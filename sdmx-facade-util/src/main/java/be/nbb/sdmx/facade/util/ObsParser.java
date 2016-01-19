@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.TimeFormat;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,13 +61,13 @@ public final class ObsParser {
     }
 
     @Nonnull
-    public ObsParser withPeriod(@Nullable String period) {
+    public ObsParser periodString(@Nullable String period) {
         this.period = period;
         return this;
     }
 
     @Nonnull
-    public ObsParser withValue(@Nullable String value) {
+    public ObsParser valueString(@Nullable String value) {
         this.value = value;
         return this;
     }
@@ -111,13 +112,13 @@ public final class ObsParser {
             case YEARLY:
                 return onStrictDatePattern("yyyy").or(onStrictDatePattern("yyyy'-01'")).or(onStrictDatePattern("yyyy'-A1'"));
             case HALF_YEARLY:
-                return new YearFreqPosParser().or(onStrictDatePattern("yyyy-MM"));
+                return YearFreqPosParser.s().or(onStrictDatePattern("yyyy-MM"));
             case QUADRI_MONTHLY:
-                return new YearFreqPosParser().or(onStrictDatePattern("yyyy-MM"));
+                return YearFreqPosParser.t().or(onStrictDatePattern("yyyy-MM"));
             case QUARTERLY:
-                return new YearFreqPosParser().or(onStrictDatePattern("yyyy-MM"));
+                return YearFreqPosParser.q().or(onStrictDatePattern("yyyy-MM"));
             case MONTHLY:
-                return new YearFreqPosParser().or(onStrictDatePattern("yyyy-MM"));
+                return YearFreqPosParser.m().or(onStrictDatePattern("yyyy-MM"));
             case WEEKLY:
                 return onStrictDatePattern("yyyy-MM-dd");
             case DAILY:
@@ -131,47 +132,71 @@ public final class ObsParser {
         }
     }
 
-    private static abstract class FailSafeParser extends DateParser {
-
-        @Override
-        public Date parse(CharSequence input) {
-            try {
-                return doParse(input);
-            } catch (Exception ex) {
-                return null;
-            }
-        }
-
-        abstract Date doParse(CharSequence input) throws Exception;
-    }
-
     @Nonnull
     private static DateParser onStrictDatePattern(@Nonnull String datePattern) {
         final DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.ROOT);
         dateFormat.setLenient(false);
-        return new FailSafeParser() {
+        return new DateParser() {
             @Override
-            protected Date doParse(CharSequence input) throws Exception {
-                String inputAsString = input.toString();
-                Date result = dateFormat.parse(inputAsString);
-                return result != null && inputAsString.equals(dateFormat.format(result)) ? result : null;
+            public Date parse(CharSequence input) {
+                try {
+                    String inputAsString = input.toString();
+                    Date result = dateFormat.parse(inputAsString);
+                    return result != null && inputAsString.equals(dateFormat.format(result)) ? result : null;
+                } catch (ParseException ex) {
+                    return null;
+                }
             }
         };
     }
 
-    private static final class YearFreqPosParser extends FailSafeParser {
+    private static final class YearFreqPosParser extends DateParser {
 
-        private final Calendar cal = new GregorianCalendar();
+        private static final Pattern Q = Pattern.compile("(\\d+)-?Q(\\d+)");
+        private static final Pattern M = Pattern.compile("(\\d+)-?M(\\d+)");
+        private static final Pattern Y = Pattern.compile("(\\d+)-?Y(\\d+)");
+        private static final Pattern S = Pattern.compile("(\\d+)-?S(\\d+)");
+        private static final Pattern T = Pattern.compile("(\\d+)-?T(\\d+)");
 
-        @Override
-        protected Date doParse(CharSequence input) throws Exception {
-            Matcher m = REGEX.matcher(input);
-            return m.matches() ? toDate(toInt(m.group(YEAR)), toFreq(m.group(FREQ)), toInt(m.group(POS))) : null;
+        public static YearFreqPosParser q() {
+            return new YearFreqPosParser(Q, 4);
         }
 
-        private Date toDate(int year, int freq, int pos) throws IllegalArgumentException {
+        public static YearFreqPosParser m() {
+            return new YearFreqPosParser(M, 12);
+        }
+
+        public static YearFreqPosParser y() {
+            return new YearFreqPosParser(Y, 1);
+        }
+
+        public static YearFreqPosParser s() {
+            return new YearFreqPosParser(S, 2);
+        }
+
+        public static YearFreqPosParser t() {
+            return new YearFreqPosParser(T, 3);
+        }
+
+        private final Pattern regex;
+        private final int freq;
+        private final Calendar cal;
+
+        private YearFreqPosParser(Pattern regex, int freq) {
+            this.regex = regex;
+            this.freq = freq;
+            this.cal = new GregorianCalendar();
+        }
+
+        @Override
+        public Date parse(CharSequence input) {
+            Matcher m = regex.matcher(input);
+            return m.matches() ? toDate(Integer.parseInt(m.group(1)), freq, Integer.parseInt(m.group(2)) - 1) : null;
+        }
+
+        private Date toDate(int year, int freq, int pos) {
             if ((pos < 0) || (pos >= freq)) {
-                throw new IllegalArgumentException();
+                return null;
             }
             int c = 12 / freq;
             int month = pos * c;
@@ -183,30 +208,6 @@ public final class ObsParser {
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
-        }
-
-        private static final Pattern REGEX = Pattern.compile("(\\d+)-?([QMYST])(\\d+)");
-        private static final int YEAR = 1, FREQ = 2, POS = 3;
-
-        private static int toInt(String input) {
-            return Integer.parseInt(input);
-        }
-
-        private static int toFreq(String input) {
-            switch (input) {
-                case "Q":
-                    return 4;
-                case "M":
-                    return 12;
-                case "Y":
-                    return 1;
-                case "S":
-                    return 2;
-                case "T":
-                    return 3;
-                default:
-                    return 0;
-            }
         }
     }
     //</editor-fold>

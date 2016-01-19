@@ -12,6 +12,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-facade-api</artifactId>

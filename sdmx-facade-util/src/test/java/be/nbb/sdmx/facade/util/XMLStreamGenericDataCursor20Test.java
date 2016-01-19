@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNull;
  */
 public class XMLStreamGenericDataCursor20Test {
 
-    private final QuickStax stax = new QuickStax();
     private final QuickCalendar cal = new QuickCalendar();
 
     @Test
@@ -37,7 +36,7 @@ public class XMLStreamGenericDataCursor20Test {
         Key.Builder keyBuilder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
         Key singleKey = Key.valueOf("LOCSTL04", "AUS", "M");
 
-        try (DataCursor cursor = new XMLStreamGenericDataCursor20(stax.open(SdmxTestResource.NBB_DATA), keyBuilder)) {
+        try (DataCursor cursor = new XMLStreamGenericDataCursor20(SdmxTestResource.NBB_DATA.open(), keyBuilder)) {
             int indexSeries = -1;
             while (cursor.nextSeries()) {
                 switch (++indexSeries) {
@@ -48,11 +47,11 @@ public class XMLStreamGenericDataCursor20Test {
                         while (cursor.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertEquals(cal.getDate(1966, 1, 1), cursor.getPeriod());
+                                    assertEquals(cal.date(1966, 1, 1), cursor.getPeriod());
                                     assertEquals(98.68823, cursor.getValue(), 0d);
                                     break;
                                 case 188:
-                                    assertEquals(cal.getDate(1970, 7, 1), cursor.getPeriod());
+                                    assertEquals(cal.date(1970, 7, 1), cursor.getPeriod());
                                     assertEquals(101.1945, cursor.getValue(), 0d);
                                     break;
                                 case 199:

@@ -18,6 +18,11 @@ package be.nbb.sdmx.facade.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  *
@@ -26,7 +31,11 @@ import java.io.InputStream;
 public abstract class SdmxTestResource {
 
     public abstract InputStream openStream() throws IOException;
-    
+
+    public XMLStreamReader open() throws XMLStreamException, IOException {
+        return XMLInputFactory.newInstance().createXMLStreamReader(new InputStreamReader(openStream(), UTF_8));
+    }
+
     public static final SdmxTestResource NBB_DATAFLOWS = onResource("Dataflows.xml");
     public static final SdmxTestResource NBB_DATA_STRUCTURE = onResource("DataflowStructure.xml");
     public static final SdmxTestResource NBB_DATA = onResource("TimeSeries.xml");

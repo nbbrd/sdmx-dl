@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class XMLStreamCompactDataCursor21Test {
 
-    private final QuickStax stax = new QuickStax();
     private final QuickCalendar cal = new QuickCalendar();
 
     @Test
@@ -39,7 +38,7 @@ public class XMLStreamCompactDataCursor21Test {
         Key key = Key.valueOf("A", "BEL", "1", "0", "0", "0", "OVGD");
         SdmxTestResource xml = SdmxTestResource.onResource("CompactData21.xml");
 
-        try (DataCursor cursor = new XMLStreamCompactDataCursor21(stax.open(xml), keyBuilder, 0, "TIME_PERIOD", "OBS_VALUE")) {
+        try (DataCursor cursor = new XMLStreamCompactDataCursor21(xml.open(), keyBuilder, 0, "TIME_PERIOD", "OBS_VALUE")) {
             assertTrue(cursor.nextSeries());
             assertEquals(key, cursor.getKey());
             assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
@@ -47,11 +46,11 @@ public class XMLStreamCompactDataCursor21Test {
             while (cursor.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertEquals(cal.getDate(1960, 0, 1), cursor.getPeriod());
+                        assertEquals(cal.date(1960, 0, 1), cursor.getPeriod());
                         assertEquals(92.0142, cursor.getValue(), 0d);
                         break;
                     case 56:
-                        assertEquals(cal.getDate(2016, 0, 1), cursor.getPeriod());
+                        assertEquals(cal.date(2016, 0, 1), cursor.getPeriod());
                         assertEquals(386.5655, cursor.getValue(), 0d);
                         break;
                 }

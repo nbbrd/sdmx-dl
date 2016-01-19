@@ -17,10 +17,14 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
+import javax.annotation.Nonnull;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -28,9 +32,19 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-final class XMLStreamCompactDataCursor21 extends DataCursor {
+public final class XMLStreamCompactDataCursor21 extends DataCursor {
 
-    public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
+    @Nonnull
+    public static DataCursor compactData21(@Nonnull XMLInputFactory factory, @Nonnull InputStreamReader stream, @Nonnull DataStructure dsd) throws IOException {
+        try {
+            return new XMLStreamCompactDataCursor21(factory.createXMLStreamReader(stream), Key.builder(dsd), Util.getFrequencyCodeIdIndex(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
+        } catch (XMLStreamException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private static final String SERIES_ELEMENT = "Series";
+    private static final String OBS_ELEMENT = "Obs";
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
@@ -39,7 +53,7 @@ final class XMLStreamCompactDataCursor21 extends DataCursor {
     private final String timeDimensionId;
     private final String primaryMeasureId;
 
-    public XMLStreamCompactDataCursor21(XMLStreamReader reader, Key.Builder keyBuilder, int frequencyCodeIdIndex, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor21(XMLStreamReader reader, Key.Builder keyBuilder, int frequencyCodeIdIndex, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.frequencyCodeIdIndex = frequencyCodeIdIndex;
@@ -55,7 +69,7 @@ final class XMLStreamCompactDataCursor21 extends DataCursor {
                 switch (reader.next()) {
                     case XMLStreamReader.START_ELEMENT:
                         switch (reader.getLocalName()) {
-                            case "Series":
+                            case SERIES_ELEMENT:
                                 if (readSeriesKey(reader, keyBuilder.clear())) {
                                     obs.timeFormat(parseTimeFormat(keyBuilder, frequencyCodeIdIndex));
                                     return true;
@@ -78,13 +92,13 @@ final class XMLStreamCompactDataCursor21 extends DataCursor {
                 switch (reader.next()) {
                     case XMLStreamReader.START_ELEMENT:
                         switch (reader.getLocalName()) {
-                            case "Obs":
+                            case OBS_ELEMENT:
                                 return parseObs(reader, obs.clear(), timeDimensionId, primaryMeasureId);
                         }
                         break;
                     case XMLStreamReader.END_ELEMENT:
                         switch (reader.getLocalName()) {
-                            case "Series":
+                            case SERIES_ELEMENT:
                                 return false;
                         }
                         break;
@@ -133,13 +147,13 @@ final class XMLStreamCompactDataCursor21 extends DataCursor {
     }
 
     private static boolean parseObs(XMLStreamReader reader, ObsParser obs, String timeDimensionId, String primaryMeasureId) {
-        obs.withPeriod(reader.getAttributeValue(null, timeDimensionId));
-        obs.withValue(reader.getAttributeValue(null, primaryMeasureId));
+        obs.periodString(reader.getAttributeValue(null, timeDimensionId));
+        obs.valueString(reader.getAttributeValue(null, primaryMeasureId));
         return true;
     }
 
     private static TimeFormat parseTimeFormat(Key.Builder keyBuilder, int frequencyCodeIdIndex) {
-        if (frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX) {
+        if (frequencyCodeIdIndex != Util.NO_FREQUENCY_CODE_ID_INDEX) {
             String frequencyCodeId = keyBuilder.getItem(frequencyCodeIdIndex);
             if (frequencyCodeId != null) {
                 return TimeFormat.parseByFrequencyCodeId(frequencyCodeId);

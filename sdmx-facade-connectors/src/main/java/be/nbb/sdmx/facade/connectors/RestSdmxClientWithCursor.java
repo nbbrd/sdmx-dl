@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.util.SdmxMediaType;
-import be.nbb.sdmx.facade.util.SdmxParser;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import javax.annotation.Nonnull;
+import javax.xml.stream.XMLInputFactory;
 import lombok.Builder;
 import lombok.Value;
 
@@ -38,10 +39,12 @@ import lombok.Value;
 final class RestSdmxClientWithCursor extends RestSdmxClient {
 
     private final Config config;
+    private final XMLInputFactory factory;
 
     public RestSdmxClientWithCursor(@Nonnull String name, @Nonnull URL endpoint, @Nonnull Config config) {
         super(name, endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
         this.config = config;
+        this.factory = XMLInputFactory.newInstance();
     }
 
     @Nonnull
@@ -51,7 +54,7 @@ final class RestSdmxClientWithCursor extends RestSdmxClient {
         if (stream == null) {
             throw new SdmxException("The query returned a null stream");
         }
-        return SdmxParser.getDefault().compactData21(stream, Util.toDataStructure(dsd));
+        return XMLStreamCompactDataCursor21.compactData21(factory, stream, Util.toDataStructure(dsd));
     }
 
     @Nonnull

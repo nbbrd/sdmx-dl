@@ -25,6 +25,7 @@
     </properties>
     
     <dependencies>
+        <!-- compile only -->
         <dependency>     
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
@@ -37,6 +38,7 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- test only -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -74,7 +74,7 @@ final class DataCursorAdapter extends DataCursor {
 
     @Override
     public Date getPeriod() throws IOException {
-        return obs.withPeriod(current.getTimeSlots().get(index)).getPeriod();
+        return obs.periodString(current.getTimeSlots().get(index)).getPeriod();
     }
 
     @Override

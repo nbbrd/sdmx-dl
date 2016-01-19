@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -28,7 +29,8 @@ final class QuickCalendar {
 
     private final GregorianCalendar cal = new GregorianCalendar();
 
-    public Date getDate(int year, int month, int dayOfMonth) {
+    @Nonnull
+    public Date date(int year, int month, int dayOfMonth) {
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -38,5 +40,4 @@ final class QuickCalendar {
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
-
 }

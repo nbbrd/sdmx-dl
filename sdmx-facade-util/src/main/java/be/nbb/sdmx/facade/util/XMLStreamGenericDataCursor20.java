@@ -17,10 +17,14 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
+import javax.annotation.Nonnull;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -28,13 +32,32 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-final class XMLStreamGenericDataCursor20 extends DataCursor {
+public final class XMLStreamGenericDataCursor20 extends DataCursor {
+
+    @Nonnull
+    public static DataCursor genericData20(@Nonnull XMLInputFactory factory, @Nonnull InputStreamReader stream, @Nonnull DataStructure dsd) throws IOException {
+        try {
+            return new XMLStreamGenericDataCursor20(factory.createXMLStreamReader(stream), Key.builder(dsd));
+        } catch (XMLStreamException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private static final String SERIES_ELEMENT = "Series";
+    private static final String OBS_ELEMENT = "Obs";
+    private static final String TIME_ELEMENT = "Time";
+    private static final String OBS_VALUE_ELEMENT = "ObsValue";
+    private static final String SERIES_KEY_ELEMENT = "SeriesKey";
+    private static final String VALUE_ELEMENT = "Value";
+    private static final String ATTRIBUTES_ELEMENT = "Attributes";
+    private static final String CONCEPT_ATTRIBUTE = "concept";
+    private static final String VALUE_ATTRIBUTE = "value";
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
     private final ObsParser obs;
 
-    public XMLStreamGenericDataCursor20(XMLStreamReader reader, Key.Builder keyBuilder) {
+    XMLStreamGenericDataCursor20(XMLStreamReader reader, Key.Builder keyBuilder) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.obs = new ObsParser();
@@ -47,7 +70,7 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
                 switch (reader.next()) {
                     case XMLStreamReader.START_ELEMENT:
                         switch (reader.getLocalName()) {
-                            case "Series":
+                            case SERIES_ELEMENT:
                                 parseSeriesHeaders();
                                 return true;
                         }
@@ -63,7 +86,7 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
     @Override
     public boolean nextObs() throws IOException {
         try {
-            if (reader.getEventType() == XMLStreamReader.START_ELEMENT && "Obs".equals(reader.getLocalName())) {
+            if (reader.getEventType() == XMLStreamReader.START_ELEMENT && OBS_ELEMENT.equals(reader.getLocalName())) {
                 parseObs();
                 return true;
             }
@@ -71,7 +94,7 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
                 switch (reader.next()) {
                     case XMLStreamReader.START_ELEMENT:
                         switch (reader.getLocalName()) {
-                            case "Obs":
+                            case OBS_ELEMENT:
                                 parseObs();
                                 return true;
                         }
@@ -118,13 +141,13 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "SeriesKey":
+                        case SERIES_KEY_ELEMENT:
                             parseSeriesKey();
                             break;
-                        case "Attributes":
+                        case ATTRIBUTES_ELEMENT:
                             parseAttributes();
                             break;
-                        case "Obs":
+                        case OBS_ELEMENT:
                             return;
                     }
                     break;
@@ -138,14 +161,14 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Value":
-                            keyBuilder.put(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
+                        case VALUE_ELEMENT:
+                            keyBuilder.put(reader.getAttributeValue(null, CONCEPT_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
                             break;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "SeriesKey":
+                        case SERIES_KEY_ELEMENT:
                             return;
                     }
                     break;
@@ -158,9 +181,9 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Value":
-                            if ("TIME_FORMAT".equals(reader.getAttributeValue(null, "concept"))) {
-                                String tmp = reader.getAttributeValue(null, "value");
+                        case VALUE_ELEMENT:
+                            if ("TIME_FORMAT".equals(reader.getAttributeValue(null, CONCEPT_ATTRIBUTE))) {
+                                String tmp = reader.getAttributeValue(null, VALUE_ATTRIBUTE);
                                 obs.timeFormat(tmp != null ? TimeFormat.parseByTimeFormat(tmp) : TimeFormat.UNDEFINED);
                             }
                             break;
@@ -168,7 +191,7 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
                     break;
                 case XMLStreamReader.END_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Attributes":
+                        case ATTRIBUTES_ELEMENT:
                             return;
                     }
                     break;
@@ -181,17 +204,17 @@ final class XMLStreamGenericDataCursor20 extends DataCursor {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Time":
-                            obs.withPeriod(reader.getElementText());
+                        case TIME_ELEMENT:
+                            obs.periodString(reader.getElementText());
                             break;
-                        case "ObsValue":
-                            obs.withValue(reader.getAttributeValue(null, "value"));
+                        case OBS_VALUE_ELEMENT:
+                            obs.valueString(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
                             break;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Obs":
+                        case OBS_ELEMENT:
                             return;
                     }
                     break;

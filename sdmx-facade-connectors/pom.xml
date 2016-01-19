@@ -26,6 +26,14 @@
     </repositories>
 
     <dependencies>
+        <!-- compile only -->
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util-lookup</artifactId>
+            <version>${netbeans.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-facade-api</artifactId>
@@ -40,12 +48,6 @@
             <groupId>it.bancaditalia.oss</groupId>
             <artifactId>sdmx</artifactId>
             <version>${sdmx-connectors.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-util-lookup</artifactId>
-            <version>${netbeans.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
