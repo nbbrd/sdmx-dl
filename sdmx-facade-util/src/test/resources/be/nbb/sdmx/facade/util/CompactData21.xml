@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><message:StructureSpecificData xmlns:message="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message" xmlns:common="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:data="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/structurespecific" xmlns:ecb_ame1="urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ECB:ECB_AME1(1.0):ObsLevelDim:TIME_PERIOD" xsi:schemaLocation="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message http://sdw-wsrest.ecb.europa.eu/vocabulary/sdmx/2_1/SDMXMessage.xsd http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common http://sdw-wsrest.ecb.europa.eu/vocabulary/sdmx/2_1/SDMXCommon.xsd urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ECB:ECB_AME1(1.0):ObsLevelDim:TIME_PERIOD http://sdw-wsrest.ecb.europa.eu/service/schema/datastructure/ECB/ECB_AME1/1.0">
+    <!-- http://sdw-wsrest.ecb.europa.eu/service/data/ECB,AME,1.0/A.BEL.1.0.0.0.OVGD -->
+    <message:Header>
+        <message:ID>2d42dedf-358a-460c-8c25-b6f427653087</message:ID>
+        <message:Test>false</message:Test>
+        <message:Prepared>2015-06-25T16:03:06.998+02:00</message:Prepared>
+        <message:Sender id="ECB"/>
+        <message:Structure structureID="ECB_AME1" dimensionAtObservation="TIME_PERIOD" namespace="urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ECB:ECB_AME1(1.0):ObsLevelDim:TIME_PERIOD">
+            <common:Structure>
+                <URN>urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ECB:ECB_AME1(1.0)</URN>
+            </common:Structure>
+        </message:Structure>
+    </message:Header>
+    <message:DataSet data:action="Replace" data:validFromDate="2015-06-25T16:03:06.998+02:00" data:structureRef="ECB_AME1" data:dataScope="DataStructure" xsi:type="ecb_ame1:DataSetType">
+        <Series FREQ="A" AME_REF_AREA="BEL" AME_TRANSFORMATION="1" AME_AGG_METHOD="0" AME_UNIT="0" AME_REFERENCE="0" AME_ITEM="OVGD" EXT_TITLE="Belgium - Gross domestic product at 2010 market prices" TITLE_COMPL="Belgium - Gross domestic product at 2010 market prices - Mrd EURO-BEF - AMECO data class: Data at constant prices" EXT_UNIT="Mrd EURO-BEF">
+            <Obs TIME_PERIOD="1960" OBS_VALUE="92.0142" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1961" OBS_VALUE="96.591" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1962" OBS_VALUE="101.5959" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1963" OBS_VALUE="106.0702" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1964" OBS_VALUE="113.4396" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1965" OBS_VALUE="117.5077" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1966" OBS_VALUE="121.1587" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1967" OBS_VALUE="125.846" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1968" OBS_VALUE="131.0966" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1969" OBS_VALUE="139.7794" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1970" OBS_VALUE="148.4345" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1971" OBS_VALUE="154.0053" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1972" OBS_VALUE="162.0992" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1973" OBS_VALUE="172.0235" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1974" OBS_VALUE="179.2479" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1975" OBS_VALUE="176.8692" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1976" OBS_VALUE="186.8672" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1977" OBS_VALUE="188.0373" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1978" OBS_VALUE="193.3811" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1979" OBS_VALUE="197.9083" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1980" OBS_VALUE="206.7035" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1981" OBS_VALUE="206.1262" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1982" OBS_VALUE="207.3526" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1983" OBS_VALUE="207.9992" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1984" OBS_VALUE="213.1293" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1985" OBS_VALUE="216.6497" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1986" OBS_VALUE="220.5987" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1987" OBS_VALUE="225.6872" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1988" OBS_VALUE="236.3469" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1989" OBS_VALUE="244.5462" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1990" OBS_VALUE="252.2186" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1991" OBS_VALUE="256.8419" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1992" OBS_VALUE="260.7733" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1993" OBS_VALUE="258.265" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1994" OBS_VALUE="266.5991" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1995" OBS_VALUE="272.9568" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1996" OBS_VALUE="277.1912" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1997" OBS_VALUE="287.5674" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1998" OBS_VALUE="293.3361" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="1999" OBS_VALUE="304.2369" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2000" OBS_VALUE="315.0385" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2001" OBS_VALUE="317.9503" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2002" OBS_VALUE="322.9088" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2003" OBS_VALUE="325.7824" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2004" OBS_VALUE="336.9713" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2005" OBS_VALUE="343.3534" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2006" OBS_VALUE="352.3848" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2007" OBS_VALUE="362.9575" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2008" OBS_VALUE="366.4176" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2009" OBS_VALUE="356.8226" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2010" OBS_VALUE="365.747" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2011" OBS_VALUE="371.7389" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2012" OBS_VALUE="372.0905" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2013" OBS_VALUE="373.1132" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2014" OBS_VALUE="376.8955" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2015" OBS_VALUE="381.2243" OBS_STATUS="A"/>
+            <Obs TIME_PERIOD="2016" OBS_VALUE="386.5655" OBS_STATUS="A"/>
+        </Series>
+    </message:DataSet>
+</message:StructureSpecificData>

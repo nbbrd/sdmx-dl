@@ -1,0 +1,634 @@
+<message:Structure xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/structure" xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common" xsi:schemaLocation="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/structure http://www.sdmx.org/docs/2_0/SDMXStructure.xsd http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message http://www.sdmx.org/docs/2_0/SDMXMessage.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:message="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">
+    <Header xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">
+        <ID>none<!--Copyright NBB - All rights reserved
+Terms and Conditions
+http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&t=ho
+Privacy Policy
+http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&t=ho
+MyNBB
+http://contact.oecd.org/ContactData.aspx
+Contact Us
+http://www.oecd.org/contact/
+--></ID>
+        <Test>false</Test>
+        <Truncated>false</Truncated>
+        <Prepared>2015-02-05T08:32:04</Prepared>
+        <Sender id="NBB">
+            <Name xml:lang="en">Organisation for Economic Co-operation and Development</Name>
+            <Name xml:lang="fr">Organisation de coopération et de développement économiques</Name>
+            <Name xml:lang="nl">Nationale Bank van België</Name>
+        </Sender>
+    </Header>
+    <message:KeyFamilies>
+        <KeyFamily id="CONSTRUCTION" agencyID="NBB">
+            <Name xml:lang="en">Bouwnijverheid</Name>
+            <Name xml:lang="fr">Construction</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="CAPSTOCK2010" agencyID="NBB">
+            <Name xml:lang="en">Capital Stock</Name>
+            <Name xml:lang="fr">Stock de capital</Name>
+            <Name xml:lang="nl">Kapitaalgoederenvoorraad</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="COMMONFLAGS" agencyID="NBB">
+            <Name xml:lang="en">CommonFlags</Name>
+            <Name xml:lang="fr">CommonFlags</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS10" agencyID="NBB">
+            <Name xml:lang="en">DK_DS10</Name>
+            <Name xml:lang="fr">DK_DS10</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS20" agencyID="NBB">
+            <Name xml:lang="en">DK_DS20</Name>
+            <Name xml:lang="fr">DK_DS20</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS21" agencyID="NBB">
+            <Name xml:lang="en">DK_DS21</Name>
+            <Name xml:lang="fr">DK_DS21</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS22" agencyID="NBB">
+            <Name xml:lang="en">DK_DS22 National Accounts</Name>
+            <Name xml:lang="fr">DK_DS22 Comptes Nationaux</Name>
+            <Name xml:lang="nl">DK_DS22 Nationale Rekeningen</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS23" agencyID="NBB">
+            <Name xml:lang="en">DK_DS23 EN</Name>
+            <Name xml:lang="fr">DK_DS23 FR</Name>
+            <Name xml:lang="nl">DK_DS23 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS24" agencyID="NBB">
+            <Name xml:lang="en">DK_DS24 EN</Name>
+            <Name xml:lang="fr">DK_DS24 FR</Name>
+            <Name xml:lang="nl">DK_DS24 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS30" agencyID="NBB">
+            <Name xml:lang="en">DK_DS30 EN</Name>
+            <Name xml:lang="fr">DK_DS30 FR</Name>
+            <Name xml:lang="nl">DK_DS30 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS35" agencyID="NBB">
+            <Name xml:lang="en">DK_DS35 EN</Name>
+            <Name xml:lang="fr">DK_DS35 FR</Name>
+            <Name xml:lang="nl">DK_DS35 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS40" agencyID="NBB">
+            <Name xml:lang="en">DK_DS40</Name>
+            <Name xml:lang="fr">DK_DS40</Name>
+            <Name xml:lang="nl">DK_DS40</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS41" agencyID="NBB">
+            <Name xml:lang="en">DK_DS41 EN</Name>
+            <Name xml:lang="fr">DK_DS41 FR</Name>
+            <Name xml:lang="nl">DK_DS41 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_GR" agencyID="NBB">
+            <Name xml:lang="en">DK_DSGR</Name>
+            <Name xml:lang="fr">DK_DSGR</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DSNICP" agencyID="NBB">
+            <Name xml:lang="en">DK_DSNICP</Name>
+            <Name xml:lang="fr">DK_DSNICP</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="TEST_DATASET" agencyID="NBB">
+            <Name xml:lang="en">My first dataset</Name>
+            <Name xml:lang="fr">Mon premier dataset</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="NFQA" agencyID="NBB">
+            <Name xml:lang="en">Non-financial quarterly accounts of the institutional sectors - ESA95</Name>
+            <Name xml:lang="fr">Comptes non financiers trimestriels des secteurs institutionnels - SEC95</Name>
+            <Name xml:lang="nl">Niet-financiële kwartaalrekeningen van de institutionele sectoren - ESR95</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="QNA" agencyID="NBB">
+            <Name xml:lang="en">Quarterly and annual aggregates</Name>
+            <Name xml:lang="fr">Agrégats trimestriels et annuels</Name>
+            <Name xml:lang="nl">Kwartaal- en jaaraggregaten</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="EXR" agencyID="NBB">
+            <Name xml:lang="en">Reference exchange rates of the euro in national currency units</Name>
+            <Name xml:lang="fr">Cours de change de référence de l'euro en unités de monnaie nationale</Name>
+            <Name xml:lang="nl">Referentiewisselkoersen van de euro in nationale munteenheden</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS01" agencyID="NBB">
+            <Name xml:lang="en">Test dataset DK_DS01</Name>
+            <Name xml:lang="fr">Test dataset DK_DS01</Name>
+            <Name xml:lang="nl">Test dataset DK_DS01 NL</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS02" agencyID="NBB">
+            <Name xml:lang="en">Test directory</Name>
+            <Name xml:lang="fr">Test directory</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_DS_DAILY_01" agencyID="NBB">
+            <Name xml:lang="en">Test DK_DS_DAILY_01</Name>
+            <Name xml:lang="fr">Test DK_DS_DAILY_01</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+        <KeyFamily id="DK_MAP_03" agencyID="NBB">
+            <Name xml:lang="en">test DK_MAP_03</Name>
+            <Name xml:lang="fr">test dataset 9998</Name>
+            <Components />
+            <Annotations>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                    <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+                </common:Annotation>
+                <common:Annotation xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common">
+                    <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                    <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+                </common:Annotation>
+            </Annotations>
+        </KeyFamily>
+    </message:KeyFamilies>
+</message:Structure>

@@ -1,0 +1,847 @@
+<message:MessageGroup xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/generic" xmlns:common="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/common" xsi:schemaLocation="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/generic http://www.sdmx.org/docs/2_0/SDMXGenericData.xsd http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message http://www.sdmx.org/docs/2_0/SDMXMessage.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:message="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">
+    <Header xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">
+        <ID>none</ID>
+        <Test>false</Test>
+        <Truncated>false</Truncated>
+        <Prepared>2015-02-05T08:30:04</Prepared>
+        <Sender id="NBB">
+            <Name xml:lang="en">Organisation for Economic Co-operation and Development</Name>
+            <Name xml:lang="fr">Organisation de coopération et de développement économiques</Name>
+            <Name xml:lang="nl">Nationale Bank van België</Name>
+        </Sender>
+    </Header>
+    <DataSet keyFamilyURI="http://srvsddwd02.nbb.local/RestSDMX/sdmx.ashx/GetKeyFamily/TEST_DATASET">
+        <KeyFamilyRef>TEST_DATASET</KeyFamilyRef>
+        <Series>
+            <SeriesKey>
+                <Value concept="SUBJECT" value="LOCSTL04" />
+                <Value concept="LOCATION" value="AUS" />
+                <Value concept="FREQUENCY" value="M" />
+            </SeriesKey>
+            <Attributes>
+                <Value concept="TIME_FORMAT" value="P1M" />
+            </Attributes>
+            <Obs>
+                <Time>1966-02</Time>
+                <ObsValue value="98.68823" />
+            </Obs>
+            <Obs>
+                <Time>1966-03</Time>
+                <ObsValue value="98.32574" />
+            </Obs>
+            <Obs>
+                <Time>1966-04</Time>
+                <ObsValue value="98.40513" />
+            </Obs>
+            <Obs>
+                <Time>1966-05</Time>
+                <ObsValue value="98.46714" />
+            </Obs>
+            <Obs>
+                <Time>1966-06</Time>
+                <ObsValue value="98.51157" />
+            </Obs>
+            <Obs>
+                <Time>1966-07</Time>
+                <ObsValue value="98.54825" />
+            </Obs>
+            <Obs>
+                <Time>1966-08</Time>
+                <ObsValue value="98.60596" />
+            </Obs>
+            <Obs>
+                <Time>1966-09</Time>
+                <ObsValue value="98.72861" />
+            </Obs>
+            <Obs>
+                <Time>1966-10</Time>
+                <ObsValue value="98.93124" />
+            </Obs>
+            <Obs>
+                <Time>1966-11</Time>
+                <ObsValue value="99.16631" />
+            </Obs>
+            <Obs>
+                <Time>1966-12</Time>
+                <ObsValue value="99.38132" />
+            </Obs>
+            <Obs>
+                <Time>1967-01</Time>
+                <ObsValue value="99.5299" />
+            </Obs>
+            <Obs>
+                <Time>1967-02</Time>
+                <ObsValue value="99.59217" />
+            </Obs>
+            <Obs>
+                <Time>1967-03</Time>
+                <ObsValue value="99.57041" />
+            </Obs>
+            <Obs>
+                <Time>1967-04</Time>
+                <ObsValue value="99.50825" />
+            </Obs>
+            <Obs>
+                <Time>1967-05</Time>
+                <ObsValue value="99.42152" />
+            </Obs>
+            <Obs>
+                <Time>1967-06</Time>
+                <ObsValue value="99.33475" />
+            </Obs>
+            <Obs>
+                <Time>1967-07</Time>
+                <ObsValue value="99.27731" />
+            </Obs>
+            <Obs>
+                <Time>1967-08</Time>
+                <ObsValue value="99.25973" />
+            </Obs>
+            <Obs>
+                <Time>1967-09</Time>
+                <ObsValue value="99.27918" />
+            </Obs>
+            <Obs>
+                <Time>1967-10</Time>
+                <ObsValue value="99.31921" />
+            </Obs>
+            <Obs>
+                <Time>1967-11</Time>
+                <ObsValue value="99.3656" />
+            </Obs>
+            <Obs>
+                <Time>1967-12</Time>
+                <ObsValue value="99.41966" />
+            </Obs>
+            <Obs>
+                <Time>1968-01</Time>
+                <ObsValue value="99.49068" />
+            </Obs>
+            <Obs>
+                <Time>1968-02</Time>
+                <ObsValue value="99.56975" />
+            </Obs>
+            <Obs>
+                <Time>1968-03</Time>
+                <ObsValue value="99.67291" />
+            </Obs>
+            <Obs>
+                <Time>1968-04</Time>
+                <ObsValue value="99.80129" />
+            </Obs>
+            <Obs>
+                <Time>1968-05</Time>
+                <ObsValue value="99.93179" />
+            </Obs>
+            <Obs>
+                <Time>1968-06</Time>
+                <ObsValue value="100.0289" />
+            </Obs>
+            <Obs>
+                <Time>1968-07</Time>
+                <ObsValue value="100.079" />
+            </Obs>
+            <Obs>
+                <Time>1968-08</Time>
+                <ObsValue value="100.1024" />
+            </Obs>
+            <Obs>
+                <Time>1968-09</Time>
+                <ObsValue value="100.1291" />
+            </Obs>
+            <Obs>
+                <Time>1968-10</Time>
+                <ObsValue value="100.1907" />
+            </Obs>
+            <Obs>
+                <Time>1968-11</Time>
+                <ObsValue value="100.3279" />
+            </Obs>
+            <Obs>
+                <Time>1968-12</Time>
+                <ObsValue value="100.5325" />
+            </Obs>
+            <Obs>
+                <Time>1969-01</Time>
+                <ObsValue value="100.7721" />
+            </Obs>
+            <Obs>
+                <Time>1969-02</Time>
+                <ObsValue value="101.0067" />
+            </Obs>
+            <Obs>
+                <Time>1969-03</Time>
+                <ObsValue value="101.2146" />
+            </Obs>
+            <Obs>
+                <Time>1969-04</Time>
+                <ObsValue value="101.4016" />
+            </Obs>
+            <Obs>
+                <Time>1969-05</Time>
+                <ObsValue value="101.5842" />
+            </Obs>
+            <Obs>
+                <Time>1969-06</Time>
+                <ObsValue value="101.756" />
+            </Obs>
+            <Obs>
+                <Time>1969-07</Time>
+                <ObsValue value="101.9197" />
+            </Obs>
+            <Obs>
+                <Time>1969-08</Time>
+                <ObsValue value="102.0443" />
+            </Obs>
+            <Obs>
+                <Time>1969-09</Time>
+                <ObsValue value="102.1529" />
+            </Obs>
+            <Obs>
+                <Time>1969-10</Time>
+                <ObsValue value="102.2441" />
+            </Obs>
+            <Obs>
+                <Time>1969-11</Time>
+                <ObsValue value="102.3128" />
+            </Obs>
+            <Obs>
+                <Time>1969-12</Time>
+                <ObsValue value="102.3366" />
+            </Obs>
+            <Obs>
+                <Time>1970-01</Time>
+                <ObsValue value="102.2701" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-01</Time>
+                <ObsValue value="101.9767" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-02</Time>
+                <ObsValue value="101.5173" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-04</Time>
+                <ObsValue value="100.9128" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-05</Time>
+                <ObsValue value="100.2526" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-06</Time>
+                <ObsValue value="99.64999" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-09</Time>
+                <ObsValue value="99.16014" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-10</Time>
+                <ObsValue value="98.81034" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-11</Time>
+                <ObsValue value="98.59795" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-13</Time>
+                <ObsValue value="98.51176" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-14</Time>
+                <ObsValue value="98.5101" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-15</Time>
+                <ObsValue value="98.54501" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-19</Time>
+                <ObsValue value="98.55175" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-20</Time>
+                <ObsValue value="98.48991" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-21</Time>
+                <ObsValue value="98.34372" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-23</Time>
+                <ObsValue value="98.11409" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-24</Time>
+                <ObsValue value="97.80976" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-25</Time>
+                <ObsValue value="97.45827" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-28</Time>
+                <ObsValue value="97.06947" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-29</Time>
+                <ObsValue value="96.66109" />
+            </Obs>
+            <Obs>
+                <Time>1970-01-30</Time>
+                <ObsValue value="96.27099" />
+            </Obs>
+            <Obs>
+                <Time>1970-02</Time>
+                <ObsValue value="95.96741" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-01</Time>
+                <ObsValue value="95.80801" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-02</Time>
+                <ObsValue value="95.82533" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-06</Time>
+                <ObsValue value="96.01513" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-07</Time>
+                <ObsValue value="96.34563" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-08</Time>
+                <ObsValue value="96.79109" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-10</Time>
+                <ObsValue value="97.34528" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-11</Time>
+                <ObsValue value="98.00642" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-12</Time>
+                <ObsValue value="98.75804" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-15</Time>
+                <ObsValue value="99.58435" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-16</Time>
+                <ObsValue value="100.4791" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-17</Time>
+                <ObsValue value="101.4311" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-19</Time>
+                <ObsValue value="102.4284" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-20</Time>
+                <ObsValue value="103.4427" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-21</Time>
+                <ObsValue value="104.4182" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-25</Time>
+                <ObsValue value="105.2898" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-26</Time>
+                <ObsValue value="106.0028" />
+            </Obs>
+            <Obs>
+                <Time>1970-02-27</Time>
+                <ObsValue value="106.5428" />
+            </Obs>
+            <Obs>
+                <Time>1970-03</Time>
+                <ObsValue value="106.917" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-01</Time>
+                <ObsValue value="107.1592" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-02</Time>
+                <ObsValue value="107.2768" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-05</Time>
+                <ObsValue value="107.2723" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-06</Time>
+                <ObsValue value="107.1272" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-07</Time>
+                <ObsValue value="106.8372" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-09</Time>
+                <ObsValue value="106.4482" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-10</Time>
+                <ObsValue value="106.0148" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-11</Time>
+                <ObsValue value="105.5671" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-15</Time>
+                <ObsValue value="105.0947" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-16</Time>
+                <ObsValue value="104.5208" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-17</Time>
+                <ObsValue value="103.7566" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-19</Time>
+                <ObsValue value="102.7477" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-20</Time>
+                <ObsValue value="101.4876" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-21</Time>
+                <ObsValue value="100.0301" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-24</Time>
+                <ObsValue value="98.48611" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-25</Time>
+                <ObsValue value="96.978" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-26</Time>
+                <ObsValue value="95.65886" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-28</Time>
+                <ObsValue value="94.64579" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-29</Time>
+                <ObsValue value="93.98652" />
+            </Obs>
+            <Obs>
+                <Time>1970-03-30</Time>
+                <ObsValue value="93.67246" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-01</Time>
+                <ObsValue value="93.6701" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-02</Time>
+                <ObsValue value="93.91381" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-03</Time>
+                <ObsValue value="94.32516" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-05</Time>
+                <ObsValue value="94.82928" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-06</Time>
+                <ObsValue value="95.36338" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-07</Time>
+                <ObsValue value="95.88672" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-10</Time>
+                <ObsValue value="96.38065" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-11</Time>
+                <ObsValue value="96.86703" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-12</Time>
+                <ObsValue value="97.3727" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-14</Time>
+                <ObsValue value="97.88828" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-15</Time>
+                <ObsValue value="98.3995" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-16</Time>
+                <ObsValue value="98.89102" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-20</Time>
+                <ObsValue value="99.34845" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-21</Time>
+                <ObsValue value="99.75745" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-22</Time>
+                <ObsValue value="100.0888" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-24</Time>
+                <ObsValue value="100.3319" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-25</Time>
+                <ObsValue value="100.4939" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-26</Time>
+                <ObsValue value="100.5891" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-29</Time>
+                <ObsValue value="100.6269" />
+            </Obs>
+            <Obs>
+                <Time>1970-04-30</Time>
+                <ObsValue value="100.601" />
+            </Obs>
+            <Obs>
+                <Time>1970-05</Time>
+                <ObsValue value="100.4945" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-02</Time>
+                <ObsValue value="100.2976" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-03</Time>
+                <ObsValue value="100.0348" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-04</Time>
+                <ObsValue value="99.73804" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-08</Time>
+                <ObsValue value="99.43481" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-09</Time>
+                <ObsValue value="99.1311" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-10</Time>
+                <ObsValue value="98.8459" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-12</Time>
+                <ObsValue value="98.61299" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-13</Time>
+                <ObsValue value="98.4239" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-14</Time>
+                <ObsValue value="98.27249" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-17</Time>
+                <ObsValue value="98.1647" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-18</Time>
+                <ObsValue value="98.10958" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-19</Time>
+                <ObsValue value="98.12327" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-21</Time>
+                <ObsValue value="98.21593" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-22</Time>
+                <ObsValue value="98.37479" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-23</Time>
+                <ObsValue value="98.58295" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-27</Time>
+                <ObsValue value="98.81702" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-28</Time>
+                <ObsValue value="99.06224" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-29</Time>
+                <ObsValue value="99.30135" />
+            </Obs>
+            <Obs>
+                <Time>1970-05-31</Time>
+                <ObsValue value="99.5222" />
+            </Obs>
+            <Obs>
+                <Time>1970-06</Time>
+                <ObsValue value="99.711" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-01</Time>
+                <ObsValue value="99.87087" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-04</Time>
+                <ObsValue value="100.0211" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-05</Time>
+                <ObsValue value="100.1906" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-06</Time>
+                <ObsValue value="100.3877" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-08</Time>
+                <ObsValue value="100.6075" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-09</Time>
+                <ObsValue value="100.8304" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-10</Time>
+                <ObsValue value="101.0397" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-14</Time>
+                <ObsValue value="101.2236" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-15</Time>
+                <ObsValue value="101.3943" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-16</Time>
+                <ObsValue value="101.5554" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-18</Time>
+                <ObsValue value="101.717" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-19</Time>
+                <ObsValue value="101.877" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-20</Time>
+                <ObsValue value="102.0123" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-23</Time>
+                <ObsValue value="102.1224" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-24</Time>
+                <ObsValue value="102.2075" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-25</Time>
+                <ObsValue value="102.2739" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-27</Time>
+                <ObsValue value="102.3135" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-28</Time>
+                <ObsValue value="102.3192" />
+            </Obs>
+            <Obs>
+                <Time>1970-06-29</Time>
+                <ObsValue value="102.2813" />
+            </Obs>
+            <Obs>
+                <Time>1970-07</Time>
+                <ObsValue value="102.1985" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-01</Time>
+                <ObsValue value="102.0513" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-02</Time>
+                <ObsValue value="101.8494" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-04</Time>
+                <ObsValue value="101.6398" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-05</Time>
+                <ObsValue value="101.4795" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-06</Time>
+                <ObsValue value="101.4166" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-09</Time>
+                <ObsValue value="101.4631" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-10</Time>
+                <ObsValue value="101.594" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-11</Time>
+                <ObsValue value="101.7673" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-13</Time>
+                <ObsValue value="101.954" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-14</Time>
+                <ObsValue value="102.1398" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-15</Time>
+                <ObsValue value="102.3265" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-19</Time>
+                <ObsValue value="102.5151" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-20</Time>
+                <ObsValue value="102.7025" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-21</Time>
+                <ObsValue value="102.8657" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-23</Time>
+                <ObsValue value="102.9667" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-24</Time>
+                <ObsValue value="102.967" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-25</Time>
+                <ObsValue value="102.8421" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-28</Time>
+                <ObsValue value="102.5727" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-29</Time>
+                <ObsValue value="102.19" />
+            </Obs>
+            <Obs>
+                <Time>1970-07-30</Time>
+                <ObsValue value="101.722" />
+            </Obs>
+            <Obs>
+                <Time>1970-08</Time>
+                <ObsValue value="101.1945" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-01</Time>
+                <ObsValue value="100.6216" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-02</Time>
+                <ObsValue value="99.99871" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-06</Time>
+                <ObsValue value="99.32618" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-07</Time>
+                <ObsValue value="98.60788" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-08</Time>
+                <ObsValue value="97.85794" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-10</Time>
+                <ObsValue value="97.0738" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-11</Time>
+                <ObsValue value="96.26937" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-12</Time>
+                <ObsValue value="95.48667" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-15</Time>
+                <ObsValue value="94.78103" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-16</Time>
+                <ObsValue value="94.18349" />
+            </Obs>
+            <Obs>
+                <Time>1970-08-17</Time>
+                <ObsValue value="93.7211" />
+            </Obs>
+        </Series>
+        <Annotations>
+            <common:Annotation>
+                <common:AnnotationTitle>Copyright NBB - All rights reserved</common:AnnotationTitle>
+            </common:Annotation>
+            <common:Annotation>
+                <common:AnnotationTitle>Terms and Conditions</common:AnnotationTitle>
+                <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+            </common:Annotation>
+            <common:Annotation>
+                <common:AnnotationTitle>Privacy Policy</common:AnnotationTitle>
+                <common:AnnotationURL>http://www.nbb.be/pub/disclaimer/disclaimer.htm?l=en&amp;t=ho</common:AnnotationURL>
+            </common:Annotation>
+            <common:Annotation>
+                <common:AnnotationTitle>MyNBB</common:AnnotationTitle>
+                <common:AnnotationURL>http://contact.oecd.org/ContactData.aspx</common:AnnotationURL>
+            </common:Annotation>
+            <common:Annotation>
+                <common:AnnotationTitle>Contact Us</common:AnnotationTitle>
+                <common:AnnotationURL>http://www.oecd.org/contact/</common:AnnotationURL>
+            </common:Annotation>
+        </Annotations>
+    </DataSet>
+</message:MessageGroup>
