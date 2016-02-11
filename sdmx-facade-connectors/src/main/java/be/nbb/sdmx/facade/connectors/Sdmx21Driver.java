@@ -64,7 +64,6 @@ public final class Sdmx21Driver extends SdmxDriver {
     public List<WsEntryPoint> getDefaultEntryPoints() {
         return asList(
                 of("ECB", "European Central Bank", "sdmx:sdmx21:http://sdw-wsrest.ecb.europa.eu/service", Config.builder().supportsCompression(true).seriesKeysOnlySupported(true).build()),
-                of("EUROSTAT", "Eurostat", "sdmx:sdmx21:http://ec.europa.eu/eurostat/SDMX/diss-web/rest", Config.builder().supportsCompression(true).build()),
                 of("ISTAT", "Istituto Nazionale di Statistica", "sdmx:sdmx21:http://sdmx.istat.it/SDMXWS/rest", Config.builder().supportsCompression(true).seriesKeysOnlySupported(true).build()),
                 of("INSEE", "Institut national de la statistique et des études économiques", "sdmx:sdmx21:http://www.bdm.insee.fr/series/sdmx", Config.builder().seriesKeysOnlySupported(true).build())
         );
