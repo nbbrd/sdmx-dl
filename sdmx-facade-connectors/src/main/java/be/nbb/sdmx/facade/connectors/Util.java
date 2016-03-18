@@ -28,6 +28,7 @@ import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
+import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,12 +73,18 @@ final class Util {
     }
 
     private final static Cache<String, Object> CACHE = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).build();
+    private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
+    private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
 
     @Nonnull
     public SdmxConnection getConnection(@Nonnull String url, @Nonnull Properties info, @Nonnull ClientSupplier supplier) throws IOException {
         try {
             URL endpoint = new URL(url);
             GenericSDMXClient client = supplier.getClient(endpoint, info);
+            if (client instanceof RestSdmxClient) {
+                ((RestSdmxClient) client).setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
+                ((RestSdmxClient) client).setReadTimeout(DEFAULT_READ_TIMEOUT);
+            }
             return new CachedSdmxConnection(client, endpoint.getHost(), CACHE);
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
