@@ -67,7 +67,11 @@ public final class Key {
 
     @Override
     public String toString() {
-        if (items.length == 1 && isWildcard(0)) {
+        return toString(items);
+    }
+
+    private static String toString(String[] items) {
+        if (items.length == 1 && WILDCARD.equals(items[0])) {
             return "all";
         }
         StringBuilder result = new StringBuilder();
@@ -173,6 +177,11 @@ public final class Key {
         @Nonnull
         public Key build() {
             return Key.valueOf(items);
+        }
+
+        @Override
+        public String toString() {
+            return Key.toString(items);
         }
     }
 }
