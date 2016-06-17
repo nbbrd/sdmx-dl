@@ -17,11 +17,11 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.FlowRef;
-import com.google.common.cache.Cache;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import javax.annotation.Nullable;
 
 /**
@@ -30,12 +30,12 @@ import javax.annotation.Nullable;
  */
 final class CachedSdmxConnection extends SdmxConnectionAdapter {
 
-    private final Cache<String, Object> cache;
+    private final ConcurrentMap<String, Object> cache;
     private final String dataflowsKey;
     private final String dataflowKey;
     private final String dataflowStructureKey;
 
-    public CachedSdmxConnection(GenericSDMXClient client, String prefix, Cache<String, Object> cache) {
+    public CachedSdmxConnection(GenericSDMXClient client, String prefix, ConcurrentMap<String, Object> cache) {
         super(client);
         this.cache = cache;
         this.dataflowsKey = prefix + "dataflows";
@@ -45,7 +45,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
 
     @Nullable
     private <X> X getOrNull(String key) {
-        return (X) cache.getIfPresent(key);
+        return (X) cache.get(key);
     }
 
     @Override
