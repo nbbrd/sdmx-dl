@@ -13,7 +13,7 @@
     
     <properties>
         <!-- dependencies -->
-        <sdmx-connectors.version>1.5</sdmx-connectors.version>
+        <sdmx-connectors.version>1.6.2</sdmx-connectors.version>
         <guava.version>18.0</guava.version>
         <netbeans.version>RELEASE801</netbeans.version>
     </properties>
