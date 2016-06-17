@@ -60,6 +60,6 @@ public final class OecdDriver extends SdmxDriver {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:http://stats.oecd.org/restsdmx/sdmx.ashx"));
+        return singletonList(of("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx"));
     }
 }

@@ -60,6 +60,6 @@ public final class NbbDriver extends SdmxDriver {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("NBB", "National Bank Belgium", "sdmx:nbb:http://stat.nbb.be/restsdmx/sdmx.ashx"));
+        return singletonList(of("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx"));
     }
 }

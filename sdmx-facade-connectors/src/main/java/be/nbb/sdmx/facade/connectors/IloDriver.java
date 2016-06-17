@@ -60,6 +60,6 @@ public final class IloDriver extends SdmxDriver {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("ILO", "International Labour Office", "sdmx:ilo:http://www.ilo.org/ilostat/sdmx/ws/rest"));
+        return singletonList(of("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest"));
     }
 }
