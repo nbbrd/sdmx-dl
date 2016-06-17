@@ -5,7 +5,7 @@
     <parent>
         <groupId>be.nbb.sdmx</groupId>
         <artifactId>sdmx-facade-parent</artifactId>
-        <version>2.0.3-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sdmx-facade-connectors</artifactId>
@@ -15,7 +15,7 @@
         <!-- dependencies -->
         <sdmx-connectors.version>1.6.2</sdmx-connectors.version>
         <guava.version>18.0</guava.version>
-        <netbeans.version>RELEASE801</netbeans.version>
+        <netbeans.version>RELEASE802</netbeans.version>
     </properties>
 
     <repositories>
