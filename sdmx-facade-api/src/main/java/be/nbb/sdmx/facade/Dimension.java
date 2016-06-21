@@ -16,18 +16,15 @@
  */
 package be.nbb.sdmx.facade;
 
-import lombok.Value;
-
 /**
  *
  * @author Philippe Charles
  */
-@Value
+@lombok.Value
 public class Dimension {
 
-    private String id;
-    private int position;
-    private Codelist codelist;
-    private String name;
-
+    String id;
+    int position;
+    Codelist codelist;
+    String name;
 }

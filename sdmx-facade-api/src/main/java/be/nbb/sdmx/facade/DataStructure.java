@@ -17,20 +17,35 @@
 package be.nbb.sdmx.facade;
 
 import java.util.Set;
-import lombok.Value;
 
 /**
+ * Dataset Structure Definition (DSD) is a set of structural metadata associated
+ * to a data set, which includes information about how concepts are associated
+ * with the measures, dimensions, and attributes of a data cube, along with
+ * information about the representation of data and related descriptive
+ * metadata.
  *
  * @author Philippe Charles
  */
-@Value
+@lombok.Value
 public class DataStructure {
 
-    private ResourceRef dataStructureRef;
-    private Set<Dimension> dimensions;
-    private String name;
+    /**
+     * Non-null unique reference to this data structure.
+     */
+    @lombok.NonNull
+    ResourceRef dataStructureRef;
 
-    private String timeDimensionId;
-    private String primaryMeasureId;
+    /**
+     * Non-null list of statistical concepts used to identify a statistical
+     * series or individual observations.
+     */
+    @lombok.NonNull
+    Set<Dimension> dimensions;
 
+    String name;
+
+    String timeDimensionId;
+
+    String primaryMeasureId;
 }

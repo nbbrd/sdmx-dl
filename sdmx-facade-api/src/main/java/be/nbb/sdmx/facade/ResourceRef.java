@@ -16,22 +16,14 @@
  */
 package be.nbb.sdmx.facade;
 
-import lombok.Value;
-
 /**
  *
  * @author Philippe Charles
  */
-@Value
+@lombok.Value
 public class ResourceRef {
 
-    private String agencyId;
-    private String resourceId;
-    private String version;
-
-    public ResourceRef(String agencyId, String resourceId, String version) {
-        this.agencyId = agencyId;
-        this.resourceId = resourceId;
-        this.version = version;
-    }
+    String agencyId;
+    String resourceId;
+    String version;
 }

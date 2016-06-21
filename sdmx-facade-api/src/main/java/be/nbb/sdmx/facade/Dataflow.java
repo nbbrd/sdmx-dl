@@ -16,16 +16,14 @@
  */
 package be.nbb.sdmx.facade;
 
-import lombok.Value;
-
 /**
  *
  * @author Philippe Charles
  */
-@Value
+@lombok.Value
 public class Dataflow {
 
-    private FlowRef flowRef;
-    private ResourceRef dataStructureRef;
-    private String name;
+    FlowRef flowRef;
+    ResourceRef dataStructureRef;
+    String name;
 }

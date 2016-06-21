@@ -17,15 +17,25 @@
 package be.nbb.sdmx.facade;
 
 import java.util.Map;
-import lombok.Value;
 
 /**
+ * Code lists are predefined sets of terms from which some statistical coded
+ * concepts take their values.
  *
  * @author Philippe Charles
  */
-@Value
+@lombok.Value
 public class Codelist {
 
-    private ResourceRef codelistRef;
-    private Map<String, String> codes;
+    /**
+     * Non-null unique reference to this code list.
+     */
+    @lombok.NonNull
+    ResourceRef codelistRef;
+
+    /**
+     * Non-null map of code description by code id.
+     */
+    @lombok.NonNull
+    Map<String, String> codes;
 }

@@ -16,8 +16,9 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
+import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.connectors.RestSdmxClientWithCursor.Config;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_URL_ENCODING_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.SERIES_KEYS_ONLY_SUPPORTED_PROPERTY;
@@ -25,13 +26,23 @@ import static be.nbb.sdmx.facade.connectors.Util.SUPPORTS_COMPRESSION_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.get;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.util.SdmxMediaType;
+import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
+import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
+import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
+import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
+import it.bancaditalia.oss.sdmx.util.SdmxException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Properties;
+import javax.xml.stream.XMLInputFactory;
+import lombok.Builder;
+import lombok.Value;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -46,7 +57,7 @@ public final class Sdmx21Driver extends SdmxDriver {
     private final Util.ClientSupplier supplier = new Util.ClientSupplier() {
         @Override
         public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
-            return new RestSdmxClientWithCursor("", endpoint, load(info));
+            return new ExtRestSdmxClient("", endpoint, load(info));
         }
     };
 
@@ -71,7 +82,8 @@ public final class Sdmx21Driver extends SdmxDriver {
         );
     }
 
-    private static WsEntryPoint of(String name, String description, String url, RestSdmxClientWithCursor.Config c) {
+    //<editor-fold defaultstate="collapsed" desc="Implementation details">
+    private static WsEntryPoint of(String name, String description, String url, Config c) {
         Properties p = new Properties();
         store(p, c);
         return WsEntryPoint.of(name, description, url, p);
@@ -91,4 +103,42 @@ public final class Sdmx21Driver extends SdmxDriver {
         p.setProperty(SUPPORTS_COMPRESSION_PROPERTY, String.valueOf(c.isSupportsCompression()));
         p.setProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, String.valueOf(c.isSeriesKeysOnlySupported()));
     }
+
+    @Value
+    @Builder
+    private static class Config {
+
+        boolean needsCredentials;
+        boolean needsURLEncoding;
+        boolean supportsCompression;
+        boolean seriesKeysOnlySupported;
+    }
+
+    private final static class ExtRestSdmxClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
+
+        private final Config config;
+        private final XMLInputFactory factory;
+
+        public ExtRestSdmxClient(String name, URL endpoint, Config config) {
+            super(name, endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
+            this.config = config;
+            this.factory = XMLInputFactory.newInstance();
+        }
+
+        @Override
+        public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
+            String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
+            InputStreamReader stream = runQuery(query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+            if (stream == null) {
+                throw new SdmxException("The query returned a null stream");
+            }
+            return XMLStreamCompactDataCursor21.compactData21(factory, stream, Util.toDataStructure(dsd));
+        }
+
+        @Override
+        public boolean isSeriesKeysOnlySupported() {
+            return config.isSeriesKeysOnlySupported();
+        }
+    }
+    //</editor-fold>
 }

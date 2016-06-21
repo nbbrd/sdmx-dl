@@ -70,8 +70,8 @@ class SdmxConnectionAdapter extends SdmxConnection {
 
     @Override
     public boolean isSeriesKeysOnlySupported() {
-        return client instanceof RestSdmxClientWithCursor
-                && ((RestSdmxClientWithCursor) client).getConfig().isSeriesKeysOnlySupported();
+        return client instanceof HasSeriesKeysOnlySupported
+                && ((HasSeriesKeysOnlySupported) client).isSeriesKeysOnlySupported();
     }
 
     @Nonnull
@@ -112,8 +112,8 @@ class SdmxConnectionAdapter extends SdmxConnection {
         it.bancaditalia.oss.sdmx.api.Dataflow dataflow = loadDataflow(flowRef);
         it.bancaditalia.oss.sdmx.api.DataFlowStructure dfs = loadDataStructure(flowRef);
         try {
-            return client instanceof RestSdmxClientWithCursor
-                    ? ((RestSdmxClientWithCursor) client).getDataCursor(dataflow, dfs, key, serieskeysonly)
+            return client instanceof HasDataCursor
+                    ? ((HasDataCursor) client).getDataCursor(dataflow, dfs, key, serieskeysonly)
                     : new DataCursorAdapter(client.getTimeSeries(dataflow, dfs, key.toString(), null, null, serieskeysonly, null, false));
         } catch (SdmxException ex) {
             if (isNoResultMatchingQuery(ex)) {
