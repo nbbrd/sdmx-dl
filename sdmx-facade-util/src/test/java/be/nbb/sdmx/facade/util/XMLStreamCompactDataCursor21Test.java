@@ -35,7 +35,7 @@ public class XMLStreamCompactDataCursor21Test {
     @Test
     public void testCompactData21() throws Exception {
         Key.Builder keyBuilder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
-        Key key = Key.valueOf("A", "BEL", "1", "0", "0", "0", "OVGD");
+        Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
         SdmxTestResource xml = SdmxTestResource.onResource("CompactData21.xml");
 
         try (DataCursor cursor = new XMLStreamCompactDataCursor21(xml.open(), keyBuilder, 0, "TIME_PERIOD", "OBS_VALUE")) {

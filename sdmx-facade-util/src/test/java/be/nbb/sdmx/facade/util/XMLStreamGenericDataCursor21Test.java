@@ -35,7 +35,7 @@ public class XMLStreamGenericDataCursor21Test {
     @Test
     public void testGenericData21() throws Exception {
         Key.Builder keyBuilder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
-        Key key = Key.valueOf("A", "BEL", "1", "0", "0", "0", "OVGD");
+        Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
         SdmxTestResource xml = SdmxTestResource.onResource("GenericData21.xml");
 
         try (DataCursor cursor = new XMLStreamGenericDataCursor21(xml.open(), keyBuilder, 0)) {
@@ -63,8 +63,8 @@ public class XMLStreamGenericDataCursor21Test {
     @Test
     public void testCursor() throws Exception {
         Key.Builder keyBuilder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
-        Key firstKey = Key.valueOf("A", "DEU", "1", "0", "319", "0", "UBLGE");
-        Key lastKey = Key.valueOf("A", "HRV", "1", "0", "0", "0", "ZUTN");
+        Key firstKey = Key.of("A", "DEU", "1", "0", "319", "0", "UBLGE");
+        Key lastKey = Key.of("A", "HRV", "1", "0", "0", "0", "ZUTN");
 
         try (DataCursor cursor = new XMLStreamGenericDataCursor21(SdmxTestResource.ECB_DATA.open(), keyBuilder, 0)) {
             int indexSeries = -1;

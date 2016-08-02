@@ -20,13 +20,12 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dimension;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import lombok.experimental.UtilityClass;
 
 /**
  *
  * @author Philippe Charles
  */
-@UtilityClass
+@lombok.experimental.UtilityClass
 class Util {
 
     public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;

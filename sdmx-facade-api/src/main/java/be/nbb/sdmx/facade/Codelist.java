@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author Philippe Charles
  */
-@lombok.Value
+@lombok.Value(staticConstructor = "of")
 public class Codelist {
 
     /**

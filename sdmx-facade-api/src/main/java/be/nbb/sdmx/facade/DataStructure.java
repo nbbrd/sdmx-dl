@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author Philippe Charles
  */
-@lombok.Value
+@lombok.Value(staticConstructor = "of")
 public class DataStructure {
 
     /**

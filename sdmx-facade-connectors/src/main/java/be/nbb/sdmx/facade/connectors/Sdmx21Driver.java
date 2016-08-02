@@ -41,8 +41,6 @@ import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Properties;
 import javax.xml.stream.XMLInputFactory;
-import lombok.Builder;
-import lombok.Value;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -104,8 +102,8 @@ public final class Sdmx21Driver extends SdmxDriver {
         p.setProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, String.valueOf(c.isSeriesKeysOnlySupported()));
     }
 
-    @Value
-    @Builder
+    @lombok.Value
+    @lombok.Builder
     private static class Config {
 
         boolean needsCredentials;

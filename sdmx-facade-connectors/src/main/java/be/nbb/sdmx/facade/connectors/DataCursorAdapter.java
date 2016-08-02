@@ -117,7 +117,7 @@ final class DataCursorAdapter extends DataCursor {
         for (int i = 0; i < result.length; i++) {
             result[i] = dimensions.get(i).split("=")[1];
         }
-        return Key.valueOf(result);
+        return Key.of(result);
     }
     //</editor-fold>
 }

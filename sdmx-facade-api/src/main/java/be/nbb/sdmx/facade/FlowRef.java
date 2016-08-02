@@ -109,7 +109,7 @@ public final class FlowRef {
     }
 
     @Nonnull
-    public static FlowRef valueOf(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
+    public static FlowRef of(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
         if (flowId.contains(",")) {
             throw new IllegalArgumentException(flowId);
         }

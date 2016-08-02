@@ -34,7 +34,7 @@ public class XMLStreamGenericDataCursor20Test {
     @Test
     public void testCursor() throws Exception {
         Key.Builder keyBuilder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
-        Key singleKey = Key.valueOf("LOCSTL04", "AUS", "M");
+        Key singleKey = Key.of("LOCSTL04", "AUS", "M");
 
         try (DataCursor cursor = new XMLStreamGenericDataCursor20(SdmxTestResource.NBB_DATA.open(), keyBuilder)) {
             int indexSeries = -1;

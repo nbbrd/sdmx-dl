@@ -18,13 +18,12 @@ package be.nbb.sdmx.facade.driver;
 
 import java.util.Properties;
 import javax.annotation.Nonnull;
-import lombok.Data;
 
 /**
  *
  * @author Philippe Charles
  */
-@Data
+@lombok.Data
 public final class WsEntryPoint {
 
     private String name;

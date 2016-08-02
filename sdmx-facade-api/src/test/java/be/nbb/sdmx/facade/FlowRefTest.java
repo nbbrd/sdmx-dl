@@ -32,13 +32,13 @@ public class FlowRefTest {
 
     @Test
     public void testParse() {
-        assertEquals(FlowRef.valueOf(null, "", null), FlowRef.parse(""));
-        assertEquals(FlowRef.valueOf(null, "hello", null), FlowRef.parse("hello"));
-        assertEquals(FlowRef.valueOf("world", "hello", null), FlowRef.parse("world,hello"));
-        assertEquals(FlowRef.valueOf("world", "hello", "123"), FlowRef.parse("world,hello,123"));
-        assertEquals(FlowRef.valueOf("world", "hello", LATEST_VERSION), FlowRef.parse("world,hello,"));
-        assertEquals(FlowRef.valueOf(ALL_AGENCIES, "hello", LATEST_VERSION), FlowRef.parse(",hello,"));
-        assertEquals(FlowRef.valueOf(ALL_AGENCIES, "", LATEST_VERSION), FlowRef.parse(",,"));
+        assertEquals(FlowRef.of(null, "", null), FlowRef.parse(""));
+        assertEquals(FlowRef.of(null, "hello", null), FlowRef.parse("hello"));
+        assertEquals(FlowRef.of("world", "hello", null), FlowRef.parse("world,hello"));
+        assertEquals(FlowRef.of("world", "hello", "123"), FlowRef.parse("world,hello,123"));
+        assertEquals(FlowRef.of("world", "hello", LATEST_VERSION), FlowRef.parse("world,hello,"));
+        assertEquals(FlowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION), FlowRef.parse(",hello,"));
+        assertEquals(FlowRef.of(ALL_AGENCIES, "", LATEST_VERSION), FlowRef.parse(",,"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -56,25 +56,25 @@ public class FlowRefTest {
     public void testValueOf() {
         FlowRef flowRef;
 
-        flowRef = FlowRef.valueOf(null, "", null);
+        flowRef = FlowRef.of(null, "", null);
         assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
         assertEquals("", flowRef.getFlowId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("all,,latest", flowRef.toString());
 
-        flowRef = FlowRef.valueOf("", "hello", null);
+        flowRef = FlowRef.of("", "hello", null);
         assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
         assertEquals("hello", flowRef.getFlowId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("all,hello,latest", flowRef.toString());
 
-        flowRef = FlowRef.valueOf("world", "hello", null);
+        flowRef = FlowRef.of("world", "hello", null);
         assertEquals("world", flowRef.getAgencyId());
         assertEquals("hello", flowRef.getFlowId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("world,hello,latest", flowRef.toString());
 
-        flowRef = FlowRef.valueOf("world", "hello", "123");
+        flowRef = FlowRef.of("world", "hello", "123");
         assertEquals("world", flowRef.getAgencyId());
         assertEquals("hello", flowRef.getFlowId());
         assertEquals("123", flowRef.getVersion());
@@ -83,35 +83,35 @@ public class FlowRefTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfInvalid() {
-        FlowRef.valueOf(null, "world,hello", null);
+        FlowRef.of(null, "world,hello", null);
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
     public void testValueOfNull() {
-        FlowRef.valueOf(null, null, null);
+        FlowRef.of(null, null, null);
     }
 
     @Test
     public void testEquals() {
-        assertEquals(FlowRef.valueOf("", "", ""), FlowRef.valueOf("", "", ""));
-        assertEquals(FlowRef.valueOf("world", "hello", "123"), FlowRef.valueOf("world", "hello", "123"));
-        assertNotEquals(FlowRef.valueOf("world", "hello", "123"), FlowRef.valueOf("world", "other", "123"));
-        assertNotEquals(FlowRef.valueOf("world", "hello", "123"), FlowRef.valueOf("", "", ""));
+        assertEquals(FlowRef.of("", "", ""), FlowRef.of("", "", ""));
+        assertEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("world", "hello", "123"));
+        assertNotEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("world", "other", "123"));
+        assertNotEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("", "", ""));
     }
 
     @Test
     public void testContains() {
-        assertTrue(FlowRef.valueOf("world", "hello", "123").contains(FlowRef.valueOf("world", "hello", "123")));
-        assertTrue(FlowRef.valueOf(ALL_AGENCIES, "hello", "123").contains(FlowRef.valueOf("world", "hello", "123")));
-        assertFalse(FlowRef.valueOf("world", "hello", "123").contains(FlowRef.valueOf(ALL_AGENCIES, "hello", "123")));
-        assertTrue(FlowRef.valueOf("world", "hello", LATEST_VERSION).contains(FlowRef.valueOf("world", "hello", "123")));
-        assertFalse(FlowRef.valueOf("world", "hello", "123").contains(FlowRef.valueOf("world", "hello", LATEST_VERSION)));
+        assertTrue(FlowRef.of("world", "hello", "123").contains(FlowRef.of("world", "hello", "123")));
+        assertTrue(FlowRef.of(ALL_AGENCIES, "hello", "123").contains(FlowRef.of("world", "hello", "123")));
+        assertFalse(FlowRef.of("world", "hello", "123").contains(FlowRef.of(ALL_AGENCIES, "hello", "123")));
+        assertTrue(FlowRef.of("world", "hello", LATEST_VERSION).contains(FlowRef.of("world", "hello", "123")));
+        assertFalse(FlowRef.of("world", "hello", "123").contains(FlowRef.of("world", "hello", LATEST_VERSION)));
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
     public void testContainsNull() {
-        FlowRef.valueOf("world", "hello", "123").contains(null);
+        FlowRef.of("world", "hello", "123").contains(null);
     }
 }

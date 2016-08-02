@@ -20,7 +20,7 @@ package be.nbb.sdmx.facade;
  *
  * @author Philippe Charles
  */
-@lombok.Value
+@lombok.Value(staticConstructor = "of")
 public class ResourceRef {
 
     String agencyId;
