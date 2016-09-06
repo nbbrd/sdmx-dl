@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -108,5 +109,20 @@ public class KeyTest {
         assertFalse(Key.of("hello").contains(Key.ALL));
         assertTrue(Key.of("LOCSTL04", "*", "M").contains(Key.of("LOCSTL04", "AUS", "M")));
         assertFalse(Key.of("LOCSTL04", "AUS", "M").contains(Key.of("LOCSTL04", "*", "M")));
+    }
+
+    @Test
+    public void testBuilder() {
+        Key.Builder b;
+
+        b = Key.builder();
+        assertThat(b.clear().toString()).isEqualTo("all");
+
+        b = Key.builder("SECTOR", "REGION");
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
+        assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
+//        assertThat(b.clear().toString()).isEqualTo("all");
     }
 }

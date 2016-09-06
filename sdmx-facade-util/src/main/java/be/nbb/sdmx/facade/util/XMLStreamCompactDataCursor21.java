@@ -155,7 +155,7 @@ public final class XMLStreamCompactDataCursor21 extends DataCursor {
     private static TimeFormat parseTimeFormat(Key.Builder keyBuilder, int frequencyCodeIdIndex) {
         if (frequencyCodeIdIndex != Util.NO_FREQUENCY_CODE_ID_INDEX) {
             String frequencyCodeId = keyBuilder.getItem(frequencyCodeIdIndex);
-            if (frequencyCodeId != null) {
+            if (!frequencyCodeId.isEmpty()) {
                 return TimeFormat.parseByFrequencyCodeId(frequencyCodeId);
             }
         }

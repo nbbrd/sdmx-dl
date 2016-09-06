@@ -138,16 +138,19 @@ public final class Key {
         @Nonnull
         Builder clear();
 
-        @Nullable
+        @Nonnull
         String getItem(@Nonnegative int index) throws IndexOutOfBoundsException;
 
         @Nonnull
         Builder put(@Nullable String id, @Nullable String value);
+
+        @Override
+        public String toString();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static String toString(String[] items) {
-        if (items.length == 1 && WILDCARD.equals(items[0])) {
+        if (items.length == 0 || (items.length == 1 && WILDCARD.equals(items[0]))) {
             return "all";
         }
         StringBuilder result = new StringBuilder();
@@ -166,6 +169,7 @@ public final class Key {
         private BuilderImpl(Map<String, Integer> index) {
             this.index = index;
             this.items = new String[index.size()];
+            Arrays.fill(items, WILDCARD);
         }
 
         @Override
@@ -173,7 +177,7 @@ public final class Key {
             if (id != null) {
                 Integer position = index.get(id);
                 if (position != null) {
-                    items[position] = value;
+                    items[position] = value != null ? value : WILDCARD;
                 }
             }
             return this;
@@ -181,7 +185,7 @@ public final class Key {
 
         @Override
         public Builder clear() {
-            Arrays.fill(items, null);
+            Arrays.fill(items, WILDCARD);
             return this;
         }
 
