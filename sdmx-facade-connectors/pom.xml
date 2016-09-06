@@ -25,34 +25,59 @@
         </repository>        
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>it.bancaditalia.oss</groupId>
+                <artifactId>sdmx</artifactId>
+                <version>${sdmx-connectors.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-openide-util-lookup</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
+        </dependencies>        
+    </dependencyManagement>
+
     <dependencies>
         <!-- compile only -->
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
-            <version>${netbeans.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-facade-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-facade-util</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>it.bancaditalia.oss</groupId>
             <artifactId>sdmx</artifactId>
-            <version>${sdmx-connectors.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 </project>
