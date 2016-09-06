@@ -36,7 +36,8 @@ public final class MemSdmxConnectionSupplier extends SdmxConnectionSupplier {
 
     @Override
     public SdmxConnection getConnection(String name) {
-        return connections.getOrDefault(name, SdmxConnection.failing());
+        SdmxConnection result = connections.get(name);
+        return result != null ? result : SdmxConnection.failing();
     }
 
     public static Builder builder() {
