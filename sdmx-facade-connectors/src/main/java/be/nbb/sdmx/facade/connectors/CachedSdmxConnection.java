@@ -17,12 +17,13 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.util.TtlCache;
+import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import javax.annotation.Nullable;
 
 /**
  *
@@ -30,49 +31,57 @@ import javax.annotation.Nullable;
  */
 final class CachedSdmxConnection extends SdmxConnectionAdapter {
 
-    private final ConcurrentMap<String, Object> cache;
+    private final ConcurrentMap cache;
+    private final Clock clock;
+    private final long ttlInMillis;
     private final String dataflowsKey;
     private final String dataflowKey;
     private final String dataflowStructureKey;
 
-    public CachedSdmxConnection(GenericSDMXClient client, String prefix, ConcurrentMap<String, Object> cache) {
+    CachedSdmxConnection(GenericSDMXClient client, String host, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         super(client);
         this.cache = cache;
-        this.dataflowsKey = prefix + "dataflows";
-        this.dataflowKey = prefix + "dataflow";
-        this.dataflowStructureKey = prefix + "struct";
+        this.clock = clock;
+        this.ttlInMillis = ttlInMillis;
+        this.dataflowsKey = "cache://" + host + "/flows";
+        this.dataflowKey = "cache://" + host + "/flow/";
+        this.dataflowStructureKey = "cache://" + host + "/struct/";
     }
 
-    @Nullable
-    private <X> X getOrNull(String key) {
-        return (X) cache.get(key);
+    private <X> X get(String key) {
+        return (X) TtlCache.get(cache, key, clock);
+    }
+
+    private void put(String key, Object value) {
+        TtlCache.put(cache, key, value, ttlInMillis, clock);
     }
 
     @Override
-    protected Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlows() throws IOException {
-        Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> result = getOrNull(dataflowsKey);
+    protected Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlowsById() throws IOException {
+        Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> result = get(dataflowsKey);
         if (result == null) {
-            result = super.loadDataFlows();
-            cache.put(dataflowsKey, result);
+            result = super.loadDataFlowsById();
+            put(dataflowsKey, result);
         }
         return result;
     }
 
     @Override
     protected it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(FlowRef flowRef) throws IOException {
-        Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> dataFlows = getOrNull(dataflowsKey);
+        // check if dataflow has been already loaded by #loadDataFlowsById
+        Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> dataFlows = get(dataflowsKey);
         if (dataFlows != null) {
-            it.bancaditalia.oss.sdmx.api.Dataflow tmp = dataFlows.get(flowRef.toString());
+            it.bancaditalia.oss.sdmx.api.Dataflow tmp = dataFlows.get(flowRef.getFlowId());
             if (tmp != null) {
                 return tmp;
             }
         }
 
         String key = dataflowKey + flowRef.toString();
-        it.bancaditalia.oss.sdmx.api.Dataflow result = getOrNull(key);
+        it.bancaditalia.oss.sdmx.api.Dataflow result = get(key);
         if (result == null) {
             result = super.loadDataflow(flowRef);
-            cache.put(key, result);
+            put(key, result);
         }
         return result;
     }
@@ -80,10 +89,10 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     @Override
     protected DataFlowStructure loadDataStructure(FlowRef flowRef) throws IOException {
         String key = dataflowStructureKey + flowRef.toString();
-        it.bancaditalia.oss.sdmx.api.DataFlowStructure result = getOrNull(key);
+        it.bancaditalia.oss.sdmx.api.DataFlowStructure result = get(key);
         if (result == null) {
             result = super.loadDataStructure(flowRef);
-            cache.put(key, result);
+            put(key, result);
         }
         return result;
     }

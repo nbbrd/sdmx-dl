@@ -16,42 +16,32 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.SdmxConnection;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.get;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.util.HasCache;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxDriver.class)
-public final class Sdmx20Driver extends SdmxDriver {
+public final class Sdmx20Driver extends SdmxDriver implements HasCache {
 
     private static final String PREFIX = "sdmx:sdmx20:";
 
-    private final Util.ClientSupplier supplier = new Util.ClientSupplier() {
+    @lombok.experimental.Delegate
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
         @Override
         public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
             return new RestSdmx20Client("", endpoint, get(info, NEEDS_CREDENTIALS_PROPERTY, false), null, "compact_v2") {
             };
         }
-    };
-
-    @Override
-    public SdmxConnection connect(String url, Properties info) throws IOException {
-        return Util.getConnection(url.substring(PREFIX.length()), info, supplier);
-    }
-
-    @Override
-    public boolean acceptsURL(String url) throws IOException {
-        return url.startsWith(PREFIX);
-    }
+    });
 }

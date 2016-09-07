@@ -16,47 +16,29 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
-import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.INEGI;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import static java.util.Collections.singletonList;
 import java.util.List;
-import java.util.Properties;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.util.HasCache;
+import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
+import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
+import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxDriver.class)
-public final class InegiDriver extends SdmxDriver {
+public final class InegiDriver extends SdmxDriver implements HasCache {
 
     private static final String PREFIX = "sdmx:inegi:";
 
-    private final Util.ClientSupplier supplier = new Util.ClientSupplier() {
-        @Override
-        public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
-            GenericSDMXClient result = new INEGI();
-            result.setEndpoint(endpoint);
-            return result;
-        }
-    };
-
-    @Override
-    public SdmxConnection connect(String url, Properties info) throws IOException {
-        return Util.getConnection(url.substring(PREFIX.length()), info, supplier);
-    }
-
-    @Override
-    public boolean acceptsURL(String url) throws IOException {
-        return url.startsWith(PREFIX);
-    }
+    @lombok.experimental.Delegate
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, INEGI.class);
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {

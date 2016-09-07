@@ -14,7 +14,6 @@
     <properties>
         <!-- dependencies -->
         <sdmx-connectors.version>1.6.2</sdmx-connectors.version>
-        <guava.version>18.0</guava.version>
         <netbeans.version>RELEASE802</netbeans.version>
     </properties>
 
@@ -31,11 +30,6 @@
                 <groupId>it.bancaditalia.oss</groupId>
                 <artifactId>sdmx</artifactId>
                 <version>${sdmx-connectors.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.netbeans.api</groupId>
@@ -74,10 +68,6 @@
         <dependency>
             <groupId>it.bancaditalia.oss</groupId>
             <artifactId>sdmx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

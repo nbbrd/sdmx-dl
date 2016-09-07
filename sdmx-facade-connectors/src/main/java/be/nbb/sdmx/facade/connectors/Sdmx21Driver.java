@@ -18,7 +18,6 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.SdmxConnection;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_URL_ENCODING_PROPERTY;
 import static be.nbb.sdmx.facade.connectors.Util.SERIES_KEYS_ONLY_SUPPORTED_PROPERTY;
@@ -42,32 +41,25 @@ import java.util.List;
 import java.util.Properties;
 import javax.xml.stream.XMLInputFactory;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.util.HasCache;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxDriver.class)
-public final class Sdmx21Driver extends SdmxDriver {
+public final class Sdmx21Driver extends SdmxDriver implements HasCache {
 
     private static final String PREFIX = "sdmx:sdmx21:";
 
-    private final Util.ClientSupplier supplier = new Util.ClientSupplier() {
+    @lombok.experimental.Delegate
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
         @Override
         public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
             return new ExtRestSdmxClient("", endpoint, load(info));
         }
-    };
+    });
 
-    @Override
-    public SdmxConnection connect(String url, Properties info) throws IOException {
-        return Util.getConnection(url.substring(PREFIX.length()), info, supplier);
-    }
-
-    @Override
-    public boolean acceptsURL(String url) throws IOException {
-        return url.startsWith(PREFIX);
-    }
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {

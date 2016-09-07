@@ -19,24 +19,14 @@ package be.nbb.sdmx.facade.connectors;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.FlowRef;
-import be.nbb.sdmx.facade.SdmxConnection;
-import com.google.common.cache.CacheBuilder;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
-import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
-import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
 
 /**
  *
@@ -65,31 +55,6 @@ class Util {
         return DataStructure.of(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()), dimensions, dfs.getName(), dfs.getTimeDimension(), dfs.getMeasure());
     }
 
-    public interface ClientSupplier {
-
-        @Nonnull
-        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Properties info) throws MalformedURLException;
-    }
-
-    private final static ConcurrentMap<String, Object> CACHE = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.MINUTES).<String, Object>build().asMap();
-    private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-    private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-
-    @Nonnull
-    public static SdmxConnection getConnection(@Nonnull String url, @Nonnull Properties info, @Nonnull ClientSupplier supplier) throws IOException {
-        try {
-            URL endpoint = new URL(url);
-            GenericSDMXClient client = supplier.getClient(endpoint, info);
-            if (client instanceof RestSdmxClient) {
-                ((RestSdmxClient) client).setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
-                ((RestSdmxClient) client).setReadTimeout(DEFAULT_READ_TIMEOUT);
-            }
-            return new CachedSdmxConnection(client, endpoint.getHost(), CACHE);
-        } catch (MalformedURLException ex) {
-            throw new IOException(ex);
-        }
-    }
-
     public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
     public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
     public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
@@ -97,9 +62,6 @@ class Util {
 
     public static boolean get(Properties p, String name, boolean defaultValue) {
         String value = p.getProperty(name);
-        if (value == null) {
-            return defaultValue;
-        }
-        return Boolean.parseBoolean(value);
+        return value == null ? defaultValue : Boolean.parseBoolean(value);
     }
 }

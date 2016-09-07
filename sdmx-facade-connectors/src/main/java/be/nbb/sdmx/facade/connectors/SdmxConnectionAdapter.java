@@ -22,12 +22,13 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.FlowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
-import com.google.common.collect.ImmutableSet;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import it.bancaditalia.oss.sdmx.util.SdmxException;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -46,11 +47,11 @@ class SdmxConnectionAdapter extends SdmxConnection {
 
     @Override
     final public Set<Dataflow> getDataflows() throws IOException {
-        ImmutableSet.Builder<Dataflow> result = ImmutableSet.builder();
-        for (it.bancaditalia.oss.sdmx.api.Dataflow o : loadDataFlows().values()) {
+        Set<Dataflow> result = new HashSet<>();
+        for (it.bancaditalia.oss.sdmx.api.Dataflow o : loadDataFlowsById().values()) {
             result.add(Util.toDataflow(o));
         }
-        return result.build();
+        return Collections.unmodifiableSet(result);
     }
 
     @Override
@@ -75,7 +76,7 @@ class SdmxConnectionAdapter extends SdmxConnection {
     }
 
     @Nonnull
-    protected Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlows() throws IOException {
+    protected Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlowsById() throws IOException {
         try {
             return client.getDataflows();
         } catch (SdmxException ex) {
