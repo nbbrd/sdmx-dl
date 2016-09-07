@@ -20,11 +20,13 @@ import java.io.IOException;
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
+@NotThreadSafe
 public abstract class DataCursor implements AutoCloseable {
 
     abstract public boolean nextSeries() throws IOException;

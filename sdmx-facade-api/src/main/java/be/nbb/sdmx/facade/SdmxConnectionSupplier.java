@@ -17,11 +17,13 @@
 package be.nbb.sdmx.facade;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
+@ThreadSafe
 public abstract class SdmxConnectionSupplier {
 
     @Nonnull

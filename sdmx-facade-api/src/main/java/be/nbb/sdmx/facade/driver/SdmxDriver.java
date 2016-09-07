@@ -22,11 +22,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
+@ThreadSafe
 public abstract class SdmxDriver {
 
     @Nonnull

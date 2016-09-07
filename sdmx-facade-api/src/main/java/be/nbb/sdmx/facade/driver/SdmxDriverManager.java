@@ -93,6 +93,7 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
         return Holder.INSTANCE;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static final class Holder {
 
         private static final SdmxDriverManager INSTANCE = instanciate();
@@ -112,4 +113,5 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
             return result;
         }
     }
+    //</editor-fold>
 }
