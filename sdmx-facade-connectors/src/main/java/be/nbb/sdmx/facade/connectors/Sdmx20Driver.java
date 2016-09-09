@@ -39,8 +39,14 @@ public final class Sdmx20Driver extends SdmxDriver implements HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
         @Override
         public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
-            return new RestSdmx20Client("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2") {
-            };
+            return new CustomClient(endpoint, info);
         }
     });
+
+    private static final class CustomClient extends RestSdmx20Client {
+
+        public CustomClient(URL endpoint, Properties info) {
+            super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
+        }
+    }
 }
