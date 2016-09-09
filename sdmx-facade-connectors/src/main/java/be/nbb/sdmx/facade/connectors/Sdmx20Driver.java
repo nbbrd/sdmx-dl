@@ -16,8 +16,7 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS_PROPERTY;
-import static be.nbb.sdmx.facade.connectors.Util.get;
+import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
@@ -40,7 +39,7 @@ public final class Sdmx20Driver extends SdmxDriver implements HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
         @Override
         public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
-            return new RestSdmx20Client("", endpoint, get(info, NEEDS_CREDENTIALS_PROPERTY, false), null, "compact_v2") {
+            return new RestSdmx20Client("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2") {
             };
         }
     });

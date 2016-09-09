@@ -19,13 +19,13 @@ package be.nbb.sdmx.facade.connectors;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.util.Property.BoolProperty;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -55,13 +55,8 @@ class Util {
         return DataStructure.of(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()), dimensions, dfs.getName(), dfs.getTimeDimension(), dfs.getMeasure());
     }
 
-    public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
-    public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
-    public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
-    public static final String SERIES_KEYS_ONLY_SUPPORTED_PROPERTY = "seriesKeysOnlySupported";
-
-    public static boolean get(Properties p, String name, boolean defaultValue) {
-        String value = p.getProperty(name);
-        return value == null ? defaultValue : Boolean.parseBoolean(value);
-    }
+    public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
+    public static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
+    public static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
+    public static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
 }

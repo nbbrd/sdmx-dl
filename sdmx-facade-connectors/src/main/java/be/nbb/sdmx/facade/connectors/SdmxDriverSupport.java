@@ -17,6 +17,9 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.SdmxConnection;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
@@ -72,8 +75,8 @@ final class SdmxDriverSupport implements HasCache {
         try {
             URL endpoint = new URL(url.substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info);
-            applyTimeouts(client);
-            return new CachedSdmxConnection(client, endpoint.getHost(), cache.get(), clock, DEFAULT_TTL);
+            applyTimeouts(client, info);
+            return new CachedSdmxConnection(client, endpoint.getHost(), cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
         }
@@ -109,15 +112,15 @@ final class SdmxDriverSupport implements HasCache {
         };
     }
 
-    private static void applyTimeouts(GenericSDMXClient client) {
+    private static void applyTimeouts(GenericSDMXClient client, Properties info) {
         if (client instanceof RestSdmxClient) {
-            ((RestSdmxClient) client).setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
-            ((RestSdmxClient) client).setReadTimeout(DEFAULT_READ_TIMEOUT);
+            ((RestSdmxClient) client).setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
+            ((RestSdmxClient) client).setReadTimeout(READ_TIMEOUT.get(info, DEFAULT_READ_TIMEOUT));
         }
     }
 
     private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-    private static final long DEFAULT_TTL = TimeUnit.MINUTES.toMillis(5);
+    private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
     //</editor-fold>
 }
