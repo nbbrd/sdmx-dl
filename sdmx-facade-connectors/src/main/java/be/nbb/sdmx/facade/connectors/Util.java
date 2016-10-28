@@ -17,8 +17,8 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.util.Property.BoolProperty;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;

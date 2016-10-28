@@ -19,14 +19,11 @@ package be.nbb.sdmx.facade.connectors;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
+import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.UIS;
 import static java.util.Collections.singletonList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
-import be.nbb.sdmx.facade.util.HasCache;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 
 /**
  *

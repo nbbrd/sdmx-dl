@@ -20,6 +20,9 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
+import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.TtlCache;
+import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
@@ -28,13 +31,10 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.util.TtlCache;
-import be.nbb.sdmx.facade.util.TtlCache.Clock;
-import java.util.concurrent.TimeUnit;
 
 /**
  *

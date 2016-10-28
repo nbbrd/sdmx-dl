@@ -18,13 +18,13 @@ package be.nbb.sdmx.facade.connectors;
 
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
+import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import org.openide.util.lookup.ServiceProvider;
-import be.nbb.sdmx.facade.util.HasCache;
 
 /**
  *
