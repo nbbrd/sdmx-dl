@@ -66,7 +66,8 @@ public final class Sdmx21Driver extends SdmxDriver implements HasCache {
                 of("ISTAT", "Istituto Nazionale di Statistica", "sdmx:sdmx21:http://sdmx.istat.it/SDMXWS/rest", Config.builder().supportsCompression(true).seriesKeysOnlySupported(true).build()),
                 of("INSEE", "Institut national de la statistique et des études économiques", "sdmx:sdmx21:http://www.bdm.insee.fr/series/sdmx", Config.builder().seriesKeysOnlySupported(true).build()),
                 of("UNDATA", "Data access system to UN databases", "sdmx:sdmx21:http://data.un.org/WS/rest", Config.builder().seriesKeysOnlySupported(true).build()),
-                of("WITS", "World Integrated Trade Solutions", "sdmx:sdmx21:http://wits.worldbank.org/API/V1/SDMX/V21/rest", Config.builder().seriesKeysOnlySupported(false).build())
+                of("WITS", "World Integrated Trade Solutions", "sdmx:sdmx21:http://wits.worldbank.org/API/V1/SDMX/V21/rest", Config.builder().seriesKeysOnlySupported(false).build()),
+                of("INEGI", "Instituto Nacional de Estadistica y Geografia", "sdmx:sdmx21:http://sdmx.snieg.mx/service/Rest", Config.builder().seriesKeysOnlySupported(false).build())
         );
     }
 
