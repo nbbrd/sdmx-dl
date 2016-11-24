@@ -13,7 +13,7 @@
     
     <properties>
         <!-- dependencies -->
-        <sdmx-connectors.version>1.6.2</sdmx-connectors.version>
+        <sdmx-connectors.version>58e21a7a5e</sdmx-connectors.version>
         <netbeans.version>RELEASE802</netbeans.version>
     </properties>
 
@@ -22,13 +22,17 @@
             <id>netbeans</id>
             <url>http://bits.netbeans.org/maven2/</url>
         </repository>        
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>it.bancaditalia.oss</groupId>
-                <artifactId>sdmx</artifactId>
+                <groupId>com.github.amattioc</groupId>
+                <artifactId>SDMX</artifactId>
                 <version>${sdmx-connectors.version}</version>
             </dependency>
             <dependency>
@@ -66,8 +70,8 @@
             <artifactId>sdmx-facade-util</artifactId>
         </dependency>
         <dependency>
-            <groupId>it.bancaditalia.oss</groupId>
-            <artifactId>sdmx</artifactId>
+            <groupId>com.github.amattioc</groupId>
+            <artifactId>SDMX</artifactId>
         </dependency>
     </dependencies>
 </project>
