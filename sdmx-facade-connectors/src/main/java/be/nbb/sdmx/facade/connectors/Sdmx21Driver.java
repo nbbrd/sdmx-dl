@@ -27,9 +27,9 @@ import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import it.bancaditalia.oss.sdmx.util.SdmxException;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -179,10 +179,7 @@ public final class Sdmx21Driver extends SdmxDriver implements HasCache {
         @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
-            InputStreamReader stream = runQuery(query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
-            if (stream == null) {
-                throw new SdmxException("The query returned a null stream");
-            }
+            Reader stream = runQuery(query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
             return XMLStreamCompactDataCursor21.compactData21(factory, stream, Util.toDataStructure(dsd));
         }
 

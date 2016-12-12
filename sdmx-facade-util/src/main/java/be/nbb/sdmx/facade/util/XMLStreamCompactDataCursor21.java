@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
@@ -35,7 +35,7 @@ import javax.xml.stream.XMLStreamReader;
 public final class XMLStreamCompactDataCursor21 extends DataCursor {
 
     @Nonnull
-    public static DataCursor compactData21(@Nonnull XMLInputFactory factory, @Nonnull InputStreamReader stream, @Nonnull DataStructure dsd) throws IOException {
+    public static DataCursor compactData21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {
         try {
             return new XMLStreamCompactDataCursor21(factory.createXMLStreamReader(stream), Key.builder(dsd), Util.getFrequencyCodeIdIndex(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
         } catch (XMLStreamException ex) {

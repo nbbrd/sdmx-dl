@@ -25,7 +25,8 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
-import it.bancaditalia.oss.sdmx.util.SdmxException;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -126,7 +127,7 @@ class SdmxConnectionAdapter extends SdmxConnection {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static boolean isNoResultMatchingQuery(SdmxException ex) {
-        return ex.getMessage().contains("SDMX meaning: No results matching the query.");
+        return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == 100;
     }
     //</editor-fold>
 }
