@@ -95,6 +95,13 @@ public final class Sdmx21Driver extends SdmxDriver implements HasCache {
                 .description("Instituto Nacional de Estadistica y Geografia")
                 .endpoint("http://sdmx.snieg.mx/service/Rest")
                 .build());
+        result.add(b.clear()
+                .name("IMF_SDMX_CENTRAL")
+                .description("International Monetary Fund SDMX Central")
+                .endpoint("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
+                .supportsCompression(true)
+                .seriesKeysOnlySupported(true)
+                .build());
         return result;
     }
 
