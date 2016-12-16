@@ -39,6 +39,6 @@ public final class AbsDriver extends SdmxDriver implements HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("ABS", "Australian Bureau of Statistics", "sdmx:abs:http://stat.abs.gov.au/restsdmx/sdmx.ashx"));
+        return singletonList(of("ABS", "Australian Bureau of Statistics", "sdmx:abs:http://stat.data.abs.gov.au/restsdmx/sdmx.ashx"));
     }
 }
