@@ -18,10 +18,8 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
-import static java.util.Collections.singletonList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -39,6 +37,6 @@ public final class OecdDriver extends SdmxDriver implements HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx"));
+        return SdmxDriverSupport.singletonOf("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
     }
 }

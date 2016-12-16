@@ -23,7 +23,7 @@ import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -38,14 +38,14 @@ public final class Sdmx20Driver extends SdmxDriver implements HasCache {
     @lombok.experimental.Delegate
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
         @Override
-        public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
+        public GenericSDMXClient getClient(URL endpoint, Map<?, ?> info) throws MalformedURLException {
             return new CustomClient(endpoint, info);
         }
     });
 
     private static final class CustomClient extends RestSdmx20Client {
 
-        public CustomClient(URL endpoint, Properties info) {
+        public CustomClient(URL endpoint, Map<?, ?> info) {
             super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
         }
     }

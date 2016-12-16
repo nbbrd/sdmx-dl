@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
  *
@@ -40,16 +40,16 @@ public abstract class Property {
             super(key);
         }
 
-        public boolean get(Properties props, boolean defaultValue) {
-            String result = props.getProperty(getKey());
+        public boolean get(Map props, boolean defaultValue) {
+            Object result = props.get(getKey());
             if (result != null) {
-                return Boolean.parseBoolean(result);
+                return Boolean.parseBoolean(result.toString());
             }
             return defaultValue;
         }
 
-        public void set(Properties props, boolean value) {
-            props.setProperty(getKey(), String.valueOf(value));
+        public void set(Map<String, String> props, boolean value) {
+            props.put(getKey(), String.valueOf(value));
         }
     }
 
@@ -59,11 +59,11 @@ public abstract class Property {
             super(key);
         }
 
-        public int get(Properties props, int defaultValue) {
-            String result = props.getProperty(getKey());
+        public int get(Map props, int defaultValue) {
+            Object result = props.get(getKey());
             if (result != null) {
                 try {
-                    return Integer.parseInt(result);
+                    return Integer.parseInt(result.toString());
                 } catch (NumberFormatException ex) {
                     // do nothing
                 }
@@ -71,8 +71,8 @@ public abstract class Property {
             return defaultValue;
         }
 
-        public void set(Properties props, int value) {
-            props.setProperty(getKey(), String.valueOf(value));
+        public void set(Map<String, String> props, int value) {
+            props.put(getKey(), String.valueOf(value));
         }
     }
 
@@ -82,11 +82,11 @@ public abstract class Property {
             super(key);
         }
 
-        public long get(Properties props, long defaultValue) {
-            String result = props.getProperty(getKey());
+        public long get(Map props, long defaultValue) {
+            Object result = props.get(getKey());
             if (result != null) {
                 try {
-                    return Long.parseLong(result);
+                    return Long.parseLong(result.toString());
                 } catch (NumberFormatException ex) {
                     // do nothing
                 }
@@ -94,8 +94,8 @@ public abstract class Property {
             return defaultValue;
         }
 
-        public void set(Properties props, long value) {
-            props.setProperty(getKey(), String.valueOf(value));
+        public void set(Map<String, String> props, long value) {
+            props.put(getKey(), String.valueOf(value));
         }
     }
 }

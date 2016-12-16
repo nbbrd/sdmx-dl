@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
  *
@@ -31,7 +31,7 @@ class Sdmx21Config {
     boolean supportsCompression;
     boolean seriesKeysOnlySupported;
 
-    static Sdmx21Config load(Properties p) {
+    static Sdmx21Config load(Map<?, ?> p) {
         return new Sdmx21Config(
                 Util.NEEDS_CREDENTIALS.get(p, false),
                 Util.NEEDS_URL_ENCODING.get(p, false),
@@ -39,7 +39,7 @@ class Sdmx21Config {
                 Util.SERIES_KEYS_ONLY_SUPPORTED.get(p, false));
     }
 
-    static void store(Properties p, Sdmx21Config c) {
+    static void store(Map<String, String> p, Sdmx21Config c) {
         Util.NEEDS_CREDENTIALS.set(p, c.isNeedsCredentials());
         Util.NEEDS_URL_ENCODING.set(p, c.isNeedsURLEncoding());
         Util.SUPPORTS_COMPRESSION.set(p, c.isSupportsCompression());

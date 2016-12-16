@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
@@ -28,7 +29,9 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +49,7 @@ final class SdmxDriverSupport implements HasCache {
     public interface ClientSupplier {
 
         @Nonnull
-        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Properties info) throws MalformedURLException;
+        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info) throws MalformedURLException;
     }
 
     @Nonnull
@@ -71,7 +74,7 @@ final class SdmxDriverSupport implements HasCache {
         this.clock = clock;
     }
 
-    public SdmxConnection connect(String url, Properties info) throws IOException {
+    public SdmxConnection connect(String url, Map<?, ?> info) throws IOException {
         try {
             URL endpoint = new URL(url.substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info);
@@ -96,11 +99,16 @@ final class SdmxDriverSupport implements HasCache {
         this.cache.set(cache != null ? cache : new ConcurrentHashMap());
     }
 
+    @Nonnull
+    public static List<WsEntryPoint> singletonOf(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
+        return Collections.singletonList(WsEntryPoint.builder().name(name).description(description).url(url).build());
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static ClientSupplier supplierOf(final Class<? extends RestSdmxClient> clazz) {
         return new ClientSupplier() {
             @Override
-            public GenericSDMXClient getClient(URL endpoint, Properties info) throws MalformedURLException {
+            public GenericSDMXClient getClient(URL endpoint, Map<?, ?> info) throws MalformedURLException {
                 try {
                     GenericSDMXClient result = clazz.newInstance();
                     result.setEndpoint(endpoint);
@@ -112,7 +120,7 @@ final class SdmxDriverSupport implements HasCache {
         };
     }
 
-    private static void applyTimeouts(GenericSDMXClient client, Properties info) {
+    private static void applyTimeouts(GenericSDMXClient client, Map<?, ?> info) {
         if (client instanceof RestSdmxClient) {
             ((RestSdmxClient) client).setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
             ((RestSdmxClient) client).setReadTimeout(READ_TIMEOUT.get(info, DEFAULT_READ_TIMEOUT));

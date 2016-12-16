@@ -18,10 +18,8 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.IMF;
-import static java.util.Collections.singletonList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -39,6 +37,6 @@ public final class ImfDriver extends SdmxDriver implements HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("IMF", "International Monetary Fund", "sdmx:imf:http://sdmxws.imf.org/SDMXRest/sdmx.ashx"));
+        return SdmxDriverSupport.singletonOf("IMF", "International Monetary Fund", "sdmx:imf:http://sdmxws.imf.org/SDMXRest/sdmx.ashx");
     }
 }

@@ -18,10 +18,8 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
-import static java.util.Collections.singletonList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -39,6 +37,6 @@ public final class NbbDriver extends SdmxDriver implements HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx"));
+        return SdmxDriverSupport.singletonOf("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx");
     }
 }

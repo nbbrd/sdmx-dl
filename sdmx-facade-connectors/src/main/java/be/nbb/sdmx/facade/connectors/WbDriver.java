@@ -18,10 +18,8 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
-import static be.nbb.sdmx.facade.driver.WsEntryPoint.of;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.WB;
-import static java.util.Collections.singletonList;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -39,6 +37,6 @@ public final class WbDriver extends SdmxDriver implements HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return singletonList(of("WB", "World Bank", "sdmx:wb:http://api.worldbank.org"));
+        return SdmxDriverSupport.singletonOf("WB", "World Bank", "sdmx:wb:http://api.worldbank.org");
     }
 }

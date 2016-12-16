@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -32,7 +32,7 @@ import javax.annotation.concurrent.ThreadSafe;
 public abstract class SdmxDriver {
 
     @Nonnull
-    abstract public SdmxConnection connect(@Nonnull String url, @Nonnull Properties info) throws IOException;
+    abstract public SdmxConnection connect(@Nonnull String url, @Nonnull Map<?, ?> info) throws IOException;
 
     abstract public boolean acceptsURL(@Nonnull String url) throws IOException;
 

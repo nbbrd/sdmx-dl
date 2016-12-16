@@ -74,17 +74,13 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
 
     @Nonnull
     public List<WsEntryPoint> getEntryPoints() {
-        List<WsEntryPoint> result = new ArrayList<>();
-        for (WsEntryPoint o : entryPointByName.values()) {
-            result.add(o.copy());
-        }
-        return result;
+        return new ArrayList<>(entryPointByName.values());
     }
 
     public void setEntryPoints(@Nonnull List<WsEntryPoint> list) {
         entryPointByName.clear();
         for (WsEntryPoint o : list) {
-            entryPointByName.put(o.getName(), o.copy());
+            entryPointByName.put(o.getName(), o);
         }
     }
 
