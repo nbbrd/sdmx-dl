@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.driver;
 
+import java.net.URI;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -34,8 +35,22 @@ public final class WsEntryPoint {
     String description;
 
     @Nonnull
-    String url;
+    URI uri;
 
     @lombok.Singular
     Map<String, String> properties;
+
+    public static class Builder {
+
+        @Nonnull
+        public Builder uri(@Nonnull URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        @Nonnull
+        public Builder uri(@Nonnull String uri) {
+            return uri(URI.create(uri));
+        }
+    }
 }

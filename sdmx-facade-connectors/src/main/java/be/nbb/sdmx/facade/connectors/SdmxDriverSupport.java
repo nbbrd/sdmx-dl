@@ -28,6 +28,7 @@ import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -74,9 +75,9 @@ final class SdmxDriverSupport implements HasCache {
         this.clock = clock;
     }
 
-    public SdmxConnection connect(String url, Map<?, ?> info) throws IOException {
+    public SdmxConnection connect(URI uri, Map<?, ?> info) throws IOException {
         try {
-            URL endpoint = new URL(url.substring(prefix.length()));
+            URL endpoint = new URL(uri.toString().substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info);
             applyTimeouts(client, info);
             return new CachedSdmxConnection(client, endpoint.getHost(), cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
@@ -85,8 +86,8 @@ final class SdmxDriverSupport implements HasCache {
         }
     }
 
-    public boolean acceptsURL(String url) throws IOException {
-        return url.startsWith(prefix);
+    public boolean acceptsURI(URI uri) throws IOException {
+        return uri.toString().startsWith(prefix);
     }
 
     @Override
@@ -101,7 +102,7 @@ final class SdmxDriverSupport implements HasCache {
 
     @Nonnull
     public static List<WsEntryPoint> singletonOf(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
-        return Collections.singletonList(WsEntryPoint.builder().name(name).description(description).url(url).build());
+        return Collections.singletonList(WsEntryPoint.builder().name(name).description(description).uri(url).build());
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

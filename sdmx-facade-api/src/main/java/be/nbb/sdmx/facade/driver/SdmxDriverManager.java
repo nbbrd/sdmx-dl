@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.driver;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,11 +49,11 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
     public SdmxConnection getConnection(String name) {
         WsEntryPoint wsEntryPoint = entryPointByName.get(name);
         if (wsEntryPoint != null) {
-            String url = wsEntryPoint.getUrl();
+            URI uri = wsEntryPoint.getUri();
             for (SdmxDriver o : drivers) {
                 try {
-                    if (o.acceptsURL(url)) {
-                        return o.connect(url, wsEntryPoint.getProperties());
+                    if (o.acceptsURI(uri)) {
+                        return o.connect(uri, wsEntryPoint.getProperties());
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(SdmxDriverManager.class.getName()).log(Level.SEVERE, null, ex);

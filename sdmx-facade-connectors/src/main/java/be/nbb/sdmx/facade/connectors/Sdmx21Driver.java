@@ -167,7 +167,7 @@ public final class Sdmx21Driver extends SdmxDriver implements HasCache {
             return WsEntryPoint.builder()
                     .name(name)
                     .description(description)
-                    .url(PREFIX + endpoint)
+                    .uri(PREFIX + endpoint)
                     .properties(toProperties())
                     .build();
         }
