@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -35,9 +36,12 @@ public final class MemSdmxConnectionSupplier extends SdmxConnectionSupplier {
     }
 
     @Override
-    public SdmxConnection getConnection(String name) {
+    public SdmxConnection getConnection(String name) throws IOException {
         SdmxConnection result = connections.get(name);
-        return result != null ? result : SdmxConnection.failing();
+        if (result != null) {
+            return result;
+        }
+        throw new IOException(name);
     }
 
     public static Builder builder() {

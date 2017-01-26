@@ -46,7 +46,7 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
     }
 
     @Override
-    public SdmxConnection getConnection(String name) {
+    public SdmxConnection getConnection(String name) throws IOException {
         WsEntryPoint wsEntryPoint = entryPointByName.get(name);
         if (wsEntryPoint != null) {
             URI uri = wsEntryPoint.getUri();
@@ -60,7 +60,7 @@ public final class SdmxDriverManager extends SdmxConnectionSupplier {
                 }
             }
         }
-        return SdmxConnection.failing();
+        throw new IOException(name);
     }
 
     @Nonnull

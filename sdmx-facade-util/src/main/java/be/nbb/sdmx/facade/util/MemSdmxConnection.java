@@ -90,6 +90,11 @@ public final class MemSdmxConnection extends SdmxConnection {
         return seriesKeysOnlySupported;
     }
 
+    @Override
+    public void close() throws IOException {
+        // nothing to do
+    }
+
     @Nonnull
     public static Builder builder() {
         return new BuilderImpl();

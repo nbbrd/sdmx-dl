@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Date;
 import javax.annotation.Nonnull;
@@ -27,7 +28,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Philippe Charles
  */
 @NotThreadSafe
-public abstract class DataCursor implements AutoCloseable {
+public abstract class DataCursor implements Closeable {
 
     abstract public boolean nextSeries() throws IOException;
 
@@ -44,9 +45,6 @@ public abstract class DataCursor implements AutoCloseable {
 
     @Nullable
     abstract public Double getValue() throws IOException;
-
-    @Override
-    abstract public void close() throws IOException;
 
     @Nonnull
     public static DataCursor noOp() {

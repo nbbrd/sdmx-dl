@@ -18,11 +18,14 @@ package be.nbb.sdmx.facade.connectors;
 
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
+import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -42,6 +45,11 @@ public final class Sdmx20Driver extends SdmxDriver implements HasCache {
             return new CustomClient(endpoint, info);
         }
     });
+
+    @Override
+    public List<WsEntryPoint> getDefaultEntryPoints() {
+        return Collections.emptyList();
+    }
 
     private static final class CustomClient extends RestSdmx20Client {
 

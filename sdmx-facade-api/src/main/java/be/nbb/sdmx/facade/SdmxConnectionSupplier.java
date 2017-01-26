@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
+import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -27,16 +28,11 @@ import javax.annotation.concurrent.ThreadSafe;
 public abstract class SdmxConnectionSupplier {
 
     @Nonnull
-    abstract public SdmxConnection getConnection(@Nonnull String name);
+    abstract public SdmxConnection getConnection(@Nonnull String name) throws IOException;
 
     @Nonnull
     public static SdmxConnectionSupplier noOp() {
         return NoOpSupplier.INSTANCE;
-    }
-
-    @Nonnull
-    public static SdmxConnectionSupplier failing() {
-        return FailingSupplier.INSTANCE;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation">
@@ -45,18 +41,8 @@ public abstract class SdmxConnectionSupplier {
         private static final NoOpSupplier INSTANCE = new NoOpSupplier();
 
         @Override
-        public SdmxConnection getConnection(String name) {
+        public SdmxConnection getConnection(String name) throws IOException {
             return SdmxConnection.noOp();
-        }
-    }
-
-    private static final class FailingSupplier extends SdmxConnectionSupplier {
-
-        private static final FailingSupplier INSTANCE = new FailingSupplier();
-
-        @Override
-        public SdmxConnection getConnection(String name) {
-            return SdmxConnection.failing();
         }
     }
     //</editor-fold>

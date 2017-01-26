@@ -76,6 +76,11 @@ class SdmxConnectionAdapter extends SdmxConnection {
                 && ((HasSeriesKeysOnlySupported) client).isSeriesKeysOnlySupported();
     }
 
+    @Override
+    public void close() throws IOException {
+        // nothing to do
+    }
+
     @Nonnull
     protected Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlowsById() throws IOException {
         try {
