@@ -25,8 +25,6 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -35,28 +33,32 @@ import java.util.Set;
 @lombok.experimental.UtilityClass
 class Util {
 
-    public static be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
+    be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
         return be.nbb.sdmx.facade.Dataflow.of(FlowRef.parse(dataflow.getFullIdentifier()), toDataStructureRef(dataflow.getDsdIdentifier()), dataflow.getDescription());
     }
 
-    public static be.nbb.sdmx.facade.ResourceRef toDataStructureRef(DSDIdentifier input) {
+    be.nbb.sdmx.facade.ResourceRef toDataStructureRef(DSDIdentifier input) {
         return ResourceRef.of(input.getAgency(), input.getId(), input.getVersion());
     }
 
-    static be.nbb.sdmx.facade.Codelist toCodelist(Codelist input) {
+    be.nbb.sdmx.facade.Codelist toCodelist(Codelist input) {
         return be.nbb.sdmx.facade.Codelist.of(ResourceRef.of(input.getAgency(), input.getId(), input.getVersion()), input.getCodes());
     }
 
-    public static DataStructure toDataStructure(DataFlowStructure dfs) {
-        Set<be.nbb.sdmx.facade.Dimension> dimensions = new HashSet<>();
+    DataStructure toDataStructure(DataFlowStructure dfs) {
+        DataStructure.Builder result = DataStructure.builder()
+                .dataStructureRef(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
+                .name(dfs.getName())
+                .timeDimensionId(dfs.getTimeDimension())
+                .primaryMeasureId(dfs.getMeasure());
         for (Dimension o : dfs.getDimensions()) {
-            dimensions.add(be.nbb.sdmx.facade.Dimension.of(o.getId(), o.getPosition(), toCodelist(o.getCodeList()), o.getName()));
+            result.dimension(be.nbb.sdmx.facade.Dimension.of(o.getId(), o.getPosition(), toCodelist(o.getCodeList()), o.getName()));
         }
-        return DataStructure.of(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()), dimensions, dfs.getName(), dfs.getTimeDimension(), dfs.getMeasure());
+        return result.build();
     }
 
-    public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
-    public static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
-    public static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
-    public static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
+    static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
+    static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
+    static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
+    static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
 }

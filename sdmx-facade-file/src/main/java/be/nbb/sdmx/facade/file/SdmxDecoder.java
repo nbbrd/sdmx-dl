@@ -14,35 +14,31 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.Dimension;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
 import javax.annotation.Nonnull;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-class Util {
+public abstract class SdmxDecoder {
 
-    final int NO_FREQUENCY_CODE_ID_INDEX = -1;
+    @Nonnull
+    abstract public Info decode(@Nonnull File file) throws IOException;
 
-    int getFrequencyCodeIdIndex(@Nonnull DataStructure dfs) {
-        Dimension dimension = tryFindFreq(dfs.getDimensions());
-        return dimension != null ? (dimension.getPosition() - 1) : NO_FREQUENCY_CODE_ID_INDEX;
+    public enum FileType {
+
+        GENERIC20, GENERIC21, COMPACT20, COMPACT21, UNKNOWN;
     }
 
-    private Dimension tryFindFreq(Set<Dimension> list) {
-        for (Dimension o : list) {
-            switch (o.getId()) {
-                case "FREQ":
-                case "FREQUENCY":
-                    return o;
-            }
-        }
-        return null;
+    @lombok.Value(staticConstructor = "of")
+    public static final class Info {
+
+        private final FileType fileType;
+        private final DataStructure dataStructure;
     }
 }

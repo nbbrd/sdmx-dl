@@ -27,7 +27,8 @@ import java.util.Set;
  *
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
 public class DataStructure {
 
     /**
@@ -41,6 +42,7 @@ public class DataStructure {
      * series or individual observations.
      */
     @lombok.NonNull
+    @lombok.Singular
     Set<Dimension> dimensions;
 
     String name;

@@ -11,6 +11,7 @@
         <module>sdmx-facade-api</module>
         <module>sdmx-facade-util</module>
         <module>sdmx-facade-connectors</module>
+        <module>sdmx-facade-file</module>
     </modules>
 
     <properties>
