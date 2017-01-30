@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import be.nbb.sdmx.facade.file.SdmxDecoder.FileType;
-import java.util.HashMap;
 
 /**
  *
@@ -85,7 +84,7 @@ final class CustomDataStructureBuilder {
     @Nonnull
     public DataStructure build() {
         return DataStructure.builder()
-                .dataStructureRef(ref(refId))
+                .ref(ref(refId))
                 .dimensions(guessDimensions())
                 .name(refId)
                 .timeDimensionId(timeDimensionId != null ? timeDimensionId : guessTimeDimensionId())
@@ -146,10 +145,10 @@ final class CustomDataStructureBuilder {
     }
 
     static Dimension dimension(String name, int pos, Iterable<String> values) {
-        Map<String, String> codes = new HashMap<>();
+        Codelist.Builder codelist = Codelist.builder().ref(ref(name));
         for (String o : values) {
-            codes.put(o, o);
+            codelist.code(o, o);
         }
-        return Dimension.of(name, pos, Codelist.of(ref(name), codes), name);
+        return Dimension.of(name, pos, codelist.build(), name);
     }
 }

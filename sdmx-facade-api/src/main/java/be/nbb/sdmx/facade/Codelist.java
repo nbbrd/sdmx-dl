@@ -24,18 +24,20 @@ import java.util.Map;
  *
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
 public class Codelist {
 
     /**
      * Non-null unique reference to this code list.
      */
     @lombok.NonNull
-    ResourceRef codelistRef;
+    ResourceRef ref;
 
     /**
      * Non-null map of code description by code id.
      */
     @lombok.NonNull
+    @lombok.Singular
     Map<String, String> codes;
 }

@@ -35,7 +35,7 @@ public class DataStructure {
      * Non-null unique reference to this data structure.
      */
     @lombok.NonNull
-    ResourceRef dataStructureRef;
+    ResourceRef ref;
 
     /**
      * Non-null list of statistical concepts used to identify a statistical

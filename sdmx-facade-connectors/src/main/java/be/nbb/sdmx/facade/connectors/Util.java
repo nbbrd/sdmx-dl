@@ -42,12 +42,15 @@ class Util {
     }
 
     be.nbb.sdmx.facade.Codelist toCodelist(Codelist input) {
-        return be.nbb.sdmx.facade.Codelist.of(ResourceRef.of(input.getAgency(), input.getId(), input.getVersion()), input.getCodes());
+        return be.nbb.sdmx.facade.Codelist.builder()
+                .ref(ResourceRef.of(input.getAgency(), input.getId(), input.getVersion()))
+                .codes(input.getCodes())
+                .build();
     }
 
     DataStructure toDataStructure(DataFlowStructure dfs) {
         DataStructure.Builder result = DataStructure.builder()
-                .dataStructureRef(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
+                .ref(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
                 .name(dfs.getName())
                 .timeDimensionId(dfs.getTimeDimension())
                 .primaryMeasureId(dfs.getMeasure());

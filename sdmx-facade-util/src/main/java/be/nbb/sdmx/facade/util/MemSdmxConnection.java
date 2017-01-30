@@ -192,7 +192,7 @@ public final class MemSdmxConnection extends SdmxConnection {
 
         @Override
         public Builder dataStructure(DataStructure dataStructure) {
-            dataStructures.put(dataStructure.getDataStructureRef(), dataStructure);
+            dataStructures.put(dataStructure.getRef(), dataStructure);
             return this;
         }
 
