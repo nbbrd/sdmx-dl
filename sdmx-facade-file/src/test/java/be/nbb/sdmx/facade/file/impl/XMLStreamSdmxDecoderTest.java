@@ -49,7 +49,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("JD_TYPE", 2, "P"))
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
                 .dimension(dimension("VIS_CTY", 4, "MX"))
-                .name("BIS_JOINT_DEBT")
+                .label("BIS_JOINT_DEBT")
                 .timeDimensionId("TIME_FORMAT")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -68,7 +68,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("VIS_CTY", 3, "MX"))
                 .dimension(dimension("JD_TYPE", 4, "P"))
                 .dimension(dimension("JD_CATEGORY", 5, "A", "B"))
-                .name("TODO")
+                .label("TODO")
                 .timeDimensionId("TIME_FORMAT")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -89,7 +89,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("AME_UNIT", 5, "0"))
                 .dimension(dimension("AME_REFERENCE", 6, "0"))
                 .dimension(dimension("AME_ITEM", 7, "OVGD"))
-                .name("ECB_AME1")
+                .label("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -110,7 +110,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("AME_UNIT", 5, "0"))
                 .dimension(dimension("AME_REFERENCE", 6, "0"))
                 .dimension(dimension("AME_ITEM", 7, "OVGD"))
-                .name("ECB_AME1")
+                .label("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();

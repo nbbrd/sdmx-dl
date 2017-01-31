@@ -25,15 +25,12 @@ import java.util.Map;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class Dimension {
+public class Dimension implements HasLabel {
 
     @lombok.NonNull
     String id;
 
     int position;
-
-    @lombok.NonNull
-    String name;
 
     /**
      * Non-null map of code description by code id that represents a codelist
@@ -43,4 +40,7 @@ public class Dimension {
     @lombok.NonNull
     @lombok.Singular
     Map<String, String> codes;
+
+    @lombok.NonNull
+    String label;
 }

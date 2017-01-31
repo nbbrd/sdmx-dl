@@ -24,6 +24,7 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -44,7 +45,7 @@ class Util {
         return be.nbb.sdmx.facade.Dimension.builder()
                 .id(o.getId())
                 .position(o.getPosition())
-                .name(o.getName())
+                .label(o.getName())
                 .codes(o.getCodeList().getCodes())
                 .build();
     }
@@ -52,13 +53,20 @@ class Util {
     DataStructure toDataStructure(DataFlowStructure dfs) {
         DataStructure.Builder result = DataStructure.builder()
                 .ref(DataStructureRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
-                .name(dfs.getName())
+                .label(getNonNullName(dfs))
                 .timeDimensionId(dfs.getTimeDimension())
                 .primaryMeasureId(dfs.getMeasure());
         for (Dimension o : dfs.getDimensions()) {
             result.dimension(toDimension(o));
         }
         return result.build();
+    }
+
+    @Nonnull
+    private String getNonNullName(DataFlowStructure dfs) {
+        // FIXME: PR parsing code for name of data structure v2.1 in connectors 
+        String result = dfs.getName();
+        return result != null ? result : dfs.getId();
     }
 
     static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");

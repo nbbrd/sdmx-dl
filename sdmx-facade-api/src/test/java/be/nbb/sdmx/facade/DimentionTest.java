@@ -30,7 +30,7 @@ public class DimentionTest {
     @Test
     public void testBuilder() {
         final String someId = "dim1";
-        final String someName = "Dim 1";
+        final String someLabel = "Dim 1";
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -51,15 +51,15 @@ public class DimentionTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Dimension.builder().id(someId).name(null).build();
+                Dimension.builder().id(someId).label(null).build();
             }
-        }).as("Codelist#getName() must be non-null")
+        }).as("Codelist#getLabel() must be non-null")
                 .isInstanceOf(NullPointerException.class);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Dimension.builder().id(someId).name(someName).codes(null).build();
+                Dimension.builder().id(someId).label(someLabel).codes(null).build();
             }
         }).as("Codelist#getCodes() must be non-null")
                 .isInstanceOf(NullPointerException.class);
@@ -67,17 +67,17 @@ public class DimentionTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Dimension.builder().id(someId).name(someName).build().getCodes().put("hello", "world");
+                Dimension.builder().id(someId).label(someLabel).build().getCodes().put("hello", "world");
             }
         }).as("Codelist#getCodes() must return immutable map")
                 .isInstanceOf(UnsupportedOperationException.class);
 
-        assertThat(Dimension.builder().id(someId).name(someName).build())
+        assertThat(Dimension.builder().id(someId).label(someLabel).build())
                 .hasFieldOrPropertyWithValue("id", someId)
-                .hasFieldOrPropertyWithValue("name", someName)
+                .hasFieldOrPropertyWithValue("label", someLabel)
                 .hasNoNullFieldsOrProperties();
-        
-        assertThat(Dimension.builder().id(someId).name(someName).code("hello", "world").build().getCodes())
+
+        assertThat(Dimension.builder().id(someId).label(someLabel).code("hello", "world").build().getCodes())
                 .containsEntry("hello", "world")
                 .hasSize(1);
     }

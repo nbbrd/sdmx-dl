@@ -85,7 +85,7 @@ final class CustomDataStructureBuilder {
         return DataStructure.builder()
                 .ref(structRef(refId))
                 .dimensions(guessDimensions())
-                .name(refId)
+                .label(refId)
                 .timeDimensionId(timeDimensionId != null ? timeDimensionId : guessTimeDimensionId())
                 .primaryMeasureId(primaryMeasureId != null ? primaryMeasureId : guessPrimaryMeasureId())
                 .build();
@@ -147,7 +147,7 @@ final class CustomDataStructureBuilder {
         Dimension.Builder result = Dimension.builder()
                 .id(name)
                 .position(pos)
-                .name(name);
+                .label(name);
         for (String o : values) {
             result.code(o, o);
         }

@@ -29,7 +29,7 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class DataStructure {
+public class DataStructure implements HasLabel {
 
     /**
      * Non-null unique reference to this data structure.
@@ -45,9 +45,10 @@ public class DataStructure {
     @lombok.Singular
     Set<Dimension> dimensions;
 
-    String name;
-
     String timeDimensionId;
 
     String primaryMeasureId;
+
+    @lombok.NonNull
+    String label;
 }
