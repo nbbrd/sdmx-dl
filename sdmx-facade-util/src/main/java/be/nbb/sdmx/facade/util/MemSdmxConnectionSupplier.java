@@ -19,59 +19,27 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
+public class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
 
-    private final Map<String, SdmxConnection> connections;
-
-    private MemSdmxConnectionSupplier(Map<String, SdmxConnection> connections) {
-        this.connections = connections;
-    }
+    @lombok.NonNull
+    @lombok.Singular
+    List<MemSdmxRepository> repositories;
 
     @Override
     public SdmxConnection getConnection(String name) throws IOException {
-        SdmxConnection result = connections.get(name);
-        if (result != null) {
-            return result;
+        for (MemSdmxRepository o : repositories) {
+            if (o.getName().equals(name)) {
+                return o.asConnection();
+            }
         }
         throw new IOException(name);
     }
-
-    public static Builder builder() {
-        return new BuilderImpl();
-    }
-
-    public interface Builder {
-
-        @Nonnull
-        MemSdmxConnectionSupplier build();
-
-        @Nonnull
-        Builder add(@Nonnull String name, @Nonnull MemSdmxConnection connection);
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static final class BuilderImpl implements Builder {
-
-        private final Map<String, SdmxConnection> connections = new HashMap<>();
-
-        @Override
-        public Builder add(String name, MemSdmxConnection connection) {
-            connections.put(name, connection);
-            return this;
-        }
-
-        @Override
-        public MemSdmxConnectionSupplier build() {
-            return new MemSdmxConnectionSupplier(new HashMap<>(connections));
-        }
-    }
-    //</editor-fold>
 }
