@@ -40,7 +40,7 @@ final class CustomDataStructureBuilder {
     private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap();
     private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap();
     private FileType fileType = FileType.UNKNOWN;
-    private String refId = null;
+    private DataStructureRef ref = null;
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
 
@@ -64,7 +64,12 @@ final class CustomDataStructureBuilder {
 
     @Nonnull
     public CustomDataStructureBuilder refId(@Nonnull String refId) {
-        this.refId = refId;
+        return ref(DataStructureRef.of(null, refId, null));
+    }
+    
+    @Nonnull
+    public CustomDataStructureBuilder ref(@Nonnull DataStructureRef ref) {
+        this.ref = ref;
         return this;
     }
 
@@ -83,9 +88,9 @@ final class CustomDataStructureBuilder {
     @Nonnull
     public DataStructure build() {
         return DataStructure.builder()
-                .ref(structRef(refId))
+                .ref(ref)
                 .dimensions(guessDimensions())
-                .label(refId)
+                .label(ref.getId())
                 .timeDimensionId(timeDimensionId != null ? timeDimensionId : guessTimeDimensionId())
                 .primaryMeasureId(primaryMeasureId != null ? primaryMeasureId : guessPrimaryMeasureId())
                 .build();
@@ -133,10 +138,6 @@ final class CustomDataStructureBuilder {
             map.put(key, tmp);
         }
         tmp.add(value);
-    }
-
-    static DataStructureRef structRef(String id) {
-        return DataStructureRef.of(null, id, null);
     }
 
     static Dimension dimension(String name, int pos, String... values) {

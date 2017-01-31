@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade.file.impl;
 
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
@@ -24,10 +25,10 @@ import be.nbb.sdmx.facade.file.SdmxDecoder;
 import be.nbb.sdmx.facade.file.TestResources;
 import static org.assertj.core.api.Assertions.assertThat;
 import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
-import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.structRef;
 import java.io.File;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
 
 /**
  *
@@ -44,7 +45,7 @@ public class XMLStreamSdmxDecoderTest {
         File generic20 = TestResources.GENERIC20_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(structRef("BIS_JOINT_DEBT"))
+                .ref(DataStructureRef.of(null, "BIS_JOINT_DEBT", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("JD_TYPE", 2, "P"))
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
@@ -62,7 +63,7 @@ public class XMLStreamSdmxDecoderTest {
         File compact20 = TestResources.COMPACT20_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(structRef("TODO"))
+                .ref(DataStructureRef.of(null, "TODO", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("COLLECTION", 2, "B"))
                 .dimension(dimension("VIS_CTY", 3, "MX"))
@@ -81,7 +82,7 @@ public class XMLStreamSdmxDecoderTest {
         File generic21 = TestResources.GENERIC21_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(structRef("ECB_AME1"))
+                .ref(DataStructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))
@@ -102,7 +103,7 @@ public class XMLStreamSdmxDecoderTest {
         File compact21 = TestResources.COMPACT21_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(structRef("ECB_AME1"))
+                .ref(DataStructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))
