@@ -40,7 +40,7 @@ import javax.xml.stream.XMLInputFactory;
  *
  * @author Philippe Charles
  */
-class FileSdmxConnection extends SdmxConnection {
+class FileSdmxConnection implements SdmxConnection {
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 

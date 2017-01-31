@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-public final class XMLStreamCompactDataCursor21 extends DataCursor {
+public final class XMLStreamCompactDataCursor21 implements DataCursor {
 
     @Nonnull
     public static DataCursor compactData21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {

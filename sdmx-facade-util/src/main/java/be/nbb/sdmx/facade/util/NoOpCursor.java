@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public final class NoOpCursor extends DataCursor {
+public final class NoOpCursor implements DataCursor {
 
     @Nonnull
     public static DataCursor noOp() {

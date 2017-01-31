@@ -28,21 +28,21 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Philippe Charles
  */
 @NotThreadSafe
-public abstract class DataCursor implements Closeable {
+public interface DataCursor extends Closeable {
 
-    abstract public boolean nextSeries() throws IOException;
+    boolean nextSeries() throws IOException;
 
-    abstract public boolean nextObs() throws IOException;
-
-    @Nonnull
-    abstract public Key getKey() throws IOException;
+    boolean nextObs() throws IOException;
 
     @Nonnull
-    abstract public TimeFormat getTimeFormat() throws IOException;
+    Key getKey() throws IOException;
+
+    @Nonnull
+    TimeFormat getTimeFormat() throws IOException;
 
     @Nullable
-    abstract public Date getPeriod() throws IOException;
+    Date getPeriod() throws IOException;
 
     @Nullable
-    abstract public Double getValue() throws IOException;
+    Double getValue() throws IOException;
 }

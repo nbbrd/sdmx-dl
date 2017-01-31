@@ -27,19 +27,19 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Philippe Charles
  */
 @NotThreadSafe
-public abstract class SdmxConnection implements Closeable {
+public interface SdmxConnection extends Closeable {
 
     @Nonnull
-    abstract public Set<Dataflow> getDataflows() throws IOException;
+    Set<Dataflow> getDataflows() throws IOException;
 
     @Nonnull
-    abstract public Dataflow getDataflow(@Nonnull DataflowRef flowRef) throws IOException;
+    Dataflow getDataflow(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    abstract public DataStructure getDataStructure(@Nonnull DataflowRef flowRef) throws IOException;
+    DataStructure getDataStructure(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    abstract public DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, boolean serieskeysonly) throws IOException;
+    DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, boolean serieskeysonly) throws IOException;
 
-    abstract public boolean isSeriesKeysOnlySupported() throws IOException;
+    boolean isSeriesKeysOnlySupported() throws IOException;
 }

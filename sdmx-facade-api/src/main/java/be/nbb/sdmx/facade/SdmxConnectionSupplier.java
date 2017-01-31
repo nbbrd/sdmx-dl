@@ -25,8 +25,8 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Philippe Charles
  */
 @ThreadSafe
-public abstract class SdmxConnectionSupplier {
+public interface SdmxConnectionSupplier {
 
     @Nonnull
-    abstract public SdmxConnection getConnection(@Nonnull String name) throws IOException;
+    SdmxConnection getConnection(@Nonnull String name) throws IOException;
 }

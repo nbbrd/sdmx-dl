@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * @author Philippe Charles
  */
 //@ServiceProvider(service = SdmxDriver.class)
-public final class FileSdmxDriver extends SdmxDriver implements HasCache {
+public final class FileSdmxDriver implements SdmxDriver, HasCache {
 
     private static final String PREFIX = "sdmx:file:";
     private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);

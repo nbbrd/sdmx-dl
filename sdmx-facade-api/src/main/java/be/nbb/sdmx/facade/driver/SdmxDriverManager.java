@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public final class SdmxDriverManager extends SdmxConnectionSupplier {
+public final class SdmxDriverManager implements SdmxConnectionSupplier {
 
     private final List<SdmxDriver> drivers;
     private final Map<String, WsEntryPoint> entryPointByName;

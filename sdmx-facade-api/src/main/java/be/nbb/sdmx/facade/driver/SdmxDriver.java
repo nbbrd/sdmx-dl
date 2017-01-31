@@ -29,13 +29,13 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Philippe Charles
  */
 @ThreadSafe
-public abstract class SdmxDriver {
+public interface SdmxDriver {
 
     @Nonnull
-    abstract public SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info) throws IOException;
+    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info) throws IOException;
 
-    abstract public boolean acceptsURI(@Nonnull URI uri) throws IOException;
+    boolean acceptsURI(@Nonnull URI uri) throws IOException;
 
     @Nonnull
-    abstract public List<WsEntryPoint> getDefaultEntryPoints();
+    List<WsEntryPoint> getDefaultEntryPoints();
 }

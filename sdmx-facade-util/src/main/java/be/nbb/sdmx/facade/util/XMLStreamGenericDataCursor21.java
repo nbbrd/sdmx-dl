@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-public final class XMLStreamGenericDataCursor21 extends DataCursor {
+public final class XMLStreamGenericDataCursor21 implements DataCursor {
 
     @Nullable
     public static DataCursor genericData21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {

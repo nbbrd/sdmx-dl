@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public final class MemSdmxConnectionSupplier extends SdmxConnectionSupplier {
+public final class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
 
     private final Map<String, SdmxConnection> connections;
 

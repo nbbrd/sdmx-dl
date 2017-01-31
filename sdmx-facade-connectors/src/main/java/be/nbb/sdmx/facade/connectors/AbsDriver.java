@@ -28,7 +28,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxDriver.class)
-public final class AbsDriver extends SdmxDriver implements HasCache {
+public final class AbsDriver implements SdmxDriver, HasCache {
 
     private static final String PREFIX = "sdmx:abs:";
 

@@ -39,7 +39,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public final class MemSdmxConnection extends SdmxConnection {
+public final class MemSdmxConnection implements SdmxConnection {
 
     private final Map<DataStructureRef, DataStructure> dataStructures;
     private final Map<DataflowRef, Dataflow> dataflows;

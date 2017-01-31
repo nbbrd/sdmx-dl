@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-final class DataCursorAdapter extends DataCursor {
+final class DataCursorAdapter implements DataCursor {
 
     private final Iterator<PortableTimeSeries> data;
     private final ObsParser obs;
