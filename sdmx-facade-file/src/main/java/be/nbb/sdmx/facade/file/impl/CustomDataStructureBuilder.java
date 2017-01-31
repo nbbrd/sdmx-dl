@@ -16,8 +16,6 @@
  */
 package be.nbb.sdmx.facade.file.impl;
 
-import be.nbb.sdmx.facade.Codelist;
-import be.nbb.sdmx.facade.CodelistRef;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
@@ -141,19 +139,18 @@ final class CustomDataStructureBuilder {
         return DataStructureRef.of(null, id, null);
     }
 
-    static CodelistRef codelistRef(String id) {
-        return CodelistRef.of(null, id, null);
-    }
-
     static Dimension dimension(String name, int pos, String... values) {
         return dimension(name, pos, Arrays.asList(values));
     }
 
     static Dimension dimension(String name, int pos, Iterable<String> values) {
-        Codelist.Builder codelist = Codelist.builder().ref(codelistRef(name));
+        Dimension.Builder result = Dimension.builder()
+                .id(name)
+                .position(pos)
+                .name(name);
         for (String o : values) {
-            codelist.code(o, o);
+            result.code(o, o);
         }
-        return Dimension.of(name, pos, codelist.build(), name);
+        return result.build();
     }
 }

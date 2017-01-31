@@ -16,12 +16,10 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.CodelistRef;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.Property.BoolProperty;
-import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
@@ -42,10 +40,12 @@ class Util {
         return DataStructureRef.of(input.getAgency(), input.getId(), input.getVersion());
     }
 
-    be.nbb.sdmx.facade.Codelist toCodelist(Codelist input) {
-        return be.nbb.sdmx.facade.Codelist.builder()
-                .ref(CodelistRef.of(input.getAgency(), input.getId(), input.getVersion()))
-                .codes(input.getCodes())
+    be.nbb.sdmx.facade.Dimension toDimension(Dimension o) {
+        return be.nbb.sdmx.facade.Dimension.builder()
+                .id(o.getId())
+                .position(o.getPosition())
+                .name(o.getName())
+                .codes(o.getCodeList().getCodes())
                 .build();
     }
 
@@ -56,7 +56,7 @@ class Util {
                 .timeDimensionId(dfs.getTimeDimension())
                 .primaryMeasureId(dfs.getMeasure());
         for (Dimension o : dfs.getDimensions()) {
-            result.dimension(be.nbb.sdmx.facade.Dimension.of(o.getId(), o.getPosition(), toCodelist(o.getCodeList()), o.getName()));
+            result.dimension(toDimension(o));
         }
         return result.build();
     }

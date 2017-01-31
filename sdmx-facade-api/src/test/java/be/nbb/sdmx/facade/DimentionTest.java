@@ -16,41 +16,50 @@
  */
 package be.nbb.sdmx.facade;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author Philippe Charles
  */
-public class CodelistTest {
+public class DimentionTest {
 
     @Test
     public void testBuilder() {
-        final CodelistRef someRef = CodelistRef.of(null, "myResourceId", null);
+        final String someId = "dim1";
+        final String someName = "Dim 1";
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Codelist.builder().build();
+                Dimension.builder().build();
             }
-        }).as("Codelist#getRef() must be non-null")
-                .isInstanceOf(NullPointerException.class).hasMessage("ref");
+        }).as("Codelist#getId() must be non-null")
+                .isInstanceOf(NullPointerException.class).hasMessage("id");
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Codelist.builder().ref(null).build();
+                Dimension.builder().id(null).build();
             }
-        }).as("Codelist#getRef() must be non-null")
-                .isInstanceOf(NullPointerException.class).hasMessage("ref");
+        }).as("Codelist#getId() must be non-null")
+                .isInstanceOf(NullPointerException.class).hasMessage("id");
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Codelist.builder().ref(someRef).codes(null).build();
+                Dimension.builder().id(someId).name(null).build();
+            }
+        }).as("Codelist#getName() must be non-null")
+                .isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
+            @Override
+            public void call() throws Throwable {
+                Dimension.builder().id(someId).name(someName).codes(null).build();
             }
         }).as("Codelist#getCodes() must be non-null")
                 .isInstanceOf(NullPointerException.class);
@@ -58,15 +67,17 @@ public class CodelistTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                Codelist.builder().ref(someRef).build().getCodes().put("hello", "world");
+                Dimension.builder().id(someId).name(someName).build().getCodes().put("hello", "world");
             }
         }).as("Codelist#getCodes() must return immutable map")
                 .isInstanceOf(UnsupportedOperationException.class);
 
-        assertThat(Codelist.builder().ref(someRef).build())
-                .hasFieldOrPropertyWithValue("ref", someRef)
+        assertThat(Dimension.builder().id(someId).name(someName).build())
+                .hasFieldOrPropertyWithValue("id", someId)
+                .hasFieldOrPropertyWithValue("name", someName)
                 .hasNoNullFieldsOrProperties();
-        assertThat(Codelist.builder().ref(someRef).code("hello", "world").build().getCodes())
+        
+        assertThat(Dimension.builder().id(someId).name(someName).code("hello", "world").build().getCodes())
                 .containsEntry("hello", "world")
                 .hasSize(1);
     }
