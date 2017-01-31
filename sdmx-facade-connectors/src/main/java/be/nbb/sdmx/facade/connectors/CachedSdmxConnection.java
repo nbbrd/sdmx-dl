@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -67,11 +67,11 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     }
 
     @Override
-    protected it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(FlowRef flowRef) throws IOException {
+    protected it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(DataflowRef flowRef) throws IOException {
         // check if dataflow has been already loaded by #loadDataFlowsById
         Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> dataFlows = get(dataflowsKey);
         if (dataFlows != null) {
-            it.bancaditalia.oss.sdmx.api.Dataflow tmp = dataFlows.get(flowRef.getFlowId());
+            it.bancaditalia.oss.sdmx.api.Dataflow tmp = dataFlows.get(flowRef.getId());
             if (tmp != null) {
                 return tmp;
             }
@@ -87,7 +87,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     }
 
     @Override
-    protected DataFlowStructure loadDataStructure(FlowRef flowRef) throws IOException {
+    protected DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException {
         String key = dataflowStructureKey + flowRef.toString();
         it.bancaditalia.oss.sdmx.api.DataFlowStructure result = get(key);
         if (result == null) {

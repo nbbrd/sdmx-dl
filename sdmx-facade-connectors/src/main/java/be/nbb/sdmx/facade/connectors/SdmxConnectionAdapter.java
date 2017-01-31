@@ -19,7 +19,7 @@ package be.nbb.sdmx.facade.connectors;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
-import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
@@ -56,17 +56,17 @@ class SdmxConnectionAdapter extends SdmxConnection {
     }
 
     @Override
-    final public Dataflow getDataflow(FlowRef flowRef) throws IOException {
+    final public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
         return Util.toDataflow(loadDataflow(flowRef));
     }
 
     @Override
-    final public DataStructure getDataStructure(FlowRef flowRef) throws IOException {
+    final public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
         return Util.toDataStructure(loadDataStructure(flowRef));
     }
 
     @Override
-    final public DataCursor getData(FlowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+    final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         return loadData(flowRef, key, serieskeysonly);
     }
 
@@ -91,19 +91,19 @@ class SdmxConnectionAdapter extends SdmxConnection {
     }
 
     @Nonnull
-    protected it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(FlowRef flowRef) throws IOException {
+    protected it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(DataflowRef flowRef) throws IOException {
         try {
-            return client.getDataflow(flowRef.getFlowId(), flowRef.getAgencyId(), flowRef.getVersion());
+            return client.getDataflow(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion());
         } catch (SdmxException ex) {
             throw new IOException("While getting dataflow '" + flowRef + "'", ex);
         }
     }
 
     @Nonnull
-    protected it.bancaditalia.oss.sdmx.api.DataFlowStructure loadDataStructure(FlowRef flowRef) throws IOException {
+    protected it.bancaditalia.oss.sdmx.api.DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException {
         try {
             it.bancaditalia.oss.sdmx.api.DSDIdentifier dsd = client instanceof DotStat
-                    ? new DSDIdentifier(flowRef.getFlowId(), flowRef.getAgencyId(), flowRef.getVersion())
+                    ? new DSDIdentifier(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion())
                     : loadDataflow(flowRef).getDsdIdentifier();
             return client.getDataFlowStructure(dsd, true);
         } catch (SdmxException ex) {
@@ -112,7 +112,7 @@ class SdmxConnectionAdapter extends SdmxConnection {
     }
 
     @Nonnull
-    protected DataCursor loadData(FlowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+    protected DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");
         }

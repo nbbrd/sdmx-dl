@@ -18,10 +18,10 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
-import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
 import be.nbb.sdmx.facade.util.XMLStreamGenericDataCursor20;
@@ -42,7 +42,7 @@ import javax.xml.stream.XMLInputFactory;
  */
 class FileSdmxConnection extends SdmxConnection {
 
-    private static final ResourceRef EMPTY = ResourceRef.of("", "", "");
+    private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
     private final File dataFile;
     private final XMLInputFactory factory;
@@ -53,7 +53,7 @@ class FileSdmxConnection extends SdmxConnection {
         this.dataFile = data;
         this.factory = factory;
         this.decoder = decoder;
-        this.dataflow = Dataflow.of(FlowRef.parse(data.getName()), EMPTY, data.getName());
+        this.dataflow = Dataflow.of(DataflowRef.parse(data.getName()), EMPTY, data.getName());
     }
 
     @Override
@@ -62,19 +62,19 @@ class FileSdmxConnection extends SdmxConnection {
     }
 
     @Override
-    final public Dataflow getDataflow(FlowRef flowRef) throws IOException {
+    final public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
         checkFlowRef(flowRef);
         return dataflow;
     }
 
     @Override
-    final public DataStructure getDataStructure(FlowRef flowRef) throws IOException {
+    final public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
         checkFlowRef(flowRef);
         return decode().getDataStructure();
     }
 
     @Override
-    final public DataCursor getData(FlowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+    final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         checkFlowRef(flowRef);
         return loadData(decode());
     }
@@ -106,7 +106,7 @@ class FileSdmxConnection extends SdmxConnection {
         }
     }
 
-    private void checkFlowRef(FlowRef flowRef) throws IOException {
+    private void checkFlowRef(DataflowRef flowRef) throws IOException {
         if (!this.dataflow.getFlowRef().contains(flowRef)) {
             throw new IOException("Invalid flowref '" + flowRef + "'");
         }

@@ -16,9 +16,10 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
+import be.nbb.sdmx.facade.CodelistRef;
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.FlowRef;
-import be.nbb.sdmx.facade.ResourceRef;
+import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.Property.BoolProperty;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
@@ -34,23 +35,23 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 class Util {
 
     be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
-        return be.nbb.sdmx.facade.Dataflow.of(FlowRef.parse(dataflow.getFullIdentifier()), toDataStructureRef(dataflow.getDsdIdentifier()), dataflow.getDescription());
+        return be.nbb.sdmx.facade.Dataflow.of(DataflowRef.parse(dataflow.getFullIdentifier()), toDataStructureRef(dataflow.getDsdIdentifier()), dataflow.getDescription());
     }
 
-    be.nbb.sdmx.facade.ResourceRef toDataStructureRef(DSDIdentifier input) {
-        return ResourceRef.of(input.getAgency(), input.getId(), input.getVersion());
+    be.nbb.sdmx.facade.DataStructureRef toDataStructureRef(DSDIdentifier input) {
+        return DataStructureRef.of(input.getAgency(), input.getId(), input.getVersion());
     }
 
     be.nbb.sdmx.facade.Codelist toCodelist(Codelist input) {
         return be.nbb.sdmx.facade.Codelist.builder()
-                .ref(ResourceRef.of(input.getAgency(), input.getId(), input.getVersion()))
+                .ref(CodelistRef.of(input.getAgency(), input.getId(), input.getVersion()))
                 .codes(input.getCodes())
                 .build();
     }
 
     DataStructure toDataStructure(DataFlowStructure dfs) {
         DataStructure.Builder result = DataStructure.builder()
-                .ref(ResourceRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
+                .ref(DataStructureRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
                 .name(dfs.getName())
                 .timeDimensionId(dfs.getTimeDimension())
                 .primaryMeasureId(dfs.getMeasure());

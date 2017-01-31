@@ -23,7 +23,7 @@ package be.nbb.sdmx.facade;
 @lombok.Value(staticConstructor = "of")
 public class Dataflow {
 
-    FlowRef flowRef;
-    ResourceRef dataStructureRef;
+    DataflowRef flowRef;
+    DataStructureRef dataStructureRef;
     String name;
 }

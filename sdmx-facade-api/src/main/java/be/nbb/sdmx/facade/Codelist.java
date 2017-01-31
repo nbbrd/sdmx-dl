@@ -32,7 +32,7 @@ public class Codelist {
      * Non-null unique reference to this code list.
      */
     @lombok.NonNull
-    ResourceRef ref;
+    CodelistRef ref;
 
     /**
      * Non-null map of code description by code id.

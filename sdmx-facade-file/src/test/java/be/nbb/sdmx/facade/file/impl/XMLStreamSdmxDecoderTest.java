@@ -22,9 +22,9 @@ import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import be.nbb.sdmx.facade.file.SdmxDecoder;
 import be.nbb.sdmx.facade.file.TestResources;
-import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.ref;
 import static org.assertj.core.api.Assertions.assertThat;
 import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
+import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.structRef;
 import java.io.File;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -44,7 +44,7 @@ public class XMLStreamSdmxDecoderTest {
         File generic20 = TestResources.GENERIC20_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(ref("BIS_JOINT_DEBT"))
+                .ref(structRef("BIS_JOINT_DEBT"))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("JD_TYPE", 2, "P"))
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
@@ -62,7 +62,7 @@ public class XMLStreamSdmxDecoderTest {
         File compact20 = TestResources.COMPACT20_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(ref("TODO"))
+                .ref(structRef("TODO"))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("COLLECTION", 2, "B"))
                 .dimension(dimension("VIS_CTY", 3, "MX"))
@@ -81,7 +81,7 @@ public class XMLStreamSdmxDecoderTest {
         File generic21 = TestResources.GENERIC21_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(ref("ECB_AME1"))
+                .ref(structRef("ECB_AME1"))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))
@@ -102,7 +102,7 @@ public class XMLStreamSdmxDecoderTest {
         File compact21 = TestResources.COMPACT21_FILE.copyTo(temp);
 
         DataStructure ds = DataStructure.builder()
-                .ref(ref("ECB_AME1"))
+                .ref(structRef("ECB_AME1"))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))

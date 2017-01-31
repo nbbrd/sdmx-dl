@@ -29,7 +29,7 @@ public class CodelistTest {
 
     @Test
     public void testBuilder() {
-        final ResourceRef someRef = ResourceRef.of(null, "myResourceId", null);
+        final CodelistRef someRef = CodelistRef.of(null, "myResourceId", null);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override

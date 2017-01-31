@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.File;
@@ -49,7 +49,7 @@ public class FileSdmxConnectionTest {
 
         FileSdmxConnection conn = new FileSdmxConnection(compact21, factory, decoder);
 
-        FlowRef flowRef = FlowRef.parse(compact21.getName());
+        DataflowRef flowRef = DataflowRef.parse(compact21.getName());
 
         assertEquals(1, conn.getDataflows().size());
         assertEquals(7, conn.getDataStructure(flowRef).getDimensions().size());

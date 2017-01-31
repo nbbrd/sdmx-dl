@@ -16,8 +16,8 @@
  */
 package be.nbb.sdmx.facade;
 
-import static be.nbb.sdmx.facade.FlowRef.ALL_AGENCIES;
-import static be.nbb.sdmx.facade.FlowRef.LATEST_VERSION;
+import static be.nbb.sdmx.facade.DataflowRef.ALL_AGENCIES;
+import static be.nbb.sdmx.facade.DataflowRef.LATEST_VERSION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -32,86 +32,86 @@ public class FlowRefTest {
 
     @Test
     public void testParse() {
-        assertEquals(FlowRef.of(null, "", null), FlowRef.parse(""));
-        assertEquals(FlowRef.of(null, "hello", null), FlowRef.parse("hello"));
-        assertEquals(FlowRef.of("world", "hello", null), FlowRef.parse("world,hello"));
-        assertEquals(FlowRef.of("world", "hello", "123"), FlowRef.parse("world,hello,123"));
-        assertEquals(FlowRef.of("world", "hello", LATEST_VERSION), FlowRef.parse("world,hello,"));
-        assertEquals(FlowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION), FlowRef.parse(",hello,"));
-        assertEquals(FlowRef.of(ALL_AGENCIES, "", LATEST_VERSION), FlowRef.parse(",,"));
+        assertEquals(DataflowRef.of(null, "", null), DataflowRef.parse(""));
+        assertEquals(DataflowRef.of(null, "hello", null), DataflowRef.parse("hello"));
+        assertEquals(DataflowRef.of("world", "hello", null), DataflowRef.parse("world,hello"));
+        assertEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.parse("world,hello,123"));
+        assertEquals(DataflowRef.of("world", "hello", LATEST_VERSION), DataflowRef.parse("world,hello,"));
+        assertEquals(DataflowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION), DataflowRef.parse(",hello,"));
+        assertEquals(DataflowRef.of(ALL_AGENCIES, "", LATEST_VERSION), DataflowRef.parse(",,"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseInvalid() {
-        FlowRef.parse(",,,,");
+        DataflowRef.parse(",,,,");
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
     public void testParseNull() {
-        FlowRef.parse(null);
+        DataflowRef.parse(null);
     }
 
     @Test
     public void testValueOf() {
-        FlowRef flowRef;
+        DataflowRef flowRef;
 
-        flowRef = FlowRef.of(null, "", null);
+        flowRef = DataflowRef.of(null, "", null);
         assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
-        assertEquals("", flowRef.getFlowId());
+        assertEquals("", flowRef.getId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("all,,latest", flowRef.toString());
 
-        flowRef = FlowRef.of("", "hello", null);
+        flowRef = DataflowRef.of("", "hello", null);
         assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getFlowId());
+        assertEquals("hello", flowRef.getId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("all,hello,latest", flowRef.toString());
 
-        flowRef = FlowRef.of("world", "hello", null);
+        flowRef = DataflowRef.of("world", "hello", null);
         assertEquals("world", flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getFlowId());
+        assertEquals("hello", flowRef.getId());
         assertEquals(LATEST_VERSION, flowRef.getVersion());
         assertEquals("world,hello,latest", flowRef.toString());
 
-        flowRef = FlowRef.of("world", "hello", "123");
+        flowRef = DataflowRef.of("world", "hello", "123");
         assertEquals("world", flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getFlowId());
+        assertEquals("hello", flowRef.getId());
         assertEquals("123", flowRef.getVersion());
         assertEquals("world,hello,123", flowRef.toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfInvalid() {
-        FlowRef.of(null, "world,hello", null);
+        DataflowRef.of(null, "world,hello", null);
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
     public void testValueOfNull() {
-        FlowRef.of(null, null, null);
+        DataflowRef.of(null, null, null);
     }
 
     @Test
     public void testEquals() {
-        assertEquals(FlowRef.of("", "", ""), FlowRef.of("", "", ""));
-        assertEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("world", "hello", "123"));
-        assertNotEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("world", "other", "123"));
-        assertNotEquals(FlowRef.of("world", "hello", "123"), FlowRef.of("", "", ""));
+        assertEquals(DataflowRef.of("", "", ""), DataflowRef.of("", "", ""));
+        assertEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("world", "hello", "123"));
+        assertNotEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("world", "other", "123"));
+        assertNotEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("", "", ""));
     }
 
     @Test
     public void testContains() {
-        assertTrue(FlowRef.of("world", "hello", "123").contains(FlowRef.of("world", "hello", "123")));
-        assertTrue(FlowRef.of(ALL_AGENCIES, "hello", "123").contains(FlowRef.of("world", "hello", "123")));
-        assertFalse(FlowRef.of("world", "hello", "123").contains(FlowRef.of(ALL_AGENCIES, "hello", "123")));
-        assertTrue(FlowRef.of("world", "hello", LATEST_VERSION).contains(FlowRef.of("world", "hello", "123")));
-        assertFalse(FlowRef.of("world", "hello", "123").contains(FlowRef.of("world", "hello", LATEST_VERSION)));
+        assertTrue(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", "123")));
+        assertTrue(DataflowRef.of(ALL_AGENCIES, "hello", "123").contains(DataflowRef.of("world", "hello", "123")));
+        assertFalse(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of(ALL_AGENCIES, "hello", "123")));
+        assertTrue(DataflowRef.of("world", "hello", LATEST_VERSION).contains(DataflowRef.of("world", "hello", "123")));
+        assertFalse(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", LATEST_VERSION)));
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
     public void testContainsNull() {
-        FlowRef.of("world", "hello", "123").contains(null);
+        DataflowRef.of("world", "hello", "123").contains(null);
     }
 }

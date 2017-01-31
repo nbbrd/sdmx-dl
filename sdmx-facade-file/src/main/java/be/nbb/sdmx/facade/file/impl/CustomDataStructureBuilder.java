@@ -17,9 +17,10 @@
 package be.nbb.sdmx.facade.file.impl;
 
 import be.nbb.sdmx.facade.Codelist;
+import be.nbb.sdmx.facade.CodelistRef;
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
-import be.nbb.sdmx.facade.ResourceRef;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -84,7 +85,7 @@ final class CustomDataStructureBuilder {
     @Nonnull
     public DataStructure build() {
         return DataStructure.builder()
-                .ref(ref(refId))
+                .ref(structRef(refId))
                 .dimensions(guessDimensions())
                 .name(refId)
                 .timeDimensionId(timeDimensionId != null ? timeDimensionId : guessTimeDimensionId())
@@ -136,8 +137,12 @@ final class CustomDataStructureBuilder {
         tmp.add(value);
     }
 
-    static ResourceRef ref(String id) {
-        return ResourceRef.of(null, id, null);
+    static DataStructureRef structRef(String id) {
+        return DataStructureRef.of(null, id, null);
+    }
+
+    static CodelistRef codelistRef(String id) {
+        return CodelistRef.of(null, id, null);
     }
 
     static Dimension dimension(String name, int pos, String... values) {
@@ -145,7 +150,7 @@ final class CustomDataStructureBuilder {
     }
 
     static Dimension dimension(String name, int pos, Iterable<String> values) {
-        Codelist.Builder codelist = Codelist.builder().ref(ref(name));
+        Codelist.Builder codelist = Codelist.builder().ref(codelistRef(name));
         for (String o : values) {
             codelist.code(o, o);
         }

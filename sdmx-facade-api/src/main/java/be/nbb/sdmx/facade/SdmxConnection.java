@@ -34,13 +34,13 @@ public abstract class SdmxConnection implements Closeable {
     abstract public Set<Dataflow> getDataflows() throws IOException;
 
     @Nonnull
-    abstract public Dataflow getDataflow(@Nonnull FlowRef flowRef) throws IOException;
+    abstract public Dataflow getDataflow(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    abstract public DataStructure getDataStructure(@Nonnull FlowRef flowRef) throws IOException;
+    abstract public DataStructure getDataStructure(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    abstract public DataCursor getData(@Nonnull FlowRef flowRef, @Nonnull Key key, boolean serieskeysonly) throws IOException;
+    abstract public DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, boolean serieskeysonly) throws IOException;
 
     abstract public boolean isSeriesKeysOnlySupported() throws IOException;
 
@@ -60,17 +60,17 @@ public abstract class SdmxConnection implements Closeable {
         }
 
         @Override
-        public Dataflow getDataflow(FlowRef flowRef) throws IOException {
+        public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
             throw new IOException(flowRef.toString());
         }
 
         @Override
-        public DataStructure getDataStructure(FlowRef flowRef) throws IOException {
+        public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
             throw new IOException(flowRef.toString());
         }
 
         @Override
-        public DataCursor getData(FlowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
             return DataCursor.noOp();
         }
 

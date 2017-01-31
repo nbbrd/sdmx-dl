@@ -18,10 +18,10 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
-import be.nbb.sdmx.facade.FlowRef;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
@@ -41,12 +41,12 @@ import javax.annotation.Nonnull;
  */
 public final class MemSdmxConnection extends SdmxConnection {
 
-    private final Map<ResourceRef, DataStructure> dataStructures;
-    private final Map<FlowRef, Dataflow> dataflows;
-    private final Map<FlowRef, List<Series>> data;
+    private final Map<DataStructureRef, DataStructure> dataStructures;
+    private final Map<DataflowRef, Dataflow> dataflows;
+    private final Map<DataflowRef, List<Series>> data;
     private final boolean seriesKeysOnlySupported;
 
-    private MemSdmxConnection(Map<ResourceRef, DataStructure> dataStructures, Map<FlowRef, Dataflow> dataflows, Map<FlowRef, List<Series>> data, boolean seriesKeysOnlySupported) {
+    private MemSdmxConnection(Map<DataStructureRef, DataStructure> dataStructures, Map<DataflowRef, Dataflow> dataflows, Map<DataflowRef, List<Series>> data, boolean seriesKeysOnlySupported) {
         this.dataStructures = dataStructures;
         this.dataflows = dataflows;
         this.data = data;
@@ -59,7 +59,7 @@ public final class MemSdmxConnection extends SdmxConnection {
     }
 
     @Override
-    public Dataflow getDataflow(FlowRef flowRef) throws IOException {
+    public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
         Dataflow result = dataflows.get(flowRef);
         if (result != null) {
             return result;
@@ -68,7 +68,7 @@ public final class MemSdmxConnection extends SdmxConnection {
     }
 
     @Override
-    public DataStructure getDataStructure(FlowRef flowRef) throws IOException {
+    public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
         DataStructure result = dataStructures.get(getDataflow(flowRef).getDataStructureRef());
         if (result != null) {
             return result;
@@ -77,7 +77,7 @@ public final class MemSdmxConnection extends SdmxConnection {
     }
 
     @Override
-    public DataCursor getData(FlowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         List<Series> col = data.get(flowRef);
         if (col != null) {
             return asDataCursor(col, key);
@@ -109,7 +109,7 @@ public final class MemSdmxConnection extends SdmxConnection {
         Builder clear();
 
         @Nonnull
-        Builder data(@Nonnull FlowRef flowRef, @Nonnull List<Series> col) throws IllegalArgumentException;
+        Builder data(@Nonnull DataflowRef flowRef, @Nonnull List<Series> col) throws IllegalArgumentException;
 
         @Nonnull
         Builder dataStructure(@Nonnull DataStructure dataStructure);
@@ -169,9 +169,9 @@ public final class MemSdmxConnection extends SdmxConnection {
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static final class BuilderImpl implements Builder {
 
-        private final Map<ResourceRef, DataStructure> dataStructures;
-        private final Map<FlowRef, Dataflow> dataflows;
-        private final Map<FlowRef, List<Series>> data;
+        private final Map<DataStructureRef, DataStructure> dataStructures;
+        private final Map<DataflowRef, Dataflow> dataflows;
+        private final Map<DataflowRef, List<Series>> data;
         private boolean seriesKeysOnlySupported;
 
         public BuilderImpl() {
@@ -222,7 +222,7 @@ public final class MemSdmxConnection extends SdmxConnection {
         }
 
         @Override
-        public Builder data(FlowRef flowRef, List<Series> col) throws IllegalArgumentException {
+        public Builder data(DataflowRef flowRef, List<Series> col) throws IllegalArgumentException {
             if (!dataflows.containsKey(flowRef)) {
                 throw new IllegalArgumentException("Missing data flow: " + flowRef);
             }
