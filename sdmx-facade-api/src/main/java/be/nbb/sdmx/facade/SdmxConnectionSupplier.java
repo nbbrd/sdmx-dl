@@ -29,21 +29,4 @@ public abstract class SdmxConnectionSupplier {
 
     @Nonnull
     abstract public SdmxConnection getConnection(@Nonnull String name) throws IOException;
-
-    @Nonnull
-    public static SdmxConnectionSupplier noOp() {
-        return NoOpSupplier.INSTANCE;
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation">
-    private static final class NoOpSupplier extends SdmxConnectionSupplier {
-
-        private static final NoOpSupplier INSTANCE = new NoOpSupplier();
-
-        @Override
-        public SdmxConnection getConnection(String name) throws IOException {
-            return SdmxConnection.noOp();
-        }
-    }
-    //</editor-fold>
 }
