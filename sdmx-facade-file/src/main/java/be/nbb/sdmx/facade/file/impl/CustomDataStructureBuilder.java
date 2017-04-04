@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import be.nbb.sdmx.facade.file.SdmxDecoder.FileType;
+import java.util.Collection;
 
 /**
  *
@@ -66,7 +67,7 @@ final class CustomDataStructureBuilder {
     public CustomDataStructureBuilder refId(@Nonnull String refId) {
         return ref(DataStructureRef.of(null, refId, null));
     }
-    
+
     @Nonnull
     public CustomDataStructureBuilder ref(@Nonnull DataStructureRef ref) {
         this.ref = ref;
@@ -121,12 +122,7 @@ final class CustomDataStructureBuilder {
         if (item.getKey().contains("TITLE")) {
             return true;
         }
-        for (String o : item.getValue()) {
-            if (WHITE_SPACE_PATTERN.matcher(o).find()) {
-                return true;
-            }
-        }
-        return false;
+        return item.getValue().stream().anyMatch(o -> WHITE_SPACE_PATTERN.matcher(o).find());
     }
 
     private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
@@ -144,14 +140,12 @@ final class CustomDataStructureBuilder {
         return dimension(name, pos, Arrays.asList(values));
     }
 
-    static Dimension dimension(String name, int pos, Iterable<String> values) {
+    static Dimension dimension(String name, int pos, Collection<String> values) {
         Dimension.Builder result = Dimension.builder()
                 .id(name)
                 .position(pos)
                 .label(name);
-        for (String o : values) {
-            result.code(o, o);
-        }
+        values.forEach(o -> result.code(o, o));
         return result.build();
     }
 }

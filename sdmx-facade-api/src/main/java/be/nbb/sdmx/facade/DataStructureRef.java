@@ -32,21 +32,11 @@ public final class DataStructureRef extends ResourceRef {
 
     @Nonnull
     public static DataStructureRef parse(@Nonnull String input) throws IllegalArgumentException {
-        return ResourceRef.parse(input, Factory.INSTANCE);
+        return ResourceRef.parse(input, DataStructureRef::new);
     }
 
     @Nonnull
     public static DataStructureRef of(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
-        return ResourceRef.of(agencyId, flowId, version, Factory.INSTANCE);
-    }
-
-    private enum Factory implements RefFactory<DataStructureRef> {
-
-        INSTANCE;
-
-        @Override
-        public DataStructureRef create(String agencyId, String id, String version) {
-            return new DataStructureRef(agencyId, id, version);
-        }
+        return ResourceRef.of(agencyId, flowId, version, DataStructureRef::new);
     }
 }

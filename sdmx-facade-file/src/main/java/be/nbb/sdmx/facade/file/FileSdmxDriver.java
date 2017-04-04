@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.stream.XMLInputFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.TtlCache;
+import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -48,17 +49,19 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final AtomicReference<ConcurrentMap> cache;
+    private final Clock clock;
 
     public FileSdmxDriver() {
         this.factory = XMLInputFactory.newInstance();
         this.decoder = new XMLStreamSdmxDecoder(factory);
         this.cache = new AtomicReference(new ConcurrentHashMap());
+        this.clock = TtlCache.systemClock();
     }
 
     @Override
     public SdmxConnection connect(URI uri, Map<?, ?> info) throws IOException {
         long cacheTtl = CACHE_TTL.get(info, DEFAULT_CACHE_TTL);
-        return new CachedFileSdmxConnection(new File(uri.toString().substring(PREFIX.length())), factory, decoder, cache.get(), TtlCache.systemClock(), cacheTtl);
+        return new CachedFileSdmxConnection(getFile(uri), factory, decoder, cache.get(), clock, cacheTtl);
     }
 
     @Override
@@ -79,5 +82,9 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
     @Override
     public void setCache(ConcurrentMap cache) {
         this.cache.set(cache != null ? cache : new ConcurrentHashMap());
+    }
+
+    private static File getFile(URI uri) {
+        return new File(uri.toString().substring(PREFIX.length()));
     }
 }

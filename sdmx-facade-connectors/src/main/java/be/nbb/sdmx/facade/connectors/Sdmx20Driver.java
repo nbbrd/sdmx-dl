@@ -20,9 +20,7 @@ import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +37,7 @@ public final class Sdmx20Driver implements SdmxDriver, HasCache {
     private static final String PREFIX = "sdmx:sdmx20:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
-        @Override
-        public GenericSDMXClient getClient(URL endpoint, Map<?, ?> info) throws MalformedURLException {
-            return new CustomClient(endpoint, info);
-        }
-    });
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, CustomClient::new);
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {

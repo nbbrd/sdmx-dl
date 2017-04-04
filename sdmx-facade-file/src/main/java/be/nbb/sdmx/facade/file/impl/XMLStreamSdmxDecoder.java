@@ -31,12 +31,14 @@ import static be.nbb.sdmx.facade.file.SdmxDecoder.FileType.COMPACT21;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.FileType.GENERIC20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.FileType.GENERIC21;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.FileType.UNKNOWN;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class XMLStreamSdmxDecoder extends SdmxDecoder {
+public final class XMLStreamSdmxDecoder implements SdmxDecoder {
 
     private static final String NS_10 = "http://www.SDMX.org/resources/SDMXML/schemas/v1_0/message";
     private static final String NS_20 = "http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message";
@@ -84,7 +86,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         int level = 0;
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     level++;
                     if (level == 2 && reader.getLocalName().equals("Header")) {
                         switch (reader.getNamespaceURI()) {
@@ -93,13 +95,13 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             case NS_20:
                                 while (reader.hasNext()) {
                                     switch (reader.next()) {
-                                        case XMLStreamReader.START_ELEMENT:
+                                        case START_ELEMENT:
                                             level++;
                                             if (level == 3 && reader.getLocalName().equals("KeyFamilyRef")) {
                                                 return GENERIC20;
                                             }
                                             break;
-                                        case XMLStreamReader.END_ELEMENT:
+                                        case END_ELEMENT:
                                             level--;
                                             break;
                                     }
@@ -108,13 +110,13 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             case NS_21:
                                 while (reader.hasNext()) {
                                     switch (reader.next()) {
-                                        case XMLStreamReader.START_ELEMENT:
+                                        case START_ELEMENT:
                                             level++;
                                             if (level == 4 && reader.getLocalName().equals("SeriesKey")) {
                                                 return GENERIC21;
                                             }
                                             break;
-                                        case XMLStreamReader.END_ELEMENT:
+                                        case END_ELEMENT:
                                             level--;
                                             break;
                                     }
@@ -123,7 +125,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                         }
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     level--;
                     break;
             }
@@ -151,7 +153,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(GENERIC20);
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "DataSet":
                             generic20DataSet(reader, builder);
@@ -166,7 +168,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic20DataSet(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "KeyFamilyRef":
                             builder.refId(reader.getElementText());
@@ -176,7 +178,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("DataSet")) {
                         return;
                     }
@@ -188,7 +190,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic20Series(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "SeriesKey":
                             generic20SeriesKey(reader, builder);
@@ -198,7 +200,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("Series")) {
                         return;
                     }
@@ -210,14 +212,14 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic20SeriesKey(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Value":
                             builder.dimension(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("SeriesKey")) {
                         return;
                     }
@@ -229,14 +231,14 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic20Attributes(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Value":
                             builder.attribute(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("Attributes")) {
                         return;
                     }
@@ -251,7 +253,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(COMPACT20);
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "CompactData":
                             builder.refId("TODO");
@@ -269,7 +271,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void compact20DataSet(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Series":
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -283,7 +285,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("DataSet")) {
                         return;
                     }
@@ -298,7 +300,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(GENERIC21);
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Structure":
                             if (reader.getName().getNamespaceURI().equals(NS_21)) {
@@ -319,14 +321,14 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         builder.refId(reader.getAttributeValue(null, "structureRef"));
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Series":
                             generic21Series(reader, builder);
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("DataSet")) {
                         return;
                     }
@@ -338,7 +340,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic21Series(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "SeriesKey":
                             generic21SeriesKey(reader, builder);
@@ -348,7 +350,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("Series")) {
                         return;
                     }
@@ -360,14 +362,14 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic21SeriesKey(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Value":
                             builder.dimension(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("SeriesKey")) {
                         return;
                     }
@@ -379,14 +381,14 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void generic21Attributes(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Value":
                             builder.attribute(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("Attributes")) {
                         return;
                     }
@@ -401,7 +403,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(COMPACT21);
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Structure":
                             if (reader.getName().getNamespaceURI().equals(NS_21)) {
@@ -422,7 +424,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
     private static void compact21DataSet(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
+                case START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "Series":
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -436,7 +438,7 @@ public final class XMLStreamSdmxDecoder extends SdmxDecoder {
                             break;
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case END_ELEMENT:
                     if (reader.getLocalName().equals("DataSet")) {
                         return;
                     }

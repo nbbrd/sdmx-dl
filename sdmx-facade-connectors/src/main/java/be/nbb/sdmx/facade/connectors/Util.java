@@ -56,9 +56,7 @@ class Util {
                 .label(getNonNullName(dfs))
                 .timeDimensionId(dfs.getTimeDimension())
                 .primaryMeasureId(dfs.getMeasure());
-        for (Dimension o : dfs.getDimensions()) {
-            result.dimension(toDimension(o));
-        }
+        dfs.getDimensions().forEach(o -> result.dimension(toDimension(o)));
         return result.build();
     }
 

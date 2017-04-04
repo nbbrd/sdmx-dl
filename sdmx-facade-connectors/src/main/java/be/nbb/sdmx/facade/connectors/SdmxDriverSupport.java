@@ -106,17 +106,14 @@ final class SdmxDriverSupport implements HasCache {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static ClientSupplier supplierOf(final Class<? extends RestSdmxClient> clazz) {
-        return new ClientSupplier() {
-            @Override
-            public GenericSDMXClient getClient(URL endpoint, Map<?, ?> info) throws MalformedURLException {
-                try {
-                    GenericSDMXClient result = clazz.newInstance();
-                    result.setEndpoint(endpoint);
-                    return result;
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    throw new RuntimeException(ex);
-                }
+    private static ClientSupplier supplierOf(Class<? extends RestSdmxClient> clazz) {
+        return (URL endpoint, Map<?, ?> info) -> {
+            try {
+                GenericSDMXClient result = clazz.newInstance();
+                result.setEndpoint(endpoint);
+                return result;
+            } catch (InstantiationException | IllegalAccessException ex) {
+                throw new RuntimeException(ex);
             }
         };
     }

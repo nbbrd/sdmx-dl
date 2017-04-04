@@ -47,21 +47,11 @@ public final class DataflowRef extends ResourceRef {
 
     @Nonnull
     public static DataflowRef parse(@Nonnull String input) throws IllegalArgumentException {
-        return ResourceRef.parse(input, Factory.INSTANCE);
+        return ResourceRef.parse(input, DataflowRef::new);
     }
 
     @Nonnull
     public static DataflowRef of(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
-        return ResourceRef.of(agencyId, flowId, version, Factory.INSTANCE);
-    }
-
-    private enum Factory implements RefFactory<DataflowRef> {
-
-        INSTANCE;
-
-        @Override
-        public DataflowRef create(String agencyId, String id, String version) {
-            return new DataflowRef(agencyId, id, version);
-        }
+        return ResourceRef.of(agencyId, flowId, version, DataflowRef::new);
     }
 }

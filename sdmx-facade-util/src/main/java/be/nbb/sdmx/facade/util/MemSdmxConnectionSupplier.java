@@ -35,11 +35,10 @@ public class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
 
     @Override
     public SdmxConnection getConnection(String name) throws IOException {
-        for (MemSdmxRepository o : repositories) {
-            if (o.getName().equals(name)) {
-                return o.asConnection();
-            }
-        }
-        throw new IOException(name);
+        return repositories.stream()
+                .filter(o -> o.getName().equals(name))
+                .map(MemSdmxRepository::asConnection)
+                .findFirst()
+                .orElseThrow(() -> new IOException(name));
     }
 }

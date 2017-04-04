@@ -25,12 +25,10 @@ import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
-import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,12 +47,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, new SdmxDriverSupport.ClientSupplier() {
-        @Override
-        public GenericSDMXClient getClient(URL endpoint, Map<?, ?> info) throws MalformedURLException {
-            return new ExtRestSdmxClient(endpoint, Sdmx21Config.load(info));
-        }
-    });
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, ExtRestSdmxClient::of);
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
@@ -174,6 +167,10 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
     }
 
     private final static class ExtRestSdmxClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
+
+        private static ExtRestSdmxClient of(URL endpoint, Map<?, ?> info) {
+            return new ExtRestSdmxClient(endpoint, Sdmx21Config.load(info));
+        }
 
         private final Sdmx21Config config;
         private final XMLInputFactory factory;

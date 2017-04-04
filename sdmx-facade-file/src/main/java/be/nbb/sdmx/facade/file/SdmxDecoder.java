@@ -25,10 +25,10 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public abstract class SdmxDecoder {
+public interface SdmxDecoder {
 
     @Nonnull
-    abstract public Info decode(@Nonnull File file) throws IOException;
+    Info decode(@Nonnull File file) throws IOException;
 
     public enum FileType {
 
