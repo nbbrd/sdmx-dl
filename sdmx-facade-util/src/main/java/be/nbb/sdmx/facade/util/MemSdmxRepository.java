@@ -28,11 +28,12 @@ import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 /**
@@ -63,9 +64,9 @@ public class MemSdmxRepository {
     @Nonnull
     public SdmxConnection asConnection() {
         return new MemSdmxConnection(
-                toMap(dataStructures, ToDataStructureKey.INSTANCE),
-                toMap(dataflows, ToDataflowKey.INSTANCE),
-                toMultimap(data, ToDataflowKey2.INSTANCE),
+                toMap(dataStructures, DataStructure::getRef),
+                toMap(dataflows, Dataflow::getFlowRef),
+                toMultimap(data, Series::getFlowRef),
                 seriesKeysOnlySupported);
     }
 
@@ -154,7 +155,7 @@ public class MemSdmxRepository {
         public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
             List<Series> col = data.get(flowRef);
             if (col != null) {
-                return asDataCursor(col, key);
+                return new MemDataCursor(col, key);
             }
             throw new IOException("Data not found");
         }
@@ -170,104 +171,66 @@ public class MemSdmxRepository {
         }
     }
 
-    private static DataCursor asDataCursor(final List<Series> col, final Key key) {
-        return new DataCursor() {
-            private int i = -1;
-            private int j = -1;
+    private static final class MemDataCursor implements DataCursor {
 
-            @Override
-            public boolean nextSeries() throws IOException {
-                do {
-                    i++;
-                    j = -1;
-                } while (i < col.size() && !key.contains(getKey()));
-                return i < col.size();
-            }
+        private final List<Series> col;
+        private final Key key;
+        private int i;
+        private int j;
 
-            @Override
-            public boolean nextObs() throws IOException {
-                j++;
-                return j < col.get(i).getObs().size();
-            }
-
-            @Override
-            public Key getKey() throws IOException {
-                return col.get(i).getKey();
-            }
-
-            @Override
-            public TimeFormat getTimeFormat() throws IOException {
-                return col.get(i).getTimeFormat();
-            }
-
-            @Override
-            public Date getPeriod() throws IOException {
-                return col.get(i).getObs().get(j).getPeriod();
-            }
-
-            @Override
-            public Double getValue() throws IOException {
-                return col.get(i).getObs().get(j).getValue();
-            }
-
-            @Override
-            public void close() throws IOException {
-            }
-        };
-    }
-
-    private interface Function<X, Y> {
-
-        Y apply(X x);
-    }
-
-    private enum ToDataStructureKey implements Function<DataStructure, DataStructureRef> {
-        INSTANCE;
-
-        @Override
-        public DataStructureRef apply(DataStructure x) {
-            return x.getRef();
+        MemDataCursor(List<Series> col, Key key) {
+            this.col = col;
+            this.key = key;
+            this.i = -1;
+            this.j = -1;
         }
-    }
-
-    private enum ToDataflowKey implements Function<Dataflow, DataflowRef> {
-        INSTANCE;
 
         @Override
-        public DataflowRef apply(Dataflow x) {
-            return x.getFlowRef();
+        public boolean nextSeries() throws IOException {
+            do {
+                i++;
+                j = -1;
+            } while (i < col.size() && !key.contains(getKey()));
+            return i < col.size();
         }
-    }
-
-    private enum ToDataflowKey2 implements Function<Series, DataflowRef> {
-        INSTANCE;
 
         @Override
-        public DataflowRef apply(Series x) {
-            return x.getFlowRef();
+        public boolean nextObs() throws IOException {
+            j++;
+            return j < col.get(i).getObs().size();
+        }
+
+        @Override
+        public Key getKey() throws IOException {
+            return col.get(i).getKey();
+        }
+
+        @Override
+        public TimeFormat getTimeFormat() throws IOException {
+            return col.get(i).getTimeFormat();
+        }
+
+        @Override
+        public Date getPeriod() throws IOException {
+            return col.get(i).getObs().get(j).getPeriod();
+        }
+
+        @Override
+        public Double getValue() throws IOException {
+            return col.get(i).getObs().get(j).getValue();
+        }
+
+        @Override
+        public void close() throws IOException {
         }
     }
 
     private static <K, V> Map<K, V> toMap(List<V> list, Function<V, K> toKey) {
-        Map<K, V> result = new HashMap<>();
-        for (V value : list) {
-            result.put(toKey.apply(value), value);
-        }
-        return result;
+        return list.stream().collect(Collectors.toMap(toKey, Function.identity()));
     }
 
     private static <K, V> Map<K, List<V>> toMultimap(List<V> list, Function<V, K> toKey) {
-        Map<K, List<V>> result = new HashMap<>();
-        for (V value : list) {
-            K key = toKey.apply(value);
-            List<V> tmp = result.get(key);
-            if (tmp == null) {
-                tmp = new ArrayList<>();
-                result.put(key, tmp);
-            }
-            tmp.add(value);
-        }
-        return result;
+        return list.stream().collect(Collectors.groupingBy(toKey));
     }
     //</editor-fold>
 }

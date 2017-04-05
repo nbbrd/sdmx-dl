@@ -76,7 +76,7 @@ class FileSdmxConnection implements SdmxConnection {
     @Override
     final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         checkFlowRef(flowRef);
-        return loadData(decode());
+        return loadData(decode(), flowRef, key, serieskeysonly);
     }
 
     @Override
@@ -93,7 +93,7 @@ class FileSdmxConnection implements SdmxConnection {
         return decoder.decode(dataFile);
     }
 
-    protected DataCursor loadData(SdmxDecoder.Info entry) throws IOException {
+    protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         switch (entry.getFileType()) {
             case GENERIC20:
                 return XMLStreamGenericDataCursor20.genericData20(factory, open(dataFile), entry.getDataStructure());
