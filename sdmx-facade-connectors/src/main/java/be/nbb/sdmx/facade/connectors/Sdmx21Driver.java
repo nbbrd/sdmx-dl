@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
-import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
+import be.nbb.sdmx.facade.util.XMLStreamCursors;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
@@ -185,7 +185,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
             Reader stream = runQuery(query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
-            return XMLStreamCompactDataCursor21.compactData21(factory, stream, Util.toDataStructure(dsd));
+            return XMLStreamCursors.compactData21(factory, stream, Util.toDataStructure(dsd));
         }
 
         @Override

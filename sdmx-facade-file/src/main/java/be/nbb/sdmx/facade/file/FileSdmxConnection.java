@@ -23,9 +23,7 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.util.XMLStreamCompactDataCursor21;
-import be.nbb.sdmx.facade.util.XMLStreamGenericDataCursor20;
-import be.nbb.sdmx.facade.util.XMLStreamGenericDataCursor21;
+import be.nbb.sdmx.facade.util.XMLStreamCursors;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -96,11 +94,11 @@ class FileSdmxConnection implements SdmxConnection {
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         switch (entry.getFileType()) {
             case GENERIC20:
-                return XMLStreamGenericDataCursor20.genericData20(factory, open(dataFile), entry.getDataStructure());
+                return XMLStreamCursors.genericData20(factory, open(dataFile), entry.getDataStructure());
             case GENERIC21:
-                return XMLStreamGenericDataCursor21.genericData21(factory, open(dataFile), entry.getDataStructure());
+                return XMLStreamCursors.genericData21(factory, open(dataFile), entry.getDataStructure());
             case COMPACT21:
-                return XMLStreamCompactDataCursor21.compactData21(factory, open(dataFile), entry.getDataStructure());
+                return XMLStreamCursors.compactData21(factory, open(dataFile), entry.getDataStructure());
             default:
                 throw new IOException("Don't known how to handle type '" + entry.getFileType() + "'");
         }
