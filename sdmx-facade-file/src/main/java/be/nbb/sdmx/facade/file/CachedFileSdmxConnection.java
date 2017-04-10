@@ -76,7 +76,7 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     private static MemSdmxRepository copyOfKeys(DataflowRef flowRef, DataCursor cursor) throws IOException {
         MemSdmxRepository.Builder result = MemSdmxRepository.builder().name("");
         while (cursor.nextSeries()) {
-            result.series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), Collections.emptyList()));
+            result.series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), Collections.emptyList(), cursor.getSeriesAttributes()));
         }
         return result.build();
     }

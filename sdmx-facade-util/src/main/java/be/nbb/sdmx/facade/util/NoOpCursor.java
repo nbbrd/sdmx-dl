@@ -20,7 +20,9 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import javax.annotation.Nonnull;
 
 /**
@@ -54,6 +56,11 @@ public final class NoOpCursor implements DataCursor {
     @Override
     public TimeFormat getSeriesTimeFormat() throws IOException {
         throw new IllegalStateException();
+    }
+
+    @Override
+    public Map<String, String> getSeriesAttributes() throws IOException {
+        return Collections.emptyMap();
     }
 
     @Override

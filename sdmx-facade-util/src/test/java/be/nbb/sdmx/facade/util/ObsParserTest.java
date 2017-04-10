@@ -17,8 +17,8 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.TimeFormat;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -27,57 +27,55 @@ import static org.junit.Assert.assertNull;
  */
 public class ObsParserTest {
 
-    final QuickCalendar c = new QuickCalendar();
-
     @Test
     public void testGetPeriod() {
         ObsParser p = new ObsParser();
 
         p.setTimeFormat(TimeFormat.YEARLY);
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-A1").getPeriod());
+        assertThat(p.periodString("2001").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-A1").getPeriod()).isEqualTo("2001-01-01");
         assertNull(p.periodString("2001-02").getPeriod());
         assertNull(p.periodString("2001-01-01").getPeriod());
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
         p.setTimeFormat(TimeFormat.HALF_YEARLY);
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
-        assertEquals(c.date(2001, 6, 1), p.periodString("2001-07").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-S1").getPeriod());
-        assertEquals(c.date(2001, 6, 1), p.periodString("2001-S2").getPeriod());
-        assertEquals(c.date(2001, 6, 1), p.periodString("2001S2").getPeriod());
+        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-07").getPeriod()).isEqualTo("2001-07-01");
+        assertThat(p.periodString("2001-S1").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-S2").getPeriod()).isEqualTo("2001-07-01");
+        assertThat(p.periodString("2001S2").getPeriod()).isEqualTo("2001-07-01");
         assertNull(p.periodString("2001S0").getPeriod());
         assertNull(p.periodString("2001S3").getPeriod());
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
         p.setTimeFormat(TimeFormat.QUADRI_MONTHLY);
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
-        assertEquals(c.date(2001, 4, 1), p.periodString("2001-05").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-T1").getPeriod());
-        assertEquals(c.date(2001, 4, 1), p.periodString("2001-T2").getPeriod());
-        assertEquals(c.date(2001, 4, 1), p.periodString("2001T2").getPeriod());
+        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-05").getPeriod()).isEqualTo("2001-05-01");
+        assertThat(p.periodString("2001-T1").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-T2").getPeriod()).isEqualTo("2001-05-01");
+        assertThat(p.periodString("2001T2").getPeriod()).isEqualTo("2001-05-01");
         assertNull(p.periodString("2001T0").getPeriod());
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
         p.setTimeFormat(TimeFormat.QUARTERLY);
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
-        assertEquals(c.date(2001, 3, 1), p.periodString("2001-04").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-Q1").getPeriod());
-        assertEquals(c.date(2001, 3, 1), p.periodString("2001-Q2").getPeriod());
-        assertEquals(c.date(2001, 3, 1), p.periodString("2001Q2").getPeriod());
+        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-04").getPeriod()).isEqualTo("2001-04-01");
+        assertThat(p.periodString("2001-Q1").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-Q2").getPeriod()).isEqualTo("2001-04-01");
+        assertThat(p.periodString("2001Q2").getPeriod()).isEqualTo("2001-04-01");
         assertNull(p.periodString("2001-Q0").getPeriod());
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
         p.setTimeFormat(TimeFormat.MONTHLY);
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
-        assertEquals(c.date(2001, 1, 1), p.periodString("2001-02").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001-M1").getPeriod());
-        assertEquals(c.date(2001, 0, 1), p.periodString("2001M1").getPeriod());
+        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001-02").getPeriod()).isEqualTo("2001-02-01");
+        assertThat(p.periodString("2001-M1").getPeriod()).isEqualTo("2001-01-01");
+        assertThat(p.periodString("2001M1").getPeriod()).isEqualTo("2001-01-01");
         assertNull(p.periodString("2001-M0").getPeriod());
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());

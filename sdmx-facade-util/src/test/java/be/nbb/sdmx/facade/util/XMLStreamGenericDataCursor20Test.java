@@ -19,9 +19,8 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  *
@@ -29,42 +28,43 @@ import static org.junit.Assert.assertNull;
  */
 public class XMLStreamGenericDataCursor20Test {
 
-    private final QuickCalendar cal = new QuickCalendar();
-
     @Test
     public void testCursor() throws Exception {
-        Key.Builder keyBuilder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
-        Key singleKey = Key.of("LOCSTL04", "AUS", "M");
+        SdmxTestResource xml = SdmxTestResource.NBB_DATA;
+        Key.Builder builder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
 
-        try (DataCursor cursor = new XMLStreamGenericDataCursor20(SdmxTestResource.NBB_DATA.open(), keyBuilder)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor20(xml.open(), builder)) {
             int indexSeries = -1;
-            while (cursor.nextSeries()) {
+            while (o.nextSeries()) {
                 switch (++indexSeries) {
                     case 0:
-                        assertEquals(singleKey, cursor.getSeriesKey());
-                        assertEquals(TimeFormat.MONTHLY, cursor.getSeriesTimeFormat());
+                        assertThat(o.getSeriesKey()).isEqualTo(Key.of("LOCSTL04", "AUS", "M"));
+                        assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.MONTHLY);
+                        assertThat(o.getSeriesAttributes())
+                                .hasSize(1)
+                                .containsEntry("TIME_FORMAT", "P1M");
                         int indexObs = -1;
-                        while (cursor.nextObs()) {
+                        while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertEquals(cal.date(1966, 1, 1), cursor.getObsPeriod());
-                                    assertEquals(98.68823, cursor.getObsValue(), 0d);
+                                    assertThat(o.getObsPeriod()).isEqualTo("1966-02-01");
+                                    assertThat(o.getObsValue()).isEqualTo(98.68823);
                                     break;
                                 case 188:
-                                    assertEquals(cal.date(1970, 7, 1), cursor.getObsPeriod());
-                                    assertEquals(101.1945, cursor.getObsValue(), 0d);
+                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-01");
+                                    assertThat(o.getObsValue()).isEqualTo(101.1945);
                                     break;
                                 case 199:
-                                    assertNull(cursor.getObsPeriod());
-                                    assertEquals(93.7211, cursor.getObsValue(), 0d);
+                                    assertThat(o.getObsPeriod()).isNull();
+                                    assertThat(o.getObsValue()).isEqualTo(93.7211);
                                     break;
                             }
                         }
-                        assertEquals(199, indexObs);
+                        assertThat(indexObs).isEqualTo(199);
                         break;
                 }
             }
-            assertEquals(0, indexSeries);
+            assertThat(indexSeries).isEqualTo(0);
         }
     }
 }

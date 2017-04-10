@@ -27,6 +27,7 @@ import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -89,6 +90,13 @@ public class MemSdmxRepository {
 
         @lombok.NonNull
         List<Obs> obs;
+
+        @lombok.NonNull
+        Map<String, String> meta;
+
+        public static Series of(DataflowRef flowRef, Key key, TimeFormat timeFormat, List<Obs> obs) {
+            return of(flowRef, key, timeFormat, obs, Collections.emptyMap());
+        }
     }
 
     @lombok.Value(staticConstructor = "of")
@@ -107,7 +115,7 @@ public class MemSdmxRepository {
                 while (cursor.nextObs()) {
                     obs.add(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
                 }
-                series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs));
+                series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs, cursor.getSeriesAttributes()));
             }
             return this;
         }
@@ -208,6 +216,11 @@ public class MemSdmxRepository {
         @Override
         public TimeFormat getSeriesTimeFormat() throws IOException {
             return col.get(i).getTimeFormat();
+        }
+
+        @Override
+        public Map<String, String> getSeriesAttributes() throws IOException {
+            return col.get(i).getMeta();
         }
 
         @Override

@@ -19,10 +19,8 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -30,72 +28,73 @@ import static org.junit.Assert.assertTrue;
  */
 public class XMLStreamGenericDataCursor21Test {
 
-    private final QuickCalendar cal = new QuickCalendar();
-
     @Test
     public void testGenericData21() throws Exception {
-        Key.Builder keyBuilder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
-        Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
         SdmxTestResource xml = SdmxTestResource.onResource("GenericData21.xml");
+        Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor cursor = new XMLStreamGenericDataCursor21(xml.open(), keyBuilder, 0)) {
-            assertTrue(cursor.nextSeries());
-            assertEquals(key, cursor.getSeriesKey());
-            assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
+        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.open(), builder, 0)) {
+            assertThat(o.nextSeries()).isTrue();
+            assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
+            assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
+            assertThat(o.getSeriesAttributes())
+                    .hasSize(3)
+                    .containsEntry("EXT_TITLE", "Belgium - Gross domestic product at 2010 market prices")
+                    .containsEntry("TITLE_COMPL", "Belgium - Gross domestic product at 2010 market prices - Mrd EURO-BEF - AMECO data class: Data at constant prices")
+                    .containsEntry("EXT_UNIT", "Mrd EURO-BEF");
             int indexObs = -1;
-            while (cursor.nextObs()) {
+            while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertEquals(cal.date(1960, 0, 1), cursor.getObsPeriod());
-                        assertEquals(92.0142, cursor.getObsValue(), 0d);
+                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01");
+                        assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertEquals(cal.date(2016, 0, 1), cursor.getObsPeriod());
-                        assertEquals(386.5655, cursor.getObsValue(), 0d);
+                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01");
+                        assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }
             }
-            assertEquals(56, indexObs);
-            assertFalse(cursor.nextSeries());
+            assertThat(indexObs).isEqualTo(56);
+            assertThat(o.nextSeries()).isFalse();
         }
     }
 
     @Test
     public void testCursor() throws Exception {
-        Key.Builder keyBuilder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
-        Key firstKey = Key.of("A", "DEU", "1", "0", "319", "0", "UBLGE");
-        Key lastKey = Key.of("A", "HRV", "1", "0", "0", "0", "ZUTN");
+        SdmxTestResource xml = SdmxTestResource.ECB_DATA;
+        Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor cursor = new XMLStreamGenericDataCursor21(SdmxTestResource.ECB_DATA.open(), keyBuilder, 0)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.open(), builder, 0)) {
             int indexSeries = -1;
-            while (cursor.nextSeries()) {
+            while (o.nextSeries()) {
                 switch (++indexSeries) {
                     case 0:
-                        assertEquals(firstKey, cursor.getSeriesKey());
-                        assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
+                        assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "DEU", "1", "0", "319", "0", "UBLGE"));
+                        assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
                         int indexObs = -1;
-                        while (cursor.nextObs()) {
+                        while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertEquals(cal.date(1991, 0, 1), cursor.getObsPeriod());
-                                    assertEquals(-2.8574221, cursor.getObsValue(), 0d);
+                                    assertThat(o.getObsPeriod()).isEqualTo("1991-01-01");
+                                    assertThat(o.getObsValue()).isEqualTo(-2.8574221);
                                     break;
                                 case 24:
-                                    assertEquals(cal.date(2015, 0, 1), cursor.getObsPeriod());
-                                    assertEquals(-0.1420473, cursor.getObsValue(), 0d);
+                                    assertThat(o.getObsPeriod()).isEqualTo("2015-01-01");
+                                    assertThat(o.getObsValue()).isEqualTo(-0.1420473);
                                     break;
                             }
                         }
-                        assertEquals(24, indexObs);
+                        assertThat(indexObs).isEqualTo(24);
                         break;
                     case 119:
-                        assertEquals(lastKey, cursor.getSeriesKey());
-                        assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
-                        assertFalse(cursor.nextObs());
+                        assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "HRV", "1", "0", "0", "0", "ZUTN"));
+                        assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
+                        assertThat(o.nextObs()).isFalse();
                         break;
                 }
             }
-            assertEquals(119, indexSeries);
+            assertThat(indexSeries).isEqualTo(119);
         }
     }
 }

@@ -73,6 +73,18 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     @Override
+    public Map<String, String> getSeriesAttributes() throws IOException {
+        Map<String, String> result = new HashMap<>();
+        current.getAttributes().forEach(o -> {
+            int sepIndex = o.indexOf("=");
+            if (sepIndex != -1) {
+                result.put(o.substring(0, sepIndex), o.substring(sepIndex + 1, o.length()));
+            }
+        });
+        return result;
+    }
+
+    @Override
     public Date getObsPeriod() throws IOException {
         return obs.periodString(current.getTimeSlots().get(index)).getPeriod();
     }

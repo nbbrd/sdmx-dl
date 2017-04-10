@@ -115,9 +115,7 @@ public final class Key {
     @Nonnull
     public static Builder builder(@Nonnull DataStructure dfs) {
         Map<String, Integer> index = new HashMap<>();
-        for (Dimension o : dfs.getDimensions()) {
-            index.put(o.getId(), o.getPosition() - 1);
-        }
+        dfs.getDimensions().forEach(o -> index.put(o.getId(), o.getPosition() - 1));
         return new BuilderImpl(index);
     }
 
@@ -140,6 +138,8 @@ public final class Key {
 
         @Nonnull
         String getItem(@Nonnegative int index) throws IndexOutOfBoundsException;
+
+        boolean isDimension(@Nullable String id);
 
         @Nonnull
         Builder put(@Nullable String id, @Nullable String value);
@@ -192,6 +192,11 @@ public final class Key {
         @Override
         public String getItem(int index) throws IndexOutOfBoundsException {
             return items[index];
+        }
+
+        @Override
+        public boolean isDimension(String id) {
+            return index.containsKey(id);
         }
 
         @Override

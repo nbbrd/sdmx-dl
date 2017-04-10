@@ -117,6 +117,7 @@ public class KeyTest {
 
         b = Key.builder();
         assertThat(b.clear().toString()).isEqualTo("all");
+        assertThat(b.isDimension("hello")).isFalse();
 
         b = Key.builder("SECTOR", "REGION");
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
@@ -124,5 +125,7 @@ public class KeyTest {
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
         assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
 //        assertThat(b.clear().toString()).isEqualTo("all");
+        assertThat(b.isDimension("hello")).isFalse();
+        assertThat(b.isDimension("SECTOR")).isTrue();
     }
 }

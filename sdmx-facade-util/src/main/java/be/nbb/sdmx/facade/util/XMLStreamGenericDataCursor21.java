@@ -19,8 +19,13 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.util.Util.Status;
+import static be.nbb.sdmx.facade.util.Util.Status.CONTINUE;
+import static be.nbb.sdmx.facade.util.Util.Status.HALT;
+import static be.nbb.sdmx.facade.util.Util.Status.SUSPEND;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -30,7 +35,9 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class XMLStreamGenericDataCursor21 implements DataCursor {
 
+    private static final String DATASET_ELEMENT = "DataSet";
     private static final String SERIES_ELEMENT = "Series";
+    private static final String ATTRIBUTES_ELEMENT = "Attributes";
     private static final String OBS_ELEMENT = "Obs";
     private static final String OBS_VALUE_ELEMENT = "ObsValue";
     private static final String SERIES_KEY_ELEMENT = "SeriesKey";
@@ -42,33 +49,23 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
     private final int frequencyCodeIdIndex;
-    private final ObsParser obs;
+    private final Util.AttributesBuilder attributesBuilder;
+    private final ObsParser obsParser;
 
     XMLStreamGenericDataCursor21(XMLStreamReader reader, Key.Builder keyBuilder, int frequencyCodeIdIndex) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.frequencyCodeIdIndex = frequencyCodeIdIndex;
-        this.obs = new ObsParser();
+        this.attributesBuilder = new Util.AttributesBuilder();
+        this.obsParser = new ObsParser();
     }
 
     @Override
     public boolean nextSeries() throws IOException {
+        keyBuilder.clear();
+        attributesBuilder.clear();
         try {
-            while (reader.hasNext()) {
-                switch (reader.next()) {
-                    case XMLStreamReader.START_ELEMENT:
-                        switch (reader.getLocalName()) {
-                            case SERIES_KEY_ELEMENT:
-                                if (readSeriesKey(reader, keyBuilder.clear())) {
-                                    obs.setTimeFormat(parseTimeFormat(keyBuilder, frequencyCodeIdIndex));
-                                    return true;
-                                }
-                                return false;
-                        }
-                        break;
-                }
-            }
-            return false;
+            return nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
@@ -76,24 +73,16 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
 
     @Override
     public boolean nextObs() throws IOException {
+        obsParser.clear();
         try {
-            while (reader.hasNext()) {
-                switch (reader.next()) {
-                    case XMLStreamReader.START_ELEMENT:
-                        switch (reader.getLocalName()) {
-                            case OBS_ELEMENT:
-                                return parseObs(reader, obs.clear());
-                        }
-                        break;
-                    case XMLStreamReader.END_ELEMENT:
-                        switch (reader.getLocalName()) {
-                            case SERIES_ELEMENT:
-                                return false;
-                        }
-                        break;
-                }
+            if (isCurrentElementStartOfObs()) {
+                parseObs();
+                return true;
             }
-            return false;
+            if (isCurrentElementEnfOfSeries()) {
+                return false;
+            }
+            return nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
@@ -106,17 +95,22 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
 
     @Override
     public TimeFormat getSeriesTimeFormat() throws IOException {
-        return obs.getTimeFormat();
+        return obsParser.getTimeFormat();
+    }
+
+    @Override
+    public Map<String, String> getSeriesAttributes() throws IOException {
+        return attributesBuilder.build();
     }
 
     @Override
     public Date getObsPeriod() throws IOException {
-        return obs.getPeriod();
+        return obsParser.getPeriod();
     }
 
     @Override
     public Double getObsValue() throws IOException {
-        return obs.getValue();
+        return obsParser.getValue();
     }
 
     @Override
@@ -128,58 +122,120 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
         }
     }
 
-    private static boolean readSeriesKey(XMLStreamReader reader, Key.Builder keyBuilder) throws XMLStreamException {
-        while (reader.hasNext()) {
-            switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case VALUE_ELEMENT:
-                            keyBuilder.put(reader.getAttributeValue(null, ID_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
-                            break;
-                    }
-                    break;
-                case XMLStreamReader.END_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case SERIES_KEY_ELEMENT:
-                            return true;
-                    }
-                    break;
-            }
+    private Status onDataSet(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            return localName.equals(SERIES_ELEMENT) ? parseSeries() : CONTINUE;
+        } else {
+            return localName.equals(DATASET_ELEMENT) ? HALT : CONTINUE;
         }
-        return false;
     }
 
-    private static boolean parseObs(XMLStreamReader reader, ObsParser obs) throws XMLStreamException {
-        while (reader.hasNext()) {
-            switch (reader.next()) {
-                case XMLStreamReader.START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case OBS_DIMENSION_ELEMENT:
-                            obs.periodString(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
-                            break;
-                        case OBS_VALUE_ELEMENT:
-                            obs.valueString(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
-                            break;
-                    }
-                    break;
-                case XMLStreamReader.END_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case OBS_ELEMENT:
-                            return true;
-                    }
-                    break;
-            }
-        }
-        return false;
+    private Status parseSeries() throws XMLStreamException {
+        nextWhile(this::onSeriesHead);
+        obsParser.setTimeFormat(Util.parseTimeFormat21(keyBuilder, frequencyCodeIdIndex));
+        return SUSPEND;
     }
 
-    private static TimeFormat parseTimeFormat(Key.Builder keyBuilder, int frequencyCodeIdIndex) {
-        if (frequencyCodeIdIndex != Util.NO_FREQUENCY_CODE_ID_INDEX) {
-            String frequencyCodeId = keyBuilder.getItem(frequencyCodeIdIndex);
-            if (!frequencyCodeId.isEmpty()) {
-                return TimeFormat.parseByFrequencyCodeId(frequencyCodeId);
+    private Status onSeriesHead(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            switch (localName) {
+                case SERIES_KEY_ELEMENT:
+                    return parseSeriesKey();
+                case ATTRIBUTES_ELEMENT:
+                    return parseAttributes();
+                case OBS_ELEMENT:
+                    return HALT;
+                default:
+                    return CONTINUE;
             }
+        } else {
+            return localName.equals(SERIES_ELEMENT) ? HALT : CONTINUE;
         }
-        return TimeFormat.UNDEFINED;
+    }
+
+    private Status parseSeriesKey() throws XMLStreamException {
+        nextWhile(this::onSeriesKey);
+        return CONTINUE;
+    }
+
+    private Status parseAttributes() throws XMLStreamException {
+        nextWhile(this::onAttributes);
+        return CONTINUE;
+    }
+
+    private Status onSeriesKey(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            return localName.equals(VALUE_ELEMENT) ? parseSeriesKeyValue() : CONTINUE;
+        } else {
+            return localName.equals(SERIES_KEY_ELEMENT) ? HALT : CONTINUE;
+        }
+    }
+
+    private Status onAttributes(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            return localName.equals(VALUE_ELEMENT) ? parseAttributesValue() : CONTINUE;
+        } else {
+            return localName.equals(ATTRIBUTES_ELEMENT) ? HALT : CONTINUE;
+        }
+    }
+
+    private Status parseSeriesKeyValue() {
+        keyBuilder.put(reader.getAttributeValue(null, ID_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+        return CONTINUE;
+    }
+
+    private Status parseAttributesValue() {
+        attributesBuilder.put(reader.getAttributeValue(null, ID_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+        return CONTINUE;
+    }
+
+    private boolean isCurrentElementStartOfObs() {
+        return reader.getEventType() == XMLStreamReader.START_ELEMENT && OBS_ELEMENT.equals(reader.getLocalName());
+    }
+
+    private boolean isCurrentElementEnfOfSeries() {
+        return reader.getEventType() == XMLStreamReader.END_ELEMENT && SERIES_ELEMENT.equals(reader.getLocalName());
+    }
+
+    private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            return localName.equals(OBS_ELEMENT) ? parseObs() : CONTINUE;
+        } else {
+            return localName.equals(SERIES_ELEMENT) ? HALT : CONTINUE;
+        }
+    }
+
+    private Status onObs(boolean start, String localName) throws XMLStreamException {
+        if (start) {
+            switch (localName) {
+                case OBS_DIMENSION_ELEMENT:
+                    return parseObsDimension();
+                case OBS_VALUE_ELEMENT:
+                    return parseObsValue();
+                default:
+                    return CONTINUE;
+            }
+        } else {
+            return localName.equals(OBS_ELEMENT) ? HALT : CONTINUE;
+        }
+    }
+
+    private Status parseObs() throws XMLStreamException {
+        nextWhile(this::onObs);
+        return SUSPEND;
+    }
+
+    private Status parseObsDimension() throws XMLStreamException {
+        obsParser.periodString(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+        return CONTINUE;
+    }
+
+    private Status parseObsValue() {
+        obsParser.valueString(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+        return CONTINUE;
+    }
+
+    private boolean nextWhile(Util.Func func) throws XMLStreamException {
+        return Util.nextWhile(reader, func);
     }
 }

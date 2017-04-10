@@ -31,21 +31,16 @@ public class TtlCacheTest {
     @Test
     public void test() {
         ConcurrentMap cache = new ConcurrentHashMap();
-        assertThat((String)TtlCache.get(cache, "KEY1", of(1000))).isNull();
+        assertThat((String) TtlCache.get(cache, "KEY1", of(1000))).isNull();
         TtlCache.put(cache, "KEY1", "VALUE1", 10, of(1000));
-        assertThat((String)TtlCache.get(cache, "KEY1", of(1009))).isEqualTo("VALUE1");
-        assertThat((String)TtlCache.get(cache, "KEY1", of(1010))).isNull();
-        assertThat((String)TtlCache.get(cache, "KEY2", of(1009))).isNull();
+        assertThat((String) TtlCache.get(cache, "KEY1", of(1009))).isEqualTo("VALUE1");
+        assertThat((String) TtlCache.get(cache, "KEY1", of(1010))).isNull();
+        assertThat((String) TtlCache.get(cache, "KEY2", of(1009))).isNull();
         TtlCache.put(cache, "KEY1", "VALUE2", 10, of(1009));
-        assertThat((String)TtlCache.get(cache, "KEY1", of(1010))).isEqualTo("VALUE2");
+        assertThat((String) TtlCache.get(cache, "KEY1", of(1010))).isEqualTo("VALUE2");
     }
 
-    private static Clock of(final long value) {
-        return new Clock() {
-            @Override
-            public long currentTimeMillis() {
-                return value;
-            }
-        };
+    private static Clock of(long value) {
+        return () -> value;
     }
 }

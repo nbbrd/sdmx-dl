@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -37,6 +38,9 @@ public interface DataCursor extends Closeable {
 
     @Nonnull
     TimeFormat getSeriesTimeFormat() throws IOException;
+
+    @Nonnull
+    Map<String, String> getSeriesAttributes() throws IOException;
 
     boolean nextObs() throws IOException;
 
