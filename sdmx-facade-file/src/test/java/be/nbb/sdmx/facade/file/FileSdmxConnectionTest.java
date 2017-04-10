@@ -58,18 +58,18 @@ public class FileSdmxConnectionTest {
 
         try (DataCursor cursor = conn.getData(flowRef, Key.ALL, false)) {
             assertTrue(cursor.nextSeries());
-            assertEquals(key, cursor.getKey());
-            assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
+            assertEquals(key, cursor.getSeriesKey());
+            assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
             int indexObs = -1;
             while (cursor.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(cursor.getPeriod()).isEqualTo("1960-01-01");
-                        assertEquals(92.0142, cursor.getValue(), 0d);
+                        assertThat(cursor.getObsPeriod()).isEqualTo("1960-01-01");
+                        assertEquals(92.0142, cursor.getObsValue(), 0d);
                         break;
                     case 56:
-                        assertThat(cursor.getPeriod()).isEqualTo("2016-01-01");
-                        assertEquals(386.5655, cursor.getValue(), 0d);
+                        assertThat(cursor.getObsPeriod()).isEqualTo("2016-01-01");
+                        assertEquals(386.5655, cursor.getObsValue(), 0d);
                         break;
                 }
             }

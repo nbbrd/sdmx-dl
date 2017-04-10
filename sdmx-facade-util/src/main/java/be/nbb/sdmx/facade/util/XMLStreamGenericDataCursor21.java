@@ -60,7 +60,7 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
                         switch (reader.getLocalName()) {
                             case SERIES_KEY_ELEMENT:
                                 if (readSeriesKey(reader, keyBuilder.clear())) {
-                                    obs.timeFormat(parseTimeFormat(keyBuilder, frequencyCodeIdIndex));
+                                    obs.setTimeFormat(parseTimeFormat(keyBuilder, frequencyCodeIdIndex));
                                     return true;
                                 }
                                 return false;
@@ -100,22 +100,22 @@ final class XMLStreamGenericDataCursor21 implements DataCursor {
     }
 
     @Override
-    public Key getKey() throws IOException {
+    public Key getSeriesKey() throws IOException {
         return keyBuilder.build();
     }
 
     @Override
-    public TimeFormat getTimeFormat() throws IOException {
+    public TimeFormat getSeriesTimeFormat() throws IOException {
         return obs.getTimeFormat();
     }
 
     @Override
-    public Date getPeriod() throws IOException {
+    public Date getObsPeriod() throws IOException {
         return obs.getPeriod();
     }
 
     @Override
-    public Double getValue() throws IOException {
+    public Double getObsValue() throws IOException {
         return obs.getValue();
     }
 

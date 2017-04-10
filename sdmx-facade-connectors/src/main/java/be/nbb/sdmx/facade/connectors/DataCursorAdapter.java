@@ -50,7 +50,7 @@ final class DataCursorAdapter implements DataCursor {
         boolean result = data.hasNext();
         if (result) {
             current = data.next();
-            obs.timeFormat(getTimeFormat(current));
+            obs.setTimeFormat(getTimeFormat(current));
             index = -1;
         }
         return result;
@@ -63,22 +63,22 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     @Override
-    public Key getKey() throws IOException {
+    public Key getSeriesKey() throws IOException {
         return parseKey(current);
     }
 
     @Override
-    public TimeFormat getTimeFormat() throws IOException {
+    public TimeFormat getSeriesTimeFormat() throws IOException {
         return obs.getTimeFormat();
     }
 
     @Override
-    public Date getPeriod() throws IOException {
+    public Date getObsPeriod() throws IOException {
         return obs.periodString(current.getTimeSlots().get(index)).getPeriod();
     }
 
     @Override
-    public Double getValue() throws IOException {
+    public Double getObsValue() throws IOException {
         return current.getObservations().get(index);
     }
 

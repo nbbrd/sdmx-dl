@@ -41,16 +41,20 @@ public final class ObsParser {
     private String value;
 
     public ObsParser() {
-        timeFormat(TimeFormat.UNDEFINED);
+        setTimeFormat(TimeFormat.UNDEFINED);
     }
 
     @Nonnull
-    public ObsParser timeFormat(@Nonnull TimeFormat timeFormat) {
+    public TimeFormat getTimeFormat() {
+        return timeFormat;
+    }
+
+    @Nonnull
+    public void setTimeFormat(@Nonnull TimeFormat timeFormat) {
         if (this.timeFormat != timeFormat) {
             this.timeFormat = timeFormat;
             this.periodParser = getParser(timeFormat);
         }
-        return this;
     }
 
     @Nonnull
@@ -70,11 +74,6 @@ public final class ObsParser {
     public ObsParser valueString(@Nullable String value) {
         this.value = value;
         return this;
-    }
-
-    @Nonnull
-    public TimeFormat getTimeFormat() {
-        return timeFormat;
     }
 
     @Nullable

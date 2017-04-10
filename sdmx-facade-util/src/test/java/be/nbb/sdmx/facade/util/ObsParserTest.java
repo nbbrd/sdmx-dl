@@ -33,7 +33,7 @@ public class ObsParserTest {
     public void testGetPeriod() {
         ObsParser p = new ObsParser();
 
-        p.timeFormat(TimeFormat.YEARLY);
+        p.setTimeFormat(TimeFormat.YEARLY);
         assertEquals(c.date(2001, 0, 1), p.periodString("2001").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-A1").getPeriod());
@@ -42,7 +42,7 @@ public class ObsParserTest {
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
-        p.timeFormat(TimeFormat.HALF_YEARLY);
+        p.setTimeFormat(TimeFormat.HALF_YEARLY);
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
         assertEquals(c.date(2001, 6, 1), p.periodString("2001-07").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-S1").getPeriod());
@@ -53,7 +53,7 @@ public class ObsParserTest {
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
-        p.timeFormat(TimeFormat.QUADRI_MONTHLY);
+        p.setTimeFormat(TimeFormat.QUADRI_MONTHLY);
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
         assertEquals(c.date(2001, 4, 1), p.periodString("2001-05").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-T1").getPeriod());
@@ -63,7 +63,7 @@ public class ObsParserTest {
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
-        p.timeFormat(TimeFormat.QUARTERLY);
+        p.setTimeFormat(TimeFormat.QUARTERLY);
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
         assertEquals(c.date(2001, 3, 1), p.periodString("2001-04").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-Q1").getPeriod());
@@ -73,7 +73,7 @@ public class ObsParserTest {
         assertNull(p.periodString("hello").getPeriod());
         assertNull(p.periodString("").getPeriod());
 
-        p.timeFormat(TimeFormat.MONTHLY);
+        p.setTimeFormat(TimeFormat.MONTHLY);
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-01").getPeriod());
         assertEquals(c.date(2001, 1, 1), p.periodString("2001-02").getPeriod());
         assertEquals(c.date(2001, 0, 1), p.periodString("2001-M1").getPeriod());

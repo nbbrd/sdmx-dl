@@ -32,17 +32,17 @@ public interface DataCursor extends Closeable {
 
     boolean nextSeries() throws IOException;
 
+    @Nonnull
+    Key getSeriesKey() throws IOException;
+
+    @Nonnull
+    TimeFormat getSeriesTimeFormat() throws IOException;
+
     boolean nextObs() throws IOException;
 
-    @Nonnull
-    Key getKey() throws IOException;
-
-    @Nonnull
-    TimeFormat getTimeFormat() throws IOException;
+    @Nullable
+    Date getObsPeriod() throws IOException;
 
     @Nullable
-    Date getPeriod() throws IOException;
-
-    @Nullable
-    Double getValue() throws IOException;
+    Double getObsValue() throws IOException;
 }

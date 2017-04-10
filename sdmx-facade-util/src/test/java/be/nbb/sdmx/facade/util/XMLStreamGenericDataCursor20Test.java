@@ -41,22 +41,22 @@ public class XMLStreamGenericDataCursor20Test {
             while (cursor.nextSeries()) {
                 switch (++indexSeries) {
                     case 0:
-                        assertEquals(singleKey, cursor.getKey());
-                        assertEquals(TimeFormat.MONTHLY, cursor.getTimeFormat());
+                        assertEquals(singleKey, cursor.getSeriesKey());
+                        assertEquals(TimeFormat.MONTHLY, cursor.getSeriesTimeFormat());
                         int indexObs = -1;
                         while (cursor.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertEquals(cal.date(1966, 1, 1), cursor.getPeriod());
-                                    assertEquals(98.68823, cursor.getValue(), 0d);
+                                    assertEquals(cal.date(1966, 1, 1), cursor.getObsPeriod());
+                                    assertEquals(98.68823, cursor.getObsValue(), 0d);
                                     break;
                                 case 188:
-                                    assertEquals(cal.date(1970, 7, 1), cursor.getPeriod());
-                                    assertEquals(101.1945, cursor.getValue(), 0d);
+                                    assertEquals(cal.date(1970, 7, 1), cursor.getObsPeriod());
+                                    assertEquals(101.1945, cursor.getObsValue(), 0d);
                                     break;
                                 case 199:
-                                    assertNull(cursor.getPeriod());
-                                    assertEquals(93.7211, cursor.getValue(), 0d);
+                                    assertNull(cursor.getObsPeriod());
+                                    assertEquals(93.7211, cursor.getObsValue(), 0d);
                                     break;
                             }
                         }

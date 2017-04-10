@@ -95,22 +95,22 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
     }
 
     @Override
-    public Key getKey() throws IOException {
+    public Key getSeriesKey() throws IOException {
         return keyBuilder.build();
     }
 
     @Override
-    public TimeFormat getTimeFormat() throws IOException {
+    public TimeFormat getSeriesTimeFormat() throws IOException {
         return obs.getTimeFormat();
     }
 
     @Override
-    public Date getPeriod() throws IOException {
+    public Date getObsPeriod() throws IOException {
         return obs.getPeriod();
     }
 
     @Override
-    public Double getValue() throws IOException {
+    public Double getObsValue() throws IOException {
         return obs.getValue();
     }
 
@@ -171,7 +171,7 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
                         case VALUE_ELEMENT:
                             if ("TIME_FORMAT".equals(reader.getAttributeValue(null, CONCEPT_ATTRIBUTE))) {
                                 String tmp = reader.getAttributeValue(null, VALUE_ATTRIBUTE);
-                                obs.timeFormat(tmp != null ? TimeFormat.parseByTimeFormat(tmp) : TimeFormat.UNDEFINED);
+                                obs.setTimeFormat(tmp != null ? TimeFormat.parseByTimeFormat(tmp) : TimeFormat.UNDEFINED);
                             }
                             break;
                     }

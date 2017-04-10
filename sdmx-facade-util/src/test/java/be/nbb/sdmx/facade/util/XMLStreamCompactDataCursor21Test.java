@@ -40,18 +40,18 @@ public class XMLStreamCompactDataCursor21Test {
 
         try (DataCursor cursor = new XMLStreamCompactDataCursor21(xml.open(), keyBuilder, 0, "TIME_PERIOD", "OBS_VALUE")) {
             assertTrue(cursor.nextSeries());
-            assertEquals(key, cursor.getKey());
-            assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
+            assertEquals(key, cursor.getSeriesKey());
+            assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
             int indexObs = -1;
             while (cursor.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertEquals(cal.date(1960, 0, 1), cursor.getPeriod());
-                        assertEquals(92.0142, cursor.getValue(), 0d);
+                        assertEquals(cal.date(1960, 0, 1), cursor.getObsPeriod());
+                        assertEquals(92.0142, cursor.getObsValue(), 0d);
                         break;
                     case 56:
-                        assertEquals(cal.date(2016, 0, 1), cursor.getPeriod());
-                        assertEquals(386.5655, cursor.getValue(), 0d);
+                        assertEquals(cal.date(2016, 0, 1), cursor.getObsPeriod());
+                        assertEquals(386.5655, cursor.getObsValue(), 0d);
                         break;
                 }
             }

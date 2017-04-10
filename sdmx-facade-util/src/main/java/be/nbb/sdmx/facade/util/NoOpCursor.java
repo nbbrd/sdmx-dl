@@ -47,22 +47,22 @@ public final class NoOpCursor implements DataCursor {
     }
 
     @Override
-    public Key getKey() throws IOException {
+    public Key getSeriesKey() throws IOException {
         throw new IllegalStateException();
     }
 
     @Override
-    public TimeFormat getTimeFormat() throws IOException {
+    public TimeFormat getSeriesTimeFormat() throws IOException {
         throw new IllegalStateException();
     }
 
     @Override
-    public Date getPeriod() throws IOException {
+    public Date getObsPeriod() throws IOException {
         throw new IllegalStateException();
     }
 
     @Override
-    public Double getValue() throws IOException {
+    public Double getObsValue() throws IOException {
         throw new IllegalStateException();
     }
 

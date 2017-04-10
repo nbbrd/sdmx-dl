@@ -105,9 +105,9 @@ public class MemSdmxRepository {
             while (cursor.nextSeries()) {
                 List<Obs> obs = new ArrayList<>();
                 while (cursor.nextObs()) {
-                    obs.add(Obs.of(cursor.getPeriod(), cursor.getValue()));
+                    obs.add(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
                 }
-                series(Series.of(flowRef, cursor.getKey(), cursor.getTimeFormat(), obs));
+                series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs));
             }
             return this;
         }
@@ -190,7 +190,7 @@ public class MemSdmxRepository {
             do {
                 i++;
                 j = -1;
-            } while (i < col.size() && !key.contains(getKey()));
+            } while (i < col.size() && !key.contains(getSeriesKey()));
             return i < col.size();
         }
 
@@ -201,22 +201,22 @@ public class MemSdmxRepository {
         }
 
         @Override
-        public Key getKey() throws IOException {
+        public Key getSeriesKey() throws IOException {
             return col.get(i).getKey();
         }
 
         @Override
-        public TimeFormat getTimeFormat() throws IOException {
+        public TimeFormat getSeriesTimeFormat() throws IOException {
             return col.get(i).getTimeFormat();
         }
 
         @Override
-        public Date getPeriod() throws IOException {
+        public Date getObsPeriod() throws IOException {
             return col.get(i).getObs().get(j).getPeriod();
         }
 
         @Override
-        public Double getValue() throws IOException {
+        public Double getObsValue() throws IOException {
             return col.get(i).getObs().get(j).getValue();
         }
 

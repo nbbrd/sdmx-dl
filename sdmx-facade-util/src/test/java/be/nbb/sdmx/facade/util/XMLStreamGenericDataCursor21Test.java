@@ -40,18 +40,18 @@ public class XMLStreamGenericDataCursor21Test {
 
         try (DataCursor cursor = new XMLStreamGenericDataCursor21(xml.open(), keyBuilder, 0)) {
             assertTrue(cursor.nextSeries());
-            assertEquals(key, cursor.getKey());
-            assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
+            assertEquals(key, cursor.getSeriesKey());
+            assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
             int indexObs = -1;
             while (cursor.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertEquals(cal.date(1960, 0, 1), cursor.getPeriod());
-                        assertEquals(92.0142, cursor.getValue(), 0d);
+                        assertEquals(cal.date(1960, 0, 1), cursor.getObsPeriod());
+                        assertEquals(92.0142, cursor.getObsValue(), 0d);
                         break;
                     case 56:
-                        assertEquals(cal.date(2016, 0, 1), cursor.getPeriod());
-                        assertEquals(386.5655, cursor.getValue(), 0d);
+                        assertEquals(cal.date(2016, 0, 1), cursor.getObsPeriod());
+                        assertEquals(386.5655, cursor.getObsValue(), 0d);
                         break;
                 }
             }
@@ -71,26 +71,26 @@ public class XMLStreamGenericDataCursor21Test {
             while (cursor.nextSeries()) {
                 switch (++indexSeries) {
                     case 0:
-                        assertEquals(firstKey, cursor.getKey());
-                        assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
+                        assertEquals(firstKey, cursor.getSeriesKey());
+                        assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
                         int indexObs = -1;
                         while (cursor.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertEquals(cal.date(1991, 0, 1), cursor.getPeriod());
-                                    assertEquals(-2.8574221, cursor.getValue(), 0d);
+                                    assertEquals(cal.date(1991, 0, 1), cursor.getObsPeriod());
+                                    assertEquals(-2.8574221, cursor.getObsValue(), 0d);
                                     break;
                                 case 24:
-                                    assertEquals(cal.date(2015, 0, 1), cursor.getPeriod());
-                                    assertEquals(-0.1420473, cursor.getValue(), 0d);
+                                    assertEquals(cal.date(2015, 0, 1), cursor.getObsPeriod());
+                                    assertEquals(-0.1420473, cursor.getObsValue(), 0d);
                                     break;
                             }
                         }
                         assertEquals(24, indexObs);
                         break;
                     case 119:
-                        assertEquals(lastKey, cursor.getKey());
-                        assertEquals(TimeFormat.YEARLY, cursor.getTimeFormat());
+                        assertEquals(lastKey, cursor.getSeriesKey());
+                        assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
                         assertFalse(cursor.nextObs());
                         break;
                 }
