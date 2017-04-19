@@ -21,14 +21,12 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -45,36 +43,37 @@ public class FileSdmxConnectionTest {
 
     @Test
     public void testCompactData21() throws IOException {
-        File compact21 = TestResources.COMPACT21_FILE.copyTo(temp);
+        File compact21 = temp.newFile();
+        SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
 
         FileSdmxConnection conn = new FileSdmxConnection(compact21, factory, decoder);
 
         DataflowRef flowRef = DataflowRef.parse(compact21.getName());
 
-        assertEquals(1, conn.getDataflows().size());
-        assertEquals(7, conn.getDataStructure(flowRef).getDimensions().size());
+        assertThat(conn.getDataflows()).hasSize(1);
+        assertThat(conn.getDataStructure(flowRef).getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor cursor = conn.getData(flowRef, Key.ALL, false)) {
-            assertTrue(cursor.nextSeries());
-            assertEquals(key, cursor.getSeriesKey());
-            assertEquals(TimeFormat.YEARLY, cursor.getSeriesTimeFormat());
+        try (DataCursor o = conn.getData(flowRef, Key.ALL, false)) {
+            assertThat(o.nextSeries()).isTrue();
+            assertThat(o.getSeriesKey()).isEqualTo(key);
+            assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
             int indexObs = -1;
-            while (cursor.nextObs()) {
+            while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(cursor.getObsPeriod()).isEqualTo("1960-01-01");
-                        assertEquals(92.0142, cursor.getObsValue(), 0d);
+                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01");
+                        assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertThat(cursor.getObsPeriod()).isEqualTo("2016-01-01");
-                        assertEquals(386.5655, cursor.getObsValue(), 0d);
+                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01");
+                        assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }
             }
-            assertEquals(56, indexObs);
-            assertFalse(cursor.nextSeries());
+            assertThat(indexObs).isEqualTo(56);
+            assertThat(o.nextSeries()).isFalse();
         }
     }
 }

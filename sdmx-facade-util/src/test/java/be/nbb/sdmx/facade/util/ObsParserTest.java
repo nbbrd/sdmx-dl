@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.TimeFormat;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.assertNull;
 
 /**
  *
@@ -35,10 +34,10 @@ public class ObsParserTest {
         assertThat(p.periodString("2001").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-A1").getPeriod()).isEqualTo("2001-01-01");
-        assertNull(p.periodString("2001-02").getPeriod());
-        assertNull(p.periodString("2001-01-01").getPeriod());
-        assertNull(p.periodString("hello").getPeriod());
-        assertNull(p.periodString("").getPeriod());
+        assertThat(p.periodString("2001-02").getPeriod()).isNull();
+        assertThat(p.periodString("2001-01-01").getPeriod()).isNull();
+        assertThat(p.periodString("hello").getPeriod()).isNull();
+        assertThat(p.periodString("").getPeriod()).isNull();
 
         p.setTimeFormat(TimeFormat.HALF_YEARLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
@@ -46,10 +45,10 @@ public class ObsParserTest {
         assertThat(p.periodString("2001-S1").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-S2").getPeriod()).isEqualTo("2001-07-01");
         assertThat(p.periodString("2001S2").getPeriod()).isEqualTo("2001-07-01");
-        assertNull(p.periodString("2001S0").getPeriod());
-        assertNull(p.periodString("2001S3").getPeriod());
-        assertNull(p.periodString("hello").getPeriod());
-        assertNull(p.periodString("").getPeriod());
+        assertThat(p.periodString("2001S0").getPeriod()).isNull();
+        assertThat(p.periodString("2001S3").getPeriod()).isNull();
+        assertThat(p.periodString("hello").getPeriod()).isNull();
+        assertThat(p.periodString("").getPeriod()).isNull();
 
         p.setTimeFormat(TimeFormat.QUADRI_MONTHLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
@@ -57,9 +56,9 @@ public class ObsParserTest {
         assertThat(p.periodString("2001-T1").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-T2").getPeriod()).isEqualTo("2001-05-01");
         assertThat(p.periodString("2001T2").getPeriod()).isEqualTo("2001-05-01");
-        assertNull(p.periodString("2001T0").getPeriod());
-        assertNull(p.periodString("hello").getPeriod());
-        assertNull(p.periodString("").getPeriod());
+        assertThat(p.periodString("2001T0").getPeriod()).isNull();
+        assertThat(p.periodString("hello").getPeriod()).isNull();
+        assertThat(p.periodString("").getPeriod()).isNull();
 
         p.setTimeFormat(TimeFormat.QUARTERLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
@@ -67,17 +66,17 @@ public class ObsParserTest {
         assertThat(p.periodString("2001-Q1").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-Q2").getPeriod()).isEqualTo("2001-04-01");
         assertThat(p.periodString("2001Q2").getPeriod()).isEqualTo("2001-04-01");
-        assertNull(p.periodString("2001-Q0").getPeriod());
-        assertNull(p.periodString("hello").getPeriod());
-        assertNull(p.periodString("").getPeriod());
+        assertThat(p.periodString("2001-Q0").getPeriod()).isNull();
+        assertThat(p.periodString("hello").getPeriod()).isNull();
+        assertThat(p.periodString("").getPeriod()).isNull();
 
         p.setTimeFormat(TimeFormat.MONTHLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001-02").getPeriod()).isEqualTo("2001-02-01");
         assertThat(p.periodString("2001-M1").getPeriod()).isEqualTo("2001-01-01");
         assertThat(p.periodString("2001M1").getPeriod()).isEqualTo("2001-01-01");
-        assertNull(p.periodString("2001-M0").getPeriod());
-        assertNull(p.periodString("hello").getPeriod());
-        assertNull(p.periodString("").getPeriod());
+        assertThat(p.periodString("2001-M0").getPeriod()).isNull();
+        assertThat(p.periodString("hello").getPeriod()).isNull();
+        assertThat(p.periodString("").getPeriod()).isNull();
     }
 }

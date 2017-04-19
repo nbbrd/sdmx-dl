@@ -22,13 +22,12 @@ import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import be.nbb.sdmx.facade.file.SdmxDecoder;
-import be.nbb.sdmx.facade.file.TestResources;
 import static org.assertj.core.api.Assertions.assertThat;
-import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
 import java.io.File;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
+import be.nbb.sdmx.facade.samples.SdmxSource;
 
 /**
  *
@@ -42,7 +41,8 @@ public class XMLStreamSdmxDecoderTest {
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        File generic20 = TestResources.GENERIC20_FILE.copyTo(temp);
+        File generic20 = temp.newFile();
+        SdmxSource.OTHER_GENERIC20.copyTo(generic20.toPath());
 
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "BIS_JOINT_DEBT", null))
@@ -60,7 +60,8 @@ public class XMLStreamSdmxDecoderTest {
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        File compact20 = TestResources.COMPACT20_FILE.copyTo(temp);
+        File compact20 = temp.newFile();
+        SdmxSource.OTHER_COMPACT20.copyTo(compact20.toPath());
 
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "TODO", null))
@@ -79,7 +80,8 @@ public class XMLStreamSdmxDecoderTest {
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        File generic21 = TestResources.GENERIC21_FILE.copyTo(temp);
+        File generic21 = temp.newFile();
+        SdmxSource.OTHER_GENERIC21.copyTo(generic21.toPath());
 
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "ECB_AME1", null))
@@ -100,7 +102,8 @@ public class XMLStreamSdmxDecoderTest {
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        File compact21 = TestResources.COMPACT21_FILE.copyTo(temp);
+        File compact21 = temp.newFile();
+        SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
 
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "ECB_AME1", null))

@@ -18,10 +18,8 @@ package be.nbb.sdmx.facade;
 
 import static be.nbb.sdmx.facade.DataflowRef.ALL_AGENCIES;
 import static be.nbb.sdmx.facade.DataflowRef.LATEST_VERSION;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 
 /**
@@ -31,87 +29,57 @@ import org.junit.Test;
 public class FlowRefTest {
 
     @Test
-    public void testParse() {
-        assertEquals(DataflowRef.of(null, "", null), DataflowRef.parse(""));
-        assertEquals(DataflowRef.of(null, "hello", null), DataflowRef.parse("hello"));
-        assertEquals(DataflowRef.of("world", "hello", null), DataflowRef.parse("world,hello"));
-        assertEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.parse("world,hello,123"));
-        assertEquals(DataflowRef.of("world", "hello", LATEST_VERSION), DataflowRef.parse("world,hello,"));
-        assertEquals(DataflowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION), DataflowRef.parse(",hello,"));
-        assertEquals(DataflowRef.of(ALL_AGENCIES, "", LATEST_VERSION), DataflowRef.parse(",,"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseInvalid() {
-        DataflowRef.parse(",,,,");
-    }
-
-    @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
-    public void testParseNull() {
-        DataflowRef.parse(null);
+    public void testParse() {
+        assertThat(DataflowRef.parse("")).isEqualTo(DataflowRef.of(null, "", null));
+        assertThat(DataflowRef.parse("hello")).isEqualTo(DataflowRef.of(null, "hello", null));
+        assertThat(DataflowRef.parse("world,hello")).isEqualTo(DataflowRef.of("world", "hello", null));
+        assertThat(DataflowRef.parse("world,hello,123")).isEqualTo(DataflowRef.of("world", "hello", "123"));
+        assertThat(DataflowRef.parse("world,hello,")).isEqualTo(DataflowRef.of("world", "hello", LATEST_VERSION));
+        assertThat(DataflowRef.parse(",hello,")).isEqualTo(DataflowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION));
+        assertThat(DataflowRef.parse(",,")).isEqualTo(DataflowRef.of(ALL_AGENCIES, "", LATEST_VERSION));
+        assertThatThrownBy(() -> DataflowRef.parse(",,,,")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> DataflowRef.parse(null)).isInstanceOf(NullPointerException.class);
     }
 
     @Test
     public void testValueOf() {
-        DataflowRef flowRef;
+        assertThat(DataflowRef.of(null, "", null))
+                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
-        flowRef = DataflowRef.of(null, "", null);
-        assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
-        assertEquals("", flowRef.getId());
-        assertEquals(LATEST_VERSION, flowRef.getVersion());
-        assertEquals("all,,latest", flowRef.toString());
+        assertThat(DataflowRef.of("", "hello", null))
+                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
-        flowRef = DataflowRef.of("", "hello", null);
-        assertEquals(ALL_AGENCIES, flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getId());
-        assertEquals(LATEST_VERSION, flowRef.getVersion());
-        assertEquals("all,hello,latest", flowRef.toString());
+        assertThat(DataflowRef.of("world", "hello", null))
+                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
-        flowRef = DataflowRef.of("world", "hello", null);
-        assertEquals("world", flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getId());
-        assertEquals(LATEST_VERSION, flowRef.getVersion());
-        assertEquals("world,hello,latest", flowRef.toString());
+        assertThat(DataflowRef.of("world", "hello", "123"))
+                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .containsExactly("world", "hello", "123", "world,hello,123");
 
-        flowRef = DataflowRef.of("world", "hello", "123");
-        assertEquals("world", flowRef.getAgencyId());
-        assertEquals("hello", flowRef.getId());
-        assertEquals("123", flowRef.getVersion());
-        assertEquals("world,hello,123", flowRef.toString());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testValueOfInvalid() {
-        DataflowRef.of(null, "world,hello", null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    @SuppressWarnings("null")
-    public void testValueOfNull() {
-        DataflowRef.of(null, null, null);
+        assertThatThrownBy(() -> DataflowRef.of(null, "world,hello", null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> DataflowRef.of(null, null, null)).isInstanceOf(NullPointerException.class);
     }
 
     @Test
     public void testEquals() {
-        assertEquals(DataflowRef.of("", "", ""), DataflowRef.of("", "", ""));
-        assertEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("world", "hello", "123"));
-        assertNotEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("world", "other", "123"));
-        assertNotEquals(DataflowRef.of("world", "hello", "123"), DataflowRef.of("", "", ""));
+        assertThat(DataflowRef.of("", "", "")).isEqualTo(DataflowRef.of("", "", ""));
+        assertThat(DataflowRef.of("world", "hello", "123")).isEqualTo(DataflowRef.of("world", "hello", "123"));
+        assertThat(DataflowRef.of("world", "other", "123")).isNotEqualTo(DataflowRef.of("world", "hello", "123"));
+        assertThat(DataflowRef.of("", "", "")).isNotEqualTo(DataflowRef.of("world", "hello", "123"));
     }
 
     @Test
-    public void testContains() {
-        assertTrue(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", "123")));
-        assertTrue(DataflowRef.of(ALL_AGENCIES, "hello", "123").contains(DataflowRef.of("world", "hello", "123")));
-        assertFalse(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of(ALL_AGENCIES, "hello", "123")));
-        assertTrue(DataflowRef.of("world", "hello", LATEST_VERSION).contains(DataflowRef.of("world", "hello", "123")));
-        assertFalse(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", LATEST_VERSION)));
-    }
-
-    @Test(expected = NullPointerException.class)
     @SuppressWarnings("null")
-    public void testContainsNull() {
-        DataflowRef.of("world", "hello", "123").contains(null);
+    public void testContains() {
+        assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", "123"))).isTrue();
+        assertThat(DataflowRef.of(ALL_AGENCIES, "hello", "123").contains(DataflowRef.of("world", "hello", "123"))).isTrue();
+        assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of(ALL_AGENCIES, "hello", "123"))).isFalse();
+        assertThat(DataflowRef.of("world", "hello", LATEST_VERSION).contains(DataflowRef.of("world", "hello", "123"))).isTrue();
+        assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", LATEST_VERSION))).isFalse();
+        assertThatThrownBy(() -> DataflowRef.of("world", "hello", "123").contains(null)).isInstanceOf(NullPointerException.class);
     }
 }

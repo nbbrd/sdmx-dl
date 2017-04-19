@@ -12,6 +12,7 @@
         <module>sdmx-facade-util</module>
         <module>sdmx-facade-connectors</module>
         <module>sdmx-facade-file</module>
+        <module>sdmx-facade-samples</module>
     </modules>
 
     <properties>
@@ -65,6 +66,11 @@
                 <artifactId>sdmx-facade-connectors</artifactId>
                 <version>${project.version}</version>
             </dependency>            
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-facade-samples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     

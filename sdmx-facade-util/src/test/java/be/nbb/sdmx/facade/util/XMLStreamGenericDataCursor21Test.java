@@ -19,6 +19,8 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.samples.ByteSource;
+import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
@@ -30,10 +32,10 @@ public class XMLStreamGenericDataCursor21Test {
 
     @Test
     public void testGenericData21() throws Exception {
-        SdmxTestResource xml = SdmxTestResource.onResource("GenericData21.xml");
+        ByteSource xml = SdmxSource.OTHER_GENERIC21;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.open(), builder, 0)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.openXmlStream(), builder, 0)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
             assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
@@ -62,10 +64,10 @@ public class XMLStreamGenericDataCursor21Test {
 
     @Test
     public void testCursor() throws Exception {
-        SdmxTestResource xml = SdmxTestResource.ECB_DATA;
+        ByteSource xml = SdmxSource.ECB_DATA;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.open(), builder, 0)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.openXmlStream(), builder, 0)) {
             int indexSeries = -1;
             while (o.nextSeries()) {
                 switch (++indexSeries) {

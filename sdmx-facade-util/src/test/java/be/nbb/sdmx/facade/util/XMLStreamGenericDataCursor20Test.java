@@ -19,6 +19,8 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.samples.ByteSource;
+import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
@@ -30,10 +32,10 @@ public class XMLStreamGenericDataCursor20Test {
 
     @Test
     public void testCursor() throws Exception {
-        SdmxTestResource xml = SdmxTestResource.NBB_DATA;
+        ByteSource xml = SdmxSource.NBB_DATA;
         Key.Builder builder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
 
-        try (DataCursor o = new XMLStreamGenericDataCursor20(xml.open(), builder)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor20(xml.openXmlStream(), builder)) {
             int indexSeries = -1;
             while (o.nextSeries()) {
                 switch (++indexSeries) {
