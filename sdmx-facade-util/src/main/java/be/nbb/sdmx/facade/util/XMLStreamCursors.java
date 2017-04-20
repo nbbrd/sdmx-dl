@@ -35,6 +35,19 @@ import javax.xml.stream.XMLStreamReader;
 public class XMLStreamCursors {
 
     @Nonnull
+    public DataCursor compactData20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {
+        try {
+            return compactData20(factory.createXMLStreamReader(stream), dsd);
+        } catch (XMLStreamException ex) {
+            throw new IOException("While creating reader", ex);
+        }
+    }
+
+    private DataCursor compactData20(XMLStreamReader reader, DataStructure dsd) {
+        return new XMLStreamCompactDataCursor20(reader, Key.builder(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
+    }
+
+    @Nonnull
     public DataCursor compactData21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {
         try {
             return compactData21(factory.createXMLStreamReader(stream), dsd);
