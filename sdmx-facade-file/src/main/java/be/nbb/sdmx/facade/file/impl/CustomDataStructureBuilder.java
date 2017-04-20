@@ -92,17 +92,9 @@ final class CustomDataStructureBuilder {
                 .ref(ref)
                 .dimensions(guessDimensions())
                 .label(ref.getId())
-                .timeDimensionId(timeDimensionId != null ? timeDimensionId : guessTimeDimensionId())
-                .primaryMeasureId(primaryMeasureId != null ? primaryMeasureId : guessPrimaryMeasureId())
+                .timeDimensionId(timeDimensionId != null ? timeDimensionId : "TIME_PERIOD")
+                .primaryMeasureId(primaryMeasureId != null ? primaryMeasureId : "OBS_VALUE")
                 .build();
-    }
-
-    private String guessTimeDimensionId() {
-        return attributes.containsKey("TIME_FORMAT") ? "TIME_FORMAT" : dimensions.containsKey("FREQ") ? "FREQ" : "";
-    }
-
-    private String guessPrimaryMeasureId() {
-        return "OBS_VALUE";
     }
 
     private Set<Dimension> guessDimensions() {

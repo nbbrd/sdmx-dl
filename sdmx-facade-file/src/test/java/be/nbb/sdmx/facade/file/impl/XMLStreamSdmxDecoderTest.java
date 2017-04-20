@@ -51,7 +51,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
                 .dimension(dimension("VIS_CTY", 4, "MX"))
                 .label("BIS_JOINT_DEBT")
-                .timeDimensionId("TIME_FORMAT")
+                .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
@@ -71,7 +71,7 @@ public class XMLStreamSdmxDecoderTest {
                 .dimension(dimension("JD_TYPE", 4, "P"))
                 .dimension(dimension("JD_CATEGORY", 5, "A", "B"))
                 .label("TODO")
-                .timeDimensionId("TIME_FORMAT")
+                .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 

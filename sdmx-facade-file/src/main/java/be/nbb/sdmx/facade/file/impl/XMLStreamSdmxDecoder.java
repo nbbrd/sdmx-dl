@@ -302,11 +302,6 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
             switch (reader.next()) {
                 case START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Structure":
-                            if (reader.getName().getNamespaceURI().equals(NS_21)) {
-                                builder.timeDimensionId(reader.getAttributeValue(null, "dimensionAtObservation"));
-                            }
-                            break;
                         case "DataSet":
                             generic21DataSet(reader, builder);
                             break;
