@@ -14,15 +14,16 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
-import be.nbb.sdmx.facade.util.Util.Status;
-import static be.nbb.sdmx.facade.util.Util.Status.CONTINUE;
-import static be.nbb.sdmx.facade.util.Util.Status.HALT;
-import static be.nbb.sdmx.facade.util.Util.Status.SUSPEND;
+import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.CONTINUE;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.HALT;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.SUSPEND;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
@@ -33,7 +34,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-final class XMLStreamCompactDataCursor20 implements DataCursor {
+final class XMLStreamCompactDataCursor implements DataCursor {
 
     private static final String DATASET_ELEMENT = "DataSet";
     private static final String SERIES_ELEMENT = "Series";
@@ -41,16 +42,18 @@ final class XMLStreamCompactDataCursor20 implements DataCursor {
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
-    private final Util.AttributesBuilder attributesBuilder;
+    private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
+    private final TimeFormatParser timeFormatParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
 
-    XMLStreamCompactDataCursor20(XMLStreamReader reader, Key.Builder keyBuilder, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, TimeFormatParser timeFormatParser, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
-        this.attributesBuilder = new Util.AttributesBuilder();
+        this.attributesBuilder = new AttributesBuilder();
         this.obsParser = new ObsParser();
+        this.timeFormatParser = timeFormatParser;
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
     }
@@ -120,7 +123,7 @@ final class XMLStreamCompactDataCursor20 implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.setTimeFormat(Util.parseTimeFormat20(attributesBuilder));
+        obsParser.setTimeFormat(timeFormatParser.parse(keyBuilder, attributesBuilder));
         return SUSPEND;
     }
 
@@ -149,7 +152,7 @@ final class XMLStreamCompactDataCursor20 implements DataCursor {
         return SUSPEND;
     }
 
-    private boolean nextWhile(Util.Func func) throws XMLStreamException {
-        return Util.nextWhile(reader, func);
+    private boolean nextWhile(XMLStreamUtil.Func func) throws XMLStreamException {
+        return XMLStreamUtil.nextWhile(reader, func);
     }
 }

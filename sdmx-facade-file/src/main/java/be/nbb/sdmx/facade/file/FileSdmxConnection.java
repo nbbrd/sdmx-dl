@@ -23,7 +23,7 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.util.XMLStreamCursors;
+import be.nbb.sdmx.facade.xml.stream.XMLStreamCursors;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -95,6 +95,8 @@ class FileSdmxConnection implements SdmxConnection {
         switch (entry.getFileType()) {
             case GENERIC20:
                 return XMLStreamCursors.genericData20(factory, open(dataFile), entry.getDataStructure());
+            case COMPACT20:
+                return XMLStreamCursors.compactData20(factory, open(dataFile), entry.getDataStructure());
             case GENERIC21:
                 return XMLStreamCursors.genericData21(factory, open(dataFile), entry.getDataStructure());
             case COMPACT21:

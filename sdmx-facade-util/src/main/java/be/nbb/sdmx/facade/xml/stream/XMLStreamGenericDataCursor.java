@@ -14,15 +14,16 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
-import be.nbb.sdmx.facade.util.Util.Status;
-import static be.nbb.sdmx.facade.util.Util.Status.CONTINUE;
-import static be.nbb.sdmx.facade.util.Util.Status.HALT;
-import static be.nbb.sdmx.facade.util.Util.Status.SUSPEND;
+import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.CONTINUE;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.HALT;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.SUSPEND;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
@@ -33,29 +34,31 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Philippe Charles
  */
-final class XMLStreamGenericDataCursor20 implements DataCursor {
+final class XMLStreamGenericDataCursor implements DataCursor {
 
     private static final String DATASET_ELEMENT = "DataSet";
     private static final String SERIES_ELEMENT = "Series";
     private static final String OBS_ELEMENT = "Obs";
-    private static final String TIME_ELEMENT = "Time";
     private static final String OBS_VALUE_ELEMENT = "ObsValue";
     private static final String SERIES_KEY_ELEMENT = "SeriesKey";
-    private static final String VALUE_ELEMENT = "Value";
     private static final String ATTRIBUTES_ELEMENT = "Attributes";
-    private static final String CONCEPT_ATTRIBUTE = "concept";
+    private static final String VALUE_ELEMENT = "Value";
     private static final String VALUE_ATTRIBUTE = "value";
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
-    private final Util.AttributesBuilder attributesBuilder;
+    private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
+    private final TimeFormatParser timeFormatParser;
+    private final GenericDataParser genericParser;
 
-    XMLStreamGenericDataCursor20(XMLStreamReader reader, Key.Builder keyBuilder) {
+    XMLStreamGenericDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, TimeFormatParser timeFormatParser, GenericDataParser genericParser) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
-        this.attributesBuilder = new Util.AttributesBuilder();
+        this.attributesBuilder = new AttributesBuilder();
         this.obsParser = new ObsParser();
+        this.timeFormatParser = timeFormatParser;
+        this.genericParser = genericParser;
     }
 
     @Override
@@ -130,7 +133,7 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
 
     private Status parseSeries() throws XMLStreamException {
         nextWhile(this::onSeriesHead);
-        obsParser.setTimeFormat(Util.parseTimeFormat20(attributesBuilder));
+        obsParser.setTimeFormat(timeFormatParser.parse(keyBuilder, attributesBuilder));
         return SUSPEND;
     }
 
@@ -177,13 +180,13 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
         }
     }
 
-    private Status parseSeriesKeyValue() {
-        keyBuilder.put(reader.getAttributeValue(null, CONCEPT_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+    private Status parseSeriesKeyValue() throws XMLStreamException {
+        genericParser.parseValueElement(reader, keyBuilder::put);
         return CONTINUE;
     }
 
-    private Status parseAttributesValue() {
-        attributesBuilder.put(reader.getAttributeValue(null, CONCEPT_ATTRIBUTE), reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+    private Status parseAttributesValue() throws XMLStreamException {
+        genericParser.parseValueElement(reader, attributesBuilder::put);
         return CONTINUE;
     }
 
@@ -205,14 +208,10 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
 
     private Status onObs(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            switch (localName) {
-                case TIME_ELEMENT:
-                    return parseObsTime();
-                case OBS_VALUE_ELEMENT:
-                    return parseObsValue();
-                default:
-                    return CONTINUE;
+            if (localName.equals(genericParser.getTimeELement())) {
+                return parseObsTime();
             }
+            return localName.equals(OBS_VALUE_ELEMENT) ? parseObsValue() : CONTINUE;
         } else {
             return localName.equals(OBS_ELEMENT) ? HALT : CONTINUE;
         }
@@ -224,7 +223,7 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
     }
 
     private Status parseObsTime() throws XMLStreamException {
-        obsParser.periodString(reader.getElementText());
+        genericParser.parseTimeElement(reader, obsParser::periodString);
         return CONTINUE;
     }
 
@@ -233,7 +232,7 @@ final class XMLStreamGenericDataCursor20 implements DataCursor {
         return CONTINUE;
     }
 
-    private boolean nextWhile(Util.Func func) throws XMLStreamException {
-        return Util.nextWhile(reader, func);
+    private boolean nextWhile(XMLStreamUtil.Func func) throws XMLStreamException {
+        return XMLStreamUtil.nextWhile(reader, func);
     }
 }

@@ -14,28 +14,68 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author charphi
  */
-public class XMLStreamGenericDataCursor21Test {
+public class XMLStreamGenericDataCursorTest {
+
+    @Test
+    public void testGenericData20() throws Exception {
+        ByteSource xml = SdmxSource.NBB_DATA;
+        Key.Builder builder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
+
+        try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx20(), GenericDataParser.sdmx20())) {
+            int indexSeries = -1;
+            while (o.nextSeries()) {
+                switch (++indexSeries) {
+                    case 0:
+                        assertThat(o.getSeriesKey()).isEqualTo(Key.of("LOCSTL04", "AUS", "M"));
+                        assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.MONTHLY);
+                        assertThat(o.getSeriesAttributes())
+                                .hasSize(1)
+                                .containsEntry("TIME_FORMAT", "P1M");
+                        int indexObs = -1;
+                        while (o.nextObs()) {
+                            switch (++indexObs) {
+                                case 0:
+                                    assertThat(o.getObsPeriod()).isEqualTo("1966-02-01");
+                                    assertThat(o.getObsValue()).isEqualTo(98.68823);
+                                    break;
+                                case 188:
+                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-01");
+                                    assertThat(o.getObsValue()).isEqualTo(101.1945);
+                                    break;
+                                case 199:
+                                    assertThat(o.getObsPeriod()).isNull();
+                                    assertThat(o.getObsValue()).isEqualTo(93.7211);
+                                    break;
+                            }
+                        }
+                        assertThat(indexObs).isEqualTo(199);
+                        break;
+                }
+            }
+            assertThat(indexSeries).isEqualTo(0);
+        }
+    }
 
     @Test
     public void testGenericData21() throws Exception {
         ByteSource xml = SdmxSource.OTHER_GENERIC21;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.openXmlStream(), builder, 0)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21())) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
             assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
@@ -63,11 +103,11 @@ public class XMLStreamGenericDataCursor21Test {
     }
 
     @Test
-    public void testCursor() throws Exception {
+    public void testGenericData21Bis() throws Exception {
         ByteSource xml = SdmxSource.ECB_DATA;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
-        try (DataCursor o = new XMLStreamGenericDataCursor21(xml.openXmlStream(), builder, 0)) {
+        try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21())) {
             int indexSeries = -1;
             while (o.nextSeries()) {
                 switch (++indexSeries) {

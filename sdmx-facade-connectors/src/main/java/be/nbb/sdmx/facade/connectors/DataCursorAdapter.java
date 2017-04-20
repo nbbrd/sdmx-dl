@@ -100,7 +100,7 @@ final class DataCursorAdapter implements DataCursor {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static TimeFormat getTimeFormat(PortableTimeSeries input) {
-        String value = splitKeyValue(input.getAttributes()).get("TIME_FORMAT");
+        String value = input.getAttributeValue("TIME_FORMAT");
         if (value != null) {
             return TimeFormat.parseByTimeFormat(value);
         }
@@ -108,15 +108,6 @@ final class DataCursorAdapter implements DataCursor {
             return TimeFormat.parseByFrequencyCodeId(input.getFrequency());
         }
         return TimeFormat.UNDEFINED;
-    }
-
-    private static Map<String, String> splitKeyValue(List<String> input) {
-        Map<String, String> result = new HashMap<>();
-        for (String o : input) {
-            String[] items = o.split("=");
-            result.put(items[0], items[1]);
-        }
-        return result;
     }
 
     @Nonnull

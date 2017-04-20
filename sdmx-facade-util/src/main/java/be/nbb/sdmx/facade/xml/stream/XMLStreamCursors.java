@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
@@ -44,7 +44,8 @@ public class XMLStreamCursors {
     }
 
     private DataCursor compactData20(XMLStreamReader reader, DataStructure dsd) {
-        return new XMLStreamCompactDataCursor20(reader, Key.builder(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
+        TimeFormatParser parser = TimeFormatParser.sdmx20();
+        return new XMLStreamCompactDataCursor(reader, Key.builder(dsd), parser, dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
     @Nonnull
@@ -57,7 +58,8 @@ public class XMLStreamCursors {
     }
 
     private DataCursor compactData21(XMLStreamReader reader, DataStructure dsd) {
-        return new XMLStreamCompactDataCursor21(reader, Key.builder(dsd), Util.getFrequencyCodeIdIndex(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
+        TimeFormatParser parser = TimeFormatParser.sdmx21(TimeFormatParser.getFrequencyCodeIdIndex(dsd));
+        return new XMLStreamCompactDataCursor(reader, Key.builder(dsd), parser, dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
     @Nonnull
@@ -70,7 +72,9 @@ public class XMLStreamCursors {
     }
 
     private DataCursor genericData20(XMLStreamReader reader, DataStructure dsd) {
-        return new XMLStreamGenericDataCursor20(reader, Key.builder(dsd));
+        TimeFormatParser tfParser = TimeFormatParser.sdmx20();
+        GenericDataParser genericParser = GenericDataParser.sdmx20();
+        return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
     }
 
     @Nullable
@@ -83,6 +87,8 @@ public class XMLStreamCursors {
     }
 
     private DataCursor genericData21(XMLStreamReader reader, DataStructure dsd) {
-        return new XMLStreamGenericDataCursor21(reader, Key.builder(dsd), Util.getFrequencyCodeIdIndex(dsd));
+        TimeFormatParser tfParser = TimeFormatParser.sdmx21(TimeFormatParser.getFrequencyCodeIdIndex(dsd));
+        GenericDataParser genericParser = GenericDataParser.sdmx21();
+        return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
     }
 }

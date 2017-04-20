@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
-import be.nbb.sdmx.facade.util.XMLStreamCursors;
+import be.nbb.sdmx.facade.xml.stream.XMLStreamCursors;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
