@@ -108,6 +108,8 @@ public class MemSdmxRepository {
 
     public static final class Builder {
 
+        private boolean seriesKeysOnlySupported = true;
+
         @Nonnull
         public Builder copyOf(@Nonnull DataflowRef flowRef, @Nonnull DataCursor cursor) throws IOException {
             while (cursor.nextSeries()) {
@@ -216,6 +218,11 @@ public class MemSdmxRepository {
         @Override
         public TimeFormat getSeriesTimeFormat() throws IOException {
             return col.get(i).getTimeFormat();
+        }
+
+        @Override
+        public String getSeriesAttribute(String key) throws IOException {
+            return col.get(i).getMeta().get(key);
         }
 
         @Override

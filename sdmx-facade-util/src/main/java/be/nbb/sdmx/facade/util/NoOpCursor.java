@@ -58,6 +58,11 @@ public final class NoOpCursor implements DataCursor {
     }
 
     @Override
+    public String getSeriesAttribute(String key) throws IOException {
+        throw new IllegalStateException();
+    }
+
+    @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         throw new IllegalStateException();
     }

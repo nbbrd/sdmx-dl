@@ -100,6 +100,11 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     @Override
+    public String getSeriesAttribute(String key) throws IOException {
+        return attributesBuilder.getAttribute(key);
+    }
+
+    @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         return attributesBuilder.build();
     }

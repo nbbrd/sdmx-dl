@@ -45,6 +45,8 @@ public class XMLStreamGenericDataCursorTest {
                         assertThat(o.getSeriesAttributes())
                                 .hasSize(1)
                                 .containsEntry("TIME_FORMAT", "P1M");
+                        assertThat(o.getSeriesAttribute("TIME_FORMAT")).isEqualTo("P1M");
+                        assertThat(o.getSeriesAttribute("hello")).isNull();
                         int indexObs = -1;
                         while (o.nextObs()) {
                             switch (++indexObs) {
@@ -84,6 +86,8 @@ public class XMLStreamGenericDataCursorTest {
                     .containsEntry("EXT_TITLE", "Belgium - Gross domestic product at 2010 market prices")
                     .containsEntry("TITLE_COMPL", "Belgium - Gross domestic product at 2010 market prices - Mrd EURO-BEF - AMECO data class: Data at constant prices")
                     .containsEntry("EXT_UNIT", "Mrd EURO-BEF");
+            assertThat(o.getSeriesAttribute("EXT_UNIT")).isEqualTo("Mrd EURO-BEF");
+            assertThat(o.getSeriesAttribute("hello")).isNull();
             int indexObs = -1;
             while (o.nextObs()) {
                 switch (++indexObs) {

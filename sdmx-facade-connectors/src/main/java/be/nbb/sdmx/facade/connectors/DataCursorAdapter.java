@@ -40,7 +40,7 @@ final class DataCursorAdapter implements DataCursor {
     private PortableTimeSeries current;
     private int index;
 
-    public DataCursorAdapter(List<PortableTimeSeries> data) {
+    DataCursorAdapter(List<PortableTimeSeries> data) {
         this.data = data.iterator();
         this.obs = new ObsParser();
     }
@@ -70,6 +70,11 @@ final class DataCursorAdapter implements DataCursor {
     @Override
     public TimeFormat getSeriesTimeFormat() throws IOException {
         return obs.getTimeFormat();
+    }
+
+    @Override
+    public String getSeriesAttribute(String key) throws IOException {
+        return current.getAttributeValue(key);
     }
 
     @Override

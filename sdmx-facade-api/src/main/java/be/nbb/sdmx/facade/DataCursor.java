@@ -39,6 +39,9 @@ public interface DataCursor extends Closeable {
     @Nonnull
     TimeFormat getSeriesTimeFormat() throws IOException;
 
+    @Nullable
+    String getSeriesAttribute(@Nonnull String key) throws IOException;
+
     @Nonnull
     Map<String, String> getSeriesAttributes() throws IOException;
 
