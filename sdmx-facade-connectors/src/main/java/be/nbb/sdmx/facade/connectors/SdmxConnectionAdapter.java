@@ -68,6 +68,9 @@ class SdmxConnectionAdapter implements SdmxConnection {
 
     @Override
     final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        if (serieskeysonly && !isSeriesKeysOnlySupported()) {
+            throw new IllegalStateException("serieskeysonly not supported");
+        }
         return loadData(flowRef, key, serieskeysonly);
     }
 
@@ -114,9 +117,6 @@ class SdmxConnectionAdapter implements SdmxConnection {
 
     @Nonnull
     protected DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        if (serieskeysonly && !isSeriesKeysOnlySupported()) {
-            throw new IllegalStateException("serieskeysonly not supported");
-        }
         it.bancaditalia.oss.sdmx.api.Dataflow dataflow = loadDataflow(flowRef);
         it.bancaditalia.oss.sdmx.api.DataFlowStructure dfs = loadDataStructure(flowRef);
         try {

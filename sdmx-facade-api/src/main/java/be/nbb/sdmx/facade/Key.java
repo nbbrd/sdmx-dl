@@ -57,12 +57,22 @@ public final class Key {
     }
 
     public boolean contains(@Nonnull Key input) {
+        if (this == ALL) {
+            return true;
+        }
+        if (getSize() != input.getSize()) {
+            return false;
+        }
         for (int i = 0; i < getSize(); i++) {
             if (!isWildcard(i) && !getItem(i).equals(input.getItem(i))) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean supersedes(@Nonnull Key that) {
+        return !equals(that) && contains(that);
     }
 
     @Override

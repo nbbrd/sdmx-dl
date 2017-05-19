@@ -109,10 +109,24 @@ public class KeyTest {
     public void testContains() {
         assertThat(Key.of("").contains(Key.of(""))).isTrue();
         assertThat(Key.ALL.contains(Key.ALL)).isTrue();
-        assertThat(Key.ALL.contains(Key.of("hello"))).isTrue();
+        assertThat(Key.ALL.contains(Key.of("hello", "world"))).isTrue();
         assertThat(Key.of("hello").contains(Key.ALL)).isFalse();
         assertThat(Key.of("LOCSTL04", "*", "M").contains(Key.of("LOCSTL04", "AUS", "M"))).isTrue();
+        assertThat(Key.of("LOCSTL04", "*").contains(Key.of("LOCSTL04", "AUS", "M"))).isFalse();
         assertThat(Key.of("LOCSTL04", "AUS", "M").contains(Key.of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(Key.of("LOCSTL04", "AUS").contains(Key.of("LOCSTL04", "*", "M"))).isFalse();
+    }
+
+    @Test
+    public void testSupersedes() {
+        assertThat(Key.of("").supersedes(Key.of(""))).isFalse();
+        assertThat(Key.ALL.supersedes(Key.ALL)).isFalse();
+        assertThat(Key.ALL.supersedes(Key.of("hello", "world"))).isTrue();
+        assertThat(Key.of("hello").supersedes(Key.ALL)).isFalse();
+        assertThat(Key.of("LOCSTL04", "*", "M").supersedes(Key.of("LOCSTL04", "AUS", "M"))).isTrue();
+        assertThat(Key.of("LOCSTL04", "*").supersedes(Key.of("LOCSTL04", "AUS", "M"))).isFalse();
+        assertThat(Key.of("LOCSTL04", "AUS", "M").supersedes(Key.of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(Key.of("LOCSTL04", "AUS").supersedes(Key.of("LOCSTL04", "*", "M"))).isFalse();
     }
 
     @Test

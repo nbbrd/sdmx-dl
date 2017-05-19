@@ -16,7 +16,10 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
+import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -24,6 +27,8 @@ import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -37,6 +42,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     private final String dataflowsKey;
     private final String dataflowKey;
     private final String dataflowStructureKey;
+    private final String dataKey;
 
     CachedSdmxConnection(GenericSDMXClient client, String host, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         super(client);
@@ -46,14 +52,21 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
         this.dataflowsKey = "cache://" + host + "/flows";
         this.dataflowKey = "cache://" + host + "/flow/";
         this.dataflowStructureKey = "cache://" + host + "/struct/";
+        this.dataKey = "cache://" + host + "/data/";
     }
 
-    private <X> X get(String key) {
-        return (X) TtlCache.get(cache, key, clock);
+    private <X> X get(String cacheKey) {
+        return (X) TtlCache.get(cache, cacheKey, clock);
     }
 
-    private void put(String key, Object value) {
-        TtlCache.put(cache, key, value, ttlInMillis, clock);
+    private void put(String cacheKey, Object value) {
+        TtlCache.put(cache, cacheKey, value, ttlInMillis, clock);
+    }
+
+    private String cacheKeyOf(String base, Object... values) {
+        return values.length > 0
+                ? Stream.of(values).map(Object::toString).collect(Collectors.joining("/", base, ""))
+                : base;
     }
 
     @Override
@@ -77,7 +90,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
             }
         }
 
-        String key = dataflowKey + flowRef.toString();
+        String key = cacheKeyOf(dataflowKey, flowRef);
         it.bancaditalia.oss.sdmx.api.Dataflow result = get(key);
         if (result == null) {
             result = super.loadDataflow(flowRef);
@@ -88,12 +101,29 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
 
     @Override
     protected DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException {
-        String key = dataflowStructureKey + flowRef.toString();
+        String key = cacheKeyOf(dataflowStructureKey, flowRef);
         it.bancaditalia.oss.sdmx.api.DataFlowStructure result = get(key);
         if (result == null) {
             result = super.loadDataStructure(flowRef);
             put(key, result);
         }
         return result;
+    }
+
+    @Override
+    protected DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        if (serieskeysonly) {
+            String cacheKey = cacheKeyOf(dataKey, flowRef);
+            MemSdmxRepository result = get(cacheKey);
+            if (result == null || key.supersedes(Key.parse(result.getName()))) {
+                result = MemSdmxRepository.builder()
+                        .copyOf(flowRef, super.loadData(flowRef, key, true))
+                        .name(key.toString())
+                        .build();
+                put(cacheKey, result);
+            }
+            return result.asConnection().getData(flowRef, key, true);
+        }
+        return super.loadData(flowRef, key, serieskeysonly);
     }
 }
