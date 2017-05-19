@@ -22,9 +22,10 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import be.nbb.sdmx.facade.util.TtlCache;
-import be.nbb.sdmx.facade.util.TtlCache.Clock;
+import be.nbb.sdmx.facade.util.TypedId;
 import java.io.File;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentMap;
 import javax.xml.stream.XMLInputFactory;
@@ -35,27 +36,23 @@ import javax.xml.stream.XMLInputFactory;
  */
 final class CachedFileSdmxConnection extends FileSdmxConnection {
 
-    private final ConcurrentMap cache;
-    private final Clock clock;
-    private final long ttlInMillis;
-    private final String decodeKey;
-    private final String loadDataKey;
+    private final TtlCache cache;
+    private final TypedId<SdmxDecoder.Info> decodeKey;
+    private final TypedId<MemSdmxRepository> loadDataKey;
 
     CachedFileSdmxConnection(File data, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         super(data, factory, decoder);
-        this.cache = cache;
-        this.clock = clock;
-        this.ttlInMillis = ttlInMillis;
-        this.decodeKey = data.getPath() + "decode";
-        this.loadDataKey = data.getPath() + "loadData";
+        this.cache = TtlCache.of(cache, clock, ttlInMillis);
+        this.decodeKey = TypedId.of("cache://" + data.getPath() + "decode");
+        this.loadDataKey = TypedId.of("cache://" + data.getPath() + "loadData");
     }
 
     @Override
     protected SdmxDecoder.Info decode() throws IOException {
-        SdmxDecoder.Info result = TtlCache.get(cache, decodeKey, clock);
+        SdmxDecoder.Info result = cache.get(decodeKey);
         if (result == null) {
             result = super.decode();
-            TtlCache.put(cache, decodeKey, result, ttlInMillis, clock);
+            cache.put(decodeKey, result);
         }
         return result;
     }
@@ -63,12 +60,12 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     @Override
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            MemSdmxRepository result = TtlCache.get(cache, loadDataKey, clock);
+            MemSdmxRepository result = cache.get(loadDataKey);
             if (result == null) {
-                result = copyOfKeys(flowRef, super.loadData(entry, flowRef, key, serieskeysonly));
-                TtlCache.put(cache, loadDataKey, result, ttlInMillis, clock);
+                result = copyOfKeys(flowRef, super.loadData(entry, flowRef, key, true));
+                cache.put(loadDataKey, result);
             }
-            return result.asConnection().getData(flowRef, key, serieskeysonly);
+            return result.asConnection().getData(flowRef, key, true);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
     }

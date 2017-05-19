@@ -16,7 +16,9 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.sdmx.facade.util.TtlCache.Clock;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,6 @@ public class TtlCacheTest {
     }
 
     private static Clock of(long value) {
-        return () -> value;
+        return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
     }
 }

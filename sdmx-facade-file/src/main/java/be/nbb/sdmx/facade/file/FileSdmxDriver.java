@@ -28,9 +28,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.stream.XMLInputFactory;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.util.TtlCache;
-import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
         this.factory = XMLInputFactory.newInstance();
         this.decoder = new XMLStreamSdmxDecoder(factory);
         this.cache = new AtomicReference(new ConcurrentHashMap());
-        this.clock = TtlCache.systemClock();
+        this.clock = Clock.systemDefaultZone();
     }
 
     @Override

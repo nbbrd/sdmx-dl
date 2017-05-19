@@ -22,14 +22,13 @@ import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.util.TtlCache;
-import be.nbb.sdmx.facade.util.TtlCache.Clock;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +54,12 @@ final class SdmxDriverSupport implements HasCache {
 
     @Nonnull
     public static SdmxDriverSupport of(@Nonnull String prefix, @Nonnull Class<? extends RestSdmxClient> clazz) {
-        return new SdmxDriverSupport(prefix, supplierOf(clazz), new ConcurrentHashMap(), TtlCache.systemClock());
+        return new SdmxDriverSupport(prefix, supplierOf(clazz), new ConcurrentHashMap(), Clock.systemDefaultZone());
     }
 
     @Nonnull
     public static SdmxDriverSupport of(@Nonnull String prefix, @Nonnull ClientSupplier supplier) {
-        return new SdmxDriverSupport(prefix, supplier, new ConcurrentHashMap(), TtlCache.systemClock());
+        return new SdmxDriverSupport(prefix, supplier, new ConcurrentHashMap(), Clock.systemDefaultZone());
     }
 
     private final String prefix;
