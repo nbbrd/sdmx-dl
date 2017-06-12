@@ -94,8 +94,22 @@ public class MemSdmxRepository {
         @lombok.NonNull
         Map<String, String> meta;
 
-        public static Series of(DataflowRef flowRef, Key key, TimeFormat timeFormat, List<Obs> obs) {
+        @Nonnull
+        public static Series of(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull TimeFormat timeFormat, @Nonnull List<Obs> obs) {
             return of(flowRef, key, timeFormat, obs, Collections.emptyMap());
+        }
+
+        @Nonnull
+        public static List<Series> copyOf(@Nonnull DataflowRef flowRef, @Nonnull DataCursor cursor) throws IOException {
+            List<Series> result = new ArrayList<>();
+            while (cursor.nextSeries()) {
+                List<Obs> obs = new ArrayList<>();
+                while (cursor.nextObs()) {
+                    obs.add(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
+                }
+                result.add(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs, cursor.getSeriesAttributes()));
+            }
+            return result;
         }
     }
 

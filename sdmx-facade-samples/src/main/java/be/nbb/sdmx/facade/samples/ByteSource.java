@@ -49,7 +49,9 @@ public interface ByteSource {
     }
 
     default void copyTo(@Nonnull Path file) throws IOException {
-        Files.copy(openStream(), file, StandardCopyOption.REPLACE_EXISTING);
+        try (InputStream stream = openStream()) {
+            Files.copy(stream, file, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     @Nonnull

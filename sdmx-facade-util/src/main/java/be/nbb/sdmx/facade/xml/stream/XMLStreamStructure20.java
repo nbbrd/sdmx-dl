@@ -1,0 +1,221 @@
+/*
+ * Copyright 2017 National Bank of Belgium
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and 
+ * limitations under the Licence.
+ */
+package be.nbb.sdmx.facade.xml.stream;
+
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.Dimension;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
+import javax.annotation.Nonnull;
+
+/**
+ *
+ * @author Philippe Charles
+ */
+final class XMLStreamStructure20 {
+
+    private final String preferredLang;
+
+    XMLStreamStructure20(String preferredLang) {
+        this.preferredLang = preferredLang;
+    }
+
+    @Nonnull
+    public List<DataStructure> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
+        List<DataStructure> result = new ArrayList<>();
+        Map<String, Map<String, String>> codelists = new HashMap<>();
+        Map<String, String> concepts = new HashMap<>();
+        while (nextTags(reader, "")) {
+            switch (reader.getLocalName()) {
+                case HEADER_TAG:
+                    parseHeader(reader);
+                    break;
+                case CODE_LISTS_TAG:
+                    parseCodelists(reader, codelists);
+                    break;
+                case CONCEPTS_TAG:
+                    parseConcepts(reader, concepts);
+                    break;
+                case KEY_FAMILIES_TAG:
+                    parseDataStructures(reader, result, concepts::get, codelists::get);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    private static final String NS_20 = "http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message";
+
+    private static final String HEADER_TAG = "Header";
+    private static final String CODE_LISTS_TAG = "CodeLists";
+    private static final String CONCEPTS_TAG = "Concepts";
+    private static final String KEY_FAMILIES_TAG = "KeyFamilies";
+    private static final String CODE_LIST_TAG = "CodeList";
+    private static final String CONCEPT_TAG = "Concept";
+    private static final String KEY_FAMILY_TAG = "KeyFamily";
+    private static final String CODE_TAG = "Code";
+    private static final String DESCRIPTION_TAG = "Description";
+    private static final String NAME_TAG = "Name";
+    private static final String COMPONENTS_TAG = "Components";
+    private static final String DIMENSION_TAG = "Dimension";
+    private static final String TIME_DIMENSION_TAG = "TimeDimension";
+    private static final String PRIMARY_MEASURE_TAG = "PrimaryMeasure";
+
+    private static final String ID_ATTR = "id";
+    private static final String AGENCY_ID_ATTR = "agencyID";
+    private static final String VERSION_ATTR = "version";
+    private static final String LANG_ATTR = "lang";
+    private static final String VALUE_ATTR = "value";
+    private static final String CONCEPT_REF_ATTR = "conceptRef";
+    private static final String CODELIST_ATTR = "codelist";
+
+    private boolean isPreferredLang(XMLStreamReader reader) {
+        return preferredLang.equals(reader.getAttributeValue(null, LANG_ATTR));
+    }
+
+    private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
+        String ns = reader.getNamespaceURI();
+        check(NS_20.equals(ns), reader, "Invalid namespace '%s'", ns);
+    }
+
+    private void parseCodelists(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {
+        while (nextTag(reader, CODE_LISTS_TAG, CODE_LIST_TAG)) {
+            parseCodelist(reader, codelists);
+        }
+    }
+
+    private void parseCodelist(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, ID_ATTR);
+        check(id != null, reader, "Missing Codelist id");
+
+        Map<String, String> codelist = codelists.computeIfAbsent(id, o -> new HashMap<>());
+        while (nextTag(reader, CODE_LIST_TAG, CODE_TAG)) {
+            parseCode(reader, codelist);
+        }
+    }
+
+    private void parseCode(XMLStreamReader reader, Map<String, String> codelist) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, VALUE_ATTR);
+        check(id != null, reader, "Missing Code value");
+
+        String label = null;
+        while (nextTag(reader, CODE_TAG, DESCRIPTION_TAG)) {
+            if (label == null || isPreferredLang(reader)) {
+                label = reader.getElementText();
+            }
+        }
+        codelist.put(id, label != null ? label : id);
+    }
+
+    private void parseConcepts(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+        while (nextTag(reader, CONCEPTS_TAG, CONCEPT_TAG)) {
+            parseConcept(reader, concepts);
+        }
+    }
+
+    private void parseConcept(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, ID_ATTR);
+        check(id != null, reader, "Missing Concept id");
+
+        String label = null;
+        while (nextTag(reader, CONCEPT_TAG, NAME_TAG)) {
+            if (label == null || isPreferredLang(reader)) {
+                label = reader.getElementText();
+            }
+        }
+        concepts.put(id, label != null ? label : id);
+    }
+
+    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+        while (nextTag(reader, KEY_FAMILIES_TAG, KEY_FAMILY_TAG)) {
+            parseDataStructure(reader, result, toConceptName, toCodes);
+        }
+    }
+
+    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, ID_ATTR);
+        check(id != null, reader, "Missing DataStrucure id");
+
+        DataStructure.Builder ds = DataStructure.builder();
+        ds.ref(DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
+        String label = null;
+        while (nextTags(reader, KEY_FAMILY_TAG)) {
+            switch (reader.getLocalName()) {
+                case NAME_TAG:
+                    if (label == null || isPreferredLang(reader)) {
+                        label = reader.getElementText();
+                    }
+                    break;
+                case COMPONENTS_TAG:
+                    parseDataStructureComponents(reader, ds, toConceptName, toCodes);
+                    break;
+            }
+        }
+        ds.label(label != null ? label : id);
+        result.add(ds.build());
+    }
+
+    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+        int position = 1;
+        while (nextTags(reader, COMPONENTS_TAG)) {
+            switch (reader.getLocalName()) {
+                case DIMENSION_TAG:
+                    parseDimension(reader, ds, toConceptName, toCodes, position++);
+                    break;
+                case TIME_DIMENSION_TAG:
+                    parseTimeDimension(reader, ds);
+                    break;
+                case PRIMARY_MEASURE_TAG:
+                    parsePrimaryMeasure(reader, ds);
+                    break;
+            }
+        }
+    }
+
+    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
+        check(id != null, reader, "Missing Dimension id");
+
+        String codelist = reader.getAttributeValue(null, CODELIST_ATTR);
+        check(codelist != null, reader, "Missing Dimension codelist");
+
+        ds.dimension(Dimension.builder().id(id).position(position).label(toConceptName.apply(id)).codes(toCodes.apply(codelist)).build());
+    }
+
+    private void parseTimeDimension(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
+        check(id != null, reader, "Missing TimeDimension id");
+
+        ds.timeDimensionId(id);
+    }
+
+    private void parsePrimaryMeasure(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
+        check(id != null, reader, "Missing PrimaryMeasure id");
+
+        ds.primaryMeasureId(id);
+    }
+}

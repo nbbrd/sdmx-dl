@@ -21,8 +21,8 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -77,7 +77,7 @@ public class XMLStreamCursors {
         return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
     }
 
-    @Nullable
+    @Nonnull
     public DataCursor genericData21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {
         try {
             return genericData21(factory.createXMLStreamReader(stream), dsd);
@@ -90,5 +90,33 @@ public class XMLStreamCursors {
         TimeFormatParser tfParser = TimeFormatParser.sdmx21(TimeFormatParser.getFrequencyCodeIdIndex(dsd));
         GenericDataParser genericParser = GenericDataParser.sdmx21();
         return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
+    }
+
+    @Nonnull
+    public List<DataStructure> struct20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull String preferredLang) throws IOException {
+        try {
+            XMLStreamReader reader = factory.createXMLStreamReader(stream);
+            try {
+                return new XMLStreamStructure20(preferredLang).parse(reader);
+            } finally {
+                reader.close();
+            }
+        } catch (XMLStreamException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Nonnull
+    public List<DataStructure> struct21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull String preferredLang) throws IOException {
+        try {
+            XMLStreamReader reader = factory.createXMLStreamReader(stream);
+            try {
+                return new XMLStreamStructure21(preferredLang).parse(reader);
+            } finally {
+                reader.close();
+            }
+        } catch (XMLStreamException ex) {
+            throw new IOException(ex);
+        }
     }
 }
