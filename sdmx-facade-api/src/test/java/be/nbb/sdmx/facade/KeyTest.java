@@ -28,32 +28,32 @@ public class KeyTest {
     @Test
     public void testParse() {
         assertThat(Key.parse("")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(1);
-            assertThat(o.getItem(0)).isEqualTo("");
+            assertThat(o.size()).isEqualTo(1);
+            assertThat(o.get(0)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("all");
         });
 
         assertThat(Key.parse("LOCSTL04.AUS.M")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("AUS");
-            assertThat(o.getItem(2)).isEqualTo("M");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("AUS");
+            assertThat(o.get(2)).isEqualTo("M");
             assertThat(o.toString()).isEqualTo("LOCSTL04.AUS.M");
         });
 
         assertThat(Key.parse("LOCSTL04..M")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("");
-            assertThat(o.getItem(2)).isEqualTo("M");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("M");
             assertThat(o.toString()).isEqualTo("LOCSTL04..M");
         });
 
         assertThat(Key.parse("LOCSTL04..")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("");
-            assertThat(o.getItem(2)).isEqualTo("");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("LOCSTL04..");
         });
     }
@@ -61,38 +61,38 @@ public class KeyTest {
     @Test
     public void testValueOf() {
         assertThat(Key.of()).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(1);
-            assertThat(o.getItem(0)).isEqualTo("");
+            assertThat(o.size()).isEqualTo(1);
+            assertThat(o.get(0)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("all");
         });
 
         assertThat(Key.of("")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(1);
-            assertThat(o.getItem(0)).isEqualTo("");
+            assertThat(o.size()).isEqualTo(1);
+            assertThat(o.get(0)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("all");
         });
 
         assertThat(Key.of("LOCSTL04", "AUS", "M")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("AUS");
-            assertThat(o.getItem(2)).isEqualTo("M");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("AUS");
+            assertThat(o.get(2)).isEqualTo("M");
             assertThat(o.toString()).isEqualTo("LOCSTL04.AUS.M");
         });
 
         assertThat(Key.of("LOCSTL04", "", "M")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("");
-            assertThat(o.getItem(2)).isEqualTo("M");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("M");
             assertThat(o.toString()).isEqualTo("LOCSTL04..M");
         });
 
         assertThat(Key.of("LOCSTL04", "", "")).satisfies(o -> {
-            assertThat(o.getSize()).isEqualTo(3);
-            assertThat(o.getItem(0)).isEqualTo("LOCSTL04");
-            assertThat(o.getItem(1)).isEqualTo("");
-            assertThat(o.getItem(2)).isEqualTo("");
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("LOCSTL04..");
         });
     }

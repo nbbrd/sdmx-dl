@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
-import be.nbb.sdmx.facade.xml.stream.XMLStreamCursors;
+import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
@@ -122,7 +122,7 @@ public final class ConnectorsResource {
 
     private static List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
         // FIXME: no connectors impl yet
-        try (DataCursor cursor = XMLStreamCursors.genericData21(XMLInputFactory.newFactory(), xml.openReader(), Util.toDataStructure(dsd))) {
+        try (DataCursor cursor = SdmxXmlStreams.genericData21(XMLInputFactory.newFactory(), xml.openReader(), Util.toDataStructure(dsd))) {
             GregorianCalendar cal = new GregorianCalendar();
             List<Dimension> dims = dsd.getDimensions();
             List<PortableTimeSeries> result = new ArrayList<>();
@@ -131,8 +131,8 @@ public final class ConnectorsResource {
                 series.setFrequency("A");
                 cursor.getSeriesAttributes().forEach((k, v) -> series.addAttribute(k + '=' + v));
                 Key key = cursor.getSeriesKey();
-                for (int i = 0; i < key.getSize(); i++) {
-                    series.addDimension(dims.get(i).getId() + '=' + key.getItem(i));
+                for (int i = 0; i < key.size(); i++) {
+                    series.addDimension(dims.get(i).getId() + '=' + key.get(i));
                 }
                 while (cursor.nextObs()) {
                     Date period = cursor.getObsPeriod();

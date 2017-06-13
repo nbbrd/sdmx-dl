@@ -43,12 +43,12 @@ public final class Key {
     }
 
     @Nonnegative
-    public int getSize() {
+    public int size() {
         return items.length;
     }
 
     @Nonnull
-    public String getItem(@Nonnegative int index) throws IndexOutOfBoundsException {
+    public String get(@Nonnegative int index) throws IndexOutOfBoundsException {
         return items[index];
     }
 
@@ -60,11 +60,11 @@ public final class Key {
         if (this == ALL) {
             return true;
         }
-        if (getSize() != input.getSize()) {
+        if (size() != input.size()) {
             return false;
         }
-        for (int i = 0; i < getSize(); i++) {
-            if (!isWildcard(i) && !getItem(i).equals(input.getItem(i))) {
+        for (int i = 0; i < size(); i++) {
+            if (!isWildcard(i) && !get(i).equals(input.get(i))) {
                 return false;
             }
         }

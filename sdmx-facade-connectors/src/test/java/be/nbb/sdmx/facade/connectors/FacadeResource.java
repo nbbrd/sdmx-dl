@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
-import be.nbb.sdmx.facade.xml.stream.XMLStreamCursors;
+import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -76,7 +76,7 @@ public final class FacadeResource {
 
     private static List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return XMLStreamCursors.struct20(f, r, "en");
+            return SdmxXmlStreams.struct20(f, r, "en");
         }
     }
 
@@ -87,14 +87,14 @@ public final class FacadeResource {
     }
 
     private static List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
-        try (DataCursor cursor = XMLStreamCursors.genericData20(f, xml.openReader(), dsd)) {
+        try (DataCursor cursor = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
             return Series.copyOf(ref, cursor);
         }
     }
 
     private static List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return XMLStreamCursors.struct21(f, r, "en");
+            return SdmxXmlStreams.struct21(f, r, "en");
         }
     }
 
@@ -110,7 +110,7 @@ public final class FacadeResource {
     }
 
     private static List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
-        try (DataCursor cursor = XMLStreamCursors.genericData21(f, xml.openReader(), dsd)) {
+        try (DataCursor cursor = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
             return Series.copyOf(ref, cursor);
         }
     }

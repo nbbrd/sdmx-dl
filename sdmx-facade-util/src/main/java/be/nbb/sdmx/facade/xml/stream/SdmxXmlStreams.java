@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamReader;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class XMLStreamCursors {
+public class SdmxXmlStreams {
 
     @Nonnull
     public DataCursor compactData20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull DataStructure dsd) throws IOException {
