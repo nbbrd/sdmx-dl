@@ -28,10 +28,6 @@ public class ParsersTest {
     @Test
     public void test() throws Exception {
         assertThat(ConnectorsResource.nbb()).isEqualTo(FacadeResource.nbb());
-
-//        assertThat(ConnectorsResource.ecb()).isEqualTo(FacadeResource.ecb());
-//        DataStructure l = ConnectorsResource.ecb().getDataStructures().get(0);
-//        DataStructure r = FacadeResource.ecb().getDataStructures().get(0);
-//        assertThat(l.getDimensions()).isEqualTo(r.getDimensions());
+        assertThat(ConnectorsResource.ecb()).isEqualTo(FacadeResource.ecb());
     }
 }
