@@ -42,13 +42,16 @@ import javax.annotation.Nonnull;
 class SdmxConnectionAdapter implements SdmxConnection {
 
     private final GenericSDMXClient client;
+    private boolean closed;
 
     public SdmxConnectionAdapter(GenericSDMXClient client) {
         this.client = client;
+        this.closed = false;
     }
 
     @Override
     final public Set<Dataflow> getDataflows() throws IOException {
+        checkState();
         Set<Dataflow> result = new HashSet<>();
         for (it.bancaditalia.oss.sdmx.api.Dataflow o : loadDataFlowsById().values()) {
             result.add(Util.toDataflow(o));
@@ -58,16 +61,19 @@ class SdmxConnectionAdapter implements SdmxConnection {
 
     @Override
     final public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+        checkState();
         return Util.toDataflow(loadDataflow(flowRef));
     }
 
     @Override
     final public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
+        checkState();
         return Util.toDataStructure(loadDataStructure(flowRef));
     }
 
     @Override
     final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        checkState();
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");
         }
@@ -82,7 +88,13 @@ class SdmxConnectionAdapter implements SdmxConnection {
 
     @Override
     public void close() throws IOException {
-        // nothing to do
+        closed = true;
+    }
+
+    private void checkState() throws IOException {
+        if (closed) {
+            throw new IOException("Connection closed");
+        }
     }
 
     @Nonnull

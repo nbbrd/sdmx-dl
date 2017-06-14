@@ -21,6 +21,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
+import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,6 +35,8 @@ public class XMLStreamGenericDataCursorTest {
     public void testGenericData20() throws Exception {
         ByteSource xml = SdmxSource.NBB_DATA;
         Key.Builder builder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
+
+        DataCursorAssert.assertCompliance(() -> new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx20(), GenericDataParser.sdmx20()));
 
         try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx20(), GenericDataParser.sdmx20())) {
             int indexSeries = -1;
@@ -77,6 +80,8 @@ public class XMLStreamGenericDataCursorTest {
         ByteSource xml = SdmxSource.OTHER_GENERIC21;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
 
+        DataCursorAssert.assertCompliance(() -> new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21()));
+
         try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21())) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
@@ -110,6 +115,8 @@ public class XMLStreamGenericDataCursorTest {
     public void testGenericData21Bis() throws Exception {
         ByteSource xml = SdmxSource.ECB_DATA;
         Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
+
+        DataCursorAssert.assertCompliance(() -> new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21()));
 
         try (DataCursor o = new XMLStreamGenericDataCursor(xml.openXmlStream(), builder, TimeFormatParser.sdmx21(0), GenericDataParser.sdmx21())) {
             int indexSeries = -1;

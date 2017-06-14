@@ -34,22 +34,22 @@ public interface DataCursor extends Closeable {
     boolean nextSeries() throws IOException;
 
     @Nonnull
-    Key getSeriesKey() throws IOException;
+    Key getSeriesKey() throws IOException, IllegalStateException;
 
     @Nonnull
-    TimeFormat getSeriesTimeFormat() throws IOException;
+    TimeFormat getSeriesTimeFormat() throws IOException, IllegalStateException;
 
     @Nullable
-    String getSeriesAttribute(@Nonnull String key) throws IOException;
+    String getSeriesAttribute(@Nonnull String key) throws IOException, IllegalStateException;
 
     @Nonnull
-    Map<String, String> getSeriesAttributes() throws IOException;
+    Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException;
 
-    boolean nextObs() throws IOException;
-
-    @Nullable
-    Date getObsPeriod() throws IOException;
+    boolean nextObs() throws IOException, IllegalStateException;
 
     @Nullable
-    Double getObsValue() throws IOException;
+    Date getObsPeriod() throws IOException, IllegalStateException;
+
+    @Nullable
+    Double getObsValue() throws IOException, IllegalStateException;
 }

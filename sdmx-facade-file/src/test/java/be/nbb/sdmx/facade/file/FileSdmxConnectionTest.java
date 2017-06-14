@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.samples.SdmxSource;
+import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
@@ -75,5 +76,7 @@ public class FileSdmxConnectionTest {
             assertThat(indexObs).isEqualTo(56);
             assertThat(o.nextSeries()).isFalse();
         }
+
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, factory, decoder), flowRef);
     }
 }

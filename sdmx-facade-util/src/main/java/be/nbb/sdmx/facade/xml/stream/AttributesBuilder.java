@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.xml.stream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -46,6 +47,7 @@ final class AttributesBuilder {
 
     @Nullable
     String getAttribute(@Nonnull String key) {
+        Objects.requireNonNull(key);
         return data.get(key);
     }
 

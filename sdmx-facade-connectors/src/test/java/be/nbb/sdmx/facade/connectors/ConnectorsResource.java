@@ -46,10 +46,11 @@ import javax.xml.stream.XMLStreamException;
  *
  * @author Philippe Charles
  */
-public final class ConnectorsResource {
+@lombok.experimental.UtilityClass
+public class ConnectorsResource {
 
     @Nonnull
-    public static final MemSdmxRepository nbb() throws IOException {
+    public MemSdmxRepository nbb() throws IOException {
         List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE);
         List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE);
         List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0));
@@ -66,7 +67,7 @@ public final class ConnectorsResource {
     }
 
     @Nonnull
-    public static final MemSdmxRepository ecb() throws IOException {
+    public MemSdmxRepository ecb() throws IOException {
         List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE);
         List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS);
         List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0));
@@ -82,7 +83,7 @@ public final class ConnectorsResource {
                 .build();
     }
 
-    private static List<DataFlowStructure> struct20(ByteSource xml) throws IOException {
+    List<DataFlowStructure> struct20(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser.parse(r);
         } catch (XMLStreamException | SdmxException ex) {
@@ -90,13 +91,13 @@ public final class ConnectorsResource {
         }
     }
 
-    private static List<Dataflow> flow20(ByteSource xml) throws IOException {
+    List<Dataflow> flow20(ByteSource xml) throws IOException {
         return struct20(xml).stream()
                 .map(ConnectorsResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
-    private static List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd) throws IOException {
+    List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return GenericDataParser.parse(r, dsd, null, true).getData();
         } catch (XMLStreamException | SdmxException ex) {
@@ -104,7 +105,7 @@ public final class ConnectorsResource {
         }
     }
 
-    private static List<DataFlowStructure> struct21(ByteSource xml) throws IOException {
+    List<DataFlowStructure> struct21(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser.parse(r);
         } catch (XMLStreamException | SdmxException ex) {
@@ -112,7 +113,7 @@ public final class ConnectorsResource {
         }
     }
 
-    private static List<Dataflow> flow21(ByteSource xml) throws IOException {
+    List<Dataflow> flow21(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return it.bancaditalia.oss.sdmx.parser.v21.DataflowParser.parse(r);
         } catch (XMLStreamException ex) {
@@ -120,7 +121,7 @@ public final class ConnectorsResource {
         }
     }
 
-    private static List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
+    List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
         // FIXME: no connectors impl yet
         try (DataCursor cursor = SdmxXmlStreams.genericData21(XMLInputFactory.newFactory(), xml.openReader(), Util.toDataStructure(dsd))) {
             GregorianCalendar cal = new GregorianCalendar();
@@ -148,7 +149,7 @@ public final class ConnectorsResource {
         }
     }
 
-    private static Dataflow asDataflow(DataFlowStructure o) {
+    Dataflow asDataflow(DataFlowStructure o) {
         Dataflow result = new Dataflow();
         result.setAgency(o.getAgency());
         result.setDsdIdentifier(new DSDIdentifier(o.getId(), o.getAgency(), o.getVersion()));

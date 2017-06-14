@@ -36,9 +36,10 @@ import javax.xml.stream.XMLStreamException;
  *
  * @author Philippe Charles
  */
-public final class FacadeResource {
+@lombok.experimental.UtilityClass
+public class FacadeResource {
 
-    public static MemSdmxRepository nbb() throws IOException {
+    public MemSdmxRepository nbb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
 
         DataflowRef ref = DataflowRef.of("NBB", "TEST_DATASET", null);
@@ -56,7 +57,7 @@ public final class FacadeResource {
                 .build();
     }
 
-    public static MemSdmxRepository ecb() throws IOException {
+    public MemSdmxRepository ecb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
 
         DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
@@ -74,31 +75,31 @@ public final class FacadeResource {
                 .build();
     }
 
-    private static List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return SdmxXmlStreams.struct20(f, r, "en");
         }
     }
 
-    private static List<Dataflow> flow20(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<Dataflow> flow20(XMLInputFactory f, ByteSource xml) throws IOException {
         return struct20(f, xml).stream()
                 .map(FacadeResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
-    private static List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
+    private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
         try (DataCursor cursor = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
             return Series.copyOf(ref, cursor);
         }
     }
 
-    private static List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             return SdmxXmlStreams.struct21(f, r, "en");
         }
     }
 
-    private static List<Dataflow> flow21(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             // FIXME: no facade impl yet
             return it.bancaditalia.oss.sdmx.parser.v21.DataflowParser.parse(r).stream()
@@ -109,13 +110,13 @@ public final class FacadeResource {
         }
     }
 
-    private static List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
+    private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
         try (DataCursor cursor = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
             return Series.copyOf(ref, cursor);
         }
     }
 
-    private static Dataflow asDataflow(DataStructure o) {
+    private Dataflow asDataflow(DataStructure o) {
         DataflowRef ref = DataflowRef.of(o.getRef().getAgencyId(), o.getRef().getId(), o.getRef().getVersion());
         return Dataflow.of(ref, o.getRef(), o.getLabel());
     }

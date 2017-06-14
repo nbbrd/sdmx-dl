@@ -32,52 +32,67 @@ public final class NoOpCursor implements DataCursor {
 
     @Nonnull
     public static DataCursor noOp() {
-        return INSTANCE;
+        return new NoOpCursor();
     }
 
-    private static final NoOpCursor INSTANCE = new NoOpCursor();
+    private boolean closed = false;
 
     @Override
     public boolean nextSeries() throws IOException {
+        checkState();
         return false;
     }
 
     @Override
     public boolean nextObs() throws IOException {
-        return false;
+        checkState();
+        throw new IllegalStateException();
     }
 
     @Override
     public Key getSeriesKey() throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public TimeFormat getSeriesTimeFormat() throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public String getSeriesAttribute(String key) throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public Date getObsPeriod() throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public Double getObsValue() throws IOException {
+        checkState();
         throw new IllegalStateException();
     }
 
     @Override
     public void close() throws IOException {
+        closed = true;
+    }
+
+    private void checkState() throws IOException {
+        if (closed) {
+            throw new IOException("Cursor closed");
+        }
     }
 }

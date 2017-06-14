@@ -87,20 +87,18 @@ public final class ObsParser {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static abstract class DateParser {
+    private interface DateParser {
 
         @Nullable
-        abstract public Date parse(@Nonnull CharSequence input);
+        Date parse(@Nonnull CharSequence input);
 
         @Nonnull
-        public DateParser or(@Nonnull final DateParser r) {
-            final DateParser l = this;
-            return new DateParser() {
-                @Override
-                public Date parse(CharSequence input) {
-                    Date result = l.parse(input);
-                    return result != null ? result : r.parse(input);
-                }
+        @SuppressWarnings("null")
+        default DateParser or(@Nonnull DateParser r) {
+            DateParser l = this;
+            return o -> {
+                Date result = l.parse(o);
+                return result != null ? result : r.parse(o);
             };
         }
     }
@@ -132,24 +130,22 @@ public final class ObsParser {
     }
 
     @Nonnull
+    @SuppressWarnings("null")
     private static DateParser onStrictDatePattern(@Nonnull String datePattern) {
-        final DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.ROOT);
+        DateFormat dateFormat = new SimpleDateFormat(datePattern, Locale.ROOT);
         dateFormat.setLenient(false);
-        return new DateParser() {
-            @Override
-            public Date parse(CharSequence input) {
-                try {
-                    String inputAsString = input.toString();
-                    Date result = dateFormat.parse(inputAsString);
-                    return result != null && inputAsString.equals(dateFormat.format(result)) ? result : null;
-                } catch (ParseException ex) {
-                    return null;
-                }
+        return o -> {
+            try {
+                String inputAsString = o.toString();
+                Date result = dateFormat.parse(inputAsString);
+                return result != null && inputAsString.equals(dateFormat.format(result)) ? result : null;
+            } catch (ParseException ex) {
+                return null;
             }
         };
     }
 
-    private static final class YearFreqPosParser extends DateParser {
+    private static final class YearFreqPosParser implements DateParser {
 
         private static final Pattern Q = Pattern.compile("(\\d+)-?Q(\\d+)");
         private static final Pattern M = Pattern.compile("(\\d+)-?M(\\d+)");

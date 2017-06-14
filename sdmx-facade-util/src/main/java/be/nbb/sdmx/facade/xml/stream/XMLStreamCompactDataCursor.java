@@ -47,6 +47,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final TimeFormatParser timeFormatParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
+    private boolean closed;
+    private boolean hasSeries;
+    private boolean hasObs;
 
     XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, TimeFormatParser timeFormatParser, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
@@ -56,14 +59,18 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         this.timeFormatParser = timeFormatParser;
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
+        this.closed = false;
+        this.hasSeries = false;
+        this.hasObs = false;
     }
 
     @Override
     public boolean nextSeries() throws IOException {
+        checkState();
         keyBuilder.clear();
         attributesBuilder.clear();
         try {
-            return nextWhile(this::onDataSet);
+            return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
@@ -71,9 +78,10 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     @Override
     public boolean nextObs() throws IOException {
+        checkSeriesState();
         obsParser.clear();
         try {
-            return nextWhile(this::onSeriesBody);
+            return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
@@ -81,40 +89,67 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     @Override
     public Key getSeriesKey() throws IOException {
+        checkSeriesState();
         return keyBuilder.build();
     }
 
     @Override
     public TimeFormat getSeriesTimeFormat() throws IOException {
+        checkSeriesState();
         return obsParser.getTimeFormat();
     }
 
     @Override
     public String getSeriesAttribute(String key) throws IOException {
+        checkSeriesState();
         return attributesBuilder.getAttribute(key);
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
+        checkSeriesState();
         return attributesBuilder.build();
     }
 
     @Override
     public Date getObsPeriod() throws IOException {
+        checkObsState();
         return obsParser.getPeriod();
     }
 
     @Override
     public Double getObsValue() throws IOException {
+        checkObsState();
         return obsParser.getValue();
     }
 
     @Override
     public void close() throws IOException {
+        closed = true;
         try {
             reader.close();
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
+        }
+    }
+
+    private void checkState() throws IOException {
+        if (closed) {
+            throw new IOException("Cursor closed");
+        }
+    }
+
+    private void checkSeriesState() throws IOException, IllegalStateException {
+        checkState();
+        if (!hasSeries) {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void checkObsState() throws IOException, IllegalStateException {
+        checkSeriesState();
+        if (!hasObs) {
+            throw new IllegalStateException();
         }
     }
 

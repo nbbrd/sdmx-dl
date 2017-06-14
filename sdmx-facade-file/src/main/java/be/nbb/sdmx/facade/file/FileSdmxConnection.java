@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import javax.xml.stream.XMLInputFactory;
 
@@ -46,33 +47,43 @@ class FileSdmxConnection implements SdmxConnection {
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final Dataflow dataflow;
+    private boolean closed;
 
     FileSdmxConnection(File data, XMLInputFactory factory, SdmxDecoder decoder) {
         this.dataFile = data;
         this.factory = factory;
         this.decoder = decoder;
         this.dataflow = Dataflow.of(DataflowRef.parse(data.getName()), EMPTY, data.getName());
+        this.closed = false;
     }
 
     @Override
     final public Set<Dataflow> getDataflows() throws IOException {
+        checkState();
         return Collections.singleton(dataflow);
     }
 
     @Override
     final public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+        checkState();
+        Objects.requireNonNull(flowRef);
         checkFlowRef(flowRef);
         return dataflow;
     }
 
     @Override
     final public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
+        checkState();
+        Objects.requireNonNull(flowRef);
         checkFlowRef(flowRef);
         return decode().getDataStructure();
     }
 
     @Override
     final public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        checkState();
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(key);
         checkFlowRef(flowRef);
         return loadData(decode(), flowRef, key, serieskeysonly);
     }
@@ -84,9 +95,15 @@ class FileSdmxConnection implements SdmxConnection {
 
     @Override
     public void close() throws IOException {
-        // do nothing
+        closed = true;
     }
 
+    private void checkState() throws IOException {
+        if (closed) {
+            throw new IOException("Connection closed");
+        }
+    }
+    
     protected SdmxDecoder.Info decode() throws IOException {
         return decoder.decode(dataFile);
     }

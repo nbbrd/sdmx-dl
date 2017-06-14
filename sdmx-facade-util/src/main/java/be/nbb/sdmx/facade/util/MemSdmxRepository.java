@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -144,21 +145,26 @@ public class MemSdmxRepository {
         private final Map<DataflowRef, Dataflow> dataflows;
         private final Map<DataflowRef, List<Series>> data;
         private final boolean seriesKeysOnlySupported;
+        private boolean closed;
 
         private MemSdmxConnection(Map<DataStructureRef, DataStructure> dataStructures, Map<DataflowRef, Dataflow> dataflows, Map<DataflowRef, List<Series>> data, boolean seriesKeysOnlySupported) {
             this.dataStructures = dataStructures;
             this.dataflows = dataflows;
             this.data = data;
             this.seriesKeysOnlySupported = seriesKeysOnlySupported;
+            this.closed = false;
         }
 
         @Override
         public Set<Dataflow> getDataflows() throws IOException {
+            checkState();
             return new HashSet<>(dataflows.values());
         }
 
         @Override
         public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+            checkState();
+            Objects.requireNonNull(flowRef);
             Dataflow result = dataflows.get(flowRef);
             if (result != null) {
                 return result;
@@ -168,6 +174,7 @@ public class MemSdmxRepository {
 
         @Override
         public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
+            checkState();
             DataStructure result = dataStructures.get(getDataflow(flowRef).getDataStructureRef());
             if (result != null) {
                 return result;
@@ -177,6 +184,9 @@ public class MemSdmxRepository {
 
         @Override
         public DataCursor getData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+            checkState();
+            Objects.requireNonNull(flowRef);
+            Objects.requireNonNull(key);
             List<Series> col = data.get(flowRef);
             if (col != null) {
                 return new MemDataCursor(col, key);
@@ -191,71 +201,113 @@ public class MemSdmxRepository {
 
         @Override
         public void close() throws IOException {
-            // nothing to do
+            closed = true;
+        }
+
+        private void checkState() throws IOException {
+            if (closed) {
+                throw new IOException("Connection closed");
+            }
         }
     }
 
-    private static final class MemDataCursor implements DataCursor {
+    static final class MemDataCursor implements DataCursor {
 
         private final List<Series> col;
         private final Key key;
         private int i;
         private int j;
+        private boolean closed;
+        private boolean hasSeries;
+        private boolean hasObs;
 
         MemDataCursor(List<Series> col, Key key) {
             this.col = col;
             this.key = key;
             this.i = -1;
             this.j = -1;
+            this.closed = false;
+            this.hasSeries = false;
+            this.hasObs = false;
         }
 
         @Override
         public boolean nextSeries() throws IOException {
+            checkState();
             do {
                 i++;
                 j = -1;
-            } while (i < col.size() && !key.contains(getSeriesKey()));
-            return i < col.size();
+            } while (i < col.size() && !key.contains(col.get(i).getKey()));
+            return hasSeries = (i < col.size());
         }
 
         @Override
         public boolean nextObs() throws IOException {
+            checkSeriesState();
             j++;
-            return j < col.get(i).getObs().size();
+            return hasObs = (j < col.get(i).getObs().size());
         }
 
         @Override
         public Key getSeriesKey() throws IOException {
+            checkSeriesState();
             return col.get(i).getKey();
         }
 
         @Override
         public TimeFormat getSeriesTimeFormat() throws IOException {
+            checkSeriesState();
             return col.get(i).getTimeFormat();
         }
 
         @Override
         public String getSeriesAttribute(String key) throws IOException {
+            checkSeriesState();
+            Objects.requireNonNull(key);
             return col.get(i).getMeta().get(key);
         }
 
         @Override
         public Map<String, String> getSeriesAttributes() throws IOException {
+            checkSeriesState();
             return col.get(i).getMeta();
         }
 
         @Override
         public Date getObsPeriod() throws IOException {
+            checkObsState();
             return col.get(i).getObs().get(j).getPeriod();
         }
 
         @Override
         public Double getObsValue() throws IOException {
+            checkObsState();
             return col.get(i).getObs().get(j).getValue();
         }
 
         @Override
         public void close() throws IOException {
+            closed = true;
+        }
+
+        private void checkState() throws IOException {
+            if (closed) {
+                throw new IOException("Cursor closed");
+            }
+        }
+
+        private void checkSeriesState() throws IOException, IllegalStateException {
+            checkState();
+            if (!hasSeries) {
+                throw new IllegalStateException();
+            }
+        }
+
+        private void checkObsState() throws IOException, IllegalStateException {
+            checkSeriesState();
+            if (!hasObs) {
+                throw new IllegalStateException();
+            }
         }
     }
 
