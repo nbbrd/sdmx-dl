@@ -26,7 +26,7 @@ import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,8 +62,8 @@ public class DataCursorAdapterTest {
                                 .isNotEmpty();
                         assertThat(o.getObs())
                                 .hasSize(25)
-                                .startsWith(Obs.of(new GregorianCalendar(1991, 0, 1).getTime(), -2.8574221))
-                                .endsWith(Obs.of(new GregorianCalendar(2015, 0, 1).getTime(), -0.1420473));
+                                .startsWith(Obs.of(LocalDate.of(1991, 1, 1).atStartOfDay(), -2.8574221))
+                                .endsWith(Obs.of(LocalDate.of(2015, 1, 1).atStartOfDay(), -0.1420473));
                     });
         }
     }

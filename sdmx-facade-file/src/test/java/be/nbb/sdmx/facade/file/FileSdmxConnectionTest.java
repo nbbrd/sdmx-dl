@@ -64,11 +64,11 @@ public class FileSdmxConnectionTest {
             while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01");
+                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01T00:00:00");
                         assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01");
+                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01T00:00:00");
                         assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }

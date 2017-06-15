@@ -32,10 +32,8 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.parser.v20.GenericDataParser;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -124,7 +122,6 @@ public class ConnectorsResource {
     List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
         // FIXME: no connectors impl yet
         try (DataCursor cursor = SdmxXmlStreams.genericData21(XMLInputFactory.newFactory(), xml.openReader(), Util.toDataStructure(dsd))) {
-            GregorianCalendar cal = new GregorianCalendar();
             List<Dimension> dims = dsd.getDimensions();
             List<PortableTimeSeries> result = new ArrayList<>();
             while (cursor.nextSeries()) {
@@ -136,11 +133,10 @@ public class ConnectorsResource {
                     series.addDimension(dims.get(i).getId() + '=' + key.get(i));
                 }
                 while (cursor.nextObs()) {
-                    Date period = cursor.getObsPeriod();
+                    LocalDateTime period = cursor.getObsPeriod();
                     if (period != null) {
-                        cal.setTime(period);
                         Double value = cursor.getObsValue();
-                        series.addObservation(value != null ? value.toString() : "", String.valueOf(cal.get(Calendar.YEAR)), null);
+                        series.addObservation(value != null ? value.toString() : "", String.valueOf(period.getYear()), null);
                     }
                 }
                 result.add(series);

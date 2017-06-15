@@ -25,7 +25,7 @@ import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.CONTINUE;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.HALT;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.SUSPEND;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -112,7 +112,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public Date getObsPeriod() throws IOException {
+    public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
         return obsParser.getPeriod();
     }

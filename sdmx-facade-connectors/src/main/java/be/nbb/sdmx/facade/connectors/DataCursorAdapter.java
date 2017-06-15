@@ -22,8 +22,8 @@ import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.util.ObsParser;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -97,7 +97,7 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     @Override
-    public Date getObsPeriod() throws IOException {
+    public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
         return obs.periodString(current.getTimeSlots().get(index)).getPeriod();
     }

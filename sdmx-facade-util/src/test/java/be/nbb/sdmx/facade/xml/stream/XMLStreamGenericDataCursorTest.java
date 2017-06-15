@@ -54,11 +54,11 @@ public class XMLStreamGenericDataCursorTest {
                         while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1966-02-01");
+                                    assertThat(o.getObsPeriod()).isEqualTo("1966-02-01T00:00:00");
                                     assertThat(o.getObsValue()).isEqualTo(98.68823);
                                     break;
                                 case 188:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-01");
+                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-01T00:00:00");
                                     assertThat(o.getObsValue()).isEqualTo(101.1945);
                                     break;
                                 case 199:
@@ -97,11 +97,11 @@ public class XMLStreamGenericDataCursorTest {
             while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01");
+                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01T00:00:00");
                         assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01");
+                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01T00:00:00");
                         assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }
@@ -129,11 +129,11 @@ public class XMLStreamGenericDataCursorTest {
                         while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1991-01-01");
+                                    assertThat(o.getObsPeriod()).isEqualTo("1991-01-01T00:00:00");
                                     assertThat(o.getObsValue()).isEqualTo(-2.8574221);
                                     break;
                                 case 24:
-                                    assertThat(o.getObsPeriod()).isEqualTo("2015-01-01");
+                                    assertThat(o.getObsPeriod()).isEqualTo("2015-01-01T00:00:00");
                                     assertThat(o.getObsValue()).isEqualTo(-0.1420473);
                                     break;
                             }

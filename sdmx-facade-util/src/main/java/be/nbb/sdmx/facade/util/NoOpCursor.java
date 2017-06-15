@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -74,7 +74,7 @@ public final class NoOpCursor implements DataCursor {
     }
 
     @Override
-    public Date getObsPeriod() throws IOException {
+    public LocalDateTime getObsPeriod() throws IOException {
         checkState();
         throw new IllegalStateException();
     }

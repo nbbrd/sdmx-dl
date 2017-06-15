@@ -26,9 +26,9 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.TimeFormat;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +117,7 @@ public class MemSdmxRepository {
     @lombok.Value(staticConstructor = "of")
     public static final class Obs {
 
-        Date period;
+        LocalDateTime period;
         Double value;
     }
 
@@ -274,7 +274,7 @@ public class MemSdmxRepository {
         }
 
         @Override
-        public Date getObsPeriod() throws IOException {
+        public LocalDateTime getObsPeriod() throws IOException {
             checkObsState();
             return col.get(i).getObs().get(j).getPeriod();
         }
