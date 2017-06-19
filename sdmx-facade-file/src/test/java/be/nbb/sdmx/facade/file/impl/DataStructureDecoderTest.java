@@ -22,28 +22,21 @@ import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import be.nbb.sdmx.facade.file.SdmxDecoder;
-import static org.assertj.core.api.Assertions.assertThat;
-import java.io.File;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
 import be.nbb.sdmx.facade.samples.SdmxSource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
+import java.io.Reader;
 
 /**
  *
  * @author Philippe Charles
  */
-public class XMLStreamSdmxDecoderTest {
+public class DataStructureDecoderTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-    private final XMLStreamSdmxDecoder decoder = new XMLStreamSdmxDecoder(XMLInputFactory.newInstance());
+    private final XMLInputFactory factory = XMLInputFactory.newInstance();
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        File generic20 = temp.newFile();
-        SdmxSource.OTHER_GENERIC20.copyTo(generic20.toPath());
-
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "BIS_JOINT_DEBT", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
@@ -55,14 +48,13 @@ public class XMLStreamSdmxDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(decoder.decode(generic20)).isEqualTo(SdmxDecoder.Info.of(SdmxDecoder.FileType.GENERIC20, ds));
+        try (Reader stream = SdmxSource.OTHER_GENERIC20.openReader()) {
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC20, factory, stream)).isEqualTo(ds);
+        }
     }
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        File compact20 = temp.newFile();
-        SdmxSource.OTHER_COMPACT20.copyTo(compact20.toPath());
-
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "TODO", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
@@ -75,14 +67,13 @@ public class XMLStreamSdmxDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(decoder.decode(compact20)).isEqualTo(SdmxDecoder.Info.of(SdmxDecoder.FileType.COMPACT20, ds));
+        try (Reader stream = SdmxSource.OTHER_COMPACT20.openReader()) {
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT20, factory, stream)).isEqualTo(ds);
+        }
     }
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        File generic21 = temp.newFile();
-        SdmxSource.OTHER_GENERIC21.copyTo(generic21.toPath());
-
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
@@ -97,14 +88,13 @@ public class XMLStreamSdmxDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(decoder.decode(generic21)).isEqualTo(SdmxDecoder.Info.of(SdmxDecoder.FileType.GENERIC21, ds));
+        try (Reader stream = SdmxSource.OTHER_GENERIC21.openReader()) {
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC21, factory, stream)).isEqualTo(ds);
+        }
     }
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        File compact21 = temp.newFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
-
         DataStructure ds = DataStructure.builder()
                 .ref(DataStructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
@@ -119,6 +109,8 @@ public class XMLStreamSdmxDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(decoder.decode(compact21)).isEqualTo(SdmxDecoder.Info.of(SdmxDecoder.FileType.COMPACT21, ds));
+        try (Reader stream = SdmxSource.OTHER_COMPACT21.openReader()) {
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT21, factory, stream)).isEqualTo(ds);
+        }
     }
 }

@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.stream.XMLInputFactory;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.Property.FileProperty;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Collections;
@@ -44,6 +45,7 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
 
     private static final String PREFIX = "sdmx:file:";
     private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
+    private static final FileProperty STRUCTURE_PATH = new FileProperty("structurePath");
 
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
@@ -52,7 +54,7 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
 
     public FileSdmxDriver() {
         this.factory = XMLInputFactory.newInstance();
-        this.decoder = new XMLStreamSdmxDecoder(factory);
+        this.decoder = new XMLStreamSdmxDecoder(factory, "en");
         this.cache = new AtomicReference(new ConcurrentHashMap());
         this.clock = Clock.systemDefaultZone();
     }
@@ -60,7 +62,8 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
     @Override
     public SdmxConnection connect(URI uri, Map<?, ?> info) throws IOException {
         long cacheTtl = CACHE_TTL.get(info, DEFAULT_CACHE_TTL);
-        return new CachedFileSdmxConnection(getFile(uri), factory, decoder, cache.get(), clock, cacheTtl);
+        File structurePath = STRUCTURE_PATH.get(info, null);
+        return new CachedFileSdmxConnection(getData(uri), structurePath, factory, decoder, cache.get(), clock, cacheTtl);
     }
 
     @Override
@@ -83,7 +86,7 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
         this.cache.set(cache != null ? cache : new ConcurrentHashMap());
     }
 
-    private static File getFile(URI uri) {
+    private static File getData(URI uri) {
         return new File(uri.toString().substring(PREFIX.length()));
     }
 }

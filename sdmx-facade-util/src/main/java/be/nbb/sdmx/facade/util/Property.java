@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.util;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -96,6 +97,25 @@ public abstract class Property {
 
         public void set(Map<String, String> props, long value) {
             props.put(getKey(), String.valueOf(value));
+        }
+    }
+
+    public static final class FileProperty extends Property {
+
+        public FileProperty(String key) {
+            super(key);
+        }
+
+        public File get(Map props, File defaultValue) {
+            Object result = props.get(getKey());
+            if (result != null) {
+                return new File(result.toString());
+            }
+            return defaultValue;
+        }
+
+        public void set(Map<String, String> props, File value) {
+            props.put(getKey(), value.toString());
         }
     }
 }

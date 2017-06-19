@@ -44,13 +44,15 @@ class FileSdmxConnection implements SdmxConnection {
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
     private final File dataFile;
+    private final File structureFile;
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(File data, XMLInputFactory factory, SdmxDecoder decoder) {
+    FileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder) {
         this.dataFile = data;
+        this.structureFile = structureFile;
         this.factory = factory;
         this.decoder = decoder;
         this.dataflow = Dataflow.of(DataflowRef.parse(data.getName()), EMPTY, data.getName());
@@ -103,13 +105,13 @@ class FileSdmxConnection implements SdmxConnection {
             throw new IOException("Connection closed");
         }
     }
-    
+
     protected SdmxDecoder.Info decode() throws IOException {
-        return decoder.decode(dataFile);
+        return decoder.decode(dataFile, structureFile);
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        switch (entry.getFileType()) {
+        switch (entry.getDataType()) {
             case GENERIC20:
                 return SdmxXmlStreams.genericData20(factory, open(dataFile), entry.getDataStructure());
             case COMPACT20:
@@ -119,7 +121,7 @@ class FileSdmxConnection implements SdmxConnection {
             case COMPACT21:
                 return SdmxXmlStreams.compactData21(factory, open(dataFile), entry.getDataStructure());
             default:
-                throw new IOException("Don't known how to handle type '" + entry.getFileType() + "'");
+                throw new IOException("Don't known how to handle type '" + entry.getDataType() + "'");
         }
     }
 

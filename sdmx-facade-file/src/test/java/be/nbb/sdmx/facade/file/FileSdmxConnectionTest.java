@@ -40,14 +40,14 @@ public class FileSdmxConnectionTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
     private final XMLInputFactory factory = XMLInputFactory.newInstance();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(factory);
+    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(factory, "en");
 
     @Test
     public void testCompactData21() throws IOException {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
 
-        FileSdmxConnection conn = new FileSdmxConnection(compact21, factory, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(compact21, null, factory, decoder);
 
         DataflowRef flowRef = DataflowRef.parse(compact21.getName());
 
@@ -77,6 +77,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, factory, decoder), flowRef);
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, null, factory, decoder), flowRef);
     }
 }

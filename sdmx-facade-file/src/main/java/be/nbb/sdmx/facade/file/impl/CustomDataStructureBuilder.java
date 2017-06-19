@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import be.nbb.sdmx.facade.file.SdmxDecoder.FileType;
+import be.nbb.sdmx.facade.file.SdmxDecoder.DataType;
 import java.util.Collection;
 
 /**
@@ -40,7 +40,7 @@ final class CustomDataStructureBuilder {
 
     private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap();
     private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap();
-    private FileType fileType = FileType.UNKNOWN;
+    private DataType fileType = DataType.UNKNOWN;
     private DataStructureRef ref = null;
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
@@ -58,7 +58,7 @@ final class CustomDataStructureBuilder {
     }
 
     @Nonnull
-    public CustomDataStructureBuilder fileType(@Nonnull FileType fileType) {
+    public CustomDataStructureBuilder fileType(@Nonnull DataType fileType) {
         this.fileType = fileType;
         return this;
     }
@@ -100,7 +100,7 @@ final class CustomDataStructureBuilder {
     private Set<Dimension> guessDimensions() {
         Set<Dimension> result = new LinkedHashSet<>();
         int position = 1;
-        boolean needsFiltering = fileType.equals(FileType.COMPACT20) || fileType.equals(FileType.COMPACT21);
+        boolean needsFiltering = fileType.equals(DataType.COMPACT20) || fileType.equals(DataType.COMPACT21);
         for (Entry<String, Set<String>> item : dimensions.entrySet()) {
             if (needsFiltering && isAttribute(item)) {
                 continue;

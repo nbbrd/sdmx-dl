@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import java.io.File;
 import java.io.IOException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  *
@@ -28,17 +29,17 @@ import javax.annotation.Nonnull;
 public interface SdmxDecoder {
 
     @Nonnull
-    Info decode(@Nonnull File file) throws IOException;
+    Info decode(@Nonnull File data, @Nullable File structure) throws IOException;
 
-    public enum FileType {
+    enum DataType {
 
-        GENERIC20, GENERIC21, COMPACT20, COMPACT21, UNKNOWN;
+        GENERIC20, GENERIC21, COMPACT20, COMPACT21, UNKNOWN
     }
 
     @lombok.Value(staticConstructor = "of")
-    public static final class Info {
+    class Info {
 
-        private final FileType fileType;
-        private final DataStructure dataStructure;
+        DataType dataType;
+        DataStructure dataStructure;
     }
 }
