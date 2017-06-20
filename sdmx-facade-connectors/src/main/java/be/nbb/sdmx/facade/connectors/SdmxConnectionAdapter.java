@@ -102,7 +102,7 @@ class SdmxConnectionAdapter implements SdmxConnection {
         try {
             return client.getDataflows();
         } catch (SdmxException ex) {
-            throw new IOException("While getting dataflows", ex);
+            throw new IOException("Failed to get datasets", ex);
         }
     }
 
@@ -111,19 +111,19 @@ class SdmxConnectionAdapter implements SdmxConnection {
         try {
             return client.getDataflow(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion());
         } catch (SdmxException ex) {
-            throw new IOException("While getting dataflow '" + flowRef + "'", ex);
+            throw new IOException("Failed to get details from dataset '" + flowRef + "'", ex);
         }
     }
 
     @Nonnull
     protected it.bancaditalia.oss.sdmx.api.DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException {
+        it.bancaditalia.oss.sdmx.api.DSDIdentifier dsd = client instanceof DotStat
+                ? new DSDIdentifier(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion())
+                : loadDataflow(flowRef).getDsdIdentifier();
         try {
-            it.bancaditalia.oss.sdmx.api.DSDIdentifier dsd = client instanceof DotStat
-                    ? new DSDIdentifier(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion())
-                    : loadDataflow(flowRef).getDsdIdentifier();
             return client.getDataFlowStructure(dsd, true);
         } catch (SdmxException ex) {
-            throw new IOException("While getting datastructure for '" + flowRef + "'", ex);
+            throw new IOException("Failed to get data structure from dataset '" + flowRef + "'", ex);
         }
     }
 
@@ -139,7 +139,7 @@ class SdmxConnectionAdapter implements SdmxConnection {
             if (isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();
             }
-            throw new IOException("While getting data for '" + flowRef + "' at '" + key + "'", ex);
+            throw new IOException("Failed to get data from dataset '" + flowRef + "' with key '" + key + "'", ex);
         }
     }
 
