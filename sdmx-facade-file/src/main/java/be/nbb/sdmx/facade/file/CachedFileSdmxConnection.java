@@ -40,11 +40,12 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<MemSdmxRepository> loadDataKey;
 
-    CachedFileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache, Clock clock, long ttlInMillis) {
-        super(data, structureFile, factory, decoder);
+    CachedFileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder, DataflowRef flowRef, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+        super(data, structureFile, factory, decoder, flowRef);
         this.cache = TtlCache.of(cache, clock, ttlInMillis);
-        this.decodeKey = TypedId.of("cache://" + data.getPath() + "decode");
-        this.loadDataKey = TypedId.of("cache://" + data.getPath() + "loadData");
+        String id = data.getPath() + (structureFile != null ? structureFile.getPath() : "");
+        this.decodeKey = TypedId.of("cache://" + id + "decode");
+        this.loadDataKey = TypedId.of("cache://" + id + "loadData");
     }
 
     @Override

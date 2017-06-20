@@ -50,12 +50,12 @@ class FileSdmxConnection implements SdmxConnection {
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder) {
+    FileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder, DataflowRef flowRef) {
         this.dataFile = data;
         this.structureFile = structureFile;
         this.factory = factory;
         this.decoder = decoder;
-        this.dataflow = Dataflow.of(DataflowRef.parse(data.getName()), EMPTY, data.getName());
+        this.dataflow = Dataflow.of(flowRef, EMPTY, data.getName());
         this.closed = false;
     }
 

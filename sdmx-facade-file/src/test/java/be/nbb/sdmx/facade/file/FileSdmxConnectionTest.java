@@ -47,9 +47,9 @@ public class FileSdmxConnectionTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
 
-        FileSdmxConnection conn = new FileSdmxConnection(compact21, null, factory, decoder);
-
         DataflowRef flowRef = DataflowRef.parse(compact21.getName());
+
+        FileSdmxConnection conn = new FileSdmxConnection(compact21, null, factory, decoder, flowRef);
 
         assertThat(conn.getDataflows()).hasSize(1);
         assertThat(conn.getDataStructure(flowRef).getDimensions()).hasSize(7);
@@ -77,6 +77,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, null, factory, decoder), flowRef);
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, null, factory, decoder, flowRef), flowRef);
     }
 }

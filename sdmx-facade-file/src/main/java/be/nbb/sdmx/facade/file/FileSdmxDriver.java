@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.file;
 
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
@@ -61,9 +62,12 @@ public final class FileSdmxDriver implements SdmxDriver, HasCache {
 
     @Override
     public SdmxConnection connect(URI uri, Map<?, ?> info) throws IOException {
+        File data = getData(uri);
         long cacheTtl = CACHE_TTL.get(info, DEFAULT_CACHE_TTL);
-        File structurePath = STRUCTURE_PATH.get(info, null);
-        return new CachedFileSdmxConnection(getData(uri), structurePath, factory, decoder, cache.get(), clock, cacheTtl);
+        File structureFile = STRUCTURE_PATH.get(info, null);
+
+        DataflowRef flowRef = DataflowRef.parse(data.getName());
+        return new CachedFileSdmxConnection(data, structureFile, factory, decoder, flowRef, cache.get(), clock, cacheTtl);
     }
 
     @Override
