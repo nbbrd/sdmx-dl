@@ -18,7 +18,6 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.samples.SdmxSource;
@@ -40,23 +39,23 @@ public class FileSdmxConnectionTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
     private final XMLInputFactory factory = XMLInputFactory.newInstance();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(factory, "en");
+    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(factory);
 
     @Test
     public void testCompactData21() throws IOException {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
 
-        DataflowRef flowRef = DataflowRef.parse(compact21.getName());
+        SdmxFile file = new SdmxFile(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(compact21, null, factory, decoder, flowRef);
+        FileSdmxConnection conn = new FileSdmxConnection(file, factory, decoder, "en");
 
         assertThat(conn.getDataflows()).hasSize(1);
-        assertThat(conn.getDataStructure(flowRef).getDimensions()).hasSize(7);
+        assertThat(conn.getDataStructure(file.getDataflowRef()).getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getData(flowRef, Key.ALL, false)) {
+        try (DataCursor o = conn.getData(file.getDataflowRef(), Key.ALL, false)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
@@ -77,6 +76,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(compact21, null, factory, decoder, flowRef), flowRef);
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, factory, decoder, "en"), file.getDataflowRef());
     }
 }

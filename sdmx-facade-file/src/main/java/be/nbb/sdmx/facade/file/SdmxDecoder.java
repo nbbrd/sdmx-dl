@@ -17,10 +17,8 @@
 package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataStructure;
-import java.io.File;
 import java.io.IOException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  *
@@ -29,7 +27,7 @@ import javax.annotation.Nullable;
 public interface SdmxDecoder {
 
     @Nonnull
-    Info decode(@Nonnull File data, @Nullable File structure) throws IOException;
+    Info decode(@Nonnull SdmxFile file, @Nonnull String preferredLang) throws IOException;
 
     enum DataType {
 

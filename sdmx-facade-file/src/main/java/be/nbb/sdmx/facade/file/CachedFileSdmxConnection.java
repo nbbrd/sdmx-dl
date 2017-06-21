@@ -23,11 +23,11 @@ import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
-import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLInputFactory;
 
 /**
@@ -36,14 +36,18 @@ import javax.xml.stream.XMLInputFactory;
  */
 final class CachedFileSdmxConnection extends FileSdmxConnection {
 
+    // TODO: replace ttl with file last modification time
+    private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
+    private static final Clock CLOCK = Clock.systemDefaultZone();
+
     private final TtlCache cache;
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<MemSdmxRepository> loadDataKey;
 
-    CachedFileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder, DataflowRef flowRef, ConcurrentMap cache, Clock clock, long ttlInMillis) {
-        super(data, structureFile, factory, decoder, flowRef);
-        this.cache = TtlCache.of(cache, clock, ttlInMillis);
-        String id = data.getPath() + (structureFile != null ? structureFile.getPath() : "");
+    CachedFileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, String preferredLang, ConcurrentMap cache) {
+        super(file, factory, decoder, preferredLang);
+        this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
+        String id = file.toString();
         this.decodeKey = TypedId.of("cache://" + id + "decode");
         this.loadDataKey = TypedId.of("cache://" + id + "loadData");
     }

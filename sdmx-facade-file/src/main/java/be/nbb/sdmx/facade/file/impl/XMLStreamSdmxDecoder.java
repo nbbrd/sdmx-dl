@@ -26,6 +26,7 @@ import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT21;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC21;
+import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -37,19 +38,17 @@ import java.nio.file.Files;
 public final class XMLStreamSdmxDecoder implements SdmxDecoder {
 
     private final XMLInputFactory factory;
-    private final String preferredLang;
 
-    public XMLStreamSdmxDecoder(XMLInputFactory factory, String preferredLang) {
+    public XMLStreamSdmxDecoder(XMLInputFactory factory) {
         this.factory = factory;
-        this.preferredLang = preferredLang;
     }
 
     @Override
-    public Info decode(File data, File structure) throws IOException {
-        DataType dataType = probeDataType(data);
-        return Info.of(dataType, structure != null
-                ? parseDataStructure(dataType, structure)
-                : decodeDataStructure(dataType, data));
+    public Info decode(SdmxFile file, String preferredLang) throws IOException {
+        DataType dataType = probeDataType(file.getData());
+        return Info.of(dataType, file.getStructure() != null
+                ? parseDataStructure(dataType, file.getStructure(), preferredLang)
+                : decodeDataStructure(dataType, file.getData()));
     }
 
     private DataType probeDataType(File data) throws IOException {
@@ -58,7 +57,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private DataStructure parseDataStructure(DataType dataType, File structure) throws IOException {
+    private DataStructure parseDataStructure(DataType dataType, File structure, String preferredLang) throws IOException {
         switch (dataType) {
             case GENERIC20:
             case COMPACT20:

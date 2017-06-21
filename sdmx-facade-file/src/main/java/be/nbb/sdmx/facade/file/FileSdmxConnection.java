@@ -43,19 +43,19 @@ class FileSdmxConnection implements SdmxConnection {
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
-    private final File dataFile;
-    private final File structureFile;
+    private final SdmxFile file;
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
+    private final String preferredLang;
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(File data, File structureFile, XMLInputFactory factory, SdmxDecoder decoder, DataflowRef flowRef) {
-        this.dataFile = data;
-        this.structureFile = structureFile;
+    FileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, String preferredLang) {
+        this.file = file;
         this.factory = factory;
         this.decoder = decoder;
-        this.dataflow = Dataflow.of(flowRef, EMPTY, data.getName());
+        this.preferredLang = preferredLang;
+        this.dataflow = Dataflow.of(file.getDataflowRef(), EMPTY, file.getData().getName());
         this.closed = false;
     }
 
@@ -107,19 +107,19 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected SdmxDecoder.Info decode() throws IOException {
-        return decoder.decode(dataFile, structureFile);
+        return decoder.decode(file, preferredLang);
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         switch (entry.getDataType()) {
             case GENERIC20:
-                return SdmxXmlStreams.genericData20(factory, open(dataFile), entry.getDataStructure());
+                return SdmxXmlStreams.genericData20(factory, open(file.getData()), entry.getDataStructure());
             case COMPACT20:
-                return SdmxXmlStreams.compactData20(factory, open(dataFile), entry.getDataStructure());
+                return SdmxXmlStreams.compactData20(factory, open(file.getData()), entry.getDataStructure());
             case GENERIC21:
-                return SdmxXmlStreams.genericData21(factory, open(dataFile), entry.getDataStructure());
+                return SdmxXmlStreams.genericData21(factory, open(file.getData()), entry.getDataStructure());
             case COMPACT21:
-                return SdmxXmlStreams.compactData21(factory, open(dataFile), entry.getDataStructure());
+                return SdmxXmlStreams.compactData21(factory, open(file.getData()), entry.getDataStructure());
             default:
                 throw new IOException("Don't known how to handle type '" + entry.getDataType() + "'");
         }
