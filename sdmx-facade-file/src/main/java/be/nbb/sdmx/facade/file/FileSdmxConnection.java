@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import javax.xml.stream.XMLInputFactory;
@@ -46,16 +48,16 @@ class FileSdmxConnection implements SdmxConnection {
     private final SdmxFile file;
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
-    private final String preferredLang;
     private final Dataflow dataflow;
+    private final List<Locale.LanguageRange> languages;
     private boolean closed;
 
-    FileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, String preferredLang) {
+    FileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, List<Locale.LanguageRange> languages) {
         this.file = file;
         this.factory = factory;
         this.decoder = decoder;
-        this.preferredLang = preferredLang;
         this.dataflow = Dataflow.of(file.getDataflowRef(), EMPTY, file.getData().getName());
+        this.languages = languages;
         this.closed = false;
     }
 
@@ -107,7 +109,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected SdmxDecoder.Info decode() throws IOException {
-        return decoder.decode(file, preferredLang);
+        return decoder.decode(file, languages);
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {

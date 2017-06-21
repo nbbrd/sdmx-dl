@@ -31,6 +31,7 @@ import java.net.URL;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -49,7 +50,7 @@ final class SdmxDriverSupport implements HasCache {
     public interface ClientSupplier {
 
         @Nonnull
-        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info) throws MalformedURLException;
+        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull List<Locale.LanguageRange> languages) throws MalformedURLException;
     }
 
     @Nonnull
@@ -70,14 +71,14 @@ final class SdmxDriverSupport implements HasCache {
     private SdmxDriverSupport(String prefix, ClientSupplier supplier, ConcurrentMap cache, Clock clock) {
         this.prefix = prefix;
         this.supplier = supplier;
-        this.cache = new AtomicReference(cache);
+        this.cache = new AtomicReference<>(cache);
         this.clock = clock;
     }
 
-    public SdmxConnection connect(URI uri, Map<?, ?> info) throws IOException {
+    public SdmxConnection connect(URI uri, Map<?, ?> info, List<Locale.LanguageRange> languages) throws IOException {
         try {
             URL endpoint = new URL(uri.toString().substring(prefix.length()));
-            GenericSDMXClient client = supplier.getClient(endpoint, info);
+            GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
             applyTimeouts(client, info);
             return new CachedSdmxConnection(client, endpoint.getHost(), cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
         } catch (MalformedURLException ex) {
@@ -106,7 +107,7 @@ final class SdmxDriverSupport implements HasCache {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static ClientSupplier supplierOf(Class<? extends RestSdmxClient> clazz) {
-        return (URL endpoint, Map<?, ?> info) -> {
+        return (URL endpoint, Map<?, ?> info, List<Locale.LanguageRange> languages) -> {
             try {
                 GenericSDMXClient result = clazz.newInstance();
                 result.setEndpoint(endpoint);

@@ -27,6 +27,7 @@ import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
@@ -77,7 +78,7 @@ public class FacadeResource {
 
     private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct20(f, r, "en");
+            return SdmxXmlStreams.struct20(f, r, Collections.emptyList());
         }
     }
 
@@ -95,7 +96,7 @@ public class FacadeResource {
 
     private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct21(f, r, "en");
+            return SdmxXmlStreams.struct21(f, r, Collections.emptyList());
         }
     }
 

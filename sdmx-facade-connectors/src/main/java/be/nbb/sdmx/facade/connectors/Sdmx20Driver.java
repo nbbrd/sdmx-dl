@@ -24,6 +24,7 @@ import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -46,7 +47,7 @@ public final class Sdmx20Driver implements SdmxDriver, HasCache {
 
     private static final class CustomClient extends RestSdmx20Client {
 
-        public CustomClient(URL endpoint, Map<?, ?> info) {
+        public CustomClient(URL endpoint, Map<?, ?> info, List<Locale.LanguageRange> languages) {
             super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
         }
     }

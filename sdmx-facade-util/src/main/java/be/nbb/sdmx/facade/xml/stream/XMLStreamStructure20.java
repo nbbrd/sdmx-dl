@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
-import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +26,10 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
+import java.util.Locale;
 import javax.annotation.Nonnull;
 
 /**
@@ -37,10 +38,12 @@ import javax.annotation.Nonnull;
  */
 final class XMLStreamStructure20 {
 
-    private final String preferredLang;
+    private final TextBuilder structureLabel;
+    private final TextBuilder label;
 
-    XMLStreamStructure20(String preferredLang) {
-        this.preferredLang = preferredLang;
+    XMLStreamStructure20(List<Locale.LanguageRange> languages) {
+        this.structureLabel = new TextBuilder(languages);
+        this.label = new TextBuilder(languages);
     }
 
     @Nonnull
@@ -92,10 +95,6 @@ final class XMLStreamStructure20 {
     private static final String CONCEPT_REF_ATTR = "conceptRef";
     private static final String CODELIST_ATTR = "codelist";
 
-    private boolean isPreferredLang(XMLStreamReader reader) {
-        return preferredLang.equals(reader.getAttributeValue(null, LANG_ATTR));
-    }
-
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
         String ns = reader.getNamespaceURI();
         check(NS_20.equals(ns), reader, "Invalid namespace '%s'", ns);
@@ -121,13 +120,11 @@ final class XMLStreamStructure20 {
         String id = reader.getAttributeValue(null, VALUE_ATTR);
         check(id != null, reader, "Missing Code value");
 
-        String label = null;
+        label.clear();
         while (nextTag(reader, CODE_TAG, DESCRIPTION_TAG)) {
-            if (label == null || isPreferredLang(reader)) {
-                label = reader.getElementText();
-            }
+            parseNameTag(reader, label);
         }
-        codelist.put(id, label != null ? label : id);
+        codelist.put(id, label.build(id));
     }
 
     private void parseConcepts(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
@@ -140,13 +137,11 @@ final class XMLStreamStructure20 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         check(id != null, reader, "Missing Concept id");
 
-        String label = null;
+        label.clear();
         while (nextTag(reader, CONCEPT_TAG, NAME_TAG)) {
-            if (label == null || isPreferredLang(reader)) {
-                label = reader.getElementText();
-            }
+            parseNameTag(reader, label);
         }
-        concepts.put(id, label != null ? label : id);
+        concepts.put(id, label.build(id));
     }
 
     private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
@@ -161,20 +156,18 @@ final class XMLStreamStructure20 {
 
         DataStructure.Builder ds = DataStructure.builder();
         ds.ref(DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
-        String label = null;
+        structureLabel.clear();
         while (nextTags(reader, KEY_FAMILY_TAG)) {
             switch (reader.getLocalName()) {
                 case NAME_TAG:
-                    if (label == null || isPreferredLang(reader)) {
-                        label = reader.getElementText();
-                    }
+                    parseNameTag(reader, structureLabel);
                     break;
                 case COMPONENTS_TAG:
                     parseDataStructureComponents(reader, ds, toConceptName, toCodes);
                     break;
             }
         }
-        ds.label(label != null ? label : id);
+        ds.label(structureLabel.build(id));
         result.add(ds.build());
     }
 
@@ -217,5 +210,12 @@ final class XMLStreamStructure20 {
         check(id != null, reader, "Missing PrimaryMeasure id");
 
         ds.primaryMeasureId(id);
+    }
+
+    private void parseNameTag(XMLStreamReader reader, TextBuilder langStack) throws XMLStreamException {
+        String lang = reader.getAttributeValue(null, LANG_ATTR);
+        if (lang != null) {
+            langStack.put(lang, reader.getElementText());
+        }
     }
 }

@@ -26,6 +26,8 @@ import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLInputFactory;
@@ -44,8 +46,8 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<MemSdmxRepository> loadDataKey;
 
-    CachedFileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, String preferredLang, ConcurrentMap cache) {
-        super(file, factory, decoder, preferredLang);
+    CachedFileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, List<Locale.LanguageRange> languages, ConcurrentMap cache) {
+        super(file, factory, decoder, languages);
         this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
         String id = file.toString();
         this.decodeKey = TypedId.of("cache://" + id + "decode");

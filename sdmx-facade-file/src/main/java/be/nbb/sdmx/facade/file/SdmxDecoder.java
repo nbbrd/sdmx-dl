@@ -18,6 +18,8 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataStructure;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import javax.annotation.Nonnull;
 
 /**
@@ -27,7 +29,7 @@ import javax.annotation.Nonnull;
 public interface SdmxDecoder {
 
     @Nonnull
-    Info decode(@Nonnull SdmxFile file, @Nonnull String preferredLang) throws IOException;
+    Info decode(@Nonnull SdmxFile file, @Nonnull List<Locale.LanguageRange> ranges) throws IOException;
 
     enum DataType {
 

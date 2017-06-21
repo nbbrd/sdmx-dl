@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.Key;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -93,11 +94,11 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public List<DataStructure> struct20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull String preferredLang) throws IOException {
+    public List<DataStructure> struct20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull List<Locale.LanguageRange> ranges) throws IOException {
         try {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             try {
-                return new XMLStreamStructure20(preferredLang).parse(reader);
+                return new XMLStreamStructure20(ranges).parse(reader);
             } finally {
                 reader.close();
             }
@@ -107,11 +108,11 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public List<DataStructure> struct21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull String preferredLang) throws IOException {
+    public List<DataStructure> struct21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull List<Locale.LanguageRange> ranges) throws IOException {
         try {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             try {
-                return new XMLStreamStructure21(preferredLang).parse(reader);
+                return new XMLStreamStructure21(ranges).parse(reader);
             } finally {
                 reader.close();
             }

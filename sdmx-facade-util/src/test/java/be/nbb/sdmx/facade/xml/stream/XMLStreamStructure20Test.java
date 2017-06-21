@@ -19,6 +19,8 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.Locale;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +38,7 @@ public class XMLStreamStructure20Test {
     public void test() throws Exception {
         XMLInputFactory factory = XMLInputFactory.newFactory();
 
-        XMLStreamStructure20 p1 = new XMLStreamStructure20("en");
+        XMLStreamStructure20 p1 = new XMLStreamStructure20(Collections.emptyList());
 
         try (InputStreamReader stream = SdmxSource.NBB_DATA_STRUCTURE.openReader()) {
             assertThat(p1.parse(factory.createXMLStreamReader(stream))).hasSize(1).element(0).satisfies(o -> {
@@ -52,7 +54,7 @@ public class XMLStreamStructure20Test {
             });
         }
 
-        XMLStreamStructure20 p2 = new XMLStreamStructure20("fr");
+        XMLStreamStructure20 p2 = new XMLStreamStructure20(Locale.LanguageRange.parse("fr"));
 
         try (InputStreamReader stream = SdmxSource.NBB_DATA_STRUCTURE.openReader()) {
             assertThat(p2.parse(factory.createXMLStreamReader(stream))).hasSize(1).element(0).satisfies(o -> {

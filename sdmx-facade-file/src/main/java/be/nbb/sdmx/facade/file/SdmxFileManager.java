@@ -21,11 +21,12 @@ import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.stream.XMLInputFactory;
 
 /**
@@ -37,22 +38,25 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final AtomicReference<ConcurrentMap> cache;
-    private final AtomicReference<String> preferredLang;
 
     public SdmxFileManager() {
         this.factory = XMLInputFactory.newInstance();
         this.decoder = new XMLStreamSdmxDecoder(factory);
-        this.cache = new AtomicReference(new ConcurrentHashMap());
-        this.preferredLang = new AtomicReference("en");
+        this.cache = new AtomicReference<>(new ConcurrentHashMap());
     }
 
     @Override
-    public SdmxConnection getConnection(String name) throws IOException {
+    public SdmxConnection getConnection(String name, List<Locale.LanguageRange> languages) throws IOException {
         try {
-            return getConnection(SdmxFile.parse(name));
+            return getConnection(SdmxFile.parse(name), languages);
         } catch (IllegalArgumentException ex) {
             throw new IOException(ex.getMessage(), ex.getCause());
         }
+    }
+
+    @Nonnull
+    public SdmxConnection getConnection(@Nonnull SdmxFile file, @Nonnull List<Locale.LanguageRange> languages) throws IOException {
+        return new CachedFileSdmxConnection(file, factory, decoder, languages, cache.get());
     }
 
     @Override
@@ -63,19 +67,6 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     @Override
     public void setCache(ConcurrentMap cache) {
         this.cache.set(cache != null ? cache : new ConcurrentHashMap());
-    }
-
-    @Nonnull
-    public String getPreferredLang() {
-        return preferredLang.get();
-    }
-
-    public void setPreferredLang(@Nullable String preferredLang) {
-        this.preferredLang.set(preferredLang != null ? preferredLang : "en");
-    }
-
-    private SdmxConnection getConnection(SdmxFile file) {
-        return new CachedFileSdmxConnection(file, factory, decoder, preferredLang.get(), cache.get());
     }
 
     @Nonnull

@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -32,7 +33,7 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxDriver {
 
     @Nonnull
-    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info) throws IOException;
+    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info, @Nonnull List<Locale.LanguageRange> languages) throws IOException;
 
     boolean acceptsURI(@Nonnull URI uri) throws IOException;
 

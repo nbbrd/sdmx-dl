@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -34,7 +35,7 @@ public class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
     List<MemSdmxRepository> repositories;
 
     @Override
-    public SdmxConnection getConnection(String name) throws IOException {
+    public SdmxConnection getConnection(String name, List<Locale.LanguageRange> languages) throws IOException {
         return repositories.stream()
                 .filter(o -> o.getName().equals(name))
                 .map(MemSdmxRepository::asConnection)

@@ -30,6 +30,8 @@ import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -44,10 +46,10 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     @Override
-    public Info decode(SdmxFile file, String preferredLang) throws IOException {
+    public Info decode(SdmxFile file, List<Locale.LanguageRange> ranges) throws IOException {
         DataType dataType = probeDataType(file.getData());
         return Info.of(dataType, file.getStructure() != null
-                ? parseDataStructure(dataType, file.getStructure(), preferredLang)
+                ? parseDataStructure(dataType, file.getStructure(), ranges)
                 : decodeDataStructure(dataType, file.getData()));
     }
 
@@ -57,17 +59,17 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private DataStructure parseDataStructure(DataType dataType, File structure, String preferredLang) throws IOException {
+    private DataStructure parseDataStructure(DataType dataType, File structure, List<Locale.LanguageRange> ranges) throws IOException {
         switch (dataType) {
             case GENERIC20:
             case COMPACT20:
                 try (Reader stream = Files.newBufferedReader(structure.toPath(), StandardCharsets.UTF_8)) {
-                    return SdmxXmlStreams.struct20(factory, stream, preferredLang).get(0);
+                    return SdmxXmlStreams.struct20(factory, stream, ranges).get(0);
                 }
             case GENERIC21:
             case COMPACT21:
                 try (Reader stream = Files.newBufferedReader(structure.toPath(), StandardCharsets.UTF_8)) {
-                    return SdmxXmlStreams.struct21(factory, stream, preferredLang).get(0);
+                    return SdmxXmlStreams.struct21(factory, stream, ranges).get(0);
                 }
             default:
                 throw new IOException("Don't know how to handle '" + dataType + "'");

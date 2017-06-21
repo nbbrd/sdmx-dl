@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,14 +48,14 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
     }
 
     @Override
-    public SdmxConnection getConnection(String name) throws IOException {
+    public SdmxConnection getConnection(String name, List<Locale.LanguageRange> languages) throws IOException {
         WsEntryPoint wsEntryPoint = entryPointByName.get(name);
         if (wsEntryPoint != null) {
             URI uri = wsEntryPoint.getUri();
             for (SdmxDriver o : drivers) {
                 try {
                     if (o.acceptsURI(uri)) {
-                        return o.connect(uri, wsEntryPoint.getProperties());
+                        return o.connect(uri, wsEntryPoint.getProperties(), languages);
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(SdmxDriverManager.class.getName()).log(Level.SEVERE, null, ex);
