@@ -71,7 +71,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         result.add(b.clear()
                 .name("INSEE")
                 .description("Institut national de la statistique et des études économiques")
-                .endpoint("http://www.bdm.insee.fr/series/sdmx")
+                .endpoint("https://bdm.insee.fr/series/sdmx")
                 .seriesKeysOnlySupported(true)
                 .build());
         result.add(b.clear()
