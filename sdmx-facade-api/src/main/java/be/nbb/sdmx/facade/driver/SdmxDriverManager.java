@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
@@ -50,19 +48,20 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         WsEntryPoint wsEntryPoint = entryPointByName.get(name);
-        if (wsEntryPoint != null) {
-            URI uri = wsEntryPoint.getUri();
+        if (wsEntryPoint == null) {
+            throw new IOException("Cannot find entry point for '" + name + "'");
+        }
+        URI uri = wsEntryPoint.getUri();
+        try {
             for (SdmxDriver o : drivers) {
-                try {
-                    if (o.acceptsURI(uri)) {
-                        return o.connect(uri, wsEntryPoint.getProperties(), languages);
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(SdmxDriverManager.class.getName()).log(Level.SEVERE, null, ex);
+                if (o.acceptsURI(uri)) {
+                    return o.connect(uri, wsEntryPoint.getProperties(), languages);
                 }
             }
+        } catch (RuntimeException ex) {
+            throw new IOException("Unexpected exception", ex);
         }
-        throw new IOException(name);
+        throw new IOException("Failed to find a suitable driver for '" + name + "'");
     }
 
     @Nonnull
