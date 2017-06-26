@@ -83,7 +83,7 @@ public class ConnectorsResource {
 
     List<DataFlowStructure> struct20(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser.parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser().parse(r);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
@@ -97,7 +97,7 @@ public class ConnectorsResource {
 
     List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return GenericDataParser.parse(r, dsd, null, true).getData();
+            return new GenericDataParser(dsd, null, true).parse(r).getData();
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
@@ -105,7 +105,7 @@ public class ConnectorsResource {
 
     List<DataFlowStructure> struct21(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser.parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser().parse(r);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
@@ -113,7 +113,7 @@ public class ConnectorsResource {
 
     List<Dataflow> flow21(ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return it.bancaditalia.oss.sdmx.parser.v21.DataflowParser.parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }

@@ -105,7 +105,8 @@ final class DataCursorAdapter implements DataCursor {
     @Override
     public Double getObsValue() throws IOException {
         checkObsState();
-        return current.getObservations().get(index);
+        Object result = current.getObservations().get(index);
+        return result instanceof Double ? (Double) result : null;
     }
 
     @Override

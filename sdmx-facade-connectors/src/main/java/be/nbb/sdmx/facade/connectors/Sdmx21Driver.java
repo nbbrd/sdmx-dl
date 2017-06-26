@@ -17,17 +17,21 @@
 package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxIOException;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
@@ -36,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -185,13 +190,34 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
-            Reader stream = runQuery(query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
-            return SdmxXmlStreams.compactData21(factory, stream, Util.toDataStructure(dsd));
+            DataflowRef flowRef = Util.toDataflow(dataflow).getFlowRef();
+            // FIXME: avoid in-memory copy
+            MemSdmxRepository result = runQuery(new CustomParser(factory, flowRef, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+            return result.asConnection().getData(flowRef, resource, serieskeysonly);
         }
 
         @Override
         public boolean isSeriesKeysOnlySupported() {
             return config.isSeriesKeysOnlySupported();
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class CustomParser implements it.bancaditalia.oss.sdmx.client.Parser<MemSdmxRepository> {
+
+        private final XMLInputFactory factory;
+        private final DataflowRef flowRef;
+        private final DataStructure dsd;
+
+        @Override
+        public MemSdmxRepository parse(Reader xmlReader) throws XMLStreamException, SdmxException {
+            MemSdmxRepository.Builder result = MemSdmxRepository.builder().name("");
+            try {
+                result.copyOf(flowRef, SdmxXmlStreams.compactData21(factory, xmlReader, dsd));
+            } catch (IOException ex) {
+                throw new SdmxIOException("Cannot parse compact data 21", ex);
+            }
+            return result.build();
         }
     }
     //</editor-fold>

@@ -103,7 +103,7 @@ public class FacadeResource {
     private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             // FIXME: no facade impl yet
-            return it.bancaditalia.oss.sdmx.parser.v21.DataflowParser.parse(r).stream()
+            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r).stream()
                     .map(Util::toDataflow)
                     .collect(Collectors.toList());
         } catch (XMLStreamException ex) {
