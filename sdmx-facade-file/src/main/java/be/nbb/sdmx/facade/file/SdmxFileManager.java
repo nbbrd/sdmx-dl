@@ -16,13 +16,12 @@
  */
 package be.nbb.sdmx.facade.file;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,7 +45,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Override
-    public SdmxConnection getConnection(String name, List<Locale.LanguageRange> languages) throws IOException {
+    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         try {
             return getConnection(SdmxFile.parse(name), languages);
         } catch (IllegalArgumentException ex) {
@@ -55,8 +54,8 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Nonnull
-    public SdmxConnection getConnection(@Nonnull SdmxFile file, @Nonnull List<Locale.LanguageRange> languages) throws IOException {
-        return new CachedFileSdmxConnection(file, factory, decoder, languages, cache.get());
+    public SdmxConnection getConnection(@Nonnull SdmxFile file, @Nonnull LanguagePriorityList languages) throws IOException {
+        return new CachedFileSdmxConnection(file, languages, factory, decoder, cache.get());
     }
 
     @Override

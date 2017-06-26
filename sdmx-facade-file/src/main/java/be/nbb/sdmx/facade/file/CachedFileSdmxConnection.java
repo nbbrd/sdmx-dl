@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.file;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import be.nbb.sdmx.facade.util.TtlCache;
@@ -26,8 +27,6 @@ import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLInputFactory;
@@ -46,12 +45,12 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<MemSdmxRepository> loadDataKey;
 
-    CachedFileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, List<Locale.LanguageRange> languages, ConcurrentMap cache) {
-        super(file, factory, decoder, languages);
+    CachedFileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
+        super(file, languages, factory, decoder);
         this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
-        String id = file.toString();
-        this.decodeKey = TypedId.of("cache://" + id + "decode");
-        this.loadDataKey = TypedId.of("cache://" + id + "loadData");
+        String base = file.toString() + languages.toString();
+        this.decodeKey = TypedId.of("decode://" + base);
+        this.loadDataKey = TypedId.of("loadData://" + base);
     }
 
     @Override

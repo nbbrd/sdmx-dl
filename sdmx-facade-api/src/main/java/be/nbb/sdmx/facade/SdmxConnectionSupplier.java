@@ -17,9 +17,6 @@
 package be.nbb.sdmx.facade;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -31,10 +28,5 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxConnectionSupplier {
 
     @Nonnull
-    SdmxConnection getConnection(@Nonnull String name, @Nonnull List<Locale.LanguageRange> languages) throws IOException;
-
-    @Nonnull
-    static List<Locale.LanguageRange> defaultLanguages() {
-        return Collections.emptyList();
-    }
+    SdmxConnection getConnection(@Nonnull String name, @Nonnull LanguagePriorityList languages) throws IOException;
 }

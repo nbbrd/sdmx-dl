@@ -19,10 +19,10 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -94,7 +94,7 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public List<DataStructure> struct20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull List<Locale.LanguageRange> ranges) throws IOException {
+    public List<DataStructure> struct20(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull LanguagePriorityList ranges) throws IOException {
         try {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             try {
@@ -108,7 +108,7 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public List<DataStructure> struct21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull List<Locale.LanguageRange> ranges) throws IOException {
+    public List<DataStructure> struct21(@Nonnull XMLInputFactory factory, @Nonnull Reader stream, @Nonnull LanguagePriorityList ranges) throws IOException {
         try {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             try {

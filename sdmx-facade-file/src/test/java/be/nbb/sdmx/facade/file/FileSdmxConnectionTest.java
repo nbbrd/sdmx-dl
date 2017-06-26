@@ -19,7 +19,7 @@ package be.nbb.sdmx.facade.file;
 import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.SdmxConnectionSupplier;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.TimeFormat;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
@@ -49,7 +49,7 @@ public class FileSdmxConnectionTest {
 
         SdmxFile file = new SdmxFile(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(file, factory, decoder, SdmxConnectionSupplier.defaultLanguages());
+        FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, factory, decoder);
 
         assertThat(conn.getDataflows()).hasSize(1);
         assertThat(conn.getDataStructure(file.getDataflowRef()).getDimensions()).hasSize(7);
@@ -77,6 +77,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, factory, decoder, SdmxConnectionSupplier.defaultLanguages()), file.getDataflowRef());
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, LanguagePriorityList.ANY, factory, decoder), file.getDataflowRef());
     }
 }

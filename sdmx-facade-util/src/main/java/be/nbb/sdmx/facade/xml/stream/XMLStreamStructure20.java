@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,6 @@ import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 
 /**
@@ -41,7 +41,7 @@ final class XMLStreamStructure20 {
     private final TextBuilder structureLabel;
     private final TextBuilder label;
 
-    XMLStreamStructure20(List<Locale.LanguageRange> languages) {
+    XMLStreamStructure20(LanguagePriorityList languages) {
         this.structureLabel = new TextBuilder(languages);
         this.label = new TextBuilder(languages);
     }

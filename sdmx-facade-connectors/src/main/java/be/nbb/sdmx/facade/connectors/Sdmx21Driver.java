@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -33,7 +34,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import org.openide.util.lookup.ServiceProvider;
@@ -169,7 +169,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
 
     private final static class ExtRestSdmxClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
-        private static ExtRestSdmxClient of(URL endpoint, Map<?, ?> info, List<Locale.LanguageRange> languages) {
+        private static ExtRestSdmxClient of(URL endpoint, Map<?, ?> info, LanguagePriorityList languages) {
             return new ExtRestSdmxClient(endpoint, Sdmx21Config.load(info));
         }
 

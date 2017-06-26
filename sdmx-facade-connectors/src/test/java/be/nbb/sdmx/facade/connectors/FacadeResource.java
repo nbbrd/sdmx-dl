@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
@@ -27,7 +28,6 @@ import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
@@ -78,7 +78,7 @@ public class FacadeResource {
 
     private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct20(f, r, Collections.emptyList());
+            return SdmxXmlStreams.struct20(f, r, LanguagePriorityList.ANY);
         }
     }
 
@@ -96,7 +96,7 @@ public class FacadeResource {
 
     private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct21(f, r, Collections.emptyList());
+            return SdmxXmlStreams.struct21(f, r, LanguagePriorityList.ANY);
         }
     }
 

@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.connectors;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.MemSdmxRepository;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
@@ -42,13 +43,14 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     private final TypedId<DataFlowStructure> dataflowStructureKey;
     private final TypedId<MemSdmxRepository> dataKey;
 
-    CachedSdmxConnection(GenericSDMXClient client, String host, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+    CachedSdmxConnection(GenericSDMXClient client, String host, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         super(client);
         this.cache = TtlCache.of(cache, clock, ttlInMillis);
-        this.dataflowsKey = TypedId.of("cache://" + host + "/flows");
-        this.dataflowKey = TypedId.of("cache://" + host + "/flow/");
-        this.dataflowStructureKey = TypedId.of("cache://" + host + "/struct/");
-        this.dataKey = TypedId.of("cache://" + host + "/data/");
+        String base = host + languages.toString();
+        this.dataflowsKey = TypedId.of("flows://" + base);
+        this.dataflowKey = TypedId.of("flow://" + base + "/");
+        this.dataflowStructureKey = TypedId.of("struct://" + base + "/");
+        this.dataKey = TypedId.of("data://" + base + "/");
     }
 
     @Override

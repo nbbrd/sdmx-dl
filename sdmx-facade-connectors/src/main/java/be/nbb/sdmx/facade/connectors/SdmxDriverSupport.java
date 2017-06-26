@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
@@ -31,7 +32,6 @@ import java.net.URL;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -50,7 +50,7 @@ final class SdmxDriverSupport implements HasCache {
     public interface ClientSupplier {
 
         @Nonnull
-        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull List<Locale.LanguageRange> languages) throws MalformedURLException;
+        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList languages) throws MalformedURLException;
     }
 
     @Nonnull
@@ -75,12 +75,12 @@ final class SdmxDriverSupport implements HasCache {
         this.clock = clock;
     }
 
-    public SdmxConnection connect(URI uri, Map<?, ?> info, List<Locale.LanguageRange> languages) throws IOException {
+    public SdmxConnection connect(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
         try {
             URL endpoint = new URL(uri.toString().substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
             applyTimeouts(client, info);
-            return new CachedSdmxConnection(client, endpoint.getHost(), cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
+            return new CachedSdmxConnection(client, endpoint.getHost(), languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
         }
@@ -107,7 +107,7 @@ final class SdmxDriverSupport implements HasCache {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static ClientSupplier supplierOf(Class<? extends RestSdmxClient> clazz) {
-        return (URL endpoint, Map<?, ?> info, List<Locale.LanguageRange> languages) -> {
+        return (URL endpoint, Map<?, ?> info, LanguagePriorityList languages) -> {
             try {
                 GenericSDMXClient result = clazz.newInstance();
                 result.setEndpoint(endpoint);

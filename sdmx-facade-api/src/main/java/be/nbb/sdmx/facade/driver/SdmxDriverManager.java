@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.driver;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
@@ -23,7 +24,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +48,7 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
     }
 
     @Override
-    public SdmxConnection getConnection(String name, List<Locale.LanguageRange> languages) throws IOException {
+    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         WsEntryPoint wsEntryPoint = entryPointByName.get(name);
         if (wsEntryPoint != null) {
             URI uri = wsEntryPoint.getUri();

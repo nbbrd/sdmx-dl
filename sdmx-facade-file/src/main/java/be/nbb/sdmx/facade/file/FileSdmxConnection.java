@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.File;
@@ -31,8 +32,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import javax.xml.stream.XMLInputFactory;
@@ -46,18 +45,18 @@ class FileSdmxConnection implements SdmxConnection {
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
     private final SdmxFile file;
+    private final LanguagePriorityList languages;
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final Dataflow dataflow;
-    private final List<Locale.LanguageRange> languages;
     private boolean closed;
 
-    FileSdmxConnection(SdmxFile file, XMLInputFactory factory, SdmxDecoder decoder, List<Locale.LanguageRange> languages) {
+    FileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder) {
         this.file = file;
+        this.languages = languages;
         this.factory = factory;
         this.decoder = decoder;
         this.dataflow = Dataflow.of(file.getDataflowRef(), EMPTY, file.getData().getName());
-        this.languages = languages;
         this.closed = false;
     }
 

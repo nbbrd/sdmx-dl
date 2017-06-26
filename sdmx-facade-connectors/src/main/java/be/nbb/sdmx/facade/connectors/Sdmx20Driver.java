@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
@@ -24,7 +25,6 @@ import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -47,7 +47,7 @@ public final class Sdmx20Driver implements SdmxDriver, HasCache {
 
     private static final class CustomClient extends RestSdmx20Client {
 
-        public CustomClient(URL endpoint, Map<?, ?> info, List<Locale.LanguageRange> languages) {
+        public CustomClient(URL endpoint, Map<?, ?> info, LanguagePriorityList languages) {
             super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
         }
     }

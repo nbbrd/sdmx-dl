@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ public class XMLStreamStructure21Test {
     public void test() throws Exception {
         XMLInputFactory factory = XMLInputFactory.newFactory();
 
-        XMLStreamStructure21 parser = new XMLStreamStructure21(Collections.emptyList());
+        XMLStreamStructure21 parser = new XMLStreamStructure21(LanguagePriorityList.ANY);
 
         try (InputStreamReader stream = SdmxSource.ECB_DATA_STRUCTURE.openReader()) {
             assertThat(parser.parse(factory.createXMLStreamReader(stream))).hasSize(1).element(0).satisfies(o -> {

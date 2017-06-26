@@ -16,11 +16,11 @@
  */
 package be.nbb.sdmx.facade.driver;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -33,7 +33,7 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxDriver {
 
     @Nonnull
-    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info, @Nonnull List<Locale.LanguageRange> languages) throws IOException;
+    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList languages) throws IOException;
 
     boolean acceptsURI(@Nonnull URI uri) throws IOException;
 

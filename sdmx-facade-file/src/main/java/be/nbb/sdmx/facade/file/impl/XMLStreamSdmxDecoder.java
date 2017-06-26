@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade.file.impl;
 
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +31,6 @@ import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -46,7 +45,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     @Override
-    public Info decode(SdmxFile file, List<Locale.LanguageRange> ranges) throws IOException {
+    public Info decode(SdmxFile file, LanguagePriorityList ranges) throws IOException {
         DataType dataType = probeDataType(file.getData());
         return Info.of(dataType, file.getStructure() != null
                 ? parseDataStructure(dataType, file.getStructure(), ranges)
@@ -59,7 +58,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private DataStructure parseDataStructure(DataType dataType, File structure, List<Locale.LanguageRange> ranges) throws IOException {
+    private DataStructure parseDataStructure(DataType dataType, File structure, LanguagePriorityList ranges) throws IOException {
         switch (dataType) {
             case GENERIC20:
             case COMPACT20:
