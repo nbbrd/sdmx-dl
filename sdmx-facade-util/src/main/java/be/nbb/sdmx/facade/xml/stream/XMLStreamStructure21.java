@@ -30,7 +30,6 @@ import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
-import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.toInt;
 import javax.annotation.Nonnull;
 
 /**
@@ -88,7 +87,6 @@ final class XMLStreamStructure21 {
     private static final String ID_ATTR = "id";
     private static final String AGENCY_ID_ATTR = "agencyID";
     private static final String VERSION_ATTR = "version";
-    private static final String POSITION_ATTR = "position";
     private static final String LANG_ATTR = "lang";
 
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
@@ -199,10 +197,11 @@ final class XMLStreamStructure21 {
     }
 
     private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+        int position = 1;
         while (nextTags(reader, DIMENSION_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
-                    parseDimension(reader, ds, toConceptName, toCodes);
+                    parseDimension(reader, ds, toConceptName, toCodes, position++);
                     break;
                 case TIME_DIMENSION_TAG:
                     parseTimeDimension(reader, ds);
@@ -211,12 +210,9 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         check(id != null, reader, "Missing Dimension id");
-
-        int position = toInt(reader.getAttributeValue(null, POSITION_ATTR), -1);
-        check(position != -1, reader, "Missing Dimension position");
 
         Dimension.Builder dimension = Dimension.builder().id(id).position(position).label(id);
         while (nextTags(reader, DIMENSION_TAG)) {
