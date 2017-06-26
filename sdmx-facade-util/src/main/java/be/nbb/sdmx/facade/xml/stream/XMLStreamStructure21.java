@@ -237,7 +237,8 @@ final class XMLStreamStructure21 {
             String id = reader.getAttributeValue(null, ID_ATTR);
             check(id != null, reader, "Missing Ref id");
 
-            dimension.label(toConceptName.apply(id));
+            String conceptName = toConceptName.apply(id);
+            dimension.label(conceptName != null ? conceptName : id);
         }
     }
 
@@ -246,7 +247,10 @@ final class XMLStreamStructure21 {
             String id = reader.getAttributeValue(null, ID_ATTR);
             check(id != null, reader, "Missing Ref id");
 
-            dimension.codes(toCodes.apply(id));
+            Map<String, String> codes = toCodes.apply(id);
+            if (codes != null) {
+                dimension.codes(codes);
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import java.util.Map;
 import javax.annotation.Nonnull;
 
 /**
@@ -42,12 +43,19 @@ class Util {
     }
 
     be.nbb.sdmx.facade.Dimension toDimension(Dimension o) {
-        return be.nbb.sdmx.facade.Dimension.builder()
+        be.nbb.sdmx.facade.Dimension.Builder result = be.nbb.sdmx.facade.Dimension.builder()
                 .id(o.getId())
-                .position(o.getPosition())
-                .label(o.getName())
-                .codes(o.getCodeList().getCodes())
-                .build();
+                .position(o.getPosition());
+
+        String name = o.getName();
+        result.label(name != null ? name : o.getId());
+
+        Map<String, String> codes = o.getCodeList().getCodes();
+        if (codes != null) {
+            result.codes(codes);
+        }
+
+        return result.build();
     }
 
     DataStructure toDataStructure(DataFlowStructure dfs) {

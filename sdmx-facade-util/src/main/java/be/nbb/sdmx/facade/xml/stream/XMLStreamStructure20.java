@@ -195,7 +195,17 @@ final class XMLStreamStructure20 {
         String codelist = reader.getAttributeValue(null, CODELIST_ATTR);
         check(codelist != null, reader, "Missing Dimension codelist");
 
-        ds.dimension(Dimension.builder().id(id).position(position).label(toConceptName.apply(id)).codes(toCodes.apply(codelist)).build());
+        Dimension.Builder result = Dimension.builder().id(id).position(position);
+
+        String conceptName = toConceptName.apply(id);
+        result.label(conceptName != null ? conceptName : id);
+
+        Map<String, String> codes = toCodes.apply(codelist);
+        if (codes != null) {
+            result.codes(codes);
+        }
+
+        ds.dimension(result.build());
     }
 
     private void parseTimeDimension(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
