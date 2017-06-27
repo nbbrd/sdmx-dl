@@ -14,13 +14,15 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.repo;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -28,18 +30,23 @@ import java.util.List;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class MemSdmxConnectionSupplier implements SdmxConnectionSupplier {
+public class SdmxRepositorySupplier implements SdmxConnectionSupplier {
 
     @lombok.NonNull
     @lombok.Singular
-    List<MemSdmxRepository> repositories;
+    List<SdmxRepository> repositories;
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         return repositories.stream()
                 .filter(o -> o.getName().equals(name))
-                .map(MemSdmxRepository::asConnection)
+                .map(SdmxRepository::asConnection)
                 .findFirst()
                 .orElseThrow(() -> new IOException(name));
+    }
+
+    @Nonnull
+    public static SdmxRepositorySupplier of(@Nonnull SdmxRepository repo) {
+        return new SdmxRepositorySupplier(Collections.singletonList(repo));
     }
 }

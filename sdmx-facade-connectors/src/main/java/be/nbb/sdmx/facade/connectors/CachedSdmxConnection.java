@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.util.MemSdmxRepository;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -41,7 +41,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     private final TypedId<Map<String, Dataflow>> dataflowsKey;
     private final TypedId<Dataflow> dataflowKey;
     private final TypedId<DataFlowStructure> dataflowStructureKey;
-    private final TypedId<MemSdmxRepository> dataKey;
+    private final TypedId<SdmxRepository> dataKey;
 
     CachedSdmxConnection(GenericSDMXClient client, String host, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         super(client);
@@ -97,13 +97,15 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
     @Override
     protected DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            TypedId<MemSdmxRepository> id = dataKey.with(flowRef);
-            MemSdmxRepository result = cache.get(id);
+            TypedId<SdmxRepository> id = dataKey.with(flowRef);
+            SdmxRepository result = cache.get(id);
             if (result == null || key.supersedes(Key.parse(result.getName()))) {
-                result = MemSdmxRepository.builder()
-                        .copyOf(flowRef, super.loadData(flowRef, key, true))
-                        .name(key.toString())
-                        .build();
+                try (DataCursor cursor = super.loadData(flowRef, key, true)) {
+                    result = SdmxRepository.builder()
+                            .copyOf(flowRef, cursor)
+                            .name(key.toString())
+                            .build();
+                }
                 cache.put(id, result);
             }
             return result.asConnection().getData(flowRef, key, true);

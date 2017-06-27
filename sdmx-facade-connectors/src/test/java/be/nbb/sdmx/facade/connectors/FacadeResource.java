@@ -23,8 +23,8 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.sdmx.facade.util.MemSdmxRepository;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,37 +40,37 @@ import javax.xml.stream.XMLStreamException;
 @lombok.experimental.UtilityClass
 public class FacadeResource {
 
-    public MemSdmxRepository nbb() throws IOException {
+    public SdmxRepository nbb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
-
-        DataflowRef ref = DataflowRef.of("NBB", "TEST_DATASET", null);
 
         List<DataStructure> structs = struct20(f, SdmxSource.NBB_DATA_STRUCTURE);
         List<Dataflow> flows = flow20(f, SdmxSource.NBB_DATA_STRUCTURE);
-        List<Series> data = data20(f, SdmxSource.NBB_DATA, structs.get(0), ref);
+        List<Series> data = data20(f, SdmxSource.NBB_DATA, structs.get(0));
 
-        return MemSdmxRepository.builder()
+        DataflowRef ref = DataflowRef.of("NBB", "TEST_DATASET", null);
+
+        return SdmxRepository.builder()
                 .dataStructures(structs)
                 .dataflows(flows)
-                .data(data)
+                .data(ref, data)
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
     }
 
-    public MemSdmxRepository ecb() throws IOException {
+    public SdmxRepository ecb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
-
-        DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
 
         List<DataStructure> structs = struct21(f, SdmxSource.ECB_DATA_STRUCTURE);
         List<Dataflow> flows = flow21(f, SdmxSource.ECB_DATAFLOWS);
-        List<Series> data = data21(f, SdmxSource.ECB_DATA, structs.get(0), ref);
+        List<Series> data = data21(f, SdmxSource.ECB_DATA, structs.get(0));
 
-        return MemSdmxRepository.builder()
+        DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
+
+        return SdmxRepository.builder()
                 .dataStructures(structs)
                 .dataflows(flows)
-                .data(data)
+                .data(ref, data)
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();
@@ -88,9 +88,9 @@ public class FacadeResource {
                 .collect(Collectors.toList());
     }
 
-    private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
+    private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor cursor = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
-            return Series.copyOf(ref, cursor);
+            return Series.copyOf(cursor);
         }
     }
 
@@ -111,9 +111,9 @@ public class FacadeResource {
         }
     }
 
-    private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd, DataflowRef ref) throws IOException {
+    private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor cursor = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
-            return Series.copyOf(ref, cursor);
+            return Series.copyOf(cursor);
         }
     }
 

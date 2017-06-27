@@ -16,13 +16,12 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Obs;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
+import be.nbb.sdmx.facade.repo.Obs;
+import be.nbb.sdmx.facade.repo.Series;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
@@ -49,8 +48,7 @@ public class DataCursorAdapterTest {
     @Test
     public void test() throws IOException {
         try (DataCursorAdapter cursor = new DataCursorAdapter(DATA)) {
-            List<Series> list = Series.copyOf(DataflowRef.of("ECB", "AME", "1.0"), cursor);
-            assertThat(list)
+            assertThat(Series.copyOf(cursor))
                     .hasSize(120)
                     .allMatch(o -> o.getFrequency().equals(Frequency.ANNUAL))
                     .element(0)

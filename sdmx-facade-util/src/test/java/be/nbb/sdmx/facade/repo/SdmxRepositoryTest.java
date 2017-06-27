@@ -14,16 +14,13 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.repo;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.MemDataCursor;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Obs;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import org.junit.Test;
@@ -32,23 +29,19 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class MemSdmxRepositoryTest {
+public class SdmxRepositoryTest {
 
     @Test
     public void testCompliance() {
-        DataflowRef ref = DataflowRef.parse("XYZ");
-        ConnectionAssert.assertCompliance(getSample()::asConnection, ref);
+        ConnectionAssert.assertCompliance(repo::asConnection, xyz);
     }
 
     @Test
     public void testDataCursorCompliance() {
-        DataCursorAssert.assertCompliance(() -> new MemDataCursor(getSample().getData(), Key.ALL));
+        DataCursorAssert.assertCompliance(() -> Series.asCursor(Collections.singletonList(series), Key.ALL));
     }
 
-    static MemSdmxRepository getSample() {
-        return MemSdmxRepository.builder()
-                .name("test")
-                .series(Series.of(DataflowRef.parse("XYZ"), Key.of("BE"), Frequency.MONTHLY, Collections.singletonList(Obs.of(LocalDateTime.now(), Math.PI)), Collections.singletonMap("hello", "world")))
-                .build();
-    }
+    private final DataflowRef xyz = DataflowRef.parse("XYZ");
+    private final Series series = Series.builder().key(Key.of("BE")).frequency(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final SdmxRepository repo = SdmxRepository.builder().name("test").data(xyz, series).build();
 }

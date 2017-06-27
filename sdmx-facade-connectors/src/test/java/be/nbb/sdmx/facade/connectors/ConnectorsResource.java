@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.sdmx.facade.util.MemSdmxRepository;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -48,14 +48,14 @@ import javax.xml.stream.XMLStreamException;
 public class ConnectorsResource {
 
     @Nonnull
-    public MemSdmxRepository nbb() throws IOException {
+    public SdmxRepository nbb() throws IOException {
         List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE);
         List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE);
         List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0));
 
         DataflowRef ref = flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
 
-        return MemSdmxRepository.builder()
+        return SdmxRepository.builder()
                 .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
                 .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
                 .copyOf(ref, new DataCursorAdapter(data))
@@ -65,14 +65,14 @@ public class ConnectorsResource {
     }
 
     @Nonnull
-    public MemSdmxRepository ecb() throws IOException {
+    public SdmxRepository ecb() throws IOException {
         List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE);
         List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS);
         List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0));
 
         DataflowRef ref = flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
 
-        return MemSdmxRepository.builder()
+        return SdmxRepository.builder()
                 .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
                 .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
                 .copyOf(ref, new DataCursorAdapter(data))

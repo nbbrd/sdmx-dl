@@ -20,13 +20,13 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.util.MemSdmxRepository;
-import be.nbb.sdmx.facade.util.MemSdmxRepository.Series;
+import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
 import java.time.Clock;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLInputFactory;
@@ -43,7 +43,7 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
 
     private final TtlCache cache;
     private final TypedId<SdmxDecoder.Info> decodeKey;
-    private final TypedId<MemSdmxRepository> loadDataKey;
+    private final TypedId<List<Series>> loadDataKey;
 
     CachedFileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
         super(file, languages, factory, decoder);
@@ -66,21 +66,22 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     @Override
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            MemSdmxRepository result = cache.get(loadDataKey);
+            List<Series> result = cache.get(loadDataKey);
             if (result == null) {
-                result = copyOfKeys(flowRef, super.loadData(entry, flowRef, key, true));
+                result = copyOfKeys(super.loadData(entry, flowRef, key, true));
                 cache.put(loadDataKey, result);
             }
-            return result.asConnection().getData(flowRef, key, true);
+            return Series.asCursor(result, key);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
     }
 
-    private static MemSdmxRepository copyOfKeys(DataflowRef flowRef, DataCursor cursor) throws IOException {
-        MemSdmxRepository.Builder result = MemSdmxRepository.builder().name("");
+    private static List<Series> copyOfKeys(DataCursor cursor) throws IOException {
+        List<Series> result = new ArrayList<>();
+        Series.Builder series = Series.builder();
         while (cursor.nextSeries()) {
-            result.series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesFrequency(), Collections.emptyList(), cursor.getSeriesAttributes()));
+            result.add(series.key(cursor.getSeriesKey()).frequency(cursor.getSeriesFrequency()).meta(cursor.getSeriesAttributes()).build());
         }
-        return result.build();
+        return result;
     }
 }
