@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class ObsParserTest {
     public void testGetPeriod() {
         ObsParser p = new ObsParser();
 
-        p.setTimeFormat(TimeFormat.YEARLY);
+        p.setFrequency(Frequency.ANNUAL);
         assertThat(p.periodString("2001").getPeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.periodString("2001-A1").getPeriod()).isEqualTo("2001-01-01T00:00:00");
@@ -39,7 +39,7 @@ public class ObsParserTest {
         assertThat(p.periodString("hello").getPeriod()).isNull();
         assertThat(p.periodString("").getPeriod()).isNull();
 
-        p.setTimeFormat(TimeFormat.HALF_YEARLY);
+        p.setFrequency(Frequency.HALF_YEARLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.periodString("2001-07").getPeriod()).isEqualTo("2001-07-01T00:00:00");
         assertThat(p.periodString("2001-S1").getPeriod()).isEqualTo("2001-01-01T00:00:00");
@@ -50,17 +50,7 @@ public class ObsParserTest {
         assertThat(p.periodString("hello").getPeriod()).isNull();
         assertThat(p.periodString("").getPeriod()).isNull();
 
-        p.setTimeFormat(TimeFormat.QUADRI_MONTHLY);
-        assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01T00:00:00");
-        assertThat(p.periodString("2001-05").getPeriod()).isEqualTo("2001-05-01T00:00:00");
-        assertThat(p.periodString("2001-T1").getPeriod()).isEqualTo("2001-01-01T00:00:00");
-        assertThat(p.periodString("2001-T2").getPeriod()).isEqualTo("2001-05-01T00:00:00");
-        assertThat(p.periodString("2001T2").getPeriod()).isEqualTo("2001-05-01T00:00:00");
-        assertThat(p.periodString("2001T0").getPeriod()).isNull();
-        assertThat(p.periodString("hello").getPeriod()).isNull();
-        assertThat(p.periodString("").getPeriod()).isNull();
-
-        p.setTimeFormat(TimeFormat.QUARTERLY);
+        p.setFrequency(Frequency.QUARTERLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.periodString("2001-04").getPeriod()).isEqualTo("2001-04-01T00:00:00");
         assertThat(p.periodString("2001-Q1").getPeriod()).isEqualTo("2001-01-01T00:00:00");
@@ -70,7 +60,7 @@ public class ObsParserTest {
         assertThat(p.periodString("hello").getPeriod()).isNull();
         assertThat(p.periodString("").getPeriod()).isNull();
 
-        p.setTimeFormat(TimeFormat.MONTHLY);
+        p.setFrequency(Frequency.MONTHLY);
         assertThat(p.periodString("2001-01").getPeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.periodString("2001-02").getPeriod()).isEqualTo("2001-02-01T00:00:00");
         assertThat(p.periodString("2001-M1").getPeriod()).isEqualTo("2001-01-01T00:00:00");

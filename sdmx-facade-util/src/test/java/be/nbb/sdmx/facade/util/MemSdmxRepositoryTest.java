@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.MemDataCursor;
@@ -48,7 +48,7 @@ public class MemSdmxRepositoryTest {
     static MemSdmxRepository getSample() {
         return MemSdmxRepository.builder()
                 .name("test")
-                .series(Series.of(DataflowRef.parse("XYZ"), Key.of("BE"), TimeFormat.MONTHLY, Collections.singletonList(Obs.of(LocalDateTime.now(), Math.PI)), Collections.singletonMap("hello", "world")))
+                .series(Series.of(DataflowRef.parse("XYZ"), Key.of("BE"), Frequency.MONTHLY, Collections.singletonList(Obs.of(LocalDateTime.now(), Math.PI)), Collections.singletonMap("hello", "world")))
                 .build();
     }
 }

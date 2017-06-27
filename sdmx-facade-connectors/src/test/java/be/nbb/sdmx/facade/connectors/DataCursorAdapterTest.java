@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.util.MemSdmxRepository.Obs;
@@ -52,7 +52,7 @@ public class DataCursorAdapterTest {
             List<Series> list = Series.copyOf(DataflowRef.of("ECB", "AME", "1.0"), cursor);
             assertThat(list)
                     .hasSize(120)
-                    .allMatch(o -> o.getTimeFormat().equals(TimeFormat.YEARLY))
+                    .allMatch(o -> o.getFrequency().equals(Frequency.ANNUAL))
                     .element(0)
                     .satisfies(o -> {
                         assertThat(o.getKey()).isEqualTo(Key.parse("A.DEU.1.0.319.0.UBLGE"));

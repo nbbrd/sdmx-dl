@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.File;
@@ -59,7 +59,7 @@ public class FileSdmxConnectionTest {
         try (DataCursor o = conn.getData(file.getDataflowRef(), Key.ALL, false)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
-            assertThat(o.getSeriesTimeFormat()).isEqualTo(TimeFormat.YEARLY);
+            assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
             int indexObs = -1;
             while (o.nextObs()) {
                 switch (++indexObs) {

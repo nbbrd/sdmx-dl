@@ -18,17 +18,17 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.util.ObsParser;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import be.nbb.sdmx.facade.util.FrequencyUtil;
+import static be.nbb.sdmx.facade.util.FrequencyUtil.TIME_FORMAT_CONCEPT;
 
 /**
  *
@@ -56,7 +56,7 @@ final class DataCursorAdapter implements DataCursor {
         boolean result = data.hasNext();
         if (result) {
             current = data.next();
-            obs.setTimeFormat(getTimeFormat(current));
+            obs.setFrequency(getFrequency(current));
             index = -1;
         } else {
             current = null;
@@ -78,22 +78,22 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     @Override
-    public TimeFormat getSeriesTimeFormat() throws IOException {
+    public Frequency getSeriesFrequency() throws IOException {
         checkSeriesState();
-        return obs.getTimeFormat();
+        return obs.getFrequency();
     }
 
     @Override
     public String getSeriesAttribute(String key) throws IOException {
         checkSeriesState();
         Objects.requireNonNull(key);
-        return current.getAttributeValue(key);
+        return current.getAttribute(key);
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
-        return parseAttributes(current);
+        return current.getAttributesMap();
     }
 
     @Override
@@ -135,59 +135,19 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static TimeFormat getTimeFormat(PortableTimeSeries input) {
-        String value = input.getAttributeValue("TIME_FORMAT");
+    private static Frequency getFrequency(PortableTimeSeries input) {
+        String value = input.getAttribute(TIME_FORMAT_CONCEPT);
         if (value != null) {
-            return TimeFormat.parseByTimeFormat(value);
+            return FrequencyUtil.parseByTimeFormat(value);
         }
         if (input.getFrequency() != null) {
-            return TimeFormat.parseByFrequencyCodeId(input.getFrequency());
+            return FrequencyUtil.parseByFreq(input.getFrequency());
         }
-        return TimeFormat.UNDEFINED;
+        return Frequency.UNDEFINED;
     }
 
     private static Key parseKey(PortableTimeSeries ts) throws IOException {
-        List<String> dimensions = ts.getDimensions();
-        if (dimensions.isEmpty()) {
-            return Key.ALL;
-        }
-        String[] result = new String[dimensions.size()];
-        for (int i = 0; i < result.length; i++) {
-            String o = dimensions.get(i);
-            int sepIndex = o.indexOf("=");
-            check(sepIndex != -1, "Invalid dimension entry: '%s'", o);
-            result[i] = o.substring(sepIndex + 1);
-        }
-        return Key.of(result);
-    }
-
-    private static Map<String, String> parseAttributes(PortableTimeSeries ts) throws IOException {
-        List<String> attributes = ts.getAttributes();
-        switch (attributes.size()) {
-            case 0:
-                return Collections.emptyMap();
-            case 1: {
-                String o = attributes.get(0);
-                int sepIndex = o.indexOf("=");
-                check(sepIndex != -1, "Invalid attribute entry: '%s'", o);
-                return Collections.singletonMap(o.substring(0, sepIndex), o.substring(sepIndex + 1));
-            }
-            default: {
-                Map<String, String> result = new HashMap<>();
-                for (String o : attributes) {
-                    int sepIndex = o.indexOf("=");
-                    check(sepIndex != -1, "Invalid attribute entry: '%s'", o);
-                    result.put(o.substring(0, sepIndex), o.substring(sepIndex + 1));
-                }
-                return result;
-            }
-        }
-    }
-
-    private static void check(boolean expression, String message, Object... args) throws IOException {
-        if (!expression) {
-            throw new IOException(String.format(message, args));
-        }
+        return Key.of(ts.getDimensionsMap().values());
     }
     //</editor-fold>
 }

@@ -45,7 +45,7 @@ public class SdmxXmlStreams {
     }
 
     private DataCursor compactData20(XMLStreamReader reader, DataStructure dsd) {
-        TimeFormatParser parser = TimeFormatParser.sdmx20();
+        FrequencyDataParser parser = FrequencyDataParser.sdmx20();
         return new XMLStreamCompactDataCursor(reader, Key.builder(dsd), parser, dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
@@ -59,7 +59,7 @@ public class SdmxXmlStreams {
     }
 
     private DataCursor compactData21(XMLStreamReader reader, DataStructure dsd) {
-        TimeFormatParser parser = TimeFormatParser.sdmx21(TimeFormatParser.getFrequencyCodeIdIndex(dsd));
+        FrequencyDataParser parser = FrequencyDataParser.sdmx21(FrequencyDataParser.getFrequencyCodeIdIndex(dsd));
         return new XMLStreamCompactDataCursor(reader, Key.builder(dsd), parser, dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
@@ -73,7 +73,7 @@ public class SdmxXmlStreams {
     }
 
     private DataCursor genericData20(XMLStreamReader reader, DataStructure dsd) {
-        TimeFormatParser tfParser = TimeFormatParser.sdmx20();
+        FrequencyDataParser tfParser = FrequencyDataParser.sdmx20();
         GenericDataParser genericParser = GenericDataParser.sdmx20();
         return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
     }
@@ -88,7 +88,7 @@ public class SdmxXmlStreams {
     }
 
     private DataCursor genericData21(XMLStreamReader reader, DataStructure dsd) {
-        TimeFormatParser tfParser = TimeFormatParser.sdmx21(TimeFormatParser.getFrequencyCodeIdIndex(dsd));
+        FrequencyDataParser tfParser = FrequencyDataParser.sdmx21(FrequencyDataParser.getFrequencyCodeIdIndex(dsd));
         GenericDataParser genericParser = GenericDataParser.sdmx21();
         return new XMLStreamGenericDataCursor(reader, Key.builder(dsd), tfParser, genericParser);
     }

@@ -40,7 +40,7 @@ public final class DataCursorAssert {
                 assertNonnull(s, c);
                 s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
                 s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey());
-                s.assertThat(c.getSeriesTimeFormat()).isNotNull().isEqualTo(c.getSeriesTimeFormat());
+                s.assertThat(c.getSeriesFrequency()).isNotNull().isEqualTo(c.getSeriesFrequency());
                 s.assertThat(c.getSeriesAttribute("hello")).isEqualTo(c.getSeriesAttribute("hello"));
                 while (c.nextObs()) {
                     s.assertThat(c.getObsPeriod()).isEqualTo(c.getObsPeriod());
@@ -71,7 +71,7 @@ public final class DataCursorAssert {
 
         assertSeriesState(s, supplier, DataCursor::getSeriesKey, "#getSeriesKey");
         assertSeriesState(s, supplier, DataCursor::getSeriesAttributes, "#getSeriesAttributes");
-        assertSeriesState(s, supplier, DataCursor::getSeriesTimeFormat, "#getSeriesTimeFormat");
+        assertSeriesState(s, supplier, DataCursor::getSeriesFrequency, "#getSeriesFrequency");
         assertSeriesState(s, supplier, o -> o.getSeriesAttribute(""), "#getSeriesAttribute");
         assertSeriesState(s, supplier, o -> o.nextObs(), "#nextObs");
 

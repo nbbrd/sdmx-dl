@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -56,7 +56,7 @@ public final class NoOpCursor implements DataCursor {
     }
 
     @Override
-    public TimeFormat getSeriesTimeFormat() throws IOException {
+    public Frequency getSeriesFrequency() throws IOException {
         checkState();
         throw new IllegalStateException();
     }

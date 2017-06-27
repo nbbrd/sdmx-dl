@@ -37,7 +37,7 @@ public interface DataCursor extends Closeable {
     Key getSeriesKey() throws IOException, IllegalStateException;
 
     @Nonnull
-    TimeFormat getSeriesTimeFormat() throws IOException, IllegalStateException;
+    Frequency getSeriesFrequency() throws IOException, IllegalStateException;
 
     @Nullable
     String getSeriesAttribute(@Nonnull String key) throws IOException, IllegalStateException;

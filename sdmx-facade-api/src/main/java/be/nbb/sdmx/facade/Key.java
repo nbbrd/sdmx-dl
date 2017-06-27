@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnegative;
@@ -100,13 +101,18 @@ public final class Key {
     }
 
     @Nonnull
+    public static Key of(@Nonnull Collection<String> input) {
+        return input.isEmpty() ? ALL : ofInternal(input.toArray(new String[input.size()]));
+    }
+
+    @Nonnull
     public static Key of(@Nonnull String... input) {
-        if (input.length == 0) {
-            return ALL;
-        }
-        String[] result = new String[input.length];
+        return input.length == 0 ? ALL : ofInternal(input.clone());
+    }
+
+    private static Key ofInternal(String[] result) {
         for (int i = 0; i < result.length; i++) {
-            String item = input[i];
+            String item = result[i];
             if (item == null) {
                 item = WILDCARD;
             } else {

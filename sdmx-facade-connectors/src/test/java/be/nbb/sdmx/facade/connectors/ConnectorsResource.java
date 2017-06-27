@@ -127,10 +127,10 @@ public class ConnectorsResource {
             while (cursor.nextSeries()) {
                 PortableTimeSeries series = new PortableTimeSeries();
                 series.setFrequency("A");
-                cursor.getSeriesAttributes().forEach((k, v) -> series.addAttribute(k + '=' + v));
+                cursor.getSeriesAttributes().forEach(series::addAttribute);
                 Key key = cursor.getSeriesKey();
                 for (int i = 0; i < key.size(); i++) {
-                    series.addDimension(dims.get(i).getId() + '=' + key.get(i));
+                    series.addDimension(dims.get(i).getId(), key.get(i));
                 }
                 while (cursor.nextObs()) {
                     LocalDateTime period = cursor.getObsPeriod();

@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.util.ObsParser;
 import be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.Status.CONTINUE;
@@ -44,19 +44,19 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
-    private final TimeFormatParser timeFormatParser;
+    private final FrequencyDataParser freqParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, TimeFormatParser timeFormatParser, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, FrequencyDataParser freqParser, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = new ObsParser();
-        this.timeFormatParser = timeFormatParser;
+        this.freqParser = freqParser;
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
         this.closed = false;
@@ -94,9 +94,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public TimeFormat getSeriesTimeFormat() throws IOException {
+    public Frequency getSeriesFrequency() throws IOException {
         checkSeriesState();
-        return obsParser.getTimeFormat();
+        return obsParser.getFrequency();
     }
 
     @Override
@@ -163,7 +163,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.setTimeFormat(timeFormatParser.parse(keyBuilder, attributesBuilder));
+        obsParser.setFrequency(freqParser.parse(keyBuilder, attributesBuilder));
         return SUSPEND;
     }
 

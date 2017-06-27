@@ -22,6 +22,7 @@ import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT21;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC21;
+import static be.nbb.sdmx.facade.util.FrequencyUtil.TIME_FORMAT_CONCEPT;
 import java.io.IOException;
 import java.io.Reader;
 import javax.xml.stream.XMLInputFactory;
@@ -194,7 +195,7 @@ final class DataStructureDecoder {
                         case "Series":
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 String concept = reader.getAttributeLocalName(i);
-                                if (concept.equals("TIME_FORMAT")) {
+                                if (concept.equals(TIME_FORMAT_CONCEPT)) {
                                     builder.attribute(concept, reader.getAttributeValue(i));
                                 } else {
                                     builder.dimension(concept, reader.getAttributeValue(i));
@@ -342,7 +343,7 @@ final class DataStructureDecoder {
                         case "Series":
                             for (int i = 0; i < reader.getAttributeCount(); i++) {
                                 String concept = reader.getAttributeLocalName(i);
-                                if (concept.equals("TIME_FORMAT")) {
+                                if (concept.equals(TIME_FORMAT_CONCEPT)) {
                                     builder.attribute(concept, reader.getAttributeValue(i));
                                 } else {
                                     builder.dimension(concept, reader.getAttributeValue(i));

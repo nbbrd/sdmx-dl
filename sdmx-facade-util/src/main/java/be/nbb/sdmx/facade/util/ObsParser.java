@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,24 +38,24 @@ import javax.annotation.Nullable;
 public final class ObsParser {
 
     private DateParser periodParser;
-    private TimeFormat timeFormat;
+    private Frequency freq;
     private String period;
     private String value;
 
     public ObsParser() {
-        setTimeFormat(TimeFormat.UNDEFINED);
+        setFrequency(Frequency.UNDEFINED);
     }
 
     @Nonnull
-    public TimeFormat getTimeFormat() {
-        return timeFormat;
+    public Frequency getFrequency() {
+        return freq;
     }
 
     @Nonnull
-    public void setTimeFormat(@Nonnull TimeFormat timeFormat) {
-        if (this.timeFormat != timeFormat) {
-            this.timeFormat = timeFormat;
-            this.periodParser = PARSERS.get(timeFormat);
+    public void setFrequency(@Nonnull Frequency freq) {
+        if (this.freq != freq) {
+            this.freq = freq;
+            this.periodParser = PARSERS.get(freq);
         }
     }
 
@@ -104,24 +104,24 @@ public final class ObsParser {
         }
     }
 
-    private static final Map<TimeFormat, DateParser> PARSERS = initParsers();
+    private static final Map<Frequency, DateParser> PARSERS = initParsers();
 
-    private static Map<TimeFormat, DateParser> initParsers() {
+    private static Map<Frequency, DateParser> initParsers() {
         DateParser yearMonth = onPattern("yyyy-MM");
         DateParser yearMonthDay = onPattern("yyyy-MM-dd");
 
-        Map<TimeFormat, DateParser> result = new EnumMap<>(TimeFormat.class);
-        result.put(TimeFormat.YEARLY, onPattern("yyyy").or(onPattern("yyyy'-01'")).or(onPattern("yyyy'-A1'")));
-        result.put(TimeFormat.HALF_YEARLY, YearFreqPosParser.S.or(yearMonth));
-        result.put(TimeFormat.QUADRI_MONTHLY, YearFreqPosParser.T.or(yearMonth));
-        result.put(TimeFormat.QUARTERLY, YearFreqPosParser.Q.or(yearMonth));
-        result.put(TimeFormat.MONTHLY, YearFreqPosParser.M.or(yearMonth));
-        result.put(TimeFormat.WEEKLY, yearMonthDay);
-        result.put(TimeFormat.DAILY, yearMonthDay);
+        Map<Frequency, DateParser> result = new EnumMap<>(Frequency.class);
+        result.put(Frequency.ANNUAL, onPattern("yyyy").or(onPattern("yyyy'-01'")).or(onPattern("yyyy'-A1'")));
+        result.put(Frequency.HALF_YEARLY, YearFreqPosParser.S.or(yearMonth));
+        result.put(Frequency.QUARTERLY, YearFreqPosParser.Q.or(yearMonth));
+        result.put(Frequency.MONTHLY, YearFreqPosParser.M.or(yearMonth));
+        result.put(Frequency.WEEKLY, yearMonthDay);
+        result.put(Frequency.DAILY, yearMonthDay);
         // FIXME: needs other pattern for time
-        result.put(TimeFormat.HOURLY, yearMonthDay);
-        result.put(TimeFormat.MINUTELY, yearMonthDay);
-        result.put(TimeFormat.UNDEFINED, yearMonth);
+        result.put(Frequency.HOURLY, yearMonthDay);
+        result.put(Frequency.DAILY_BUSINESS, yearMonthDay);
+        result.put(Frequency.MINUTELY, yearMonthDay);
+        result.put(Frequency.UNDEFINED, yearMonth);
         return result;
     }
 

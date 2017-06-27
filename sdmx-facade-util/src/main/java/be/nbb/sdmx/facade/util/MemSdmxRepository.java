@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class MemSdmxRepository {
         Key key;
 
         @lombok.NonNull
-        TimeFormat timeFormat;
+        Frequency frequency;
 
         @lombok.NonNull
         List<Obs> obs;
@@ -96,8 +96,8 @@ public class MemSdmxRepository {
         Map<String, String> meta;
 
         @Nonnull
-        public static Series of(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull TimeFormat timeFormat, @Nonnull List<Obs> obs) {
-            return of(flowRef, key, timeFormat, obs, Collections.emptyMap());
+        public static Series of(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull Frequency freq, @Nonnull List<Obs> obs) {
+            return of(flowRef, key, freq, obs, Collections.emptyMap());
         }
 
         @Nonnull
@@ -108,7 +108,7 @@ public class MemSdmxRepository {
                 while (cursor.nextObs()) {
                     obs.add(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
                 }
-                result.add(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs, cursor.getSeriesAttributes()));
+                result.add(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesFrequency(), obs, cursor.getSeriesAttributes()));
             }
             return result;
         }
@@ -132,7 +132,7 @@ public class MemSdmxRepository {
                 while (cursor.nextObs()) {
                     obs.add(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
                 }
-                series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesTimeFormat(), obs, cursor.getSeriesAttributes()));
+                series(Series.of(flowRef, cursor.getSeriesKey(), cursor.getSeriesFrequency(), obs, cursor.getSeriesAttributes()));
             }
             return this;
         }
@@ -255,9 +255,9 @@ public class MemSdmxRepository {
         }
 
         @Override
-        public TimeFormat getSeriesTimeFormat() throws IOException {
+        public Frequency getSeriesFrequency() throws IOException {
             checkSeriesState();
-            return col.get(i).getTimeFormat();
+            return col.get(i).getFrequency();
         }
 
         @Override

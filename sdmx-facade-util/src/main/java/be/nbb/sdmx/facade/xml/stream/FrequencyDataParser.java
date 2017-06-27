@@ -19,38 +19,39 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.TimeFormat;
+import be.nbb.sdmx.facade.Frequency;
 import javax.annotation.Nonnull;
+import be.nbb.sdmx.facade.util.FrequencyUtil;
 
 /**
  *
  * @author Philippe Charles
  */
-interface TimeFormatParser {
+interface FrequencyDataParser {
 
     @Nonnull
-    TimeFormat parse(@Nonnull Key.Builder key, @Nonnull AttributesBuilder attributes);
+    Frequency parse(@Nonnull Key.Builder key, @Nonnull AttributesBuilder attributes);
 
     @Nonnull
-    static TimeFormatParser sdmx20() {
+    static FrequencyDataParser sdmx20() {
         return (k, a) -> {
-            String value = a.getAttribute("TIME_FORMAT");
-            return value != null ? TimeFormat.parseByTimeFormat(value) : TimeFormat.UNDEFINED;
+            String value = a.getAttribute(FrequencyUtil.TIME_FORMAT_CONCEPT);
+            return value != null ? FrequencyUtil.parseByTimeFormat(value) : Frequency.UNDEFINED;
         };
     }
 
     @Nonnull
-    static TimeFormatParser sdmx21(int frequencyCodeIdIndex) {
+    static FrequencyDataParser sdmx21(int frequencyCodeIdIndex) {
         if (frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX) {
             return (k, a) -> {
                 String frequencyCodeId = k.getItem(frequencyCodeIdIndex);
                 if (!frequencyCodeId.isEmpty()) {
-                    return TimeFormat.parseByFrequencyCodeId(frequencyCodeId);
+                    return FrequencyUtil.parseByFreq(frequencyCodeId);
                 }
-                return TimeFormat.UNDEFINED;
+                return Frequency.UNDEFINED;
             };
         }
-        return (k, a) -> TimeFormat.UNDEFINED;
+        return (k, a) -> Frequency.UNDEFINED;
     }
 
     static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
@@ -58,7 +59,7 @@ interface TimeFormatParser {
     static int getFrequencyCodeIdIndex(@Nonnull DataStructure dfs) {
         for (Dimension o : dfs.getDimensions()) {
             switch (o.getId()) {
-                case "FREQ":
+                case FrequencyUtil.FREQ_CONCEPT:
                 case "FREQUENCY":
                     return (o.getPosition() - 1);
             }
