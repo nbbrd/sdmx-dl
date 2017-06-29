@@ -80,7 +80,7 @@ public class FacadeResource {
 
     private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct20(f, r, l);
+            return SdmxXmlStreams.struct20(l).get(f, r);
         }
     }
 
@@ -91,14 +91,14 @@ public class FacadeResource {
     }
 
     private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
+        try (DataCursor c = SdmxXmlStreams.genericData20(dsd).get(f, xml.openReader())) {
             return Series.copyOf(c);
         }
     }
 
     private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct21(f, r, l);
+            return SdmxXmlStreams.struct21(l).get(f, r);
         }
     }
 
@@ -114,7 +114,7 @@ public class FacadeResource {
     }
 
     private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsd).get(f, xml.openReader())) {
             return Series.copyOf(c);
         }
     }

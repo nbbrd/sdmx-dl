@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.util.ObsParser;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -61,7 +62,7 @@ public class ConnectorsResource {
             return SdmxRepository.builder()
                     .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
                     .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                    .copyOf(ref, new DataCursorAdapter(data))
+                    .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
                     .name("NBB")
                     .seriesKeysOnlySupported(false)
                     .build();
@@ -83,7 +84,7 @@ public class ConnectorsResource {
             return SdmxRepository.builder()
                     .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
                     .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                    .copyOf(ref, new DataCursorAdapter(data))
+                    .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
                     .name("ECB")
                     .seriesKeysOnlySupported(true)
                     .build();
@@ -136,7 +137,7 @@ public class ConnectorsResource {
 
     List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
         // FIXME: no connectors impl yet
-        try (DataCursor cursor = SdmxXmlStreams.genericData21(XMLInputFactory.newFactory(), xml.openReader(), Util.toDataStructure(dsd))) {
+        try (DataCursor cursor = SdmxXmlStreams.genericData21(Util.toDataStructure(dsd)).get(XMLInputFactory.newFactory(), xml.openReader())) {
             List<Dimension> dims = dsd.getDimensions();
             List<PortableTimeSeries> result = new ArrayList<>();
             while (cursor.nextSeries()) {

@@ -23,6 +23,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.NoOpCursor;
+import be.nbb.sdmx.facade.util.ObsParser;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
@@ -134,7 +135,7 @@ class SdmxConnectionAdapter implements SdmxConnection {
         try {
             return client instanceof HasDataCursor
                     ? ((HasDataCursor) client).getDataCursor(dataflow, dfs, key, serieskeysonly)
-                    : new DataCursorAdapter(client.getTimeSeries(dataflow, dfs, key.toString(), null, null, serieskeysonly, null, false));
+                    : new DataCursorAdapter(client.getTimeSeries(dataflow, dfs, key.toString(), null, null, serieskeysonly, null, false), ObsParser.standard());
         } catch (SdmxException ex) {
             if (isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();

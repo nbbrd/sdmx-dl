@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import be.nbb.sdmx.facade.util.FrequencyUtil;
-import static be.nbb.sdmx.facade.util.FrequencyUtil.TIME_FORMAT_CONCEPT;
+import be.nbb.sdmx.facade.util.FreqUtil;
+import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
 
 /**
  *
@@ -43,9 +43,9 @@ final class DataCursorAdapter implements DataCursor {
     private boolean closed;
     private boolean hasObs;
 
-    DataCursorAdapter(List<PortableTimeSeries> data) {
+    DataCursorAdapter(List<PortableTimeSeries> data, ObsParser obs) {
         this.data = data.iterator();
-        this.obs = new ObsParser();
+        this.obs = obs;
         this.closed = false;
         this.hasObs = false;
     }
@@ -56,7 +56,7 @@ final class DataCursorAdapter implements DataCursor {
         boolean result = data.hasNext();
         if (result) {
             current = data.next();
-            obs.setFrequency(getFrequency(current));
+            obs.frequency(getFrequency(current));
             index = -1;
         } else {
             current = null;
@@ -99,7 +99,7 @@ final class DataCursorAdapter implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obs.periodString(current.getTimeSlots().get(index)).getPeriod();
+        return obs.period(current.getTimeSlots().get(index)).parsePeriod();
     }
 
     @Override
@@ -138,10 +138,10 @@ final class DataCursorAdapter implements DataCursor {
     private static Frequency getFrequency(PortableTimeSeries input) {
         String value = input.getAttribute(TIME_FORMAT_CONCEPT);
         if (value != null) {
-            return FrequencyUtil.parseByTimeFormat(value);
+            return FreqUtil.parseByTimeFormat(value);
         }
         if (input.getFrequency() != null) {
-            return FrequencyUtil.parseByFreq(input.getFrequency());
+            return FreqUtil.parseByFreq(input.getFrequency());
         }
         return Frequency.UNDEFINED;
     }

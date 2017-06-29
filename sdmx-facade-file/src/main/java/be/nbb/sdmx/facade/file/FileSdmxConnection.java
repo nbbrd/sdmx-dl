@@ -25,11 +25,8 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
@@ -112,17 +109,21 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        switch (entry.getDataType()) {
+        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).get(factory, file.getData().toPath(), StandardCharsets.UTF_8);
+    }
+
+    private XMLStream<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
+        switch (o) {
             case GENERIC20:
-                return SdmxXmlStreams.genericData20(factory, open(file.getData()), entry.getDataStructure());
+                return SdmxXmlStreams.genericData20(dsd);
             case COMPACT20:
-                return SdmxXmlStreams.compactData20(factory, open(file.getData()), entry.getDataStructure());
+                return SdmxXmlStreams.compactData20(dsd);
             case GENERIC21:
-                return SdmxXmlStreams.genericData21(factory, open(file.getData()), entry.getDataStructure());
+                return SdmxXmlStreams.genericData21(dsd);
             case COMPACT21:
-                return SdmxXmlStreams.compactData21(factory, open(file.getData()), entry.getDataStructure());
+                return SdmxXmlStreams.compactData21(dsd);
             default:
-                throw new IOException("Don't known how to handle type '" + entry.getDataType() + "'");
+                throw new IOException("Don't known how to handle type '" + o + "'");
         }
     }
 
@@ -130,9 +131,5 @@ class FileSdmxConnection implements SdmxConnection {
         if (!this.dataflow.getFlowRef().contains(flowRef)) {
             throw new IOException("Invalid flowref '" + flowRef + "'");
         }
-    }
-
-    private static InputStreamReader open(File file) throws FileNotFoundException {
-        return new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     }
 }

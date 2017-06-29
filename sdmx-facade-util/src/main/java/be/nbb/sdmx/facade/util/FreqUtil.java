@@ -34,7 +34,7 @@ import static be.nbb.sdmx.facade.Frequency.DAILY_BUSINESS;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class FrequencyUtil {
+public class FreqUtil {
 
     public final String FREQ_CONCEPT = "FREQ";
     public final String TIME_FORMAT_CONCEPT = "TIME_FORMAT";

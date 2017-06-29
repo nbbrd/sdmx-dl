@@ -29,8 +29,10 @@ import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC20;
 import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
+import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  *
@@ -45,11 +47,11 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     @Override
-    public Info decode(SdmxFile file, LanguagePriorityList ranges) throws IOException {
+    public Info decode(SdmxFile file, LanguagePriorityList langs) throws IOException {
         DataType dataType = probeDataType(file.getData());
         return Info.of(dataType, file.getStructure() != null
-                ? parseDataStructure(dataType, file.getStructure(), ranges)
-                : decodeDataStructure(dataType, file.getData()));
+                ? parseStruct(dataType, file.getStructure(), langs)
+                : decodeStruct(dataType, file.getData()));
     }
 
     private DataType probeDataType(File data) throws IOException {
@@ -58,25 +60,25 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private DataStructure parseDataStructure(DataType dataType, File structure, LanguagePriorityList ranges) throws IOException {
-        switch (dataType) {
+    private DataStructure parseStruct(DataType dataType, File structure, LanguagePriorityList langs) throws IOException {
+        return getStructSupplier(dataType, langs).get(factory, structure.toPath(), StandardCharsets.UTF_8).get(0);
+    }
+
+    private XMLStream<List<DataStructure>> getStructSupplier(DataType o, LanguagePriorityList langs) throws IOException {
+        switch (o) {
             case GENERIC20:
             case COMPACT20:
-                try (Reader stream = Files.newBufferedReader(structure.toPath(), StandardCharsets.UTF_8)) {
-                    return SdmxXmlStreams.struct20(factory, stream, ranges).get(0);
-                }
+                return SdmxXmlStreams.struct20(langs);
             case GENERIC21:
             case COMPACT21:
-                try (Reader stream = Files.newBufferedReader(structure.toPath(), StandardCharsets.UTF_8)) {
-                    return SdmxXmlStreams.struct21(factory, stream, ranges).get(0);
-                }
+                return SdmxXmlStreams.struct21(langs);
             default:
-                throw new IOException("Don't know how to handle '" + dataType + "'");
+                throw new IOException("Don't know how to handle '" + o + "'");
         }
     }
 
-    private DataStructure decodeDataStructure(DataType dataType, File data) throws IOException {
-        try (Reader stream = Files.newBufferedReader(data.toPath())) {
+    private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
+        try (Reader stream = Files.newBufferedReader(data.toPath(), StandardCharsets.UTF_8)) {
             return DataStructureDecoder.decodeDataStructure(dataType, factory, stream);
         }
     }

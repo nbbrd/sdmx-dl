@@ -115,4 +115,25 @@ class XMLStreamUtil {
         }
         return defaultValue;
     }
+
+    static <T> T with(XMLStreamReader reader, ReaderFunc<T> func) throws XMLStreamException {
+        T result;
+        try {
+            result = func.apply(reader);
+        } catch (XMLStreamException ex) {
+            try {
+                reader.close();
+            } catch (XMLStreamException suppressed) {
+                ex.addSuppressed(suppressed);
+            }
+            throw (ex);
+        }
+        reader.close();
+        return result;
+    }
+
+    interface ReaderFunc<T> {
+
+        T apply(XMLStreamReader reader) throws XMLStreamException;
+    }
 }

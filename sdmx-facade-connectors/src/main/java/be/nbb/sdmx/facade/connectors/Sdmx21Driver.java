@@ -209,7 +209,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         @Override
         public List<Series> parse(Reader xmlReader) throws XMLStreamException, SdmxException {
             try {
-                return Series.copyOf(SdmxXmlStreams.compactData21(factory, xmlReader, dsd));
+                return Series.copyOf(SdmxXmlStreams.compactData21(dsd).get(factory, xmlReader));
             } catch (IOException ex) {
                 throw new SdmxIOException("Cannot parse compact data 21", ex);
             }

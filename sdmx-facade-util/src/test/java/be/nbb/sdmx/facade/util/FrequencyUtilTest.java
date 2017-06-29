@@ -30,24 +30,24 @@ public class FrequencyUtilTest {
     @Test
     @SuppressWarnings("null")
     public void testParseByFreq() {
-        assertThatThrownBy(() -> FrequencyUtil.parseByFreq(null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> FreqUtil.parseByFreq(null)).isInstanceOf(NullPointerException.class);
 
-        assertThat(FrequencyUtil.parseByFreq("A")).isEqualTo(Frequency.ANNUAL);
-        assertThat(FrequencyUtil.parseByFreq("S")).isEqualTo(Frequency.HALF_YEARLY);
-        assertThat(FrequencyUtil.parseByFreq("Q")).isEqualTo(Frequency.QUARTERLY);
-        assertThat(FrequencyUtil.parseByFreq("M")).isEqualTo(Frequency.MONTHLY);
-        assertThat(FrequencyUtil.parseByFreq("W")).isEqualTo(Frequency.WEEKLY);
-        assertThat(FrequencyUtil.parseByFreq("D")).isEqualTo(Frequency.DAILY);
-        assertThat(FrequencyUtil.parseByFreq("H")).isEqualTo(Frequency.HOURLY);
-        assertThat(FrequencyUtil.parseByFreq("B")).isEqualTo(Frequency.DAILY_BUSINESS);
-        assertThat(FrequencyUtil.parseByFreq("N")).isEqualTo(Frequency.MINUTELY);
+        assertThat(FreqUtil.parseByFreq("A")).isEqualTo(Frequency.ANNUAL);
+        assertThat(FreqUtil.parseByFreq("S")).isEqualTo(Frequency.HALF_YEARLY);
+        assertThat(FreqUtil.parseByFreq("Q")).isEqualTo(Frequency.QUARTERLY);
+        assertThat(FreqUtil.parseByFreq("M")).isEqualTo(Frequency.MONTHLY);
+        assertThat(FreqUtil.parseByFreq("W")).isEqualTo(Frequency.WEEKLY);
+        assertThat(FreqUtil.parseByFreq("D")).isEqualTo(Frequency.DAILY);
+        assertThat(FreqUtil.parseByFreq("H")).isEqualTo(Frequency.HOURLY);
+        assertThat(FreqUtil.parseByFreq("B")).isEqualTo(Frequency.DAILY_BUSINESS);
+        assertThat(FreqUtil.parseByFreq("N")).isEqualTo(Frequency.MINUTELY);
 
-        assertThat(FrequencyUtil.parseByFreq("A5")).isEqualTo(Frequency.ANNUAL);
-        assertThat(FrequencyUtil.parseByFreq("M2")).isEqualTo(Frequency.MONTHLY);
-        assertThat(FrequencyUtil.parseByFreq("W6")).isEqualTo(Frequency.WEEKLY);
+        assertThat(FreqUtil.parseByFreq("A5")).isEqualTo(Frequency.ANNUAL);
+        assertThat(FreqUtil.parseByFreq("M2")).isEqualTo(Frequency.MONTHLY);
+        assertThat(FreqUtil.parseByFreq("W6")).isEqualTo(Frequency.WEEKLY);
 
-        assertThat(FrequencyUtil.parseByFreq("")).isEqualTo(Frequency.UNDEFINED);
-        assertThat(FrequencyUtil.parseByFreq("A0")).isEqualTo(Frequency.UNDEFINED);
-        assertThat(FrequencyUtil.parseByFreq("A1")).isEqualTo(Frequency.UNDEFINED);
+        assertThat(FreqUtil.parseByFreq("")).isEqualTo(Frequency.UNDEFINED);
+        assertThat(FreqUtil.parseByFreq("A0")).isEqualTo(Frequency.UNDEFINED);
+        assertThat(FreqUtil.parseByFreq("A1")).isEqualTo(Frequency.UNDEFINED);
     }
 }

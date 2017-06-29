@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import be.nbb.sdmx.facade.util.FreqParser;
 
 /**
  *
@@ -44,18 +45,18 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
-    private final FrequencyDataParser freqParser;
+    private final FreqParser freqParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, FrequencyDataParser freqParser, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
-        this.obsParser = new ObsParser();
+        this.obsParser = obsParser;
         this.freqParser = freqParser;
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
@@ -117,13 +118,13 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.getPeriod();
+        return obsParser.parsePeriod();
     }
 
     @Override
     public Double getObsValue() throws IOException {
         checkObsState();
-        return obsParser.getValue();
+        return obsParser.parseValue();
     }
 
     @Override
@@ -166,7 +167,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.setFrequency(freqParser.parse(keyBuilder, attributesBuilder));
+        obsParser.frequency(freqParser.parse(keyBuilder, attributesBuilder::getAttribute));
         return SUSPEND;
     }
 
@@ -190,8 +191,8 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     private Status parseObs() {
-        obsParser.periodString(reader.getAttributeValue(null, timeDimensionId));
-        obsParser.valueString(reader.getAttributeValue(null, primaryMeasureId));
+        obsParser.period(reader.getAttributeValue(null, timeDimensionId));
+        obsParser.value(reader.getAttributeValue(null, primaryMeasureId));
         return SUSPEND;
     }
 

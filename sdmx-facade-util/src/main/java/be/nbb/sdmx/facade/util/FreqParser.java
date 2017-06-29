@@ -14,44 +14,40 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.xml.stream;
+package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
+import internal.util.FreqParsers;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
-import be.nbb.sdmx.facade.util.FrequencyUtil;
 
 /**
  *
  * @author Philippe Charles
  */
-interface FrequencyDataParser {
+public interface FreqParser {
 
     @Nonnull
-    Frequency parse(@Nonnull Key.Builder key, @Nonnull AttributesBuilder attributes);
+    Frequency parse(@Nonnull Key.Builder key, @Nonnull Function<String, String> attributes);
 
     @Nonnull
-    static FrequencyDataParser sdmx20() {
-        return (k, a) -> {
-            String value = a.getAttribute(FrequencyUtil.TIME_FORMAT_CONCEPT);
-            return value != null ? FrequencyUtil.parseByTimeFormat(value) : Frequency.UNDEFINED;
-        };
+    static FreqParser sdmx20() {
+        return (k, a) -> FreqParsers.parseByTimeFormat(a);
     }
 
     @Nonnull
-    static FrequencyDataParser sdmx21(int frequencyCodeIdIndex) {
-        if (frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX) {
-            return (k, a) -> {
-                String frequencyCodeId = k.getItem(frequencyCodeIdIndex);
-                if (!frequencyCodeId.isEmpty()) {
-                    return FrequencyUtil.parseByFreq(frequencyCodeId);
-                }
-                return Frequency.UNDEFINED;
-            };
-        }
-        return (k, a) -> Frequency.UNDEFINED;
+    static FreqParser sdmx21(@Nonnull DataStructure dfs) {
+        return sdmx21(getFrequencyCodeIdIndex(dfs));
+    }
+
+    @Nonnull
+    static FreqParser sdmx21(int frequencyCodeIdIndex) {
+        return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
+                ? (k, a) -> FreqParsers.parseByFreqCodeIdIndex(k, frequencyCodeIdIndex)
+                : (k, a) -> Frequency.UNDEFINED;
     }
 
     static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
@@ -59,7 +55,7 @@ interface FrequencyDataParser {
     static int getFrequencyCodeIdIndex(@Nonnull DataStructure dfs) {
         for (Dimension o : dfs.getDimensions()) {
             switch (o.getId()) {
-                case FrequencyUtil.FREQ_CONCEPT:
+                case FreqUtil.FREQ_CONCEPT:
                 case "FREQUENCY":
                     return (o.getPosition() - 1);
             }
