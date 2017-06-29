@@ -42,9 +42,10 @@ public class FacadeResource {
 
     public SdmxRepository nbb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
+        LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataStructure> structs = struct20(f, SdmxSource.NBB_DATA_STRUCTURE);
-        List<Dataflow> flows = flow20(f, SdmxSource.NBB_DATA_STRUCTURE);
+        List<DataStructure> structs = struct20(f, SdmxSource.NBB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow20(f, SdmxSource.NBB_DATA_STRUCTURE, l);
         List<Series> data = data20(f, SdmxSource.NBB_DATA, structs.get(0));
 
         DataflowRef ref = DataflowRef.of("NBB", "TEST_DATASET", null);
@@ -60,9 +61,10 @@ public class FacadeResource {
 
     public SdmxRepository ecb() throws IOException {
         XMLInputFactory f = XMLInputFactory.newFactory();
+        LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataStructure> structs = struct21(f, SdmxSource.ECB_DATA_STRUCTURE);
-        List<Dataflow> flows = flow21(f, SdmxSource.ECB_DATAFLOWS);
+        List<DataStructure> structs = struct21(f, SdmxSource.ECB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow21(f, SdmxSource.ECB_DATAFLOWS, l);
         List<Series> data = data21(f, SdmxSource.ECB_DATA, structs.get(0));
 
         DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
@@ -76,31 +78,31 @@ public class FacadeResource {
                 .build();
     }
 
-    private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct20(f, r, LanguagePriorityList.ANY);
+            return SdmxXmlStreams.struct20(f, r, l);
         }
     }
 
-    private List<Dataflow> flow20(XMLInputFactory f, ByteSource xml) throws IOException {
-        return struct20(f, xml).stream()
+    private List<Dataflow> flow20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
+        return struct20(f, xml, l).stream()
                 .map(FacadeResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
     private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor cursor = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
-            return Series.copyOf(cursor);
+        try (DataCursor c = SdmxXmlStreams.genericData20(f, xml.openReader(), dsd)) {
+            return Series.copyOf(c);
         }
     }
 
-    private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct21(f, r, LanguagePriorityList.ANY);
+            return SdmxXmlStreams.struct21(f, r, l);
         }
     }
 
-    private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml) throws IOException {
+    private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
             // FIXME: no facade impl yet
             return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r).stream()
@@ -112,8 +114,8 @@ public class FacadeResource {
     }
 
     private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor cursor = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
-            return Series.copyOf(cursor);
+        try (DataCursor c = SdmxXmlStreams.genericData21(f, xml.openReader(), dsd)) {
+            return Series.copyOf(c);
         }
     }
 

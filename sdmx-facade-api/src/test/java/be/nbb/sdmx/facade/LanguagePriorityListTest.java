@@ -20,6 +20,7 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -29,7 +30,7 @@ public class LanguagePriorityListTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testToString() {
+    public void testParse() {
         assertThat(LanguagePriorityList.parse("*")).hasToString("*");
         assertThat(LanguagePriorityList.parse("fr")).hasToString("fr");
         assertThat(LanguagePriorityList.parse("fr-BE")).hasToString("fr-be");
@@ -55,6 +56,7 @@ public class LanguagePriorityListTest {
     public void testLookupTag() {
         assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
         assertThat(LanguagePriorityList.parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
+        assertThat(LanguagePriorityList.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
         assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("nl"))).isNull();
         assertThatThrownBy(() -> LanguagePriorityList.parse("fr").lookupTag(null)).isInstanceOf(NullPointerException.class);
     }

@@ -25,45 +25,64 @@ import javax.annotation.Nullable;
 import lombok.AccessLevel;
 
 /**
- * Simple wrapper around list of Locale.LanguageRange.
+ * Represents a language priority list. This class is an immutable convenient
+ * wrapper around list of Locale.LanguageRange. It is designed to be used
+ * directly in the "Accept-Language" header of an HTTP request.
  *
  * @author Philippe Charles
+ * @see Locale.LanguageRange
+ * @see
+ * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+ * @see https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation
  */
 @lombok.EqualsAndHashCode
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LanguagePriorityList {
 
+    /**
+     * Any language.
+     */
     public static final LanguagePriorityList ANY = LanguagePriorityList.parse("*");
 
     /**
-     * Parses the given input to generate a priority list.
+     * Parses the given ranges to generate a priority list.
      *
-     * @param input a non-null input
+     * @param ranges a non-null list of comma-separated language ranges or a
+     * list of language ranges in the form of the "Accept-Language" header
+     * defined in <a href="http://tools.ietf.org/html/rfc2616">RFC 2616</a>
      * @return a non-null priority list
-     * @throws IllegalArgumentException
-     * @see Locale.LanguageRange#parse(java.lang.String)
+     * @throws NullPointerException if {@code ranges} is null
+     * @throws IllegalArgumentException if a language range or a weight found in
+     * the given {@code ranges} is ill-formed
      */
     @Nonnull
-    public static LanguagePriorityList parse(@Nonnull String input) throws IllegalArgumentException {
-        return new LanguagePriorityList(Locale.LanguageRange.parse(input));
+    public static LanguagePriorityList parse(@Nonnull String ranges) throws IllegalArgumentException {
+        return new LanguagePriorityList(Locale.LanguageRange.parse(ranges));
     }
 
-    private final List<Locale.LanguageRange> ranges;
+    private final List<Locale.LanguageRange> list;
 
     /**
+     * Returns the best-matching language tag using the lookup mechanism defined
+     * in RFC 4647.
      *
-     * @param tags
-     * @return
-     * @see Locale#lookupTag(java.util.List, java.util.Collection)
+     * @param tags a non-null list of language tags used for matching
+     * @return the best matching language tag chosen based on priority or
+     * weight, or {@code null} if nothing matches.
+     * @throws NullPointerException if {@code tags} is {@code null}
      */
     @Nullable
     public String lookupTag(@Nonnull Collection<String> tags) {
-        return Locale.lookupTag(ranges, tags);
+        return Locale.lookupTag(list, tags);
     }
 
     @Override
     public String toString() {
-        return ranges.stream().
+        return asString(list);
+    }
+
+    private static String asString(List<Locale.LanguageRange> list) {
+        return list.stream().
                 map(LanguagePriorityList::asString)
                 .collect(Collectors.joining(","));
     }

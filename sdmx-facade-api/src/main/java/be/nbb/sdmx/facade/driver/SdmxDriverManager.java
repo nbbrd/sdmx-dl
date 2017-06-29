@@ -59,7 +59,7 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
                 }
             }
         } catch (RuntimeException ex) {
-            throw new IOException("Unexpected exception", ex);
+            throw new IOException("Failed to connect to '" + name + "'", ex);
         }
         throw new IOException("Failed to find a suitable driver for '" + name + "'");
     }

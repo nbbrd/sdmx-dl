@@ -17,8 +17,9 @@
 package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,8 +30,9 @@ import javax.annotation.Nullable;
 @lombok.AllArgsConstructor
 final class TextBuilder {
 
+    @lombok.NonNull
     private final LanguagePriorityList ranges;
-    private final Map<String, String> data = new HashMap<>();
+    private final Map<String, String> data = new LinkedHashMap<>();
 
     @Nonnull
     public TextBuilder clear() {
@@ -40,6 +42,7 @@ final class TextBuilder {
 
     @Nonnull
     public TextBuilder put(@Nonnull String lang, @Nullable String text) {
+        Objects.requireNonNull(lang);
         if (text != null) {
             data.put(lang, text);
         }
@@ -48,18 +51,16 @@ final class TextBuilder {
 
     @Nullable
     public String build() {
+        if (data.isEmpty()) {
+            return null;
+        }
         String lang = ranges.lookupTag(data.keySet());
-        if (lang != null) {
-            return data.get(lang);
-        }
-        if (!data.isEmpty()) {
-            return data.values().iterator().next();
-        }
-        return null;
+        return lang != null ? data.get(lang) : data.values().iterator().next();
     }
 
     @Nonnull
     public String build(@Nonnull String defaultValue) {
+        Objects.requireNonNull(defaultValue);
         String result = build();
         return result != null ? result : defaultValue;
     }

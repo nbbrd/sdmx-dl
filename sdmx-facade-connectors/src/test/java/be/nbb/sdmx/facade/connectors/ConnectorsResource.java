@@ -30,6 +30,7 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.parser.v20.GenericDataParser;
+import it.bancaditalia.oss.sdmx.util.Configuration;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
@@ -49,36 +50,50 @@ public class ConnectorsResource {
 
     @Nonnull
     public SdmxRepository nbb() throws IOException {
-        List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE);
-        List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE);
-        List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0));
+        Configuration.setLang("fr");
+        try {
+            List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE);
+            List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE);
+            List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0));
 
-        DataflowRef ref = flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
+            DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
-                .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                .copyOf(ref, new DataCursorAdapter(data))
-                .name("NBB")
-                .seriesKeysOnlySupported(false)
-                .build();
+            return SdmxRepository.builder()
+                    .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
+                    .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
+                    .copyOf(ref, new DataCursorAdapter(data))
+                    .name("NBB")
+                    .seriesKeysOnlySupported(false)
+                    .build();
+        } finally {
+            Configuration.setLang("en");
+        }
     }
 
     @Nonnull
     public SdmxRepository ecb() throws IOException {
-        List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE);
-        List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS);
-        List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0));
+        Configuration.setLang("fr");
+        try {
+            List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE);
+            List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS);
+            List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0));
 
-        DataflowRef ref = flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
+            DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
-                .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                .copyOf(ref, new DataCursorAdapter(data))
-                .name("ECB")
-                .seriesKeysOnlySupported(true)
-                .build();
+            return SdmxRepository.builder()
+                    .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
+                    .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
+                    .copyOf(ref, new DataCursorAdapter(data))
+                    .name("ECB")
+                    .seriesKeysOnlySupported(true)
+                    .build();
+        } finally {
+            Configuration.setLang("en");
+        }
+    }
+
+    DataflowRef firstOf(List<Dataflow> flows) {
+        return flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
     }
 
     List<DataFlowStructure> struct20(ByteSource xml) throws IOException {
