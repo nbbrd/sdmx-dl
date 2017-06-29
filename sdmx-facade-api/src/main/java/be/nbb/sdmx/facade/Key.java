@@ -57,6 +57,15 @@ public final class Key {
         return WILDCARD.equals(items[index]);
     }
 
+    public boolean isSeries() {
+        for (int i = 0; i < items.length; i++) {
+            if (isWildcard(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean contains(@Nonnull Key input) {
         if (this == ALL) {
             return true;
@@ -157,6 +166,8 @@ public final class Key {
 
         boolean isDimension(@Nullable String id);
 
+        boolean isSeries();
+
         @Nonnull
         Builder put(@Nullable String id, @Nullable String value);
 
@@ -213,6 +224,16 @@ public final class Key {
         @Override
         public boolean isDimension(String id) {
             return index.containsKey(id);
+        }
+
+        @Override
+        public boolean isSeries() {
+            for (String item : items) {
+                if (WILDCARD.equals(item)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         @Override

@@ -100,6 +100,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     @Override
     public Key getSeriesKey() throws IOException {
         checkSeriesState();
+        if (!keyBuilder.isSeries()) {
+            throw new IOException("Invalid series key '" + keyBuilder + "'");
+        }
         return keyBuilder.build();
     }
 

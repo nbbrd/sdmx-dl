@@ -55,18 +55,18 @@ public class Series {
         if (!cursor.nextSeries()) {
             return Collections.emptyList();
         }
-        Series.Builder series = builder();
+        Series.Builder b = builder();
         List<Series> result = new ArrayList<>();
-        result.add(getSeries(series, cursor));
+        result.add(getSeries(b, cursor));
         while (cursor.nextSeries()) {
-            result.add(getSeries(series, cursor));
+            result.add(getSeries(b, cursor));
         }
         return result;
     }
 
     @Nonnull
-    public static DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key key) {
-        return new SeriesCursor(list, key);
+    public static DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key ref) {
+        return new SeriesCursor(list, ref);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
@@ -85,16 +85,16 @@ public class Series {
     private static final class SeriesCursor implements DataCursor {
 
         private final List<Series> col;
-        private final Key key;
+        private final Key ref;
         private int i;
         private int j;
         private boolean closed;
         private boolean hasSeries;
         private boolean hasObs;
 
-        SeriesCursor(List<Series> col, Key key) {
+        SeriesCursor(List<Series> col, Key ref) {
             this.col = col;
-            this.key = key;
+            this.ref = ref;
             this.i = -1;
             this.j = -1;
             this.closed = false;
@@ -108,7 +108,7 @@ public class Series {
             do {
                 i++;
                 j = -1;
-            } while (i < col.size() && !key.contains(col.get(i).getKey()));
+            } while (i < col.size() && !ref.contains(col.get(i).getKey()));
             return hasSeries = (i < col.size());
         }
 

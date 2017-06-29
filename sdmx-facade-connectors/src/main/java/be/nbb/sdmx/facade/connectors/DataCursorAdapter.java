@@ -147,7 +147,11 @@ final class DataCursorAdapter implements DataCursor {
     }
 
     private static Key parseKey(PortableTimeSeries ts) throws IOException {
-        return Key.of(ts.getDimensionsMap().values());
+        Key result = Key.of(ts.getDimensionsMap().values());
+        if (!result.isSeries()) {
+            throw new IOException("Invalid series key '" + result + "'");
+        }
+        return result;
     }
     //</editor-fold>
 }

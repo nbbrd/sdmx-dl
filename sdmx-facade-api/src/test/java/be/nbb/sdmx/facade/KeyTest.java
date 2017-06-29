@@ -106,6 +106,13 @@ public class KeyTest {
     }
 
     @Test
+    public void testIsSeries() {
+        assertThat(Key.ALL.isSeries()).isFalse();
+        assertThat(Key.of("LOCSTL04", "*").isSeries()).isFalse();
+        assertThat(Key.of("LOCSTL04", "AUS").isSeries()).isTrue();
+    }
+
+    @Test
     public void testContains() {
         assertThat(Key.of("").contains(Key.of(""))).isTrue();
         assertThat(Key.ALL.contains(Key.ALL)).isTrue();
@@ -145,5 +152,9 @@ public class KeyTest {
 //        assertThat(b.clear().toString()).isEqualTo("all");
         assertThat(b.isDimension("hello")).isFalse();
         assertThat(b.isDimension("SECTOR")).isTrue();
+
+        assertThat(b.clear().isSeries()).isFalse();
+        assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
     }
 }
