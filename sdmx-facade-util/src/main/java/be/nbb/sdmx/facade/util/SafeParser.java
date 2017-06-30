@@ -48,6 +48,12 @@ public interface SafeParser<T> {
     }
 
     @Nonnull
+    @SuppressWarnings("null")
+    static <T> SafeParser<T> onNull() {
+        return o -> null;
+    }
+
+    @Nonnull
     static SafeParser<LocalDateTime> onDatePattern(@Nonnull String pattern) {
         DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
                 .appendPattern(pattern)

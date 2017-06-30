@@ -33,12 +33,7 @@ public class FreqParsers {
         return value != null ? FreqUtil.parseByTimeFormat(value) : Frequency.UNDEFINED;
     }
 
-    public Frequency parseByFreqCodeIdIndex(Key.Builder key, int frequencyCodeIdIndex) {
-        String frequencyCodeId = key.getItem(frequencyCodeIdIndex);
-        if (!frequencyCodeId.isEmpty()) {
-            return FreqUtil.parseByFreq(frequencyCodeId);
-        }
-        return Frequency.UNDEFINED;
+    public Frequency parseByFreq(Key.Builder key, int index) {
+        return FreqUtil.parseByFreq(key.getItem(index));
     }
-
 }

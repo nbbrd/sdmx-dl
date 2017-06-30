@@ -35,13 +35,13 @@ import be.nbb.sdmx.facade.util.SafeParser;
 @lombok.experimental.UtilityClass
 public class SafeParsers {
 
-    public final Map<Frequency, SafeParser> STANDARD_PARSERS = initStandardParsers();
+    public final Map<Frequency, SafeParser<LocalDateTime>> STANDARD_PARSERS = initStandardParsers();
 
-    private Map<Frequency, SafeParser> initStandardParsers() {
+    private Map<Frequency, SafeParser<LocalDateTime>> initStandardParsers() {
         SafeParser yearMonth = SafeParser.onDatePattern("yyyy-MM");
         SafeParser yearMonthDay = SafeParser.onDatePattern("yyyy-MM-dd");
 
-        Map<Frequency, SafeParser> result = new EnumMap<>(Frequency.class);
+        Map<Frequency, SafeParser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
         result.put(Frequency.ANNUAL, SafeParser.onDatePattern("yyyy").or(SafeParser.onDatePattern("yyyy'-01'")).or(SafeParser.onDatePattern("yyyy'-A1'")));
         result.put(Frequency.HALF_YEARLY, SafeParser.onYearFreqPos("S", 2).or(yearMonth));
         result.put(Frequency.QUARTERLY, SafeParser.onYearFreqPos("Q", 4).or(yearMonth));

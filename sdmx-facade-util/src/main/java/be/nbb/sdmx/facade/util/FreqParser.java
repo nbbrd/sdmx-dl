@@ -46,7 +46,7 @@ public interface FreqParser {
     @Nonnull
     static FreqParser sdmx21(int frequencyCodeIdIndex) {
         return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
-                ? (k, a) -> FreqParsers.parseByFreqCodeIdIndex(k, frequencyCodeIdIndex)
+                ? (k, a) -> FreqParsers.parseByFreq(k, frequencyCodeIdIndex)
                 : (k, a) -> Frequency.UNDEFINED;
     }
 

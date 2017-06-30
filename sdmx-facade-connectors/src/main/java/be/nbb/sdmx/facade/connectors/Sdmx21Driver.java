@@ -73,12 +73,6 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
                 .seriesKeysOnlySupported(true)
                 .build());
         result.add(b.clear()
-                .name("INSEE")
-                .description("Institut national de la statistique et des études économiques")
-                .endpoint("https://bdm.insee.fr/series/sdmx")
-                .seriesKeysOnlySupported(true)
-                .build());
-        result.add(b.clear()
                 .name("UNDATA")
                 .description("Data access system to UN databases")
                 .endpoint("http://data.un.org/WS/rest")
@@ -190,7 +184,7 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
             // FIXME: avoid in-memory copy
-            List<Series> data = runQuery(new CustomParser(factory, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+            List<Series> data = runQuery(o -> parse(o, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
             return Series.asCursor(data, resource);
         }
 
@@ -198,16 +192,8 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         public boolean isSeriesKeysOnlySupported() {
             return config.isSeriesKeysOnlySupported();
         }
-    }
 
-    @lombok.AllArgsConstructor
-    private static final class CustomParser implements it.bancaditalia.oss.sdmx.client.Parser<List<Series>> {
-
-        private final XMLInputFactory factory;
-        private final DataStructure dsd;
-
-        @Override
-        public List<Series> parse(Reader xmlReader) throws XMLStreamException, SdmxException {
+        private List<Series> parse(Reader xmlReader, DataStructure dsd) throws XMLStreamException, SdmxException {
             try {
                 return Series.copyOf(SdmxXmlStreams.compactData21(dsd).get(factory, xmlReader));
             } catch (IOException ex) {
