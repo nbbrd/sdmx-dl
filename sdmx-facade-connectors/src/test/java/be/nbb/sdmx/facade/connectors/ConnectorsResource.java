@@ -31,7 +31,7 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.parser.v20.GenericDataParser;
-import it.bancaditalia.oss.sdmx.util.Configuration;
+import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
@@ -51,91 +51,85 @@ public class ConnectorsResource {
 
     @Nonnull
     public SdmxRepository nbb() throws IOException {
-        Configuration.setLang("fr");
-        try {
-            List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE);
-            List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE);
-            List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0));
+        LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-            DataflowRef ref = firstOf(flows);
+        List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE, l);
+        List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0), l);
 
-            return SdmxRepository.builder()
-                    .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
-                    .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                    .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
-                    .name("NBB")
-                    .seriesKeysOnlySupported(false)
-                    .build();
-        } finally {
-            Configuration.setLang("en");
-        }
+        DataflowRef ref = firstOf(flows);
+
+        return SdmxRepository.builder()
+                .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
+                .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
+                .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
+                .name("NBB")
+                .seriesKeysOnlySupported(false)
+                .build();
     }
 
     @Nonnull
     public SdmxRepository ecb() throws IOException {
-        Configuration.setLang("fr");
-        try {
-            List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE);
-            List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS);
-            List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0));
+        LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-            DataflowRef ref = firstOf(flows);
+        List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS, l);
+        List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0), l);
 
-            return SdmxRepository.builder()
-                    .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
-                    .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
-                    .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
-                    .name("ECB")
-                    .seriesKeysOnlySupported(true)
-                    .build();
-        } finally {
-            Configuration.setLang("en");
-        }
+        DataflowRef ref = firstOf(flows);
+
+        return SdmxRepository.builder()
+                .dataStructures(structs.stream().map(Util::toDataStructure).collect(Collectors.toList()))
+                .dataflows(flows.stream().map(Util::toDataflow).collect(Collectors.toList()))
+                .copyOf(ref, new DataCursorAdapter(data, ObsParser.standard()))
+                .name("ECB")
+                .seriesKeysOnlySupported(true)
+                .build();
     }
 
     DataflowRef firstOf(List<Dataflow> flows) {
         return flows.stream().map(o -> Util.toDataflow(o).getFlowRef()).findFirst().get();
     }
 
-    List<DataFlowStructure> struct20(ByteSource xml) throws IOException {
+    List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser().parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser().parse(r, l);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
     }
 
-    List<Dataflow> flow20(ByteSource xml) throws IOException {
-        return struct20(xml).stream()
+    List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
+        return struct20(xml, l).stream()
                 .map(ConnectorsResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
-    List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd) throws IOException {
+    List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return new GenericDataParser(dsd, null, true).parse(r).getData();
+            return new GenericDataParser(dsd, null, true).parse(r, l).getData();
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
     }
 
-    List<DataFlowStructure> struct21(ByteSource xml) throws IOException {
+    List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser().parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser().parse(r, l);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
         }
     }
 
-    List<Dataflow> flow21(ByteSource xml) throws IOException {
+    List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
         try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r);
+            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r, l);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
     }
 
-    List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd) throws IOException {
+    List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // FIXME: no connectors impl yet
         try (DataCursor cursor = SdmxXmlStreams.genericData21(Util.toDataStructure(dsd)).get(XMLInputFactory.newFactory(), xml.openReader())) {
             List<Dimension> dims = dsd.getDimensions();

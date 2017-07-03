@@ -13,7 +13,7 @@
     
     <properties>
         <!-- dependencies -->
-        <sdmx-connectors.version>bcd8c0273a</sdmx-connectors.version>
+        <sdmx-connectors.version>e401cd23be</sdmx-connectors.version>
         <netbeans.version>RELEASE802</netbeans.version>
     </properties>
 

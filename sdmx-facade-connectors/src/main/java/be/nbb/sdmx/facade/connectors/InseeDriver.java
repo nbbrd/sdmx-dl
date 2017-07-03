@@ -62,8 +62,10 @@ public final class InseeDriver implements SdmxDriver, HasCache {
 
     private static final String PREFIX = "sdmx:insee:";
 
+    private final XMLInputFactory xml = XMLInputFactory.newInstance();
+
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, InseeClient::of);
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new InseeClient(u, l, xml));
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
@@ -73,22 +75,19 @@ public final class InseeDriver implements SdmxDriver, HasCache {
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
-        private static InseeClient of(URL endpoint, Map<?, ?> info, LanguagePriorityList languages) {
-            return new InseeClient(endpoint);
-        }
-
         private final XMLInputFactory factory;
 
-        private InseeClient(URL endpoint) {
+        private InseeClient(URL endpoint, LanguagePriorityList langs, XMLInputFactory factory) {
             super("", endpoint, false, false, true);
-            this.factory = XMLInputFactory.newInstance();
+            this.languages = Util.fromLanguages(langs);
+            this.factory = factory;
         }
 
         @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
             // FIXME: avoid in-memory copy
-            List<Series> data = runQuery(o -> parse(o, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+            List<Series> data = runQuery((r, l) -> parse(r, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
             return Series.asCursor(data, resource);
         }
 

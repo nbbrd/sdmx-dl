@@ -25,6 +25,7 @@ import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.ObsParser;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -42,8 +43,9 @@ public class DataCursorAdapterTest {
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-        DataFlowStructure dsd = ConnectorsResource.struct21(SdmxSource.ECB_DATA_STRUCTURE).get(0);
-        DATA = ConnectorsResource.data21(SdmxSource.ECB_DATA, dsd);
+        LanguagePriorityList l = LanguagePriorityList.parse("en");
+        DataFlowStructure dsd = ConnectorsResource.struct21(SdmxSource.ECB_DATA_STRUCTURE, l).get(0);
+        DATA = ConnectorsResource.data21(SdmxSource.ECB_DATA, dsd, l);
     }
 
     @Test

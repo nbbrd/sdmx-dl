@@ -47,15 +47,9 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 final class SdmxDriverSupport implements HasCache {
 
-    public interface ClientSupplier {
-
-        @Nonnull
-        GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList languages) throws MalformedURLException;
-    }
-
     @Nonnull
     public static SdmxDriverSupport of(@Nonnull String prefix, @Nonnull Class<? extends RestSdmxClient> clazz) {
-        return new SdmxDriverSupport(prefix, supplierOf(clazz), new ConcurrentHashMap(), Clock.systemDefaultZone());
+        return new SdmxDriverSupport(prefix, ClientSupplier.ofType(clazz), new ConcurrentHashMap(), Clock.systemDefaultZone());
     }
 
     @Nonnull
@@ -106,18 +100,6 @@ final class SdmxDriverSupport implements HasCache {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static ClientSupplier supplierOf(Class<? extends RestSdmxClient> clazz) {
-        return (URL endpoint, Map<?, ?> info, LanguagePriorityList languages) -> {
-            try {
-                GenericSDMXClient result = clazz.newInstance();
-                result.setEndpoint(endpoint);
-                return result;
-            } catch (InstantiationException | IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            }
-        };
-    }
-
     private static void applyTimeouts(GenericSDMXClient client, Map<?, ?> info) {
         if (client instanceof RestSdmxClient) {
             ((RestSdmxClient) client).setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));

@@ -68,6 +68,10 @@ class Util {
         return result.build();
     }
 
+    it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {
+        return it.bancaditalia.oss.sdmx.util.LanguagePriorityList.parse(l.toString());
+    }
+
     @Nonnull
     private String getNonNullName(DataFlowStructure dfs) {
         // FIXME: PR parsing code for name of data structure v2.1 in connectors 

@@ -51,8 +51,10 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
 
     private static final String PREFIX = "sdmx:sdmx21:";
 
+    private final XMLInputFactory xml = XMLInputFactory.newInstance();
+
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, ExtRestSdmxClient::of);
+    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l, xml));
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
@@ -165,26 +167,23 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
         }
     }
 
-    private final static class ExtRestSdmxClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
-
-        private static ExtRestSdmxClient of(URL endpoint, Map<?, ?> info, LanguagePriorityList languages) {
-            return new ExtRestSdmxClient(endpoint, Sdmx21Config.load(info));
-        }
+    private final static class Sdmx21Client extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
         private final Sdmx21Config config;
         private final XMLInputFactory factory;
 
-        private ExtRestSdmxClient(URL endpoint, Sdmx21Config config) {
+        private Sdmx21Client(URL endpoint, Sdmx21Config config, LanguagePriorityList langs, XMLInputFactory factory) {
             super("", endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
+            this.languages = Util.fromLanguages(langs);
             this.config = config;
-            this.factory = XMLInputFactory.newInstance();
+            this.factory = factory;
         }
 
         @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             String query = buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false);
             // FIXME: avoid in-memory copy
-            List<Series> data = runQuery(o -> parse(o, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+            List<Series> data = runQuery((r, l) -> parse(r, Util.toDataStructure(dsd)), query, SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
             return Series.asCursor(data, resource);
         }
 
