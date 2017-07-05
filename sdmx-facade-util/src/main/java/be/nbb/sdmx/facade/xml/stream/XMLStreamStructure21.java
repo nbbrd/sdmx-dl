@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.util.SdmxFix;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -243,10 +244,7 @@ final class XMLStreamStructure21 {
             String id = reader.getAttributeValue(null, ID_ATTR);
             check(id != null, reader, "Missing Ref id");
 
-            Map<String, String> codes = toCodes.apply(id);
-            if (codes != null) {
-                dimension.codes(codes);
-            }
+            SdmxFix.codes(dimension, toCodes.apply(id));
         }
     }
 

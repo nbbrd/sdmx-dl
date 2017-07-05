@@ -69,7 +69,7 @@ public final class InseeDriver implements SdmxDriver, HasCache {
 
     @Override
     public List<WsEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.singletonOf("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:https://bdm.insee.fr/series/sdmx");
+        return SdmxDriverSupport.singletonOf("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

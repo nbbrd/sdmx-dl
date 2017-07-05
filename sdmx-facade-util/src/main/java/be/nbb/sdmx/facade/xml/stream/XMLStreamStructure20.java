@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.util.SdmxFix;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -200,10 +201,7 @@ final class XMLStreamStructure20 {
         String conceptName = toConceptName.apply(id);
         result.label(conceptName != null ? conceptName : id);
 
-        Map<String, String> codes = toCodes.apply(codelist);
-        if (codes != null) {
-            result.codes(codes);
-        }
+        SdmxFix.codes(result, toCodes.apply(codelist));
 
         ds.dimension(result.build());
     }
