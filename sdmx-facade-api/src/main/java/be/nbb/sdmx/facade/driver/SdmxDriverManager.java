@@ -22,13 +22,13 @@ import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 /**
@@ -37,12 +37,33 @@ import javax.annotation.Nonnull;
  */
 public final class SdmxDriverManager implements SdmxConnectionSupplier {
 
-    private final List<SdmxDriver> drivers;
-    private final Map<String, WsEntryPoint> entryPointByName;
+    @Nonnull
+    public static SdmxDriverManager getDefault() {
+        return Holder.INSTANCE;
+    }
 
-    public SdmxDriverManager() {
-        this.drivers = new CopyOnWriteArrayList<>();
-        this.entryPointByName = new ConcurrentHashMap<>();
+    @Nonnull
+    public static SdmxDriverManager of(@Nonnull SdmxDriver... drivers) {
+        return of(Arrays.asList(drivers));
+    }
+
+    @Nonnull
+    public static SdmxDriverManager of(@Nonnull Iterable<? extends SdmxDriver> drivers) {
+        CopyOnWriteArrayList<SdmxDriver> driverList = new CopyOnWriteArrayList<>();
+        ConcurrentMap<String, WsEntryPoint> entryPointByName = new ConcurrentHashMap<>();
+        drivers.forEach(o -> {
+            driverList.add(o);
+            o.getDefaultEntryPoints().forEach(x -> entryPointByName.put(x.getName(), x));
+        });
+        return new SdmxDriverManager(driverList, entryPointByName);
+    }
+
+    private final CopyOnWriteArrayList<SdmxDriver> drivers;
+    private final ConcurrentMap<String, WsEntryPoint> entryPointByName;
+
+    private SdmxDriverManager(CopyOnWriteArrayList<SdmxDriver> drivers, ConcurrentMap<String, WsEntryPoint> entryPointByName) {
+        this.drivers = drivers;
+        this.entryPointByName = entryPointByName;
     }
 
     @Override
@@ -84,34 +105,10 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
         list.forEach(o -> entryPointByName.put(o.getName(), o));
     }
 
-    @Nonnull
-    public static SdmxDriverManager getDefault() {
-        return Holder.INSTANCE;
-    }
-
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static final class Holder {
 
-        private static final SdmxDriverManager INSTANCE = instanciate();
-
-        private static SdmxDriverManager instanciate() {
-            SdmxDriverManager result = new SdmxDriverManager();
-            result.setDrivers(getDrivers());
-            result.setEntryPoints(getEntryPoints(result.getDrivers()));
-            return result;
-        }
-
-        private static List<SdmxDriver> getDrivers() {
-            List<SdmxDriver> result = new ArrayList<>();
-            ServiceLoader.load(SdmxDriver.class).forEach(result::add);
-            return result;
-        }
-
-        private static List<WsEntryPoint> getEntryPoints(List<SdmxDriver> drivers) {
-            return drivers.stream()
-                    .flatMap(o -> o.getDefaultEntryPoints().stream())
-                    .collect(Collectors.toList());
-        }
+        private static final SdmxDriverManager INSTANCE = of(ServiceLoader.load(SdmxDriver.class));
     }
     //</editor-fold>
 }

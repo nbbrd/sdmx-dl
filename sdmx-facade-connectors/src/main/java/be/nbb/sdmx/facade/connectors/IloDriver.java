@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.ILO;
-import java.util.List;
+import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,7 +36,7 @@ public final class IloDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, ILO.class);
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.singletonOf("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
+    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+        return SdmxDriverSupport.entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
     }
 }

@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
-import java.util.List;
+import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,7 +36,7 @@ public final class NbbDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, NBB.class);
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.singletonOf("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx");
+    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+        return SdmxDriverSupport.entry("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx");
     }
 }

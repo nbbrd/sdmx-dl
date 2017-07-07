@@ -30,8 +30,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Clock;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -95,8 +95,8 @@ final class SdmxDriverSupport implements HasCache {
     }
 
     @Nonnull
-    public static List<WsEntryPoint> singletonOf(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
-        return Collections.singletonList(WsEntryPoint.builder().name(name).description(description).uri(url).build());
+    public static Collection<WsEntryPoint> entry(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
+        return Collections.singleton(WsEntryPoint.builder().name(name).description(description).uri(url).build());
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

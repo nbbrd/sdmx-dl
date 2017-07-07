@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -68,8 +69,8 @@ public final class InseeDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new InseeClient(u, l, xml));
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.singletonOf("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
+    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+        return SdmxDriverSupport.entry("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

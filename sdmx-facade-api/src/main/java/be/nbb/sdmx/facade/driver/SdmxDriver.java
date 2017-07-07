@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -38,5 +38,5 @@ public interface SdmxDriver {
     boolean acceptsURI(@Nonnull URI uri) throws IOException;
 
     @Nonnull
-    List<WsEntryPoint> getDefaultEntryPoints();
+    Collection<WsEntryPoint> getDefaultEntryPoints();
 }

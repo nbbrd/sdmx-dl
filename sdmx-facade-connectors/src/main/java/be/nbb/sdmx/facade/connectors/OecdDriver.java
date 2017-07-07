@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.driver.SdmxDriver;
 import be.nbb.sdmx.facade.driver.WsEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
-import java.util.List;
+import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,7 +36,7 @@ public final class OecdDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, OECD.class);
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.singletonOf("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
+    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+        return SdmxDriverSupport.entry("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
     }
 }
