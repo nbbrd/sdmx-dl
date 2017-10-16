@@ -23,6 +23,7 @@ import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 /**
@@ -39,6 +40,11 @@ public class SdmxRepositoryTest {
     @Test
     public void testDataCursorCompliance() {
         DataCursorAssert.assertCompliance(() -> Series.asCursor(Collections.singletonList(series), Key.ALL));
+    }
+
+    @Test
+    public void testBuilder() {
+        assertThat(SdmxRepository.builder().name("test").data(xyz, series).build().isSeriesKeysOnlySupported()).isTrue();
     }
 
     private final DataflowRef xyz = DataflowRef.parse("XYZ");

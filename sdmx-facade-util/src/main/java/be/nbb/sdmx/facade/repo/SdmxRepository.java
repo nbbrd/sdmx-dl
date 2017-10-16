@@ -57,7 +57,8 @@ public class SdmxRepository {
     @lombok.NonNull
     Map<DataflowRef, List<Series>> data;
 
-    boolean seriesKeysOnlySupported;
+    @lombok.Builder.Default
+    boolean seriesKeysOnlySupported = true;
 
     @Nonnull
     public SdmxConnection asConnection() {
@@ -69,8 +70,6 @@ public class SdmxRepository {
     }
 
     public static final class Builder {
-
-        private boolean seriesKeysOnlySupported = true;
 
         @Nonnull
         public Builder clearData() {
