@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,29 +14,32 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.driver;
+package be.nbb.sdmx.facade.repo;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import java.util.List;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
-public interface SdmxDriver {
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
+public final class SdmxRepositoryManager implements SdmxConnectionSupplier {
 
-    @Nonnull
-    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList languages) throws IOException;
+    @lombok.NonNull
+    @lombok.Singular
+    List<SdmxRepository> repositories;
 
-    boolean acceptsURI(@Nonnull URI uri) throws IOException;
-
-    @Nonnull
-    Collection<WsEntryPoint> getDefaultEntryPoints();
+    @Override
+    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+        return repositories.stream()
+                .filter(o -> o.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IOException("Cannot find '" + name + "'"))
+                .asConnection();
+    }
 }

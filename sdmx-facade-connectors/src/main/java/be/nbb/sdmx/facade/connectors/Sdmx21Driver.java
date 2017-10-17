@@ -20,8 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
@@ -41,13 +40,14 @@ import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class Sdmx21Driver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:sdmx21:";
 
@@ -57,9 +57,9 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l, xml));
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
+    public List<WebEntryPoint> getDefaultEntryPoints() {
         Sdmx21EntryPointBuilder b = new Sdmx21EntryPointBuilder();
-        List<WsEntryPoint> result = new ArrayList<>();
+        List<WebEntryPoint> result = new ArrayList<>();
         result.add(b.clear()
                 .name("ECB")
                 .description("European Central Bank")
@@ -157,8 +157,8 @@ public final class Sdmx21Driver implements SdmxDriver, HasCache {
             return result;
         }
 
-        public WsEntryPoint build() {
-            return WsEntryPoint.builder()
+        public WebEntryPoint build() {
+            return WebEntryPoint.builder()
                     .name(name)
                     .description(description)
                     .uri(PREFIX + endpoint)

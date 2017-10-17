@@ -16,19 +16,19 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.IMF;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class ImfDriver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class ImfDriver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:imf:";
 
@@ -36,7 +36,7 @@ public final class ImfDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, IMF.class);
 
     @Override
-    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+    public Collection<WebEntryPoint> getDefaultEntryPoints() {
         return SdmxDriverSupport.entry("IMF", "International Monetary Fund", "sdmx:imf:http://sdmxws.imf.org/SDMXRest/sdmx.ashx");
     }
 }

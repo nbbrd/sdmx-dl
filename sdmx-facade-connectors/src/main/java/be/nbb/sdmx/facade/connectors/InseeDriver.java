@@ -26,8 +26,7 @@ import static be.nbb.sdmx.facade.Frequency.QUARTERLY;
 import static be.nbb.sdmx.facade.Frequency.UNDEFINED;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.FreqParser;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -53,13 +52,14 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class InseeDriver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class InseeDriver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:insee:";
 
@@ -69,7 +69,7 @@ public final class InseeDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new InseeClient(u, l, xml));
 
     @Override
-    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+    public Collection<WebEntryPoint> getDefaultEntryPoints() {
         return SdmxDriverSupport.entry("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
     }
 

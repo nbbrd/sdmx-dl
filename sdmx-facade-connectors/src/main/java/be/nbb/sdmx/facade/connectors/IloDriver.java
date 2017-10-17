@@ -16,19 +16,19 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.ILO;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class IloDriver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class IloDriver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:ilo:";
 
@@ -36,7 +36,7 @@ public final class IloDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, ILO.class);
 
     @Override
-    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+    public Collection<WebEntryPoint> getDefaultEntryPoints() {
         return SdmxDriverSupport.entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
     }
 }

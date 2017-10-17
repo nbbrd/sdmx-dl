@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.driver;
+package be.nbb.sdmx.facade.web;
 
 import java.net.URI;
 import java.util.Map;
@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public final class WsEntryPoint {
+public final class WebEntryPoint {
 
     @Nonnull
     String name;

@@ -14,29 +14,29 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.connectors;
+package be.nbb.sdmx.facade.web;
 
-import be.nbb.sdmx.facade.web.WebEntryPoint;
-import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.WB;
+import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.SdmxConnection;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
-import org.openide.util.lookup.ServiceProvider;
-import be.nbb.sdmx.facade.web.SdmxWebDriver;
+import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
-public final class WbDriver implements SdmxWebDriver, HasCache {
+@ThreadSafe
+public interface SdmxWebDriver {
 
-    private static final String PREFIX = "sdmx:wb:";
+    @Nonnull
+    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> properties, @Nonnull LanguagePriorityList languages) throws IOException;
 
-    @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, WB.class);
+    boolean acceptsURI(@Nonnull URI uri) throws IOException;
 
-    @Override
-    public Collection<WebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("WB", "World Bank", "sdmx:wb:http://api.worldbank.org");
-    }
+    @Nonnull
+    Collection<WebEntryPoint> getDefaultEntryPoints();
 }

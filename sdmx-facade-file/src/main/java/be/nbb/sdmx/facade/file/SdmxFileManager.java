@@ -67,11 +67,4 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     public void setCache(ConcurrentMap cache) {
         this.cache.set(cache != null ? cache : new ConcurrentHashMap());
     }
-
-    @Nonnull
-    public static SdmxFileManager getDefault() {
-        return INSTANCE;
-    }
-
-    private static final SdmxFileManager INSTANCE = new SdmxFileManager();
 }

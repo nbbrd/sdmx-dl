@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
@@ -95,8 +95,8 @@ final class SdmxDriverSupport implements HasCache {
     }
 
     @Nonnull
-    public static Collection<WsEntryPoint> entry(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
-        return Collections.singleton(WsEntryPoint.builder().name(name).description(description).uri(url).build());
+    public static Collection<WebEntryPoint> entry(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
+        return Collections.singleton(WebEntryPoint.builder().name(name).description(description).uri(url).build());
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

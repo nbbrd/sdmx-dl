@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.driver;
+package be.nbb.sdmx.facade.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
@@ -35,46 +35,46 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-public final class SdmxDriverManager implements SdmxConnectionSupplier {
+public final class SdmxWebManager implements SdmxConnectionSupplier {
 
     @Nonnull
-    public static SdmxDriverManager getDefault() {
-        return Holder.INSTANCE;
+    public static SdmxWebManager ofServiceLoader() {
+        return of(ServiceLoader.load(SdmxWebDriver.class));
     }
 
     @Nonnull
-    public static SdmxDriverManager of(@Nonnull SdmxDriver... drivers) {
+    public static SdmxWebManager of(@Nonnull SdmxWebDriver... drivers) {
         return of(Arrays.asList(drivers));
     }
 
     @Nonnull
-    public static SdmxDriverManager of(@Nonnull Iterable<? extends SdmxDriver> drivers) {
-        CopyOnWriteArrayList<SdmxDriver> driverList = new CopyOnWriteArrayList<>();
-        ConcurrentMap<String, WsEntryPoint> entryPointByName = new ConcurrentHashMap<>();
+    public static SdmxWebManager of(@Nonnull Iterable<? extends SdmxWebDriver> drivers) {
+        CopyOnWriteArrayList<SdmxWebDriver> driverList = new CopyOnWriteArrayList<>();
+        ConcurrentMap<String, WebEntryPoint> entryPointByName = new ConcurrentHashMap<>();
         drivers.forEach(o -> {
             driverList.add(o);
             o.getDefaultEntryPoints().forEach(x -> entryPointByName.put(x.getName(), x));
         });
-        return new SdmxDriverManager(driverList, entryPointByName);
+        return new SdmxWebManager(driverList, entryPointByName);
     }
 
-    private final CopyOnWriteArrayList<SdmxDriver> drivers;
-    private final ConcurrentMap<String, WsEntryPoint> entryPointByName;
+    private final CopyOnWriteArrayList<SdmxWebDriver> drivers;
+    private final ConcurrentMap<String, WebEntryPoint> entryPointByName;
 
-    private SdmxDriverManager(CopyOnWriteArrayList<SdmxDriver> drivers, ConcurrentMap<String, WsEntryPoint> entryPointByName) {
+    private SdmxWebManager(CopyOnWriteArrayList<SdmxWebDriver> drivers, ConcurrentMap<String, WebEntryPoint> entryPointByName) {
         this.drivers = drivers;
         this.entryPointByName = entryPointByName;
     }
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
-        WsEntryPoint wsEntryPoint = entryPointByName.get(name);
+        WebEntryPoint wsEntryPoint = entryPointByName.get(name);
         if (wsEntryPoint == null) {
             throw new IOException("Cannot find entry point for '" + name + "'");
         }
         URI uri = wsEntryPoint.getUri();
         try {
-            for (SdmxDriver o : drivers) {
+            for (SdmxWebDriver o : drivers) {
                 if (o.acceptsURI(uri)) {
                     return o.connect(uri, wsEntryPoint.getProperties(), languages);
                 }
@@ -86,29 +86,22 @@ public final class SdmxDriverManager implements SdmxConnectionSupplier {
     }
 
     @Nonnull
-    public List<SdmxDriver> getDrivers() {
+    public List<SdmxWebDriver> getDrivers() {
         return Collections.unmodifiableList(drivers);
     }
 
-    public void setDrivers(@Nonnull List<SdmxDriver> list) {
+    public void setDrivers(@Nonnull List<SdmxWebDriver> list) {
         drivers.clear();
         drivers.addAll(list);
     }
 
     @Nonnull
-    public List<WsEntryPoint> getEntryPoints() {
+    public List<WebEntryPoint> getEntryPoints() {
         return new ArrayList<>(entryPointByName.values());
     }
 
-    public void setEntryPoints(@Nonnull List<WsEntryPoint> list) {
+    public void setEntryPoints(@Nonnull List<WebEntryPoint> list) {
         entryPointByName.clear();
         list.forEach(o -> entryPointByName.put(o.getName(), o));
     }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static final class Holder {
-
-        private static final SdmxDriverManager INSTANCE = of(ServiceLoader.load(SdmxDriver.class));
-    }
-    //</editor-fold>
 }

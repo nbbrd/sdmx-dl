@@ -18,8 +18,7 @@ package be.nbb.sdmx.facade.connectors;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import static be.nbb.sdmx.facade.connectors.Util.NEEDS_CREDENTIALS;
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.net.URL;
@@ -27,13 +26,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class Sdmx20Driver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:sdmx20:";
 
@@ -41,7 +41,7 @@ public final class Sdmx20Driver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, Sdmx20Client::new);
 
     @Override
-    public List<WsEntryPoint> getDefaultEntryPoints() {
+    public List<WebEntryPoint> getDefaultEntryPoints() {
         return Collections.emptyList();
     }
 

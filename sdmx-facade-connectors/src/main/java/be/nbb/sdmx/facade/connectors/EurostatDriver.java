@@ -16,19 +16,19 @@
  */
 package be.nbb.sdmx.facade.connectors;
 
-import be.nbb.sdmx.facade.driver.SdmxDriver;
-import be.nbb.sdmx.facade.driver.WsEntryPoint;
+import be.nbb.sdmx.facade.web.WebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
+import be.nbb.sdmx.facade.web.SdmxWebDriver;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDriver.class)
-public final class EurostatDriver implements SdmxDriver, HasCache {
+@ServiceProvider(service = SdmxWebDriver.class)
+public final class EurostatDriver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:eurostat:";
 
@@ -36,7 +36,7 @@ public final class EurostatDriver implements SdmxDriver, HasCache {
     private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, EUROSTAT.class);
 
     @Override
-    public Collection<WsEntryPoint> getDefaultEntryPoints() {
+    public Collection<WebEntryPoint> getDefaultEntryPoints() {
         return SdmxDriverSupport.entry("EUROSTAT", "Eurostat", "sdmx:eurostat:http://ec.europa.eu/eurostat/SDMX/diss-web/rest");
     }
 }
