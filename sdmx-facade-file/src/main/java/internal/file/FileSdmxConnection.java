@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
@@ -26,6 +26,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.QueryDetail;
 import be.nbb.sdmx.facade.QueryParameters;
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.IOException;

@@ -14,12 +14,13 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
@@ -35,7 +36,7 @@ import javax.xml.stream.XMLInputFactory;
  *
  * @author Philippe Charles
  */
-final class CachedFileSdmxConnection extends FileSdmxConnection {
+public final class CachedFileSdmxConnection extends FileSdmxConnection {
 
     // TODO: replace ttl with file last modification time
     private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
@@ -45,7 +46,7 @@ final class CachedFileSdmxConnection extends FileSdmxConnection {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<List<Series>> loadDataKey;
 
-    CachedFileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
+    public CachedFileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
         super(file, languages, factory, decoder);
         this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
         String base = file.toString() + languages.toString();

@@ -14,17 +14,16 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file.impl;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
-import be.nbb.sdmx.facade.file.SdmxDecoder;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
-import static be.nbb.sdmx.facade.file.impl.CustomDataStructureBuilder.dimension;
+import static internal.file.CustomDataStructureBuilder.dimension;
 import java.io.Reader;
 
 /**

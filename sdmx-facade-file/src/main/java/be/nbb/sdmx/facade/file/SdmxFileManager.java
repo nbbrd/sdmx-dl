@@ -16,10 +16,12 @@
  */
 package be.nbb.sdmx.facade.file;
 
+import internal.file.CachedFileSdmxConnection;
+import internal.file.SdmxDecoder;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
-import be.nbb.sdmx.facade.file.impl.XMLStreamSdmxDecoder;
+import internal.file.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,22 +29,24 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
+import lombok.AccessLevel;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
+
+    @Nonnull
+    public static SdmxFileManager of() {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        return new SdmxFileManager(factory, new XMLStreamSdmxDecoder(factory), new AtomicReference<>(new ConcurrentHashMap()));
+    }
 
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final AtomicReference<ConcurrentMap> cache;
-
-    public SdmxFileManager() {
-        this.factory = XMLInputFactory.newInstance();
-        this.decoder = new XMLStreamSdmxDecoder(factory);
-        this.cache = new AtomicReference<>(new ConcurrentHashMap());
-    }
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {

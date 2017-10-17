@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file.impl;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import be.nbb.sdmx.facade.file.SdmxDecoder.DataType;
+import internal.file.SdmxDecoder.DataType;
 import java.util.Collection;
 
 /**

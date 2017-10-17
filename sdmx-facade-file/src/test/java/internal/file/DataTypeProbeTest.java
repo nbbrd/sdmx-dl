@@ -14,9 +14,8 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file.impl;
+package internal.file;
 
-import be.nbb.sdmx.facade.file.SdmxDecoder;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.IOException;
 import org.junit.Test;

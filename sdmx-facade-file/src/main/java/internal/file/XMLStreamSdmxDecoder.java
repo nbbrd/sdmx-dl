@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file.impl;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.LanguagePriorityList;
@@ -22,11 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLInputFactory;
-import be.nbb.sdmx.facade.file.SdmxDecoder;
-import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT20;
-import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.COMPACT21;
-import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC20;
-import static be.nbb.sdmx.facade.file.SdmxDecoder.DataType.GENERIC21;
+import static internal.file.SdmxDecoder.DataType.COMPACT20;
+import static internal.file.SdmxDecoder.DataType.COMPACT21;
+import static internal.file.SdmxDecoder.DataType.GENERIC20;
+import static internal.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;

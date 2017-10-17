@@ -14,10 +14,11 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.file;
+package internal.file;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.file.SdmxFile;
 import java.io.IOException;
 import javax.annotation.Nonnull;
 
