@@ -10,9 +10,9 @@
     <modules>
         <module>sdmx-facade-api</module>
         <module>sdmx-facade-util</module>
-        <module>sdmx-facade-connectors</module>
         <module>sdmx-facade-file</module>
         <module>sdmx-facade-samples</module>
+        <module>sdmx-facade-web</module>
     </modules>
 
     <properties>
@@ -63,7 +63,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>sdmx-facade-connectors</artifactId>
+                <artifactId>sdmx-facade-web</artifactId>
                 <version>${project.version}</version>
             </dependency>            
             <dependency>
