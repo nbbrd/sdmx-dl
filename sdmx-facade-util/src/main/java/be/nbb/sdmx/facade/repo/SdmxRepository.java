@@ -72,19 +72,16 @@ public class SdmxRepository {
 
     public static final class Builder {
 
+        private final Map<DataflowRef, List<Series>> data = new HashMap<>();
+
         @Nonnull
         public Builder clearData() {
-            if (this.data == null) {
-                this.data.clear();
-            }
+            this.data.clear();
             return this;
         }
 
         @Nonnull
         public Builder data(@Nonnull DataflowRef flowRef, @Nonnull Series series) {
-            if (this.data == null) {
-                this.data = new HashMap<>();
-            }
             data.computeIfAbsent(flowRef, o -> new ArrayList<>()).add(series);
             return this;
         }
@@ -92,9 +89,6 @@ public class SdmxRepository {
         @Nonnull
         public Builder data(@Nonnull DataflowRef flowRef, @Nonnull List<Series> list) {
             if (!list.isEmpty()) {
-                if (this.data == null) {
-                    this.data = new HashMap<>();
-                }
                 data.computeIfAbsent(flowRef, o -> new ArrayList<>()).addAll(list);
             }
             return this;

@@ -21,6 +21,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -36,6 +37,9 @@ public final class SdmxRepositoryManager implements SdmxConnectionSupplier {
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(languages);
+
         return repositories.stream()
                 .filter(o -> o.getName().equals(name))
                 .findFirst()

@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.samples;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,6 +53,10 @@ public interface ByteSource {
         try (InputStream stream = openStream()) {
             Files.copy(stream, file, StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    default void copyTo(@Nonnull File file) throws IOException {
+        copyTo(file.toPath());
     }
 
     @Nonnull

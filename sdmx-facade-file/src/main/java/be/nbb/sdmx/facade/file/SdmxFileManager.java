@@ -50,11 +50,15 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+        SdmxFile file;
+
         try {
-            return getConnection(SdmxFile.parse(name), languages);
+            file = SdmxFile.parse(name);
         } catch (IllegalArgumentException ex) {
             throw new IOException(ex.getMessage(), ex.getCause());
         }
+
+        return getConnection(file, languages);
     }
 
     @Nonnull

@@ -46,7 +46,7 @@ public class FileSdmxConnectionTest {
     @Test
     public void testCompactData21() throws IOException {
         File compact21 = temp.newFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21.toPath());
+        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFile file = new SdmxFile(compact21, null);
 

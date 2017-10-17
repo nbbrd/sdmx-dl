@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -75,16 +76,27 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(languages);
+
         SdmxWebEntryPoint entryPoint = entryPointByName.get(name);
         if (entryPoint == null) {
             throw new IOException("Cannot find entry point for '" + name + "'");
         }
+        return getConnection(entryPoint, languages);
+    }
+
+    @Nonnull
+    public SdmxConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException {
+        Objects.requireNonNull(entryPoint);
+        Objects.requireNonNull(languages);
+
         for (SdmxWebDriver o : drivers) {
             if (tryAcceptURI(o, entryPoint)) {
                 return tryConnect(o, entryPoint, languages);
             }
         }
-        throw new IOException("Failed to find a suitable driver for '" + name + "'");
+        throw new IOException("Failed to find a suitable driver for '" + entryPoint + "'");
     }
 
     @Override

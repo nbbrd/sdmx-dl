@@ -25,16 +25,17 @@ import javax.annotation.Nonnull;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public final class SdmxWebEntryPoint {
 
-    @Nonnull
+    @lombok.NonNull
     String name;
 
-    @Nonnull
-    String description;
+    @lombok.NonNull
+    @lombok.Builder.Default
+    String description = "";
 
-    @Nonnull
+    @lombok.NonNull
     URI uri;
 
     @lombok.Singular
