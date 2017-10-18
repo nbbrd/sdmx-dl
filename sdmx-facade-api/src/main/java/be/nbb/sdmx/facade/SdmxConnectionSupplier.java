@@ -29,4 +29,9 @@ public interface SdmxConnectionSupplier {
 
     @Nonnull
     SdmxConnection getConnection(@Nonnull String name, @Nonnull LanguagePriorityList languages) throws IOException;
+
+    @Nonnull
+    default SdmxConnection getConnection(@Nonnull String name) throws IOException {
+        return getConnection(name, LanguagePriorityList.ANY);
+    }
 }

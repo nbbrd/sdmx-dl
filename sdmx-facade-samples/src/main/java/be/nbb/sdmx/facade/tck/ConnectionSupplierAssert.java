@@ -41,15 +41,19 @@ public final class ConnectionSupplierAssert {
     public static void assertCompliance(SoftAssertions s, SdmxConnectionSupplier supplier, String name, String invalidName) throws Exception {
         assertNonnull(s, supplier, name);
 
-        s.assertThatThrownBy(() -> supplier.getConnection(invalidName, LanguagePriorityList.ANY)).isInstanceOf(IOException.class);
+        s.assertThatThrownBy(() -> supplier.getConnection(invalidName)).isInstanceOf(IOException.class);
 
-        try (SdmxConnection conn = supplier.getConnection(name, LanguagePriorityList.ANY)) {
+        try (SdmxConnection conn = supplier.getConnection(name)) {
             s.assertThat(conn).isNotNull();
         }
     }
 
     @SuppressWarnings("null")
     private static void assertNonnull(SoftAssertions s, SdmxConnectionSupplier supplier, String name) {
+        s.assertThatThrownBy(() -> supplier.getConnection(null))
+                .as("Expecting 'getConnection(String, LanguagePriorityList)' to raise NPE when called with null name")
+                .isInstanceOf(NullPointerException.class);
+
         s.assertThatThrownBy(() -> supplier.getConnection(null, LanguagePriorityList.ANY))
                 .as("Expecting 'getConnection(String, LanguagePriorityList)' to raise NPE when called with null name")
                 .isInstanceOf(NullPointerException.class);
