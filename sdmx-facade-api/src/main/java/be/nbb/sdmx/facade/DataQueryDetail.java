@@ -20,7 +20,7 @@ package be.nbb.sdmx.facade;
  *
  * @author Philippe Charles
  */
-public enum QueryDetail {
+public enum DataQueryDetail {
 
     FULL, SERIES_KEYS_ONLY
 }

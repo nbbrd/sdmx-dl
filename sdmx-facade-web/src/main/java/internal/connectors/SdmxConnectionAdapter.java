@@ -21,8 +21,8 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.QueryDetail;
-import be.nbb.sdmx.facade.QueryParameters;
+import be.nbb.sdmx.facade.DataQueryDetail;
+import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.NoOpCursor;
 import be.nbb.sdmx.facade.util.ObsParser;
@@ -75,13 +75,13 @@ class SdmxConnectionAdapter implements SdmxConnection {
     }
 
     @Override
-    final public DataCursor getData(DataflowRef flowRef, Key key, QueryParameters queryParams) throws IOException {
+    final public DataCursor getData(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
-        boolean serieskeysonly = queryParams.getDetail().equals(QueryDetail.SERIES_KEYS_ONLY);
+        boolean serieskeysonly = query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");
         }
-        return loadData(flowRef, key, serieskeysonly);
+        return loadData(flowRef, query.getKey(), serieskeysonly);
     }
 
     @Override

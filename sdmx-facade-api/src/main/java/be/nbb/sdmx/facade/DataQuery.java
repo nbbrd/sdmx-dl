@@ -16,18 +16,28 @@
  */
 package be.nbb.sdmx.facade;
 
+import javax.annotation.Nonnull;
+
 /**
  *
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class QueryParameters {
+public class DataQuery {
 
-    public static final QueryParameters FULL = builder().detail(QueryDetail.FULL).build();
-    public static final QueryParameters SERIES_KEYS_ONLY = builder().detail(QueryDetail.SERIES_KEYS_ONLY).build();
+    @lombok.NonNull
+    Key key;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private QueryDetail detail = QueryDetail.FULL;
+    DataQueryDetail detail = DataQueryDetail.FULL;
+
+    @Nonnull
+    public static DataQuery of(@Nonnull Key key, boolean seriesKeysOnly) {
+        return DataQuery.builder()
+                .key(key)
+                .detail(seriesKeysOnly ? DataQueryDetail.SERIES_KEYS_ONLY : DataQueryDetail.FULL)
+                .build();
+    }
 }

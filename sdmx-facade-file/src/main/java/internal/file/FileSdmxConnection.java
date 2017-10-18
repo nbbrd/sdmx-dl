@@ -23,8 +23,8 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.QueryDetail;
-import be.nbb.sdmx.facade.QueryParameters;
+import be.nbb.sdmx.facade.DataQueryDetail;
+import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
@@ -83,12 +83,12 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    final public DataCursor getData(DataflowRef flowRef, Key key, QueryParameters queryParams) throws IOException {
+    final public DataCursor getData(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(query);
         checkFlowRef(flowRef);
-        return loadData(decode(), flowRef, key, queryParams.getDetail().equals(QueryDetail.SERIES_KEYS_ONLY));
+        return loadData(decode(), flowRef, query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
     }
 
     @Override

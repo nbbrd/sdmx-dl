@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.QueryParameters;
+import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
@@ -109,7 +109,7 @@ final class CachedSdmxConnection extends SdmxConnectionAdapter {
                 }
                 cache.put(id, result);
             }
-            return result.asConnection().getData(flowRef, key, QueryParameters.SERIES_KEYS_ONLY);
+            return result.asConnection().getData(flowRef, DataQuery.of(key, true));
         }
         return super.loadData(flowRef, key, serieskeysonly);
     }

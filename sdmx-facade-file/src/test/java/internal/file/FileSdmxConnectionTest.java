@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.QueryParameters;
+import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.file.SdmxFile;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
@@ -57,7 +57,7 @@ public class FileSdmxConnectionTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getData(file.getDataflowRef(), Key.ALL, QueryParameters.FULL)) {
+        try (DataCursor o = conn.getData(file.getDataflowRef(), DataQuery.of(Key.ALL, false))) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);

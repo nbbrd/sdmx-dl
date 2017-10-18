@@ -21,8 +21,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.QueryParameters;
+import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -145,13 +144,13 @@ public class SdmxRepository {
         }
 
         @Override
-        public DataCursor getData(DataflowRef flowRef, Key key, QueryParameters queryParams) throws IOException {
+        public DataCursor getData(DataflowRef flowRef, DataQuery query) throws IOException {
             checkState();
             Objects.requireNonNull(flowRef);
-            Objects.requireNonNull(key);
+            Objects.requireNonNull(query);
             List<Series> col = data.get(flowRef);
             if (col != null) {
-                return Series.asCursor(col, key);
+                return Series.asCursor(col, query.getKey());
             }
             throw new IOException("Data not found");
         }
