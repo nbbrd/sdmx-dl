@@ -14,42 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
-import static internal.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import it.bancaditalia.oss.sdmx.client.custom.ILO;
+import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
+public final class IloDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:sdmx20:";
+    private static final String PREFIX = "sdmx:ilo:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, Sdmx20Client::new);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, ILO.class);
 
     @Override
-    public List<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return Collections.emptyList();
-    }
-
-    private static final class Sdmx20Client extends RestSdmx20Client {
-
-        private Sdmx20Client(URL endpoint, Map<?, ?> info, LanguagePriorityList langs) {
-            super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
-            this.languages = Util.fromLanguages(langs);
-        }
+    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
+        return ConnectorsDriverSupport.entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
     }
 }

@@ -28,13 +28,13 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-interface ClientSupplier {
+public interface GenericSDMXClientSupplier {
 
     @Nonnull
     GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList langs) throws MalformedURLException;
 
     @Nonnull
-    static ClientSupplier ofType(@Nonnull Class<? extends RestSdmxClient> clazz) {
+    static GenericSDMXClientSupplier ofType(@Nonnull Class<? extends RestSdmxClient> clazz) {
         return (URL endpoint, Map<?, ?> info, LanguagePriorityList langs) -> {
             try {
                 RestSdmxClient result = clazz.newInstance();

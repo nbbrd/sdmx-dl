@@ -14,29 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.UIS;
+import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class UisDriver implements SdmxWebDriver, HasCache {
+public final class OecdDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:uis:";
+    private static final String PREFIX = "sdmx:oecd:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, UIS.class);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, OECD.class);
 
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("UIS", "Unesco Institute for Statistics", "sdmx:uis:http://data.uis.unesco.org/RestSDMX/sdmx.ashx");
+        return ConnectorsDriverSupport.entry("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
     }
 }

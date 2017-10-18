@@ -50,7 +50,7 @@ public class DataCursorAdapterTest {
 
     @Test
     public void test() throws IOException {
-        try (DataCursorAdapter cursor = new DataCursorAdapter(DATA, ObsParser.standard())) {
+        try (PortableTimeSeriesCursor cursor = new PortableTimeSeriesCursor(DATA, ObsParser.standard())) {
             assertThat(Series.copyOf(cursor))
                     .hasSize(120)
                     .allMatch(o -> o.getFrequency().equals(Frequency.ANNUAL))
@@ -71,6 +71,6 @@ public class DataCursorAdapterTest {
 
     @Test
     public void testCompliance() {
-        DataCursorAssert.assertCompliance(() -> new DataCursorAdapter(DATA, ObsParser.standard()));
+        DataCursorAssert.assertCompliance(() -> new PortableTimeSeriesCursor(DATA, ObsParser.standard()));
     }
 }

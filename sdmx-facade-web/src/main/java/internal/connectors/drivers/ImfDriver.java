@@ -14,29 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.OECD;
+import it.bancaditalia.oss.sdmx.client.custom.IMF;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class OecdDriver implements SdmxWebDriver, HasCache {
+public final class ImfDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:oecd:";
+    private static final String PREFIX = "sdmx:imf:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, OECD.class);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, IMF.class);
 
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
+        return ConnectorsDriverSupport.entry("IMF", "International Monetary Fund", "sdmx:imf:http://sdmxws.imf.org/SDMXRest/sdmx.ashx");
     }
 }

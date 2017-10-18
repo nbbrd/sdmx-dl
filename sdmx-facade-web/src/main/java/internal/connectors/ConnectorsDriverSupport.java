@@ -45,24 +45,24 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Philippe Charles
  */
 @ThreadSafe
-final class SdmxDriverSupport implements HasCache {
+public final class ConnectorsDriverSupport implements HasCache {
 
     @Nonnull
-    public static SdmxDriverSupport of(@Nonnull String prefix, @Nonnull Class<? extends RestSdmxClient> clazz) {
-        return new SdmxDriverSupport(prefix, ClientSupplier.ofType(clazz), new ConcurrentHashMap(), Clock.systemDefaultZone());
+    public static ConnectorsDriverSupport of(@Nonnull String prefix, @Nonnull Class<? extends RestSdmxClient> clazz) {
+        return new ConnectorsDriverSupport(prefix, GenericSDMXClientSupplier.ofType(clazz), new ConcurrentHashMap(), Clock.systemDefaultZone());
     }
 
     @Nonnull
-    public static SdmxDriverSupport of(@Nonnull String prefix, @Nonnull ClientSupplier supplier) {
-        return new SdmxDriverSupport(prefix, supplier, new ConcurrentHashMap(), Clock.systemDefaultZone());
+    public static ConnectorsDriverSupport of(@Nonnull String prefix, @Nonnull GenericSDMXClientSupplier supplier) {
+        return new ConnectorsDriverSupport(prefix, supplier, new ConcurrentHashMap(), Clock.systemDefaultZone());
     }
 
     private final String prefix;
-    private final ClientSupplier supplier;
+    private final GenericSDMXClientSupplier supplier;
     private final AtomicReference<ConcurrentMap> cache;
     private final Clock clock;
 
-    private SdmxDriverSupport(String prefix, ClientSupplier supplier, ConcurrentMap cache, Clock clock) {
+    private ConnectorsDriverSupport(String prefix, GenericSDMXClientSupplier supplier, ConcurrentMap cache, Clock clock) {
         this.prefix = prefix;
         this.supplier = supplier;
         this.cache = new AtomicReference<>(cache);
@@ -70,14 +70,7 @@ final class SdmxDriverSupport implements HasCache {
     }
 
     public SdmxConnection connect(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
-        try {
-            URL endpoint = new URL(uri.toString().substring(prefix.length()));
-            GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
-            applyTimeouts(client, info);
-            return new CachedSdmxConnection(client, endpoint.getHost(), languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
-        } catch (MalformedURLException ex) {
-            throw new IOException(ex);
-        }
+        return new ConnectorsConnection(getResource(uri, info, languages));
     }
 
     public boolean acceptsURI(URI uri) throws IOException {
@@ -99,7 +92,17 @@ final class SdmxDriverSupport implements HasCache {
         return Collections.singleton(SdmxWebEntryPoint.builder().name(name).description(description).uri(url).build());
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
+    private ConnectorsConnection.Resource getResource(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
+        try {
+            URL endpoint = new URL(uri.toString().substring(prefix.length()));
+            GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
+            applyTimeouts(client, info);
+            return new CachedResource(new GenericSDMXClientResource(client), endpoint.getHost(), languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
+        } catch (MalformedURLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
     private static void applyTimeouts(GenericSDMXClient client, Map<?, ?> info) {
         if (client instanceof RestSdmxClient) {
             ((RestSdmxClient) client).setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
@@ -110,5 +113,4 @@ final class SdmxDriverSupport implements HasCache {
     private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
-    //</editor-fold>
 }

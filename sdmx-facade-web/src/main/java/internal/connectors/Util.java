@@ -32,17 +32,17 @@ import javax.annotation.Nonnull;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-class Util {
+public class Util {
 
-    be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
+    public be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
         return be.nbb.sdmx.facade.Dataflow.of(DataflowRef.parse(dataflow.getFullIdentifier()), toDataStructureRef(dataflow.getDsdIdentifier()), dataflow.getDescription());
     }
 
-    be.nbb.sdmx.facade.DataStructureRef toDataStructureRef(DSDIdentifier input) {
+    public be.nbb.sdmx.facade.DataStructureRef toDataStructureRef(DSDIdentifier input) {
         return DataStructureRef.of(input.getAgency(), input.getId(), input.getVersion());
     }
 
-    be.nbb.sdmx.facade.Dimension toDimension(Dimension o) {
+    public be.nbb.sdmx.facade.Dimension toDimension(Dimension o) {
         be.nbb.sdmx.facade.Dimension.Builder result = be.nbb.sdmx.facade.Dimension.builder()
                 .id(o.getId())
                 .position(o.getPosition());
@@ -54,7 +54,7 @@ class Util {
         return result.build();
     }
 
-    DataStructure toDataStructure(DataFlowStructure dfs) {
+    public DataStructure toDataStructure(DataFlowStructure dfs) {
         DataStructure.Builder result = DataStructure.builder()
                 .ref(DataStructureRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
                 .label(getNonNullName(dfs))
@@ -64,7 +64,7 @@ class Util {
         return result.build();
     }
 
-    it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {
+    public it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {
         return it.bancaditalia.oss.sdmx.util.LanguagePriorityList.parse(l.toString());
     }
 
@@ -75,8 +75,8 @@ class Util {
         return result != null ? result : dfs.getId();
     }
 
-    static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
-    static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
-    static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
-    static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
+    public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
+    public static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
+    public static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
+    public static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
 }

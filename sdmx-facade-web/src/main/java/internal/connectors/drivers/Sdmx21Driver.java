@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
@@ -41,6 +41,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.HasDataCursor;
+import internal.connectors.HasSeriesKeysOnlySupported;
+import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.Util;
 
 /**
  *
@@ -54,7 +58,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     private final XMLInputFactory xml = XMLInputFactory.newInstance();
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l, xml));
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l, xml));
 
     @Override
     public List<SdmxWebEntryPoint> getDefaultEntryPoints() {

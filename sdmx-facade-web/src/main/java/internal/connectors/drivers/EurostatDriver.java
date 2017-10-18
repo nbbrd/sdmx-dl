@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -22,6 +22,7 @@ import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
@@ -33,10 +34,10 @@ public final class EurostatDriver implements SdmxWebDriver, HasCache {
     private static final String PREFIX = "sdmx:eurostat:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, EUROSTAT.class);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, EUROSTAT.class);
 
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("EUROSTAT", "Eurostat", "sdmx:eurostat:http://ec.europa.eu/eurostat/SDMX/diss-web/rest");
+        return ConnectorsDriverSupport.entry("EUROSTAT", "Eurostat", "sdmx:eurostat:http://ec.europa.eu/eurostat/SDMX/diss-web/rest");
     }
 }

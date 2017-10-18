@@ -14,29 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.ILO;
+import it.bancaditalia.oss.sdmx.client.custom.UIS;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class IloDriver implements SdmxWebDriver, HasCache {
+public final class UisDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:ilo:";
+    private static final String PREFIX = "sdmx:uis:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, ILO.class);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, UIS.class);
 
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
+        return ConnectorsDriverSupport.entry("UIS", "Unesco Institute for Statistics", "sdmx:uis:http://data.uis.unesco.org/RestSDMX/sdmx.ashx");
     }
 }

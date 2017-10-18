@@ -29,6 +29,6 @@ public class SdmxConnectionAdapterTest {
     @Test
     public void testCompliance() {
         DataflowRef ref = DataflowRef.parse("XYZ");
-        ConnectionAssert.assertCompliance(() -> new SdmxConnectionAdapter(null), ref);
+        ConnectionAssert.assertCompliance(() -> new ConnectorsConnection(null), ref);
     }
 }

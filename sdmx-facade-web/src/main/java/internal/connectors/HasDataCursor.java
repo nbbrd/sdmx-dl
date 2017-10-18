@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-interface HasDataCursor {
+public interface HasDataCursor {
 
     @Nonnull
     DataCursor getDataCursor(@Nonnull Dataflow dataflow, @Nonnull DataFlowStructure dsd, @Nonnull Key resource, boolean serieskeysonly) throws SdmxException, IOException;

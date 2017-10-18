@@ -20,7 +20,7 @@ package internal.connectors;
  *
  * @author Philippe Charles
  */
-interface HasSeriesKeysOnlySupported {
+public interface HasSeriesKeysOnlySupported {
 
     boolean isSeriesKeysOnlySupported();
 }

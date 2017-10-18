@@ -14,29 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.IMF;
+import it.bancaditalia.oss.sdmx.client.custom.WB;
 import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorsDriverSupport;
 
 /**
  *
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class ImfDriver implements SdmxWebDriver, HasCache {
+public final class WbDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:imf:";
+    private static final String PREFIX = "sdmx:wb:";
 
     @lombok.experimental.Delegate
-    private final SdmxDriverSupport support = SdmxDriverSupport.of(PREFIX, IMF.class);
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, WB.class);
 
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return SdmxDriverSupport.entry("IMF", "International Monetary Fund", "sdmx:imf:http://sdmxws.imf.org/SDMXRest/sdmx.ashx");
+        return ConnectorsDriverSupport.entry("WB", "World Bank", "sdmx:wb:http://api.worldbank.org");
     }
 }
