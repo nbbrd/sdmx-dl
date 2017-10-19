@@ -30,7 +30,7 @@ public final class ObsParser {
 
     @Nonnull
     public static ObsParser standard() {
-        return new ObsParser(SafeParser::onStandardFreq, SafeParser.onDouble());
+        return new ObsParser(SafeParser::onStandardFreq, SafeParser.onStandardDouble());
     }
 
     private final Function<Frequency, SafeParser<LocalDateTime>> toPeriodParser;

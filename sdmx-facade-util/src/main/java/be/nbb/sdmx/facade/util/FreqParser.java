@@ -17,10 +17,10 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import internal.util.FreqParsers;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 
@@ -35,31 +35,33 @@ public interface FreqParser {
 
     @Nonnull
     static FreqParser sdmx20() {
-        return (k, a) -> FreqParsers.parseByTimeFormat(a);
+        return FreqParsers::parseSdmx20;
     }
 
     @Nonnull
-    static FreqParser sdmx21(@Nonnull DataStructure dfs) {
-        return sdmx21(getFrequencyCodeIdIndex(dfs));
+    static FreqParser sdmx21(@Nonnull DataStructure dsd) {
+        return of(FreqUtil.extractorByIndex(dsd), FreqUtil::parseByFreq);
     }
 
     @Nonnull
     static FreqParser sdmx21(int frequencyCodeIdIndex) {
-        return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
-                ? (k, a) -> FreqParsers.parseByFreq(k, frequencyCodeIdIndex)
-                : (k, a) -> Frequency.UNDEFINED;
+        return of(FreqUtil.extractorByIndex(frequencyCodeIdIndex), FreqUtil::parseByFreq);
     }
 
-    static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
-
-    static int getFrequencyCodeIdIndex(@Nonnull DataStructure dfs) {
-        for (Dimension o : dfs.getDimensions()) {
-            switch (o.getId()) {
-                case FreqUtil.FREQ_CONCEPT:
-                case "FREQUENCY":
-                    return (o.getPosition() - 1);
+    @Nonnull
+    static FreqParser of(
+            @Nonnull BiFunction<Key.Builder, Function<String, String>, String> extractor,
+            @Nonnull Function<String, Frequency> mapper) {
+        return (k, a) -> {
+            String code = extractor.apply(k, a);
+            if (code == null) {
+                return Frequency.UNDEFINED;
             }
-        }
-        return NO_FREQUENCY_CODE_ID_INDEX;
+            Frequency freq = mapper.apply(code);
+            if (freq == null) {
+                return Frequency.UNDEFINED;
+            }
+            return freq;
+        };
     }
 }

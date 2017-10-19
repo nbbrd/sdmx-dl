@@ -16,6 +16,8 @@
  */
 package be.nbb.sdmx.facade.util;
 
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Frequency;
 import static be.nbb.sdmx.facade.Frequency.DAILY;
 import static be.nbb.sdmx.facade.Frequency.HALF_YEARLY;
@@ -28,6 +30,9 @@ import static be.nbb.sdmx.facade.Frequency.WEEKLY;
 import javax.annotation.Nonnull;
 import static be.nbb.sdmx.facade.Frequency.ANNUAL;
 import static be.nbb.sdmx.facade.Frequency.DAILY_BUSINESS;
+import be.nbb.sdmx.facade.Key;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  *
@@ -38,6 +43,31 @@ public class FreqUtil {
 
     public final String FREQ_CONCEPT = "FREQ";
     public final String TIME_FORMAT_CONCEPT = "TIME_FORMAT";
+
+    public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
+
+    public int getFrequencyCodeIdIndex(@Nonnull DataStructure dsd) {
+        for (Dimension o : dsd.getDimensions()) {
+            switch (o.getId()) {
+                case FREQ_CONCEPT:
+                case "FREQUENCY":
+                    return (o.getPosition() - 1);
+            }
+        }
+        return NO_FREQUENCY_CODE_ID_INDEX;
+    }
+
+    @Nonnull
+    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(@Nonnull DataStructure dsd) {
+        return extractorByIndex(getFrequencyCodeIdIndex(dsd));
+    }
+
+    @Nonnull
+    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(int frequencyCodeIdIndex) {
+        return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
+                ? (k, a) -> k.getItem(frequencyCodeIdIndex)
+                : (k, a) -> null;
+    }
 
     /**
      *

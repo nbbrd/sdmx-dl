@@ -30,12 +30,23 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.util.FreqParser;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 /**
  *
  * @author Philippe Charles
  */
 final class XMLStreamGenericDataCursor implements DataCursor {
+
+    static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
+        return new XMLStreamGenericDataCursor(reader, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX20);
+    }
+
+    static XMLStreamGenericDataCursor sdmx21(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
+        return new XMLStreamGenericDataCursor(reader, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX21);
+    }
 
     private static final String DATASET_ELEMENT = "DataSet";
     private static final String SERIES_ELEMENT = "Series";
@@ -51,18 +62,18 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
     private final FreqParser freqParser;
-    private final GenericDataParser genericParser;
+    private final SeriesHeadParser headParser;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamGenericDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, GenericDataParser genericParser) {
+    private XMLStreamGenericDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, SeriesHeadParser headParser) {
         this.reader = reader;
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = obsParser;
         this.freqParser = freqParser;
-        this.genericParser = genericParser;
+        this.headParser = headParser;
         this.closed = false;
         this.hasSeries = false;
         this.hasObs = false;
@@ -225,12 +236,12 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     private Status parseSeriesKeyValue() throws XMLStreamException {
-        genericParser.parseValueElement(reader, keyBuilder::put);
+        headParser.parseValueElement(reader, keyBuilder::put);
         return CONTINUE;
     }
 
     private Status parseAttributesValue() throws XMLStreamException {
-        genericParser.parseValueElement(reader, attributesBuilder::put);
+        headParser.parseValueElement(reader, attributesBuilder::put);
         return CONTINUE;
     }
 
@@ -252,7 +263,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onObs(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            if (localName.equals(genericParser.getTimeELement())) {
+            if (localName.equals(headParser.getTimeELement())) {
                 return parseObsTime();
             }
             return localName.equals(OBS_VALUE_ELEMENT) ? parseObsValue() : CONTINUE;
@@ -267,7 +278,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     private Status parseObsTime() throws XMLStreamException {
-        genericParser.parseTimeElement(reader, obsParser::period);
+        headParser.parseTimeElement(reader, obsParser::period);
         return CONTINUE;
     }
 
@@ -278,5 +289,48 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private boolean nextWhile(XMLStreamUtil.Func func) throws XMLStreamException {
         return XMLStreamUtil.nextWhile(reader, func);
+    }
+
+    private enum SeriesHeadParser {
+
+        SDMX20 {
+            @Override
+            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) throws XMLStreamException {
+                c.accept(r.getAttributeValue(null, "concept"), r.getAttributeValue(null, "value"));
+            }
+
+            @Override
+            public void parseTimeElement(XMLStreamReader r, Consumer<String> c) throws XMLStreamException {
+                c.accept(r.getElementText());
+            }
+
+            @Override
+            public String getTimeELement() {
+                return "Time";
+            }
+        },
+        SDMX21 {
+            @Override
+            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) throws XMLStreamException {
+                c.accept(r.getAttributeValue(null, "id"), r.getAttributeValue(null, "value"));
+            }
+
+            @Override
+            public void parseTimeElement(XMLStreamReader r, Consumer<String> c) throws XMLStreamException {
+                c.accept(r.getAttributeValue(null, "value"));
+            }
+
+            @Override
+            public String getTimeELement() {
+                return "ObsDimension";
+            }
+        };
+
+        abstract void parseValueElement(@Nonnull XMLStreamReader r, @Nonnull BiConsumer<String, String> c) throws XMLStreamException;
+
+        abstract void parseTimeElement(@Nonnull XMLStreamReader r, @Nonnull Consumer<String> c) throws XMLStreamException;
+
+        @Nonnull
+        abstract String getTimeELement();
     }
 }

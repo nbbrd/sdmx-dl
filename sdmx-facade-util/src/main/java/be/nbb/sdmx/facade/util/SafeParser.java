@@ -78,7 +78,7 @@ public interface SafeParser<T> {
     }
 
     @Nonnull
-    static SafeParser<Double> onDouble() {
+    static SafeParser<Double> onStandardDouble() {
         return SafeParsers::doubleOrNull;
     }
 }

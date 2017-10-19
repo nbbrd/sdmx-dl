@@ -43,7 +43,7 @@ import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
-import internal.xml.stream.InseeDataFactory;
+import internal.util.drivers.InseeDataFactory;
 
 /**
  *

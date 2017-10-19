@@ -40,11 +40,15 @@ public interface XMLStream<T> {
 
     @Nonnull
     default T get(@Nonnull XMLInputFactory xf, @Nonnull Reader stream) throws IOException {
+        XMLStreamReader reader;
+
         try {
-            return get(xf.createXMLStreamReader(stream));
+            reader = xf.createXMLStreamReader(stream);
         } catch (XMLStreamException ex) {
             throw new IOException("Failed to create XML reader", ex);
         }
+
+        return get(reader);
     }
 
     @Nonnull

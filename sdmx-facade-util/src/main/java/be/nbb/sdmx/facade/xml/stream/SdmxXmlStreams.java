@@ -16,19 +16,16 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
+import be.nbb.sdmx.facade.util.DataFactory;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.util.ObsParser;
 import java.io.IOException;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import be.nbb.sdmx.facade.util.FreqParser;
 import be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.ReaderFunc;
-import java.util.function.Function;
 
 /**
  *
@@ -39,62 +36,42 @@ public class SdmxXmlStreams {
 
     @Nonnull
     public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd) throws IOException {
-        return compactData20(dsd, DataParser::sdmx20);
+        return compactData20(dsd, DataFactory.sdmx20());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull Function<DataStructure, DataParser> customizer) throws IOException {
-        return o -> compactData20(o, customizer.apply(dsd));
-    }
-
-    @Nonnull
-    private DataCursor compactData20(@Nonnull XMLStreamReader r, @Nonnull DataParser p) throws IOException {
-        return new XMLStreamCompactDataCursor(r, p.getKeyBuilder(), p.getObsParser(), p.getFreqParser(), p.getTimeDimensionId(), p.getPrimaryMeasureId());
+    public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+        return o -> new XMLStreamCompactDataCursor(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), "", "");
     }
 
     @Nonnull
     public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd) throws IOException {
-        return compactData21(dsd, DataParser::sdmx21);
+        return compactData21(dsd, DataFactory.sdmx21());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull Function<DataStructure, DataParser> customizer) throws IOException {
-        return o -> compactData21(o, customizer.apply(dsd));
-    }
-
-    @Nonnull
-    private DataCursor compactData21(@Nonnull XMLStreamReader r, @Nonnull DataParser p) throws IOException {
-        return new XMLStreamCompactDataCursor(r, p.getKeyBuilder(), p.getObsParser(), p.getFreqParser(), p.getTimeDimensionId(), p.getPrimaryMeasureId());
+    public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+        return o -> new XMLStreamCompactDataCursor(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
     @Nonnull
     public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd) throws IOException {
-        return genericData20(dsd, DataParser::sdmx20);
+        return genericData20(dsd, DataFactory.sdmx20());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull Function<DataStructure, DataParser> customizer) throws IOException {
-        return o -> genericData20(o, customizer.apply(dsd));
-    }
-
-    @Nonnull
-    private DataCursor genericData20(@Nonnull XMLStreamReader r, @Nonnull DataParser p) throws IOException {
-        return new XMLStreamGenericDataCursor(r, p.getKeyBuilder(), p.getObsParser(), p.getFreqParser(), GenericDataParser.sdmx20());
+    public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+        return o -> XMLStreamGenericDataCursor.sdmx20(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull
     public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd) throws IOException {
-        return genericData21(dsd, DataParser::sdmx21);
+        return genericData21(dsd, DataFactory.sdmx21());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull Function<DataStructure, DataParser> customizer) throws IOException {
-        return o -> genericData21(o, customizer.apply(dsd));
-    }
-
-    @Nonnull
-    private DataCursor genericData21(@Nonnull XMLStreamReader r, @Nonnull DataParser p) throws IOException {
-        return new XMLStreamGenericDataCursor(r, p.getKeyBuilder(), p.getObsParser(), p.getFreqParser(), GenericDataParser.sdmx21());
+    public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+        return o -> XMLStreamGenericDataCursor.sdmx21(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull
@@ -113,35 +90,6 @@ public class SdmxXmlStreams {
             return XMLStreamUtil.with(reader, func);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
-        }
-    }
-
-    @lombok.Value
-    public static class DataParser {
-
-        @lombok.NonNull
-        Key.Builder keyBuilder;
-
-        @lombok.NonNull
-        FreqParser freqParser;
-
-        @lombok.NonNull
-        ObsParser obsParser;
-
-        @lombok.NonNull
-        String timeDimensionId;
-
-        @lombok.NonNull
-        String primaryMeasureId;
-
-        @Nonnull
-        public static DataParser sdmx20(@Nonnull DataStructure o) {
-            return new DataParser(Key.builder(o), FreqParser.sdmx20(), ObsParser.standard(), "", "");
-        }
-
-        @Nonnull
-        public static DataParser sdmx21(@Nonnull DataStructure o) {
-            return new DataParser(Key.builder(o), FreqParser.sdmx21(o), ObsParser.standard(), o.getTimeDimensionId(), o.getPrimaryMeasureId());
         }
     }
 }
