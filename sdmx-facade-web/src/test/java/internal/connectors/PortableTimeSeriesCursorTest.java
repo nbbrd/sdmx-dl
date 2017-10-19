@@ -32,12 +32,13 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author Philippe Charles
  */
-public class DataCursorAdapterTest {
+public class PortableTimeSeriesCursorTest {
 
     static List<PortableTimeSeries> DATA;
 

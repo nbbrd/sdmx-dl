@@ -97,7 +97,7 @@ public final class ConnectorsDriverSupport implements HasCache {
             URL endpoint = new URL(uri.toString().substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
             applyTimeouts(client, info);
-            return new CachedResource(new GenericSDMXClientResource(client), endpoint.getHost(), languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
+            return CachedResource.of(client, endpoint, languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
         }

@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class SdmxConnectionAdapterTest {
+public class ConnectorsConnectionTest {
 
     @Test
     public void testCompliance() {

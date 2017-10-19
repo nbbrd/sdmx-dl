@@ -37,7 +37,7 @@ import java.util.logging.Level;
  */
 @lombok.AllArgsConstructor
 @lombok.extern.java.Log
-final class GenericSDMXClientResource implements ConnectorsConnection.Resource {
+class GenericSDMXClientResource implements ConnectorsConnection.Resource {
 
     private final GenericSDMXClient client;
 

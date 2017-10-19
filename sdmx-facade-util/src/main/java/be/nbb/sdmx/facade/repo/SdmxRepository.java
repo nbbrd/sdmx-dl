@@ -69,6 +69,17 @@ public class SdmxRepository {
                 seriesKeysOnlySupported);
     }
 
+    @Nonnull
+    public DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException {
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(query);
+        List<Series> col = data.get(flowRef);
+        if (col != null) {
+            return Series.asCursor(col, query.getKey());
+        }
+        throw new IOException("Data not found");
+    }
+
     public static final class Builder {
 
         private final Map<DataflowRef, List<Series>> data = new HashMap<>();
@@ -87,9 +98,7 @@ public class SdmxRepository {
 
         @Nonnull
         public Builder data(@Nonnull DataflowRef flowRef, @Nonnull List<Series> list) {
-            if (!list.isEmpty()) {
-                data.computeIfAbsent(flowRef, o -> new ArrayList<>()).addAll(list);
-            }
+            data.computeIfAbsent(flowRef, o -> new ArrayList<>()).addAll(list);
             return this;
         }
 

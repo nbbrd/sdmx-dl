@@ -16,20 +16,37 @@
  */
 package be.nbb.sdmx.facade.util;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 
 /**
  *
  * @author Philippe Charles
+ * @param <T>
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.EqualsAndHashCode
 public final class TypedId<T> {
 
-    @lombok.NonNull
-    String content;
+    @Nonnull
+    public static <T> TypedId<T> of(@Nonnull String content) {
+        Objects.requireNonNull(content);
+        return new TypedId<>(content);
+    }
+
+    private final String content;
+
+    private TypedId(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return content;
+    }
 
     @Nonnull
     public TypedId<T> with(@Nonnull Object o) {
+        Objects.requireNonNull(o);
         return new TypedId<>(content + o);
     }
 }

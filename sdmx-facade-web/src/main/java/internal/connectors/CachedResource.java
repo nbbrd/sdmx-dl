@@ -26,96 +26,128 @@ import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
+import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Clock;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  *
  * @author Philippe Charles
  */
-final class CachedResource implements ConnectorsConnection.Resource {
+final class CachedResource extends GenericSDMXClientResource {
 
-    private final ConnectorsConnection.Resource delegate;
+    static CachedResource of(GenericSDMXClient client, URL endpoint, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+        return new CachedResource(client, generateBase(endpoint.getHost(), languages), cache, clock, ttlInMillis);
+    }
+
     private final TtlCache cache;
-    private final TypedId<Map<String, Dataflow>> dataflowsKey;
-    private final TypedId<Dataflow> dataflowKey;
-    private final TypedId<DataFlowStructure> dataflowStructureKey;
-    private final TypedId<SdmxRepository> dataKey;
+    private final TypedId<Map<String, Dataflow>> idOfFlows;
+    private final TypedId<Dataflow> idOfFlow;
+    private final TypedId<DataFlowStructure> idOfStruct;
+    private final TypedId<SdmxRepository> idOfKeysOnly;
 
-    CachedResource(ConnectorsConnection.Resource delegate, String host, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
-        this.delegate = delegate;
+    CachedResource(GenericSDMXClient client, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+        super(client);
         this.cache = TtlCache.of(cache, clock, ttlInMillis);
-        String base = host + languages.toString();
-        this.dataflowsKey = TypedId.of("flows://" + base);
-        this.dataflowKey = TypedId.of("flow://" + base + "/");
-        this.dataflowStructureKey = TypedId.of("struct://" + base + "/");
-        this.dataKey = TypedId.of("data://" + base + "/");
+        this.idOfFlows = TypedId.of("flows://" + base);
+        this.idOfFlow = TypedId.of("flow://" + base);
+        this.idOfStruct = TypedId.of("struct://" + base);
+        this.idOfKeysOnly = TypedId.of("keys://" + base);
     }
 
     @Override
     public Map<String, Dataflow> loadDataFlowsById() throws IOException {
-        Map<String, Dataflow> result = cache.get(dataflowsKey);
-        if (result == null) {
-            result = delegate.loadDataFlowsById();
-            cache.put(dataflowsKey, result);
-        }
-        return result;
+        return loadDataFlowsWithCache();
     }
 
     @Override
     public Dataflow loadDataflow(DataflowRef flowRef) throws IOException {
-        // check if dataflow has been already loaded by #loadDataFlowsById
-        Map<String, Dataflow> dataFlows = cache.get(dataflowsKey);
-        if (dataFlows != null) {
-            Dataflow tmp = dataFlows.get(flowRef.getId());
-            if (tmp != null) {
-                return tmp;
-            }
-        }
+        Objects.requireNonNull(flowRef);
 
-        TypedId<Dataflow> id = dataflowKey.with(flowRef);
-        Dataflow result = cache.get(id);
-        if (result == null) {
-            result = delegate.loadDataflow(flowRef);
-            cache.put(id, result);
-        }
-        return result;
+        Dataflow result = peekDataflowFromCache(flowRef);
+        return result != null ? result : loadDataflowWithCache(flowRef);
     }
 
     @Override
     public DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException {
-        TypedId<DataFlowStructure> id = dataflowStructureKey.with(flowRef);
+        return loadDataStructureWithCache(flowRef);
+    }
+
+    @Override
+    public DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
+        return serieskeysonly
+                ? loadKeysOnlyWithCache(flowRef, key).getData(flowRef, DataQuery.of(key, true))
+                : super.loadData(flowRef, key, serieskeysonly);
+    }
+
+    @Override
+    public boolean isSeriesKeysOnlySupported() {
+        return super.isSeriesKeysOnlySupported();
+    }
+
+    private Map<String, Dataflow> loadDataFlowsWithCache() throws IOException {
+        Map<String, Dataflow> result = cache.get(idOfFlows);
+        if (result == null) {
+            result = super.loadDataFlowsById();
+            cache.put(idOfFlows, result);
+        }
+        return result;
+    }
+
+    private DataFlowStructure loadDataStructureWithCache(DataflowRef flowRef) throws IOException {
+        TypedId<DataFlowStructure> id = idOfStruct.with(flowRef);
         DataFlowStructure result = cache.get(id);
         if (result == null) {
-            result = delegate.loadDataStructure(flowRef);
+            result = super.loadDataStructure(flowRef);
             cache.put(id, result);
         }
         return result;
     }
 
-    @Override
-    public DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        if (!serieskeysonly) {
-            return delegate.loadData(flowRef, key, serieskeysonly);
-        }
-        TypedId<SdmxRepository> id = dataKey.with(flowRef);
+    private SdmxRepository loadKeysOnlyWithCache(DataflowRef flowRef, Key key) throws IOException {
+        TypedId<SdmxRepository> id = idOfKeysOnly.with(flowRef);
         SdmxRepository result = cache.get(id);
-        if (result == null || key.supersedes(Key.parse(result.getName()))) {
-            try (DataCursor cursor = delegate.loadData(flowRef, key, true)) {
-                result = SdmxRepository.builder()
-                        .copyOf(flowRef, cursor)
-                        .name(key.toString())
-                        .build();
-            }
+        if (result == null || isBroaderRequest(key, result)) {
+            result = copyDataKeys(flowRef, key);
             cache.put(id, result);
         }
-        return result.asConnection().getData(flowRef, DataQuery.of(key, true));
+        return result;
     }
 
-    @Override
-    public boolean isSeriesKeysOnlySupported() {
-        return delegate.isSeriesKeysOnlySupported();
+    private Dataflow peekDataflowFromCache(DataflowRef flowRef) {
+        // check if dataflow has been already loaded by #loadDataFlowsById
+        Map<String, Dataflow> dataFlows = cache.get(idOfFlows);
+        return dataFlows != null ? dataFlows.get(flowRef.getId()) : null;
+    }
+
+    private Dataflow loadDataflowWithCache(DataflowRef flowRef) throws IOException {
+        TypedId<Dataflow> id = idOfFlow.with(flowRef);
+        Dataflow result = cache.get(id);
+        if (result == null) {
+            result = super.loadDataflow(flowRef);
+            cache.put(id, result);
+        }
+        return result;
+    }
+
+    private boolean isBroaderRequest(Key key, SdmxRepository repo) {
+        return key.supersedes(Key.parse(repo.getName()));
+    }
+
+    private SdmxRepository copyDataKeys(DataflowRef flowRef, Key key) throws IOException {
+        try (DataCursor cursor = super.loadData(flowRef, key, true)) {
+            return SdmxRepository.builder()
+                    .copyOf(flowRef, cursor)
+                    .name(key.toString())
+                    .build();
+        }
+    }
+
+    private static String generateBase(String host, LanguagePriorityList languages) {
+        return host + languages.toString() + "/";
     }
 }

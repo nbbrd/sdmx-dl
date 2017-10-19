@@ -42,13 +42,13 @@ final class ConnectorsConnection implements SdmxConnection {
         Map<String, it.bancaditalia.oss.sdmx.api.Dataflow> loadDataFlowsById() throws IOException;
 
         @Nonnull
-        it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(DataflowRef flowRef) throws IOException;
+        it.bancaditalia.oss.sdmx.api.Dataflow loadDataflow(@Nonnull DataflowRef flowRef) throws IOException;
 
         @Nonnull
-        it.bancaditalia.oss.sdmx.api.DataFlowStructure loadDataStructure(DataflowRef flowRef) throws IOException;
+        it.bancaditalia.oss.sdmx.api.DataFlowStructure loadDataStructure(@Nonnull DataflowRef flowRef) throws IOException;
 
         @Nonnull
-        DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException;
+        DataCursor loadData(@Nonnull DataflowRef flowRef, @Nonnull Key key, boolean serieskeysonly) throws IOException;
 
         boolean isSeriesKeysOnlySupported();
     }
