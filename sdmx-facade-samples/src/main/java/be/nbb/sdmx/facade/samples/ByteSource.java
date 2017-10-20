@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -40,8 +41,13 @@ public interface ByteSource {
     InputStream openStream() throws IOException;
 
     @Nonnull
-    default XMLStreamReader openXmlStream() throws XMLStreamException, IOException {
-        return XMLInputFactory.newInstance().createXMLStreamReader(openReader());
+    default XMLStreamReader openXmlStream(@Nonnull XMLInputFactory f) throws XMLStreamException, IOException {
+        return f.createXMLStreamReader(openReader());
+    }
+
+    @Nonnull
+    default XMLEventReader openXmlEvent(@Nonnull XMLInputFactory f) throws XMLStreamException, IOException {
+        return f.createXMLEventReader(openReader());
     }
 
     @Nonnull

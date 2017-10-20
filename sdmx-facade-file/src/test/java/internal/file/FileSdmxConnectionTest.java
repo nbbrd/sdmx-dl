@@ -26,7 +26,6 @@ import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.File;
 import java.io.IOException;
-import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.Rule;
@@ -40,8 +39,7 @@ public class FileSdmxConnectionTest {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
-    private final XMLInputFactory factory = XMLInputFactory.newInstance();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(factory);
+    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(SdmxSource.XIF);
 
     @Test
     public void testCompactData21() throws IOException {
@@ -50,7 +48,7 @@ public class FileSdmxConnectionTest {
 
         SdmxFile file = new SdmxFile(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, factory, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
 
         assertThat(conn.getDataflows()).hasSize(1);
         assertThat(conn.getDataStructure(file.getDataflowRef()).getDimensions()).hasSize(7);
@@ -78,6 +76,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, LanguagePriorityList.ANY, factory, decoder), file.getDataflowRef());
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder), file.getDataflowRef());
     }
 }

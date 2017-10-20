@@ -19,7 +19,6 @@ package internal.file;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import java.io.IOException;
-import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +30,6 @@ import java.io.Reader;
  * @author Philippe Charles
  */
 public class DataStructureDecoderTest {
-
-    private final XMLInputFactory factory = XMLInputFactory.newInstance();
 
     @Test
     public void testDecodeGeneric20() throws IOException {
@@ -48,7 +45,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_GENERIC20.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC20, factory, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC20, SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -67,7 +64,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_COMPACT20.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT20, factory, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT20, SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -88,7 +85,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_GENERIC21.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC21, factory, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC21, SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -109,7 +106,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_COMPACT21.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT21, factory, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT21, SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 }

@@ -17,7 +17,6 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.Key;
 import internal.util.StandardDataFactory;
 import javax.annotation.Nonnull;
 
@@ -26,9 +25,6 @@ import javax.annotation.Nonnull;
  * @author Philippe Charles
  */
 public interface DataFactory {
-
-    @Nonnull
-    Key.Builder getKeyBuilder(@Nonnull DataStructure dsd);
 
     @Nonnull
     FreqParser getFreqParser(@Nonnull DataStructure dsd);

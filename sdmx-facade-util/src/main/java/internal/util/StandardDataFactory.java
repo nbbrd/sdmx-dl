@@ -17,7 +17,6 @@
 package internal.util;
 
 import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.DataFactory;
 import be.nbb.sdmx.facade.util.FreqParser;
 import be.nbb.sdmx.facade.util.ObsParser;
@@ -30,11 +29,6 @@ public enum StandardDataFactory implements DataFactory {
 
     SDMX20 {
         @Override
-        public Key.Builder getKeyBuilder(DataStructure o) {
-            return Key.builder(o);
-        }
-
-        @Override
         public FreqParser getFreqParser(DataStructure o) {
             return FreqParser.sdmx20();
         }
@@ -44,11 +38,6 @@ public enum StandardDataFactory implements DataFactory {
             return ObsParser.standard();
         }
     }, SDMX21 {
-        @Override
-        public Key.Builder getKeyBuilder(DataStructure o) {
-            return Key.builder(o);
-        }
-
         @Override
         public FreqParser getFreqParser(DataStructure o) {
             return FreqParser.sdmx21(o);

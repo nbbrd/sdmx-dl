@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.xml.stream;
 import be.nbb.sdmx.facade.util.DataFactory;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +42,7 @@ public class SdmxXmlStreams {
 
     @Nonnull
     public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
-        return o -> new XMLStreamCompactDataCursor(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), "", "");
+        return o -> new XMLStreamCompactDataCursor(o, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), "", "");
     }
 
     @Nonnull
@@ -51,7 +52,7 @@ public class SdmxXmlStreams {
 
     @Nonnull
     public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
-        return o -> new XMLStreamCompactDataCursor(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
+        return o -> new XMLStreamCompactDataCursor(o, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
     @Nonnull
@@ -61,7 +62,7 @@ public class SdmxXmlStreams {
 
     @Nonnull
     public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
-        return o -> XMLStreamGenericDataCursor.sdmx20(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
+        return o -> XMLStreamGenericDataCursor.sdmx20(o, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull
@@ -71,7 +72,7 @@ public class SdmxXmlStreams {
 
     @Nonnull
     public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
-        return o -> XMLStreamGenericDataCursor.sdmx21(o, df.getKeyBuilder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
+        return o -> XMLStreamGenericDataCursor.sdmx21(o, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull

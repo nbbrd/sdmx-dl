@@ -16,15 +16,14 @@
  */
 package be.nbb.sdmx.facade.samples;
 
+import javax.xml.stream.XMLInputFactory;
+
 /**
  *
  * @author Philippe Charles
  */
-public final class SdmxSource {
-
-    private SdmxSource() {
-        // static class
-    }
+@lombok.experimental.UtilityClass
+public class SdmxSource {
 
     private static ByteSource of(String name) {
         return ByteSource.of(SdmxSource.class, name);
@@ -42,4 +41,6 @@ public final class SdmxSource {
     public static final ByteSource OTHER_COMPACT20 = of("other/sdmx-compact20-sample.xml");
     public static final ByteSource OTHER_GENERIC21 = of("other/sdmx-GenericData21.xml");
     public static final ByteSource OTHER_COMPACT21 = of("other/sdmx-compactData21.xml");
+
+    public static final XMLInputFactory XIF = XMLInputFactory.newInstance();
 }

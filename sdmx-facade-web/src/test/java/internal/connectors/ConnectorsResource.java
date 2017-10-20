@@ -16,26 +16,26 @@
  */
 package internal.connectors;
 
-import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.repo.Series;
 import be.nbb.sdmx.facade.util.ObsParser;
-import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
-import it.bancaditalia.oss.sdmx.parser.v20.GenericDataParser;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -92,11 +92,7 @@ public class ConnectorsResource {
     }
 
     List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser().parse(r, l);
-        } catch (XMLStreamException | SdmxException ex) {
-            throw new IOException(ex);
-        }
+        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
     }
 
     List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -106,52 +102,56 @@ public class ConnectorsResource {
     }
 
     List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return new GenericDataParser(dsd, null, true).parse(r, l).getData();
-        } catch (XMLStreamException | SdmxException ex) {
-            throw new IOException(ex);
-        }
+        // No connectors impl
+        return FacadeResource.data20(XMLInputFactory.newFactory(), xml, Util.toDataStructure(dsd))
+                .stream()
+                .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
+                .collect(Collectors.toList());
     }
 
     List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser().parse(r, l);
-        } catch (XMLStreamException | SdmxException ex) {
-            throw new IOException(ex);
-        }
+        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
     List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r, l);
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
     List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
-        // FIXME: no connectors impl yet
-        try (DataCursor cursor = SdmxXmlStreams.genericData21(Util.toDataStructure(dsd)).get(XMLInputFactory.newFactory(), xml.openReader())) {
-            List<Dimension> dims = dsd.getDimensions();
-            List<PortableTimeSeries> result = new ArrayList<>();
-            while (cursor.nextSeries()) {
-                PortableTimeSeries series = new PortableTimeSeries();
-                series.setFrequency("A");
-                cursor.getSeriesAttributes().forEach(series::addAttribute);
-                Key key = cursor.getSeriesKey();
-                for (int i = 0; i < key.size(); i++) {
-                    series.addDimension(dims.get(i).getId(), key.get(i));
-                }
-                while (cursor.nextObs()) {
-                    LocalDateTime period = cursor.getObsPeriod();
-                    if (period != null) {
-                        Double value = cursor.getObsValue();
-                        series.addObservation(value != null ? value.toString() : "", String.valueOf(period.getYear()), null);
-                    }
-                }
-                result.add(series);
-            }
-            return result;
+        // No connectors impl
+        return FacadeResource.data21(XMLInputFactory.newFactory(), xml, Util.toDataStructure(dsd))
+                .stream()
+                .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
+                .collect(Collectors.toList());
+    }
+
+    PortableTimeSeries toPortableTimeSeries(Series o, List<Dimension> dims) {
+        PortableTimeSeries result = new PortableTimeSeries();
+        result.setFrequency(String.valueOf(formatByStandardFreq(o.getFrequency())));
+        o.getMeta().forEach(result::addAttribute);
+        Key key = o.getKey();
+        for (int i = 0; i < key.size(); i++) {
+            result.addDimension(dims.get(i).getId(), key.get(i));
+        }
+        o.getObs().forEach(x -> result.addObservation(valueToString(x.getValue()), periodToString(o.getFrequency(), x.getPeriod()), null));
+        return result;
+    }
+
+    String valueToString(Double o) {
+        return o != null ? o.toString() : "";
+    }
+
+    String periodToString(Frequency f, LocalDateTime o) {
+        if (o == null) {
+            return "";
+        }
+        switch (f) {
+            case ANNUAL:
+                return String.valueOf(o.getYear());
+            case MONTHLY:
+                return YearMonth.from(o).toString();
+            default:
+                throw new RuntimeException("Not implemented yet");
         }
     }
 
@@ -163,5 +163,38 @@ public class ConnectorsResource {
         result.setName(o.getName());
         result.setVersion(o.getVersion());
         return result;
+    }
+
+    <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
+        try (InputStreamReader r = xml.openReader()) {
+            return parser.parse(r, l);
+        } catch (XMLStreamException | SdmxException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private char formatByStandardFreq(Frequency code) {
+        switch (code) {
+            case ANNUAL:
+                return 'A';
+            case HALF_YEARLY:
+                return 'S';
+            case QUARTERLY:
+                return 'Q';
+            case MONTHLY:
+                return 'M';
+            case WEEKLY:
+                return 'W';
+            case DAILY:
+                return 'D';
+            case HOURLY:
+                return 'H';
+            case DAILY_BUSINESS:
+                return 'B';
+            case MINUTELY:
+                return 'N';
+            default:
+                return '?';
+        }
     }
 }

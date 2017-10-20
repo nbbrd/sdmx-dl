@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade.repo;
 
 import java.time.LocalDateTime;
+import javax.annotation.Nullable;
 
 /**
  *
@@ -25,6 +26,9 @@ import java.time.LocalDateTime;
 @lombok.Value(staticConstructor = "of")
 public class Obs {
 
+    @Nullable
     LocalDateTime period;
+
+    @Nullable
     Double value;
 }

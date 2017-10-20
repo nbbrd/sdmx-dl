@@ -136,12 +136,12 @@ final class PortableTimeSeriesCursor implements DataCursor {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static Frequency getFrequency(PortableTimeSeries input) {
+        if (input.getFrequency() != null) {
+            return FreqUtil.parseByFreq(input.getFrequency());
+        }
         String value = input.getAttribute(TIME_FORMAT_CONCEPT);
         if (value != null) {
             return FreqUtil.parseByTimeFormat(value);
-        }
-        if (input.getFrequency() != null) {
-            return FreqUtil.parseByFreq(input.getFrequency());
         }
         return Frequency.UNDEFINED;
     }

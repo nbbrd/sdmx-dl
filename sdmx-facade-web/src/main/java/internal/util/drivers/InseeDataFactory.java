@@ -22,7 +22,6 @@ import static be.nbb.sdmx.facade.Frequency.ANNUAL;
 import static be.nbb.sdmx.facade.Frequency.HALF_YEARLY;
 import static be.nbb.sdmx.facade.Frequency.MONTHLY;
 import static be.nbb.sdmx.facade.Frequency.QUARTERLY;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.FreqParser;
 import be.nbb.sdmx.facade.util.ObsParser;
 import be.nbb.sdmx.facade.util.SafeParser;
@@ -36,11 +35,6 @@ import java.time.LocalDateTime;
  * @author Philippe Charles
  */
 public final class InseeDataFactory implements DataFactory {
-
-    @Override
-    public Key.Builder getKeyBuilder(DataStructure dsd) {
-        return Key.builder(dsd);
-    }
 
     @Override
     public FreqParser getFreqParser(DataStructure dsd) {

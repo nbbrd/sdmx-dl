@@ -31,7 +31,6 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 
 /**
  *
@@ -90,7 +89,7 @@ public class FacadeResource {
                 .collect(Collectors.toList());
     }
 
-    private List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
+    List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData20(dsd).get(f, xml.openReader())) {
             return Series.copyOf(c);
         }
@@ -103,17 +102,14 @@ public class FacadeResource {
     }
 
     private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            // FIXME: no facade impl yet
-            return new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser().parse(r, Util.fromLanguages(l)).stream()
-                    .map(Util::toDataflow)
-                    .collect(Collectors.toList());
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        // FIXME: no facade impl yet
+        return ConnectorsResource.parse(xml, Util.fromLanguages(l), new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser())
+                .stream()
+                .map(Util::toDataflow)
+                .collect(Collectors.toList());
     }
 
-    private List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
+    List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData21(dsd).get(f, xml.openReader())) {
             return Series.copyOf(c);
         }
