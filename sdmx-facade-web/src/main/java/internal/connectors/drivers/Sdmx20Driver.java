@@ -21,7 +21,6 @@ import static internal.connectors.Util.NEEDS_CREDENTIALS;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
+import java.net.URI;
 
 /**
  *
@@ -49,7 +49,7 @@ public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
 
     private static final class Sdmx20Client extends RestSdmx20Client {
 
-        private Sdmx20Client(URL endpoint, Map<?, ?> info, LanguagePriorityList langs) {
+        private Sdmx20Client(URI endpoint, Map<?, ?> info, LanguagePriorityList langs) {
             super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
             this.languages = Util.fromLanguages(langs);
         }

@@ -33,12 +33,12 @@ import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
@@ -166,10 +166,20 @@ public class ConnectorsResource {
     }
 
     <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
+        XMLEventReader r = null;
+        try {
+            r = xml.openXmlEvent(SdmxSource.XIF);
             return parser.parse(r, l);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);
+        } finally {
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (XMLStreamException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }
     }
 

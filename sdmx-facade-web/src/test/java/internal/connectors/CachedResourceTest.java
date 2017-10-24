@@ -26,7 +26,7 @@ import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -239,12 +239,12 @@ public class CachedResourceTest {
         }
 
         @Override
-        public URL getEndpoint() throws SdmxException {
+        public URI getEndpoint() throws SdmxException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public void setEndpoint(URL url) {
+        public void setEndpoint(URI url) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

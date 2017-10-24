@@ -19,8 +19,7 @@ package internal.connectors;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -31,11 +30,11 @@ import javax.annotation.Nonnull;
 public interface GenericSDMXClientSupplier {
 
     @Nonnull
-    GenericSDMXClient getClient(@Nonnull URL endpoint, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList langs) throws MalformedURLException;
+    GenericSDMXClient getClient(@Nonnull URI endpoint, @Nonnull Map<?, ?> info, @Nonnull LanguagePriorityList langs);
 
     @Nonnull
     static GenericSDMXClientSupplier ofType(@Nonnull Class<? extends RestSdmxClient> clazz) {
-        return (URL endpoint, Map<?, ?> info, LanguagePriorityList langs) -> {
+        return (URI endpoint, Map<?, ?> info, LanguagePriorityList langs) -> {
             try {
                 RestSdmxClient result = clazz.newInstance();
                 result.setEndpoint(endpoint);

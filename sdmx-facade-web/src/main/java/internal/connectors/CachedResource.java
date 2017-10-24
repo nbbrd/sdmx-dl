@@ -28,7 +28,7 @@ import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.util.Map;
 import java.util.Objects;
@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final class CachedResource extends GenericSDMXClientResource {
 
-    static CachedResource of(GenericSDMXClient client, URL endpoint, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+    static CachedResource of(GenericSDMXClient client, URI endpoint, LanguagePriorityList languages, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         return new CachedResource(client, generateBase(endpoint.getHost(), languages), cache, clock, ttlInMillis);
     }
 

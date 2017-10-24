@@ -30,19 +30,19 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxIOException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.stream.XMLInputFactory;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
+import internal.org.springframework.util.xml.XMLEventStreamReader;
 import it.bancaditalia.oss.sdmx.client.Parser;
+import java.net.URI;
 
 /**
  *
@@ -53,10 +53,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
     private static final String PREFIX = "sdmx:sdmx21:";
 
-    private final XMLInputFactory xml = XMLInputFactory.newInstance();
-
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l, xml));
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l));
 
     @Override
     public List<SdmxWebEntryPoint> getDefaultEntryPoints() {
@@ -98,6 +96,13 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
                 .endpoint("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
                 .supportsCompression(true)
                 .seriesKeysOnlySupported(true)
+                .build());
+        result.add(b.clear()
+                .name("WB")
+                .description("World Bank")
+                .endpoint("http://api.worldbank.org/v2/sdmx/rest")
+                .supportsCompression(true)
+//                .seriesKeysOnlySupported(true)
                 .build());
         return result;
     }
@@ -172,13 +177,11 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     private final static class Sdmx21Client extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
         private final Sdmx21Config config;
-        private final XMLInputFactory factory;
 
-        private Sdmx21Client(URL endpoint, Sdmx21Config config, LanguagePriorityList langs, XMLInputFactory factory) {
+        private Sdmx21Client(URI endpoint, Sdmx21Config config, LanguagePriorityList langs) {
             super("", endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
             this.languages = Util.fromLanguages(langs);
             this.config = config;
-            this.factory = factory;
         }
 
         @Override
@@ -201,7 +204,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
         private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toDataStructure(dsd)).get(factory, r)) {
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toDataStructure(dsd)).get(new XMLEventStreamReader(r))) {
                     return Series.copyOf(cursor);
                 } catch (IOException ex) {
                     throw new SdmxIOException("Cannot parse compact data 21", ex);

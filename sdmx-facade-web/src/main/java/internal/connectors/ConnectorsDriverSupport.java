@@ -26,9 +26,8 @@ import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
@@ -94,11 +93,11 @@ public final class ConnectorsDriverSupport implements HasCache {
 
     private ConnectorsConnection.Resource getResource(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
         try {
-            URL endpoint = new URL(uri.toString().substring(prefix.length()));
+            URI endpoint = new URI(uri.toString().substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
             applyTimeouts(client, info);
             return CachedResource.of(client, endpoint, languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException ex) {
             throw new IOException(ex);
         }
     }
