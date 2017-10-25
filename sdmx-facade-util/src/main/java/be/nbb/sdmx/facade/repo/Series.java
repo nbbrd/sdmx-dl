@@ -55,12 +55,16 @@ public class Series {
         if (!cursor.nextSeries()) {
             return Collections.emptyList();
         }
+
+        if (cursor instanceof SeriesCursor) {
+            return ((SeriesCursor) cursor).getRemainingItems();
+        }
+
         Series.Builder b = builder();
         List<Series> result = new ArrayList<>();
-        result.add(getSeries(b, cursor));
-        while (cursor.nextSeries()) {
+        do {
             result.add(getSeries(b, cursor));
-        }
+        } while (cursor.nextSeries());
         return result;
     }
 
@@ -159,6 +163,10 @@ public class Series {
         @Override
         public void close() throws IOException {
             closed = true;
+        }
+
+        List<Series> getRemainingItems() {
+            return col.subList(i, col.size());
         }
 
         private void checkState() throws IOException {
