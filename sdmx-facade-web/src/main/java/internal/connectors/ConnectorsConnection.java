@@ -24,10 +24,13 @@ import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 /**
@@ -82,13 +85,18 @@ final class ConnectorsConnection implements SdmxConnection {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataQuery query) throws IOException {
+    public DataCursor getDataCursor(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         boolean serieskeysonly = query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");
         }
         return resource.loadData(flowRef, query.getKey(), serieskeysonly);
+    }
+
+    @Override
+    public Stream<Series> getDataStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        return SeriesSupport.asStream(() -> getDataCursor(flowRef, query));
     }
 
     @Override

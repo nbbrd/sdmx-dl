@@ -79,9 +79,14 @@ final class CachedResource extends GenericSDMXClientResource {
 
     @Override
     public DataCursor loadData(DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return serieskeysonly
-                ? loadKeysOnlyWithCache(flowRef, key).getData(flowRef, DataQuery.of(key, true))
-                : super.loadData(flowRef, key, serieskeysonly);
+        if (!serieskeysonly) {
+            return super.loadData(flowRef, key, serieskeysonly);
+        }
+        DataCursor result = loadKeysOnlyWithCache(flowRef, key).getCursor(flowRef, DataQuery.of(key, true));
+        if (result != null) {
+            return result;
+        }
+        throw new IOException("Data not found");
     }
 
     @Override

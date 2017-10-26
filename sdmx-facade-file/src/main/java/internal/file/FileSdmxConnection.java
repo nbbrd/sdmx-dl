@@ -26,7 +26,9 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 
 /**
@@ -83,12 +86,17 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    final public DataCursor getData(DataflowRef flowRef, DataQuery query) throws IOException {
+    final public DataCursor getDataCursor(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
         Objects.requireNonNull(query);
         checkFlowRef(flowRef);
         return loadData(decode(), flowRef, query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
+    }
+
+    @Override
+    public Stream<Series> getDataStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        return SeriesSupport.asStream(() -> getDataCursor(flowRef, query));
     }
 
     @Override

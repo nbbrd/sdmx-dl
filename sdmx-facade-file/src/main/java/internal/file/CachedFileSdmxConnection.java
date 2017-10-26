@@ -21,8 +21,8 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFile;
-import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public final class CachedFileSdmxConnection extends FileSdmxConnection {
                 result = copyOfKeys(super.loadData(entry, flowRef, key, true));
                 cache.put(loadDataKey, result);
             }
-            return SdmxRepository.asCursor(result, key);
+            return SeriesSupport.asCursor(result, key);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
     }
