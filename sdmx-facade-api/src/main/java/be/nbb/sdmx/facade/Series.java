@@ -14,21 +14,30 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.repo;
+package be.nbb.sdmx.facade;
 
-import java.time.LocalDateTime;
-import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
-public class Obs {
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
+public class Series {
 
-    @Nullable
-    LocalDateTime period;
+    @lombok.NonNull
+    Key key;
 
-    @Nullable
-    Double value;
+    @lombok.NonNull
+    Frequency frequency;
+
+    @lombok.NonNull
+    @lombok.Singular(value = "obs")
+    List<Obs> obs;
+
+    @lombok.NonNull
+    @lombok.Singular(value = "meta")
+    Map<String, String> meta;
 }

@@ -19,9 +19,10 @@ package internal.connectors.drivers;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.repo.Series;
+import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -187,7 +188,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
         @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             // FIXME: avoid in-memory copy
-            return Series.asCursor(getData(dataflow, dsd, resource, serieskeysonly), resource);
+            return SdmxRepository.asCursor(getData(dataflow, dsd, resource, serieskeysonly), resource);
         }
 
         @Override
@@ -205,7 +206,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
         private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
             return (r, l) -> {
                 try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toDataStructure(dsd)).get(new XMLEventStreamReader(r))) {
-                    return Series.copyOf(cursor);
+                    return SdmxRepository.copyOf(cursor);
                 } catch (IOException ex) {
                     throw new SdmxIOException("Cannot parse compact data 21", ex);
                 }

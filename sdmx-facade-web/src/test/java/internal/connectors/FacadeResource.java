@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.repo.Series;
+import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -91,7 +91,7 @@ public class FacadeResource {
 
     List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData20(dsd).get(f, xml.openReader())) {
-            return Series.copyOf(c);
+            return SdmxRepository.copyOf(c);
         }
     }
 
@@ -111,7 +111,7 @@ public class FacadeResource {
 
     List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData21(dsd).get(f, xml.openReader())) {
-            return Series.copyOf(c);
+            return SdmxRepository.copyOf(c);
         }
     }
 
