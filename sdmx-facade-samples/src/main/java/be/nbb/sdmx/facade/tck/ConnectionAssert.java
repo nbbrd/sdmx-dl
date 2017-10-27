@@ -52,37 +52,37 @@ public final class ConnectionAssert {
             s.fail("Subsequent calls to #close must not raise exception", ex);
         }
 
-        assertState(s, supplier, o -> o.getDataCursor(ref, DataQuery.of(Key.ALL, false)), "getDataCursor(DataFlowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getDataStream(ref, DataQuery.of(Key.ALL, false)), "getDataStream(DataFlowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getDataStructure(ref), "getDataStructure(DataFlowRef)");
-        assertState(s, supplier, o -> o.getDataflow(ref), "getDataflow(DataFlowRef)");
-        assertState(s, supplier, SdmxConnection::getDataflows, "getDataflows()");
+        assertState(s, supplier, o -> o.getCursor(ref, DataQuery.of(Key.ALL, false)), "getCursor(DataFlowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getStream(ref, DataQuery.of(Key.ALL, false)), "getStream(DataFlowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getStructure(ref), "getStructure(DataFlowRef)");
+        assertState(s, supplier, o -> o.getFlow(ref), "getFlow(DataFlowRef)");
+        assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
     }
 
     @SuppressWarnings("null")
     private static void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
-        s.assertThatThrownBy(() -> conn.getDataCursor(null, DataQuery.of(Key.ALL, false)))
-                .as("Expecting 'getDataCursor(DataFlowRef, DataQuery)' to raise NPE when called with null flowRef")
+        s.assertThatThrownBy(() -> conn.getCursor(null, DataQuery.of(Key.ALL, false)))
+                .as("Expecting 'getCursor(DataFlowRef, DataQuery)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataCursor(ref, null))
-                .as("Expecting 'getDataCursor(DataFlowRef, DataQuery)' to raise NPE when called with null query")
+        s.assertThatThrownBy(() -> conn.getCursor(ref, null))
+                .as("Expecting 'getCursor(DataFlowRef, DataQuery)' to raise NPE when called with null query")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(null, DataQuery.of(Key.ALL, false)))
-                .as("Expecting 'getDataStream(DataFlowRef, DataQuery)' to raise NPE when called with null flowRef")
+        s.assertThatThrownBy(() -> conn.getStream(null, DataQuery.of(Key.ALL, false)))
+                .as("Expecting 'getStream(DataFlowRef, DataQuery)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(ref, null))
-                .as("Expecting 'getDataStream(DataFlowRef, DataQuery)' to raise NPE when called with null query")
+        s.assertThatThrownBy(() -> conn.getStream(ref, null))
+                .as("Expecting 'getStream(DataFlowRef, DataQuery)' to raise NPE when called with null query")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStructure(null))
-                .as("Expecting 'getDataStructure(DataFlowRef)' to raise NPE when called with null flowRef")
+        s.assertThatThrownBy(() -> conn.getStructure(null))
+                .as("Expecting 'getStructure(DataFlowRef)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataflow(null))
-                .as("Expecting 'getDataflow(DataFlowRef)' to raise NPE when called with null flowRef")
+        s.assertThatThrownBy(() -> conn.getFlow(null))
+                .as("Expecting 'getFlow(DataFlowRef)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
     }
 

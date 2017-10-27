@@ -81,5 +81,5 @@ public class SeriesSupportTest {
         }
     }
 
-    private final Series series = Series.builder().key(Key.of("BE")).frequency(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
 }

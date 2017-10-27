@@ -76,7 +76,7 @@ public class SeriesSupport {
 
     private Series getSeries(Series.Builder builder, DataCursor cursor) throws IOException {
         builder.key(cursor.getSeriesKey())
-                .frequency(cursor.getSeriesFrequency())
+                .freq(cursor.getSeriesFrequency())
                 .clearMeta()
                 .clearObs()
                 .meta(cursor.getSeriesAttributes());
@@ -132,7 +132,7 @@ public class SeriesSupport {
         @Override
         public Frequency getSeriesFrequency() throws IOException {
             checkSeriesState();
-            return col.get(i).getFrequency();
+            return col.get(i).getFreq();
         }
 
         @Override

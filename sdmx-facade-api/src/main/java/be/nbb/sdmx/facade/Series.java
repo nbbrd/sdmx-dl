@@ -31,7 +31,7 @@ public class Series {
     Key key;
 
     @lombok.NonNull
-    Frequency frequency;
+    Frequency freq;
 
     @lombok.NonNull
     @lombok.Singular(value = "obs")

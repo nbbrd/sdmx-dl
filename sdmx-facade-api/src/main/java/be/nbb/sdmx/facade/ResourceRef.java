@@ -29,7 +29,7 @@ public interface ResourceRef {
     public static final String LATEST_VERSION = "latest";
 
     @Nonnull
-    String getAgencyId();
+    String getAgency();
 
     @Nonnull
     String getId();

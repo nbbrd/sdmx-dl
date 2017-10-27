@@ -31,19 +31,19 @@ import javax.annotation.concurrent.NotThreadSafe;
 public interface SdmxConnection extends Closeable {
 
     @Nonnull
-    Set<Dataflow> getDataflows() throws IOException;
+    Set<Dataflow> getFlows() throws IOException;
 
     @Nonnull
-    Dataflow getDataflow(@Nonnull DataflowRef flowRef) throws IOException;
+    Dataflow getFlow(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    DataStructure getDataStructure(@Nonnull DataflowRef flowRef) throws IOException;
+    DataStructure getStructure(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    DataCursor getDataCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
+    DataCursor getCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
 
     @Nonnull
-    Stream<Series> getDataStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
+    Stream<Series> getStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 }

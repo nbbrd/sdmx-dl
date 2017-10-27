@@ -41,7 +41,7 @@ public class ResourceRefs {
 
     @Nonnull
     public static String toString(ResourceRef ref) {
-        return ref.getAgencyId() + "," + ref.getId() + "," + ref.getVersion();
+        return ref.getAgency() + "," + ref.getId() + "," + ref.getVersion();
     }
 
     @Nonnull

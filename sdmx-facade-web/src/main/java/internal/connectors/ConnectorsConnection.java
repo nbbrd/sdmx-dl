@@ -65,27 +65,27 @@ final class ConnectorsConnection implements SdmxConnection {
     }
 
     @Override
-    public Set<Dataflow> getDataflows() throws IOException {
+    public Set<Dataflow> getFlows() throws IOException {
         checkState();
         return resource.loadDataFlowsById().values().stream()
-                .map(Util::toDataflow)
+                .map(Util::toFlow)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+    public Dataflow getFlow(DataflowRef flowRef) throws IOException {
         checkState();
-        return Util.toDataflow(resource.loadDataflow(flowRef));
+        return Util.toFlow(resource.loadDataflow(flowRef));
     }
 
     @Override
-    public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
+    public DataStructure getStructure(DataflowRef flowRef) throws IOException {
         checkState();
-        return Util.toDataStructure(resource.loadDataStructure(flowRef));
+        return Util.toStructure(resource.loadDataStructure(flowRef));
     }
 
     @Override
-    public DataCursor getDataCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+    public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         boolean serieskeysonly = query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
@@ -95,8 +95,8 @@ final class ConnectorsConnection implements SdmxConnection {
     }
 
     @Override
-    public Stream<Series> getDataStream(DataflowRef flowRef, DataQuery query) throws IOException {
-        return SeriesSupport.asStream(() -> getDataCursor(flowRef, query));
+    public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(flowRef, query));
     }
 
     @Override

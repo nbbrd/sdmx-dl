@@ -31,7 +31,7 @@ import lombok.AccessLevel;
 public final class DataStructureRef implements ResourceRef {
 
     @lombok.NonNull
-    private String agencyId;
+    private String agency;
 
     @lombok.NonNull
     private String id;
@@ -50,7 +50,7 @@ public final class DataStructureRef implements ResourceRef {
     }
 
     @Nonnull
-    public static DataStructureRef of(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
-        return ResourceRefs.of(agencyId, flowId, version, DataStructureRef::new);
+    public static DataStructureRef of(@Nullable String agency, @Nonnull String id, @Nullable String version) throws IllegalArgumentException {
+        return ResourceRefs.of(agency, id, version, DataStructureRef::new);
     }
 }

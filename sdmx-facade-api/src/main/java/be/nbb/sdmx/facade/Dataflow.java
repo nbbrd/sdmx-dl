@@ -23,8 +23,11 @@ package be.nbb.sdmx.facade;
 @lombok.Value(staticConstructor = "of")
 public class Dataflow implements HasLabel {
 
-    DataflowRef flowRef;
-    DataStructureRef dataStructureRef;
+    @lombok.NonNull
+    DataflowRef ref;
+
+    @lombok.NonNull
+    DataStructureRef structureRef;
 
     @lombok.NonNull
     String label;

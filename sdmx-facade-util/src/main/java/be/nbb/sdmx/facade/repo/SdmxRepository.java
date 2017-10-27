@@ -121,34 +121,34 @@ public class SdmxRepository {
         }
 
         @Override
-        public Set<Dataflow> getDataflows() throws IOException {
+        public Set<Dataflow> getFlows() throws IOException {
             checkState();
             return repo.getDataflows();
         }
 
         @Override
-        public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
             checkState();
             Objects.requireNonNull(flowRef);
             return repo.getDataflows()
                     .stream()
-                    .filter(o -> flowRef.equals(o.getFlowRef()))
+                    .filter(o -> flowRef.equals(o.getRef()))
                     .findFirst()
                     .orElseThrow(() -> new IOException("Dataflow not found"));
         }
 
         @Override
-        public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
-            Dataflow flow = getDataflow(flowRef);
+        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+            Dataflow flow = getFlow(flowRef);
             return repo.getDataStructures()
                     .stream()
-                    .filter(o -> flow.getDataStructureRef().equals(o.getRef()))
+                    .filter(o -> flow.getStructureRef().equals(o.getRef()))
                     .findFirst()
                     .orElseThrow(() -> new IOException("DataStructure not found"));
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+        public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
             checkState();
             DataCursor result = repo.getCursor(flowRef, query);
             if (result != null) {
@@ -158,7 +158,7 @@ public class SdmxRepository {
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
             checkState();
             Stream<Series> result = repo.getStream(flowRef, query);
             if (result != null) {

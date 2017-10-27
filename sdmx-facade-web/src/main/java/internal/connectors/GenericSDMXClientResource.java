@@ -65,7 +65,7 @@ class GenericSDMXClientResource implements ConnectorsConnection.Resource {
         it.bancaditalia.oss.sdmx.api.Dataflow result;
 
         try {
-            result = client.getDataflow(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion());
+            result = client.getDataflow(flowRef.getId(), flowRef.getAgency(), flowRef.getVersion());
         } catch (SdmxException ex) {
             throw expected(ex, "Failed to get details from dataset '%s'", flowRef);
         } catch (RuntimeException ex) {
@@ -135,7 +135,7 @@ class GenericSDMXClientResource implements ConnectorsConnection.Resource {
 
     private it.bancaditalia.oss.sdmx.api.DSDIdentifier loadDsdIdentifier(DataflowRef flowRef) throws IOException {
         return client instanceof DotStat
-                ? new DSDIdentifier(flowRef.getId(), flowRef.getAgencyId(), flowRef.getVersion())
+                ? new DSDIdentifier(flowRef.getId(), flowRef.getAgency(), flowRef.getVersion())
                 : loadDataflow(flowRef).getDsdIdentifier();
     }
 

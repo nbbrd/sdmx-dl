@@ -92,7 +92,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
 
         private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toDataStructure(dsd), dataFactory).get(new XMLEventStreamReader(r))) {
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toStructure(dsd), dataFactory).get(new XMLEventStreamReader(r))) {
                     return SeriesSupport.copyOf(cursor);
                 } catch (IOException ex) {
                     throw new SdmxIOException("Cannot parse compact data 21", ex);

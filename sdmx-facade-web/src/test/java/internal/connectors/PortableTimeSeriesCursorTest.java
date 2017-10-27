@@ -52,7 +52,7 @@ public class PortableTimeSeriesCursorTest {
     public void test() throws IOException {
         assertThat(SeriesSupport.asStream(() -> new PortableTimeSeriesCursor(DATA, ObsParser.standard())))
                 .hasSize(120)
-                .allMatch(o -> o.getFrequency().equals(Frequency.ANNUAL))
+                .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
                 .element(0)
                 .satisfies(o -> {
                     assertThat(o.getKey()).isEqualTo(Key.parse("A.DEU.1.0.319.0.UBLGE"));

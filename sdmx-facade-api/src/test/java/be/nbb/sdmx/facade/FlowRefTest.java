@@ -43,21 +43,22 @@ public class FlowRefTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testValueOf() {
         assertThat(DataflowRef.of(null, "", null))
-                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
                 .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
         assertThat(DataflowRef.of("", "hello", null))
-                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
                 .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
         assertThat(DataflowRef.of("world", "hello", null))
-                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
                 .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
         assertThat(DataflowRef.of("world", "hello", "123"))
-                .extracting(DataflowRef::getAgencyId, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
         assertThatThrownBy(() -> DataflowRef.of(null, "world,hello", null)).isInstanceOf(IllegalArgumentException.class);

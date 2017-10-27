@@ -50,12 +50,12 @@ public class FileSdmxConnectionTest {
 
         FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
 
-        assertThat(conn.getDataflows()).hasSize(1);
-        assertThat(conn.getDataStructure(file.getDataflowRef()).getDimensions()).hasSize(7);
+        assertThat(conn.getFlows()).hasSize(1);
+        assertThat(conn.getStructure(file.getDataflowRef()).getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getDataCursor(file.getDataflowRef(), DataQuery.of(Key.ALL, false))) {
+        try (DataCursor o = conn.getCursor(file.getDataflowRef(), DataQuery.of(Key.ALL, false))) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);

@@ -64,13 +64,13 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    final public Set<Dataflow> getDataflows() throws IOException {
+    final public Set<Dataflow> getFlows() throws IOException {
         checkState();
         return Collections.singleton(dataflow);
     }
 
     @Override
-    final public Dataflow getDataflow(DataflowRef flowRef) throws IOException {
+    final public Dataflow getFlow(DataflowRef flowRef) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
         checkFlowRef(flowRef);
@@ -78,7 +78,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    final public DataStructure getDataStructure(DataflowRef flowRef) throws IOException {
+    final public DataStructure getStructure(DataflowRef flowRef) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
         checkFlowRef(flowRef);
@@ -86,7 +86,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    final public DataCursor getDataCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+    final public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
         Objects.requireNonNull(query);
@@ -95,8 +95,8 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
-    public Stream<Series> getDataStream(DataflowRef flowRef, DataQuery query) throws IOException {
-        return SeriesSupport.asStream(() -> getDataCursor(flowRef, query));
+    public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(flowRef, query));
     }
 
     @Override
@@ -139,7 +139,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {
-        if (!this.dataflow.getFlowRef().contains(flowRef)) {
+        if (!this.dataflow.getRef().contains(flowRef)) {
             throw new IOException("Invalid flowref '" + flowRef + "'");
         }
     }

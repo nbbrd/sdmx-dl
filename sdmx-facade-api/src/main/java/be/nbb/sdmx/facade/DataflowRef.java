@@ -40,7 +40,7 @@ import lombok.AccessLevel;
 public final class DataflowRef implements ResourceRef {
 
     @lombok.NonNull
-    private String agencyId;
+    private String agency;
 
     @lombok.NonNull
     private String id;
@@ -49,7 +49,7 @@ public final class DataflowRef implements ResourceRef {
     private String version;
 
     public boolean contains(@Nonnull DataflowRef that) {
-        return (this.agencyId.equals(ALL_AGENCIES) || this.agencyId.equals(that.agencyId))
+        return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
                 && (this.id.equals(that.id))
                 && (this.version.equals(LATEST_VERSION) || this.version.equals(that.version));
     }
@@ -65,7 +65,7 @@ public final class DataflowRef implements ResourceRef {
     }
 
     @Nonnull
-    public static DataflowRef of(@Nullable String agencyId, @Nonnull String flowId, @Nullable String version) throws IllegalArgumentException {
-        return ResourceRefs.of(agencyId, flowId, version, DataflowRef::new);
+    public static DataflowRef of(@Nullable String agency, @Nonnull String id, @Nullable String version) throws IllegalArgumentException {
+        return ResourceRefs.of(agency, id, version, DataflowRef::new);
     }
 }

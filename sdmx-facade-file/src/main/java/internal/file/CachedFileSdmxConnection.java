@@ -82,7 +82,7 @@ public final class CachedFileSdmxConnection extends FileSdmxConnection {
         List<Series> result = new ArrayList<>();
         Series.Builder series = Series.builder();
         while (cursor.nextSeries()) {
-            result.add(series.key(cursor.getSeriesKey()).frequency(cursor.getSeriesFrequency()).meta(cursor.getSeriesAttributes()).build());
+            result.add(series.key(cursor.getSeriesKey()).freq(cursor.getSeriesFrequency()).meta(cursor.getSeriesAttributes()).build());
         }
         return result;
     }

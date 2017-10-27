@@ -106,7 +106,7 @@ public class FacadeResource {
         // FIXME: no facade impl yet
         return ConnectorsResource.parse(xml, Util.fromLanguages(l), new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser())
                 .stream()
-                .map(Util::toDataflow)
+                .map(Util::toFlow)
                 .collect(Collectors.toList());
     }
 
@@ -117,7 +117,7 @@ public class FacadeResource {
     }
 
     private Dataflow asDataflow(DataStructure o) {
-        DataflowRef ref = DataflowRef.of(o.getRef().getAgencyId(), o.getRef().getId(), o.getRef().getVersion());
+        DataflowRef ref = DataflowRef.of(o.getRef().getAgency(), o.getRef().getId(), o.getRef().getVersion());
         return Dataflow.of(ref, o.getRef(), o.getLabel());
     }
 }

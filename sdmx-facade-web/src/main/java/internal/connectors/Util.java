@@ -34,11 +34,11 @@ import javax.annotation.Nonnull;
 @lombok.experimental.UtilityClass
 public class Util {
 
-    public be.nbb.sdmx.facade.Dataflow toDataflow(Dataflow dataflow) {
-        return be.nbb.sdmx.facade.Dataflow.of(DataflowRef.parse(dataflow.getFullIdentifier()), toDataStructureRef(dataflow.getDsdIdentifier()), dataflow.getDescription());
+    public be.nbb.sdmx.facade.Dataflow toFlow(Dataflow flow) {
+        return be.nbb.sdmx.facade.Dataflow.of(DataflowRef.parse(flow.getFullIdentifier()), toStructureRef(flow.getDsdIdentifier()), flow.getDescription());
     }
 
-    public be.nbb.sdmx.facade.DataStructureRef toDataStructureRef(DSDIdentifier input) {
+    public be.nbb.sdmx.facade.DataStructureRef toStructureRef(DSDIdentifier input) {
         return DataStructureRef.of(input.getAgency(), input.getId(), input.getVersion());
     }
 
@@ -54,13 +54,13 @@ public class Util {
         return result.build();
     }
 
-    public DataStructure toDataStructure(DataFlowStructure dfs) {
+    public DataStructure toStructure(DataFlowStructure dsd) {
         DataStructure.Builder result = DataStructure.builder()
-                .ref(DataStructureRef.of(dfs.getAgency(), dfs.getId(), dfs.getVersion()))
-                .label(getNonNullName(dfs))
-                .timeDimensionId(dfs.getTimeDimension())
-                .primaryMeasureId(dfs.getMeasure());
-        dfs.getDimensions().forEach(o -> result.dimension(toDimension(o)));
+                .ref(DataStructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
+                .label(getNonNullName(dsd))
+                .timeDimensionId(dsd.getTimeDimension())
+                .primaryMeasureId(dsd.getMeasure());
+        dsd.getDimensions().forEach(o -> result.dimension(toDimension(o)));
         return result.build();
     }
 
