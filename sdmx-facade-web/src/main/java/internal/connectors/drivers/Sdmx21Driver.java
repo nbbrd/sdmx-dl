@@ -101,7 +101,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
         result.add(b.clear()
                 .name("WB")
                 .description("World Bank")
-                .endpoint("http://api.worldbank.org/v2/sdmx/rest")
+                .endpoint("https://api.worldbank.org/v2/sdmx/rest")
                 .supportsCompression(true)
 //                .seriesKeysOnlySupported(true)
                 .build());
