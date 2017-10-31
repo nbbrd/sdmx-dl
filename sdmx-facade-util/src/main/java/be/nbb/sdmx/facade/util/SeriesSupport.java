@@ -57,6 +57,20 @@ public class SeriesSupport {
     }
 
     @Nonnull
+    public static List<Series> copyOfKeysAndMeta(@Nonnull DataCursor cursor) throws IOException {
+        if (!cursor.nextSeries()) {
+            return Collections.emptyList();
+        }
+
+        List<Series> result = new ArrayList<>();
+        Series.Builder builder = Series.builder();
+        do {
+            result.add(builder.key(cursor.getSeriesKey()).freq(cursor.getSeriesFrequency()).clearMeta().meta(cursor.getSeriesAttributes()).build());
+        } while (cursor.nextSeries());
+        return result;
+    }
+
+    @Nonnull
     public DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key ref) {
         Objects.requireNonNull(list);
         Objects.requireNonNull(ref);

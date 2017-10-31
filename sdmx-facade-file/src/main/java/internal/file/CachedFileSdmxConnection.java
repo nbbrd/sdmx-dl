@@ -27,7 +27,6 @@ import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -70,20 +69,11 @@ public final class CachedFileSdmxConnection extends FileSdmxConnection {
         if (serieskeysonly) {
             List<Series> result = cache.get(loadDataKey);
             if (result == null) {
-                result = copyOfKeys(super.loadData(entry, flowRef, key, true));
+                result = SeriesSupport.copyOfKeysAndMeta(super.loadData(entry, flowRef, key, true));
                 cache.put(loadDataKey, result);
             }
             return SeriesSupport.asCursor(result, key);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
-    }
-
-    private static List<Series> copyOfKeys(DataCursor cursor) throws IOException {
-        List<Series> result = new ArrayList<>();
-        Series.Builder series = Series.builder();
-        while (cursor.nextSeries()) {
-            result.add(series.key(cursor.getSeriesKey()).freq(cursor.getSeriesFrequency()).meta(cursor.getSeriesAttributes()).build());
-        }
-        return result;
     }
 }

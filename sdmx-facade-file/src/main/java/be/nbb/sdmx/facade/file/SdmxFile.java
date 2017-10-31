@@ -17,26 +17,22 @@
 package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataflowRef;
+import internal.file.SdmxFileUtil;
 import java.io.File;
-import java.io.StringReader;
-import java.io.StringWriter;
 import javax.annotation.Nonnull;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+import javax.annotation.Nullable;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.Value
+@lombok.Value(staticConstructor = "of")
 public class SdmxFile {
 
     @lombok.NonNull
     File data;
 
+    @Nullable
     File structure;
 
     @Nonnull
@@ -46,41 +42,11 @@ public class SdmxFile {
 
     @Override
     public String toString() {
-        try {
-            StringWriter stream = new StringWriter();
-            XMLStreamWriter writer = OUTPUT.createXMLStreamWriter(stream);
-            writer.writeStartElement("sdmxFile");
-            writer.writeAttribute("data", data.toString());
-            if (structure != null) {
-                writer.writeAttribute("structure", structure.toString());
-            }
-            writer.writeEndElement();
-            writer.close();
-            return stream.toString();
-        } catch (XMLStreamException ex) {
-            throw new RuntimeException(ex);
-        }
+        return SdmxFileUtil.toXml(this);
     }
 
     @Nonnull
     public static SdmxFile parse(@Nonnull String input) throws IllegalArgumentException {
-        try {
-            XMLStreamReader reader = INPUT.createXMLStreamReader(new StringReader(input));
-            String data = null;
-            String structure = null;
-            while (reader.hasNext()) {
-                if (reader.next() == XMLStreamReader.START_ELEMENT && reader.getLocalName().equals("sdmxFile")) {
-                    data = reader.getAttributeValue(null, "data");
-                    structure = reader.getAttributeValue(null, "structure");
-                }
-            }
-            reader.close();
-            return new SdmxFile(data != null ? new File(data) : null, structure != null ? new File(structure) : null);
-        } catch (XMLStreamException ex) {
-            throw new IllegalArgumentException("Cannot parse SdmxFile", ex);
-        }
+        return SdmxFileUtil.fromXml(input);
     }
-
-    private static final XMLOutputFactory OUTPUT = XMLOutputFactory.newInstance();
-    private static final XMLInputFactory INPUT = XMLInputFactory.newInstance();
 }

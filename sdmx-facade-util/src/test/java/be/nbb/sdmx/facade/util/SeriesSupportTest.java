@@ -76,8 +76,33 @@ public class SeriesSupportTest {
         }
 
         List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).get(SdmxSource.ECB_DATA_STRUCTURE.openXmlStream(SdmxSource.XIF));
-        try (DataCursor o = SdmxXmlStreams.genericData21(dsds.get(0)).get(SdmxSource.ECB_DATA.openXmlStream(SdmxSource.XIF))) {
-            assertThat(SeriesSupport.copyOf(o)).hasSize(120);
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).get(SdmxSource.ECB_DATA.openXmlStream(SdmxSource.XIF))) {
+            assertThat(SeriesSupport.copyOf(c)).hasSize(120);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("null")
+    public void testCopyOfKeysAndMeta() throws IOException, XMLStreamException {
+        assertThatThrownBy(() -> SeriesSupport.copyOfKeysAndMeta(null)).isInstanceOf(NullPointerException.class);
+
+        try (DataCursor c = NoOpCursor.noOp()) {
+            assertThat(SeriesSupport.copyOfKeysAndMeta(c)).isEmpty();
+        }
+
+        try (DataCursor c = SeriesSupport.asCursor(Collections.singletonList(series), Key.ALL)) {
+            assertThat(SeriesSupport.copyOfKeysAndMeta(c))
+                    .allMatch(o -> o.getObs().isEmpty())
+                    .hasSize(1)
+                    .element(0)
+                    .isEqualToComparingOnlyGivenFields(series, "key", "freq", "meta");
+        }
+
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).get(SdmxSource.ECB_DATA_STRUCTURE.openXmlStream(SdmxSource.XIF));
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).get(SdmxSource.ECB_DATA.openXmlStream(SdmxSource.XIF))) {
+            assertThat(SeriesSupport.copyOfKeysAndMeta(c))
+                    .allMatch(o -> o.getObs().isEmpty())
+                    .hasSize(120);
         }
     }
 

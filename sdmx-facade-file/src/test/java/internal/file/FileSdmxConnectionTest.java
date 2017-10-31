@@ -46,7 +46,7 @@ public class FileSdmxConnectionTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFile file = new SdmxFile(compact21, null);
+        SdmxFile file = SdmxFile.of(compact21, null);
 
         FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
 
