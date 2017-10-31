@@ -41,6 +41,9 @@ import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
 import internal.util.drivers.InseeDataFactory;
+import it.bancaditalia.oss.sdmx.api.Codelist;
+import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
+import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
 
@@ -73,6 +76,13 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         }
 
         @Override
+        public DataFlowStructure getDataFlowStructure(DSDIdentifier dsd, boolean full) throws SdmxException {
+            DataFlowStructure result = super.getDataFlowStructure(dsd, full);
+            fixMissingCodes(result);
+            return result;
+        }
+
+        @Override
         public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             // FIXME: avoid in-memory copy
             return SeriesSupport.asCursor(getData(dataflow, dsd, resource, serieskeysonly), resource);
@@ -81,6 +91,15 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         @Override
         public boolean isSeriesKeysOnlySupported() {
             return true;
+        }
+
+        private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
+            for (Dimension d : dsd.getDimensions()) {
+                Codelist freq = d.getCodeList();
+                if (freq.getCodes().isEmpty()) {
+                    freq.setCodes(super.getCodes(freq.getId(), freq.getAgency(), freq.getVersion()));
+                }
+            }
         }
 
         private List<Series> getData(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
