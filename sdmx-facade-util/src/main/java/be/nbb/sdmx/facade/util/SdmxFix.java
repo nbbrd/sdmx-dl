@@ -16,20 +16,19 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.sdmx.facade.Dimension;
-import java.util.Collections;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class SdmxFix {
+@Retention(RetentionPolicy.SOURCE)
+@Documented
+public @interface SdmxFix {
 
-    public void codes(@Nonnull Dimension.Builder dim, @Nullable Map<String, String> codes) {
-        dim.codes(codes != null ? codes : Collections.emptyMap());
-    }
+    String id();
+
+    String cause();
 }

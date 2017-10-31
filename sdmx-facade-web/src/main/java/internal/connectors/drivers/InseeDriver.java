@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
@@ -59,14 +60,15 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new InseeClient(u, l));
 
+    @SdmxFix(id = "INSEE#1", cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
     @Override
     public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
         return ConnectorsDriverSupport.entry("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
+        @SdmxFix(id = "INSEE#2", cause = "Does not follow sdmx standard codes")
         private final InseeDataFactory dataFactory;
 
         private InseeClient(URI endpoint, LanguagePriorityList langs) {
@@ -93,6 +95,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             return true;
         }
 
+        @SdmxFix(id = "INSEE#3", cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
                 Codelist freq = d.getCodeList();
@@ -119,5 +122,4 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             };
         }
     }
-    //</editor-fold>
 }

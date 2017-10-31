@@ -20,12 +20,10 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.Property.BoolProperty;
-import be.nbb.sdmx.facade.util.SdmxFix;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
-import javax.annotation.Nonnull;
 
 /**
  *
@@ -45,11 +43,11 @@ public class Util {
     public be.nbb.sdmx.facade.Dimension toDimension(Dimension o) {
         be.nbb.sdmx.facade.Dimension.Builder result = be.nbb.sdmx.facade.Dimension.builder()
                 .id(o.getId())
-                .position(o.getPosition());
+                .position(o.getPosition())
+                .codes(o.getCodeList().getCodes());
 
         String name = o.getName();
         result.label(name != null ? name : o.getId());
-        SdmxFix.codes(result, o.getCodeList().getCodes());
 
         return result.build();
     }
@@ -57,7 +55,7 @@ public class Util {
     public DataStructure toStructure(DataFlowStructure dsd) {
         DataStructure.Builder result = DataStructure.builder()
                 .ref(DataStructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
-                .label(getNonNullName(dsd))
+                .label(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure());
         dsd.getDimensions().forEach(o -> result.dimension(toDimension(o)));
@@ -66,13 +64,6 @@ public class Util {
 
     public it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {
         return it.bancaditalia.oss.sdmx.util.LanguagePriorityList.parse(l.toString());
-    }
-
-    @Nonnull
-    private String getNonNullName(DataFlowStructure dfs) {
-        // FIXME: PR parsing code for name of data structure v2.1 in connectors 
-        String result = dfs.getName();
-        return result != null ? result : dfs.getId();
     }
 
     public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
