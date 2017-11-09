@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * @author Philippe Charles
  */
 @lombok.Value(staticConstructor = "of")
-public class SdmxFile {
+public class SdmxFileSet {
 
     @lombok.NonNull
     File data;
@@ -40,7 +40,7 @@ public class SdmxFile {
     }
 
     @Nonnull
-    public static SdmxFile parse(@Nonnull String input) throws IllegalArgumentException {
+    public static SdmxFileSet parse(@Nonnull String input) throws IllegalArgumentException {
         return SdmxFileUtil.fromXml(input);
     }
 }

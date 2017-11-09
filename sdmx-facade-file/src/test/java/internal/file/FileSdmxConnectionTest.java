@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.DataQuery;
-import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.File;
@@ -46,16 +46,16 @@ public class FileSdmxConnectionTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFile file = SdmxFile.of(compact21, null);
+        SdmxFileSet files = SdmxFileSet.of(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
 
         assertThat(conn.getFlows()).hasSize(1);
-        assertThat(conn.getStructure(SdmxFileUtil.asDataflowRef(file)).getDimensions()).hasSize(7);
+        assertThat(conn.getStructure(SdmxFileUtil.asDataflowRef(files)).getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getCursor(SdmxFileUtil.asDataflowRef(file), DataQuery.of(Key.ALL, false))) {
+        try (DataCursor o = conn.getCursor(SdmxFileUtil.asDataflowRef(files), DataQuery.of(Key.ALL, false))) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
@@ -76,6 +76,6 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(file, LanguagePriorityList.ANY, SdmxSource.XIF, decoder), SdmxFileUtil.asDataflowRef(file));
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, SdmxSource.XIF, decoder), SdmxFileUtil.asDataflowRef(files));
     }
 }

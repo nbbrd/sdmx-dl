@@ -17,7 +17,7 @@
 package internal.file;
 
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.file.SdmxFileSet;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -36,18 +36,18 @@ import javax.xml.stream.XMLStreamWriter;
 public class SdmxFileUtil {
 
     @Nonnull
-    public DataflowRef asDataflowRef(@Nonnull SdmxFile file) {
-        return DataflowRef.parse("data" + (file.getStructure() != null ? "&struct" : ""));
+    public DataflowRef asDataflowRef(@Nonnull SdmxFileSet files) {
+        return DataflowRef.parse("data" + (files.getStructure() != null ? "&struct" : ""));
     }
 
     @Nonnull
-    public String toXml(@Nonnull SdmxFile file) {
+    public String toXml(@Nonnull SdmxFileSet files) {
         StringWriter result = new StringWriter();
         try {
             XMLStreamWriter xml = OUTPUT.createXMLStreamWriter(result);
             xml.writeEmptyElement(ROOT_TAG);
-            xml.writeAttribute(DATA_ATTR, file.getData().toString());
-            File structure = file.getStructure();
+            xml.writeAttribute(DATA_ATTR, files.getData().toString());
+            File structure = files.getStructure();
             if (structure != null) {
                 xml.writeAttribute(STRUCT_ATTR, structure.toString());
             }
@@ -60,7 +60,7 @@ public class SdmxFileUtil {
     }
 
     @Nonnull
-    public static SdmxFile fromXml(@Nonnull String input) throws IllegalArgumentException {
+    public static SdmxFileSet fromXml(@Nonnull String input) throws IllegalArgumentException {
         String data = null;
         String structure = null;
         try {
@@ -78,7 +78,7 @@ public class SdmxFileUtil {
         if (data == null) {
             throw new IllegalArgumentException("Cannot parse SdmxFile from '" + input + "'");
         }
-        return SdmxFile.of(new File(data), structure != null ? new File(structure) : null);
+        return SdmxFileSet.of(new File(data), structure != null ? new File(structure) : null);
     }
 
     private static final String ROOT_TAG = "file";

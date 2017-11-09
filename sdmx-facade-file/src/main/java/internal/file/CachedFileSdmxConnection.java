@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.util.TtlCache;
@@ -46,10 +46,10 @@ public final class CachedFileSdmxConnection extends FileSdmxConnection {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<List<Series>> loadDataKey;
 
-    public CachedFileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
-        super(file, languages, factory, decoder);
+    public CachedFileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
+        super(files, languages, factory, decoder);
         this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
-        String base = file.toString() + languages.toString();
+        String base = files.toString() + languages.toString();
         this.decodeKey = TypedId.of("decode://" + base);
         this.loadDataKey = TypedId.of("loadData://" + base);
     }

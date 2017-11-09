@@ -25,47 +25,47 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class SdmxFileTest {
+public class SdmxFileSetTest {
 
     @Test
     @SuppressWarnings("null")
     public void testFactory() {
-        assertThatThrownBy(() -> SdmxFile.of(null, null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> SdmxFileSet.of(null, null)).isInstanceOf(NullPointerException.class);
 
-        assertThat(SdmxFile.of(data, null))
+        assertThat(SdmxFileSet.of(data, null))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", null);
 
-        assertThat(SdmxFile.of(data, structure))
+        assertThat(SdmxFileSet.of(data, structure))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure);
     }
 
     @Test
     public void testToString() {
-        assertThat(SdmxFile.of(data, structure).toString())
+        assertThat(SdmxFileSet.of(data, structure).toString())
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
 
-        assertThat(SdmxFile.of(data, null).toString())
+        assertThat(SdmxFileSet.of(data, null).toString())
                 .isEqualTo("<file data=\"a.xml\"/>");
     }
 
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        assertThatThrownBy(() -> SdmxFile.parse(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SdmxFile.parse("")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> SdmxFile.parse("<file />")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> SdmxFileSet.parse(null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> SdmxFileSet.parse("")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> SdmxFileSet.parse("<file />")).isInstanceOf(IllegalArgumentException.class);
 
-        assertThat(SdmxFile.parse("<file data=\"\" />"))
+        assertThat(SdmxFileSet.parse("<file data=\"\" />"))
                 .hasFieldOrPropertyWithValue("data", new File(""))
                 .hasFieldOrPropertyWithValue("structure", null);
 
-        assertThat(SdmxFile.parse("<file data=\"a.xml\" />"))
+        assertThat(SdmxFileSet.parse("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", null);
 
-        assertThat(SdmxFile.parse("<file data=\"a.xml\" structure=\"b.xml\" />"))
+        assertThat(SdmxFileSet.parse("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure);
     }

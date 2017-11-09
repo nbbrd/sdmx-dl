@@ -38,8 +38,8 @@ public class SdmxFileManagerTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFile file = SdmxFile.of(compact21, null);
+        SdmxFileSet files = SdmxFileSet.of(compact21, null);
 
-        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.of(), file.toString(), "ko");
+        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.of(), files.toString(), "ko");
     }
 }

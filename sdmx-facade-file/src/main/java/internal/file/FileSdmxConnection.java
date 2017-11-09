@@ -27,7 +27,7 @@ import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
-import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
@@ -47,19 +47,19 @@ class FileSdmxConnection implements SdmxConnection {
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
-    private final SdmxFile file;
+    private final SdmxFileSet files;
     private final LanguagePriorityList languages;
     private final XMLInputFactory factory;
     private final SdmxDecoder decoder;
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(SdmxFile file, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder) {
-        this.file = file;
+    FileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder) {
+        this.files = files;
         this.languages = languages;
         this.factory = factory;
         this.decoder = decoder;
-        this.dataflow = Dataflow.of(SdmxFileUtil.asDataflowRef(file), EMPTY, file.getData().getName().replace(".xml", ""));
+        this.dataflow = Dataflow.of(SdmxFileUtil.asDataflowRef(files), EMPTY, files.getData().getName().replace(".xml", ""));
         this.closed = false;
     }
 
@@ -116,11 +116,11 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected SdmxDecoder.Info decode() throws IOException {
-        return decoder.decode(file, languages);
+        return decoder.decode(files, languages);
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).get(factory, file.getData().toPath(), StandardCharsets.UTF_8);
+        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).get(factory, files.getData().toPath(), StandardCharsets.UTF_8);
     }
 
     private XMLStream<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {

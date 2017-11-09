@@ -26,7 +26,7 @@ import static internal.file.SdmxDecoder.DataType.COMPACT20;
 import static internal.file.SdmxDecoder.DataType.COMPACT21;
 import static internal.file.SdmxDecoder.DataType.GENERIC20;
 import static internal.file.SdmxDecoder.DataType.GENERIC21;
-import be.nbb.sdmx.facade.file.SdmxFile;
+import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.Reader;
@@ -46,11 +46,11 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     @Override
-    public Info decode(SdmxFile file, LanguagePriorityList langs) throws IOException {
-        DataType dataType = probeDataType(file.getData());
-        return Info.of(dataType, file.getStructure() != null
-                ? parseStruct(dataType, file.getStructure(), langs)
-                : decodeStruct(dataType, file.getData()));
+    public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
+        DataType dataType = probeDataType(files.getData());
+        return Info.of(dataType, files.getStructure() != null
+                ? parseStruct(dataType, files.getStructure(), langs)
+                : decodeStruct(dataType, files.getData()));
     }
 
     private DataType probeDataType(File data) throws IOException {
