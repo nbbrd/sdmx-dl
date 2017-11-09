@@ -37,7 +37,8 @@ public class SdmxFileUtil {
 
     @Nonnull
     public DataflowRef asDataflowRef(@Nonnull SdmxFileSet files) {
-        return DataflowRef.parse("data" + (files.getStructure() != null ? "&struct" : ""));
+        File structFile = files.getStructure();
+        return DataflowRef.parse("data" + (structFile != null && !structFile.toString().isEmpty() ? "&struct" : ""));
     }
 
     @Nonnull
@@ -75,10 +76,10 @@ public class SdmxFileUtil {
         } catch (XMLStreamException ex) {
             throw new IllegalArgumentException("Cannot parse SdmxFile", ex);
         }
-        if (data == null) {
+        if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("Cannot parse SdmxFile from '" + input + "'");
         }
-        return SdmxFileSet.of(new File(data), structure != null ? new File(structure) : null);
+        return SdmxFileSet.of(new File(data), structure != null && !structure.isEmpty() ? new File(structure) : null);
     }
 
     private static final String ROOT_TAG = "file";

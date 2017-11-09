@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.file;
 
-import internal.file.SdmxFileUtil;
 import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,35 +37,6 @@ public class SdmxFileSetTest {
                 .hasFieldOrPropertyWithValue("structure", null);
 
         assertThat(SdmxFileSet.of(data, structure))
-                .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", structure);
-    }
-
-    @Test
-    public void testToString() {
-        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, structure)))
-                .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
-
-        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, null)))
-                .isEqualTo("<file data=\"a.xml\"/>");
-    }
-
-    @Test
-    @SuppressWarnings("null")
-    public void testParse() {
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml("")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml("<file />")).isInstanceOf(IllegalArgumentException.class);
-
-        assertThat(SdmxFileUtil.fromXml("<file data=\"\" />"))
-                .hasFieldOrPropertyWithValue("data", new File(""))
-                .hasFieldOrPropertyWithValue("structure", null);
-
-        assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" />"))
-                .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null);
-
-        assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure);
     }
