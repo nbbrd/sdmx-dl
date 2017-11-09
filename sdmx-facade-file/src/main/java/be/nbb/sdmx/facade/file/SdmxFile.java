@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.file;
 
-import be.nbb.sdmx.facade.DataflowRef;
 import internal.file.SdmxFileUtil;
 import java.io.File;
 import javax.annotation.Nonnull;
@@ -34,11 +33,6 @@ public class SdmxFile {
 
     @Nullable
     File structure;
-
-    @Nonnull
-    public DataflowRef getDataflowRef() {
-        return DataflowRef.parse("file");
-    }
 
     @Override
     public String toString() {

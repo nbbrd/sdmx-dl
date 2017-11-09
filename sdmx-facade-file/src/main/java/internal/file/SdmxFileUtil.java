@@ -16,6 +16,7 @@
  */
 package internal.file;
 
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.file.SdmxFile;
 import java.io.File;
 import java.io.StringReader;
@@ -33,6 +34,11 @@ import javax.xml.stream.XMLStreamWriter;
  */
 @lombok.experimental.UtilityClass
 public class SdmxFileUtil {
+
+    @Nonnull
+    public DataflowRef asDataflowRef(@Nonnull SdmxFile file) {
+        return DataflowRef.parse("data" + (file.getStructure() != null ? "&struct" : ""));
+    }
 
     @Nonnull
     public String toXml(@Nonnull SdmxFile file) {
