@@ -20,9 +20,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -34,9 +32,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxWebDriver {
 
     @Nonnull
-    SdmxConnection connect(@Nonnull URI uri, @Nonnull Map<?, ?> properties, @Nonnull LanguagePriorityList languages) throws IOException;
+    SdmxConnection connect(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException;
 
-    boolean acceptsURI(@Nonnull URI uri) throws IOException;
+    boolean accepts(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException;
 
     @Nonnull
     Collection<SdmxWebEntryPoint> getDefaultEntryPoints();

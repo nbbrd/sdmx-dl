@@ -22,11 +22,9 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 
@@ -67,8 +65,8 @@ public class SdmxWebManagerTest {
         final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("r1").build());
 
         @Override
-        public SdmxConnection connect(URI uri, Map<?, ?> properties, LanguagePriorityList languages) throws IOException {
-            String repoName = uri.toString().substring(PREFIX.length());
+        public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+            String repoName = entryPoint.getUri().toString().substring(PREFIX.length());
             return repos.stream()
                     .filter(o -> o.getName().equals(repoName))
                     .findFirst()
@@ -77,8 +75,8 @@ public class SdmxWebManagerTest {
         }
 
         @Override
-        public boolean acceptsURI(URI uri) throws IOException {
-            return uri.toString().startsWith(PREFIX);
+        public boolean accepts(SdmxWebEntryPoint entryPoint) throws IOException {
+            return entryPoint.getUri().toString().startsWith(PREFIX);
         }
 
         @Override

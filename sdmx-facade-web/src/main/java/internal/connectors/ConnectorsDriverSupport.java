@@ -68,12 +68,12 @@ public final class ConnectorsDriverSupport implements HasCache {
         this.clock = clock;
     }
 
-    public SdmxConnection connect(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
-        return new ConnectorsConnection(getResource(uri, info, languages));
+    public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+        return new ConnectorsConnection(getResource(entryPoint, languages));
     }
 
-    public boolean acceptsURI(URI uri) throws IOException {
-        return uri.toString().startsWith(prefix);
+    public boolean accepts(SdmxWebEntryPoint entryPoint) throws IOException {
+        return entryPoint.getUri().toString().startsWith(prefix);
     }
 
     @Override
@@ -91,9 +91,10 @@ public final class ConnectorsDriverSupport implements HasCache {
         return Collections.singleton(SdmxWebEntryPoint.builder().name(name).description(description).uri(url).build());
     }
 
-    private ConnectorsConnection.Resource getResource(URI uri, Map<?, ?> info, LanguagePriorityList languages) throws IOException {
+    private ConnectorsConnection.Resource getResource(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+        Map<String, String> info = entryPoint.getProperties();
         try {
-            URI endpoint = new URI(uri.toString().substring(prefix.length()));
+            URI endpoint = new URI(entryPoint.getUri().toString().substring(prefix.length()));
             GenericSDMXClient client = supplier.getClient(endpoint, info, languages);
             applyTimeouts(client, info);
             return CachedResource.of(client, endpoint, languages, cache.get(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));

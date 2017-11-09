@@ -92,7 +92,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         Objects.requireNonNull(languages);
 
         for (SdmxWebDriver o : drivers) {
-            if (tryAcceptURI(o, entryPoint)) {
+            if (tryAccepts(o, entryPoint)) {
                 return tryConnect(o, entryPoint, languages);
             }
         }
@@ -130,9 +130,9 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         list.forEach(o -> entryPointByName.put(o.getName(), o));
     }
 
-    private static boolean tryAcceptURI(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint) throws IOException {
+    private static boolean tryAccepts(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint) throws IOException {
         try {
-            return driver.acceptsURI(entryPoint.getUri());
+            return driver.accepts(entryPoint);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while parsing URI", ex);
             return false;
@@ -144,7 +144,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         SdmxConnection result;
 
         try {
-            result = driver.connect(entryPoint.getUri(), entryPoint.getProperties(), languages);
+            result = driver.connect(entryPoint, languages);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new UnexpectedIOException(ex);
