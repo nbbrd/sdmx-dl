@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
+import internal.file.SdmxFileUtil;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Rule;
@@ -40,6 +41,6 @@ public class SdmxFileManagerTest {
 
         SdmxFileSet files = SdmxFileSet.of(compact21, null);
 
-        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.of(), files.toString(), "ko");
+        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.of(), SdmxFileUtil.toXml(files), "ko");
     }
 }

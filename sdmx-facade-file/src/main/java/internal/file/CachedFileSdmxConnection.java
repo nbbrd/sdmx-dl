@@ -49,7 +49,7 @@ public final class CachedFileSdmxConnection extends FileSdmxConnection {
     public CachedFileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder, ConcurrentMap cache) {
         super(files, languages, factory, decoder);
         this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
-        String base = files.toString() + languages.toString();
+        String base = SdmxFileUtil.toXml(files) + languages.toString();
         this.decodeKey = TypedId.of("decode://" + base);
         this.loadDataKey = TypedId.of("loadData://" + base);
     }

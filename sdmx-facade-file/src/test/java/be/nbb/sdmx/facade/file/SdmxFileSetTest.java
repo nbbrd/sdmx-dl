@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.file;
 
+import internal.file.SdmxFileUtil;
 import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,29 +44,29 @@ public class SdmxFileSetTest {
 
     @Test
     public void testToString() {
-        assertThat(SdmxFileSet.of(data, structure).toString())
+        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, structure)))
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
 
-        assertThat(SdmxFileSet.of(data, null).toString())
+        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, null)))
                 .isEqualTo("<file data=\"a.xml\"/>");
     }
 
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        assertThatThrownBy(() -> SdmxFileSet.parse(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SdmxFileSet.parse("")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> SdmxFileSet.parse("<file />")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> SdmxFileUtil.fromXml(null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> SdmxFileUtil.fromXml("")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> SdmxFileUtil.fromXml("<file />")).isInstanceOf(IllegalArgumentException.class);
 
-        assertThat(SdmxFileSet.parse("<file data=\"\" />"))
+        assertThat(SdmxFileUtil.fromXml("<file data=\"\" />"))
                 .hasFieldOrPropertyWithValue("data", new File(""))
                 .hasFieldOrPropertyWithValue("structure", null);
 
-        assertThat(SdmxFileSet.parse("<file data=\"a.xml\" />"))
+        assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", null);
 
-        assertThat(SdmxFileSet.parse("<file data=\"a.xml\" structure=\"b.xml\" />"))
+        assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure);
     }

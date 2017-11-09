@@ -16,9 +16,7 @@
  */
 package be.nbb.sdmx.facade.file;
 
-import internal.file.SdmxFileUtil;
 import java.io.File;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -33,14 +31,4 @@ public class SdmxFileSet {
 
     @Nullable
     File structure;
-
-    @Override
-    public String toString() {
-        return SdmxFileUtil.toXml(this);
-    }
-
-    @Nonnull
-    public static SdmxFileSet parse(@Nonnull String input) throws IllegalArgumentException {
-        return SdmxFileUtil.fromXml(input);
-    }
 }

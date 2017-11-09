@@ -23,6 +23,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import internal.file.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
+import internal.file.SdmxFileUtil;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,7 +54,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
         SdmxFileSet files;
 
         try {
-            files = SdmxFileSet.parse(name);
+            files = SdmxFileUtil.fromXml(name);
         } catch (IllegalArgumentException ex) {
             throw new IOException(ex.getMessage(), ex.getCause());
         }
