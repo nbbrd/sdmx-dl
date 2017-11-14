@@ -29,8 +29,6 @@ import static internal.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
-import java.io.Reader;
-import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -54,9 +52,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataType probeDataType(File data) throws IOException {
-        try (Reader stream = Files.newBufferedReader(data.toPath())) {
-            return DataTypeProbe.probeDataType(factory, stream);
-        }
+        return DataTypeProbe.of().get(factory, data.toPath(), StandardCharsets.UTF_8);
     }
 
     private DataStructure parseStruct(DataType dataType, File structure, LanguagePriorityList langs) throws IOException {
@@ -77,8 +73,6 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        try (Reader stream = Files.newBufferedReader(data.toPath(), StandardCharsets.UTF_8)) {
-            return DataStructureDecoder.decodeDataStructure(dataType, factory, stream);
-        }
+        return DataStructureDecoder.of(dataType).get(factory, data.toPath(), StandardCharsets.UTF_8);
     }
 }

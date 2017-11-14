@@ -48,14 +48,14 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         return new XMLStreamGenericDataCursor(reader, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX21);
     }
 
-    private static final String DATASET_ELEMENT = "DataSet";
-    private static final String SERIES_ELEMENT = "Series";
-    private static final String OBS_ELEMENT = "Obs";
-    private static final String OBS_VALUE_ELEMENT = "ObsValue";
-    private static final String SERIES_KEY_ELEMENT = "SeriesKey";
-    private static final String ATTRIBUTES_ELEMENT = "Attributes";
-    private static final String VALUE_ELEMENT = "Value";
-    private static final String VALUE_ATTRIBUTE = "value";
+    private static final String DATASET_TAG = "DataSet";
+    private static final String SERIES_TAG = "Series";
+    private static final String OBS_TAG = "Obs";
+    private static final String OBS_VALUE_TAG = "ObsValue";
+    private static final String SERIES_KEY_TAG = "SeriesKey";
+    private static final String ATTRIBUTES_TAG = "Attributes";
+    private static final String VALUE_TAG = "Value";
+    private static final String VALUE_ATTR = "value";
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
@@ -180,9 +180,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onDataSet(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(SERIES_ELEMENT) ? parseSeries() : CONTINUE;
+            return localName.equals(SERIES_TAG) ? parseSeries() : CONTINUE;
         } else {
-            return localName.equals(DATASET_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(DATASET_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -195,17 +195,17 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private Status onSeriesHead(boolean start, String localName) throws XMLStreamException {
         if (start) {
             switch (localName) {
-                case SERIES_KEY_ELEMENT:
+                case SERIES_KEY_TAG:
                     return parseSeriesKey();
-                case ATTRIBUTES_ELEMENT:
+                case ATTRIBUTES_TAG:
                     return parseAttributes();
-                case OBS_ELEMENT:
+                case OBS_TAG:
                     return HALT;
                 default:
                     return CONTINUE;
             }
         } else {
-            return localName.equals(SERIES_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -221,17 +221,17 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onSeriesKey(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(VALUE_ELEMENT) ? parseSeriesKeyValue() : CONTINUE;
+            return localName.equals(VALUE_TAG) ? parseSeriesKeyValue() : CONTINUE;
         } else {
-            return localName.equals(SERIES_KEY_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(SERIES_KEY_TAG) ? HALT : CONTINUE;
         }
     }
 
     private Status onAttributes(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(VALUE_ELEMENT) ? parseAttributesValue() : CONTINUE;
+            return localName.equals(VALUE_TAG) ? parseAttributesValue() : CONTINUE;
         } else {
-            return localName.equals(ATTRIBUTES_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(ATTRIBUTES_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -246,18 +246,18 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     private boolean isCurrentElementStartOfObs() {
-        return reader.getEventType() == XMLStreamReader.START_ELEMENT && OBS_ELEMENT.equals(reader.getLocalName());
+        return reader.getEventType() == XMLStreamReader.START_ELEMENT && OBS_TAG.equals(reader.getLocalName());
     }
 
     private boolean isCurrentElementEnfOfSeries() {
-        return reader.getEventType() == XMLStreamReader.END_ELEMENT && SERIES_ELEMENT.equals(reader.getLocalName());
+        return reader.getEventType() == XMLStreamReader.END_ELEMENT && SERIES_TAG.equals(reader.getLocalName());
     }
 
     private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(OBS_ELEMENT) ? parseObs() : CONTINUE;
+            return localName.equals(OBS_TAG) ? parseObs() : CONTINUE;
         } else {
-            return localName.equals(SERIES_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -266,9 +266,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
             if (localName.equals(headParser.getTimeELement())) {
                 return parseObsTime();
             }
-            return localName.equals(OBS_VALUE_ELEMENT) ? parseObsValue() : CONTINUE;
+            return localName.equals(OBS_VALUE_TAG) ? parseObsValue() : CONTINUE;
         } else {
-            return localName.equals(OBS_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(OBS_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -283,7 +283,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     private Status parseObsValue() {
-        obsParser.value(reader.getAttributeValue(null, VALUE_ATTRIBUTE));
+        obsParser.value(reader.getAttributeValue(null, VALUE_ATTR));
         return CONTINUE;
     }
 

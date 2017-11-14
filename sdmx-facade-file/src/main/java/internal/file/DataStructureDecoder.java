@@ -17,14 +17,10 @@
 package internal.file;
 
 import be.nbb.sdmx.facade.DataStructure;
-import static internal.file.SdmxDecoder.DataType.COMPACT20;
-import static internal.file.SdmxDecoder.DataType.COMPACT21;
-import static internal.file.SdmxDecoder.DataType.GENERIC20;
-import static internal.file.SdmxDecoder.DataType.GENERIC21;
+import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
+import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.IOException;
-import java.io.Reader;
-import javax.xml.stream.XMLInputFactory;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
@@ -36,19 +32,18 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class DataStructureDecoder {
 
-    private static final String NS_21 = "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message";
-
-    public static DataStructure decodeDataStructure(SdmxDecoder.DataType dataType, XMLInputFactory factory, Reader stream) throws IOException {
-        try {
-            XMLStreamReader reader = factory.createXMLStreamReader(stream);
+    public static XMLStream<DataStructure> of(SdmxDecoder.DataType dataType) {
+        return reader -> {
             try {
-                return decodeDataStructure(dataType, reader);
-            } finally {
-                reader.close();
+                try {
+                    return decodeDataStructure(dataType, reader);
+                } finally {
+                    reader.close();
+                }
+            } catch (XMLStreamException ex) {
+                throw new IOException(ex);
             }
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        };
     }
 
     private static DataStructure decodeDataStructure(SdmxDecoder.DataType dataType, XMLStreamReader reader) throws IOException, XMLStreamException {
@@ -318,11 +313,8 @@ final class DataStructureDecoder {
             switch (reader.next()) {
                 case START_ELEMENT:
                     switch (reader.getLocalName()) {
-                        case "Structure":
-                            if (reader.getName().getNamespaceURI().equals(NS_21)) {
-                                builder.refId(reader.getAttributeValue(null, "structureID"));
-                                builder.timeDimensionId(reader.getAttributeValue(null, "dimensionAtObservation"));
-                            }
+                        case "Header":
+                            compact21Header(reader, builder);
                             break;
                         case "DataSet":
                             compact21DataSet(reader, builder);
@@ -332,6 +324,30 @@ final class DataStructureDecoder {
             }
         }
         return builder.build();
+    }
+
+    private static void compact21Header(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    switch (reader.getLocalName()) {
+                        case "Structure":
+                            String structureId = reader.getAttributeValue(null, "structureID");
+                            String dimensionAtObservation = reader.getAttributeValue(null, "dimensionAtObservation");
+                            if (structureId != null && dimensionAtObservation != null) {
+                                builder.refId(structureId);
+                                builder.timeDimensionId(dimensionAtObservation);
+                            }
+                            break;
+                    }
+                    break;
+                case END_ELEMENT:
+                    if (reader.getLocalName().equals("Header")) {
+                        return;
+                    }
+                    break;
+            }
+        }
     }
 
     private static void compact21DataSet(XMLStreamReader reader, CustomDataStructureBuilder builder) throws XMLStreamException {

@@ -16,14 +16,10 @@
  */
 package internal.file;
 
-import static internal.file.SdmxDecoder.DataType.COMPACT20;
-import static internal.file.SdmxDecoder.DataType.COMPACT21;
-import static internal.file.SdmxDecoder.DataType.GENERIC20;
-import static internal.file.SdmxDecoder.DataType.GENERIC21;
-import static internal.file.SdmxDecoder.DataType.UNKNOWN;
+import static be.nbb.sdmx.facade.xml.Sdmxml.*;
+import be.nbb.sdmx.facade.xml.stream.XMLStream;
+import static internal.file.SdmxDecoder.DataType.*;
 import java.io.IOException;
-import java.io.Reader;
-import javax.xml.stream.XMLInputFactory;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
@@ -35,21 +31,18 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class DataTypeProbe {
 
-    private static final String NS_10 = "http://www.SDMX.org/resources/SDMXML/schemas/v1_0/message";
-    private static final String NS_20 = "http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message";
-    private static final String NS_21 = "http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message";
-
-    public static SdmxDecoder.DataType probeDataType(XMLInputFactory factory, Reader stream) throws IOException {
-        try {
-            XMLStreamReader reader = factory.createXMLStreamReader(stream);
+    public static XMLStream<SdmxDecoder.DataType> of() {
+        return reader -> {
             try {
-                return probeDataType(reader);
-            } finally {
-                reader.close();
+                try {
+                    return probeDataType(reader);
+                } finally {
+                    reader.close();
+                }
+            } catch (XMLStreamException ex) {
+                throw new IOException(ex);
             }
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        };
     }
 
     private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {
@@ -60,9 +53,9 @@ final class DataTypeProbe {
                     level++;
                     if (level == 2 && reader.getLocalName().equals("Header")) {
                         switch (reader.getNamespaceURI()) {
-                            case NS_10:
+                            case NS_V10_URI:
                                 return UNKNOWN;
-                            case NS_20:
+                            case NS_V20_URI:
                                 while (reader.hasNext()) {
                                     switch (reader.next()) {
                                         case START_ELEMENT:
@@ -77,7 +70,7 @@ final class DataTypeProbe {
                                     }
                                 }
                                 return COMPACT20;
-                            case NS_21:
+                            case NS_V21_URI:
                                 while (reader.hasNext()) {
                                     switch (reader.next()) {
                                         case START_ELEMENT:

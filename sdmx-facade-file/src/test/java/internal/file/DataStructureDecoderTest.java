@@ -45,7 +45,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_GENERIC20.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC20, SdmxSource.XIF, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.GENERIC20).get(SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -64,7 +64,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_COMPACT20.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT20, SdmxSource.XIF, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.COMPACT20).get(SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -85,7 +85,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_GENERIC21.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.GENERIC21, SdmxSource.XIF, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.GENERIC21).get(SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 
@@ -106,7 +106,7 @@ public class DataStructureDecoderTest {
                 .build();
 
         try (Reader stream = SdmxSource.OTHER_COMPACT21.openReader()) {
-            assertThat(DataStructureDecoder.decodeDataStructure(SdmxDecoder.DataType.COMPACT21, SdmxSource.XIF, stream)).isEqualTo(ds);
+            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.COMPACT21).get(SdmxSource.XIF, stream)).isEqualTo(ds);
         }
     }
 }

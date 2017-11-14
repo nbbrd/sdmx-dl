@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
+import static be.nbb.sdmx.facade.xml.Sdmxml.NS_V20_URI;
 import javax.annotation.Nonnull;
 
 /**
@@ -37,6 +38,29 @@ import javax.annotation.Nonnull;
  * @author Philippe Charles
  */
 final class XMLStreamStructure20 {
+
+    private static final String HEADER_TAG = "Header";
+    private static final String CODE_LISTS_TAG = "CodeLists";
+    private static final String CONCEPTS_TAG = "Concepts";
+    private static final String KEY_FAMILIES_TAG = "KeyFamilies";
+    private static final String CODE_LIST_TAG = "CodeList";
+    private static final String CONCEPT_TAG = "Concept";
+    private static final String KEY_FAMILY_TAG = "KeyFamily";
+    private static final String CODE_TAG = "Code";
+    private static final String DESCRIPTION_TAG = "Description";
+    private static final String NAME_TAG = "Name";
+    private static final String COMPONENTS_TAG = "Components";
+    private static final String DIMENSION_TAG = "Dimension";
+    private static final String TIME_DIMENSION_TAG = "TimeDimension";
+    private static final String PRIMARY_MEASURE_TAG = "PrimaryMeasure";
+
+    private static final String ID_ATTR = "id";
+    private static final String AGENCY_ID_ATTR = "agencyID";
+    private static final String VERSION_ATTR = "version";
+    private static final String LANG_ATTR = "lang";
+    private static final String VALUE_ATTR = "value";
+    private static final String CONCEPT_REF_ATTR = "conceptRef";
+    private static final String CODELIST_ATTR = "codelist";
 
     private final TextBuilder structureLabel;
     private final TextBuilder label;
@@ -70,34 +94,9 @@ final class XMLStreamStructure20 {
         return result;
     }
 
-    private static final String NS_20 = "http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message";
-
-    private static final String HEADER_TAG = "Header";
-    private static final String CODE_LISTS_TAG = "CodeLists";
-    private static final String CONCEPTS_TAG = "Concepts";
-    private static final String KEY_FAMILIES_TAG = "KeyFamilies";
-    private static final String CODE_LIST_TAG = "CodeList";
-    private static final String CONCEPT_TAG = "Concept";
-    private static final String KEY_FAMILY_TAG = "KeyFamily";
-    private static final String CODE_TAG = "Code";
-    private static final String DESCRIPTION_TAG = "Description";
-    private static final String NAME_TAG = "Name";
-    private static final String COMPONENTS_TAG = "Components";
-    private static final String DIMENSION_TAG = "Dimension";
-    private static final String TIME_DIMENSION_TAG = "TimeDimension";
-    private static final String PRIMARY_MEASURE_TAG = "PrimaryMeasure";
-
-    private static final String ID_ATTR = "id";
-    private static final String AGENCY_ID_ATTR = "agencyID";
-    private static final String VERSION_ATTR = "version";
-    private static final String LANG_ATTR = "lang";
-    private static final String VALUE_ATTR = "value";
-    private static final String CONCEPT_REF_ATTR = "conceptRef";
-    private static final String CODELIST_ATTR = "codelist";
-
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
         String ns = reader.getNamespaceURI();
-        check(NS_20.equals(ns), reader, "Invalid namespace '%s'", ns);
+        check(NS_V20_URI.equals(ns), reader, "Invalid namespace '%s'", ns);
     }
 
     private void parseCodelists(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {

@@ -37,9 +37,9 @@ import be.nbb.sdmx.facade.util.FreqParser;
  */
 final class XMLStreamCompactDataCursor implements DataCursor {
 
-    private static final String DATASET_ELEMENT = "DataSet";
-    private static final String SERIES_ELEMENT = "Series";
-    private static final String OBS_ELEMENT = "Obs";
+    private static final String DATASET_TAG = "DataSet";
+    private static final String SERIES_TAG = "Series";
+    private static final String OBS_TAG = "Obs";
 
     private final XMLStreamReader reader;
     private final Key.Builder keyBuilder;
@@ -159,9 +159,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status onDataSet(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(SERIES_ELEMENT) ? parseSeries() : CONTINUE;
+            return localName.equals(SERIES_TAG) ? parseSeries() : CONTINUE;
         } else {
-            return localName.equals(DATASET_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(DATASET_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -184,9 +184,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(OBS_ELEMENT) ? parseObs() : CONTINUE;
+            return localName.equals(OBS_TAG) ? parseObs() : CONTINUE;
         } else {
-            return localName.equals(SERIES_ELEMENT) ? HALT : CONTINUE;
+            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 
