@@ -16,6 +16,8 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.function.Supplier;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
@@ -32,12 +34,12 @@ class XMLStreamUtil {
         HALT, CONTINUE, SUSPEND;
     }
 
-    interface Func {
+    interface TagVisitor {
 
         Status visitTag(boolean start, String localName) throws XMLStreamException;
     }
 
-    static boolean nextWhile(XMLStreamReader reader, Func func) throws XMLStreamException {
+    static boolean nextWhile(XMLStreamReader reader, TagVisitor func) throws XMLStreamException {
         while (reader.hasNext()) {
             int event = reader.next();
             if (event == XMLStreamReader.START_ELEMENT) {
@@ -106,34 +108,21 @@ class XMLStreamUtil {
         }
     }
 
-    static int toInt(String input, int defaultValue) {
-        if (input != null) {
-            try {
-                return Integer.parseInt(input);
-            } catch (NumberFormatException ex) {
-            }
-        }
-        return defaultValue;
-    }
-
-    static <T> T with(XMLStreamReader reader, ReaderFunc<T> func) throws XMLStreamException {
-        T result;
+    void closeBoth(XMLStreamReader reader, Closeable onClose) throws IOException {
         try {
-            result = func.apply(reader);
+            reader.close();
         } catch (XMLStreamException ex) {
-            try {
-                reader.close();
-            } catch (XMLStreamException suppressed) {
-                ex.addSuppressed(suppressed);
-            }
-            throw (ex);
+            ensureClosed(ex, onClose);
+            throw new IOException("Failed to close xml stream reader", ex);
         }
-        reader.close();
-        return result;
+        onClose.close();
     }
 
-    interface ReaderFunc<T> {
-
-        T apply(XMLStreamReader reader) throws XMLStreamException;
+    void ensureClosed(XMLStreamException ex, Closeable onClose) throws IOException {
+        try {
+            onClose.close();
+        } catch (IOException suppressed) {
+            ex.addSuppressed(suppressed);
+        }
     }
 }

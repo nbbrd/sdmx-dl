@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 /**
@@ -103,7 +102,7 @@ public class ConnectorsResource {
 
     List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data20(XMLInputFactory.newFactory(), xml, Util.toStructure(dsd))
+        return FacadeResource.data20(SdmxSource.XIF, xml, Util.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());
@@ -119,7 +118,7 @@ public class ConnectorsResource {
 
     List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data21(XMLInputFactory.newFactory(), xml, Util.toStructure(dsd))
+        return FacadeResource.data21(SdmxSource.XIF, xml, Util.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());
@@ -168,7 +167,7 @@ public class ConnectorsResource {
     <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
         XMLEventReader r = null;
         try {
-            r = xml.openXmlEvent(SdmxSource.XIF);
+            r = SdmxSource.XIF.createXMLEventReader(xml.openReader());
             return parser.parse(r, l);
         } catch (XMLStreamException | SdmxException ex) {
             throw new IOException(ex);

@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.util.FreqParser;
+import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
@@ -40,12 +41,12 @@ import javax.annotation.Nonnull;
  */
 final class XMLStreamGenericDataCursor implements DataCursor {
 
-    static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
-        return new XMLStreamGenericDataCursor(reader, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX20);
+    static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
+        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX20);
     }
 
-    static XMLStreamGenericDataCursor sdmx21(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
-        return new XMLStreamGenericDataCursor(reader, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX21);
+    static XMLStreamGenericDataCursor sdmx21(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
+        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX21);
     }
 
     private static final String DATASET_TAG = "DataSet";
@@ -58,6 +59,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private static final String VALUE_ATTR = "value";
 
     private final XMLStreamReader reader;
+    private final Closeable onClose;
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
@@ -67,8 +69,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private boolean hasSeries;
     private boolean hasObs;
 
-    private XMLStreamGenericDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, SeriesHeadParser headParser) {
+    private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, SeriesHeadParser headParser) {
         this.reader = reader;
+        this.onClose = onClose;
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = obsParser;
@@ -151,11 +154,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     @Override
     public void close() throws IOException {
         closed = true;
-        try {
-            reader.close();
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        XMLStreamUtil.closeBoth(reader, onClose);
     }
 
     private void checkState() throws IOException {
@@ -287,7 +286,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         return CONTINUE;
     }
 
-    private boolean nextWhile(XMLStreamUtil.Func func) throws XMLStreamException {
+    private boolean nextWhile(XMLStreamUtil.TagVisitor func) throws XMLStreamException {
         return XMLStreamUtil.nextWhile(reader, func);
     }
 

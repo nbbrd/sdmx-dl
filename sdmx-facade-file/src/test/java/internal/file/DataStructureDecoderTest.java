@@ -23,7 +23,6 @@ import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static internal.file.CustomDataStructureBuilder.dimension;
-import java.io.Reader;
 
 /**
  *
@@ -44,9 +43,10 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        try (Reader stream = SdmxSource.OTHER_GENERIC20.openReader()) {
-            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.GENERIC20).get(SdmxSource.XIF, stream)).isEqualTo(ds);
-        }
+        assertThat(DataStructureDecoder
+                .of(SdmxDecoder.DataType.GENERIC20)
+                .parseReader(SdmxSource.XIF, SdmxSource.OTHER_GENERIC20::openReader)
+        ).isEqualTo(ds);
     }
 
     @Test
@@ -63,9 +63,10 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        try (Reader stream = SdmxSource.OTHER_COMPACT20.openReader()) {
-            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.COMPACT20).get(SdmxSource.XIF, stream)).isEqualTo(ds);
-        }
+        assertThat(DataStructureDecoder
+                .of(SdmxDecoder.DataType.COMPACT20)
+                .parseReader(SdmxSource.XIF, SdmxSource.OTHER_COMPACT20::openReader)
+        ).isEqualTo(ds);
     }
 
     @Test
@@ -84,9 +85,10 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        try (Reader stream = SdmxSource.OTHER_GENERIC21.openReader()) {
-            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.GENERIC21).get(SdmxSource.XIF, stream)).isEqualTo(ds);
-        }
+        assertThat(DataStructureDecoder
+                .of(SdmxDecoder.DataType.GENERIC21)
+                .parseReader(SdmxSource.XIF, SdmxSource.OTHER_GENERIC21::openReader)
+        ).isEqualTo(ds);
     }
 
     @Test
@@ -105,8 +107,9 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        try (Reader stream = SdmxSource.OTHER_COMPACT21.openReader()) {
-            assertThat(DataStructureDecoder.of(SdmxDecoder.DataType.COMPACT21).get(SdmxSource.XIF, stream)).isEqualTo(ds);
-        }
+        assertThat(DataStructureDecoder
+                .of(SdmxDecoder.DataType.COMPACT21)
+                .parseReader(SdmxSource.XIF, SdmxSource.OTHER_COMPACT21::openReader)
+        ).isEqualTo(ds);
     }
 }

@@ -120,7 +120,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).get(factory, files.getData().toPath(), StandardCharsets.UTF_8);
+        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).parseFile(factory, files.getData().toPath(), StandardCharsets.UTF_8);
     }
 
     private XMLStream<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {

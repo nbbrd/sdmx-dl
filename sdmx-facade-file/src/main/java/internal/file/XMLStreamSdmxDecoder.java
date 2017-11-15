@@ -52,11 +52,11 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataType probeDataType(File data) throws IOException {
-        return DataTypeProbe.of().get(factory, data.toPath(), StandardCharsets.UTF_8);
+        return DataTypeProbe.of().parseFile(factory, data.toPath(), StandardCharsets.UTF_8);
     }
 
     private DataStructure parseStruct(DataType dataType, File structure, LanguagePriorityList langs) throws IOException {
-        return getStructSupplier(dataType, langs).get(factory, structure.toPath(), StandardCharsets.UTF_8).get(0);
+        return getStructSupplier(dataType, langs).parseFile(factory, structure.toPath(), StandardCharsets.UTF_8).get(0);
     }
 
     private XMLStream<List<DataStructure>> getStructSupplier(DataType o, LanguagePriorityList langs) throws IOException {
@@ -73,6 +73,6 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        return DataStructureDecoder.of(dataType).get(factory, data.toPath(), StandardCharsets.UTF_8);
+        return DataStructureDecoder.of(dataType).parseFile(factory, data.toPath(), StandardCharsets.UTF_8);
     }
 }

@@ -28,7 +28,6 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
@@ -41,7 +40,7 @@ import javax.xml.stream.XMLInputFactory;
 public class FacadeResource {
 
     public SdmxRepository nbb() throws IOException {
-        XMLInputFactory f = XMLInputFactory.newFactory();
+        XMLInputFactory f = SdmxSource.XIF;
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
         List<DataStructure> structs = struct20(f, SdmxSource.NBB_DATA_STRUCTURE, l);
@@ -60,7 +59,7 @@ public class FacadeResource {
     }
 
     public SdmxRepository ecb() throws IOException {
-        XMLInputFactory f = XMLInputFactory.newFactory();
+        XMLInputFactory f = SdmxSource.XIF;
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
         List<DataStructure> structs = struct21(f, SdmxSource.ECB_DATA_STRUCTURE, l);
@@ -79,9 +78,7 @@ public class FacadeResource {
     }
 
     private List<DataStructure> struct20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct20(l).get(f, r);
-        }
+        return SdmxXmlStreams.struct20(l).parseReader(f, xml::openReader);
     }
 
     private List<Dataflow> flow20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -91,15 +88,13 @@ public class FacadeResource {
     }
 
     List<Series> data20(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData20(dsd).get(f, xml.openReader())) {
+        try (DataCursor c = SdmxXmlStreams.genericData20(dsd).parseReader(f, xml::openReader)) {
             return SeriesSupport.copyOf(c);
         }
     }
 
     private List<DataStructure> struct21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
-        try (InputStreamReader r = xml.openReader()) {
-            return SdmxXmlStreams.struct21(l).get(f, r);
-        }
+        return SdmxXmlStreams.struct21(l).parseReader(f, xml::openReader);
     }
 
     private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -111,7 +106,7 @@ public class FacadeResource {
     }
 
     List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsd).get(f, xml.openReader())) {
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsd).parseReader(f, xml::openReader)) {
             return SeriesSupport.copyOf(c);
         }
     }

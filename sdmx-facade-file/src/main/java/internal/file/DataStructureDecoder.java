@@ -20,7 +20,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
-import java.io.IOException;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
@@ -33,20 +32,10 @@ import javax.xml.stream.XMLStreamReader;
 final class DataStructureDecoder {
 
     public static XMLStream<DataStructure> of(SdmxDecoder.DataType dataType) {
-        return reader -> {
-            try {
-                try {
-                    return decodeDataStructure(dataType, reader);
-                } finally {
-                    reader.close();
-                }
-            } catch (XMLStreamException ex) {
-                throw new IOException(ex);
-            }
-        };
+        return XMLStream.of(o -> decodeDataStructure(dataType, o));
     }
 
-    private static DataStructure decodeDataStructure(SdmxDecoder.DataType dataType, XMLStreamReader reader) throws IOException, XMLStreamException {
+    private static DataStructure decodeDataStructure(SdmxDecoder.DataType dataType, XMLStreamReader reader) throws XMLStreamException {
         switch (dataType) {
             case GENERIC20:
                 return generic20(reader);
@@ -57,7 +46,7 @@ final class DataStructureDecoder {
             case COMPACT21:
                 return compact21(reader);
             default:
-                throw new IOException("Don't know how to handle '" + dataType + "'");
+                throw new XMLStreamException("Don't know how to handle '" + dataType + "'");
         }
     }
 

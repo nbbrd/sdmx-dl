@@ -75,8 +75,8 @@ public class SeriesSupportTest {
             assertThat(SeriesSupport.copyOf(c)).hasSize(1).element(0).isSameAs(series);
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).get(SdmxSource.ECB_DATA_STRUCTURE.openXmlStream(SdmxSource.XIF));
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).get(SdmxSource.ECB_DATA.openXmlStream(SdmxSource.XIF))) {
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOf(c)).hasSize(120);
         }
     }
@@ -98,8 +98,8 @@ public class SeriesSupportTest {
                     .isEqualToComparingOnlyGivenFields(series, "key", "freq", "meta");
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).get(SdmxSource.ECB_DATA_STRUCTURE.openXmlStream(SdmxSource.XIF));
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).get(SdmxSource.ECB_DATA.openXmlStream(SdmxSource.XIF))) {
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c))
                     .allMatch(o -> o.getObs().isEmpty())
                     .hasSize(120);

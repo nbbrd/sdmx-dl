@@ -22,7 +22,6 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.IOException;
 import java.util.List;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,11 +36,9 @@ public class XMLStreamStructure20Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
-
         XMLStream<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
-        assertThat(p1.get(factory, SdmxSource.NBB_DATA_STRUCTURE.openReader())).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p1.parseReader(SdmxSource.XIF, SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -55,7 +52,7 @@ public class XMLStreamStructure20Test {
 
         XMLStream<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
-        assertThat(p2.get(factory, SdmxSource.NBB_DATA_STRUCTURE.openReader())).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p2.parseReader(SdmxSource.XIF, SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -67,7 +64,7 @@ public class XMLStreamStructure20Test {
             });
         });
 
-        assertThatThrownBy(() -> p1.get(factory, SdmxSource.ECB_DATA_STRUCTURE.openReader()))
+        assertThatThrownBy(() -> p1.parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA_STRUCTURE::openReader))
                 .isInstanceOf(IOException.class)
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasMessageContaining("Invalid namespace");

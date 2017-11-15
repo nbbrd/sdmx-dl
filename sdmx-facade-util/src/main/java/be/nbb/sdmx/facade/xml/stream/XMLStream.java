@@ -16,7 +16,10 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
+import be.nbb.sdmx.facade.util.IO;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -34,23 +37,47 @@ import javax.xml.stream.XMLStreamReader;
 public interface XMLStream<T> {
 
     @Nonnull
-    default T get(@Nonnull XMLInputFactory xf, @Nonnull Path path, @Nonnull Charset cs) throws IOException {
-        return get(xf, Files.newBufferedReader(path, cs));
+    default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull Path path, @Nonnull Charset cs) throws IOException {
+        return parseReader(xf, () -> Files.newBufferedReader(path, cs));
     }
 
     @Nonnull
-    default T get(@Nonnull XMLInputFactory xf, @Nonnull Reader stream) throws IOException {
-        XMLStreamReader reader;
+    default T parseStream(@Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends InputStream> supplier, @Nonnull Charset cs) throws IOException {
+        InputStream stream = supplier.getWithIO();
 
         try {
-            reader = xf.createXMLStreamReader(stream);
+            XMLStreamReader xml = xf.createXMLStreamReader(stream, cs.name());
+            return parse(xml, () -> XMLStreamUtil.closeBoth(xml, stream));
         } catch (XMLStreamException ex) {
-            throw new IOException("Failed to create XML reader", ex);
+            XMLStreamUtil.ensureClosed(ex, stream);
+            throw new IOException("Failed to create XMLStreamReader from a stream", ex);
         }
-
-        return get(reader);
     }
 
     @Nonnull
-    T get(@Nonnull XMLStreamReader reader) throws IOException;
+    default T parseReader(@Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends Reader> supplier) throws IOException {
+        Reader reader = supplier.getWithIO();
+
+        try {
+            XMLStreamReader xml = xf.createXMLStreamReader(reader);
+            return parse(xml, () -> XMLStreamUtil.closeBoth(xml, reader));
+        } catch (XMLStreamException ex) {
+            XMLStreamUtil.ensureClosed(ex, reader);
+            throw new IOException("Failed to create XMLStreamReader from a reader", ex);
+        }
+    }
+
+    @Nonnull
+    T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
+
+    @Nonnull
+    static <T> XMLStream<T> of(@Nonnull XFunc<T> func) {
+        return (reader, onClose) -> {
+            try (Closeable c = onClose) {
+                return func.apply(reader);
+            } catch (XMLStreamException ex) {
+                throw new IOException(ex);
+            }
+        };
+    }
 }

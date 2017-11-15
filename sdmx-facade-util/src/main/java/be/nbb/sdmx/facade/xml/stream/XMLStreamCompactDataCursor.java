@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.util.FreqParser;
+import java.io.Closeable;
 
 /**
  *
@@ -42,6 +43,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private static final String OBS_TAG = "Obs";
 
     private final XMLStreamReader reader;
+    private final Closeable onClose;
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
@@ -52,8 +54,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamCompactDataCursor(XMLStreamReader reader, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
         this.reader = reader;
+        this.onClose = onClose;
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = obsParser;
@@ -130,11 +133,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     @Override
     public void close() throws IOException {
         closed = true;
-        try {
-            reader.close();
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        XMLStreamUtil.closeBoth(reader, onClose);
     }
 
     private void checkState() throws IOException {
@@ -196,7 +195,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         return SUSPEND;
     }
 
-    private boolean nextWhile(XMLStreamUtil.Func func) throws XMLStreamException {
+    private boolean nextWhile(XMLStreamUtil.TagVisitor func) throws XMLStreamException {
         return XMLStreamUtil.nextWhile(reader, func);
     }
 }

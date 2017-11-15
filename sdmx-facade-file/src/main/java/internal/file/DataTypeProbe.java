@@ -19,7 +19,6 @@ package internal.file;
 import static be.nbb.sdmx.facade.xml.Sdmxml.*;
 import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import static internal.file.SdmxDecoder.DataType.*;
-import java.io.IOException;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
@@ -32,17 +31,7 @@ import javax.xml.stream.XMLStreamReader;
 final class DataTypeProbe {
 
     public static XMLStream<SdmxDecoder.DataType> of() {
-        return reader -> {
-            try {
-                try {
-                    return probeDataType(reader);
-                } finally {
-                    reader.close();
-                }
-            } catch (XMLStreamException ex) {
-                throw new IOException(ex);
-            }
-        };
+        return XMLStream.of(DataTypeProbe::probeDataType);
     }
 
     private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {

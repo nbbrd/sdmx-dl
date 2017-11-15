@@ -98,7 +98,7 @@ public class IO {
                 iter, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
-    private static Runnable asUncheckedRunnable(Closeable c) {
+    private Runnable asUncheckedRunnable(Closeable c) {
         return () -> {
             try {
                 c.close();
