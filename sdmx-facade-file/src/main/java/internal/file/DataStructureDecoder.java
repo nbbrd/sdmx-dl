@@ -31,23 +31,20 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class DataStructureDecoder {
 
-    public static XMLStream<DataStructure> of(SdmxDecoder.DataType dataType) {
-        return XMLStream.of(o -> decodeDataStructure(dataType, o));
+    public static XMLStream<DataStructure> generic20() {
+        return XMLStream.of(DataStructureDecoder::generic20);
     }
 
-    private static DataStructure decodeDataStructure(SdmxDecoder.DataType dataType, XMLStreamReader reader) throws XMLStreamException {
-        switch (dataType) {
-            case GENERIC20:
-                return generic20(reader);
-            case COMPACT20:
-                return compact20(reader);
-            case GENERIC21:
-                return generic21(reader);
-            case COMPACT21:
-                return compact21(reader);
-            default:
-                throw new XMLStreamException("Don't know how to handle '" + dataType + "'");
-        }
+    public static XMLStream<DataStructure> compact20() {
+        return XMLStream.of(DataStructureDecoder::compact20);
+    }
+
+    public static XMLStream<DataStructure> generic21() {
+        return XMLStream.of(DataStructureDecoder::generic21);
+    }
+
+    public static XMLStream<DataStructure> compact21() {
+        return XMLStream.of(DataStructureDecoder::compact21);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Generic20">

@@ -35,31 +35,28 @@ import java.util.List;
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor
 public final class XMLStreamSdmxDecoder implements SdmxDecoder {
 
     private final XMLInputFactory factory;
-
-    public XMLStreamSdmxDecoder(XMLInputFactory factory) {
-        this.factory = factory;
-    }
 
     @Override
     public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
         DataType dataType = probeDataType(files.getData());
         return Info.of(dataType, files.getStructure() != null
-                ? parseStruct(dataType, files.getStructure(), langs)
+                ? parseStruct(dataType, langs, files.getStructure())
                 : decodeStruct(dataType, files.getData()));
     }
 
     private DataType probeDataType(File data) throws IOException {
-        return DataTypeProbe.of().parseFile(factory, data.toPath(), StandardCharsets.UTF_8);
+        return DataTypeProbe.of().parseFile(factory, data, StandardCharsets.UTF_8);
     }
 
-    private DataStructure parseStruct(DataType dataType, File structure, LanguagePriorityList langs) throws IOException {
-        return getStructSupplier(dataType, langs).parseFile(factory, structure.toPath(), StandardCharsets.UTF_8).get(0);
+    private DataStructure parseStruct(DataType dataType, LanguagePriorityList langs, File structure) throws IOException {
+        return getStructParser(dataType, langs).parseFile(factory, structure, StandardCharsets.UTF_8).get(0);
     }
 
-    private XMLStream<List<DataStructure>> getStructSupplier(DataType o, LanguagePriorityList langs) throws IOException {
+    private XMLStream<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
         switch (o) {
             case GENERIC20:
             case COMPACT20:
@@ -73,6 +70,21 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        return DataStructureDecoder.of(dataType).parseFile(factory, data.toPath(), StandardCharsets.UTF_8);
+        return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
+    }
+
+    private static XMLStream<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {
+        switch (o) {
+            case GENERIC20:
+                return DataStructureDecoder.generic20();
+            case COMPACT20:
+                return DataStructureDecoder.compact20();
+            case GENERIC21:
+                return DataStructureDecoder.generic21();
+            case COMPACT21:
+                return DataStructureDecoder.compact21();
+            default:
+                throw new IOException("Don't know how to handle '" + o + "'");
+        }
     }
 }

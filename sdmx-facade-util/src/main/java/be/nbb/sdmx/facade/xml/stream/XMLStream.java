@@ -18,6 +18,8 @@ package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.util.IO;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -37,8 +39,17 @@ import javax.xml.stream.XMLStreamReader;
 public interface XMLStream<T> {
 
     @Nonnull
+    default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull File file, @Nonnull Charset cs) throws IOException {
+        return parseStream(xf, () -> new FileInputStream(file), cs);
+    }
+
+    @Nonnull
     default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull Path path, @Nonnull Charset cs) throws IOException {
-        return parseReader(xf, () -> Files.newBufferedReader(path, cs));
+        try {
+            return parseStream(xf, () -> new FileInputStream(path.toFile()), cs);
+        } catch (UnsupportedOperationException ex) {
+            return parseReader(xf, () -> Files.newBufferedReader(path, cs));
+        }
     }
 
     @Nonnull
