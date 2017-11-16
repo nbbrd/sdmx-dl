@@ -70,7 +70,17 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
+        if (factory.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)
+                && (Boolean) factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE)) {
+            factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+            try {
+                return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
+            } finally {
+                factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
+            }
+        } else {
+            return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
+        }
     }
 
     private static XMLStream<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {

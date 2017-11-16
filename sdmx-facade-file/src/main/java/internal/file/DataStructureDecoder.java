@@ -47,16 +47,18 @@ final class DataStructureDecoder {
         return XMLStream.of(DataStructureDecoder::compact21);
     }
 
+    private static boolean isTagMatch(XMLStreamReader r, String tag) {
+        return r.getLocalName().endsWith(tag);
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Generic20">
     private static DataStructure generic20(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(GENERIC20);
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "DataSet":
-                            generic20DataSet(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "DataSet")) {
+                        generic20DataSet(reader, builder);
                     }
                     break;
             }
@@ -68,17 +70,14 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "KeyFamilyRef":
-                            builder.refId(reader.getElementText());
-                            break;
-                        case "Series":
-                            generic20Series(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "KeyFamilyRef")) {
+                        builder.refId(reader.getElementText());
+                    } else if (isTagMatch(reader, "Series")) {
+                        generic20Series(reader, builder);
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("DataSet")) {
+                    if (isTagMatch(reader, "DataSet")) {
                         return;
                     }
                     break;
@@ -90,17 +89,14 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "SeriesKey":
-                            generic20SeriesKey(reader, builder);
-                            break;
-                        case "Attributes":
-                            generic20Attributes(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "SeriesKey")) {
+                        generic20SeriesKey(reader, builder);
+                    } else if (isTagMatch(reader, "Attributes")) {
+                        generic20Attributes(reader, builder);
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("Series")) {
+                    if (isTagMatch(reader, "Series")) {
                         return;
                     }
                     break;
@@ -112,14 +108,12 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Value":
-                            builder.dimension(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
-                            break;
+                    if (isTagMatch(reader, "Value")) {
+                        builder.dimension(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("SeriesKey")) {
+                    if (isTagMatch(reader, "SeriesKey")) {
                         return;
                     }
                     break;
@@ -131,14 +125,12 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Value":
-                            builder.attribute(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
-                            break;
+                    if (isTagMatch(reader, "Value")) {
+                        builder.attribute(reader.getAttributeValue(null, "concept"), reader.getAttributeValue(null, "value"));
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("Attributes")) {
+                    if (isTagMatch(reader, "Attributes")) {
                         return;
                     }
                     break;
@@ -153,13 +145,10 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "CompactData":
-                            builder.refId("TODO");
-                            break;
-                        case "DataSet":
-                            compact20DataSet(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "CompactData")) {
+                        builder.refId("TODO");
+                    } else if (isTagMatch(reader, "DataSet")) {
+                        compact20DataSet(reader, builder);
                     }
                     break;
             }
@@ -171,21 +160,19 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Series":
-                            for (int i = 0; i < reader.getAttributeCount(); i++) {
-                                String concept = reader.getAttributeLocalName(i);
-                                if (concept.equals(TIME_FORMAT_CONCEPT)) {
-                                    builder.attribute(concept, reader.getAttributeValue(i));
-                                } else {
-                                    builder.dimension(concept, reader.getAttributeValue(i));
-                                }
+                    if (isTagMatch(reader, "Series")) {
+                        for (int i = 0; i < reader.getAttributeCount(); i++) {
+                            String concept = reader.getAttributeLocalName(i);
+                            if (concept.equals(TIME_FORMAT_CONCEPT)) {
+                                builder.attribute(concept, reader.getAttributeValue(i));
+                            } else {
+                                builder.dimension(concept, reader.getAttributeValue(i));
                             }
-                            break;
+                        }
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("DataSet")) {
+                    if (isTagMatch(reader, "DataSet")) {
                         return;
                     }
                     break;
@@ -200,10 +187,8 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "DataSet":
-                            generic21DataSet(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "DataSet")) {
+                        generic21DataSet(reader, builder);
                     }
                     break;
             }
@@ -216,14 +201,12 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Series":
-                            generic21Series(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "Series")) {
+                        generic21Series(reader, builder);
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("DataSet")) {
+                    if (isTagMatch(reader, "DataSet")) {
                         return;
                     }
                     break;
@@ -235,17 +218,14 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "SeriesKey":
-                            generic21SeriesKey(reader, builder);
-                            break;
-                        case "Attributes":
-                            generic21Attributes(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "SeriesKey")) {
+                        generic21SeriesKey(reader, builder);
+                    } else if (isTagMatch(reader, "Attributes")) {
+                        generic21Attributes(reader, builder);
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("Series")) {
+                    if (isTagMatch(reader, "Series")) {
                         return;
                     }
                     break;
@@ -257,14 +237,12 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Value":
-                            builder.dimension(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
-                            break;
+                    if (isTagMatch(reader, "Value")) {
+                        builder.dimension(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("SeriesKey")) {
+                    if (isTagMatch(reader, "SeriesKey")) {
                         return;
                     }
                     break;
@@ -276,14 +254,12 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Value":
-                            builder.attribute(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
-                            break;
+                    if (isTagMatch(reader, "Value")) {
+                        builder.attribute(reader.getAttributeValue(null, "id"), reader.getAttributeValue(null, "value"));
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("Attributes")) {
+                    if (isTagMatch(reader, "Attributes")) {
                         return;
                     }
                     break;
@@ -298,13 +274,10 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Header":
-                            compact21Header(reader, builder);
-                            break;
-                        case "DataSet":
-                            compact21DataSet(reader, builder);
-                            break;
+                    if (isTagMatch(reader, "Header")) {
+                        compact21Header(reader, builder);
+                    } else if (isTagMatch(reader, "DataSet")) {
+                        compact21DataSet(reader, builder);
                     }
                     break;
             }
@@ -316,19 +289,18 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Structure":
-                            String structureId = reader.getAttributeValue(null, "structureID");
-                            String dimensionAtObservation = reader.getAttributeValue(null, "dimensionAtObservation");
-                            if (structureId != null && dimensionAtObservation != null) {
-                                builder.refId(structureId);
-                                builder.timeDimensionId(dimensionAtObservation);
-                            }
-                            break;
+                    if (isTagMatch(reader, "Structure")) {
+                        String structureId = reader.getAttributeValue(null, "structureID");
+                        String dimensionAtObservation = reader.getAttributeValue(null, "dimensionAtObservation");
+                        if (structureId != null && dimensionAtObservation != null) {
+                            builder.refId(structureId);
+                            builder.timeDimensionId(dimensionAtObservation);
+                        }
+
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("Header")) {
+                    if (isTagMatch(reader, "Header")) {
                         return;
                     }
                     break;
@@ -340,21 +312,20 @@ final class DataStructureDecoder {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    switch (reader.getLocalName()) {
-                        case "Series":
-                            for (int i = 0; i < reader.getAttributeCount(); i++) {
-                                String concept = reader.getAttributeLocalName(i);
-                                if (concept.equals(TIME_FORMAT_CONCEPT)) {
-                                    builder.attribute(concept, reader.getAttributeValue(i));
-                                } else {
-                                    builder.dimension(concept, reader.getAttributeValue(i));
-                                }
+                    if (isTagMatch(reader, "Series")) {
+                        for (int i = 0; i < reader.getAttributeCount(); i++) {
+                            String concept = reader.getAttributeLocalName(i);
+                            if (concept.equals(TIME_FORMAT_CONCEPT)) {
+                                builder.attribute(concept, reader.getAttributeValue(i));
+                            } else {
+                                builder.dimension(concept, reader.getAttributeValue(i));
                             }
-                            break;
+                        }
+
                     }
                     break;
                 case END_ELEMENT:
-                    if (reader.getLocalName().equals("DataSet")) {
+                    if (isTagMatch(reader, "DataSet")) {
                         return;
                     }
                     break;
