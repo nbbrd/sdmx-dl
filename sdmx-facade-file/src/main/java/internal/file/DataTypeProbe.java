@@ -35,6 +35,10 @@ final class DataTypeProbe {
     }
 
     private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {
+        if (Stax.isNotNamespaceAware(reader)) {
+            throw new XMLStreamException("Cannot probe data type");
+        }
+        
         int level = 0;
         while (reader.hasNext()) {
             switch (reader.next()) {

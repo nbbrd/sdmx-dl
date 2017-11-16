@@ -76,6 +76,10 @@ final class XMLStreamStructure21 {
 
     @Nonnull
     public List<DataStructure> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
+        if (Stax.isNotNamespaceAware(reader)) {
+            throw new XMLStreamException("Cannot parse structure");
+        }
+
         List<DataStructure> result = new ArrayList<>();
         while (nextTags(reader, "")) {
             switch (reader.getLocalName()) {

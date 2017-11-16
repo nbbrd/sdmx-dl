@@ -23,6 +23,7 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import internal.file.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 import internal.file.SdmxFileUtil;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,8 +42,8 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     @Nonnull
     public static SdmxFileManager of() {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        return new SdmxFileManager(factory, new XMLStreamSdmxDecoder(factory), new AtomicReference<>(new ConcurrentHashMap()));
+        XMLInputFactory factory = Stax.getInputFactory();
+        return new SdmxFileManager(factory, new XMLStreamSdmxDecoder(factory, Stax.getInputFactoryWithoutNamespace()), new AtomicReference<>(new ConcurrentHashMap()));
     }
 
     private final XMLInputFactory factory;

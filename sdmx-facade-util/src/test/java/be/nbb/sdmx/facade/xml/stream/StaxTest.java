@@ -103,7 +103,7 @@ public class StaxTest {
                 .hasNoCause();
     }
 
-    private final XMLInputFactory xif = SdmxSource.XIF;
+    private final XMLInputFactory xif = Stax.getInputFactory();
 
     private static class EmptyStream extends InputStream {
 

@@ -74,6 +74,10 @@ final class XMLStreamStructure20 {
 
     @Nonnull
     public List<DataStructure> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
+        if (Stax.isNotNamespaceAware(reader)) {
+            throw new XMLStreamException("Cannot parse structure");
+        }
+
         List<DataStructure> result = new ArrayList<>();
         Map<String, Map<String, String>> codelists = new HashMap<>();
         Map<String, String> concepts = new HashMap<>();

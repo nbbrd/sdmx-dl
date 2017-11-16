@@ -39,6 +39,7 @@ import be.nbb.sdmx.facade.xml.stream.Stax;
 public final class XMLStreamSdmxDecoder implements SdmxDecoder {
 
     private final XMLInputFactory factory;
+    private final XMLInputFactory factoryWithoutNamespace;
 
     @Override
     public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
@@ -70,17 +71,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        if (factory.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)
-                && (Boolean) factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE)) {
-            factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
-            try {
-                return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
-            } finally {
-                factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-            }
-        } else {
-            return getStructDecoder(dataType).parseFile(factory, data, StandardCharsets.UTF_8);
-        }
+        return getStructDecoder(dataType).parseFile(factoryWithoutNamespace, data, StandardCharsets.UTF_8);
     }
 
     private static Stax.Parser<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {

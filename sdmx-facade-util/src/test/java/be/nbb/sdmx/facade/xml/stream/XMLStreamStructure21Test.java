@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.IOException;
 import java.util.List;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,7 +39,7 @@ public class XMLStreamStructure21Test {
     public void test() throws Exception {
         Stax.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
-        assertThat(parser.parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(parser.parseReader(xif, SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
@@ -50,9 +51,11 @@ public class XMLStreamStructure21Test {
             });
         });
 
-        assertThatThrownBy(() -> parser.parseReader(SdmxSource.XIF, SdmxSource.NBB_DATA_STRUCTURE::openReader))
+        assertThatThrownBy(() -> parser.parseReader(xif, SdmxSource.NBB_DATA_STRUCTURE::openReader))
                 .isInstanceOf(IOException.class)
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasMessageContaining("Invalid namespace");
     }
+    
+    private final XMLInputFactory xif = Stax.getInputFactory();
 }

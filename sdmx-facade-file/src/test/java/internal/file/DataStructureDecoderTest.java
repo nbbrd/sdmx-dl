@@ -21,9 +21,10 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import java.io.IOException;
 import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 import static org.assertj.core.api.Assertions.assertThat;
 import static internal.file.CustomDataStructureBuilder.dimension;
-import static internal.file.CustomDataStructureBuilder.dimension;
+import javax.xml.stream.XMLInputFactory;
 
 /**
  *
@@ -44,7 +45,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic20().parseReader(SdmxSource.XIF, SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic20().parseReader(xif, SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact20().parseReader(SdmxSource.XIF, SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact20().parseReader(xif, SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -80,7 +81,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic21().parseReader(SdmxSource.XIF, SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic21().parseReader(xif, SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -99,6 +100,8 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact21().parseReader(SdmxSource.XIF, SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact21().parseReader(xif, SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
     }
+
+    private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();
 }

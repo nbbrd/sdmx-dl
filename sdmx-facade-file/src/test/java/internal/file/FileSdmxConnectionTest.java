@@ -24,8 +24,10 @@ import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 import java.io.File;
 import java.io.IOException;
+import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.Rule;
@@ -37,10 +39,6 @@ import org.junit.rules.TemporaryFolder;
  */
 public class FileSdmxConnectionTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(SdmxSource.XIF);
-
     @Test
     public void testCompactData21() throws IOException {
         File compact21 = temp.newFile();
@@ -48,7 +46,7 @@ public class FileSdmxConnectionTest {
 
         SdmxFileSet files = SdmxFileSet.of(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, SdmxSource.XIF, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, xif, decoder);
 
         assertThat(conn.getFlows()).hasSize(1);
         assertThat(conn.getStructure(SdmxFileUtil.asDataflowRef(files)).getDimensions()).hasSize(7);
@@ -76,6 +74,12 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, SdmxSource.XIF, decoder), SdmxFileUtil.asDataflowRef(files));
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, xif, decoder), SdmxFileUtil.asDataflowRef(files));
     }
+
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
+    private final XMLInputFactory xif = Stax.getInputFactory();
+    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(xif, Stax.getInputFactoryWithoutNamespace());
 }

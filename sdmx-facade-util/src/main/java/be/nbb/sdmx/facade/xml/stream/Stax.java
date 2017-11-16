@@ -27,9 +27,16 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import javax.xml.stream.EventFilter;
+import javax.xml.stream.StreamFilter;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLReporter;
+import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.XMLEventAllocator;
+import javax.xml.transform.Source;
 
 /**
  *
@@ -131,6 +138,155 @@ public class Stax {
             onClose.close();
         } catch (IOException suppressed) {
             ex.addSuppressed(suppressed);
+        }
+    }
+
+    @Nonnull
+    public XMLInputFactory getInputFactory() {
+        return ImmutableInputFactory.DEFAULT;
+    }
+
+    @Nonnull
+    public XMLInputFactory getInputFactoryWithoutNamespace() {
+        return ImmutableInputFactory.WITHOUT_NAMESPACE;
+    }
+
+    public boolean isNotNamespaceAware(@Nonnull XMLStreamReader f) {
+        return !(Boolean) f.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE);
+    }
+
+    private static final class ImmutableInputFactory extends XMLInputFactory {
+
+        static final XMLInputFactory DEFAULT = new ImmutableInputFactory(true);
+        static final XMLInputFactory WITHOUT_NAMESPACE = new ImmutableInputFactory(false);
+
+        private final XMLInputFactory delegate;
+
+        private ImmutableInputFactory(boolean namespaceAware) {
+            this.delegate = XMLInputFactory.newFactory();
+            if (!namespaceAware && delegate.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)) {
+                delegate.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+            }
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
+            return delegate.createXMLStreamReader(reader);
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(Source source) throws XMLStreamException {
+            return delegate.createXMLStreamReader(source);
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(InputStream stream) throws XMLStreamException {
+            return delegate.createXMLStreamReader(stream);
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(InputStream stream, String encoding) throws XMLStreamException {
+            return delegate.createXMLStreamReader(stream, encoding);
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(String systemId, InputStream stream) throws XMLStreamException {
+            return delegate.createXMLStreamReader(systemId, stream);
+        }
+
+        @Override
+        public XMLStreamReader createXMLStreamReader(String systemId, Reader reader) throws XMLStreamException {
+            return delegate.createXMLStreamReader(systemId, reader);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
+            return delegate.createXMLEventReader(reader);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(String systemId, Reader reader) throws XMLStreamException {
+            return delegate.createXMLEventReader(systemId, reader);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
+            return delegate.createXMLEventReader(reader);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(Source source) throws XMLStreamException {
+            return delegate.createXMLEventReader(source);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(InputStream stream) throws XMLStreamException {
+            return delegate.createXMLEventReader(stream);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(InputStream stream, String encoding) throws XMLStreamException {
+            return delegate.createXMLEventReader(stream, encoding);
+        }
+
+        @Override
+        public XMLEventReader createXMLEventReader(String systemId, InputStream stream) throws XMLStreamException {
+            return delegate.createXMLEventReader(systemId, stream);
+        }
+
+        @Override
+        public XMLStreamReader createFilteredReader(XMLStreamReader reader, StreamFilter filter) throws XMLStreamException {
+            return delegate.createFilteredReader(reader, filter);
+        }
+
+        @Override
+        public XMLEventReader createFilteredReader(XMLEventReader reader, EventFilter filter) throws XMLStreamException {
+            return delegate.createFilteredReader(reader, filter);
+        }
+
+        @Override
+        public XMLResolver getXMLResolver() {
+            return delegate.getXMLResolver();
+        }
+
+        @Override
+        public void setXMLResolver(XMLResolver resolver) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public XMLReporter getXMLReporter() {
+            return delegate.getXMLReporter();
+        }
+
+        @Override
+        public void setXMLReporter(XMLReporter reporter) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setProperty(String name, Object value) throws IllegalArgumentException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object getProperty(String name) throws IllegalArgumentException {
+            return delegate.getProperty(name);
+        }
+
+        @Override
+        public boolean isPropertySupported(String name) {
+            return delegate.isPropertySupported(name);
+        }
+
+        @Override
+        public void setEventAllocator(XMLEventAllocator allocator) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public XMLEventAllocator getEventAllocator() {
+            return delegate.getEventAllocator();
         }
     }
 }
