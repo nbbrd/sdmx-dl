@@ -59,7 +59,7 @@ class FileSdmxConnection implements SdmxConnection {
         this.languages = languages;
         this.factory = factory;
         this.decoder = decoder;
-        this.dataflow = Dataflow.of(SdmxFileUtil.asDataflowRef(files), EMPTY, files.getData().getName().replace(".xml", ""));
+        this.dataflow = Dataflow.of(SdmxFileUtil.asDataflowRef(files), EMPTY, SdmxFileUtil.asFlowLabel(files));
         this.closed = false;
     }
 

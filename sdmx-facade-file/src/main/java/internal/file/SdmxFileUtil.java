@@ -42,6 +42,11 @@ public class SdmxFileUtil {
     }
 
     @Nonnull
+    public String asFlowLabel(@Nonnull SdmxFileSet files) {
+        return files.getData().getName().replace(".xml", "");
+    }
+
+    @Nonnull
     public String toXml(@Nonnull SdmxFileSet files) {
         StringWriter result = new StringWriter();
         try {
