@@ -142,12 +142,11 @@ final class DataStructureDecoder {
     //<editor-fold defaultstate="collapsed" desc="Compact20">
     private static DataStructure compact20(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(COMPACT20);
+        builder.refId("UNKNOWN"); // FIXME: find a way to parse/guess this information
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    if (isTagMatch(reader, "CompactData")) {
-                        builder.refId("TODO");
-                    } else if (isTagMatch(reader, "DataSet")) {
+                    if (isTagMatch(reader, "DataSet")) {
                         compact20DataSet(reader, builder);
                     }
                     break;

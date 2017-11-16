@@ -51,13 +51,13 @@ public class DataStructureDecoderTest {
     @Test
     public void testDecodeCompact20() throws IOException {
         DataStructure ds = DataStructure.builder()
-                .ref(DataStructureRef.of(null, "TODO", null))
+                .ref(DataStructureRef.of(null, "UNKNOWN", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("COLLECTION", 2, "B"))
                 .dimension(dimension("VIS_CTY", 3, "MX"))
                 .dimension(dimension("JD_TYPE", 4, "P"))
                 .dimension(dimension("JD_CATEGORY", 5, "A", "B"))
-                .label("TODO")
+                .label("UNKNOWN")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
