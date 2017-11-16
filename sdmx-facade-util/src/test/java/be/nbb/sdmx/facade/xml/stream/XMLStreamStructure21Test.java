@@ -36,7 +36,7 @@ public class XMLStreamStructure21Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        XMLStream<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
+        Stax.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
         assertThat(parser.parseReader(SdmxSource.XIF, SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("AMECO");

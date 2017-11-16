@@ -36,7 +36,7 @@ public class XMLStreamStructure20Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        XMLStream<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
+        Stax.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
         assertThat(p1.parseReader(SdmxSource.XIF, SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("My first dataset");
@@ -50,7 +50,7 @@ public class XMLStreamStructure20Test {
             });
         });
 
-        XMLStream<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
+        Stax.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
         assertThat(p2.parseReader(SdmxSource.XIF, SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("Mon premier dataset");

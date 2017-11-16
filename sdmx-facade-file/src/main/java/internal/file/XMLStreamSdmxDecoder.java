@@ -28,8 +28,8 @@ import static internal.file.SdmxDecoder.DataType.GENERIC20;
 import static internal.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.util.List;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 
 /**
  *
@@ -56,7 +56,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         return getStructParser(dataType, langs).parseFile(factory, structure, StandardCharsets.UTF_8).get(0);
     }
 
-    private XMLStream<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
+    private Stax.Parser<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
         switch (o) {
             case GENERIC20:
             case COMPACT20:
@@ -83,7 +83,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private static XMLStream<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {
+    private static Stax.Parser<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {
         switch (o) {
             case GENERIC20:
                 return DataStructureDecoder.generic20();

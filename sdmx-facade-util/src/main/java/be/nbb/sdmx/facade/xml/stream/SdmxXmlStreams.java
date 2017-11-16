@@ -33,52 +33,52 @@ import javax.annotation.Nonnull;
 public class SdmxXmlStreams {
 
     @Nonnull
-    public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd) throws IOException {
+    public Stax.Parser<DataCursor> compactData20(@Nonnull DataStructure dsd) throws IOException {
         return compactData20(dsd, DataFactory.sdmx20());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Stax.Parser<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return (o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), "", "");
     }
 
     @Nonnull
-    public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd) throws IOException {
+    public Stax.Parser<DataCursor> compactData21(@Nonnull DataStructure dsd) throws IOException {
         return compactData21(dsd, DataFactory.sdmx21());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Stax.Parser<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return (o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd) throws IOException {
+    public Stax.Parser<DataCursor> genericData20(@Nonnull DataStructure dsd) throws IOException {
         return genericData20(dsd, DataFactory.sdmx20());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Stax.Parser<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return (o, onClose) -> XMLStreamGenericDataCursor.sdmx20(o, onClose, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd) throws IOException {
+    public Stax.Parser<DataCursor> genericData21(@Nonnull DataStructure dsd) throws IOException {
         return genericData21(dsd, DataFactory.sdmx21());
     }
 
     @Nonnull
-    public XMLStream<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Stax.Parser<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return (o, onClose) -> XMLStreamGenericDataCursor.sdmx21(o, onClose, Key.builder(dsd), df.getObsParser(dsd), df.getFreqParser(dsd));
     }
 
     @Nonnull
-    public XMLStream<List<DataStructure>> struct20(@Nonnull LanguagePriorityList langs) throws IOException {
-        return XMLStream.of(new XMLStreamStructure20(langs)::parse);
+    public Stax.Parser<List<DataStructure>> struct20(@Nonnull LanguagePriorityList langs) throws IOException {
+        return Stax.Parser.of(new XMLStreamStructure20(langs)::parse);
     }
 
     @Nonnull
-    public XMLStream<List<DataStructure>> struct21(@Nonnull LanguagePriorityList langs) throws IOException {
-        return XMLStream.of(new XMLStreamStructure21(langs)::parse);
+    public Stax.Parser<List<DataStructure>> struct21(@Nonnull LanguagePriorityList langs) throws IOException {
+        return Stax.Parser.of(new XMLStreamStructure21(langs)::parse);
     }
 }

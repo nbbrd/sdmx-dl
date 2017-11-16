@@ -30,12 +30,12 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class XMLStreamTest {
+public class StaxTest {
 
     @Test
     @SuppressWarnings("null")
     public void testValidParseStream() throws IOException {
-        XMLStream<String> p = (o, c) -> {
+        Stax.Parser<String> p = (o, c) -> {
             c.close();
             return "";
         };
@@ -56,7 +56,7 @@ public class XMLStreamTest {
                 .hasNoCause();
 
         assertThatThrownBy(() -> p.parseStream(xif, ReadErrorStream::new, UTF_8))
-                .isInstanceOf(IOException.class)
+                .isInstanceOf(Stax.XMLStreamIOException.class)
                 .hasNoSuppressedExceptions()
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasRootCauseInstanceOf(ReadError.class);
@@ -70,7 +70,7 @@ public class XMLStreamTest {
     @Test
     @SuppressWarnings("null")
     public void testInvalidParseStream() throws IOException {
-        XMLStream<String> p = (o, c) -> {
+        Stax.Parser<String> p = (o, c) -> {
             try (Closeable x = c) {
                 throw new ParseError();
             }
@@ -92,7 +92,7 @@ public class XMLStreamTest {
                 .hasNoCause();
 
         assertThatThrownBy(() -> p.parseStream(xif, ReadErrorStream::new, UTF_8))
-                .isInstanceOf(IOException.class)
+                .isInstanceOf(Stax.XMLStreamIOException.class)
                 .hasNoSuppressedExceptions()
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasRootCauseInstanceOf(ReadError.class);

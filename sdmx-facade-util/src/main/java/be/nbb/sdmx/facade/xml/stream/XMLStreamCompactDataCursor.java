@@ -76,7 +76,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
-            throw new IOException(ex);
+            throw new Stax.XMLStreamIOException(ex);
         }
     }
 
@@ -87,7 +87,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         try {
             return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
-            throw new IOException(ex);
+            throw new Stax.XMLStreamIOException(ex);
         }
     }
 
@@ -133,7 +133,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     @Override
     public void close() throws IOException {
         closed = true;
-        XMLStreamUtil.closeBoth(reader, onClose);
+        Stax.closeBoth(reader, onClose);
     }
 
     private void checkState() throws IOException {

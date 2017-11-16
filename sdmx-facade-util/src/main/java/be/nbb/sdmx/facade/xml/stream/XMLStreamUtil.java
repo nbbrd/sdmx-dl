@@ -16,8 +16,6 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.function.Supplier;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
@@ -105,24 +103,6 @@ class XMLStreamUtil {
     static void check(boolean expression, Supplier<Location> location, String message, Object... args) throws XMLStreamException {
         if (!expression) {
             throw new XMLStreamException(String.format(message, args), location.get());
-        }
-    }
-
-    void closeBoth(XMLStreamReader reader, Closeable onClose) throws IOException {
-        try {
-            reader.close();
-        } catch (XMLStreamException ex) {
-            ensureClosed(ex, onClose);
-            throw new IOException("Failed to close xml stream reader", ex);
-        }
-        onClose.close();
-    }
-
-    void ensureClosed(XMLStreamException ex, Closeable onClose) throws IOException {
-        try {
-            onClose.close();
-        } catch (IOException suppressed) {
-            ex.addSuppressed(suppressed);
         }
     }
 }

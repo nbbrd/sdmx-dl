@@ -23,6 +23,7 @@ import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static internal.file.CustomDataStructureBuilder.dimension;
+import static internal.file.CustomDataStructureBuilder.dimension;
 
 /**
  *

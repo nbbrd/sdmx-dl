@@ -30,7 +30,6 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 
 /**
  *
@@ -123,7 +123,7 @@ class FileSdmxConnection implements SdmxConnection {
         return getDataSupplier(entry.getDataType(), entry.getDataStructure()).parseFile(factory, files.getData(), StandardCharsets.UTF_8);
     }
 
-    private XMLStream<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
+    private Stax.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
         switch (o) {
             case GENERIC20:
                 return SdmxXmlStreams.genericData20(dsd);

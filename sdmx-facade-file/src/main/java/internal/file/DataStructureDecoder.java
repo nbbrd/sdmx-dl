@@ -19,11 +19,11 @@ package internal.file;
 import be.nbb.sdmx.facade.DataStructure;
 import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
-import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 
 /**
  *
@@ -31,20 +31,20 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class DataStructureDecoder {
 
-    public static XMLStream<DataStructure> generic20() {
-        return XMLStream.of(DataStructureDecoder::generic20);
+    public static Stax.Parser<DataStructure> generic20() {
+        return Stax.Parser.of(DataStructureDecoder::generic20);
     }
 
-    public static XMLStream<DataStructure> compact20() {
-        return XMLStream.of(DataStructureDecoder::compact20);
+    public static Stax.Parser<DataStructure> compact20() {
+        return Stax.Parser.of(DataStructureDecoder::compact20);
     }
 
-    public static XMLStream<DataStructure> generic21() {
-        return XMLStream.of(DataStructureDecoder::generic21);
+    public static Stax.Parser<DataStructure> generic21() {
+        return Stax.Parser.of(DataStructureDecoder::generic21);
     }
 
-    public static XMLStream<DataStructure> compact21() {
-        return XMLStream.of(DataStructureDecoder::compact21);
+    public static Stax.Parser<DataStructure> compact21() {
+        return Stax.Parser.of(DataStructureDecoder::compact21);
     }
 
     private static boolean isTagMatch(XMLStreamReader r, String tag) {

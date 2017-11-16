@@ -17,12 +17,12 @@
 package internal.file;
 
 import static be.nbb.sdmx.facade.xml.Sdmxml.*;
-import be.nbb.sdmx.facade.xml.stream.XMLStream;
 import static internal.file.SdmxDecoder.DataType.*;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import be.nbb.sdmx.facade.xml.stream.Stax;
 
 /**
  *
@@ -30,8 +30,8 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class DataTypeProbe {
 
-    public static XMLStream<SdmxDecoder.DataType> of() {
-        return XMLStream.of(DataTypeProbe::probeDataType);
+    public static Stax.Parser<SdmxDecoder.DataType> of() {
+        return Stax.Parser.of(DataTypeProbe::probeDataType);
     }
 
     private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {
