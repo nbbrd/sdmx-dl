@@ -16,14 +16,13 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import be.nbb.sdmx.facade.samples.SdmxSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -31,6 +30,28 @@ import org.junit.Test;
  * @author Philippe Charles
  */
 public class StaxTest {
+
+    @Test
+    public void testIsTagMatch() {
+        assertThat(XMLStreamUtil.isTagMatch("", "")).isTrue();
+        assertThat(XMLStreamUtil.isTagMatch("HelloWorld", "HelloWorld")).isTrue();
+        assertThat(XMLStreamUtil.isTagMatch("HelloWorld", "helloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("helloWorld", "HelloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("HelloWorld", "")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("", "HelloWorld")).isFalse();
+
+        assertThat(XMLStreamUtil.isTagMatch("xxx:HelloWorld", "HelloWorld")).isTrue();
+        assertThat(XMLStreamUtil.isTagMatch("xxx:HelloWorld", "helloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("xxx:HelloWorld", "Hello")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("xxx:HelloWorld", "World")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("xxx:HelloWorld", "")).isFalse();
+
+        assertThat(XMLStreamUtil.isTagMatch("HelloWorld", "xxx:HelloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("helloWorld", "xxx:HelloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("Hello", "xxx:HelloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("World", "xxx:HelloWorld")).isFalse();
+        assertThat(XMLStreamUtil.isTagMatch("", "xxx:HelloWorld")).isFalse();
+    }
 
     @Test
     @SuppressWarnings("null")

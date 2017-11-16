@@ -30,7 +30,9 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.util.FreqParser;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
 import java.io.Closeable;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,6 +57,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private boolean hasObs;
 
     XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
+        if (!Stax.isNotNamespaceAware(reader)) {
+            Logger.getLogger(getClass().getName()).warning("Using XMLStreamReader with namespace awareness");
+        }
         this.reader = reader;
         this.onClose = onClose;
         this.keyBuilder = keyBuilder;
@@ -158,9 +163,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status onDataSet(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(SERIES_TAG) ? parseSeries() : CONTINUE;
+            return isTagMatch(localName, SERIES_TAG) ? parseSeries() : CONTINUE;
         } else {
-            return localName.equals(DATASET_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, DATASET_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -183,9 +188,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(OBS_TAG) ? parseObs() : CONTINUE;
+            return isTagMatch(localName, OBS_TAG) ? parseObs() : CONTINUE;
         } else {
-            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 

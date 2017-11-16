@@ -49,15 +49,15 @@ class FileSdmxConnection implements SdmxConnection {
 
     private final SdmxFileSet files;
     private final LanguagePriorityList languages;
-    private final XMLInputFactory factory;
+    private final XMLInputFactory factoryWithoutNamespace;
     private final SdmxDecoder decoder;
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factory, SdmxDecoder decoder) {
+    FileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factoryWithoutNamespace, SdmxDecoder decoder) {
         this.files = files;
         this.languages = languages;
-        this.factory = factory;
+        this.factoryWithoutNamespace = factoryWithoutNamespace;
         this.decoder = decoder;
         this.dataflow = Dataflow.of(SdmxFileUtil.asDataflowRef(files), EMPTY, SdmxFileUtil.asFlowLabel(files));
         this.closed = false;
@@ -120,7 +120,7 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     protected DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).parseFile(factory, files.getData(), StandardCharsets.UTF_8);
+        return getDataSupplier(entry.getDataType(), entry.getDataStructure()).parseFile(factoryWithoutNamespace, files.getData(), StandardCharsets.UTF_8);
     }
 
     private Stax.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {

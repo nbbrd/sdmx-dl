@@ -168,5 +168,5 @@ public class XMLStreamGenericDataCursorTest {
         }
     }
     
-    private final XMLInputFactory xif = Stax.getInputFactory();
+    private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();
 }

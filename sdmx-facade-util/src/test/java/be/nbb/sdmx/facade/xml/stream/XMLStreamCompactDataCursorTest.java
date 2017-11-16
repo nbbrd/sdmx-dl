@@ -120,5 +120,5 @@ public class XMLStreamCompactDataCursorTest {
         }
     }
     
-    private final XMLInputFactory xif = Stax.getInputFactory();
+    private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();
 }

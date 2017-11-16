@@ -69,7 +69,7 @@ class XMLStreamUtil {
                 case XMLStreamReader.START_ELEMENT:
                     return true;
                 case XMLStreamReader.END_ELEMENT:
-                    if (tag.equals(reader.getLocalName())) {
+                    if (isTagMatch(reader.getLocalName(), tag)) {
                         return false;
                     }
                     break;
@@ -82,12 +82,12 @@ class XMLStreamUtil {
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
-                    if (start.equals(reader.getLocalName())) {
+                    if (isTagMatch(reader.getLocalName(), start)) {
                         return true;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:
-                    if (end.equals(reader.getLocalName())) {
+                    if (isTagMatch(reader.getLocalName(), end)) {
                         return false;
                     }
                     break;
@@ -104,5 +104,9 @@ class XMLStreamUtil {
         if (!expression) {
             throw new XMLStreamException(String.format(message, args), location.get());
         }
+    }
+
+    static boolean isTagMatch(String localName, String tag) {
+        return localName.endsWith(tag) && (localName.length() == tag.length() || localName.charAt(localName.length() - 1 - tag.length()) == ':');
     }
 }

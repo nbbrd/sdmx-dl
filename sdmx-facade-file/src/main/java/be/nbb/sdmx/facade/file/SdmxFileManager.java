@@ -42,11 +42,11 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     @Nonnull
     public static SdmxFileManager of() {
-        XMLInputFactory factory = Stax.getInputFactory();
-        return new SdmxFileManager(factory, new XMLStreamSdmxDecoder(factory, Stax.getInputFactoryWithoutNamespace()), new AtomicReference<>(new ConcurrentHashMap()));
+        XMLInputFactory factoryWithoutNamespace = Stax.getInputFactoryWithoutNamespace();
+        return new SdmxFileManager(factoryWithoutNamespace, new XMLStreamSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace), new AtomicReference<>(new ConcurrentHashMap()));
     }
 
-    private final XMLInputFactory factory;
+    private final XMLInputFactory factoryWithoutNamespace;
     private final SdmxDecoder decoder;
     private final AtomicReference<ConcurrentMap> cache;
 
@@ -65,7 +65,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     @Nonnull
     public SdmxConnection getConnection(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException {
-        return new CachedFileSdmxConnection(files, languages, factory, decoder, cache.get());
+        return new CachedFileSdmxConnection(files, languages, factoryWithoutNamespace, decoder, cache.get());
     }
 
     @Override

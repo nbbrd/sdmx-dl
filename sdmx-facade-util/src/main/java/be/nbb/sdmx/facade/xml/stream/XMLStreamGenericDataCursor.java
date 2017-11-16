@@ -30,9 +30,11 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.util.FreqParser;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
 import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
 /**
@@ -70,6 +72,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private boolean hasObs;
 
     private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, SeriesHeadParser headParser) {
+        if (!Stax.isNotNamespaceAware(reader)) {
+            Logger.getLogger(getClass().getName()).warning("Using XMLStreamReader with namespace awareness");
+        }
         this.reader = reader;
         this.onClose = onClose;
         this.keyBuilder = keyBuilder;
@@ -179,9 +184,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onDataSet(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(SERIES_TAG) ? parseSeries() : CONTINUE;
+            return isTagMatch(localName, SERIES_TAG) ? parseSeries() : CONTINUE;
         } else {
-            return localName.equals(DATASET_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, DATASET_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -193,18 +198,17 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onSeriesHead(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            switch (localName) {
-                case SERIES_KEY_TAG:
-                    return parseSeriesKey();
-                case ATTRIBUTES_TAG:
-                    return parseAttributes();
-                case OBS_TAG:
-                    return HALT;
-                default:
-                    return CONTINUE;
+            if (isTagMatch(localName, SERIES_KEY_TAG)) {
+                return parseSeriesKey();
+            } else if (isTagMatch(localName, ATTRIBUTES_TAG)) {
+                return parseAttributes();
+            } else if (isTagMatch(localName, OBS_TAG)) {
+                return HALT;
+            } else {
+                return CONTINUE;
             }
         } else {
-            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -220,17 +224,17 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status onSeriesKey(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(VALUE_TAG) ? parseSeriesKeyValue() : CONTINUE;
+            return isTagMatch(localName, VALUE_TAG) ? parseSeriesKeyValue() : CONTINUE;
         } else {
-            return localName.equals(SERIES_KEY_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, SERIES_KEY_TAG) ? HALT : CONTINUE;
         }
     }
 
     private Status onAttributes(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(VALUE_TAG) ? parseAttributesValue() : CONTINUE;
+            return isTagMatch(localName, VALUE_TAG) ? parseAttributesValue() : CONTINUE;
         } else {
-            return localName.equals(ATTRIBUTES_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, ATTRIBUTES_TAG) ? HALT : CONTINUE;
         }
     }
 
@@ -245,29 +249,29 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     private boolean isCurrentElementStartOfObs() {
-        return reader.getEventType() == XMLStreamReader.START_ELEMENT && OBS_TAG.equals(reader.getLocalName());
+        return reader.isStartElement() && isTagMatch(reader.getLocalName(), OBS_TAG);
     }
 
     private boolean isCurrentElementEnfOfSeries() {
-        return reader.getEventType() == XMLStreamReader.END_ELEMENT && SERIES_TAG.equals(reader.getLocalName());
+        return reader.isEndElement() && isTagMatch(reader.getLocalName(), SERIES_TAG);
     }
 
     private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            return localName.equals(OBS_TAG) ? parseObs() : CONTINUE;
+            return isTagMatch(localName, OBS_TAG) ? parseObs() : CONTINUE;
         } else {
-            return localName.equals(SERIES_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, SERIES_TAG) ? HALT : CONTINUE;
         }
     }
 
     private Status onObs(boolean start, String localName) throws XMLStreamException {
         if (start) {
-            if (localName.equals(headParser.getTimeELement())) {
+            if (isTagMatch(localName, headParser.getTimeELement())) {
                 return parseObsTime();
             }
-            return localName.equals(OBS_VALUE_TAG) ? parseObsValue() : CONTINUE;
+            return isTagMatch(localName, OBS_VALUE_TAG) ? parseObsValue() : CONTINUE;
         } else {
-            return localName.equals(OBS_TAG) ? HALT : CONTINUE;
+            return isTagMatch(localName, OBS_TAG) ? HALT : CONTINUE;
         }
     }
 

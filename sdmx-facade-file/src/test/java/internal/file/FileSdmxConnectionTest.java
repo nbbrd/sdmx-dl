@@ -46,7 +46,7 @@ public class FileSdmxConnectionTest {
 
         SdmxFileSet files = SdmxFileSet.of(compact21, null);
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, xif, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder);
 
         assertThat(conn.getFlows()).hasSize(1);
         assertThat(conn.getStructure(SdmxFileUtil.asDataflowRef(files)).getDimensions()).hasSize(7);
@@ -74,12 +74,12 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, xif, decoder), SdmxFileUtil.asDataflowRef(files));
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder), SdmxFileUtil.asDataflowRef(files));
     }
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private final XMLInputFactory xif = Stax.getInputFactory();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(xif, Stax.getInputFactoryWithoutNamespace());
+    private final XMLInputFactory factoryWithoutNamespace = Stax.getInputFactoryWithoutNamespace();
+    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace);
 }
