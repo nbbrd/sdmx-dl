@@ -25,8 +25,8 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.file.SdmxFileConnection;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
@@ -43,7 +43,7 @@ import be.nbb.sdmx.facade.xml.stream.Stax;
  *
  * @author Philippe Charles
  */
-class FileSdmxConnection implements SdmxConnection {
+class FileSdmxConnection implements SdmxFileConnection {
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
@@ -64,9 +64,21 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
+    final public DataflowRef getDataflowRef() throws IOException {
+        checkState();
+        return dataflow.getRef();
+    }
+
+    @Override
     final public Set<Dataflow> getFlows() throws IOException {
         checkState();
         return Collections.singleton(dataflow);
+    }
+
+    @Override
+    final public Dataflow getFlow() throws IOException {
+        checkState();
+        return dataflow;
     }
 
     @Override
@@ -78,11 +90,24 @@ class FileSdmxConnection implements SdmxConnection {
     }
 
     @Override
+    final public DataStructure getStructure() throws IOException {
+        checkState();
+        return decode().getDataStructure();
+    }
+
+    @Override
     final public DataStructure getStructure(DataflowRef flowRef) throws IOException {
         checkState();
         Objects.requireNonNull(flowRef);
         checkFlowRef(flowRef);
         return decode().getDataStructure();
+    }
+
+    @Override
+    final public DataCursor getCursor(DataQuery query) throws IOException {
+        checkState();
+        Objects.requireNonNull(query);
+        return loadData(decode(), dataflow.getRef(), query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
     }
 
     @Override
@@ -92,6 +117,11 @@ class FileSdmxConnection implements SdmxConnection {
         Objects.requireNonNull(query);
         checkFlowRef(flowRef);
         return loadData(decode(), flowRef, query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
+    }
+
+    @Override
+    public Stream<Series> getStream(DataQuery query) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(query));
     }
 
     @Override

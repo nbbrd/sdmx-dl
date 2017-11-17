@@ -21,6 +21,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
@@ -28,7 +29,7 @@ import be.nbb.sdmx.facade.xml.stream.Stax;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -38,6 +39,24 @@ import org.junit.rules.TemporaryFolder;
  * @author Philippe Charles
  */
 public class FileSdmxConnectionTest {
+
+    @Test
+    @SuppressWarnings("null")
+    public void testFile() throws IOException {
+        File compact21 = temp.newFile();
+        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
+
+        SdmxFileSet files = SdmxFileSet.of(compact21, null);
+
+        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder);
+
+        assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
+        assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
+        assertThat(conn.getStructure()).isEqualTo(conn.getStructure(files.asDataflowRef()));
+        assertThatThrownBy(() -> conn.getCursor(null)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> conn.getStream(null)).isInstanceOf(NullPointerException.class);
+        assertThat(conn.getStream(DataQuery.of(Key.ALL, false))).containsExactly(conn.getStream(DataQuery.of(Key.ALL, false)).toArray(Series[]::new));
+    }
 
     @Test
     public void testCompactData21() throws IOException {

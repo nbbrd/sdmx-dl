@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade.file;
 import internal.file.CachedFileSdmxConnection;
 import internal.file.SdmxDecoder;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import internal.file.XMLStreamSdmxDecoder;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -51,7 +50,12 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     private final AtomicReference<ConcurrentMap> cache;
 
     @Override
-    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+    public SdmxFileConnection getConnection(String name) throws IOException {
+        return getConnection(name, LanguagePriorityList.ANY);
+    }
+
+    @Override
+    public SdmxFileConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         SdmxFileSet files;
 
         try {
@@ -64,7 +68,12 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Nonnull
-    public SdmxConnection getConnection(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException {
+    public SdmxFileConnection getConnection(@Nonnull SdmxFileSet files) throws IOException {
+        return getConnection(files, LanguagePriorityList.ANY);
+    }
+
+    @Nonnull
+    public SdmxFileConnection getConnection(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException {
         return new CachedFileSdmxConnection(files, languages, factoryWithoutNamespace, decoder, cache.get());
     }
 
