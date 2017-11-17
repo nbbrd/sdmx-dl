@@ -16,7 +16,6 @@
  */
 package internal.file;
 
-import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.Stax;
 import java.io.File;
@@ -36,26 +35,20 @@ import javax.xml.stream.XMLStreamWriter;
 public class SdmxFileUtil {
 
     @Nonnull
-    public DataflowRef asDataflowRef(@Nonnull SdmxFileSet files) {
-        File structFile = files.getStructure();
-        return DataflowRef.parse("data" + (structFile != null && !structFile.toString().isEmpty() ? "&struct" : ""));
-    }
-
-    @Nonnull
     public String asFlowLabel(@Nonnull SdmxFileSet files) {
         return files.getData().getName().replace(".xml", "");
     }
 
     @Nonnull
+    @SuppressWarnings("null")
     public String toXml(@Nonnull SdmxFileSet files) {
         StringWriter result = new StringWriter();
         try {
             XMLStreamWriter xml = OUTPUT.createXMLStreamWriter(result);
             xml.writeEmptyElement(ROOT_TAG);
             xml.writeAttribute(DATA_ATTR, files.getData().toString());
-            File structure = files.getStructure();
-            if (structure != null) {
-                xml.writeAttribute(STRUCT_ATTR, structure.toString());
+            if (files.hasStructure()) {
+                xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
             }
             xml.writeEndDocument();
             xml.close();

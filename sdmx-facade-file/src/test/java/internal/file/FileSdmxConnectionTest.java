@@ -49,11 +49,11 @@ public class FileSdmxConnectionTest {
         FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder);
 
         assertThat(conn.getFlows()).hasSize(1);
-        assertThat(conn.getStructure(SdmxFileUtil.asDataflowRef(files)).getDimensions()).hasSize(7);
+        assertThat(conn.getStructure(files.asDataflowRef()).getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getCursor(SdmxFileUtil.asDataflowRef(files), DataQuery.of(Key.ALL, false))) {
+        try (DataCursor o = conn.getCursor(files.asDataflowRef(), DataQuery.of(Key.ALL, false))) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
@@ -74,7 +74,7 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder), SdmxFileUtil.asDataflowRef(files));
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder), files.asDataflowRef());
     }
 
     @Rule

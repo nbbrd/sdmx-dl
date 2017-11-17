@@ -44,7 +44,7 @@ public final class XMLStreamSdmxDecoder implements SdmxDecoder {
     @Override
     public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
         DataType dataType = probeDataType(files.getData());
-        return Info.of(dataType, files.getStructure() != null
+        return Info.of(dataType, files.hasStructure()
                 ? parseStruct(dataType, langs, files.getStructure())
                 : decodeStruct(dataType, files.getData()));
     }

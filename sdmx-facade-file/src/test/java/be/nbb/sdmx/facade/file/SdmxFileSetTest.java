@@ -41,6 +41,18 @@ public class SdmxFileSetTest {
                 .hasFieldOrPropertyWithValue("structure", structure);
     }
 
+    @Test
+    public void testAsDataflowRef() {
+        assertThat(SdmxFileSet.of(data, structure).asDataflowRef().toString())
+                .isEqualTo("all,data&struct,latest");
+
+        assertThat(SdmxFileSet.of(data, new File("")).asDataflowRef().toString())
+                .isEqualTo("all,data,latest");
+
+        assertThat(SdmxFileSet.of(data, null).asDataflowRef().toString())
+                .isEqualTo("all,data,latest");
+    }
+
     private final File data = new File("a.xml");
     private final File structure = new File("b.xml");
 }

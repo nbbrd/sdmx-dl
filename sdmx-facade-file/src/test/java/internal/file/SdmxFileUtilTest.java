@@ -29,18 +29,6 @@ import org.junit.Test;
 public class SdmxFileUtilTest {
 
     @Test
-    public void testAsDataflowRef() {
-        assertThat(SdmxFileUtil.asDataflowRef(SdmxFileSet.of(data, structure)).toString())
-                .isEqualTo("all,data&struct,latest");
-
-        assertThat(SdmxFileUtil.asDataflowRef(SdmxFileSet.of(data, new File(""))).toString())
-                .isEqualTo("all,data,latest");
-
-        assertThat(SdmxFileUtil.asDataflowRef(SdmxFileSet.of(data, null)).toString())
-                .isEqualTo("all,data,latest");
-    }
-
-    @Test
     public void testToXml() {
         assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, structure)))
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");

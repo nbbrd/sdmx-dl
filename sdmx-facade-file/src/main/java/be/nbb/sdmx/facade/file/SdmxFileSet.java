@@ -16,7 +16,9 @@
  */
 package be.nbb.sdmx.facade.file;
 
+import be.nbb.sdmx.facade.DataflowRef;
 import java.io.File;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -31,4 +33,13 @@ public class SdmxFileSet {
 
     @Nullable
     File structure;
+
+    public boolean hasStructure() {
+        return structure != null;
+    }
+
+    @Nonnull
+    public DataflowRef asDataflowRef() {
+        return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
+    }
 }
