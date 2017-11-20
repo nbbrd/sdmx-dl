@@ -30,10 +30,13 @@ public class SdmxFileUtilTest {
 
     @Test
     public void testToXml() {
-        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, structure)))
+        assertThat(SdmxFileUtil.toXml(SdmxFileSet.builder().data(data).structure(structure).dialect("hello").build()))
+                .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\"/>");
+
+        assertThat(SdmxFileUtil.toXml(SdmxFileSet.builder().data(data).structure(structure).build()))
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
 
-        assertThat(SdmxFileUtil.toXml(SdmxFileSet.of(data, null)))
+        assertThat(SdmxFileUtil.toXml(SdmxFileSet.builder().data(data).build()))
                 .isEqualTo("<file data=\"a.xml\"/>");
     }
 
@@ -47,17 +50,26 @@ public class SdmxFileUtilTest {
 
         assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null);
+                .hasFieldOrPropertyWithValue("structure", null)
+                .hasFieldOrPropertyWithValue("dialect", null);
 
         assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" structure=\"\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null);
+                .hasFieldOrPropertyWithValue("structure", null)
+                .hasFieldOrPropertyWithValue("dialect", null);
 
         assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", structure);
+                .hasFieldOrPropertyWithValue("structure", structure)
+                .hasFieldOrPropertyWithValue("dialect", null);
+
+        assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\" />"))
+                .hasFieldOrPropertyWithValue("data", data)
+                .hasFieldOrPropertyWithValue("structure", structure)
+                .hasFieldOrPropertyWithValue("dialect", dialect);
     }
 
     private final File data = new File("a.xml");
     private final File structure = new File("b.xml");
+    private final String dialect = "hello";
 }

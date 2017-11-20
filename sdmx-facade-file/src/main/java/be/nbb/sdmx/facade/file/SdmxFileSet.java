@@ -25,7 +25,8 @@ import javax.annotation.Nullable;
  *
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder")
 public class SdmxFileSet {
 
     @lombok.NonNull
@@ -33,6 +34,9 @@ public class SdmxFileSet {
 
     @Nullable
     File structure;
+
+    @Nullable
+    String dialect;
 
     public boolean hasStructure() {
         return structure != null;

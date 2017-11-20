@@ -18,9 +18,9 @@ package internal.file;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.DataQuery;
+import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
@@ -28,6 +28,7 @@ import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import be.nbb.sdmx.facade.xml.stream.Stax;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
@@ -46,9 +47,9 @@ public class FileSdmxConnectionTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSet files = SdmxFileSet.of(compact21, null);
+        SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
 
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
@@ -63,9 +64,9 @@ public class FileSdmxConnectionTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSet files = SdmxFileSet.of(compact21, null);
+        SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder);
+        FileSdmxConnection conn = new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
 
         assertThat(conn.getFlows()).hasSize(1);
         assertThat(conn.getStructure(files.asDataflowRef()).getDimensions()).hasSize(7);
@@ -93,7 +94,7 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, LanguagePriorityList.ANY, factoryWithoutNamespace, decoder), files.asDataflowRef());
+        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty()), files.asDataflowRef());
     }
 
     @Rule

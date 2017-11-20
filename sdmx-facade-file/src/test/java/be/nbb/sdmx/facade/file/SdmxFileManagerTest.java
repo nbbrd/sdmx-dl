@@ -39,8 +39,8 @@ public class SdmxFileManagerTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSet files = SdmxFileSet.of(compact21, null);
+        SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.of(), SdmxFileUtil.toXml(files), "ko");
+        ConnectionSupplierAssert.assertCompliance(SdmxFileManager.ofServiceLoader(), SdmxFileUtil.toXml(files), "ko");
     }
 }

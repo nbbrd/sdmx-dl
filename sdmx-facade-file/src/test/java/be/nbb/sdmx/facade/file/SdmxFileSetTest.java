@@ -17,8 +17,7 @@
 package be.nbb.sdmx.facade.file;
 
 import java.io.File;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -28,28 +27,14 @@ import org.junit.Test;
 public class SdmxFileSetTest {
 
     @Test
-    @SuppressWarnings("null")
-    public void testFactory() {
-        assertThatThrownBy(() -> SdmxFileSet.of(null, null)).isInstanceOf(NullPointerException.class);
-
-        assertThat(SdmxFileSet.of(data, null))
-                .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null);
-
-        assertThat(SdmxFileSet.of(data, structure))
-                .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", structure);
-    }
-
-    @Test
     public void testAsDataflowRef() {
-        assertThat(SdmxFileSet.of(data, structure).asDataflowRef().toString())
+        assertThat(SdmxFileSet.builder().data(data).structure(structure).build().asDataflowRef().toString())
                 .isEqualTo("all,data&struct,latest");
 
-        assertThat(SdmxFileSet.of(data, new File("")).asDataflowRef().toString())
+        assertThat(SdmxFileSet.builder().data(data).structure(new File("")).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
 
-        assertThat(SdmxFileSet.of(data, null).asDataflowRef().toString())
+        assertThat(SdmxFileSet.builder().data(data).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
     }
 

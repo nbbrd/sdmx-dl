@@ -28,6 +28,7 @@ import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileConnection;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import java.util.Optional;
 
 /**
  *
@@ -51,14 +53,16 @@ class FileSdmxConnection implements SdmxFileConnection {
     private final LanguagePriorityList languages;
     private final XMLInputFactory factoryWithoutNamespace;
     private final SdmxDecoder decoder;
+    private final Optional<DataFactory> dataFactory;
     private final Dataflow dataflow;
     private boolean closed;
 
-    FileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factoryWithoutNamespace, SdmxDecoder decoder) {
+    FileSdmxConnection(SdmxFileSet files, LanguagePriorityList languages, XMLInputFactory factoryWithoutNamespace, SdmxDecoder decoder, Optional<DataFactory> dataFactory) {
         this.files = files;
         this.languages = languages;
         this.factoryWithoutNamespace = factoryWithoutNamespace;
         this.decoder = decoder;
+        this.dataFactory = dataFactory;
         this.dataflow = Dataflow.of(files.asDataflowRef(), EMPTY, SdmxFileUtil.asFlowLabel(files));
         this.closed = false;
     }
@@ -156,13 +160,13 @@ class FileSdmxConnection implements SdmxFileConnection {
     private Stax.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
         switch (o) {
             case GENERIC20:
-                return SdmxXmlStreams.genericData20(dsd);
+                return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactory.sdmx20()));
             case COMPACT20:
-                return SdmxXmlStreams.compactData20(dsd);
+                return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(DataFactory.sdmx20()));
             case GENERIC21:
-                return SdmxXmlStreams.genericData21(dsd);
+                return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(DataFactory.sdmx21()));
             case COMPACT21:
-                return SdmxXmlStreams.compactData21(dsd);
+                return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(DataFactory.sdmx21()));
             default:
                 throw new IOException("Don't known how to handle type '" + o + "'");
         }

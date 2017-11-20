@@ -50,6 +50,10 @@ public class SdmxFileUtil {
             if (files.hasStructure()) {
                 xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
             }
+            String dialect = files.getDialect();
+            if (dialect != null && !dialect.isEmpty()) {
+                xml.writeAttribute(DIALECT_ATTR, dialect);
+            }
             xml.writeEndDocument();
             xml.close();
         } catch (XMLStreamException ex) {
@@ -62,12 +66,14 @@ public class SdmxFileUtil {
     public static SdmxFileSet fromXml(@Nonnull String input) throws IllegalArgumentException {
         String data = null;
         String structure = null;
+        String dialect = null;
         try {
             XMLStreamReader xml = Stax.getInputFactoryWithoutNamespace().createXMLStreamReader(new StringReader(input));
             while (xml.hasNext()) {
                 if (xml.next() == XMLStreamReader.START_ELEMENT && xml.getLocalName().equals(ROOT_TAG)) {
                     data = xml.getAttributeValue(null, DATA_ATTR);
                     structure = xml.getAttributeValue(null, STRUCT_ATTR);
+                    dialect = xml.getAttributeValue(null, DIALECT_ATTR);
                 }
             }
             xml.close();
@@ -77,11 +83,16 @@ public class SdmxFileUtil {
         if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("Cannot parse SdmxFile from '" + input + "'");
         }
-        return SdmxFileSet.of(new File(data), structure != null && !structure.isEmpty() ? new File(structure) : null);
+        return SdmxFileSet.builder()
+                .data(new File(data))
+                .structure(structure != null && !structure.isEmpty() ? new File(structure) : null)
+                .dialect(dialect)
+                .build();
     }
 
     private static final String ROOT_TAG = "file";
     private static final String DATA_ATTR = "data";
     private static final String STRUCT_ATTR = "structure";
+    private static final String DIALECT_ATTR = "dialect";
     private static final XMLOutputFactory OUTPUT = XMLOutputFactory.newInstance();
 }
