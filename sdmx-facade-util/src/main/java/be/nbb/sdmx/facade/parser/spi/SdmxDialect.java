@@ -14,22 +14,22 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util;
+package be.nbb.sdmx.facade.parser.spi;
 
-import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.util.FreqUtil;
-import java.util.function.Function;
+import be.nbb.sdmx.facade.parser.DataFactory;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class FreqParsers {
+@ThreadSafe
+public interface SdmxDialect extends DataFactory {
 
-    public Frequency parseSdmx20(Key.Builder key, Function<String, String> attributes) {
-        String code = attributes.apply(FreqUtil.TIME_FORMAT_CONCEPT);
-        return code != null ? FreqUtil.parseByTimeFormat(code) : Frequency.UNDEFINED;
-    }
+    @Nonnull
+    String getName();
+
+    @Nonnull
+    String getDescription();
 }

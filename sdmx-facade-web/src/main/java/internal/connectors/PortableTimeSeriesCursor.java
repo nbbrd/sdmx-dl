@@ -19,7 +19,7 @@ package internal.connectors;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.parser.ObsParser;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import be.nbb.sdmx.facade.util.FreqUtil;
-import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
+import be.nbb.sdmx.facade.parser.FreqUtil;
+import static be.nbb.sdmx.facade.parser.FreqUtil.TIME_FORMAT_CONCEPT;
 
 /**
  *

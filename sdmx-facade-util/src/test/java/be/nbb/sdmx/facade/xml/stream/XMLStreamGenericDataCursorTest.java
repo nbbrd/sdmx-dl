@@ -22,11 +22,11 @@ import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import static be.nbb.sdmx.facade.util.FreqUtil.TIME_FORMAT_CONCEPT;
-import be.nbb.sdmx.facade.util.ObsParser;
+import static be.nbb.sdmx.facade.parser.FreqUtil.TIME_FORMAT_CONCEPT;
+import be.nbb.sdmx.facade.parser.ObsParser;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import be.nbb.sdmx.facade.util.FreqParser;
+import be.nbb.sdmx.facade.parser.FreqParser;
 import java.io.InputStream;
 import javax.xml.stream.XMLInputFactory;
 

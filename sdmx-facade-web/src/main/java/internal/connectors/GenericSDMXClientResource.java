@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.NoOpCursor;
-import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.parser.ObsParser;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;

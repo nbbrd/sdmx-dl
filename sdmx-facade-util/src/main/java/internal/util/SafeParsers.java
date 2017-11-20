@@ -16,14 +16,10 @@
  */
 package internal.util;
 
-import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import be.nbb.sdmx.facade.util.SafeParser;
@@ -34,27 +30,6 @@ import be.nbb.sdmx.facade.util.SafeParser;
  */
 @lombok.experimental.UtilityClass
 public class SafeParsers {
-
-    public final Map<Frequency, SafeParser<LocalDateTime>> STANDARD_PARSERS = initStandardParsers();
-
-    private Map<Frequency, SafeParser<LocalDateTime>> initStandardParsers() {
-        SafeParser yearMonth = SafeParser.onDatePattern("yyyy-MM");
-        SafeParser yearMonthDay = SafeParser.onDatePattern("yyyy-MM-dd");
-
-        Map<Frequency, SafeParser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
-        result.put(Frequency.ANNUAL, SafeParser.onDatePattern("yyyy").or(SafeParser.onDatePattern("yyyy'-01'")).or(SafeParser.onDatePattern("yyyy'-A1'")));
-        result.put(Frequency.HALF_YEARLY, SafeParser.onYearFreqPos("S", 2).or(yearMonth));
-        result.put(Frequency.QUARTERLY, SafeParser.onYearFreqPos("Q", 4).or(yearMonth));
-        result.put(Frequency.MONTHLY, SafeParser.onYearFreqPos("M", 12).or(yearMonth));
-        result.put(Frequency.WEEKLY, yearMonthDay);
-        result.put(Frequency.DAILY, yearMonthDay);
-        // FIXME: needs other pattern for time
-        result.put(Frequency.HOURLY, yearMonthDay);
-        result.put(Frequency.DAILY_BUSINESS, yearMonthDay);
-        result.put(Frequency.MINUTELY, yearMonthDay);
-        result.put(Frequency.UNDEFINED, yearMonth);
-        return Collections.unmodifiableMap(result);
-    }
 
     public static final class Fallback<T> implements SafeParser<T> {
 

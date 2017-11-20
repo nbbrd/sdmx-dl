@@ -17,10 +17,12 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
@@ -41,7 +43,7 @@ import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
-import internal.util.drivers.InseeDataFactory;
+import internal.util.drivers.InseeDialect;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.Dimension;
@@ -69,12 +71,12 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
         @SdmxFix(id = "INSEE#2", cause = "Does not follow sdmx standard codes")
-        private final InseeDataFactory dataFactory;
+        private final SdmxDialect dialect;
 
         private InseeClient(URI endpoint, LanguagePriorityList langs) {
             super("", endpoint, false, false, true);
             this.languages = Util.fromLanguages(langs);
-            this.dataFactory = new InseeDataFactory();
+            this.dialect = new InseeDialect();
         }
 
         @Override
@@ -114,7 +116,9 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
 
         private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toStructure(dsd), dataFactory).parse(new XMLEventStreamReader(r), () -> {})) {
+                DataStructure tmp = Util.toStructure(dsd);
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(tmp, dialect).parse(new XMLEventStreamReader(r), () -> {
+                })) {
                     return SeriesSupport.copyOf(cursor);
                 } catch (IOException ex) {
                     throw new SdmxIOException("Cannot parse compact data 21", ex);

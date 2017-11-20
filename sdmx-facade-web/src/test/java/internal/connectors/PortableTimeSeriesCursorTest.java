@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.Obs;
-import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.parser.ObsParser;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;

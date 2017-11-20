@@ -22,28 +22,44 @@ import static be.nbb.sdmx.facade.Frequency.ANNUAL;
 import static be.nbb.sdmx.facade.Frequency.HALF_YEARLY;
 import static be.nbb.sdmx.facade.Frequency.MONTHLY;
 import static be.nbb.sdmx.facade.Frequency.QUARTERLY;
-import be.nbb.sdmx.facade.util.FreqParser;
-import be.nbb.sdmx.facade.util.ObsParser;
+import be.nbb.sdmx.facade.parser.FreqParser;
 import be.nbb.sdmx.facade.util.SafeParser;
-import be.nbb.sdmx.facade.util.DataFactory;
-import be.nbb.sdmx.facade.util.FreqUtil;
+import be.nbb.sdmx.facade.parser.FreqUtil;
+import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import java.time.LocalDateTime;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * https://www.insee.fr/fr/information/2862759
  *
  * @author Philippe Charles
  */
-public final class InseeDataFactory implements DataFactory {
+@ServiceProvider(service = SdmxDialect.class)
+public final class InseeDialect implements SdmxDialect {
 
     @Override
-    public FreqParser getFreqParser(DataStructure dsd) {
-        return FreqParser.of(FreqUtil.extractorByIndex(dsd), InseeDataFactory::parseInseeFreq);
+    public String getName() {
+        return "INSEE2017";
     }
 
     @Override
-    public ObsParser getObsParser(DataStructure dsd) {
-        return new ObsParser(InseeDataFactory::onInseeTimePeriod, SafeParser.onStandardDouble());
+    public String getDescription() {
+        return getName();
+    }
+
+    @Override
+    public FreqParser getFreqParser(DataStructure dsd) {
+        return FreqParser.of(FreqUtil.extractorByIndex(dsd), InseeDialect::parseInseeFreq);
+    }
+
+    @Override
+    public SafeParser<LocalDateTime> getPeriodParser(Frequency freq) {
+        return onInseeTimePeriod(freq);
+    }
+
+    @Override
+    public SafeParser<Double> getValueParser() {
+        return SafeParser.onStandardDouble();
     }
 
     private static Frequency parseInseeFreq(String code) {

@@ -14,18 +14,20 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.parser;
 
+import be.nbb.sdmx.facade.parser.FreqUtil;
 import be.nbb.sdmx.facade.Frequency;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author Philippe Charles
  */
-public class FrequencyUtilTest {
+public class FreqUtilTest {
 
     @Test
     @SuppressWarnings("null")

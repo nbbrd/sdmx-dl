@@ -14,8 +14,9 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.parser;
 
+import be.nbb.sdmx.facade.util.SafeParser;
 import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -30,7 +31,7 @@ public final class ObsParser {
 
     @Nonnull
     public static ObsParser standard() {
-        return new ObsParser(SafeParser::onStandardFreq, SafeParser.onStandardDouble());
+        return new ObsParser(FreqUtil::onStandardFreq, SafeParser.onStandardDouble());
     }
 
     private final Function<Frequency, SafeParser<LocalDateTime>> toPeriodParser;

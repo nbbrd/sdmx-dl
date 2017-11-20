@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.sdmx.facade.Frequency;
 import internal.util.SafeParsers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -70,11 +69,6 @@ public interface SafeParser<T> {
     @Nonnull
     static SafeParser<LocalDateTime> onYearFreqPos(@Nonnull String freqCode, @Nonnegative int freq) {
         return new SafeParsers.YearFreqPos(freqCode, freq);
-    }
-
-    @Nonnull
-    static SafeParser<LocalDateTime> onStandardFreq(@Nonnull Frequency freq) {
-        return SafeParsers.STANDARD_PARSERS.get(freq);
     }
 
     @Nonnull

@@ -14,12 +14,12 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.parser;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
-import internal.util.FreqParsers;
+import internal.parser.FreqParsers;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import javax.annotation.Nonnull;

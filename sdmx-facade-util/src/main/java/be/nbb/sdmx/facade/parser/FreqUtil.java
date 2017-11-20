@@ -14,23 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.parser;
 
+import be.nbb.sdmx.facade.util.SafeParser;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Frequency;
-import static be.nbb.sdmx.facade.Frequency.DAILY;
-import static be.nbb.sdmx.facade.Frequency.HALF_YEARLY;
-import static be.nbb.sdmx.facade.Frequency.HOURLY;
-import static be.nbb.sdmx.facade.Frequency.MINUTELY;
-import static be.nbb.sdmx.facade.Frequency.MONTHLY;
-import static be.nbb.sdmx.facade.Frequency.QUARTERLY;
-import static be.nbb.sdmx.facade.Frequency.UNDEFINED;
-import static be.nbb.sdmx.facade.Frequency.WEEKLY;
+import static be.nbb.sdmx.facade.Frequency.*;
 import javax.annotation.Nonnull;
-import static be.nbb.sdmx.facade.Frequency.ANNUAL;
-import static be.nbb.sdmx.facade.Frequency.DAILY_BUSINESS;
 import be.nbb.sdmx.facade.Key;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -80,12 +76,12 @@ public class FreqUtil {
     public Frequency parseByFreq(@Nonnull String code) {
         switch (code.length()) {
             case 0:
-                return Frequency.UNDEFINED;
+                return UNDEFINED;
             case 1:
                 return parseByStandardFreq(code.charAt(0));
             default:
                 Frequency base = parseByStandardFreq(code.charAt(0));
-                return isMultiplier(code.substring(1)) ? base : Frequency.UNDEFINED;
+                return isMultiplier(code.substring(1)) ? base : UNDEFINED;
         }
     }
 
@@ -148,5 +144,31 @@ public class FreqUtil {
             default:
                 return UNDEFINED;
         }
+    }
+
+    @Nonnull
+    public static SafeParser<LocalDateTime> onStandardFreq(@Nonnull Frequency freq) {
+        return STANDARD_PARSERS.get(freq);
+    }
+
+    private final Map<Frequency, SafeParser<LocalDateTime>> STANDARD_PARSERS = initStandardParsers();
+
+    private Map<Frequency, SafeParser<LocalDateTime>> initStandardParsers() {
+        SafeParser yearMonth = SafeParser.onDatePattern("yyyy-MM");
+        SafeParser yearMonthDay = SafeParser.onDatePattern("yyyy-MM-dd");
+
+        Map<Frequency, SafeParser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
+        result.put(ANNUAL, SafeParser.onDatePattern("yyyy").or(SafeParser.onDatePattern("yyyy'-01'")).or(SafeParser.onDatePattern("yyyy'-A1'")));
+        result.put(HALF_YEARLY, SafeParser.onYearFreqPos("S", 2).or(yearMonth));
+        result.put(QUARTERLY, SafeParser.onYearFreqPos("Q", 4).or(yearMonth));
+        result.put(MONTHLY, SafeParser.onYearFreqPos("M", 12).or(yearMonth));
+        result.put(WEEKLY, yearMonthDay);
+        result.put(DAILY, yearMonthDay);
+        // FIXME: needs other pattern for time
+        result.put(HOURLY, yearMonthDay);
+        result.put(DAILY_BUSINESS, yearMonthDay);
+        result.put(MINUTELY, yearMonthDay);
+        result.put(UNDEFINED, yearMonth);
+        return Collections.unmodifiableMap(result);
     }
 }

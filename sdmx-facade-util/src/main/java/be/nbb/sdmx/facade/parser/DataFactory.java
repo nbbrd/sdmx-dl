@@ -14,31 +14,39 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade.parser;
 
+import be.nbb.sdmx.facade.util.SafeParser;
 import be.nbb.sdmx.facade.DataStructure;
-import internal.util.StandardDataFactory;
+import be.nbb.sdmx.facade.Frequency;
+import internal.parser.DataFactories;
+import java.time.LocalDateTime;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
+@ThreadSafe
 public interface DataFactory {
 
     @Nonnull
     FreqParser getFreqParser(@Nonnull DataStructure dsd);
 
     @Nonnull
-    ObsParser getObsParser(@Nonnull DataStructure dsd);
+    SafeParser<LocalDateTime> getPeriodParser(@Nonnull Frequency freq);
+
+    @Nonnull
+    SafeParser<Double> getValueParser();
 
     @Nonnull
     static DataFactory sdmx20() {
-        return StandardDataFactory.SDMX20;
+        return DataFactories.SDMX20;
     }
 
     @Nonnull
     static DataFactory sdmx21() {
-        return StandardDataFactory.SDMX21;
+        return DataFactories.SDMX21;
     }
 }
