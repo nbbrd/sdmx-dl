@@ -22,9 +22,8 @@ import static be.nbb.sdmx.facade.Frequency.ANNUAL;
 import static be.nbb.sdmx.facade.Frequency.HALF_YEARLY;
 import static be.nbb.sdmx.facade.Frequency.MONTHLY;
 import static be.nbb.sdmx.facade.Frequency.QUARTERLY;
-import be.nbb.sdmx.facade.parser.FreqParser;
-import be.nbb.sdmx.facade.util.SafeParser;
-import be.nbb.sdmx.facade.parser.FreqUtil;
+import be.nbb.sdmx.facade.parser.Freqs;
+import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import java.time.LocalDateTime;
 import org.openide.util.lookup.ServiceProvider;
@@ -48,18 +47,18 @@ public final class InseeDialect implements SdmxDialect {
     }
 
     @Override
-    public FreqParser getFreqParser(DataStructure dsd) {
-        return FreqParser.of(FreqUtil.extractorByIndex(dsd), InseeDialect::parseInseeFreq);
+    public Freqs.Parser getFreqParser(DataStructure dsd) {
+        return Freqs.Parser.of(Freqs.extractorByIndex(dsd), InseeDialect::parseInseeFreq);
     }
 
     @Override
-    public SafeParser<LocalDateTime> getPeriodParser(Frequency freq) {
+    public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
         return onInseeTimePeriod(freq);
     }
 
     @Override
-    public SafeParser<Double> getValueParser() {
-        return SafeParser.onStandardDouble();
+    public Chars.Parser<Double> getValueParser() {
+        return Chars.Parser.onStandardDouble();
     }
 
     private static Frequency parseInseeFreq(String code) {
@@ -80,7 +79,7 @@ public final class InseeDialect implements SdmxDialect {
         return Frequency.UNDEFINED;
     }
 
-    private static SafeParser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
+    private static Chars.Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
         switch (freq) {
             case ANNUAL:
                 return ANNUAL_PARSER;
@@ -95,9 +94,9 @@ public final class InseeDialect implements SdmxDialect {
         }
     }
 
-    private static final SafeParser<LocalDateTime> ANNUAL_PARSER = SafeParser.onDatePattern("yyyy");
-    private static final SafeParser<LocalDateTime> HALF_YEARLY_PARSER = SafeParser.onYearFreqPos("S", 2);
-    private static final SafeParser<LocalDateTime> QUARTERLY_PARSER = SafeParser.onYearFreqPos("Q", 4);
-    private static final SafeParser<LocalDateTime> MONTHLY_PARSER = SafeParser.onDatePattern("yyyy-MM").or(SafeParser.onYearFreqPos("B", 12));
-    private static final SafeParser<LocalDateTime> DEFAULT_PARSER = SafeParser.onNull();
+    private static final Chars.Parser<LocalDateTime> ANNUAL_PARSER = Chars.Parser.onDatePattern("yyyy");
+    private static final Chars.Parser<LocalDateTime> HALF_YEARLY_PARSER = Chars.Parser.onYearFreqPos("S", 2);
+    private static final Chars.Parser<LocalDateTime> QUARTERLY_PARSER = Chars.Parser.onYearFreqPos("Q", 4);
+    private static final Chars.Parser<LocalDateTime> MONTHLY_PARSER = Chars.Parser.onDatePattern("yyyy-MM").or(Chars.Parser.onYearFreqPos("B", 12));
+    private static final Chars.Parser<LocalDateTime> DEFAULT_PARSER = Chars.Parser.onNull();
 }

@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.parser;
 
-import be.nbb.sdmx.facade.util.SafeParser;
+import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import internal.parser.DataFactories;
@@ -32,13 +32,13 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface DataFactory {
 
     @Nonnull
-    FreqParser getFreqParser(@Nonnull DataStructure dsd);
+    Freqs.Parser getFreqParser(@Nonnull DataStructure dsd);
 
     @Nonnull
-    SafeParser<LocalDateTime> getPeriodParser(@Nonnull Frequency freq);
+    Chars.Parser<LocalDateTime> getPeriodParser(@Nonnull Frequency freq);
 
     @Nonnull
-    SafeParser<Double> getValueParser();
+    Chars.Parser<Double> getValueParser();
 
     @Nonnull
     static DataFactory sdmx20() {

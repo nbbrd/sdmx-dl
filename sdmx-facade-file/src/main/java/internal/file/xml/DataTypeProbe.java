@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.file;
+package internal.file.xml;
 
 import static be.nbb.sdmx.facade.xml.Sdmxml.*;
 import static internal.file.SdmxDecoder.DataType.*;
@@ -23,6 +23,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import internal.file.SdmxDecoder;
 
 /**
  *

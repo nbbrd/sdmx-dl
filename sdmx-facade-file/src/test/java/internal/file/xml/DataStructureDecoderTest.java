@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.file;
+package internal.file.xml;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
@@ -23,7 +23,7 @@ import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.xml.stream.Stax;
 import static org.assertj.core.api.Assertions.assertThat;
-import static internal.file.CustomDataStructureBuilder.dimension;
+import static internal.file.xml.CustomDataStructureBuilder.dimension;
 import javax.xml.stream.XMLInputFactory;
 
 /**

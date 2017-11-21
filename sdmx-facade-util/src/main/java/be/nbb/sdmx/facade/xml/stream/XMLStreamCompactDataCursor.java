@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import be.nbb.sdmx.facade.parser.FreqParser;
+import be.nbb.sdmx.facade.parser.Freqs;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
 import java.io.Closeable;
 
@@ -49,14 +49,14 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
-    private final FreqParser freqParser;
+    private final Freqs.Parser freqParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, String timeDimensionId, String primaryMeasureId) {
         if (!Stax.isNotNamespaceAware(reader)) {
             log.fine("Using XMLStreamReader with namespace awareness");
         }

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.file;
+package internal.file.xml;
 
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.LanguagePriorityList;
@@ -30,23 +30,26 @@ import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.util.List;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import internal.file.SdmxDecoder;
+import internal.file.SdmxFileUtil;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class XMLStreamSdmxDecoder implements SdmxDecoder {
+public final class StaxSdmxDecoder implements SdmxDecoder {
 
     private final XMLInputFactory factory;
     private final XMLInputFactory factoryWithoutNamespace;
 
     @Override
     public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
-        DataType dataType = probeDataType(files.getData());
-        return Info.of(dataType, files.hasStructure()
-                ? parseStruct(dataType, langs, files.getStructure())
-                : decodeStruct(dataType, files.getData()));
+        DataType type = probeDataType(files.getData());
+        File structure = files.getStructure();
+        return Info.of(type, SdmxFileUtil.isValidFile(structure)
+                ? parseStruct(type, langs, structure)
+                : decodeStruct(type, files.getData()));
     }
 
     private DataType probeDataType(File data) throws IOException {

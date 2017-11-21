@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public interface SdmxDecoder {
 
     @Nonnull
-    Info decode(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList ranges) throws IOException;
+    Info decode(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException;
 
     enum DataType {
 
@@ -39,7 +39,7 @@ public interface SdmxDecoder {
     @lombok.Value(staticConstructor = "of")
     class Info {
 
-        DataType dataType;
-        DataStructure dataStructure;
+        DataType type;
+        DataStructure structure;
     }
 }

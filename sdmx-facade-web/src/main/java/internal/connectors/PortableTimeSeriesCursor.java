@@ -27,8 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import be.nbb.sdmx.facade.parser.FreqUtil;
-import static be.nbb.sdmx.facade.parser.FreqUtil.TIME_FORMAT_CONCEPT;
+import be.nbb.sdmx.facade.parser.Freqs;
+import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
 
 /**
  *
@@ -137,11 +137,11 @@ final class PortableTimeSeriesCursor implements DataCursor {
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static Frequency getFrequency(PortableTimeSeries input) {
         if (input.getFrequency() != null) {
-            return FreqUtil.parseByFreq(input.getFrequency());
+            return Freqs.parseByFreq(input.getFrequency());
         }
         String value = input.getAttribute(TIME_FORMAT_CONCEPT);
         if (value != null) {
-            return FreqUtil.parseByTimeFormat(value);
+            return Freqs.parseByTimeFormat(value);
         }
         return Frequency.UNDEFINED;
     }

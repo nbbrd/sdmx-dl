@@ -14,29 +14,80 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util;
+package be.nbb.sdmx.facade.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import be.nbb.sdmx.facade.util.SafeParser;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class SafeParsers {
+public class Chars {
 
-    public static final class Fallback<T> implements SafeParser<T> {
+    public interface Parser<T> {
 
-        private final SafeParser<T> first;
-        private final SafeParser<T> second;
+        @Nullable
+        T parse(@Nonnull CharSequence input);
 
-        public Fallback(SafeParser<T> first, SafeParser<T> second) {
+        @Nonnull
+        default Parser<T> or(@Nonnull Parser<T> r) {
+            return new Fallback(this, r);
+        }
+
+        @Nonnull
+        default Parser<T> or(@Nonnull T value) {
+            return new Fallback(this, o -> value);
+        }
+
+        @Nonnull
+        @SuppressWarnings("null")
+        static <T> Parser<T> onNull() {
+            return o -> null;
+        }
+
+        @Nonnull
+        static Parser<LocalDateTime> onDatePattern(@Nonnull String pattern) {
+            DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
+                    .appendPattern(pattern)
+                    .parseStrict()
+                    .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+                    .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                    .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                    .toFormatter(Locale.ROOT);
+            return new OnDateTimeFormatter(dateFormat);
+        }
+
+        @Nonnull
+        static Parser<LocalDateTime> onYearFreqPos(@Nonnull String freqCode, @Nonnegative int freq) {
+            return new YearFreqPos(freqCode, freq);
+        }
+
+        @Nonnull
+        static Parser<Double> onStandardDouble() {
+            return Chars::doubleOrNull;
+        }
+    }
+
+    private static final class Fallback<T> implements Parser<T> {
+
+        private final Parser<T> first;
+        private final Parser<T> second;
+
+        public Fallback(Parser<T> first, Parser<T> second) {
             this.first = first;
             this.second = second;
         }
@@ -48,7 +99,7 @@ public class SafeParsers {
         }
     }
 
-    public static final class OnDateTimeFormatter implements SafeParser<LocalDateTime> {
+    private static final class OnDateTimeFormatter implements Parser<LocalDateTime> {
 
         private final DateTimeFormatter dateFormat;
 
@@ -66,7 +117,7 @@ public class SafeParsers {
         }
     }
 
-    public static final class YearFreqPos implements SafeParser<LocalDateTime> {
+    private static final class YearFreqPos implements Parser<LocalDateTime> {
 
         private final Pattern regex;
         private final int freq;
@@ -87,7 +138,7 @@ public class SafeParsers {
         }
     }
 
-    public Double doubleOrNull(CharSequence input) {
+    private Double doubleOrNull(CharSequence input) {
         try {
             return Double.valueOf(input.toString());
         } catch (NumberFormatException ex) {

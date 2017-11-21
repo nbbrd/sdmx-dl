@@ -16,10 +16,14 @@
  */
 package internal.file;
 
+import internal.file.xml.StaxSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.Dataflow;
+import be.nbb.sdmx.facade.DataflowRef;
 import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
@@ -39,7 +43,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Philippe Charles
  */
-public class FileSdmxConnectionTest {
+public class SdmxFileConnectionImplTest {
 
     @Test
     @SuppressWarnings("null")
@@ -49,7 +53,8 @@ public class FileSdmxConnectionTest {
 
         SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
@@ -66,7 +71,8 @@ public class FileSdmxConnectionTest {
 
         SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        FileSdmxConnection conn = new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getFlows()).hasSize(1);
         assertThat(conn.getStructure(files.asDataflowRef()).getDimensions()).hasSize(7);
@@ -94,12 +100,13 @@ public class FileSdmxConnectionTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new FileSdmxConnection(files, ANY, factoryWithoutNamespace, decoder, Optional.empty()), files.asDataflowRef());
+        ConnectionAssert.assertCompliance(() -> new SdmxFileConnectionImpl(r, dataflow), files.asDataflowRef());
     }
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
     private final XMLInputFactory factoryWithoutNamespace = Stax.getInputFactoryWithoutNamespace();
-    private final SdmxDecoder decoder = new XMLStreamSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace);
+    private final SdmxDecoder decoder = new StaxSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace);
+    private final Dataflow dataflow = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");
 }

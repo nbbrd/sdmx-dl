@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.parser;
 
-import be.nbb.sdmx.facade.util.SafeParser;
+import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -31,17 +31,17 @@ public final class ObsParser {
 
     @Nonnull
     public static ObsParser standard() {
-        return new ObsParser(FreqUtil::onStandardFreq, SafeParser.onStandardDouble());
+        return new ObsParser(Freqs::onStandardFreq, Chars.Parser.onStandardDouble());
     }
 
-    private final Function<Frequency, SafeParser<LocalDateTime>> toPeriodParser;
-    private final SafeParser<Double> valueParser;
-    private SafeParser<LocalDateTime> periodParser;
+    private final Function<Frequency, Chars.Parser<LocalDateTime>> toPeriodParser;
+    private final Chars.Parser<Double> valueParser;
+    private Chars.Parser<LocalDateTime> periodParser;
     private Frequency freq;
     private String period;
     private String value;
 
-    public ObsParser(Function<Frequency, SafeParser<LocalDateTime>> toPeriodParser, SafeParser<Double> valueParser) {
+    public ObsParser(Function<Frequency, Chars.Parser<LocalDateTime>> toPeriodParser, Chars.Parser<Double> valueParser) {
         this.toPeriodParser = toPeriodParser;
         this.valueParser = valueParser;
         this.periodParser = toPeriodParser.apply(Frequency.UNDEFINED);

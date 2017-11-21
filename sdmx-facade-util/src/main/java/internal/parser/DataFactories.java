@@ -19,9 +19,8 @@ package internal.parser;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.parser.FreqParser;
-import be.nbb.sdmx.facade.parser.FreqUtil;
-import be.nbb.sdmx.facade.util.SafeParser;
+import be.nbb.sdmx.facade.parser.Freqs;
+import be.nbb.sdmx.facade.util.Chars;
 import java.time.LocalDateTime;
 
 /**
@@ -32,34 +31,34 @@ public enum DataFactories implements DataFactory {
 
     SDMX20 {
         @Override
-        public FreqParser getFreqParser(DataStructure dsd) {
-            return FreqParser.sdmx20();
+        public Freqs.Parser getFreqParser(DataStructure dsd) {
+            return Freqs.Parser.sdmx20();
         }
 
         @Override
-        public SafeParser<LocalDateTime> getPeriodParser(Frequency freq) {
-            return FreqUtil.onStandardFreq(freq);
+        public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
+            return Freqs.onStandardFreq(freq);
         }
 
         @Override
-        public SafeParser<Double> getValueParser() {
-            return SafeParser.onStandardDouble();
+        public Chars.Parser<Double> getValueParser() {
+            return Chars.Parser.onStandardDouble();
         }
     },
     SDMX21 {
         @Override
-        public FreqParser getFreqParser(DataStructure dsd) {
-            return FreqParser.sdmx21(dsd);
+        public Freqs.Parser getFreqParser(DataStructure dsd) {
+            return Freqs.Parser.sdmx21(dsd);
         }
 
         @Override
-        public SafeParser<LocalDateTime> getPeriodParser(Frequency freq) {
-            return FreqUtil.onStandardFreq(freq);
+        public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
+            return Freqs.onStandardFreq(freq);
         }
 
         @Override
-        public SafeParser<Double> getValueParser() {
-            return SafeParser.onStandardDouble();
+        public Chars.Parser<Double> getValueParser() {
+            return Chars.Parser.onStandardDouble();
         }
     }
 }

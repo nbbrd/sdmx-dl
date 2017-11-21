@@ -14,10 +14,11 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.file;
+package internal.file.xml;
 
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import internal.file.SdmxDecoder;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;

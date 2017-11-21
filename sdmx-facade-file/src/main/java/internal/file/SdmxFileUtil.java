@@ -46,14 +46,19 @@ public class SdmxFileUtil {
         try {
             XMLStreamWriter xml = OUTPUT.createXMLStreamWriter(result);
             xml.writeEmptyElement(ROOT_TAG);
+
             xml.writeAttribute(DATA_ATTR, files.getData().toString());
-            if (files.hasStructure()) {
+
+            File structure = files.getStructure();
+            if (isValidFile(structure)) {
                 xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
             }
+
             String dialect = files.getDialect();
-            if (dialect != null && !dialect.isEmpty()) {
+            if (!isNullOrEmpty(dialect)) {
                 xml.writeAttribute(DIALECT_ATTR, dialect);
             }
+
             xml.writeEndDocument();
             xml.close();
         } catch (XMLStreamException ex) {
@@ -85,9 +90,17 @@ public class SdmxFileUtil {
         }
         return SdmxFileSet.builder()
                 .data(new File(data))
-                .structure(structure != null && !structure.isEmpty() ? new File(structure) : null)
+                .structure(!isNullOrEmpty(structure) ? new File(structure) : null)
                 .dialect(dialect)
                 .build();
+    }
+
+    public boolean isValidFile(File file) {
+        return file != null && !file.toString().isEmpty();
+    }
+
+    private boolean isNullOrEmpty(String o) {
+        return o == null || o.isEmpty();
     }
 
     private static final String ROOT_TAG = "file";

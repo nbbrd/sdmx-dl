@@ -38,10 +38,6 @@ public class SdmxFileSet {
     @Nullable
     String dialect;
 
-    public boolean hasStructure() {
-        return structure != null;
-    }
-
     @Nonnull
     public DataflowRef asDataflowRef() {
         return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
