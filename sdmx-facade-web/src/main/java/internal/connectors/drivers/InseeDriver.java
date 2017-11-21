@@ -49,11 +49,13 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
+import java.util.logging.Level;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.extern.java.Log
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class InseeDriver implements SdmxWebDriver, HasCache {
 
@@ -82,6 +84,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         @Override
         public DataFlowStructure getDataFlowStructure(DSDIdentifier dsd, boolean full) throws SdmxException {
             DataFlowStructure result = super.getDataFlowStructure(dsd, full);
+            fixIds(result);
             fixMissingCodes(result);
             return result;
         }
@@ -97,13 +100,38 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             return true;
         }
 
+        @SdmxFix(id = "INSEE#4", cause = "Some dimension/code ids are invalid")
+        private void fixIds(DataFlowStructure dsd) {
+            for (Dimension d : dsd.getDimensions()) {
+                if (d.getId().endsWith("6")) {
+                    d.setId(getValidId(d.getId()));
+//                    d.getCodeList().setId(getValidId(d.getCodeList().getId()));
+                }
+            }
+        }
+
+        private String getValidId(String id) {
+            return id.substring(0, id.length() - 1);
+        }
+
         @SdmxFix(id = "INSEE#3", cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
-                Codelist freq = d.getCodeList();
-                if (freq.getCodes().isEmpty()) {
-                    freq.setCodes(super.getCodes(freq.getId(), freq.getAgency(), freq.getVersion()));
+                Codelist codelist = d.getCodeList();
+                if (codelist.getCodes().isEmpty()) {
+                    loadMissingCodes(codelist);
                 }
+            }
+        }
+
+        private void loadMissingCodes(Codelist codelist) throws SdmxException {
+            try {
+                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
+            } catch (SdmxException ex) {
+                if (!Util.isNoResultMatchingQuery(ex)) {
+                    throw ex;
+                }
+                log.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
             }
         }
 

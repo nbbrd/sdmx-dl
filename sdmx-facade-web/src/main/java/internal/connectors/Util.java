@@ -24,6 +24,8 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 
 /**
  *
@@ -64,6 +66,10 @@ public class Util {
 
     public it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {
         return it.bancaditalia.oss.sdmx.util.LanguagePriorityList.parse(l.toString());
+    }
+
+    public boolean isNoResultMatchingQuery(SdmxException ex) {
+        return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == 100;
     }
 
     public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
