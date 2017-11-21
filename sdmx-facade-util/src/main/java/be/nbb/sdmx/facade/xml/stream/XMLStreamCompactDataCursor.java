@@ -32,12 +32,12 @@ import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.parser.FreqParser;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
 import java.io.Closeable;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.extern.java.Log
 final class XMLStreamCompactDataCursor implements DataCursor {
 
     private static final String DATASET_TAG = "DataSet";
@@ -58,7 +58,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, String timeDimensionId, String primaryMeasureId) {
         if (!Stax.isNotNamespaceAware(reader)) {
-            Logger.getLogger(getClass().getName()).warning("Using XMLStreamReader with namespace awareness");
+            log.fine("Using XMLStreamReader with namespace awareness");
         }
         this.reader = reader;
         this.onClose = onClose;

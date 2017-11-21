@@ -34,13 +34,13 @@ import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
 import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.extern.java.Log
 final class XMLStreamGenericDataCursor implements DataCursor {
 
     static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser) {
@@ -73,7 +73,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, FreqParser freqParser, SeriesHeadParser headParser) {
         if (!Stax.isNotNamespaceAware(reader)) {
-            Logger.getLogger(getClass().getName()).warning("Using XMLStreamReader with namespace awareness");
+            log.fine("Using XMLStreamReader with namespace awareness");
         }
         this.reader = reader;
         this.onClose = onClose;
