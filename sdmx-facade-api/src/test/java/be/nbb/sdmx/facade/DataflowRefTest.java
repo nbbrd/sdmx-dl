@@ -18,15 +18,14 @@ package be.nbb.sdmx.facade;
 
 import static be.nbb.sdmx.facade.DataflowRef.ALL_AGENCIES;
 import static be.nbb.sdmx.facade.DataflowRef.LATEST_VERSION;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-public class FlowRefTest {
+public class DataflowRefTest {
 
     @Test
     @SuppressWarnings("null")
@@ -38,8 +37,8 @@ public class FlowRefTest {
         assertThat(DataflowRef.parse("world,hello,")).isEqualTo(DataflowRef.of("world", "hello", LATEST_VERSION));
         assertThat(DataflowRef.parse(",hello,")).isEqualTo(DataflowRef.of(ALL_AGENCIES, "hello", LATEST_VERSION));
         assertThat(DataflowRef.parse(",,")).isEqualTo(DataflowRef.of(ALL_AGENCIES, "", LATEST_VERSION));
-        assertThatThrownBy(() -> DataflowRef.parse(",,,,")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DataflowRef.parse(null)).isInstanceOf(NullPointerException.class);
+        assertThatIllegalArgumentException().isThrownBy(() -> DataflowRef.parse(",,,,"));
+        assertThatNullPointerException().isThrownBy(() -> DataflowRef.parse(null));
     }
 
     @Test
@@ -61,8 +60,8 @@ public class FlowRefTest {
                 .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
-        assertThatThrownBy(() -> DataflowRef.of(null, "world,hello", null)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> DataflowRef.of(null, null, null)).isInstanceOf(NullPointerException.class);
+        assertThatIllegalArgumentException().isThrownBy(() -> DataflowRef.of(null, "world,hello", null));
+        assertThatNullPointerException().isThrownBy(() -> DataflowRef.of(null, null, null));
     }
 
     @Test
@@ -81,6 +80,6 @@ public class FlowRefTest {
         assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of(ALL_AGENCIES, "hello", "123"))).isFalse();
         assertThat(DataflowRef.of("world", "hello", LATEST_VERSION).contains(DataflowRef.of("world", "hello", "123"))).isTrue();
         assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", LATEST_VERSION))).isFalse();
-        assertThatThrownBy(() -> DataflowRef.of("world", "hello", "123").contains(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> DataflowRef.of("world", "hello", "123").contains(null));
     }
 }

@@ -46,6 +46,12 @@ public class IO {
         R applyWithIO(T t) throws IOException;
     }
 
+    @FunctionalInterface
+    public interface Predicate<T> {
+
+        boolean testWithIO(T t) throws IOException;
+    }
+
     @Nonnull
     public <T extends Closeable, R> Stream<R> stream(IO.Supplier<T> supplier, IO.Function<T, Stream<R>> stream) throws IOException {
         T resource = supplier.getWithIO();
@@ -98,10 +104,30 @@ public class IO {
                 iter, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
-    private Runnable asUncheckedRunnable(Closeable c) {
+    private Runnable asUncheckedRunnable(Closeable o) {
         return () -> {
             try {
-                c.close();
+                o.close();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
+    }
+
+    public <T, R> java.util.function.Function<T, R> asUnchecked(Function<T, R> o) {
+        return (T t) -> {
+            try {
+                return o.applyWithIO(t);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
+    }
+
+    public <T> java.util.function.Predicate<T> asUnchecked(Predicate<T> o) {
+        return (T t) -> {
+            try {
+                return o.testWithIO(t);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }

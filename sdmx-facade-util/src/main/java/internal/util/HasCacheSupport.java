@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,37 +14,36 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package internal.util;
 
-import internal.util.HasCacheSupport;
+import be.nbb.sdmx.facade.util.HasCache;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  *
  * @author Philippe Charles
  */
-public interface HasCache {
+@lombok.AllArgsConstructor
+public final class HasCacheSupport implements HasCache {
 
-    @Nonnull
-    ConcurrentMap getCache();
+    private final Supplier<ConcurrentMap> defaultCache;
+    private final AtomicReference<ConcurrentMap> cache;
+    private final BiConsumer<ConcurrentMap, ConcurrentMap> onCacheChange;
 
-    void setCache(@Nullable ConcurrentMap cache);
-
-    @Nonnull
-    static HasCache of(@Nonnull Supplier<ConcurrentMap> defaultCache) {
-        return of(defaultCache, (oldObj, newObj) -> {
-        });
+    @Override
+    public ConcurrentMap getCache() {
+        return cache.get();
     }
 
-    @Nonnull
-    static HasCache of(@Nonnull Supplier<ConcurrentMap> defaultCache, @Nonnull BiConsumer<ConcurrentMap, ConcurrentMap> onCacheChange) {
-        ConcurrentMap cache = defaultCache.get();
-        onCacheChange.accept(null, cache);
-        return new HasCacheSupport(defaultCache, new AtomicReference<>(cache), onCacheChange);
+    @Override
+    public void setCache(ConcurrentMap cache) {
+        ConcurrentMap oldObj = this.cache.get();
+        ConcurrentMap newObj = cache != null ? cache : defaultCache.get();
+        if (this.cache.compareAndSet(oldObj, newObj)) {
+            onCacheChange.accept(oldObj, newObj);
+        }
     }
 }

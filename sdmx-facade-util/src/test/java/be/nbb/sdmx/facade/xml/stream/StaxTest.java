@@ -61,15 +61,9 @@ public class StaxTest {
             return "";
         };
 
-        assertThatThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8))
-                .isInstanceOf(NullPointerException.class)
-                .hasNoSuppressedExceptions()
-                .hasNoCause();
+        assertThatNullPointerException().isThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8));
 
-        assertThatThrownBy(() -> p.parseStream(xif, null, UTF_8))
-                .isInstanceOf(NullPointerException.class)
-                .hasNoSuppressedExceptions()
-                .hasNoCause();
+        assertThatNullPointerException().isThrownBy(() -> p.parseStream(xif, null, UTF_8));
 
         assertThatThrownBy(() -> p.parseStream(xif, OpenErrorStream::new, UTF_8))
                 .isInstanceOf(OpenError.class)
@@ -97,15 +91,9 @@ public class StaxTest {
             }
         };
 
-        assertThatThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8))
-                .isInstanceOf(NullPointerException.class)
-                .hasNoSuppressedExceptions()
-                .hasNoCause();
+        assertThatNullPointerException().isThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8));
 
-        assertThatThrownBy(() -> p.parseStream(xif, null, UTF_8))
-                .isInstanceOf(NullPointerException.class)
-                .hasNoSuppressedExceptions()
-                .hasNoCause();
+        assertThatNullPointerException().isThrownBy(() -> p.parseStream(xif, null, UTF_8));
 
         assertThatThrownBy(() -> p.parseStream(xif, OpenErrorStream::new, UTF_8))
                 .isInstanceOf(OpenError.class)

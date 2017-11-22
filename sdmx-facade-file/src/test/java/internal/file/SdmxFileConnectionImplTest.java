@@ -59,8 +59,8 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(files.asDataflowRef()));
-        assertThatThrownBy(() -> conn.getCursor(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> conn.getStream(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> conn.getCursor(null));
+        assertThatNullPointerException().isThrownBy(() -> conn.getStream(null));
         assertThat(conn.getStream(DataQuery.of(Key.ALL, false))).containsExactly(conn.getStream(DataQuery.of(Key.ALL, false)).toArray(Series[]::new));
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,24 +16,17 @@
  */
 package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.NBB;
-import org.openide.util.lookup.ServiceProvider;
-import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import org.junit.Test;
+import static test.DriverAssertions.*;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
-public final class NbbDriver implements SdmxWebDriver, HasCache {
+public class AbsDriverTest {
 
-    @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
-            .builder()
-            .prefix("sdmx:nbb:")
-            .supplier(NBB::new)
-            .entry("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx")
-            .build();
+    @Test
+    public void testCompliance() {
+        assertDriverCompliance(new AbsDriver(), "sdmx:abs:");
+    }
 }

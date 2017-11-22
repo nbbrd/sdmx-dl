@@ -18,8 +18,7 @@ package internal.file;
 
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import java.io.File;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -43,10 +42,10 @@ public class SdmxFileUtilTest {
     @Test
     @SuppressWarnings("null")
     public void testFromXml() {
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml("")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml("<file />")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> SdmxFileUtil.fromXml("<file data=\"\" />")).isInstanceOf(IllegalArgumentException.class);
+        assertThatNullPointerException().isThrownBy(() -> SdmxFileUtil.fromXml(null));
+        assertThatIllegalArgumentException().isThrownBy(() -> SdmxFileUtil.fromXml(""));
+        assertThatIllegalArgumentException().isThrownBy(() -> SdmxFileUtil.fromXml("<file />"));
+        assertThatIllegalArgumentException().isThrownBy(() -> SdmxFileUtil.fromXml("<file data=\"\" />"));
 
         assertThat(SdmxFileUtil.fromXml("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)

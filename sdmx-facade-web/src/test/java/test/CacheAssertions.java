@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,26 +14,26 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors.drivers;
+package test;
 
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.NBB;
-import org.openide.util.lookup.ServiceProvider;
-import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
-public final class NbbDriver implements SdmxWebDriver, HasCache {
+@lombok.experimental.UtilityClass
+public class CacheAssertions {
 
-    @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
-            .builder()
-            .prefix("sdmx:nbb:")
-            .supplier(NBB::new)
-            .entry("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx")
-            .build();
+    public void assertCacheBehavior(HasCache o) {
+        assertThat(o.getCache()).isNotNull();
+        ConcurrentMap cache = new ConcurrentHashMap();
+        o.setCache(cache);
+        assertThat(o.getCache()).isSameAs(cache);
+        o.setCache(null);
+        assertThat(o.getCache()).isNotNull().isNotSameAs(cache);
+    }
 }

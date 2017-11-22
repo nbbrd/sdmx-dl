@@ -73,6 +73,7 @@ public final class InseeDialect implements SdmxDialect {
                 case 'M':
                     return MONTHLY;
                 case 'B':
+                    // FIXME: define new freq?
                     return MONTHLY;
             }
         }

@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
 import internal.file.SdmxFileUtil;
 import java.io.File;
 import java.io.IOException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -50,11 +50,11 @@ public class SdmxFileManagerTest {
     @SuppressWarnings("null")
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
-        assertThatThrownBy(() -> m.getConnection((String) null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> m.getConnection((String) null, LanguagePriorityList.ANY)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> m.getConnection(SdmxFileUtil.toXml(files), null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> m.getConnection((SdmxFileSet) null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> m.getConnection(files, null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null, LanguagePriorityList.ANY));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection(SdmxFileUtil.toXml(files), null));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection((SdmxFileSet) null));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection(files, null));
     }
 
     private final SdmxFileSet files = SdmxFileSet.builder().data(new File("hello")).build();

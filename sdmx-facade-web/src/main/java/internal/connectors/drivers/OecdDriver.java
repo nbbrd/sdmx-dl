@@ -16,10 +16,8 @@
  */
 package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
-import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorsDriverSupport;
@@ -31,13 +29,11 @@ import internal.connectors.ConnectorsDriverSupport;
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class OecdDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:oecd:";
-
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, OECD.class);
-
-    @Override
-    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return ConnectorsDriverSupport.entry("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx");
-    }
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+            .builder()
+            .prefix("sdmx:oecd:")
+            .supplier(OECD::new)
+            .entry("OECD", "The Organisation for Economic Co-operation and Development", "sdmx:oecd:https://stats.oecd.org/restsdmx/sdmx.ashx")
+            .build();
 }

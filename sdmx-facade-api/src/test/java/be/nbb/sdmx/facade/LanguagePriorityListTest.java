@@ -16,11 +16,11 @@
  */
 package be.nbb.sdmx.facade;
 
+import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
+import static be.nbb.sdmx.facade.LanguagePriorityList.parse;
 import java.util.Arrays;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -31,33 +31,33 @@ public class LanguagePriorityListTest {
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        assertThat(LanguagePriorityList.parse("*")).hasToString("*");
-        assertThat(LanguagePriorityList.parse("fr")).hasToString("fr");
-        assertThat(LanguagePriorityList.parse("fr-BE")).hasToString("fr-be");
-        assertThat(LanguagePriorityList.parse("fr-BE,fr;q=0.5")).hasToString("fr-be,fr;q=0.5");
-        assertThat(LanguagePriorityList.parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
-        assertThatThrownBy(() -> LanguagePriorityList.parse("fr-BE;")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> LanguagePriorityList.parse(null)).isInstanceOf(NullPointerException.class);
+        assertThat(parse("*")).hasToString("*");
+        assertThat(parse("fr")).hasToString("fr");
+        assertThat(parse("fr-BE")).hasToString("fr-be");
+        assertThat(parse("fr-BE,fr;q=0.5")).hasToString("fr-be,fr;q=0.5");
+        assertThat(parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
+        assertThatIllegalArgumentException().isThrownBy(() -> parse("fr-BE;"));
+        assertThatNullPointerException().isThrownBy(() -> parse(null));
     }
 
     @Test
     public void testEquals() {
-        assertThat(LanguagePriorityList.parse("*"))
-                .isEqualTo(LanguagePriorityList.parse("*"))
-                .isEqualTo(LanguagePriorityList.ANY);
+        assertThat(parse("*"))
+                .isEqualTo(parse("*"))
+                .isEqualTo(ANY);
 
-        assertThat(LanguagePriorityList.parse("fr-BE"))
-                .isEqualTo(LanguagePriorityList.parse("fr-BE;q=1"))
-                .isEqualTo(LanguagePriorityList.parse("fr-BE"));
+        assertThat(parse("fr-BE"))
+                .isEqualTo(parse("fr-BE;q=1"))
+                .isEqualTo(parse("fr-BE"));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testLookupTag() {
-        assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
-        assertThat(LanguagePriorityList.parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
-        assertThat(LanguagePriorityList.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
-        assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("nl"))).isNull();
-        assertThatThrownBy(() -> LanguagePriorityList.parse("fr").lookupTag(null)).isInstanceOf(NullPointerException.class);
+        assertThat(parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
+        assertThat(parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
+        assertThat(parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
+        assertThat(parse("fr").lookupTag(Arrays.asList("nl"))).isNull();
+        assertThatNullPointerException().isThrownBy(() -> parse("fr").lookupTag(null));
     }
 }

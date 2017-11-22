@@ -16,9 +16,9 @@
  */
 package be.nbb.sdmx.facade;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static be.nbb.sdmx.facade.Dimension.builder;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -31,41 +31,27 @@ public class DimentionTest {
 
     @Test
     public void testBuilder() {
-        assertThatThrownBy(Dimension.builder()::build)
-                .as("Codelist#getId() must be non-null")
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("id");
+        assertThatNullPointerException().isThrownBy(builder()::build).withMessage("id");
+        assertThatNullPointerException().isThrownBy(builder().id(null)::build).withMessage("id");
+        assertThatNullPointerException().isThrownBy(builder().id(someId).label(null)::build).withMessage("label");
+        assertThatNullPointerException().isThrownBy(() -> builder().codes(null));
 
-        assertThatThrownBy(Dimension.builder().id(null)::build)
-                .as("Codelist#getId() must be non-null")
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("id");
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> builder().id(someId).label(someLabel).build().getCodes().put("hello", "world"));
 
-        assertThatThrownBy(Dimension.builder().id(someId).label(null)::build)
-                .as("Codelist#getLabel() must be non-null")
-                .isInstanceOf(NullPointerException.class);
-
-        assertThatThrownBy(() -> Dimension.builder().codes(null))
-                .as("Codelist#getCodes() must be non-null")
-                .isInstanceOf(NullPointerException.class);
-
-        assertThatThrownBy(() -> Dimension.builder().id(someId).label(someLabel).build().getCodes().put("hello", "world"))
-                .as("Codelist#getCodes() must return immutable map")
-                .isInstanceOf(UnsupportedOperationException.class);
-
-        assertThat(Dimension.builder().id(someId).label(someLabel).build())
+        assertThat(builder().id(someId).label(someLabel).build())
                 .hasFieldOrPropertyWithValue("id", someId)
                 .hasFieldOrPropertyWithValue("label", someLabel)
                 .hasNoNullFieldsOrProperties();
 
-        assertThat(Dimension.builder().id(someId).label(someLabel).code("hello", "world").build().getCodes())
+        assertThat(builder().id(someId).label(someLabel).code("hello", "world").build().getCodes())
                 .containsEntry("hello", "world")
                 .hasSize(1);
     }
 
     @Test
     public void testEquals() {
-        assertThat(Dimension.builder().id("id").label("label").position(1).code("k1", "v1").code("k2", "v2").build())
-                .isEqualTo(Dimension.builder().id("id").label("label").position(1).code("k2", "v2").code("k1", "v1").build());
+        assertThat(builder().id("id").label("label").position(1).code("k1", "v1").code("k2", "v2").build())
+                .isEqualTo(builder().id("id").label("label").position(1).code("k2", "v2").code("k1", "v1").build());
     }
 }

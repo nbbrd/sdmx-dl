@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package test;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
@@ -28,6 +28,7 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import internal.connectors.Util;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;

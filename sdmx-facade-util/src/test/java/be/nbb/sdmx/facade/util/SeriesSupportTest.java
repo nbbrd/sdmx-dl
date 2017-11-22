@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.LanguagePriorityList;
+import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.samples.SdmxSource;
@@ -33,8 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -46,8 +45,8 @@ public class SeriesSupportTest {
     @Test
     @SuppressWarnings("null")
     public void testAsCursor() {
-        assertThatThrownBy(() -> SeriesSupport.asCursor(null, Key.ALL)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SeriesSupport.asCursor(Collections.emptyList(), null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> SeriesSupport.asCursor(null, Key.ALL));
+        assertThatNullPointerException().isThrownBy(() -> SeriesSupport.asCursor(Collections.emptyList(), null));
 
         DataCursorAssert.assertCompliance(() -> SeriesSupport.asCursor(Collections.emptyList(), Key.ALL));
     }
@@ -55,19 +54,19 @@ public class SeriesSupportTest {
     @Test
     @SuppressWarnings("null")
     public void testAsStream() {
-        assertThatThrownBy(() -> SeriesSupport.asStream(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> SeriesSupport.asStream(null));
 
-        assertThatThrownBy(() -> {
+        assertThatIllegalStateException().isThrownBy(() -> {
             DataCursor cursor = NoOpCursor.noOp();
             SeriesSupport.asStream(() -> cursor).count();
             cursor.getSeriesKey();
-        }).isInstanceOf(IllegalStateException.class);
+        });
     }
 
     @Test
     @SuppressWarnings("null")
     public void testCopyOf() throws IOException, XMLStreamException {
-        assertThatThrownBy(() -> SeriesSupport.copyOf(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> SeriesSupport.copyOf(null));
 
         try (DataCursor c = NoOpCursor.noOp()) {
             assertThat(SeriesSupport.copyOf(c)).isEmpty();
@@ -77,7 +76,7 @@ public class SeriesSupportTest {
             assertThat(SeriesSupport.copyOf(c)).hasSize(1).element(0).isSameAs(series);
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).parseReader(xif, SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(xif, SdmxSource.ECB_DATA_STRUCTURE::openReader);
         try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(xif, SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOf(c)).hasSize(120);
         }
@@ -86,7 +85,7 @@ public class SeriesSupportTest {
     @Test
     @SuppressWarnings("null")
     public void testCopyOfKeysAndMeta() throws IOException, XMLStreamException {
-        assertThatThrownBy(() -> SeriesSupport.copyOfKeysAndMeta(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> SeriesSupport.copyOfKeysAndMeta(null));
 
         try (DataCursor c = NoOpCursor.noOp()) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c)).isEmpty();
@@ -100,7 +99,7 @@ public class SeriesSupportTest {
                     .isEqualToComparingOnlyGivenFields(series, "key", "freq", "meta");
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(LanguagePriorityList.ANY).parseReader(xif, SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(xif, SdmxSource.ECB_DATA_STRUCTURE::openReader);
         try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(xif, SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c))
                     .allMatch(o -> o.getObs().isEmpty())

@@ -16,10 +16,8 @@
  */
 package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.UIS;
-import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorsDriverSupport;
@@ -31,13 +29,11 @@ import internal.connectors.ConnectorsDriverSupport;
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class UisDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:uis:";
-
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, UIS.class);
-
-    @Override
-    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return ConnectorsDriverSupport.entry("UIS", "Unesco Institute for Statistics", "sdmx:uis:http://data.uis.unesco.org/RestSDMX/sdmx.ashx");
-    }
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+            .builder()
+            .prefix("sdmx:uis:")
+            .supplier(UIS::new)
+            .entry("UIS", "Unesco Institute for Statistics", "sdmx:uis:http://data.uis.unesco.org/RestSDMX/sdmx.ashx")
+            .build();
 }

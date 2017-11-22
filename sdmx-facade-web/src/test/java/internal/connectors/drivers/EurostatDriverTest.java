@@ -14,20 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.connectors.drivers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
+import static test.DriverAssertions.*;
 
 /**
  *
  * @author Philippe Charles
  */
-public class ParsersTest {
+public class EurostatDriverTest {
 
     @Test
-    public void test() throws Exception {
-        assertThat(ConnectorsResource.nbb()).isEqualTo(FacadeResource.nbb());
-        assertThat(ConnectorsResource.ecb()).isEqualTo(FacadeResource.ecb());
+    public void testCompliance() {
+        assertDriverCompliance(new EurostatDriver(), "sdmx:eurostat:");
     }
 }

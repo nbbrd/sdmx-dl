@@ -17,6 +17,7 @@
 package be.nbb.sdmx.facade.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -42,17 +43,17 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testFactories() {
-        assertThatThrownBy(() -> SdmxWebManager.of((Iterable) null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> SdmxWebManager.of((SdmxWebDriver[]) null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((Iterable) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((SdmxWebDriver[]) null));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testGetConnectionOfEntryPoint() {
         SdmxWebManager manager = SdmxWebManager.of(REPO);
-        assertThatThrownBy(() -> manager.getConnection((SdmxWebEntryPoint) null, LanguagePriorityList.ANY)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> manager.getConnection(HELLO, null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> manager.getConnection(HELLO.toBuilder().uri("ko").build(), LanguagePriorityList.ANY)).isInstanceOf(IOException.class);
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebEntryPoint) null, ANY));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
+        assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().uri("ko").build(), ANY));
     }
 
     private static final SdmxWebEntryPoint HELLO = SdmxWebEntryPoint.builder().name("ok").uri(RepoDriver.PREFIX + "r1").build();

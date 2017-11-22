@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import org.junit.Test;
 
 /**
@@ -80,7 +80,7 @@ public class CachedResourceTest {
 
         CachedResource target = new CachedResource(resource, "", cache, clock, 100);
 
-        assertThatThrownBy(() -> target.loadDataflow(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> target.loadDataflow(null));
 
         target.loadDataflow(sample);
         assertThat(resource.count).isEqualTo(1);
@@ -115,7 +115,7 @@ public class CachedResourceTest {
 
         CachedResource target = new CachedResource(resource, "", cache, clock, 100);
 
-        assertThatThrownBy(() -> target.loadDataflow(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> target.loadDataflow(null));
 
         target.loadDataStructure(sample);
         assertThat(resource.count).isEqualTo(2);
@@ -144,7 +144,7 @@ public class CachedResourceTest {
 
         CachedResource target = new CachedResource(resource, "", cache, clock, 100);
 
-        assertThatThrownBy(() -> target.loadDataflow(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> target.loadDataflow(null));
 
         target.loadData(sample, Key.ALL, true);
         assertThat(resource.count).isEqualTo(3);

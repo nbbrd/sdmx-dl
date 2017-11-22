@@ -19,7 +19,6 @@ package internal.connectors.drivers;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
@@ -34,7 +33,6 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxIOException;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -59,25 +57,29 @@ import java.util.logging.Level;
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class InseeDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:insee:";
-
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new InseeClient(u, l));
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+            .builder()
+            .prefix("sdmx:insee:")
+            .supplier((u, i) -> new InseeClient(u))
+            .entryPoint(INSEE_ENTRY)
+            .build();
 
     @SdmxFix(id = "INSEE#1", cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
-    @Override
-    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return ConnectorsDriverSupport.entry("INSEE", "Institut national de la statistique et des études économiques", "sdmx:insee:http://bdm.insee.fr/series/sdmx");
-    }
+    private static final SdmxWebEntryPoint INSEE_ENTRY = SdmxWebEntryPoint
+            .builder()
+            .name("INSEE")
+            .description("Institut national de la statistique et des études économiques")
+            .uri("sdmx:insee:http://bdm.insee.fr/series/sdmx")
+            .build();
 
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
         @SdmxFix(id = "INSEE#2", cause = "Does not follow sdmx standard codes")
         private final SdmxDialect dialect;
 
-        private InseeClient(URI endpoint, LanguagePriorityList langs) {
+        private InseeClient(URI endpoint) {
             super("", endpoint, false, false, true);
-            this.languages = Util.fromLanguages(langs);
             this.dialect = new InseeDialect();
         }
 

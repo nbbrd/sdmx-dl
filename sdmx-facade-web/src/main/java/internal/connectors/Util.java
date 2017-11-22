@@ -69,7 +69,7 @@ public class Util {
     }
 
     public boolean isNoResultMatchingQuery(SdmxException ex) {
-        return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == 100;
+        return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
     public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");

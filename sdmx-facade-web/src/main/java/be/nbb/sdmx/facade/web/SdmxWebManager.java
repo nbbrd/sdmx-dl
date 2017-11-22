@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
@@ -62,17 +61,16 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         drivers.forEach(driverList::add);
 
         ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName = new ConcurrentHashMap<>();
-        ConcurrentMap cache = new ConcurrentHashMap();
-
         updateEntryPointMap(entryPointByName, driverList.stream().flatMap(o -> tryGetDefaultEntryPoints(o).stream()));
-        updateCache(driverList, cache);
 
-        return new SdmxWebManager(driverList, entryPointByName, new AtomicReference<>(cache));
+        HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
+
+        return new SdmxWebManager(driverList, entryPointByName, cacheSupport);
     }
 
     private final List<SdmxWebDriver> drivers;
     private final ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName;
-    private final AtomicReference<ConcurrentMap> cache;
+    private final HasCache cacheSupport;
 
     @Override
     public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
@@ -101,13 +99,12 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
     @Override
     public ConcurrentMap getCache() {
-        return cache.get();
+        return cacheSupport.getCache();
     }
 
     @Override
     public void setCache(ConcurrentMap cache) {
-        this.cache.set(cache != null ? cache : new ConcurrentHashMap());
-        updateCache(drivers, this.cache.get());
+        this.cacheSupport.setCache(cache);
     }
 
     @Nonnull
@@ -119,7 +116,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         updateEntryPointMap(entryPointByName, list.stream());
     }
 
-    private static void updateCache(List<SdmxWebDriver> drivers, ConcurrentMap cache) {
+    private static void applyCache(ConcurrentMap cache, List<SdmxWebDriver> drivers) {
         drivers.stream()
                 .filter(HasCache.class::isInstance)
                 .forEach(o -> ((HasCache) o).setCache(cache));

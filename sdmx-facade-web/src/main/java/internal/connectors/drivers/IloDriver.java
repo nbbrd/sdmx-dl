@@ -16,10 +16,8 @@
  */
 package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.ILO;
-import java.util.Collection;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorsDriverSupport;
@@ -31,13 +29,11 @@ import internal.connectors.ConnectorsDriverSupport;
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class IloDriver implements SdmxWebDriver, HasCache {
 
-    private static final String PREFIX = "sdmx:ilo:";
-
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, ILO.class);
-
-    @Override
-    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return ConnectorsDriverSupport.entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest");
-    }
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+            .builder()
+            .prefix("sdmx:ilo:")
+            .supplier(ILO::new)
+            .entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest")
+            .build();
 }

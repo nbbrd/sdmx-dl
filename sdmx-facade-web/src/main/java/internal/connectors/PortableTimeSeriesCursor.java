@@ -34,7 +34,7 @@ import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
  *
  * @author Philippe Charles
  */
-final class PortableTimeSeriesCursor implements DataCursor {
+public final class PortableTimeSeriesCursor implements DataCursor {
 
     private final Iterator<PortableTimeSeries> data;
     private final ObsParser obs;
@@ -43,7 +43,7 @@ final class PortableTimeSeriesCursor implements DataCursor {
     private boolean closed;
     private boolean hasObs;
 
-    PortableTimeSeriesCursor(List<PortableTimeSeries> data, ObsParser obs) {
+    public PortableTimeSeriesCursor(List<PortableTimeSeries> data, ObsParser obs) {
         this.data = data.iterator();
         this.obs = obs;
         this.closed = false;

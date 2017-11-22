@@ -36,7 +36,6 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
 import lombok.AccessLevel;
@@ -56,7 +55,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
         return new SdmxFileManager(
                 factoryWithoutNamespace,
                 new StaxSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace),
-                new AtomicReference<>(new ConcurrentHashMap()),
+                HasCache.of(ConcurrentHashMap::new),
                 dialects
         );
     }
@@ -65,7 +64,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     private final XMLInputFactory factoryWithoutNamespace;
     private final SdmxDecoder decoder;
-    private final AtomicReference<ConcurrentMap> cache;
+    private final HasCache cacheSupport;
     private final List<SdmxDialect> dialects;
 
     @Override
@@ -90,12 +89,12 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     @Override
     public ConcurrentMap getCache() {
-        return cache.get();
+        return cacheSupport.getCache();
     }
 
     @Override
     public void setCache(ConcurrentMap cache) {
-        this.cache.set(cache != null ? cache : new ConcurrentHashMap());
+        this.cacheSupport.setCache(cache);
     }
 
     private SdmxFileSet getFiles(String name) throws IOException {
@@ -107,7 +106,7 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
     }
 
     private SdmxFileConnectionImpl.Resource getResource(SdmxFileSet files, LanguagePriorityList languages) {
-        return new CachedResource(files, languages, factoryWithoutNamespace, decoder, getDataFactory(files), cache.get());
+        return new CachedResource(files, languages, factoryWithoutNamespace, decoder, getDataFactory(files), getCache());
     }
 
     private Dataflow getDataflow(SdmxFileSet files) {

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package test;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Frequency;
@@ -25,6 +25,8 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.ObsParser;
 import be.nbb.sdmx.facade.xml.stream.Stax;
+import internal.connectors.PortableTimeSeriesCursor;
+import internal.connectors.Util;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
@@ -110,7 +112,7 @@ public class ConnectorsResource {
                 .collect(Collectors.toList());
     }
 
-    List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    public List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
@@ -118,7 +120,7 @@ public class ConnectorsResource {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
-    List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    public List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
         return FacadeResource.data21(XIF, xml, Util.toStructure(dsd))
                 .stream()

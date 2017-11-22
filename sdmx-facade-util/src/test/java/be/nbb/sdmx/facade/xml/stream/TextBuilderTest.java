@@ -18,8 +18,7 @@ package be.nbb.sdmx.facade.xml.stream;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -38,9 +37,9 @@ public class TextBuilderTest {
         assertThat(new TextBuilder(ANY).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("hello");
         assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("bonjour");
 
-        assertThatThrownBy(() -> new TextBuilder(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> new TextBuilder(ANY).put(null, "hello")).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> new TextBuilder(ANY).put("en", "hello").build(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> new TextBuilder(null));
+        assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put(null, "hello"));
+        assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put("en", "hello").build(null));
 
         assertThat(new TextBuilder(LanguagePriorityList.parse("fr")).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("bonjour");
         assertThat(new TextBuilder(LanguagePriorityList.parse("en")).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("hello");

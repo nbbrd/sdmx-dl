@@ -16,23 +16,20 @@
  */
 package be.nbb.sdmx.facade.parser;
 
-import be.nbb.sdmx.facade.parser.Freqs;
 import be.nbb.sdmx.facade.Frequency;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author Philippe Charles
  */
-public class FreqUtilTest {
+public class FreqsTest {
 
     @Test
     @SuppressWarnings("null")
     public void testParseByFreq() {
-        assertThatThrownBy(() -> Freqs.parseByFreq(null)).isInstanceOf(NullPointerException.class);
+        assertThatNullPointerException().isThrownBy(() -> Freqs.parseByFreq(null));
 
         assertThat(Freqs.parseByFreq("A")).isEqualTo(Frequency.ANNUAL);
         assertThat(Freqs.parseByFreq("S")).isEqualTo(Frequency.HALF_YEARLY);

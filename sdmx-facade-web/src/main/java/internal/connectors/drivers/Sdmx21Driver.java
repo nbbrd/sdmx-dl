@@ -18,7 +18,6 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.Series;
@@ -55,10 +54,14 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport.of(PREFIX, (u, i, l) -> new Sdmx21Client(u, Sdmx21Config.load(i), l));
+    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+            .builder()
+            .prefix(PREFIX)
+            .supplier((u, i) -> new Sdmx21Client(u, Sdmx21Config.load(i)))
+            .entryPoints(getEntryPoints())
+            .build();
 
-    @Override
-    public List<SdmxWebEntryPoint> getDefaultEntryPoints() {
+    private static List<SdmxWebEntryPoint> getEntryPoints() {
         Sdmx21EntryPointBuilder b = new Sdmx21EntryPointBuilder();
         List<SdmxWebEntryPoint> result = new ArrayList<>();
         result.add(b.clear()
@@ -103,7 +106,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
                 .description("World Bank")
                 .endpoint("https://api.worldbank.org/v2/sdmx/rest")
                 .supportsCompression(true)
-//                .seriesKeysOnlySupported(true)
+                //                .seriesKeysOnlySupported(true)
                 .build());
         return result;
     }
@@ -179,9 +182,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
         private final Sdmx21Config config;
 
-        private Sdmx21Client(URI endpoint, Sdmx21Config config, LanguagePriorityList langs) {
+        private Sdmx21Client(URI endpoint, Sdmx21Config config) {
             super("", endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
-            this.languages = Util.fromLanguages(langs);
             this.config = config;
         }
 
@@ -205,7 +207,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
         private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toStructure(dsd)).parse(new XMLEventStreamReader(r), () -> {})) {
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toStructure(dsd)).parse(new XMLEventStreamReader(r), () -> {
+                })) {
                     return SeriesSupport.copyOf(cursor);
                 } catch (IOException ex) {
                     throw new SdmxIOException("Cannot parse compact data 21", ex);
