@@ -20,6 +20,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.Property.BoolProperty;
+import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
@@ -62,6 +63,51 @@ public class Util {
                 .primaryMeasureId(dsd.getMeasure());
         dsd.getDimensions().forEach(o -> result.dimension(toDimension(o)));
         return result.build();
+    }
+
+    public Dataflow fromFlowQuery(be.nbb.sdmx.facade.DataflowRef ref) {
+        Dataflow result = new Dataflow();
+        result.setAgency(ref.getAgency());
+        result.setId(ref.getId());
+        result.setVersion(ref.getVersion());
+        return result;
+    }
+
+    public Dataflow fromFlow(be.nbb.sdmx.facade.Dataflow flow) {
+        Dataflow result = new Dataflow();
+        result.setAgency(flow.getRef().getAgency());
+        result.setId(flow.getRef().getId());
+        result.setVersion(flow.getRef().getVersion());
+        result.setDsdIdentifier(fromStructureRef(flow.getStructureRef()));
+        result.setName(flow.getLabel());
+        return result;
+    }
+
+    public DSDIdentifier fromStructureRef(be.nbb.sdmx.facade.DataStructureRef ref) {
+        return new DSDIdentifier(ref.getId(), ref.getAgency(), ref.getVersion());
+    }
+
+    public Dimension fromDimension(be.nbb.sdmx.facade.Dimension o) {
+        Dimension result = new Dimension();
+        result.setId(o.getId());
+        result.setPosition(o.getPosition());
+        result.setName(o.getLabel());
+        Codelist codelist = new Codelist();
+        codelist.setCodes(o.getCodes());
+        result.setCodeList(codelist);
+        return result;
+    }
+
+    public DataFlowStructure fromStructure(DataStructure dsd) {
+        DataFlowStructure result = new DataFlowStructure();
+        result.setAgency(dsd.getRef().getAgency());
+        result.setId(dsd.getRef().getId());
+        result.setVersion(dsd.getRef().getVersion());
+        result.setName(dsd.getLabel());
+        result.setTimeDimension(dsd.getTimeDimensionId());
+        // FIXME: how to set MEASURE?
+        dsd.getDimensions().forEach(o -> result.setDimension(fromDimension(o)));
+        return result;
     }
 
     public it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(be.nbb.sdmx.facade.LanguagePriorityList l) {

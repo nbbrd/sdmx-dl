@@ -22,7 +22,8 @@ import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.ConnectorRestClient;
+import internal.web.RestDriverSupport;
 import java.net.URI;
 
 /**
@@ -33,10 +34,10 @@ import java.net.URI;
 public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:sdmx20:")
-            .supplier(Sdmx20Client::new)
+            .client(ConnectorRestClient.of(Sdmx20Client::new))
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

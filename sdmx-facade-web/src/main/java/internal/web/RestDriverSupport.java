@@ -14,28 +14,23 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors;
+package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import it.bancaditalia.oss.sdmx.api.GenericSDMXClient;
-import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Clock;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -45,13 +40,13 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @lombok.Builder(builderClassName = "Builder")
 @ThreadSafe
-public final class ConnectorsDriverSupport implements SdmxWebDriver, HasCache {
+public final class RestDriverSupport implements SdmxWebDriver, HasCache {
 
     @lombok.NonNull
     private final String prefix;
 
     @lombok.NonNull
-    private final BiFunction<URI, Map<?, ?>, GenericSDMXClient> supplier;
+    private final RestClient.Supplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebEntryPoint> entryPoints;
@@ -64,7 +59,9 @@ public final class ConnectorsDriverSupport implements SdmxWebDriver, HasCache {
 
     @Override
     public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
-        return new ConnectorsConnection(getResource(entryPoint, languages));
+        Objects.requireNonNull(entryPoint);
+        Objects.requireNonNull(languages);
+        return RestConnection.of(getClient(entryPoint, languages));
     }
 
     @Override
@@ -87,27 +84,21 @@ public final class ConnectorsDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private ConnectorsConnection.Resource getResource(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
-        return getResource(getEndpoint(entryPoint, prefix), entryPoint.getProperties(), languages);
+    private RestClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+        RestClient origin = client.get(entryPoint, prefix, languages);
+        RestClient cached = CachedRestClient.of(origin, getBase(entryPoint, prefix, languages), getCache(), clock, getCacheTtl(entryPoint));
+        return FailsafeRestClient.of(cached);
     }
 
-    private ConnectorsConnection.Resource getResource(URI endpoint, Map<String, String> info, LanguagePriorityList languages) throws IOException {
-        GenericSDMXClient client = supplier.apply(endpoint, info);
-        configure(client, info, languages);
-        return CachedResource.of(client, endpoint, languages, getCache(), clock, CACHE_TTL.get(info, DEFAULT_CACHE_TTL));
+    private long getCacheTtl(SdmxWebEntryPoint entryPoint) {
+        return CACHE_TTL.get(entryPoint.getProperties(), DEFAULT_CACHE_TTL);
     }
 
-    private static void configure(GenericSDMXClient client, Map<?, ?> info, LanguagePriorityList languages) {
-        if (client instanceof RestSdmxClient) {
-            ((RestSdmxClient) client).setLanguages(Util.fromLanguages(languages));
-            ((RestSdmxClient) client).setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
-            ((RestSdmxClient) client).setReadTimeout(READ_TIMEOUT.get(info, DEFAULT_READ_TIMEOUT));
-        }
-    }
-
-    private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-    private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
+
+    private static String getBase(SdmxWebEntryPoint entryPoint, String prefix, LanguagePriorityList languages) throws IOException {
+        return getEndpoint(entryPoint, prefix).getHost() + languages.toString() + "/";
+    }
 
     @Nonnull
     public static URI getEndpoint(@Nonnull SdmxWebEntryPoint o, @Nonnull String prefix) throws IOException {
@@ -118,37 +109,10 @@ public final class ConnectorsDriverSupport implements SdmxWebDriver, HasCache {
         }
     }
 
-    @FunctionalInterface
-    public interface ClientConstructor {
-
-        @Nonnull
-        GenericSDMXClient get() throws URISyntaxException;
-    }
-
     public static final class Builder {
 
-        public Builder supplier(@Nonnull ClientConstructor constructor) {
-            this.supplier = (x, y) -> newClient(constructor, x);
-            return this;
-        }
-
-        public Builder supplier(@Nonnull BiFunction<URI, Map<?, ?>, GenericSDMXClient> supplier) {
-            this.supplier = supplier;
-            return this;
-        }
-
         public Builder entry(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
-            return entryPoint(SdmxWebEntryPoint.builder().name(name).description(description).uri(url).build());
-        }
-
-        private static GenericSDMXClient newClient(ClientConstructor constructor, URI endpoint) {
-            try {
-                GenericSDMXClient result = constructor.get();
-                result.setEndpoint(endpoint);
-                return result;
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
+            return entryPoint(SdmxWebEntryPoint.builder().name(name).description(description).uri(prefix + url).build());
         }
     }
 }

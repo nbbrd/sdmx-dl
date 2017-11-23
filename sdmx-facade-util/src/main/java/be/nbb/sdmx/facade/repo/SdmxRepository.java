@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
@@ -30,10 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  *
@@ -65,20 +67,50 @@ public class SdmxRepository {
         return new RepoConnection(this);
     }
 
-    @Nullable
-    public DataCursor getCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(query);
-        List<Series> result = data.get(flowRef);
-        return result != null ? SeriesSupport.asCursor(result, query.getKey()) : null;
+    @Nonnull
+    public Optional<DataStructure> getStructure(@Nonnull DataStructureRef ref) {
+        Objects.requireNonNull(ref);
+        return dataStructures
+                .stream()
+                .filter(o -> o.getRef().equals(ref))
+                .findFirst();
     }
 
-    @Nullable
-    public Stream<Series> getStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
+    @Nonnull
+    public Optional<Dataflow> getFlow(@Nonnull DataflowRef ref) {
+        Objects.requireNonNull(ref);
+        return dataflows
+                .stream()
+                .filter(o -> o.getRef().equals(ref))
+                .findFirst();
+    }
+
+    @Nonnull
+    public Optional<DataCursor> getCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
+        return getData(flowRef).map(toCursor(query));
+    }
+
+    @Nonnull
+    public Optional<Stream<Series>> getStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
+        return getData(flowRef).map(toStream(query));
+    }
+
+    @Nonnull
+    private Optional<List<Series>> getData(@Nonnull DataflowRef flowRef) {
         Objects.requireNonNull(flowRef);
+        return Optional.ofNullable(data.get(flowRef));
+    }
+
+    @Nonnull
+    private static Function<List<Series>, DataCursor> toCursor(@Nonnull DataQuery query) {
         Objects.requireNonNull(query);
-        List<Series> result = data.get(flowRef);
-        return result != null ? result.stream().filter(o -> query.getKey().contains(o.getKey())) : null;
+        return o -> SeriesSupport.asCursor(o, query.getKey());
+    }
+
+    @Nonnull
+    private static Function<List<Series>, Stream<Series>> toStream(@Nonnull DataQuery query) {
+        Objects.requireNonNull(query);
+        return o -> o.stream().filter(s -> query.getKey().contains(s.getKey()));
     }
 
     public static final class Builder {
@@ -129,42 +161,33 @@ public class SdmxRepository {
         @Override
         public Dataflow getFlow(DataflowRef flowRef) throws IOException {
             checkState();
-            Objects.requireNonNull(flowRef);
-            return repo.getDataflows()
-                    .stream()
-                    .filter(o -> flowRef.equals(o.getRef()))
-                    .findFirst()
+            return repo
+                    .getFlow(flowRef)
                     .orElseThrow(() -> new IOException("Dataflow not found"));
         }
 
         @Override
         public DataStructure getStructure(DataflowRef flowRef) throws IOException {
-            Dataflow flow = getFlow(flowRef);
-            return repo.getDataStructures()
-                    .stream()
-                    .filter(o -> flow.getStructureRef().equals(o.getRef()))
-                    .findFirst()
+            checkState();
+            return repo
+                    .getStructure(getFlow(flowRef).getStructureRef())
                     .orElseThrow(() -> new IOException("DataStructure not found"));
         }
 
         @Override
         public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
             checkState();
-            DataCursor result = repo.getCursor(flowRef, query);
-            if (result != null) {
-                return result;
-            }
-            throw new IOException("Data not found");
+            return repo
+                    .getCursor(flowRef, query)
+                    .orElseThrow(() -> new IOException("Data not found"));
         }
 
         @Override
         public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
             checkState();
-            Stream<Series> result = repo.getStream(flowRef, query);
-            if (result != null) {
-                return result;
-            }
-            throw new IOException("Data not found");
+            return repo
+                    .getStream(flowRef, query)
+                    .orElseThrow(() -> new IOException("Data not found"));
         }
 
         @Override

@@ -20,7 +20,8 @@ import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.ConnectorRestClient;
+import internal.web.RestDriverSupport;
 
 /**
  *
@@ -30,10 +31,10 @@ import internal.connectors.ConnectorsDriverSupport;
 public final class NbbDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:nbb:")
-            .supplier(NBB::new)
-            .entry("NBB", "National Bank Belgium", "sdmx:nbb:https://stat.nbb.be/restsdmx/sdmx.ashx")
+            .client(ConnectorRestClient.of(NBB::new))
+            .entry("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();
 }

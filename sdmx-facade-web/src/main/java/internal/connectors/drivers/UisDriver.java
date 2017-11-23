@@ -20,7 +20,8 @@ import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.UIS;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.ConnectorRestClient;
+import internal.web.RestDriverSupport;
 
 /**
  *
@@ -30,10 +31,10 @@ import internal.connectors.ConnectorsDriverSupport;
 public final class UisDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:uis:")
-            .supplier(UIS::new)
-            .entry("UIS", "Unesco Institute for Statistics", "sdmx:uis:http://data.uis.unesco.org/RestSDMX/sdmx.ashx")
+            .client(ConnectorRestClient.of(UIS::new))
+            .entry("UIS", "Unesco Institute for Statistics", "http://data.uis.unesco.org/RestSDMX/sdmx.ashx")
             .build();
 }

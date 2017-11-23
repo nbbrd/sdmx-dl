@@ -20,7 +20,8 @@ import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.ConnectorRestClient;
+import internal.web.RestDriverSupport;
 
 /**
  *
@@ -30,10 +31,10 @@ import internal.connectors.ConnectorsDriverSupport;
 public final class AbsDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:abs:")
-            .supplier(ABS::new)
-            .entry("ABS", "Australian Bureau of Statistics", "sdmx:abs:http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+            .client(ConnectorRestClient.of(ABS::new))
+            .entry("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();
 }

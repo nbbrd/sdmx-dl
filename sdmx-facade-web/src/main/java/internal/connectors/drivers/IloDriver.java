@@ -20,7 +20,8 @@ import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.ILO;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.ConnectorsDriverSupport;
+import internal.connectors.ConnectorRestClient;
+import internal.web.RestDriverSupport;
 
 /**
  *
@@ -30,10 +31,10 @@ import internal.connectors.ConnectorsDriverSupport;
 public final class IloDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:ilo:")
-            .supplier(ILO::new)
-            .entry("ILO", "International Labour Office", "sdmx:ilo:https://www.ilo.org/ilostat/sdmx/ws/rest")
+            .client(ConnectorRestClient.of(ILO::new))
+            .entry("ILO", "International Labour Office", "https://www.ilo.org/ilostat/sdmx/ws/rest")
             .build();
 }

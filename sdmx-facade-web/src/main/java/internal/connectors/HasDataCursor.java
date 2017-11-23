@@ -17,9 +17,9 @@
 package internal.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
-import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.io.IOException;
 import javax.annotation.Nonnull;
@@ -31,5 +31,5 @@ import javax.annotation.Nonnull;
 public interface HasDataCursor {
 
     @Nonnull
-    DataCursor getDataCursor(@Nonnull Dataflow dataflow, @Nonnull DataFlowStructure dsd, @Nonnull Key resource, boolean serieskeysonly) throws SdmxException, IOException;
+    DataCursor getDataCursor(@Nonnull DataflowRef flowRef, @Nonnull DataStructure dsd, @Nonnull Key resource, boolean serieskeysonly) throws SdmxException, IOException;
 }

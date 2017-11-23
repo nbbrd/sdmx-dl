@@ -16,9 +16,15 @@
  */
 package internal.connectors;
 
-import it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory;
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.Dataflow;
+import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Dimension;
+import static internal.connectors.Util.*;
+import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
 import java.net.HttpURLConnection;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
@@ -29,7 +35,38 @@ public class UtilTest {
 
     @Test
     public void testIsNoResultMatchingQuery() {
-        assertThat(Util.isNoResultMatchingQuery(SdmxExceptionFactory.createRestException(HttpURLConnection.HTTP_NOT_FOUND, null, null))).isTrue();
-        assertThat(Util.isNoResultMatchingQuery(SdmxExceptionFactory.createRestException(HttpURLConnection.HTTP_BAD_REQUEST, null, null))).isFalse();
+        assertThat(isNoResultMatchingQuery(createRestException(HttpURLConnection.HTTP_NOT_FOUND, null, null))).isTrue();
+        assertThat(isNoResultMatchingQuery(createRestException(HttpURLConnection.HTTP_BAD_REQUEST, null, null))).isFalse();
+    }
+
+    @Test
+    public void testFlow() {
+        Dataflow o = Dataflow.of(DataflowRef.parse("flow1"), DataStructureRef.parse("struct1"), "label0");
+        assertThat(toFlow(fromFlow(o))).isEqualTo(o);
+    }
+
+    @Test
+    public void testStructureRef() {
+        DataStructureRef o = DataStructureRef.parse("struct1");
+        assertThat(toStructureRef(fromStructureRef(o))).isEqualTo(o);
+    }
+
+    @Test
+    public void testDimension() {
+        Dimension o = Dimension.builder().id("1234").label("label1").position(1).code("hello", "world").build();
+        assertThat(toDimension(fromDimension(o))).isEqualTo(o);
+    }
+
+    @Test
+    public void testStructure() {
+        DataStructure o = DataStructure
+                .builder()
+                .ref(DataStructureRef.parse("struct1"))
+                .dimension(Dimension.builder().id("1234").label("label1").position(1).code("hello", "world").build())
+                .label("label2")
+                .primaryMeasureId("OBS_VALUE")
+                .timeDimensionId("obs_period")
+                .build();
+        assertThat(toStructure(fromStructure(o))).isEqualTo(o);
     }
 }

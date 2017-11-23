@@ -17,6 +17,8 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -24,8 +26,6 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
-import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxIOException;
@@ -36,11 +36,12 @@ import java.util.List;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
-import internal.connectors.ConnectorsDriverSupport;
 import internal.connectors.Util;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
+import internal.web.RestDriverSupport;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
 
@@ -54,10 +55,10 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final ConnectorsDriverSupport support = ConnectorsDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix(PREFIX)
-            .supplier((u, i) -> new Sdmx21Client(u, Sdmx21Config.load(i)))
+            .client(ConnectorRestClient.of(Sdmx21Client::new))
             .entryPoints(getEntryPoints())
             .build();
 
@@ -182,15 +183,19 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
         private final Sdmx21Config config;
 
+        private Sdmx21Client(URI endpoint, Map<?, ?> properties) {
+            this(endpoint, Sdmx21Config.load(properties));
+        }
+
         private Sdmx21Client(URI endpoint, Sdmx21Config config) {
             super("", endpoint, config.isNeedsCredentials(), config.isNeedsURLEncoding(), config.isSupportsCompression());
             this.config = config;
         }
 
         @Override
-        public DataCursor getDataCursor(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
+        public DataCursor getDataCursor(DataflowRef flowRef, DataStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException, IOException {
             // FIXME: avoid in-memory copy
-            return SeriesSupport.asCursor(getData(dataflow, dsd, resource, serieskeysonly), resource);
+            return SeriesSupport.asCursor(getData(flowRef, dsd, resource, serieskeysonly), resource);
         }
 
         @Override
@@ -198,16 +203,16 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             return config.isSeriesKeysOnlySupported();
         }
 
-        private List<Series> getData(Dataflow dataflow, DataFlowStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
+        private List<Series> getData(DataflowRef flowRef, DataStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
             return runQuery(
                     getCompactData21Parser(dsd),
-                    buildDataQuery(dataflow, resource.toString(), null, null, serieskeysonly, null, false),
+                    buildDataQuery(Util.fromFlowQuery(flowRef), resource.toString(), null, null, serieskeysonly, null, false),
                     SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         }
 
-        private Parser<List<Series>> getCompactData21Parser(DataFlowStructure dsd) {
+        private Parser<List<Series>> getCompactData21Parser(DataStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(Util.toStructure(dsd)).parse(new XMLEventStreamReader(r), () -> {
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(dsd).parse(new XMLEventStreamReader(r), () -> {
                 })) {
                     return SeriesSupport.copyOf(cursor);
                 } catch (IOException ex) {
