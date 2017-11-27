@@ -81,7 +81,7 @@ public class SdmxRepository {
         Objects.requireNonNull(ref);
         return dataflows
                 .stream()
-                .filter(o -> o.getRef().equals(ref))
+                .filter(o -> ref.contains(o.getRef()))
                 .findFirst();
     }
 

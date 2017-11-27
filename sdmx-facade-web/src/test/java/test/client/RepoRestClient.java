@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -33,8 +33,9 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-final class RepoRestClient implements RestClient {
+public final class RepoRestClient implements RestClient {
 
+    @lombok.NonNull
     private final SdmxRepository repo;
 
     @Override
@@ -44,26 +45,29 @@ final class RepoRestClient implements RestClient {
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        return repo.getFlow(ref).orElseThrow(IOException::new);
+        return repo.getFlow(ref)
+                .orElseThrow(() -> new IOException("Dataflow not found"));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        return repo.getStructure(ref).orElseThrow(IOException::new);
+        return repo.getStructure(ref)
+                .orElseThrow(() -> new IOException("DataStructure not found"));
     }
 
     @Override
     public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
-        return repo.getCursor(flowRef, query).orElseThrow(IOException::new);
+        return repo.getCursor(flowRef, query)
+                .orElseThrow(() -> new IOException("Data not found"));
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isSeriesKeysOnlySupported() throws IOException {
         return true;
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return null;
     }
 }

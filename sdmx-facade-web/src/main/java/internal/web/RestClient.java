@@ -47,10 +47,10 @@ public interface RestClient {
     @Nonnull
     DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull DataStructure dsd, @Nonnull DataQuery query) throws IOException;
 
-    boolean isSeriesKeysOnlySupported();
+    boolean isSeriesKeysOnlySupported() throws IOException;
 
     @Nullable
-    DataStructureRef peekStructureRef(@Nonnull DataflowRef flowRef);
+    DataStructureRef peekStructureRef(@Nonnull DataflowRef flowRef) throws IOException;
 
     interface Supplier {
 

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -24,51 +24,43 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import internal.web.RestClient;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum NoOpRestClient implements RestClient {
+public enum FailingRestClient implements RestClient {
 
     INSTANCE;
-    
+
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        Objects.requireNonNull(ref);
-        throw new IOException();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        Objects.requireNonNull(ref);
-        throw new IOException();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(dsd);
-        Objects.requireNonNull(query);
-        throw new IOException();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
-        return false;
+    public boolean isSeriesKeysOnlySupported() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
-        Objects.requireNonNull(flowRef);
-        return null;
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

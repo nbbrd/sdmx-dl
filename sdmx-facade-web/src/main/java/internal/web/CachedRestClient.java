@@ -42,6 +42,7 @@ final class CachedRestClient implements RestClient {
         return new CachedRestClient(delegate, base, cache, clock, ttlInMillis);
     }
 
+    @lombok.NonNull
     private final RestClient delegate;
     private final TtlCache cache;
     private final TypedId<List<Dataflow>> idOfFlows;
@@ -84,12 +85,12 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isSeriesKeysOnlySupported() throws IOException {
         return delegate.isSeriesKeysOnlySupported();
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return delegate.peekStructureRef(flowRef);
     }
 

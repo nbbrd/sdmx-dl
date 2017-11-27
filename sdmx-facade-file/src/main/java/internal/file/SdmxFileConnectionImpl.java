@@ -69,7 +69,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    final public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+    public Dataflow getFlow(DataflowRef flowRef) throws IOException {
         checkState();
         checkFlowRef(flowRef);
         return dataflow;
@@ -96,7 +96,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    final public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+    public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
         checkState();
         checkFlowRef(flowRef);
         Objects.requireNonNull(query);

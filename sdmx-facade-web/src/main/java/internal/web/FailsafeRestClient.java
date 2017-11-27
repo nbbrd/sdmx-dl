@@ -35,6 +35,7 @@ import java.util.logging.Level;
 @lombok.extern.java.Log
 final class FailsafeRestClient implements RestClient {
 
+    @lombok.NonNull
     private final RestClient delegate;
 
     @Override
@@ -106,13 +107,21 @@ final class FailsafeRestClient implements RestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
-        return delegate.isSeriesKeysOnlySupported();
+    public boolean isSeriesKeysOnlySupported() throws IOException {
+        try {
+            return delegate.isSeriesKeysOnlySupported();
+        } catch (RuntimeException ex) {
+            throw unexpected(ex, "Unexpected exception while checking keys-only support");
+        }
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
-        return delegate.peekStructureRef(flowRef);
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        try {
+            return delegate.peekStructureRef(flowRef);
+        } catch (RuntimeException ex) {
+            throw unexpected(ex, "Unexpected exception while peeking struct ref for dataset '%s'", flowRef);
+        }
     }
 
     private static IOException unexpected(RuntimeException ex, String format, Object... args) {

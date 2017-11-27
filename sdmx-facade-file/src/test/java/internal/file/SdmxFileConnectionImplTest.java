@@ -33,6 +33,7 @@ import be.nbb.sdmx.facade.xml.stream.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
@@ -61,7 +62,9 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(files.asDataflowRef()));
         assertThatNullPointerException().isThrownBy(() -> conn.getCursor(null));
         assertThatNullPointerException().isThrownBy(() -> conn.getStream(null));
-        assertThat(conn.getStream(DataQuery.of(Key.ALL, false))).containsExactly(conn.getStream(DataQuery.of(Key.ALL, false)).toArray(Series[]::new));
+        try (Stream<Series> stream = conn.getStream(DataQuery.of(Key.ALL, false))) {
+            assertThat(stream).containsExactly(conn.getStream(DataQuery.of(Key.ALL, false)).toArray(Series[]::new));
+        }
     }
 
     @Test

@@ -16,10 +16,12 @@
  */
 package internal.web;
 
-import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
+import java.io.IOException;
 import org.junit.Test;
-import test.NoOpRestClient;
+import test.FacadeResource;
+import test.client.RepoRestClient;
 
 /**
  *
@@ -28,8 +30,8 @@ import test.NoOpRestClient;
 public class RestConnectionTest {
 
     @Test
-    public void testCompliance() {
-        DataflowRef ref = DataflowRef.parse("XYZ");
-        ConnectionAssert.assertCompliance(() -> RestConnection.of(NoOpRestClient.INSTANCE), ref);
+    public void testCompliance() throws IOException {
+        SdmxRepository repo = FacadeResource.ecb();
+        ConnectionAssert.assertCompliance(() -> RestConnection.of(RepoRestClient.of(repo)), FacadeResource.ECB_FLOW_REF);
     }
 }

@@ -89,7 +89,7 @@ final class RestConnection implements SdmxConnection {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isSeriesKeysOnlySupported() throws IOException {
         return client.isSeriesKeysOnlySupported();
     }
 
@@ -104,7 +104,7 @@ final class RestConnection implements SdmxConnection {
         }
     }
 
-    private void checkQuery(DataQuery query) {
+    private void checkQuery(DataQuery query) throws IOException {
         boolean serieskeysonly = query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
         if (serieskeysonly && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");

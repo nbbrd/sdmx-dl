@@ -82,6 +82,7 @@ public final class ConnectorRestClient implements RestClient {
         };
     }
 
+    @lombok.NonNull
     private final RestSdmxClient connector;
 
     @Override
@@ -131,13 +132,13 @@ public final class ConnectorRestClient implements RestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isSeriesKeysOnlySupported() throws IOException {
         return connector instanceof HasSeriesKeysOnlySupported
                 && ((HasSeriesKeysOnlySupported) connector).isSeriesKeysOnlySupported();
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef ref) {
+    public DataStructureRef peekStructureRef(DataflowRef ref) throws IOException {
         return connector instanceof DotStat ? DataStructureRef.of(ref.getAgency(), ref.getId(), ref.getVersion()) : null;
     }
 
