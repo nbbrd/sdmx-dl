@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
+import be.nbb.util.Stax;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;

@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
+import be.nbb.util.Stax;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;

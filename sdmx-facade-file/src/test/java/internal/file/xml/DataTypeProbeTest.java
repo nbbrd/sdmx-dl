@@ -17,7 +17,7 @@
 package internal.file.xml;
 
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;

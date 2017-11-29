@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.ObsParser;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.connectors.PortableTimeSeriesCursor;
 import internal.connectors.Util;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;

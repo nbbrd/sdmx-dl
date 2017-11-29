@@ -19,7 +19,7 @@ package internal.web;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.util.IO;
+import be.nbb.util.IO;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;

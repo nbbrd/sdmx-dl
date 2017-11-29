@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.util;
 
 import java.io.Closeable;
 import java.io.FileNotFoundException;

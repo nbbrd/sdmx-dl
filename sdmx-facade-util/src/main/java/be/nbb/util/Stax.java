@@ -14,9 +14,8 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.xml.stream;
+package be.nbb.util;
 
-import be.nbb.sdmx.facade.util.IO;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -123,7 +122,7 @@ public class Stax {
         }
     }
 
-    void closeBoth(XMLStreamReader reader, Closeable onClose) throws IOException {
+    public void closeBoth(XMLStreamReader reader, Closeable onClose) throws IOException {
         try {
             reader.close();
         } catch (XMLStreamException ex) {

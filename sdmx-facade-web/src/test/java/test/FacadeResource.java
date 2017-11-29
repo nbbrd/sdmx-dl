@@ -28,7 +28,7 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.connectors.Util;
 import java.io.IOException;
 import java.util.List;

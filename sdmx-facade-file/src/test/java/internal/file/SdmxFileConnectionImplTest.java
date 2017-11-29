@@ -29,7 +29,7 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;

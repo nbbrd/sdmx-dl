@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.util;
 
+import be.nbb.util.IO;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.Key;

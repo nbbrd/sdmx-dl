@@ -26,7 +26,7 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;

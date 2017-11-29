@@ -29,7 +29,7 @@ import static internal.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.util.List;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
 import internal.file.SdmxFileUtil;
 

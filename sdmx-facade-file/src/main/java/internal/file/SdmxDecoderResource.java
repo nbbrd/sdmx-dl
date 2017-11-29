@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

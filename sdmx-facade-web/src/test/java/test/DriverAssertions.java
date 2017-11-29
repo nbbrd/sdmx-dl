@@ -18,7 +18,7 @@ package test;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.util.IO;
+import be.nbb.util.IO;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.RestDriverSupport;

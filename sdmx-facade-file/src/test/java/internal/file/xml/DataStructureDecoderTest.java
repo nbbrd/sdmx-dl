@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import java.io.IOException;
 import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import static org.assertj.core.api.Assertions.assertThat;
 import static internal.file.xml.CustomDataStructureBuilder.dimension;
 import javax.xml.stream.XMLInputFactory;

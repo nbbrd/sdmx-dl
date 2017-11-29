@@ -22,7 +22,7 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
 
 /**

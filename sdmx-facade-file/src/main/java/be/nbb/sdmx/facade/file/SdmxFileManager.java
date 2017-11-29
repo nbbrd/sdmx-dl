@@ -23,7 +23,7 @@ import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.xml.stream.Stax;
+import be.nbb.util.Stax;
 import internal.file.CachedResource;
 import internal.file.SdmxDecoder;
 import internal.file.SdmxFileConnectionImpl;
