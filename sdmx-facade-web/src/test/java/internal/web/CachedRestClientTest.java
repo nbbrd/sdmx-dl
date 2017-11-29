@@ -29,9 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import test.FacadeResource;
-import static test.FacadeResource.ECB_FLOW_REF;
-import static test.FacadeResource.ECB_STRUCT_REF;
+import test.samples.FacadeResource;
+import static test.samples.FacadeResource.ECB_FLOW_REF;
+import static test.samples.FacadeResource.ECB_STRUCT_REF;
 import test.client.RepoRestClient;
 
 /**

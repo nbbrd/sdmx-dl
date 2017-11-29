@@ -20,6 +20,7 @@ import be.nbb.util.Stax;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
+import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
@@ -82,5 +83,10 @@ public class SdmxXmlStreams {
     @Nonnull
     public Stax.Parser<List<DataStructure>> struct21(@Nonnull LanguagePriorityList langs) throws IOException {
         return Stax.Parser.of(new XMLStreamStructure21(langs)::parse);
+    }
+
+    @Nonnull
+    public Stax.Parser<List<Dataflow>> flow21(@Nonnull LanguagePriorityList langs) throws IOException {
+        return Stax.Parser.of(new XMLStreamFlow21(langs)::parse);
     }
 }

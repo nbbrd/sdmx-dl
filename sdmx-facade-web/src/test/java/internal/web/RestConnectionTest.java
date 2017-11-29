@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.IOException;
 import org.junit.Test;
-import test.FacadeResource;
+import test.samples.FacadeResource;
 import test.client.RepoRestClient;
 
 /**

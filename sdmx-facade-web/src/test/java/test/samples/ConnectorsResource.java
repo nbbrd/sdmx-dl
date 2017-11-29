@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package test.samples;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Frequency;
@@ -90,21 +90,21 @@ public class ConnectorsResource {
                 .build();
     }
 
-    DataflowRef firstOf(List<Dataflow> flows) {
+    private DataflowRef firstOf(List<Dataflow> flows) {
         return flows.stream().map(o -> Util.toFlow(o).getRef()).findFirst().get();
     }
 
-    List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
     }
 
-    List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
         return struct20(xml, l).stream()
                 .map(ConnectorsResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
-    List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    private List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
         return FacadeResource.data20(XIF, xml, Util.toStructure(dsd))
                 .stream()
@@ -116,7 +116,7 @@ public class ConnectorsResource {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
-    List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
@@ -128,7 +128,7 @@ public class ConnectorsResource {
                 .collect(Collectors.toList());
     }
 
-    PortableTimeSeries toPortableTimeSeries(Series o, List<Dimension> dims) {
+    private PortableTimeSeries toPortableTimeSeries(Series o, List<Dimension> dims) {
         PortableTimeSeries result = new PortableTimeSeries();
         result.setFrequency(String.valueOf(formatByStandardFreq(o.getFreq())));
         o.getMeta().forEach(result::addAttribute);
@@ -140,11 +140,11 @@ public class ConnectorsResource {
         return result;
     }
 
-    String valueToString(Double o) {
+    private String valueToString(Double o) {
         return o != null ? o.toString() : "";
     }
 
-    String periodToString(Frequency f, LocalDateTime o) {
+    private String periodToString(Frequency f, LocalDateTime o) {
         if (o == null) {
             return "";
         }
@@ -158,7 +158,7 @@ public class ConnectorsResource {
         }
     }
 
-    Dataflow asDataflow(DataFlowStructure o) {
+    private Dataflow asDataflow(DataFlowStructure o) {
         Dataflow result = new Dataflow();
         result.setAgency(o.getAgency());
         result.setDsdIdentifier(new DSDIdentifier(o.getId(), o.getAgency(), o.getVersion()));
@@ -168,7 +168,7 @@ public class ConnectorsResource {
         return result;
     }
 
-    <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
+    private <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
         XMLEventReader r = null;
         try {
             r = XIF.createXMLEventReader(xml.openReader());
@@ -210,6 +210,6 @@ public class ConnectorsResource {
                 return '?';
         }
     }
-    
+
     private final XMLInputFactory XIF = Stax.getInputFactory();
 }

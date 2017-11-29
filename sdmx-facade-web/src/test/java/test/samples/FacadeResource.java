@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package test.samples;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
@@ -29,7 +29,6 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import be.nbb.util.Stax;
-import internal.connectors.Util;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,6 +45,8 @@ public class FacadeResource {
     public static final DataflowRef ECB_FLOW_REF = DataflowRef.of("ECB", "AME", "1.0");
     public static final DataStructureRef ECB_STRUCT_REF = DataStructureRef.of("ECB", "ECB_AME1", "1.0");
 
+    public static final DataflowRef NBB_FLOW_REF = DataflowRef.of("NBB", "TEST_DATASET", null);
+
     public SdmxRepository nbb() throws IOException {
         SdmxRepository result = NBB.get();
         if (result == null) {
@@ -55,12 +56,10 @@ public class FacadeResource {
             List<Dataflow> flows = flow20(XIF, SdmxSource.NBB_DATA_STRUCTURE, l);
             List<Series> data = data20(XIF, SdmxSource.NBB_DATA, structs.get(0));
 
-            DataflowRef ref = DataflowRef.of("NBB", "TEST_DATASET", null);
-
             result = SdmxRepository.builder()
                     .dataStructures(structs)
                     .dataflows(flows)
-                    .data(ref, data)
+                    .data(NBB_FLOW_REF, data)
                     .name("NBB")
                     .seriesKeysOnlySupported(false)
                     .build();
@@ -100,6 +99,7 @@ public class FacadeResource {
     }
 
     private List<Dataflow> flow20(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
+        // FIXME: find sample of dataflow20 ?
         return struct20(f, xml, l).stream()
                 .map(FacadeResource::asDataflow)
                 .collect(Collectors.toList());
@@ -116,11 +116,7 @@ public class FacadeResource {
     }
 
     private List<Dataflow> flow21(XMLInputFactory f, ByteSource xml, LanguagePriorityList l) throws IOException {
-        // FIXME: no facade impl yet
-        return ConnectorsResource.parse(xml, Util.fromLanguages(l), new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser())
-                .stream()
-                .map(Util::toFlow)
-                .collect(Collectors.toList());
+        return SdmxXmlStreams.flow21(l).parseReader(f, xml::openReader);
     }
 
     List<Series> data21(XMLInputFactory f, ByteSource xml, DataStructure dsd) throws IOException {
