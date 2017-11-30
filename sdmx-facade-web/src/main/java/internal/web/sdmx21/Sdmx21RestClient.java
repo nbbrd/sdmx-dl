@@ -55,7 +55,7 @@ public final class Sdmx21RestClient implements RestClient {
     public List<Dataflow> getFlows() throws IOException {
         URL url = getFlowsQuery(endpoint);
         return flow21(langs)
-                .asStreamParser(Stax.getInputFactory(), UTF_8)
+                .onInputStream(Stax.getInputFactory(), UTF_8)
                 .parseWithIO(calling(url, XML));
     }
 
@@ -63,7 +63,7 @@ public final class Sdmx21RestClient implements RestClient {
     public Dataflow getFlow(DataflowRef ref) throws IOException {
         URL url = getFlowQuery(endpoint, ref);
         return flow21(langs)
-                .asStreamParser(Stax.getInputFactory(), UTF_8)
+                .onInputStream(Stax.getInputFactory(), UTF_8)
                 .parseWithIO(calling(url, XML))
                 .stream()
                 .filter(ref::containsRef)
@@ -75,7 +75,7 @@ public final class Sdmx21RestClient implements RestClient {
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
         URL url = getStructureQuery(endpoint, ref);
         return struct21(langs)
-                .asStreamParser(Stax.getInputFactory(), UTF_8)
+                .onInputStream(Stax.getInputFactory(), UTF_8)
                 .parseWithIO(calling(url, STRUCTURE_21))
                 .stream()
                 .filter(ref::equalsRef)
@@ -87,7 +87,7 @@ public final class Sdmx21RestClient implements RestClient {
     public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         URL url = getDataQuery(endpoint, flowRef, query);
         return compactData21(dsd, dialect)
-                .asStreamParser(Stax.getInputFactoryWithoutNamespace(), UTF_8)
+                .onInputStream(Stax.getInputFactoryWithoutNamespace(), UTF_8)
                 .parseWithIO(calling(url, STRUCTURE_SPECIFIC_DATA_21));
     }
 

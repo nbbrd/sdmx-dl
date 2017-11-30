@@ -63,45 +63,29 @@ public class Stax {
         T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
 
         @Nonnull
-        default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull File file, @Nonnull Charset cs) throws IOException {
-            return parseStream(xf, () -> new FileInputStream(file), cs);
+        default IO.Parser<File, T> onFile(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+            return source -> parseStream(this, xf, () -> new FileInputStream(source), cs);
         }
 
         @Nonnull
-        default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull Path path, @Nonnull Charset cs) throws IOException {
-            try {
-                return parseStream(xf, () -> new FileInputStream(path.toFile()), cs);
-            } catch (UnsupportedOperationException ex) {
-                return parseReader(xf, () -> Files.newBufferedReader(path, cs));
-            }
+        default IO.Parser<Path, T> onPath(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+            return source -> {
+                try {
+                    return parseStream(this, xf, () -> new FileInputStream(source.toFile()), cs);
+                } catch (UnsupportedOperationException ex) {
+                    return parseReader(this, xf, () -> Files.newBufferedReader(source, cs));
+                }
+            };
         }
 
         @Nonnull
-        default T parseStream(@Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends InputStream> source, @Nonnull Charset cs) throws IOException {
-            InputStream stream = source.getWithIO();
-            return parse(() -> xf.createXMLStreamReader(stream, cs.name()), stream);
+        default IO.Parser<IO.Supplier<? extends InputStream>, T> onInputStream(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+            return source -> parseStream(this, xf, source, cs);
         }
 
         @Nonnull
-        default T parseReader(@Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends Reader> source) throws IOException {
-            Reader reader = source.getWithIO();
-            return parse(() -> xf.createXMLStreamReader(reader), reader);
-        }
-
-        @Nonnull
-        default T parse(@Nonnull Supplier<? extends XMLStreamReader> supplier, @Nonnull Closeable onClose) throws IOException {
-            try {
-                XMLStreamReader xml = supplier.getWithStream();
-                return parse(xml, () -> closeBoth(xml, onClose));
-            } catch (XMLStreamException ex) {
-                ensureClosed(ex, onClose);
-                throw new XMLStreamIOException("Failed to create XMLStreamReader", ex);
-            }
-        }
-
-        @Nonnull
-        default IO.Parser<InputStream, T> asStreamParser(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
-            return o -> parseStream(xf, o, cs);
+        default IO.Parser<IO.Supplier<? extends Reader>, T> onReader(@Nonnull XMLInputFactory xf) {
+            return source -> parseReader(this, xf, source);
         }
 
         @Nonnull
@@ -114,6 +98,29 @@ public class Stax {
                 }
             };
         }
+    }
+
+    @Nonnull
+    private <T> T parse(Parser<T> parser, @Nonnull Supplier<? extends XMLStreamReader> supplier, @Nonnull Closeable onClose) throws IOException {
+        try {
+            XMLStreamReader xml = supplier.getWithStream();
+            return parser.parse(xml, () -> closeBoth(xml, onClose));
+        } catch (XMLStreamException ex) {
+            ensureClosed(ex, onClose);
+            throw new XMLStreamIOException("Failed to create XMLStreamReader", ex);
+        }
+    }
+
+    @Nonnull
+    <T> T parseStream(Parser<T> parser, @Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends InputStream> source, @Nonnull Charset cs) throws IOException {
+        InputStream stream = source.getWithIO();
+        return parse(parser, () -> xf.createXMLStreamReader(stream, cs.name()), stream);
+    }
+
+    @Nonnull
+    <T> T parseReader(Parser<T> parser, @Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends Reader> source) throws IOException {
+        Reader reader = source.getWithIO();
+        return parse(parser, () -> xf.createXMLStreamReader(reader), reader);
     }
 
     public static final class XMLStreamIOException extends IOException {

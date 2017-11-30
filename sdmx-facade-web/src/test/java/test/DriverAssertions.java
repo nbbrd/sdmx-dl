@@ -43,7 +43,7 @@ public class DriverAssertions {
 
         assertThat(d.getDefaultEntryPoints())
                 .allSatisfy(o -> checkEntryPoint(o, prefix))
-                .allMatch(IO.asUnchecked(d::accepts));
+                .allMatch(IO.Predicate.unchecked(d::accepts));
 
         assertThat(d.getClass()).isFinal();
     }

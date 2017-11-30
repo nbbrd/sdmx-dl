@@ -17,10 +17,11 @@
 package internal.file.xml;
 
 import be.nbb.sdmx.facade.samples.SdmxSource;
+import be.nbb.util.IO;
 import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
 import java.io.IOException;
-import javax.xml.stream.XMLInputFactory;
+import java.io.Reader;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,27 +33,27 @@ public class DataTypeProbeTest {
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        assertThat(DataTypeProbe.of().parseReader(xif, SdmxSource.OTHER_GENERIC20::openReader))
+        assertThat(decoder.parseWithIO(SdmxSource.OTHER_GENERIC20::openReader))
                 .isEqualTo(SdmxDecoder.DataType.GENERIC20);
     }
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        assertThat(DataTypeProbe.of().parseReader(xif, SdmxSource.OTHER_COMPACT20::openReader))
+        assertThat(decoder.parseWithIO(SdmxSource.OTHER_COMPACT20::openReader))
                 .isEqualTo(SdmxDecoder.DataType.COMPACT20);
     }
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        assertThat(DataTypeProbe.of().parseReader(xif, SdmxSource.OTHER_GENERIC21::openReader))
+        assertThat(decoder.parseWithIO(SdmxSource.OTHER_GENERIC21::openReader))
                 .isEqualTo(SdmxDecoder.DataType.GENERIC21);
     }
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        assertThat(DataTypeProbe.of().parseReader(xif, SdmxSource.OTHER_COMPACT21::openReader))
+        assertThat(decoder.parseWithIO(SdmxSource.OTHER_COMPACT21::openReader))
                 .isEqualTo(SdmxDecoder.DataType.COMPACT21);
     }
-    
-    private final XMLInputFactory xif = Stax.getInputFactory();
+
+    private final IO.Parser<IO.Supplier<? extends Reader>, SdmxDecoder.DataType> decoder = DataTypeProbe.of().onReader(Stax.getInputFactory());
 }

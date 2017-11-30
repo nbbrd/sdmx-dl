@@ -51,7 +51,8 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         return getDataSupplier(entry.getType(), entry.getStructure())
-                .parseFile(factoryWithoutNamespace, files.getData(), StandardCharsets.UTF_8);
+                .onFile(factoryWithoutNamespace, StandardCharsets.UTF_8)
+                .parseWithIO(files.getData());
     }
 
     private Stax.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {

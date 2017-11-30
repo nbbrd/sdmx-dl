@@ -23,7 +23,6 @@ import org.junit.Test;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.util.Stax;
 import static org.assertj.core.api.Assertions.assertThat;
-import static internal.file.xml.CustomDataStructureBuilder.dimension;
 import javax.xml.stream.XMLInputFactory;
 import static internal.file.xml.CustomDataStructureBuilder.dimension;
 
@@ -46,7 +45,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic20().parseReader(xif, SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic20().onReader(xif).parseWithIO(SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -63,7 +62,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact20().parseReader(xif, SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact20().onReader(xif).parseWithIO(SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -82,7 +81,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic21().parseReader(xif, SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic21().onReader(xif).parseWithIO(SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -101,7 +100,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact21().parseReader(xif, SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact21().onReader(xif).parseWithIO(SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
     }
 
     private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();

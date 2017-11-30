@@ -39,22 +39,22 @@ public class StaxTest {
             return "";
         };
 
-        assertThatNullPointerException().isThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8));
+        assertThatNullPointerException().isThrownBy(() -> Stax.parseStream(p, null, EmptyStream::new, UTF_8));
 
-        assertThatNullPointerException().isThrownBy(() -> p.parseStream(xif, null, UTF_8));
+        assertThatNullPointerException().isThrownBy(() -> Stax.parseStream(p, xif, null, UTF_8));
 
-        assertThatThrownBy(() -> p.parseStream(xif, OpenErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, OpenErrorStream::new, UTF_8))
                 .isInstanceOf(OpenError.class)
                 .hasNoSuppressedExceptions()
                 .hasNoCause();
 
-        assertThatThrownBy(() -> p.parseStream(xif, ReadErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, ReadErrorStream::new, UTF_8))
                 .isInstanceOf(Stax.XMLStreamIOException.class)
                 .hasNoSuppressedExceptions()
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasRootCauseInstanceOf(ReadError.class);
 
-        assertThatThrownBy(() -> p.parseStream(xif, CloseErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, CloseErrorStream::new, UTF_8))
                 .isInstanceOf(CloseError.class)
                 .hasNoSuppressedExceptions()
                 .hasNoCause();
@@ -69,22 +69,22 @@ public class StaxTest {
             }
         };
 
-        assertThatNullPointerException().isThrownBy(() -> p.parseStream(null, EmptyStream::new, UTF_8));
+        assertThatNullPointerException().isThrownBy(() -> Stax.parseStream(p, null, EmptyStream::new, UTF_8));
 
-        assertThatNullPointerException().isThrownBy(() -> p.parseStream(xif, null, UTF_8));
+        assertThatNullPointerException().isThrownBy(() -> Stax.parseStream(p, xif, null, UTF_8));
 
-        assertThatThrownBy(() -> p.parseStream(xif, OpenErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, OpenErrorStream::new, UTF_8))
                 .isInstanceOf(OpenError.class)
                 .hasNoSuppressedExceptions()
                 .hasNoCause();
 
-        assertThatThrownBy(() -> p.parseStream(xif, ReadErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, ReadErrorStream::new, UTF_8))
                 .isInstanceOf(Stax.XMLStreamIOException.class)
                 .hasNoSuppressedExceptions()
                 .hasCauseInstanceOf(XMLStreamException.class)
                 .hasRootCauseInstanceOf(ReadError.class);
 
-        assertThatThrownBy(() -> p.parseStream(xif, CloseErrorStream::new, UTF_8))
+        assertThatThrownBy(() -> Stax.parseStream(p, xif, CloseErrorStream::new, UTF_8))
                 .isInstanceOf(ParseError.class)
                 .hasSuppressedException(new CloseError())
                 .hasNoCause();

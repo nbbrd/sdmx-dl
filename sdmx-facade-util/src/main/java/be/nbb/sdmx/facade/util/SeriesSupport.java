@@ -79,14 +79,14 @@ public class SeriesSupport {
     }
 
     @Nonnull
-    public Stream<Series> asStream(@Nonnull IO.Supplier<DataCursor> supplier) throws IOException {
-        return IO.stream(supplier, SeriesSupport::getDataStream);
+    public Stream<Series> asStream(@Nonnull IO.Supplier<DataCursor> source) throws IOException {
+        return IO.Stream.open(source, SeriesSupport::getDataStream);
     }
 
     @SuppressWarnings("null")
     private Stream<Series> getDataStream(DataCursor cursor) {
         Series.Builder builder = Series.builder();
-        return IO.streamNonnull(() -> cursor.nextSeries() ? getSeries(builder, cursor) : null);
+        return IO.Stream.generateUntilNull(() -> cursor.nextSeries() ? getSeries(builder, cursor) : null);
     }
 
     private Series getSeries(Series.Builder builder, DataCursor cursor) throws IOException {

@@ -53,11 +53,16 @@ public final class StaxSdmxDecoder implements SdmxDecoder {
     }
 
     private DataType probeDataType(File data) throws IOException {
-        return DataTypeProbe.of().parseFile(factory, data, StandardCharsets.UTF_8);
+        return DataTypeProbe.of()
+                .onFile(factory, StandardCharsets.UTF_8)
+                .parseWithIO(data);
     }
 
     private DataStructure parseStruct(DataType dataType, LanguagePriorityList langs, File structure) throws IOException {
-        return getStructParser(dataType, langs).parseFile(factory, structure, StandardCharsets.UTF_8).get(0);
+        return getStructParser(dataType, langs)
+                .onFile(factory, StandardCharsets.UTF_8)
+                .parseWithIO(structure)
+                .get(0);
     }
 
     private Stax.Parser<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
@@ -74,7 +79,9 @@ public final class StaxSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        return getStructDecoder(dataType).parseFile(factoryWithoutNamespace, data, StandardCharsets.UTF_8);
+        return getStructDecoder(dataType)
+                .onFile(factoryWithoutNamespace, StandardCharsets.UTF_8)
+                .parseWithIO(data);
     }
 
     private static Stax.Parser<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {

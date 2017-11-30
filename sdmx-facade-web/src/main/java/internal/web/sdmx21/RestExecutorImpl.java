@@ -141,7 +141,7 @@ final class RestExecutorImpl implements RestExecutor {
                     .filter(o -> Objects.equals(name, o.name))
                     .map(o -> o.getDecoder())
                     .findAny()
-                    .orElse(o -> o);
+                    .orElse(IO.Function.identity());
         }
 
         static String getEncodingHeader() {
