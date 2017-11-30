@@ -25,6 +25,7 @@ import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileConnection;
+import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.Collections;
@@ -125,7 +126,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw new IOException("Connection closed");
+            throw SdmxExceptions.connectionClosed();
         }
     }
 

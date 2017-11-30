@@ -60,6 +60,9 @@ public class Stax {
     public interface Parser<T> {
 
         @Nonnull
+        T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
+
+        @Nonnull
         default T parseFile(@Nonnull XMLInputFactory xf, @Nonnull File file, @Nonnull Charset cs) throws IOException {
             return parseStream(xf, () -> new FileInputStream(file), cs);
         }
@@ -97,7 +100,9 @@ public class Stax {
         }
 
         @Nonnull
-        T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
+        default IO.Parser<InputStream, T> asStreamParser(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+            return o -> parseStream(xf, o, cs);
+        }
 
         @Nonnull
         static <R> Parser<R> of(@Nonnull Function<XMLStreamReader, R> func) {

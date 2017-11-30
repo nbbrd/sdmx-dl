@@ -118,7 +118,7 @@ public final class ConnectorRestClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         try {
             return connector instanceof HasDataCursor
                     ? getCursor((HasDataCursor) connector, flowRef, dsd, query)

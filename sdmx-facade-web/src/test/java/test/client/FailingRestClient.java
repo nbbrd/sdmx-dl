@@ -50,7 +50,7 @@ public enum FailingRestClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

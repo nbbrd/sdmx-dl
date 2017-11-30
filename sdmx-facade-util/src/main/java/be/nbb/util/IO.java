@@ -190,6 +190,12 @@ public class IO {
         }
     }
 
+    @FunctionalInterface
+    public interface Parser<T, R> {
+
+        R parseWithIO(@Nonnull Supplier<? extends T> input) throws IOException;
+    }
+
     @Nonnull
     public <T extends Closeable, R> Stream<R> stream(@Nonnull Supplier<T> supplier, @Nonnull Function<T, Stream<R>> stream) throws IOException {
         T resource = supplier.getWithIO();

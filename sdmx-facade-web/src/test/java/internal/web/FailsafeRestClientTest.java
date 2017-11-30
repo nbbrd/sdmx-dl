@@ -58,7 +58,7 @@ public class FailsafeRestClientTest {
         DataQuery all = DataQuery.of(Key.ALL, false);
         DataStructure struct = DataStructure.builder().ref(ECB_STRUCT_REF).label("hello").build();
 
-        assertOperation(o -> FailsafeRestClient.of(o).getData(ECB_FLOW_REF, struct, all));
+        assertOperation(o -> FailsafeRestClient.of(o).getData(ECB_FLOW_REF, all, struct));
     }
 
     @Test

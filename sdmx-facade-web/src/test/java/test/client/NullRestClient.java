@@ -53,7 +53,7 @@ public enum NullRestClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         Objects.requireNonNull(flowRef);
         Objects.requireNonNull(dsd);
         Objects.requireNonNull(query);

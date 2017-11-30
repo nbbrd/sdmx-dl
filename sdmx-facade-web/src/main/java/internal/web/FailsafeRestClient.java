@@ -90,11 +90,11 @@ final class FailsafeRestClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         DataCursor result;
 
         try {
-            result = delegate.getData(flowRef, dsd, query);
+            result = delegate.getData(flowRef, query, dsd);
         } catch (RuntimeException ex) {
             throw unexpected(ex, "Unexpected exception while getting data from dataset '%s' with key '%s'", flowRef, query.getKey());
         }

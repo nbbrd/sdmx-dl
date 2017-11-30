@@ -45,7 +45,7 @@ public interface RestClient {
     DataStructure getStructure(@Nonnull DataStructureRef ref) throws IOException;
 
     @Nonnull
-    DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull DataStructure dsd, @Nonnull DataQuery query) throws IOException;
+    DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query, @Nonnull DataStructure dsd) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 

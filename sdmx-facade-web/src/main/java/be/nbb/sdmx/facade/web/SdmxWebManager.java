@@ -85,6 +85,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Nonnull
+    public SdmxConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException {
+        return getConnection(entryPoint, LanguagePriorityList.ANY);
+    }
+
+    @Nonnull
     public SdmxConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException {
         Objects.requireNonNull(entryPoint);
         Objects.requireNonNull(languages);

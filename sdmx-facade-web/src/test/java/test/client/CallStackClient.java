@@ -59,9 +59,9 @@ public final class CallStackClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         count.incrementAndGet();
-        return delegate.getData(flowRef, dsd, query);
+        return delegate.getData(flowRef, query, dsd);
     }
 
     @Override

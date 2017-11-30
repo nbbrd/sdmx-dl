@@ -25,6 +25,7 @@ import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.HashSet;
@@ -80,7 +81,7 @@ final class RestConnection implements SdmxConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
-        return client.getData(flowRef, structure, query);
+        return client.getData(flowRef, query, structure);
     }
 
     @Override
@@ -100,7 +101,7 @@ final class RestConnection implements SdmxConnection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw new IOException("Connection closed");
+            throw SdmxExceptions.connectionClosed();
         }
     }
 

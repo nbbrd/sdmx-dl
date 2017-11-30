@@ -76,9 +76,9 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataStructure dsd, DataQuery query) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
         if (!query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY)) {
-            return delegate.getData(flowRef, dsd, query);
+            return delegate.getData(flowRef, query, dsd);
         }
         return loadKeysOnlyWithCache(flowRef, dsd, query).getCursor(flowRef, query)
                 .orElseThrow(() -> new IOException("Data not found"));
@@ -153,7 +153,7 @@ final class CachedRestClient implements RestClient {
     }
 
     private SdmxRepository copyDataKeys(DataflowRef flowRef, DataStructure structure, DataQuery query) throws IOException {
-        try (DataCursor cursor = delegate.getData(flowRef, structure, query)) {
+        try (DataCursor cursor = delegate.getData(flowRef, query, structure)) {
             return SdmxRepository.builder()
                     .copyOf(flowRef, cursor)
                     .name(query.getKey().toString())

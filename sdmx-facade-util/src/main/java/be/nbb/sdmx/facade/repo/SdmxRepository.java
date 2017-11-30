@@ -24,6 +24,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.SdmxConnection;
+import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -163,15 +164,16 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getFlow(flowRef)
-                    .orElseThrow(() -> new IOException("Dataflow not found"));
+                    .orElseThrow(() -> SdmxExceptions.missingFlow(flowRef));
         }
 
         @Override
         public DataStructure getStructure(DataflowRef flowRef) throws IOException {
             checkState();
+            DataStructureRef structRef = getFlow(flowRef).getStructureRef();
             return repo
-                    .getStructure(getFlow(flowRef).getStructureRef())
-                    .orElseThrow(() -> new IOException("DataStructure not found"));
+                    .getStructure(structRef)
+                    .orElseThrow(() -> SdmxExceptions.missingStructure(structRef));
         }
 
         @Override
@@ -179,7 +181,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getCursor(flowRef, query)
-                    .orElseThrow(() -> new IOException("Data not found"));
+                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 
         @Override
@@ -187,7 +189,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getStream(flowRef, query)
-                    .orElseThrow(() -> new IOException("Data not found"));
+                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 
         @Override
@@ -202,7 +204,7 @@ public class SdmxRepository {
 
         private void checkState() throws IOException {
             if (closed) {
-                throw new IOException("Connection closed");
+                throw SdmxExceptions.connectionClosed();
             }
         }
     }
