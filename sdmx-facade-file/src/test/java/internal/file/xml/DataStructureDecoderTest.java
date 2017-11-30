@@ -25,6 +25,7 @@ import be.nbb.util.Stax;
 import static org.assertj.core.api.Assertions.assertThat;
 import static internal.file.xml.CustomDataStructureBuilder.dimension;
 import javax.xml.stream.XMLInputFactory;
+import static internal.file.xml.CustomDataStructureBuilder.dimension;
 
 /**
  *

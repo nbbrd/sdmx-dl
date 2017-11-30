@@ -66,7 +66,7 @@ public final class Sdmx21RestClient implements RestClient {
                 .asStreamParser(Stax.getInputFactory(), UTF_8)
                 .parseWithIO(calling(url, XML))
                 .stream()
-                .filter(o -> ref.contains(o.getRef()))
+                .filter(ref::containsRef)
                 .findFirst()
                 .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
     }
@@ -78,7 +78,7 @@ public final class Sdmx21RestClient implements RestClient {
                 .asStreamParser(Stax.getInputFactory(), UTF_8)
                 .parseWithIO(calling(url, STRUCTURE_21))
                 .stream()
-                .filter(o -> ref.equals(o.getRef()))
+                .filter(ref::equalsRef)
                 .findFirst()
                 .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
     }

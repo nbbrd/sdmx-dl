@@ -51,7 +51,7 @@ public final class ConnectionAssert {
             assertNonnull(s, conn, ref);
             DataCursorAssert.assertCompliance(s, () -> conn.getCursor(ref, ALL));
             s.assertThat(conn.getStream(ref, ALL)).containsExactlyElementsOf(cursorToSeries(ref, ALL, conn));
-            s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(o -> ref.contains(o.getRef())).isNotEmpty();
+            s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(ref::containsRef).isNotEmpty();
             s.assertThat(conn.getFlow(ref)).isNotNull();
             s.assertThat(conn.getStructure(ref)).isNotNull();
         }

@@ -82,4 +82,10 @@ public class DataflowRefTest {
         assertThat(DataflowRef.of("world", "hello", "123").contains(DataflowRef.of("world", "hello", LATEST_VERSION))).isFalse();
         assertThatNullPointerException().isThrownBy(() -> DataflowRef.of("world", "hello", "123").contains(null));
     }
+
+    @Test
+    @SuppressWarnings("null")
+    public void testContainsRef() {
+        assertThatNullPointerException().isThrownBy(() -> DataflowRef.of("world", "hello", "123").containsRef(null));
+    }
 }

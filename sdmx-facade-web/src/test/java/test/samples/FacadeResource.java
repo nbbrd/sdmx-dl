@@ -57,8 +57,8 @@ public class FacadeResource {
             List<Series> data = data20(XIF, SdmxSource.NBB_DATA, structs.get(0));
 
             result = SdmxRepository.builder()
-                    .dataStructures(structs)
-                    .dataflows(flows)
+                    .structures(structs)
+                    .flows(flows)
                     .data(NBB_FLOW_REF, data)
                     .name("NBB")
                     .seriesKeysOnlySupported(false)
@@ -79,8 +79,8 @@ public class FacadeResource {
             List<Series> data = data21(XIF, SdmxSource.ECB_DATA, structs.get(0));
 
             result = SdmxRepository.builder()
-                    .dataStructures(structs)
-                    .dataflows(flows)
+                    .structures(structs)
+                    .flows(flows)
                     .data(ECB_FLOW_REF, data)
                     .name("ECB")
                     .seriesKeysOnlySupported(true)

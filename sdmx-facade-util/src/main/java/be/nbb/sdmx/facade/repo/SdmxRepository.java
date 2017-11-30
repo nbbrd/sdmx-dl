@@ -51,11 +51,11 @@ public class SdmxRepository {
 
     @lombok.NonNull
     @lombok.Singular
-    List<DataStructure> dataStructures;
+    List<DataStructure> structures;
 
     @lombok.NonNull
     @lombok.Singular
-    Set<Dataflow> dataflows;
+    Set<Dataflow> flows;
 
     @lombok.NonNull
     Map<DataflowRef, List<Series>> data;
@@ -71,18 +71,18 @@ public class SdmxRepository {
     @Nonnull
     public Optional<DataStructure> getStructure(@Nonnull DataStructureRef ref) {
         Objects.requireNonNull(ref);
-        return dataStructures
+        return structures
                 .stream()
-                .filter(o -> o.getRef().equals(ref))
+                .filter(ref::equalsRef)
                 .findFirst();
     }
 
     @Nonnull
     public Optional<Dataflow> getFlow(@Nonnull DataflowRef ref) {
         Objects.requireNonNull(ref);
-        return dataflows
+        return flows
                 .stream()
-                .filter(o -> ref.contains(o.getRef()))
+                .filter(ref::containsRef)
                 .findFirst();
     }
 
@@ -156,7 +156,7 @@ public class SdmxRepository {
         @Override
         public Set<Dataflow> getFlows() throws IOException {
             checkState();
-            return repo.getDataflows();
+            return repo.getFlows();
         }
 
         @Override

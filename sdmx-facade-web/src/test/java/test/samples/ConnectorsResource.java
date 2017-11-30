@@ -63,8 +63,8 @@ public class ConnectorsResource {
         DataflowRef ref = firstOf(flows);
 
         return SdmxRepository.builder()
-                .dataStructures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
-                .dataflows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
+                .structures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
+                .flows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
                 .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
@@ -82,8 +82,8 @@ public class ConnectorsResource {
         DataflowRef ref = firstOf(flows);
 
         return SdmxRepository.builder()
-                .dataStructures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
-                .dataflows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
+                .structures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
+                .flows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
                 .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
                 .name("ECB")
                 .seriesKeysOnlySupported(true)

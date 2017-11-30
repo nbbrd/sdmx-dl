@@ -39,6 +39,10 @@ public final class DataStructureRef implements ResourceRef {
     @lombok.NonNull
     private String version;
 
+    public boolean equalsRef(@Nonnull DataStructure that) {
+        return equals(that.getRef());
+    }
+
     @Override
     public String toString() {
         return ResourceRefs.toString(this);

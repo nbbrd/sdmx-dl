@@ -48,6 +48,10 @@ public final class DataflowRef implements ResourceRef {
     @lombok.NonNull
     private String version;
 
+    public boolean containsRef(@Nonnull Dataflow that) {
+        return contains(that.getRef());
+    }
+
     public boolean contains(@Nonnull DataflowRef that) {
         return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
                 && (this.id.equals(that.id))

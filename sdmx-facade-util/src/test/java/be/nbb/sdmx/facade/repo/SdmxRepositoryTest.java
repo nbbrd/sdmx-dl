@@ -81,13 +81,13 @@ public class SdmxRepositoryTest {
     }
 
     @Test
-    public void testGetDataStructures() {
-        assertThat(repo.getDataStructures()).containsExactly(struct);
+    public void testGetStructures() {
+        assertThat(repo.getStructures()).containsExactly(struct);
     }
 
     @Test
-    public void testGetDataflows() {
-        assertThat(repo.getDataflows()).containsExactly(flow);
+    public void testGetFlows() {
+        assertThat(repo.getFlows()).containsExactly(flow);
     }
 
     @Test
@@ -118,8 +118,8 @@ public class SdmxRepositoryTest {
     private final SdmxRepository repo = SdmxRepository
             .builder()
             .name("test")
-            .dataStructure(struct)
-            .dataflow(flow)
+            .structure(struct)
+            .flow(flow)
             .data(goodFlowRef, series)
             .build();
 }

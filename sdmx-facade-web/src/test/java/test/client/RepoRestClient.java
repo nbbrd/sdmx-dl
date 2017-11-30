@@ -41,7 +41,7 @@ public final class RepoRestClient implements RestClient {
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        return new ArrayList(repo.getDataflows());
+        return new ArrayList(repo.getFlows());
     }
 
     @Override

@@ -34,6 +34,7 @@ import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
 import static be.nbb.sdmx.facade.xml.Sdmxml.NS_V21_URI;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 
 /**
  *
