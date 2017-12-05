@@ -105,7 +105,7 @@ public class Util {
         result.setVersion(dsd.getRef().getVersion());
         result.setName(dsd.getLabel());
         result.setTimeDimension(dsd.getTimeDimensionId());
-        // FIXME: how to set MEASURE?
+        result.setMeasure(dsd.getPrimaryMeasureId());
         dsd.getDimensions().forEach(o -> result.setDimension(fromDimension(o)));
         return result;
     }
