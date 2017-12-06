@@ -17,7 +17,7 @@
 package internal.web.sdmx21;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.util.IO;
+import ioutil.IO;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;

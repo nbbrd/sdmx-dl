@@ -27,10 +27,10 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
 import static be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams.*;
-import be.nbb.util.IO;
 import be.nbb.util.Stax;
 import internal.web.RestClient;
 import static internal.web.sdmx21.Sdmx21RestQueries.*;
+import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -56,7 +56,7 @@ public final class Sdmx21RestClient implements RestClient {
         URL url = getFlowsQuery(endpoint);
         return flow21(langs)
                 .onInputStream(Stax.getInputFactory(), UTF_8)
-                .parseWithIO(calling(url, XML));
+                .applyWithIO(calling(url, XML));
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class Sdmx21RestClient implements RestClient {
         URL url = getFlowQuery(endpoint, ref);
         return flow21(langs)
                 .onInputStream(Stax.getInputFactory(), UTF_8)
-                .parseWithIO(calling(url, XML))
+                .applyWithIO(calling(url, XML))
                 .stream()
                 .filter(ref::containsRef)
                 .findFirst()
@@ -76,7 +76,7 @@ public final class Sdmx21RestClient implements RestClient {
         URL url = getStructureQuery(endpoint, ref);
         return struct21(langs)
                 .onInputStream(Stax.getInputFactory(), UTF_8)
-                .parseWithIO(calling(url, STRUCTURE_21))
+                .applyWithIO(calling(url, STRUCTURE_21))
                 .stream()
                 .filter(ref::equalsRef)
                 .findFirst()
@@ -88,7 +88,7 @@ public final class Sdmx21RestClient implements RestClient {
         URL url = getDataQuery(endpoint, flowRef, query);
         return compactData21(dsd, dialect)
                 .onInputStream(Stax.getInputFactoryWithoutNamespace(), UTF_8)
-                .parseWithIO(calling(url, STRUCTURE_SPECIFIC_DATA_21));
+                .applyWithIO(calling(url, STRUCTURE_SPECIFIC_DATA_21));
     }
 
     @Override

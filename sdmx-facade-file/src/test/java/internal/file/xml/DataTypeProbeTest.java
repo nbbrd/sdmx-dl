@@ -17,9 +17,9 @@
 package internal.file.xml;
 
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.util.IO;
 import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
+import ioutil.IO;
 import java.io.IOException;
 import java.io.Reader;
 import org.junit.Test;
@@ -33,27 +33,27 @@ public class DataTypeProbeTest {
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        assertThat(decoder.parseWithIO(SdmxSource.OTHER_GENERIC20::openReader))
+        assertThat(decoder.applyWithIO(SdmxSource.OTHER_GENERIC20::openReader))
                 .isEqualTo(SdmxDecoder.DataType.GENERIC20);
     }
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        assertThat(decoder.parseWithIO(SdmxSource.OTHER_COMPACT20::openReader))
+        assertThat(decoder.applyWithIO(SdmxSource.OTHER_COMPACT20::openReader))
                 .isEqualTo(SdmxDecoder.DataType.COMPACT20);
     }
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        assertThat(decoder.parseWithIO(SdmxSource.OTHER_GENERIC21::openReader))
+        assertThat(decoder.applyWithIO(SdmxSource.OTHER_GENERIC21::openReader))
                 .isEqualTo(SdmxDecoder.DataType.GENERIC21);
     }
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        assertThat(decoder.parseWithIO(SdmxSource.OTHER_COMPACT21::openReader))
+        assertThat(decoder.applyWithIO(SdmxSource.OTHER_COMPACT21::openReader))
                 .isEqualTo(SdmxDecoder.DataType.COMPACT21);
     }
 
-    private final IO.Parser<IO.Supplier<? extends Reader>, SdmxDecoder.DataType> decoder = DataTypeProbe.of().onReader(Stax.getInputFactory());
+    private final IO.Function<IO.Supplier<? extends Reader>, SdmxDecoder.DataType> decoder = DataTypeProbe.of().onReader(Stax.getInputFactory());
 }

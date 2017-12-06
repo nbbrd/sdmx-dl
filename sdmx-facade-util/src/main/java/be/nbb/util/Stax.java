@@ -16,6 +16,8 @@
  */
 package be.nbb.util;
 
+import ioutil.IO;
+import ioutil.Xml;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +27,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.StreamFilter;
@@ -63,28 +66,27 @@ public class Stax {
         T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
 
         @Nonnull
-        default IO.Parser<File, T> onFile(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+        default IO.Function<File, T> onFile(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
             return source -> parseStream(this, xf, () -> new FileInputStream(source), cs);
         }
 
         @Nonnull
-        default IO.Parser<Path, T> onPath(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+        default IO.Function<Path, T> onPath(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
             return source -> {
-                try {
-                    return parseStream(this, xf, () -> new FileInputStream(source.toFile()), cs);
-                } catch (UnsupportedOperationException ex) {
-                    return parseReader(this, xf, () -> Files.newBufferedReader(source, cs));
-                }
+                Optional<File> file = IO.getFile(source);
+                return file.isPresent()
+                        ? parseStream(this, xf, () -> new FileInputStream(file.get()), cs)
+                        : parseReader(this, xf, () -> Files.newBufferedReader(source, cs));
             };
         }
 
         @Nonnull
-        default IO.Parser<IO.Supplier<? extends InputStream>, T> onInputStream(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
+        default IO.Function<IO.Supplier<? extends InputStream>, T> onInputStream(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
             return source -> parseStream(this, xf, source, cs);
         }
 
         @Nonnull
-        default IO.Parser<IO.Supplier<? extends Reader>, T> onReader(@Nonnull XMLInputFactory xf) {
+        default IO.Function<IO.Supplier<? extends Reader>, T> onReader(@Nonnull XMLInputFactory xf) {
             return source -> parseReader(this, xf, source);
         }
 
@@ -166,16 +168,6 @@ public class Stax {
         return !(Boolean) f.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE);
     }
 
-    // https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#XMLInputFactory_.28a_StAX_parser.29
-    public static void preventXXE(@Nonnull XMLInputFactory factory) {
-        if (factory.isPropertySupported(XMLInputFactory.SUPPORT_DTD)) {
-            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        }
-        if (factory.isPropertySupported(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES)) {
-            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-        }
-    }
-
     private static final class ImmutableInputFactory extends XMLInputFactory {
 
         static final XMLInputFactory DEFAULT = new ImmutableInputFactory(true);
@@ -188,7 +180,7 @@ public class Stax {
             if (!namespaceAware && delegate.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)) {
                 delegate.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
             }
-            preventXXE(delegate);
+            Xml.StAX.preventXXE(delegate);
         }
 
         @Override

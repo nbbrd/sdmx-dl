@@ -38,7 +38,7 @@ public class XMLStreamStructure21Test {
     public void test() throws Exception {
         Stax.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
-        assertThat(parser.onReader(xif).parseWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(parser.onReader(xif).applyWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
@@ -51,7 +51,7 @@ public class XMLStreamStructure21Test {
         });
 
         assertThatIOException()
-                .isThrownBy(() -> parser.onReader(xif).parseWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> parser.onReader(xif).applyWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }

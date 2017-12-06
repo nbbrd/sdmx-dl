@@ -45,7 +45,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic20().onReader(xif).parseWithIO(SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic20().onReader(xif).applyWithIO(SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact20().onReader(xif).parseWithIO(SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact20().onReader(xif).applyWithIO(SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic21().onReader(xif).parseWithIO(SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic21().onReader(xif).applyWithIO(SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact21().onReader(xif).parseWithIO(SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact21().onReader(xif).applyWithIO(SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
     }
 
     private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();

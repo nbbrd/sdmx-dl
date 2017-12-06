@@ -16,12 +16,12 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import be.nbb.util.IO;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.Series;
+import ioutil.IO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -17,13 +17,13 @@
 package be.nbb.sdmx.facade.tck;
 
 import be.nbb.sdmx.facade.DataCursor;
-import internal.io.ConsumerWithIO;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
+import ioutil.IO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,10 +96,10 @@ public final class ConnectionAssert {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    private static void assertState(SoftAssertions s, Callable<SdmxConnection> supplier, ConsumerWithIO<SdmxConnection> consumer, String expression) throws Exception {
+    private static void assertState(SoftAssertions s, Callable<SdmxConnection> supplier, IO.Consumer<SdmxConnection> consumer, String expression) throws Exception {
         try (SdmxConnection conn = supplier.call()) {
             conn.close();
-            s.assertThatThrownBy(() -> consumer.accept(conn))
+            s.assertThatThrownBy(() -> consumer.acceptWithIO(conn))
                     .as("Expecting '%s' to raise IOException when called after close", expression)
                     .isInstanceOf(IOException.class)
                     .hasMessageContaining("closed");

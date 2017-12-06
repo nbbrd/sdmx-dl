@@ -20,12 +20,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version> 
+
         <!-- dependencies -->
         <jsr305.version>3.0.2</jsr305.version>
         <lombok.version>1.16.18</lombok.version>
         <junit.version>4.12</junit.version>
         <assertj.version>3.8.0</assertj.version>
-        <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version> 
+        <java-io-util.version>0.0.1-SNAPSHOT</java-io-util.version>
     </properties>
     
     <dependencyManagement>
@@ -50,6 +52,11 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-util</artifactId>
+                <version>${java-io-util.version}</version>
             </dependency>
             <!-- modules -->
             <dependency>

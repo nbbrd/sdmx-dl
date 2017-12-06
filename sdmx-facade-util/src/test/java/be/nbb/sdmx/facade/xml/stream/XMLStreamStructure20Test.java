@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import java.io.IOException;
 import java.util.List;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -39,7 +38,7 @@ public class XMLStreamStructure20Test {
     public void test() throws Exception {
         Stax.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
-        assertThat(p1.onReader(xif).parseWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p1.onReader(xif).applyWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -53,7 +52,7 @@ public class XMLStreamStructure20Test {
 
         Stax.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
-        assertThat(p2.onReader(xif).parseWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p2.onReader(xif).applyWithIO(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -66,7 +65,7 @@ public class XMLStreamStructure20Test {
         });
 
         assertThatIOException()
-                .isThrownBy(() -> p1.onReader(xif).parseWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> p1.onReader(xif).applyWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }
