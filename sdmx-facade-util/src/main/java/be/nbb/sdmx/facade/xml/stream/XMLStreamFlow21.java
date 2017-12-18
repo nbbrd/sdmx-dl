@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import be.nbb.util.Stax;
+import be.nbb.util.StaxUtil;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
@@ -58,7 +58,7 @@ final class XMLStreamFlow21 {
 
     @Nonnull
     public List<Dataflow> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
-        if (Stax.isNotNamespaceAware(reader)) {
+        if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse flows");
         }
 

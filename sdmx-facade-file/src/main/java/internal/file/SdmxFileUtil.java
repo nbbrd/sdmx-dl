@@ -17,7 +17,7 @@
 package internal.file;
 
 import be.nbb.sdmx.facade.file.SdmxFileSet;
-import be.nbb.util.Stax;
+import be.nbb.util.StaxUtil;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -73,7 +73,7 @@ public class SdmxFileUtil {
         String structure = null;
         String dialect = null;
         try {
-            XMLStreamReader xml = Stax.getInputFactoryWithoutNamespace().createXMLStreamReader(new StringReader(input));
+            XMLStreamReader xml = StaxUtil.getInputFactoryWithoutNamespace().createXMLStreamReader(new StringReader(input));
             while (xml.hasNext()) {
                 if (xml.next() == XMLStreamReader.START_ELEMENT && xml.getLocalName().equals(ROOT_TAG)) {
                     data = xml.getAttributeValue(null, DATA_ATTR);

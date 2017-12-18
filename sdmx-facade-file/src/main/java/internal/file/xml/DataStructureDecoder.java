@@ -19,11 +19,13 @@ package internal.file.xml;
 import be.nbb.sdmx.facade.DataStructure;
 import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
+import be.nbb.util.StaxUtil;
+import ioutil.Stax;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import be.nbb.util.Stax;
+import ioutil.Xml;
 
 /**
  *
@@ -31,20 +33,32 @@ import be.nbb.util.Stax;
  */
 final class DataStructureDecoder {
 
-    public static Stax.Parser<DataStructure> generic20() {
-        return Stax.Parser.of(DataStructureDecoder::generic20);
+    public static Xml.Parser<DataStructure> generic20() {
+        return Stax.StreamParser.<DataStructure>builder()
+                .factory(StaxUtil::getInputFactoryWithoutNamespace)
+                .handler(Stax.FlowHandler.of(DataStructureDecoder::generic20))
+                .build();
     }
 
-    public static Stax.Parser<DataStructure> compact20() {
-        return Stax.Parser.of(DataStructureDecoder::compact20);
+    public static Xml.Parser<DataStructure> compact20() {
+        return Stax.StreamParser.<DataStructure>builder()
+                .factory(StaxUtil::getInputFactoryWithoutNamespace)
+                .handler(Stax.FlowHandler.of(DataStructureDecoder::compact20))
+                .build();
     }
 
-    public static Stax.Parser<DataStructure> generic21() {
-        return Stax.Parser.of(DataStructureDecoder::generic21);
+    public static Xml.Parser<DataStructure> generic21() {
+        return Stax.StreamParser.<DataStructure>builder()
+                .factory(StaxUtil::getInputFactoryWithoutNamespace)
+                .handler(Stax.FlowHandler.of(DataStructureDecoder::generic21))
+                .build();
     }
 
-    public static Stax.Parser<DataStructure> compact21() {
-        return Stax.Parser.of(DataStructureDecoder::compact21);
+    public static Xml.Parser<DataStructure> compact21() {
+        return Stax.StreamParser.<DataStructure>builder()
+                .factory(StaxUtil::getInputFactoryWithoutNamespace)
+                .handler(Stax.FlowHandler.of(DataStructureDecoder::compact21))
+                .build();
     }
 
     private static boolean isTagMatch(XMLStreamReader r, String tag) {

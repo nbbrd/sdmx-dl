@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import be.nbb.util.Stax;
+import be.nbb.util.StaxUtil;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.parser.Freqs;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
+import ioutil.Xml;
 import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -73,7 +74,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private boolean hasObs;
 
     private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, SeriesHeadParser headParser) {
-        if (!Stax.isNotNamespaceAware(reader)) {
+        if (!StaxUtil.isNotNamespaceAware(reader)) {
             log.fine("Using XMLStreamReader with namespace awareness");
         }
         this.reader = reader;
@@ -96,7 +97,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
-            throw new Stax.XMLStreamIOException(ex);
+            throw new Xml.WrappedException(ex);
         }
     }
 
@@ -114,7 +115,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
             }
             return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
-            throw new Stax.XMLStreamIOException(ex);
+            throw new Xml.WrappedException(ex);
         }
     }
 
@@ -160,7 +161,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     @Override
     public void close() throws IOException {
         closed = true;
-        Stax.closeBoth(reader, onClose);
+        StaxUtil.closeBoth(reader, onClose);
     }
 
     private void checkState() throws IOException {

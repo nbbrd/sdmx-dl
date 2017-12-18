@@ -19,15 +19,9 @@ package be.nbb.util;
 import ioutil.IO;
 import ioutil.Xml;
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.StreamFilter;
@@ -45,113 +39,16 @@ import javax.xml.transform.Source;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class Stax {
-
-    @FunctionalInterface
-    public interface Supplier<T> {
-
-        T getWithStream() throws XMLStreamException;
-    }
-
-    @FunctionalInterface
-    public interface Function<T, R> {
-
-        R applyWithStream(T t) throws XMLStreamException;
-    }
-
-    @FunctionalInterface
-    public interface Parser<T> {
-
-        @Nonnull
-        T parse(@Nonnull XMLStreamReader reader, @Nonnull Closeable onClose) throws IOException;
-
-        @Nonnull
-        default IO.Function<File, T> onFile(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
-            return source -> parseStream(this, xf, () -> new FileInputStream(source), cs);
-        }
-
-        @Nonnull
-        default IO.Function<Path, T> onPath(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
-            return source -> {
-                Optional<File> file = IO.getFile(source);
-                return file.isPresent()
-                        ? parseStream(this, xf, () -> new FileInputStream(file.get()), cs)
-                        : parseReader(this, xf, () -> Files.newBufferedReader(source, cs));
-            };
-        }
-
-        @Nonnull
-        default IO.Function<IO.Supplier<? extends InputStream>, T> onInputStream(@Nonnull XMLInputFactory xf, @Nonnull Charset cs) {
-            return source -> parseStream(this, xf, source, cs);
-        }
-
-        @Nonnull
-        default IO.Function<IO.Supplier<? extends Reader>, T> onReader(@Nonnull XMLInputFactory xf) {
-            return source -> parseReader(this, xf, source);
-        }
-
-        @Nonnull
-        static <R> Parser<R> of(@Nonnull Function<XMLStreamReader, R> func) {
-            return (reader, onClose) -> {
-                try (Closeable c = onClose) {
-                    return func.applyWithStream(reader);
-                } catch (XMLStreamException ex) {
-                    throw new XMLStreamIOException(ex);
-                }
-            };
-        }
-    }
-
-    @Nonnull
-    private <T> T parse(Parser<T> parser, @Nonnull Supplier<? extends XMLStreamReader> supplier, @Nonnull Closeable onClose) throws IOException {
-        try {
-            XMLStreamReader xml = supplier.getWithStream();
-            return parser.parse(xml, () -> closeBoth(xml, onClose));
-        } catch (XMLStreamException ex) {
-            ensureClosed(ex, onClose);
-            throw new XMLStreamIOException("Failed to create XMLStreamReader", ex);
-        }
-    }
-
-    @Nonnull
-    <T> T parseStream(Parser<T> parser, @Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends InputStream> source, @Nonnull Charset cs) throws IOException {
-        InputStream stream = source.getWithIO();
-        return parse(parser, () -> xf.createXMLStreamReader(stream, cs.name()), stream);
-    }
-
-    @Nonnull
-    <T> T parseReader(Parser<T> parser, @Nonnull XMLInputFactory xf, @Nonnull IO.Supplier<? extends Reader> source) throws IOException {
-        Reader reader = source.getWithIO();
-        return parse(parser, () -> xf.createXMLStreamReader(reader), reader);
-    }
-
-    public static final class XMLStreamIOException extends IOException {
-
-        public XMLStreamIOException(XMLStreamException ex) {
-            super(ex);
-        }
-
-        public XMLStreamIOException(String message, XMLStreamException ex) {
-            super(message, ex);
-        }
-    }
+public class StaxUtil {
 
     public void closeBoth(XMLStreamReader reader, Closeable onClose) throws IOException {
         try {
             reader.close();
         } catch (XMLStreamException ex) {
-            ensureClosed(ex, onClose);
-            throw new Stax.XMLStreamIOException("Failed to close xml stream reader", ex);
+            IO.ensureClosed(ex, onClose);
+            throw new Xml.WrappedException(ex);
         }
         onClose.close();
-    }
-
-    void ensureClosed(XMLStreamException ex, Closeable onClose) throws IOException {
-        try {
-            onClose.close();
-        } catch (IOException suppressed) {
-            ex.addSuppressed(suppressed);
-        }
     }
 
     @Nonnull
@@ -180,7 +77,7 @@ public class Stax {
             if (!namespaceAware && delegate.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)) {
                 delegate.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
             }
-            Xml.StAX.preventXXE(delegate);
+            ioutil.Stax.preventXXE(delegate);
         }
 
         @Override

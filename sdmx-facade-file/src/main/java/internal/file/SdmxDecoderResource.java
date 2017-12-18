@@ -24,11 +24,9 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.util.Stax;
+import ioutil.Xml;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import javax.xml.stream.XMLInputFactory;
 
 /**
  *
@@ -39,7 +37,6 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
     private final SdmxFileSet files;
     private final LanguagePriorityList languages;
-    private final XMLInputFactory factoryWithoutNamespace;
     private final SdmxDecoder decoder;
     private final Optional<DataFactory> dataFactory;
 
@@ -51,11 +48,10 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         return getDataSupplier(entry.getType(), entry.getStructure())
-                .onFile(factoryWithoutNamespace, StandardCharsets.UTF_8)
-                .applyWithIO(files.getData());
+                .parseFile(files.getData());
     }
 
-    private Stax.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
+    private Xml.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
         switch (o) {
             case GENERIC20:
                 return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactory.sdmx20()));

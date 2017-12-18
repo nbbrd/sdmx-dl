@@ -29,12 +29,10 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
-import be.nbb.util.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.junit.Rule;
@@ -54,7 +52,7 @@ public class SdmxFileConnectionImplTest {
 
         SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, decoder, Optional.empty());
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
@@ -74,7 +72,7 @@ public class SdmxFileConnectionImplTest {
 
         SdmxFileSet files = SdmxFileSet.builder().data(compact21).build();
 
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, factoryWithoutNamespace, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(files, ANY, decoder, Optional.empty());
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getFlows()).hasSize(1);
@@ -109,7 +107,6 @@ public class SdmxFileConnectionImplTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private final XMLInputFactory factoryWithoutNamespace = Stax.getInputFactoryWithoutNamespace();
-    private final SdmxDecoder decoder = new StaxSdmxDecoder(Stax.getInputFactory(), factoryWithoutNamespace);
+    private final SdmxDecoder decoder = new StaxSdmxDecoder();
     private final Dataflow dataflow = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");
 }

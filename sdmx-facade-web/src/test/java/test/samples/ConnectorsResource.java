@@ -24,7 +24,6 @@ import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.ObsParser;
-import be.nbb.util.Stax;
 import internal.connectors.PortableTimeSeriesCursor;
 import internal.connectors.Util;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
@@ -106,7 +105,7 @@ public class ConnectorsResource {
 
     private List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data20(XIF, xml, Util.toStructure(dsd))
+        return FacadeResource.data20(xml, Util.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());
@@ -122,7 +121,7 @@ public class ConnectorsResource {
 
     public List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data21(XIF, xml, Util.toStructure(dsd))
+        return FacadeResource.data21(xml, Util.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());
@@ -211,5 +210,5 @@ public class ConnectorsResource {
         }
     }
 
-    private final XMLInputFactory XIF = Stax.getInputFactory();
+    private final XMLInputFactory XIF = XMLInputFactory.newFactory();
 }

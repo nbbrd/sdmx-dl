@@ -26,12 +26,10 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import be.nbb.util.Stax;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
@@ -76,8 +74,8 @@ public class SeriesSupportTest {
             assertThat(SeriesSupport.copyOf(c)).hasSize(1).element(0).isSameAs(series);
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).onReader(xif).applyWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader);
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).onReader(xif).applyWithIO(SdmxSource.ECB_DATA::openReader)) {
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOf(c)).hasSize(120);
         }
     }
@@ -99,8 +97,8 @@ public class SeriesSupportTest {
                     .isEqualToComparingOnlyGivenFields(series, "key", "freq", "meta");
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).onReader(xif).applyWithIO(SdmxSource.ECB_DATA_STRUCTURE::openReader);
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).onReader(xif).applyWithIO(SdmxSource.ECB_DATA::openReader)) {
+        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader);
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.ECB_DATA::openReader)) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c))
                     .allMatch(o -> o.getObs().isEmpty())
                     .hasSize(120);
@@ -108,5 +106,4 @@ public class SeriesSupportTest {
     }
 
     private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
-    private final XMLInputFactory xif = Stax.getInputFactory();
 }

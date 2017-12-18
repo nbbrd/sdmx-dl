@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import be.nbb.util.Stax;
+import be.nbb.util.StaxUtil;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
@@ -121,5 +121,5 @@ public class XMLStreamCompactDataCursorTest {
         }
     }
     
-    private final XMLInputFactory xif = Stax.getInputFactoryWithoutNamespace();
+    private final XMLInputFactory xif = StaxUtil.getInputFactoryWithoutNamespace();
 }

@@ -21,10 +21,10 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import be.nbb.util.Stax;
+import ioutil.Stax;
+import ioutil.Xml;
 import java.io.IOException;
 import java.util.List;
-import javax.xml.stream.XMLInputFactory;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
@@ -36,15 +36,13 @@ public class XMLStreamFlow21Test {
 
     @Test
     public void test() throws IOException {
-        Stax.Parser<List<Dataflow>> p = Stax.Parser.of(new XMLStreamFlow21(LanguagePriorityList.ANY)::parse);
+        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(LanguagePriorityList.ANY)::parse);
 
-        assertThat(p.onReader(xif).applyWithIO(SdmxSource.ECB_DATAFLOWS::openReader))
+        assertThat(p.parseReader(SdmxSource.ECB_DATAFLOWS::openReader))
                 .containsExactly(
                         Dataflow.of(DataflowRef.of("ECB", "AME", "1.0"), DataStructureRef.of("ECB", "ECB_AME1", "1.0"), "AMECO"),
                         Dataflow.of(DataflowRef.of("ECB", "BKN", "1.0"), DataStructureRef.of("ECB", "ECB_BKN1", "1.0"), "Banknotes statistics"),
                         Dataflow.of(DataflowRef.of("ECB", "BLS", "1.0"), DataStructureRef.of("ECB", "ECB_BLS1", "1.0"), "Bank Lending Survey Statistics")
                 );
     }
-
-    private final XMLInputFactory xif = Stax.getInputFactory();
 }

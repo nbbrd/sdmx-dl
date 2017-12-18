@@ -20,8 +20,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import javax.xml.stream.XMLInputFactory;
 import static internal.file.SdmxDecoder.DataType.COMPACT20;
 import static internal.file.SdmxDecoder.DataType.COMPACT21;
 import static internal.file.SdmxDecoder.DataType.GENERIC20;
@@ -29,9 +27,9 @@ import static internal.file.SdmxDecoder.DataType.GENERIC21;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.util.List;
-import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
 import internal.file.SdmxFileUtil;
+import ioutil.Xml;
 
 /**
  *
@@ -39,9 +37,6 @@ import internal.file.SdmxFileUtil;
  */
 @lombok.AllArgsConstructor
 public final class StaxSdmxDecoder implements SdmxDecoder {
-
-    private final XMLInputFactory factory;
-    private final XMLInputFactory factoryWithoutNamespace;
 
     @Override
     public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
@@ -53,19 +48,14 @@ public final class StaxSdmxDecoder implements SdmxDecoder {
     }
 
     private DataType probeDataType(File data) throws IOException {
-        return DataTypeProbe.of()
-                .onFile(factory, StandardCharsets.UTF_8)
-                .applyWithIO(data);
+        return DataTypeProbe.of().parseFile(data);
     }
 
     private DataStructure parseStruct(DataType dataType, LanguagePriorityList langs, File structure) throws IOException {
-        return getStructParser(dataType, langs)
-                .onFile(factory, StandardCharsets.UTF_8)
-                .applyWithIO(structure)
-                .get(0);
+        return getStructParser(dataType, langs).parseFile(structure).get(0);
     }
 
-    private Stax.Parser<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
+    private Xml.Parser<List<DataStructure>> getStructParser(DataType o, LanguagePriorityList langs) throws IOException {
         switch (o) {
             case GENERIC20:
             case COMPACT20:
@@ -79,12 +69,10 @@ public final class StaxSdmxDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(DataType dataType, File data) throws IOException {
-        return getStructDecoder(dataType)
-                .onFile(factoryWithoutNamespace, StandardCharsets.UTF_8)
-                .applyWithIO(data);
+        return getStructDecoder(dataType).parseFile(data);
     }
 
-    private static Stax.Parser<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {
+    private static Xml.Parser<DataStructure> getStructDecoder(SdmxDecoder.DataType o) throws IOException {
         switch (o) {
             case GENERIC20:
                 return DataStructureDecoder.generic20();

@@ -17,13 +17,15 @@
 package internal.file.xml;
 
 import static be.nbb.sdmx.facade.xml.Sdmxml.*;
+import be.nbb.util.StaxUtil;
 import static internal.file.SdmxDecoder.DataType.*;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import be.nbb.util.Stax;
 import internal.file.SdmxDecoder;
+import ioutil.Stax;
+import ioutil.Xml;
 
 /**
  *
@@ -31,12 +33,12 @@ import internal.file.SdmxDecoder;
  */
 final class DataTypeProbe {
 
-    public static Stax.Parser<SdmxDecoder.DataType> of() {
-        return Stax.Parser.of(DataTypeProbe::probeDataType);
+    public static Xml.Parser<SdmxDecoder.DataType> of() {
+        return Stax.StreamParser.valueOf(DataTypeProbe::probeDataType);
     }
 
     private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {
-        if (Stax.isNotNamespaceAware(reader)) {
+        if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot probe data type");
         }
         

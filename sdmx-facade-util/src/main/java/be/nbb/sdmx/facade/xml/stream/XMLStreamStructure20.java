@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.xml.stream;
 
-import be.nbb.util.Stax;
+import be.nbb.util.StaxUtil;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
@@ -34,6 +34,8 @@ import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
 import static be.nbb.sdmx.facade.xml.Sdmxml.NS_V20_URI;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
+import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 
 /**
@@ -76,7 +78,7 @@ final class XMLStreamStructure20 {
 
     @Nonnull
     public List<DataStructure> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
-        if (Stax.isNotNamespaceAware(reader)) {
+        if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }
 
