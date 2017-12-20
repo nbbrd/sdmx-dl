@@ -17,11 +17,11 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.IMF;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.web.RestDriverSupport;
+import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 
 /**
  *
@@ -34,7 +34,7 @@ public final class ImfDriver implements SdmxWebDriver, HasCache {
     private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:imf:")
-            .client(ConnectorRestClient.of(IMF::new))
-            .entry("IMF", "International Monetary Fund", "http://sdmxws.imf.org/SDMXRest/sdmx.ashx")
+            .client(ConnectorRestClient.of(IMF2::new))
+            .entry("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
             .build();
 }

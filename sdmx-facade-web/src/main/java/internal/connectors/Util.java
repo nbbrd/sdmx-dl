@@ -65,11 +65,12 @@ public class Util {
         return result.build();
     }
 
-    public Dataflow fromFlowQuery(be.nbb.sdmx.facade.DataflowRef ref) {
+    public Dataflow fromFlowQuery(be.nbb.sdmx.facade.DataflowRef flowRef, be.nbb.sdmx.facade.DataStructureRef structRef) {
         Dataflow result = new Dataflow();
-        result.setAgency(ref.getAgency());
-        result.setId(ref.getId());
-        result.setVersion(ref.getVersion());
+        result.setAgency(flowRef.getAgency());
+        result.setId(flowRef.getId());
+        result.setVersion(flowRef.getVersion());
+        result.setDsdIdentifier(fromStructureRef(structRef));
         return result;
     }
 

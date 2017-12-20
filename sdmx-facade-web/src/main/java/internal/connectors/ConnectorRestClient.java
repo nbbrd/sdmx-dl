@@ -147,7 +147,7 @@ public final class ConnectorRestClient implements RestClient {
     }
 
     private static DataCursor getAdaptedCursor(RestSdmxClient connector, DataflowRef flowRef, DataStructure dsd, DataQuery query) throws SdmxException {
-        return new PortableTimeSeriesCursor(connector.getTimeSeries(Util.fromFlowQuery(flowRef), Util.fromStructure(dsd), query.getKey().toString(), null, null, isSeriesKeyOnly(query), null, false), ObsParser.standard());
+        return new PortableTimeSeriesCursor(connector.getTimeSeries(Util.fromFlowQuery(flowRef, dsd.getRef()), Util.fromStructure(dsd), query.getKey().toString(), null, null, isSeriesKeyOnly(query), null, false), ObsParser.standard());
     }
 
     private static boolean isSeriesKeyOnly(DataQuery query) {

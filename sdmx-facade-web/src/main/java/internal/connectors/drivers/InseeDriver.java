@@ -136,7 +136,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         private List<Series> getData(DataflowRef flowRef, DataStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
             return runQuery(
                     getCompactData21Parser(dsd),
-                    buildDataQuery(Util.fromFlowQuery(flowRef), resource.toString(), null, null, serieskeysonly, null, false),
+                    buildDataQuery(Util.fromFlowQuery(flowRef, dsd.getRef()), resource.toString(), null, null, serieskeysonly, null, false),
                     SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         }
 

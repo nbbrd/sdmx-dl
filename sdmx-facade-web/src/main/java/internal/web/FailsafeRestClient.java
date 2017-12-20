@@ -125,7 +125,7 @@ final class FailsafeRestClient implements RestClient {
     }
 
     private static IOException unexpected(RuntimeException ex, String format, Object... args) {
-        log.log(Level.WARNING, format, args);
+        log.log(Level.WARNING, String.format(format, args));
         return new UnexpectedIOException(ex);
     }
 
