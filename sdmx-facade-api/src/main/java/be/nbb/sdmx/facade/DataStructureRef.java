@@ -39,6 +39,16 @@ public final class DataStructureRef implements ResourceRef {
     @lombok.NonNull
     private String version;
 
+    public boolean containsRef(@Nonnull DataStructure that) {
+        return contains(that.getRef());
+    }
+
+    public boolean contains(@Nonnull DataStructureRef that) {
+        return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
+                && (this.id.equals(that.id))
+                && (this.version.equals(LATEST_VERSION) || this.version.equals(that.version));
+    }
+
     public boolean equalsRef(@Nonnull DataStructure that) {
         return equals(that.getRef());
     }
