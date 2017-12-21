@@ -63,7 +63,7 @@ public final class ConnectorRestClient implements RestClient {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(getEndpoint(x, prefix));
                 configure(client, x.getProperties(), z);
-                return new ConnectorRestClient(client);
+                return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
@@ -75,12 +75,15 @@ public final class ConnectorRestClient implements RestClient {
             try {
                 RestSdmxClient client = supplier.apply(getEndpoint(x, prefix), x.getProperties());
                 configure(client, x.getProperties(), z);
-                return new ConnectorRestClient(client);
+                return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
+
+    @lombok.NonNull
+    private final String name;
 
     @lombok.NonNull
     private final RestSdmxClient connector;
@@ -95,7 +98,7 @@ public final class ConnectorRestClient implements RestClient {
                     .map(Util::toFlow)
                     .collect(Collectors.toList());
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get datasets");
+            throw expected(ex, "Failed to get dataflows from '%s'", name);
         }
     }
 
@@ -104,7 +107,7 @@ public final class ConnectorRestClient implements RestClient {
         try {
             return Util.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get details from dataset '%s'", ref);
+            throw expected(ex, "Failed to get dataflow '%s' from '%s'", ref, name);
         }
     }
 
@@ -113,7 +116,7 @@ public final class ConnectorRestClient implements RestClient {
         try {
             return Util.toStructure(connector.getDataFlowStructure(Util.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get data structure from dataset '%s'", ref);
+            throw expected(ex, "Failed to get datastructure '%s' from '%s'", ref, name);
         }
     }
 
@@ -127,7 +130,7 @@ public final class ConnectorRestClient implements RestClient {
             if (Util.isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();
             }
-            throw expected(ex, "Failed to get data from dataset '%s' with key '%s'", flowRef, query.getKey());
+            throw expected(ex, "Failed to get data '%s' with %s from '%s'", flowRef, query, name);
         }
     }
 
