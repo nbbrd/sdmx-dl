@@ -17,11 +17,14 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.util.HasCache;
-import it.bancaditalia.oss.sdmx.client.custom.UIS;
+import be.nbb.sdmx.facade.util.SdmxFix;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.web.RestDriverSupport;
+import it.bancaditalia.oss.sdmx.client.custom.DotStat;
+import java.net.URI;
+import java.util.Map;
 
 /**
  *
@@ -34,7 +37,17 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
     private final RestDriverSupport support = RestDriverSupport
             .builder()
             .prefix("sdmx:uis:")
-            .client(ConnectorRestClient.of(UIS::new))
-            .entry("UIS", "Unesco Institute for Statistics", "http://data.uis.unesco.org/RestSDMX/sdmx.ashx")
+            .client(ConnectorRestClient.of(UIS2::new))
+            .entry("UIS", "Unesco Institute for Statistics", URL)
             .build();
+
+    @SdmxFix(id = "#UIS1", cause = "API requires auth by key in header and this is not supported yet in facade")
+    private final static String URL = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
+
+    private static final class UIS2 extends DotStat {
+
+        private UIS2(URI uri, Map<?, ?> properties) {
+            super("", uri, false, "compact_v2");
+        }
+    }
 }
