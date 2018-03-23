@@ -33,10 +33,10 @@ import java.util.logging.Level;
  */
 @lombok.AllArgsConstructor(staticName = "of")
 @lombok.extern.java.Log
-final class FailsafeRestClient implements RestClient {
+final class FailsafeWebClient implements WebClient {
 
     @lombok.NonNull
-    private final RestClient delegate;
+    private final WebClient delegate;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test.client;
+package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -22,16 +22,16 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import internal.web.RestClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import internal.web.WebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum NoOpRestClient implements RestClient {
+public enum NoOpWebClient implements WebClient {
 
     INSTANCE;
 

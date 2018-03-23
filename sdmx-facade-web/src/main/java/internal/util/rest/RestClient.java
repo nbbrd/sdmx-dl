@@ -14,26 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package internal.util.rest;
 
-import be.nbb.sdmx.facade.util.HasCache;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import static org.assertj.core.api.Assertions.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import javax.annotation.Nonnull;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class CacheAssertions {
+public interface RestClient {
 
-    public void assertCacheBehavior(HasCache o) {
-        assertThat(o.getCache()).isNotNull();
-        ConcurrentMap cache = new ConcurrentHashMap();
-        o.setCache(cache);
-        assertThat(o.getCache()).isSameAs(cache);
-        o.setCache(null);
-        assertThat(o.getCache()).isNotNull().isNotSameAs(cache);
-    }
+    @Nonnull
+    InputStream openStream(@Nonnull URL query, @Nonnull String mediaType, @Nonnull String langs) throws IOException;
 }

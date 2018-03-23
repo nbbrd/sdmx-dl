@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test.client;
+package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -22,52 +22,55 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import internal.web.RestClient;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import internal.web.WebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum NullRestClient implements RestClient {
+@lombok.RequiredArgsConstructor(staticName = "of")
+public final class CallStackWebClient implements WebClient {
 
-    INSTANCE;
+    @lombok.NonNull
+    private final WebClient delegate;
+
+    @lombok.NonNull
+    private final AtomicInteger count;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        return null;
+        count.incrementAndGet();
+        return delegate.getFlows();
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        Objects.requireNonNull(ref);
-        return null;
+        count.incrementAndGet();
+        return delegate.getFlow(ref);
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        Objects.requireNonNull(ref);
-        return null;
+        count.incrementAndGet();
+        return delegate.getStructure(ref);
     }
 
     @Override
     public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(dsd);
-        Objects.requireNonNull(query);
-        return null;
+        count.incrementAndGet();
+        return delegate.getData(flowRef, query, dsd);
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        return false;
+        return delegate.isSeriesKeysOnlySupported();
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
-        Objects.requireNonNull(flowRef);
-        return null;
+        return delegate.peekStructureRef(flowRef);
     }
 }

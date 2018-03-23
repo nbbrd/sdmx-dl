@@ -14,19 +14,24 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.web;
 
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import javax.annotation.Nonnull;
+import org.junit.Test;
+import _test.samples.FacadeResource;
+import _test.client.RepoWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public interface RestExecutor {
+public class WebConnectionTest {
 
-    @Nonnull
-    InputStream openStream(@Nonnull URL query, @Nonnull String mediaType, @Nonnull String langs) throws IOException;
+    @Test
+    public void testCompliance() throws IOException {
+        SdmxRepository repo = FacadeResource.ecb();
+        ConnectionAssert.assertCompliance(() -> WebConnection.of(RepoWebClient.of(repo)), FacadeResource.ECB_FLOW_REF);
+    }
 }

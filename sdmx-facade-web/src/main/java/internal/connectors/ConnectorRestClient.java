@@ -31,7 +31,6 @@ import be.nbb.sdmx.facade.util.NoOpCursor;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import java.io.IOException;
 import java.util.List;
-import internal.web.RestClient;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
@@ -42,13 +41,14 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import internal.web.WebClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements RestClient {
+public final class ConnectorRestClient implements WebClient {
 
     @FunctionalInterface
     public interface ConnectorConstructor {
@@ -57,7 +57,7 @@ public final class ConnectorRestClient implements RestClient {
         RestSdmxClient get() throws URISyntaxException;
     }
 
-    public static RestClient.Supplier of(ConnectorConstructor supplier) {
+    public static WebClient.Supplier of(ConnectorConstructor supplier) {
         return (x, prefix, z) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -70,7 +70,7 @@ public final class ConnectorRestClient implements RestClient {
         };
     }
 
-    public static RestClient.Supplier of(BiFunction<URI, Map<?, ?>, RestSdmxClient> supplier) {
+    public static WebClient.Supplier of(BiFunction<URI, Map<?, ?>, RestSdmxClient> supplier) {
         return (x, prefix, z) -> {
             try {
                 RestSdmxClient client = supplier.apply(getEndpoint(x, prefix), x.getProperties());

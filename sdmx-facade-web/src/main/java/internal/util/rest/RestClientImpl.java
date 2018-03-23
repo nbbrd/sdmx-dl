@@ -41,7 +41,7 @@ import javax.net.ssl.SSLSocketFactory;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class RestExecutorImpl implements RestExecutor {
+public final class RestClientImpl implements RestClient {
 
     private static final String ACCEPT_HEADER = "Accept";
     private static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";

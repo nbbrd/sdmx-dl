@@ -41,7 +41,7 @@ import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.Util;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
 import internal.util.drivers.InseeDialect;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.Dimension;
@@ -59,7 +59,7 @@ import java.util.logging.Level;
 public final class InseeDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .prefix("sdmx:insee:")
             .client(ConnectorRestClient.of(InseeClient::new))

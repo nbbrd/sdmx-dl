@@ -23,7 +23,7 @@ import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 import java.net.URI;
 
 /**
@@ -34,7 +34,7 @@ import java.net.URI;
 public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .prefix("sdmx:sdmx20:")
             .client(ConnectorRestClient.of(Sdmx20Client::new))

@@ -17,7 +17,7 @@
 package internal.connectors.drivers;
 
 import org.junit.Test;
-import static test.DriverAssertions.*;
+import static _test.DriverAssertions.*;
 
 /**
  *

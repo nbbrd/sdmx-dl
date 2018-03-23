@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.util.SdmxFix;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import java.net.URI;
 import java.util.Map;
@@ -34,7 +34,7 @@ import java.util.Map;
 public final class UisDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .prefix("sdmx:uis:")
             .client(ConnectorRestClient.of(UIS2::new))

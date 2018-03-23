@@ -16,7 +16,7 @@
  */
 package internal.connectors;
 
-import test.samples.ConnectorsResource;
+import _test.samples.ConnectorsResource;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;

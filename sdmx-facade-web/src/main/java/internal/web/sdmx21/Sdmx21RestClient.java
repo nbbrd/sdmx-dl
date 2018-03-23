@@ -16,7 +16,6 @@
  */
 package internal.web.sdmx21;
 
-import internal.util.rest.RestExecutor;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructure;
@@ -28,25 +27,26 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
 import static be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams.*;
-import internal.web.RestClient;
 import static internal.web.sdmx21.Sdmx21RestQueries.*;
 import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import internal.web.WebClient;
+import internal.util.rest.RestClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class Sdmx21RestClient implements RestClient {
+final class Sdmx21RestClient implements WebClient {
 
     private final URL endpoint;
     private final boolean seriesKeysOnlySupported;
     private final LanguagePriorityList langs;
-    private final RestExecutor executor;
+    private final RestClient executor;
 
     private final DataFactory dialect = DataFactory.sdmx21();
 

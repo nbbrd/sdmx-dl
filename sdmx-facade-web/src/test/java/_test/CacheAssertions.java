@@ -14,19 +14,26 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.connectors.drivers;
+package _test;
 
-import org.junit.Test;
-import static _test.DriverAssertions.*;
+import be.nbb.sdmx.facade.util.HasCache;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  *
  * @author Philippe Charles
  */
-public class NbbDriverTest {
+@lombok.experimental.UtilityClass
+public class CacheAssertions {
 
-    @Test
-    public void testCompliance() {
-        assertDriverCompliance(new NbbDriver(), "sdmx:nbb:");
+    public void assertCacheBehavior(HasCache o) {
+        assertThat(o.getCache()).isNotNull();
+        ConcurrentMap cache = new ConcurrentHashMap();
+        o.setCache(cache);
+        assertThat(o.getCache()).isSameAs(cache);
+        o.setCache(null);
+        assertThat(o.getCache()).isNotNull().isNotSameAs(cache);
     }
 }

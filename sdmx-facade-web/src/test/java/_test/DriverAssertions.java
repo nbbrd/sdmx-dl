@@ -14,13 +14,13 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package _test;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 import ioutil.IO;
 import static org.assertj.core.api.Assertions.*;
 
@@ -53,6 +53,6 @@ public class DriverAssertions {
         assertThat(o.getDescription()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getUri().toString()).startsWith(prefix);
-        assertThatCode(() -> RestDriverSupport.getEndpoint(o, prefix).toURL()).doesNotThrowAnyException();
+        assertThatCode(() -> WebDriverSupport.getEndpoint(o, prefix).toURL()).doesNotThrowAnyException();
     }
 }

@@ -25,7 +25,7 @@ import be.nbb.sdmx.facade.util.Chars;
 import java.util.function.Function;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import test.DialectAssertions;
+import _test.DialectAssertions;
 
 /**
  *

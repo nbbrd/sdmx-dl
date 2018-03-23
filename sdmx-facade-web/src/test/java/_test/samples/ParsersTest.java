@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test.samples;
+package _test.samples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;

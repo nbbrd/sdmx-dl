@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test.client;
+package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -22,53 +22,52 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.util.SdmxExceptions;
-import internal.web.RestClient;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import internal.web.WebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(staticName = "of")
-public final class RepoRestClient implements RestClient {
+public enum NullWebClient implements WebClient {
 
-    @lombok.NonNull
-    private final SdmxRepository repo;
+    INSTANCE;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        return new ArrayList(repo.getFlows());
+        return null;
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        return repo.getFlow(ref)
-                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
+        Objects.requireNonNull(ref);
+        return null;
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        return repo.getStructure(ref)
-                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
+        Objects.requireNonNull(ref);
+        return null;
     }
 
     @Override
     public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
-        return repo.getCursor(flowRef, query)
-                .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(dsd);
+        Objects.requireNonNull(query);
+        return null;
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        return true;
+        return false;
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        Objects.requireNonNull(flowRef);
         return null;
     }
 }

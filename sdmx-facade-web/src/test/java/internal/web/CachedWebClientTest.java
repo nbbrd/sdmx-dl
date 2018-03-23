@@ -16,7 +16,7 @@
  */
 package internal.web;
 
-import test.client.CallStackClient;
+import _test.client.CallStackWebClient;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.TypedId;
@@ -29,16 +29,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import test.samples.FacadeResource;
-import static test.samples.FacadeResource.ECB_FLOW_REF;
-import static test.samples.FacadeResource.ECB_STRUCT_REF;
-import test.client.RepoRestClient;
+import _test.samples.FacadeResource;
+import static _test.samples.FacadeResource.ECB_FLOW_REF;
+import static _test.samples.FacadeResource.ECB_STRUCT_REF;
+import _test.client.RepoWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public class CachedRestClientTest {
+public class CachedWebClientTest {
 
     @Test
     public void testGetFlows() throws IOException {
@@ -46,7 +46,7 @@ public class CachedRestClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedRestClient target = new CachedRestClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
         target.getFlows();
         assertThat(count).hasValue(1);
@@ -73,7 +73,7 @@ public class CachedRestClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedRestClient target = new CachedRestClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
         assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
 
@@ -108,7 +108,7 @@ public class CachedRestClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedRestClient target = new CachedRestClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
         assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
 
@@ -137,7 +137,7 @@ public class CachedRestClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedRestClient target = new CachedRestClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
         assertThatNullPointerException().isThrownBy(() -> target.getData(null, query, null));
 
@@ -190,8 +190,8 @@ public class CachedRestClientTest {
         }
     }
 
-    private static RestClient getClient(AtomicInteger count) throws IOException {
-        RestClient original = RepoRestClient.of(FacadeResource.ecb());
-        return CallStackClient.of(original, count);
+    private static WebClient getClient(AtomicInteger count) throws IOException {
+        WebClient original = RepoWebClient.of(FacadeResource.ecb());
+        return CallStackWebClient.of(original, count);
     }
 }

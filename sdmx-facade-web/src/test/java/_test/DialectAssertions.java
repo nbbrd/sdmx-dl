@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package _test;
 
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import static org.assertj.core.api.Assertions.*;

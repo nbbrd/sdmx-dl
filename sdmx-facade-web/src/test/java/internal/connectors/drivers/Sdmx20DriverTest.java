@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import static test.DriverAssertions.*;
+import static _test.DriverAssertions.*;
 
 /**
  *

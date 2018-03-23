@@ -24,33 +24,33 @@ import ioutil.IO;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import test.samples.FacadeResource;
-import static test.samples.FacadeResource.ECB_FLOW_REF;
-import static test.samples.FacadeResource.ECB_STRUCT_REF;
-import test.client.FailingRestClient;
-import test.client.NoOpRestClient;
-import test.client.NullRestClient;
-import test.client.RepoRestClient;
+import _test.samples.FacadeResource;
+import static _test.samples.FacadeResource.ECB_FLOW_REF;
+import static _test.samples.FacadeResource.ECB_STRUCT_REF;
+import _test.client.FailingWebClient;
+import _test.client.NoOpWebClient;
+import _test.client.NullWebClient;
+import _test.client.RepoWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public class FailsafeRestClientTest {
+public class FailsafeWebClientTest {
 
     @Test
     public void testGetFlows() {
-        assertOperation(o -> FailsafeRestClient.of(o).getFlows());
+        assertOperation(o -> FailsafeWebClient.of(o).getFlows());
     }
 
     @Test
     public void testGetFlow() {
-        assertOperation(o -> FailsafeRestClient.of(o).getFlow(ECB_FLOW_REF));
+        assertOperation(o -> FailsafeWebClient.of(o).getFlow(ECB_FLOW_REF));
     }
 
     @Test
     public void testGetStructure() {
-        assertOperation(o -> FailsafeRestClient.of(o).getStructure(ECB_STRUCT_REF));
+        assertOperation(o -> FailsafeWebClient.of(o).getStructure(ECB_STRUCT_REF));
     }
 
     @Test
@@ -58,52 +58,52 @@ public class FailsafeRestClientTest {
         DataQuery all = DataQuery.of(Key.ALL, false);
         DataStructure struct = DataStructure.builder().ref(ECB_STRUCT_REF).label("hello").build();
 
-        assertOperation(o -> FailsafeRestClient.of(o).getData(ECB_FLOW_REF, all, struct));
+        assertOperation(o -> FailsafeWebClient.of(o).getData(ECB_FLOW_REF, all, struct));
     }
 
     @Test
     public void testIsSeriesKeysOnlySupported() {
-        IO.Consumer<RestClient> op = o -> FailsafeRestClient.of(o).isSeriesKeysOnlySupported();
+        IO.Consumer<WebClient> op = o -> FailsafeWebClient.of(o).isSeriesKeysOnlySupported();
 
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
                 .isInstanceOf(UnexpectedIOException.class)
                 .hasCauseInstanceOf(UnsupportedOperationException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoRestClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 
     @Test
     public void testPeekStructureRef() {
-        IO.Consumer<RestClient> op = o -> FailsafeRestClient.of(o).peekStructureRef(ECB_FLOW_REF);
+        IO.Consumer<WebClient> op = o -> FailsafeWebClient.of(o).peekStructureRef(ECB_FLOW_REF);
 
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
                 .isInstanceOf(UnexpectedIOException.class)
                 .hasCauseInstanceOf(UnsupportedOperationException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoRestClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 
-    private static void assertOperation(IO.Consumer<RestClient> op) {
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpRestClient.INSTANCE))
+    private static void assertOperation(IO.Consumer<WebClient> op) {
+        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
                 .isInstanceOf(UnexpectedIOException.class)
                 .hasCauseInstanceOf(UnsupportedOperationException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(NullRestClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(NullWebClient.INSTANCE))
                 .isInstanceOf(UnexpectedIOException.class)
                 .hasCauseInstanceOf(NullPointerException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoRestClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 }

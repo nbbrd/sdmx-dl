@@ -21,7 +21,7 @@ import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 
 /**
  *
@@ -31,7 +31,7 @@ import internal.web.RestDriverSupport;
 public final class NbbDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .prefix("sdmx:nbb:")
             .client(ConnectorRestClient.of(NBB::new))

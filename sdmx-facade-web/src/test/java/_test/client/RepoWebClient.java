@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test.client;
+package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -22,45 +22,53 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import internal.web.RestClient;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.util.SdmxExceptions;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import internal.web.WebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum FailingRestClient implements RestClient {
+@lombok.AllArgsConstructor(staticName = "of")
+public final class RepoWebClient implements WebClient {
 
-    INSTANCE;
+    @lombok.NonNull
+    private final SdmxRepository repo;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList(repo.getFlows());
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return repo.getFlow(ref)
+                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return repo.getStructure(ref)
+                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
     }
 
     @Override
     public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return repo.getCursor(flowRef, query)
+                .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 }

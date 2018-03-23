@@ -37,10 +37,10 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class RestConnection implements SdmxConnection {
+final class WebConnection implements SdmxConnection {
 
     @lombok.NonNull
-    private final RestClient client;
+    private final WebClient client;
     private boolean closed = false;
 
     @Override

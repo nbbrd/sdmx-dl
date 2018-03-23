@@ -40,13 +40,13 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @lombok.Builder(builderClassName = "Builder")
 @ThreadSafe
-public final class RestDriverSupport implements SdmxWebDriver, HasCache {
+public final class WebDriverSupport implements SdmxWebDriver, HasCache {
 
     @lombok.NonNull
     private final String prefix;
 
     @lombok.NonNull
-    private final RestClient.Supplier client;
+    private final WebClient.Supplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebEntryPoint> entryPoints;
@@ -61,7 +61,7 @@ public final class RestDriverSupport implements SdmxWebDriver, HasCache {
     public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
         Objects.requireNonNull(entryPoint);
         Objects.requireNonNull(languages);
-        return RestConnection.of(getClient(entryPoint, languages));
+        return WebConnection.of(getClient(entryPoint, languages));
     }
 
     @Override
@@ -84,10 +84,10 @@ public final class RestDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private RestClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
-        RestClient origin = client.get(entryPoint, prefix, languages);
-        RestClient cached = CachedRestClient.of(origin, getBase(entryPoint, prefix, languages), getCache(), clock, getCacheTtl(entryPoint));
-        return FailsafeRestClient.of(cached);
+    private WebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+        WebClient origin = client.get(entryPoint, prefix, languages);
+        WebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, languages), getCache(), clock, getCacheTtl(entryPoint));
+        return FailsafeWebClient.of(cached);
     }
 
     private long getCacheTtl(SdmxWebEntryPoint entryPoint) {

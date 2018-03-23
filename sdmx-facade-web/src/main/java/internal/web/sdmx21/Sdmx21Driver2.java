@@ -17,19 +17,19 @@
 package internal.web.sdmx21;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
-import internal.util.rest.RestExecutor;
-import internal.util.rest.RestExecutorImpl;
+import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.CommonSdmxProperty;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.Util;
-import internal.web.RestClient;
-import internal.web.RestDriverSupport;
+import internal.web.WebDriverSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ServiceLoader;
 import javax.annotation.Nonnull;
+import internal.web.WebClient;
+import internal.util.rest.RestClient;
 
 /**
  *
@@ -40,13 +40,13 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .prefix(PREFIX)
             .client(Sdmx21Driver2::of)
             .build();
 
-    private static RestClient of(SdmxWebEntryPoint o, String prefix, @Nonnull LanguagePriorityList languages) {
+    private static WebClient of(SdmxWebEntryPoint o, String prefix, @Nonnull LanguagePriorityList languages) {
         return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), languages, getExecutor(o));
     }
 
@@ -62,9 +62,9 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return Util.SERIES_KEYS_ONLY_SUPPORTED.get(o.getProperties(), false);
     }
 
-    private static RestExecutor getExecutor(SdmxWebEntryPoint o) {
+    private static RestClient getExecutor(SdmxWebEntryPoint o) {
         SdmxWebBridge bridge = ServiceLoader.load(SdmxWebBridge.class).iterator().next();
-        return RestExecutorImpl.of(
+        return RestClientImpl.of(
                 CommonSdmxProperty.READ_TIMEOUT.get(o.getProperties(), DEFAULT_READ_TIMEOUT),
                 CommonSdmxProperty.CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT),
                 DEFAULT_MAX_HOP, bridge.getProxySelector(o), bridge.getSslSocketFactory(o)

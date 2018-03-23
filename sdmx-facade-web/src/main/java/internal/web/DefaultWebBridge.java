@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2018 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,22 +16,27 @@
  */
 package internal.web;
 
-import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.tck.ConnectionAssert;
-import java.io.IOException;
-import org.junit.Test;
-import test.samples.FacadeResource;
-import test.client.RepoRestClient;
+import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
+import java.net.ProxySelector;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-public class RestConnectionTest {
+@ServiceProvider(service = SdmxWebBridge.class)
+public final class DefaultWebBridge implements SdmxWebBridge {
 
-    @Test
-    public void testCompliance() throws IOException {
-        SdmxRepository repo = FacadeResource.ecb();
-        ConnectionAssert.assertCompliance(() -> RestConnection.of(RepoRestClient.of(repo)), FacadeResource.ECB_FLOW_REF);
+    @Override
+    public ProxySelector getProxySelector(SdmxWebEntryPoint o) {
+        return ProxySelector.getDefault();
+    }
+
+    @Override
+    public SSLSocketFactory getSslSocketFactory(SdmxWebEntryPoint o) {
+        return HttpsURLConnection.getDefaultSSLSocketFactory();
     }
 }
