@@ -22,11 +22,13 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -41,22 +43,24 @@ import lombok.AccessLevel;
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.extern.java.Log
 public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
     @Nonnull
     public static SdmxWebManager ofServiceLoader() {
-        return of(ServiceLoader.load(SdmxWebDriver.class));
+        return of(lookupBridge(), ServiceLoader.load(SdmxWebDriver.class));
     }
 
     @Nonnull
-    public static SdmxWebManager of(@Nonnull SdmxWebDriver... drivers) {
-        return of(Arrays.asList(drivers));
+    public static SdmxWebManager of(@Nonnull SdmxWebBridge bridge, @Nonnull SdmxWebDriver... drivers) {
+        return of(bridge, Arrays.asList(drivers));
     }
 
     @Nonnull
-    public static SdmxWebManager of(@Nonnull Iterable<? extends SdmxWebDriver> drivers) {
+    public static SdmxWebManager of(@Nonnull SdmxWebBridge bridge, @Nonnull Iterable<? extends SdmxWebDriver> drivers) {
+        Objects.requireNonNull(bridge);
+
         List<SdmxWebDriver> driverList = new ArrayList<>();
         drivers.forEach(driverList::add);
 
@@ -65,9 +69,10 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
         HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
 
-        return new SdmxWebManager(driverList, entryPointByName, cacheSupport);
+        return new SdmxWebManager(bridge, driverList, entryPointByName, cacheSupport);
     }
 
+    private final SdmxWebBridge bridge;
     private final List<SdmxWebDriver> drivers;
     private final ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName;
     private final HasCache cacheSupport;
@@ -96,7 +101,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
         for (SdmxWebDriver o : drivers) {
             if (tryAccepts(o, entryPoint)) {
-                return tryConnect(o, entryPoint, languages);
+                return tryConnect(o, entryPoint, languages, bridge);
             }
         }
         throw new IOException("Failed to find a suitable driver for '" + entryPoint + "'");
@@ -121,6 +126,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         updateEntryPointMap(entryPointByName, list.stream());
     }
 
+    private static SdmxWebBridge lookupBridge() {
+        Iterator<SdmxWebBridge> iter = ServiceLoader.load(SdmxWebBridge.class).iterator();
+        return iter.hasNext() ? iter.next() : SdmxWebBridge.getDefault();
+    }
+
     private static void applyCache(ConcurrentMap cache, List<SdmxWebDriver> drivers) {
         drivers.stream()
                 .filter(HasCache.class::isInstance)
@@ -142,11 +152,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static SdmxConnection tryConnect(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+    private static SdmxConnection tryConnect(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
         SdmxConnection result;
 
         try {
-            result = driver.connect(entryPoint, languages);
+            result = driver.connect(entryPoint, langs, bridge);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new UnexpectedIOException(ex);

@@ -21,6 +21,7 @@ import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.util.Collection;
@@ -37,20 +38,21 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testCompliance() {
-        ConnectionSupplierAssert.assertCompliance(SdmxWebManager.of(REPO), HELLO.getName(), "ko");
+        ConnectionSupplierAssert.assertCompliance(SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO), HELLO.getName(), "ko");
     }
 
     @Test
     @SuppressWarnings("null")
     public void testFactories() {
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((Iterable) null));
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((SdmxWebDriver[]) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(null, REPO));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(SdmxWebBridge.getDefault(), (Iterable) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(SdmxWebBridge.getDefault(), (SdmxWebDriver[]) null));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testGetConnectionOfEntryPoint() {
-        SdmxWebManager manager = SdmxWebManager.of(REPO);
+        SdmxWebManager manager = SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO);
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebEntryPoint) null, ANY));
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
         assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().uri("ko").build(), ANY));
@@ -66,7 +68,7 @@ public class SdmxWebManagerTest {
         final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("r1").build());
 
         @Override
-        public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+        public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
             String repoName = entryPoint.getUri().toString().substring(PREFIX.length());
             return repos.stream()
                     .filter(o -> o.getName().equals(repoName))

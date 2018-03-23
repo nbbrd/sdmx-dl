@@ -19,15 +19,13 @@ package internal.web.sdmx21;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.util.CommonSdmxProperty;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.Util;
 import internal.web.WebDriverSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ServiceLoader;
-import javax.annotation.Nonnull;
 import internal.web.WebClient;
 import internal.util.rest.RestClient;
 
@@ -46,8 +44,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .client(Sdmx21Driver2::of)
             .build();
 
-    private static WebClient of(SdmxWebEntryPoint o, String prefix, @Nonnull LanguagePriorityList languages) {
-        return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), languages, getExecutor(o));
+    private static WebClient of(SdmxWebEntryPoint o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
+        return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
     }
 
     private static URL getEndPoint(SdmxWebEntryPoint o, String prefix) {
@@ -62,16 +60,13 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return Util.SERIES_KEYS_ONLY_SUPPORTED.get(o.getProperties(), false);
     }
 
-    private static RestClient getExecutor(SdmxWebEntryPoint o) {
-        SdmxWebBridge bridge = ServiceLoader.load(SdmxWebBridge.class).iterator().next();
+    private static RestClient getRestClient(SdmxWebEntryPoint o, SdmxWebBridge bridge) {
         return RestClientImpl.of(
-                CommonSdmxProperty.READ_TIMEOUT.get(o.getProperties(), DEFAULT_READ_TIMEOUT),
-                CommonSdmxProperty.CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT),
+                READ_TIMEOUT.get(o.getProperties(), DEFAULT_READ_TIMEOUT),
+                CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT),
                 DEFAULT_MAX_HOP, bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
         );
     }
 
-    private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-    private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private final static int DEFAULT_MAX_HOP = 3;
 }

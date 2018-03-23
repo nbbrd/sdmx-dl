@@ -21,14 +21,14 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.net.ProxySelector;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebBridge.class)
-public final class DefaultWebBridge implements SdmxWebBridge {
+public enum DefaultWebBridge implements SdmxWebBridge {
+
+    INSTANCE;
 
     @Override
     public ProxySelector getProxySelector(SdmxWebEntryPoint o) {

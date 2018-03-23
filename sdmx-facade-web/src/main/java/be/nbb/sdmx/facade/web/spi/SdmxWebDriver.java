@@ -32,7 +32,11 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxWebDriver {
 
     @Nonnull
-    SdmxConnection connect(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException;
+    SdmxConnection connect(
+            @Nonnull SdmxWebEntryPoint entryPoint,
+            @Nonnull LanguagePriorityList languages,
+            @Nonnull SdmxWebBridge bridge
+    ) throws IOException;
 
     boolean accepts(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException;
 

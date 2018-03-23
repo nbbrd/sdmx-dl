@@ -22,6 +22,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import static _test.DriverAssertions.*;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 
 /**
  *
@@ -37,6 +38,6 @@ public class Sdmx20DriverTest {
     @Test
     public void testConnect() throws IOException {
         SdmxWebEntryPoint x = SdmxWebEntryPoint.builder().name("").uri("sdmx:sdmx20:http://localhost").build();
-        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY).close()).doesNotThrowAnyException();
+        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, SdmxWebBridge.getDefault()).close()).doesNotThrowAnyException();
     }
 }

@@ -19,6 +19,7 @@ package _test;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.WebDriverSupport;
 import ioutil.IO;
@@ -38,8 +39,9 @@ public class DriverAssertions {
         }
 
         assertThatNullPointerException().isThrownBy(() -> d.accepts(null));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(null, LanguagePriorityList.ANY));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(SdmxWebEntryPoint.builder().name("").build(), null));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(null, LanguagePriorityList.ANY, SdmxWebBridge.getDefault()));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(SdmxWebEntryPoint.builder().name("").build(), null, SdmxWebBridge.getDefault()));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(SdmxWebEntryPoint.builder().name("").build(), LanguagePriorityList.ANY, null));
 
         assertThat(d.getDefaultEntryPoints())
                 .allSatisfy(o -> checkEntryPoint(o, prefix))

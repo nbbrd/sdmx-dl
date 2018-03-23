@@ -19,8 +19,9 @@ package internal.web;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CACHE_TTL;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.net.URI;
@@ -30,7 +31,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -58,10 +58,11 @@ public final class WebDriverSupport implements SdmxWebDriver, HasCache {
     private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
 
     @Override
-    public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
+    public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
         Objects.requireNonNull(entryPoint);
         Objects.requireNonNull(languages);
-        return WebConnection.of(getClient(entryPoint, languages));
+        Objects.requireNonNull(bridge);
+        return WebConnection.of(getClient(entryPoint, languages, bridge));
     }
 
     @Override
@@ -84,17 +85,15 @@ public final class WebDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private WebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages) throws IOException {
-        WebClient origin = client.get(entryPoint, prefix, languages);
-        WebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, languages), getCache(), clock, getCacheTtl(entryPoint));
+    private WebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+        WebClient origin = client.get(entryPoint, prefix, langs, bridge);
+        WebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, langs), getCache(), clock, getCacheTtl(entryPoint));
         return FailsafeWebClient.of(cached);
     }
 
     private long getCacheTtl(SdmxWebEntryPoint entryPoint) {
         return CACHE_TTL.get(entryPoint.getProperties(), DEFAULT_CACHE_TTL);
     }
-
-    private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
 
     private static String getBase(SdmxWebEntryPoint entryPoint, String prefix, LanguagePriorityList languages) throws IOException {
         return getEndpoint(entryPoint, prefix).getHost() + languages.toString() + "/";

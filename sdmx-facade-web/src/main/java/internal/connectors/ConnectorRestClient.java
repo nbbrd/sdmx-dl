@@ -25,10 +25,10 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.CONNECT_TIMEOUT;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.READ_TIMEOUT;
+import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
 import be.nbb.sdmx.facade.util.NoOpCursor;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
 import java.util.List;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
@@ -37,7 +37,6 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
@@ -51,18 +50,26 @@ import internal.web.WebClient;
 public final class ConnectorRestClient implements WebClient {
 
     @FunctionalInterface
-    public interface ConnectorConstructor {
+    public interface SpecificSupplier {
 
         @Nonnull
         RestSdmxClient get() throws URISyntaxException;
     }
 
-    public static WebClient.Supplier of(ConnectorConstructor supplier) {
-        return (x, prefix, z) -> {
+    @FunctionalInterface
+    public interface GenericSupplier {
+
+        @Nonnull
+        RestSdmxClient get(@Nonnull URI uri, @Nonnull Map<?, ?> properties) throws URISyntaxException;
+    }
+
+    @Nonnull
+    public static WebClient.Supplier of(@Nonnull SpecificSupplier supplier) {
+        return (x, prefix, langs, bridge) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(getEndpoint(x, prefix));
-                configure(client, x.getProperties(), z);
+                configure(client, x.getProperties(), langs, bridge);
                 return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -70,11 +77,12 @@ public final class ConnectorRestClient implements WebClient {
         };
     }
 
-    public static WebClient.Supplier of(BiFunction<URI, Map<?, ?>, RestSdmxClient> supplier) {
-        return (x, prefix, z) -> {
+    @Nonnull
+    public static WebClient.Supplier of(@Nonnull GenericSupplier supplier) {
+        return (x, prefix, langs, bridge) -> {
             try {
-                RestSdmxClient client = supplier.apply(getEndpoint(x, prefix), x.getProperties());
-                configure(client, x.getProperties(), z);
+                RestSdmxClient client = supplier.get(getEndpoint(x, prefix), x.getProperties());
+                configure(client, x.getProperties(), langs, bridge);
                 return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -161,17 +169,14 @@ public final class ConnectorRestClient implements WebClient {
         return new IOException(String.format(format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, Map<?, ?> info, LanguagePriorityList languages) {
-        client.setLanguages(Util.fromLanguages(languages));
+    private static void configure(RestSdmxClient client, Map<?, ?> info, LanguagePriorityList langs, SdmxWebBridge bridge) {
+        client.setLanguages(Util.fromLanguages(langs));
         client.setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
         client.setReadTimeout(READ_TIMEOUT.get(info, DEFAULT_READ_TIMEOUT));
+        // TODO: bridge
     }
 
-    @Nonnull
-    private static URI getEndpoint(@Nonnull SdmxWebEntryPoint o, @Nonnull String prefix) throws URISyntaxException {
+    private static URI getEndpoint(SdmxWebEntryPoint o, String prefix) throws URISyntaxException {
         return new URI(o.getUri().toString().substring(prefix.length()));
     }
-
-    private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
-    private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
 }

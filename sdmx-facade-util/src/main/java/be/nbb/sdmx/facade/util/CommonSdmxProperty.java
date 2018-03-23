@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.util.Property.IntProperty;
 import be.nbb.sdmx.facade.util.Property.LongProperty;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -30,4 +31,7 @@ public class CommonSdmxProperty {
     public static final IntProperty READ_TIMEOUT = new IntProperty("readTimeout");
     public static final LongProperty CACHE_TTL = new LongProperty("cacheTtl");
 
+    public static final int DEFAULT_CONNECT_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
+    public static final int DEFAULT_READ_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
+    public static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
 }
