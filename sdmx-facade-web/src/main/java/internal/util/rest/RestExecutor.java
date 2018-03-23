@@ -14,9 +14,8 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.util.rest;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -26,13 +25,8 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-@FunctionalInterface
 public interface RestExecutor {
 
     @Nonnull
-    InputStream execute(@Nonnull URL query, @Nonnull String mediaType, @Nonnull LanguagePriorityList langs) throws IOException;
-
-    static RestExecutor getDefault(int readTimeout, int connectTimeout) {
-        return RestExecutorImpl.of(readTimeout, connectTimeout);
-    }
+    InputStream openStream(@Nonnull URL query, @Nonnull String mediaType, @Nonnull String langs) throws IOException;
 }

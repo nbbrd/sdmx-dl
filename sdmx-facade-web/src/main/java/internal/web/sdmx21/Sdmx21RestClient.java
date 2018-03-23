@@ -16,6 +16,7 @@
  */
 package internal.web.sdmx21;
 
+import internal.util.rest.RestExecutor;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructure;
@@ -96,6 +97,6 @@ public final class Sdmx21RestClient implements RestClient {
     }
 
     private IO.Supplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
-        return () -> executor.execute(query, mediaType, langs);
+        return () -> executor.openStream(query, mediaType, langs.toString());
     }
 }

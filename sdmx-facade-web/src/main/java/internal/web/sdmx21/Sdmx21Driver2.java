@@ -16,6 +16,9 @@
  */
 package internal.web.sdmx21;
 
+import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
+import internal.util.rest.RestExecutor;
+import internal.util.rest.RestExecutorImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.CommonSdmxProperty;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
@@ -25,6 +28,7 @@ import internal.web.RestClient;
 import internal.web.RestDriverSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ServiceLoader;
 import javax.annotation.Nonnull;
 
 /**
@@ -59,11 +63,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
     }
 
     private static RestExecutor getExecutor(SdmxWebEntryPoint o) {
-        return RestExecutor.getDefault(
+        SdmxWebBridge bridge = ServiceLoader.load(SdmxWebBridge.class).iterator().next();
+        return RestExecutorImpl.of(
                 CommonSdmxProperty.READ_TIMEOUT.get(o.getProperties(), DEFAULT_READ_TIMEOUT),
-                CommonSdmxProperty.CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT));
+                CommonSdmxProperty.CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT),
+                DEFAULT_MAX_HOP, bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
+        );
     }
 
     private final static int DEFAULT_CONNECT_TIMEOUT = 1000 * 60 * 2; // 2 minutes
     private final static int DEFAULT_READ_TIMEOUT = 1000 * 60 * 2; // 2 minutes
+    private final static int DEFAULT_MAX_HOP = 3;
 }

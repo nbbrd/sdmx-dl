@@ -14,29 +14,34 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.util.rest;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import ioutil.IO;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class RestExecutorImpl implements RestExecutor {
+public final class RestExecutorImpl implements RestExecutor {
 
     private static final String ACCEPT_HEADER = "Accept";
     private static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
@@ -45,15 +50,21 @@ final class RestExecutorImpl implements RestExecutor {
 
     private final int readTimeout;
     private final int connectTimeout;
-    private final int maxHop = 3;
+    private final int maxHop;
+
+    @lombok.NonNull
+    private final ProxySelector proxySelector;
+
+    @lombok.NonNull
+    private final SSLSocketFactory sslSocketFactory;
 
     @Override
-    public InputStream execute(URL query, String mediaType, LanguagePriorityList langs) throws IOException {
-        return call(query, mediaType, langs, 0);
+    public InputStream openStream(URL query, String mediaType, String langs) throws IOException {
+        return openStream(query, mediaType, langs, 0);
     }
 
-    private InputStream call(URL query, String mediaType, LanguagePriorityList langs, int hop) throws IOException {
-        URLConnection conn = query.openConnection();
+    private InputStream openStream(URL query, String mediaType, String langs, int hop) throws IOException {
+        URLConnection conn = query.openConnection(getProxy(query));
         conn.setReadTimeout(readTimeout);
         conn.setConnectTimeout(connectTimeout);
 
@@ -61,10 +72,14 @@ final class RestExecutorImpl implements RestExecutor {
             throw new IOException("Unsupported connection type");
         }
 
+        if (conn instanceof HttpsURLConnection) {
+            ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
+        }
+
         HttpURLConnection http = (HttpURLConnection) conn;
         http.setRequestMethod("GET");
         http.setRequestProperty(ACCEPT_HEADER, mediaType);
-        http.setRequestProperty(ACCEPT_LANGUAGE_HEADER, langs.toString());
+        http.setRequestProperty(ACCEPT_LANGUAGE_HEADER, langs);
         http.addRequestProperty(ACCEPT_ENCODING_HEADER, ContentEncoder.getEncodingHeader());
 
         switch (http.getResponseCode()) {
@@ -78,7 +93,16 @@ final class RestExecutorImpl implements RestExecutor {
         }
     }
 
-    private InputStream redirect(HttpURLConnection http, String mediaType, LanguagePriorityList langs, int hop) throws IOException {
+    private Proxy getProxy(URL url) throws IOException {
+        try {
+            List<Proxy> proxies = proxySelector.select(url.toURI());
+            return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private InputStream redirect(HttpURLConnection http, String mediaType, String langs, int hop) throws IOException {
         try {
             if (hop == maxHop) {
                 throw new IOException("Max hop reached");
@@ -87,7 +111,7 @@ final class RestExecutorImpl implements RestExecutor {
             if (newQuery == null || newQuery.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
-            return call(new URL(newQuery), mediaType, langs, hop + 1);
+            return openStream(new URL(newQuery), mediaType, langs, hop + 1);
         } finally {
             http.disconnect();
         }

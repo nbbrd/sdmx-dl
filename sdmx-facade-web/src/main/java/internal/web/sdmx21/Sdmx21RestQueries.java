@@ -16,6 +16,7 @@
  */
 package internal.web.sdmx21;
 
+import internal.util.rest.RestQueryBuilder;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
@@ -31,16 +32,16 @@ import java.net.URL;
 @lombok.experimental.UtilityClass
 class Sdmx21RestQueries {
 
-    URLBuilder onMeta(URL endpoint, String resourceType, ResourceRef ref) {
-        return URLBuilder.of(endpoint)
+    RestQueryBuilder onMeta(URL endpoint, String resourceType, ResourceRef ref) {
+        return RestQueryBuilder.of(endpoint)
                 .path(resourceType)
                 .path(ref.getAgency())
                 .path(ref.getId())
                 .path(ref.getVersion());
     }
 
-    URLBuilder onData(URL endpoint, DataflowRef flowRef, Key key) throws IOException {
-        return URLBuilder.of(endpoint)
+    RestQueryBuilder onData(URL endpoint, DataflowRef flowRef, Key key) throws IOException {
+        return RestQueryBuilder.of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(flowRef.toString())
                 .path(key.toString())
@@ -60,7 +61,7 @@ class Sdmx21RestQueries {
     }
 
     URL getDataQuery(URL endpoint, DataflowRef flowRef, DataQuery query) throws IOException {
-        URLBuilder result = onData(endpoint, flowRef, query.getKey());
+        RestQueryBuilder result = onData(endpoint, flowRef, query.getKey());
         switch (query.getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");

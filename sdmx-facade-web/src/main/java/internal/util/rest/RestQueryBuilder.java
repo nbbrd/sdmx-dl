@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.util.rest;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class URLBuilder {
+public final class RestQueryBuilder {
 
     private final URL entryPoint;
     private final List<String> paths = new ArrayList<>();
@@ -43,7 +43,7 @@ final class URLBuilder {
      * @return this builder
      * @throws NullPointerException if entryPoint is null
      */
-    public URLBuilder path(String path) {
+    public RestQueryBuilder path(String path) {
         Objects.requireNonNull(path);
         paths.add(path);
         return this;
@@ -57,7 +57,7 @@ final class URLBuilder {
      * @return this builder
      * @throws NullPointerException if key or value is null
      */
-    public URLBuilder param(String key, String value) {
+    public RestQueryBuilder param(String key, String value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         params.put(key, value);
