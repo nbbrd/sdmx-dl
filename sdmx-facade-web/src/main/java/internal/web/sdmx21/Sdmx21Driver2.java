@@ -19,10 +19,10 @@ package internal.web.sdmx21;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
+import be.nbb.sdmx.facade.util.Property;
+import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.connectors.Util;
 import internal.web.WebDriverSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -57,16 +57,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
     }
 
     private static boolean isSeriesKeysOnly(SdmxWebEntryPoint o) {
-        return Util.SERIES_KEYS_ONLY_SUPPORTED.get(o.getProperties(), false);
+        return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o.getProperties());
     }
 
     private static RestClient getRestClient(SdmxWebEntryPoint o, SdmxWebBridge bridge) {
         return RestClientImpl.of(
-                READ_TIMEOUT.get(o.getProperties(), DEFAULT_READ_TIMEOUT),
-                CONNECT_TIMEOUT.get(o.getProperties(), DEFAULT_CONNECT_TIMEOUT),
-                DEFAULT_MAX_HOP, bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
+                Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, o.getProperties()),
+                Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, o.getProperties()),
+                Property.get(MAX_REDIRECTS_PROPERTY, DEFAULT_MAX_REDIRECTS, o.getProperties()),
+                bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
         );
     }
-
-    private final static int DEFAULT_MAX_HOP = 3;
 }

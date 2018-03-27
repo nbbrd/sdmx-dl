@@ -16,8 +16,9 @@
  */
 package internal.connectors.drivers;
 
-import static internal.connectors.Util.NEEDS_CREDENTIALS;
+import static internal.connectors.Connectors.*;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.Property;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
@@ -43,7 +44,7 @@ public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
     private static final class Sdmx20Client extends RestSdmx20Client {
 
         private Sdmx20Client(URI endpoint, Map<?, ?> info) {
-            super("", endpoint, NEEDS_CREDENTIALS.get(info, false), null, "compact_v2");
+            super("", endpoint, Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, info), null, "compact_v2");
         }
     }
 }

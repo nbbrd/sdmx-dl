@@ -16,106 +16,56 @@
  */
 package be.nbb.sdmx.facade.util;
 
-import java.io.File;
 import java.util.Map;
 
 /**
  *
  * @author Philippe Charles
  */
-public abstract class Property {
+@lombok.experimental.UtilityClass
+public class Property {
 
-    private final String key;
-
-    public Property(String key) {
-        this.key = key;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public static final class BoolProperty extends Property {
-
-        public BoolProperty(String key) {
-            super(key);
+    public boolean get(String key, boolean defaultValue, Map props) {
+        Object result = props.get(key);
+        if (result != null) {
+            return Boolean.parseBoolean(result.toString());
         }
+        return defaultValue;
+    }
 
-        public boolean get(Map props, boolean defaultValue) {
-            Object result = props.get(getKey());
-            if (result != null) {
-                return Boolean.parseBoolean(result.toString());
+    public int get(String key, int defaultValue, Map props) {
+        Object result = props.get(key);
+        if (result != null) {
+            try {
+                return Integer.parseInt(result.toString());
+            } catch (NumberFormatException ex) {
+                // do nothing
             }
-            return defaultValue;
         }
-
-        public void set(Map<String, String> props, boolean value) {
-            props.put(getKey(), String.valueOf(value));
-        }
+        return defaultValue;
     }
 
-    public static final class IntProperty extends Property {
-
-        public IntProperty(String key) {
-            super(key);
-        }
-
-        public int get(Map props, int defaultValue) {
-            Object result = props.get(getKey());
-            if (result != null) {
-                try {
-                    return Integer.parseInt(result.toString());
-                } catch (NumberFormatException ex) {
-                    // do nothing
-                }
+    public long get(String key, long defaultValue, Map props) {
+        Object result = props.get(key);
+        if (result != null) {
+            try {
+                return Long.parseLong(result.toString());
+            } catch (NumberFormatException ex) {
+                // do nothing
             }
-            return defaultValue;
         }
-
-        public void set(Map<String, String> props, int value) {
-            props.put(getKey(), String.valueOf(value));
-        }
+        return defaultValue;
     }
 
-    public static final class LongProperty extends Property {
-
-        public LongProperty(String key) {
-            super(key);
-        }
-
-        public long get(Map props, long defaultValue) {
-            Object result = props.get(getKey());
-            if (result != null) {
-                try {
-                    return Long.parseLong(result.toString());
-                } catch (NumberFormatException ex) {
-                    // do nothing
-                }
-            }
-            return defaultValue;
-        }
-
-        public void set(Map<String, String> props, long value) {
-            props.put(getKey(), String.valueOf(value));
-        }
+    public void set(String key, boolean value, Map props) {
+        props.put(key, String.valueOf(value));
     }
 
-    public static final class FileProperty extends Property {
+    public void set(String key, int value, Map props) {
+        props.put(key, String.valueOf(value));
+    }
 
-        public FileProperty(String key) {
-            super(key);
-        }
-
-        public File get(Map props, File defaultValue) {
-            Object result = props.get(getKey());
-            if (result != null) {
-                return new File(result.toString());
-            }
-            return defaultValue;
-        }
-
-        public void set(Map<String, String> props, File value) {
-            props.put(getKey(), value.toString());
-        }
+    public void set(String key, long value, Map props) {
+        props.put(key, String.valueOf(value));
     }
 }

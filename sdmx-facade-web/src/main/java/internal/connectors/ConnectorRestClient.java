@@ -25,8 +25,9 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
+import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.NoOpCursor;
+import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
@@ -103,7 +104,7 @@ public final class ConnectorRestClient implements WebClient {
                     .getDataflows()
                     .values()
                     .stream()
-                    .map(Util::toFlow)
+                    .map(Connectors::toFlow)
                     .collect(Collectors.toList());
         } catch (SdmxException ex) {
             throw expected(ex, "Failed to get dataflows from '%s'", name);
@@ -113,7 +114,7 @@ public final class ConnectorRestClient implements WebClient {
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
         try {
-            return Util.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
+            return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
             throw expected(ex, "Failed to get dataflow '%s' from '%s'", ref, name);
         }
@@ -122,7 +123,7 @@ public final class ConnectorRestClient implements WebClient {
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
         try {
-            return Util.toStructure(connector.getDataFlowStructure(Util.fromStructureRef(ref), true));
+            return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
             throw expected(ex, "Failed to get datastructure '%s' from '%s'", ref, name);
         }
@@ -135,7 +136,7 @@ public final class ConnectorRestClient implements WebClient {
                     ? getCursor((HasDataCursor) connector, flowRef, dsd, query)
                     : getAdaptedCursor(connector, flowRef, dsd, query);
         } catch (SdmxException ex) {
-            if (Util.isNoResultMatchingQuery(ex)) {
+            if (Connectors.isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();
             }
             throw expected(ex, "Failed to get data '%s' with %s from '%s'", flowRef, query, name);
@@ -158,7 +159,7 @@ public final class ConnectorRestClient implements WebClient {
     }
 
     private static DataCursor getAdaptedCursor(RestSdmxClient connector, DataflowRef flowRef, DataStructure dsd, DataQuery query) throws SdmxException {
-        return new PortableTimeSeriesCursor(connector.getTimeSeries(Util.fromFlowQuery(flowRef, dsd.getRef()), Util.fromStructure(dsd), query.getKey().toString(), null, null, isSeriesKeyOnly(query), null, false), ObsParser.standard());
+        return new PortableTimeSeriesCursor(connector.getTimeSeries(Connectors.fromFlowQuery(flowRef, dsd.getRef()), Connectors.fromStructure(dsd), query.getKey().toString(), null, null, isSeriesKeyOnly(query), null, false), ObsParser.standard());
     }
 
     private static boolean isSeriesKeyOnly(DataQuery query) {
@@ -170,9 +171,9 @@ public final class ConnectorRestClient implements WebClient {
     }
 
     private static void configure(RestSdmxClient client, Map<?, ?> info, LanguagePriorityList langs, SdmxWebBridge bridge) {
-        client.setLanguages(Util.fromLanguages(langs));
-        client.setConnectTimeout(CONNECT_TIMEOUT.get(info, DEFAULT_CONNECT_TIMEOUT));
-        client.setReadTimeout(READ_TIMEOUT.get(info, DEFAULT_READ_TIMEOUT));
+        client.setLanguages(Connectors.fromLanguages(langs));
+        client.setConnectTimeout(Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, info));
+        client.setReadTimeout(Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, info));
         // TODO: bridge
     }
 

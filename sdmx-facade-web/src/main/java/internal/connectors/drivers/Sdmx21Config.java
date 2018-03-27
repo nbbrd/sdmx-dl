@@ -16,7 +16,9 @@
  */
 package internal.connectors.drivers;
 
-import internal.connectors.Util;
+import be.nbb.sdmx.facade.util.Property;
+import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
+import static internal.connectors.Connectors.*;
 import java.util.Map;
 
 /**
@@ -34,17 +36,17 @@ class Sdmx21Config {
 
     static Sdmx21Config load(Map<?, ?> p) {
         return new Sdmx21Config(
-                Util.NEEDS_CREDENTIALS.get(p, false),
-                Util.NEEDS_URL_ENCODING.get(p, false),
-                Util.SUPPORTS_COMPRESSION.get(p, false),
-                Util.SERIES_KEYS_ONLY_SUPPORTED.get(p, false));
+                Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, p),
+                Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, p),
+                Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, p),
+                Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, p));
     }
 
     static void store(Map<String, String> p, Sdmx21Config c) {
-        Util.NEEDS_CREDENTIALS.set(p, c.isNeedsCredentials());
-        Util.NEEDS_URL_ENCODING.set(p, c.isNeedsURLEncoding());
-        Util.SUPPORTS_COMPRESSION.set(p, c.isSupportsCompression());
-        Util.SERIES_KEYS_ONLY_SUPPORTED.set(p, c.isSeriesKeysOnlySupported());
+        Property.set(NEEDS_CREDENTIALS_PROPERTY, c.isNeedsCredentials(), p);
+        Property.set(NEEDS_URL_ENCODING_PROPERTY, c.isNeedsURLEncoding(), p);
+        Property.set(SUPPORTS_COMPRESSION_PROPERTY, c.isSupportsCompression(), p);
+        Property.set(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, c.isSeriesKeysOnlySupported(), p);
     }
 
     static class Sdmx21ConfigBuilder {

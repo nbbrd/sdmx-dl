@@ -25,7 +25,7 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.ObsParser;
 import internal.connectors.PortableTimeSeriesCursor;
-import internal.connectors.Util;
+import internal.connectors.Connectors;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
@@ -62,8 +62,8 @@ public class ConnectorsResource {
         DataflowRef ref = firstOf(flows);
 
         return SdmxRepository.builder()
-                .structures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
+                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
                 .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
@@ -81,8 +81,8 @@ public class ConnectorsResource {
         DataflowRef ref = firstOf(flows);
 
         return SdmxRepository.builder()
-                .structures(structs.stream().map(Util::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Util::toFlow).collect(Collectors.toList()))
+                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
                 .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
@@ -90,7 +90,7 @@ public class ConnectorsResource {
     }
 
     private DataflowRef firstOf(List<Dataflow> flows) {
-        return flows.stream().map(o -> Util.toFlow(o).getRef()).findFirst().get();
+        return flows.stream().map(o -> Connectors.toFlow(o).getRef()).findFirst().get();
     }
 
     private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -105,7 +105,7 @@ public class ConnectorsResource {
 
     private List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data20(xml, Util.toStructure(dsd))
+        return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());
@@ -121,7 +121,7 @@ public class ConnectorsResource {
 
     public List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
-        return FacadeResource.data21(xml, Util.toStructure(dsd))
+        return FacadeResource.data21(xml, Connectors.toStructure(dsd))
                 .stream()
                 .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
                 .collect(Collectors.toList());

@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Dimension;
-import static internal.connectors.Util.*;
+import static internal.connectors.Connectors.*;
 import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
 import java.net.HttpURLConnection;
 import static org.assertj.core.api.Assertions.*;

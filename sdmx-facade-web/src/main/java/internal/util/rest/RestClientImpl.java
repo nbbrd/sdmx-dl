@@ -50,7 +50,7 @@ public final class RestClientImpl implements RestClient {
 
     private final int readTimeout;
     private final int connectTimeout;
-    private final int maxHop;
+    private final int maxRedirects;
 
     @lombok.NonNull
     private final ProxySelector proxySelector;
@@ -63,7 +63,7 @@ public final class RestClientImpl implements RestClient {
         return openStream(query, mediaType, langs, 0);
     }
 
-    private InputStream openStream(URL query, String mediaType, String langs, int hop) throws IOException {
+    private InputStream openStream(URL query, String mediaType, String langs, int redirects) throws IOException {
         URLConnection conn = query.openConnection(getProxy(query));
         conn.setReadTimeout(readTimeout);
         conn.setConnectTimeout(connectTimeout);
@@ -85,7 +85,7 @@ public final class RestClientImpl implements RestClient {
         switch (http.getResponseCode()) {
             case HttpURLConnection.HTTP_MULT_CHOICE:
             case HttpURLConnection.HTTP_SEE_OTHER:
-                return redirect(http, mediaType, langs, hop);
+                return redirect(http, mediaType, langs, redirects);
             case HttpURLConnection.HTTP_OK:
                 return getBody(http);
             default:
@@ -102,16 +102,16 @@ public final class RestClientImpl implements RestClient {
         }
     }
 
-    private InputStream redirect(HttpURLConnection http, String mediaType, String langs, int hop) throws IOException {
+    private InputStream redirect(HttpURLConnection http, String mediaType, String langs, int redirects) throws IOException {
         try {
-            if (hop == maxHop) {
-                throw new IOException("Max hop reached");
+            if (redirects == maxRedirects) {
+                throw new IOException("Max redirections reached");
             }
             String newQuery = http.getHeaderField(LOCATION_HEADER);
             if (newQuery == null || newQuery.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
-            return openStream(new URL(newQuery), mediaType, langs, hop + 1);
+            return openStream(new URL(newQuery), mediaType, langs, redirects + 1);
         } finally {
             http.disconnect();
         }

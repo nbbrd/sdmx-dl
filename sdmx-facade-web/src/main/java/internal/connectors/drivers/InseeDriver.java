@@ -38,7 +38,7 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
-import internal.connectors.Util;
+import internal.connectors.Connectors;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
 import internal.util.drivers.InseeDialect;
 import internal.web.WebDriverSupport;
@@ -126,7 +126,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             try {
                 codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
             } catch (SdmxException ex) {
-                if (!Util.isNoResultMatchingQuery(ex)) {
+                if (!Connectors.isNoResultMatchingQuery(ex)) {
                     throw ex;
                 }
                 log.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
@@ -134,9 +134,8 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         }
 
         private List<Series> getData(DataflowRef flowRef, DataStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
-            return runQuery(
-                    getCompactData21Parser(dsd),
-                    buildDataQuery(Util.fromFlowQuery(flowRef, dsd.getRef()), resource.toString(), null, null, serieskeysonly, null, false),
+            return runQuery(getCompactData21Parser(dsd),
+                    buildDataQuery(Connectors.fromFlowQuery(flowRef, dsd.getRef()), resource.toString(), null, null, serieskeysonly, null, false),
                     SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         }
 

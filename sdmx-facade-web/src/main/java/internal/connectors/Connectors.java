@@ -19,7 +19,6 @@ package internal.connectors;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.util.Property.BoolProperty;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -33,7 +32,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class Util {
+public class Connectors {
 
     public be.nbb.sdmx.facade.Dataflow toFlow(Dataflow flow) {
         return be.nbb.sdmx.facade.Dataflow.of(DataflowRef.parse(flow.getFullIdentifier()), toStructureRef(flow.getDsdIdentifier()), flow.getDescription());
@@ -119,8 +118,12 @@ public class Util {
         return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
-    public static final BoolProperty SUPPORTS_COMPRESSION = new BoolProperty("supportsCompression");
-    public static final BoolProperty NEEDS_CREDENTIALS = new BoolProperty("needsCredentials");
-    public static final BoolProperty NEEDS_URL_ENCODING = new BoolProperty("needsURLEncoding");
-    public static final BoolProperty SERIES_KEYS_ONLY_SUPPORTED = new BoolProperty("seriesKeysOnlySupported");
+    public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
+    public static final boolean DEFAULT_SUPPORTS_COMPRESSION = false;
+
+    public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
+    public static final boolean DEFAULT_NEEDS_CREDENTIALS = false;
+
+    public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
+    public static final boolean DEFAULT_NEEDS_URL_ENCODING = false;
 }

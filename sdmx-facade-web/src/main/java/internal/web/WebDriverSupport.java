@@ -19,8 +19,9 @@ package internal.web;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
-import static be.nbb.sdmx.facade.util.CommonSdmxProperty.*;
+import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
+import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public final class WebDriverSupport implements SdmxWebDriver, HasCache {
     }
 
     private long getCacheTtl(SdmxWebEntryPoint entryPoint) {
-        return CACHE_TTL.get(entryPoint.getProperties(), DEFAULT_CACHE_TTL);
+        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, entryPoint.getProperties());
     }
 
     private static String getBase(SdmxWebEntryPoint entryPoint, String prefix, LanguagePriorityList languages) throws IOException {

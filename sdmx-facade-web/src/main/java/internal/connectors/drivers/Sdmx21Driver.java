@@ -39,7 +39,7 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
-import internal.connectors.Util;
+import internal.connectors.Connectors;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
 import internal.web.WebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.Parser;
@@ -204,9 +204,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
         }
 
         private List<Series> getData(DataflowRef flowRef, DataStructure dsd, Key resource, boolean serieskeysonly) throws SdmxException {
-            return runQuery(
-                    getCompactData21Parser(dsd),
-                    buildDataQuery(Util.fromFlowQuery(flowRef, dsd.getRef()), resource.toString(), null, null, serieskeysonly, null, false),
+            return runQuery(getCompactData21Parser(dsd),
+                    buildDataQuery(Connectors.fromFlowQuery(flowRef, dsd.getRef()), resource.toString(), null, null, serieskeysonly, null, false),
                     SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         }
 
