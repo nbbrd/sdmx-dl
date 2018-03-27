@@ -26,6 +26,7 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +54,9 @@ public interface WebClient {
     @Nullable
     DataStructureRef peekStructureRef(@Nonnull DataflowRef flowRef) throws IOException;
 
+    @Nonnull
+    Duration ping() throws IOException;
+    
     @FunctionalInterface
     interface Supplier {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,32 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.web.spi;
+package be.nbb.sdmx.facade.web;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.web.SdmxWebConnection;
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
-import java.util.Collection;
+import java.time.Duration;
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
-public interface SdmxWebDriver {
+public interface SdmxWebConnection extends SdmxConnection {
 
     @Nonnull
-    SdmxWebConnection connect(
-            @Nonnull SdmxWebEntryPoint entryPoint,
-            @Nonnull LanguagePriorityList languages,
-            @Nonnull SdmxWebBridge bridge
-    ) throws IOException;
-
-    boolean accepts(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException;
-
-    @Nonnull
-    Collection<SdmxWebEntryPoint> getDefaultEntryPoints();
+    Duration ping() throws IOException;
 }

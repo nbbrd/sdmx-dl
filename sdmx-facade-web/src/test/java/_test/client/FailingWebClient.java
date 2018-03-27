@@ -25,6 +25,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import java.io.IOException;
 import java.util.List;
 import internal.web.WebClient;
+import java.time.Duration;
 
 /**
  *
@@ -61,6 +62,11 @@ public enum FailingWebClient implements WebClient {
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Duration ping() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

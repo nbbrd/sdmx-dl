@@ -18,7 +18,6 @@ package be.nbb.sdmx.facade.web;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
@@ -78,7 +77,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     private final HasCache cacheSupport;
 
     @Override
-    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+    public SdmxWebConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
         Objects.requireNonNull(name);
         Objects.requireNonNull(languages);
 
@@ -90,12 +89,12 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Nonnull
-    public SdmxConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException {
+    public SdmxWebConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException {
         return getConnection(entryPoint, LanguagePriorityList.ANY);
     }
 
     @Nonnull
-    public SdmxConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException {
+    public SdmxWebConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException {
         Objects.requireNonNull(entryPoint);
         Objects.requireNonNull(languages);
 
@@ -152,8 +151,8 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static SdmxConnection tryConnect(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
-        SdmxConnection result;
+    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+        SdmxWebConnection result;
 
         try {
             result = driver.connect(entryPoint, langs, bridge);

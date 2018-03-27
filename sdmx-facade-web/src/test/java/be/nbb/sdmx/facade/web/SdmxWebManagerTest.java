@@ -24,6 +24,7 @@ import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -68,12 +69,12 @@ public class SdmxWebManagerTest {
         final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("r1").build());
 
         @Override
-        public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+        public SdmxWebConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
             String repoName = entryPoint.getUri().toString().substring(PREFIX.length());
             return repos.stream()
                     .filter(o -> o.getName().equals(repoName))
                     .findFirst()
-                    .map(SdmxRepository::asConnection)
+                    .map(o -> new RepoWebConnection(o.asConnection()))
                     .orElseThrow(IOException::new);
         }
 
@@ -85,6 +86,18 @@ public class SdmxWebManagerTest {
         @Override
         public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
             return Collections.singletonList(HELLO);
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class RepoWebConnection implements SdmxWebConnection {
+
+        @lombok.experimental.Delegate
+        private final SdmxConnection delegate;
+
+        @Override
+        public Duration ping() throws IOException {
+            return Duration.ZERO;
         }
     }
 }

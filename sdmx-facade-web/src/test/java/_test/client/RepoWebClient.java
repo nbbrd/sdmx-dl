@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import internal.web.WebClient;
+import java.time.Duration;
 
 /**
  *
@@ -70,5 +71,10 @@ public final class RepoWebClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return null;
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        return Duration.ZERO;
     }
 }

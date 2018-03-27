@@ -24,6 +24,7 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -122,6 +123,23 @@ final class FailsafeWebClient implements WebClient {
         } catch (RuntimeException ex) {
             throw unexpected(ex, "Unexpected exception while peeking struct ref for dataset '%s'", flowRef);
         }
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        Duration result;
+
+        try {
+            result = delegate.ping();
+        } catch (RuntimeException ex) {
+            throw unexpected(ex, "Unexpected exception while pinging resource");
+        }
+
+        if (result == null) {
+            throw unexpectedNull("Unexpected null while pinging resource");
+        }
+
+        return result;
     }
 
     private static IOException unexpected(RuntimeException ex, String format, Object... args) {

@@ -17,11 +17,11 @@
 package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.Property;
+import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
@@ -59,11 +59,11 @@ public final class WebDriverSupport implements SdmxWebDriver, HasCache {
     private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
 
     @Override
-    public SdmxConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+    public SdmxWebConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
         Objects.requireNonNull(entryPoint);
         Objects.requireNonNull(languages);
         Objects.requireNonNull(bridge);
-        return WebConnection.of(getClient(entryPoint, languages, bridge));
+        return SdmxWebConnectionImpl.of(getClient(entryPoint, languages, bridge));
     }
 
     @Override

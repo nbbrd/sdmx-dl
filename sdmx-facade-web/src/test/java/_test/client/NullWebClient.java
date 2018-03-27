@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import internal.web.WebClient;
+import java.time.Duration;
 
 /**
  *
@@ -68,6 +69,11 @@ public enum NullWebClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         Objects.requireNonNull(flowRef);
+        return null;
+    }
+
+    @Override
+    public Duration ping() throws IOException {
         return null;
     }
 }

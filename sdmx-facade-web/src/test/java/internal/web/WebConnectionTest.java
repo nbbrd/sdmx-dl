@@ -32,6 +32,6 @@ public class WebConnectionTest {
     @Test
     public void testCompliance() throws IOException {
         SdmxRepository repo = FacadeResource.ecb();
-        ConnectionAssert.assertCompliance(() -> WebConnection.of(RepoWebClient.of(repo)), FacadeResource.ECB_FLOW_REF);
+        ConnectionAssert.assertCompliance(() -> SdmxWebConnectionImpl.of(RepoWebClient.of(repo)), FacadeResource.ECB_FLOW_REF);
     }
 }

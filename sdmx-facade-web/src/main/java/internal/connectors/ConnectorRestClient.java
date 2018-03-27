@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
 import internal.web.WebClient;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *
@@ -152,6 +155,18 @@ public final class ConnectorRestClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef ref) throws IOException {
         return connector instanceof DotStat ? DataStructureRef.of(ref.getAgency(), ref.getId(), ref.getVersion()) : null;
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        try {
+            Clock clock = Clock.systemDefaultZone();
+            Instant start = clock.instant();
+            connector.getDataflows();
+            return Duration.between(start, clock.instant());
+        } catch (SdmxException ex) {
+            throw expected(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
+        }
     }
 
     private static DataCursor getCursor(HasDataCursor connector, DataflowRef flowRef, DataStructure dsd, DataQuery query) throws SdmxException, IOException {

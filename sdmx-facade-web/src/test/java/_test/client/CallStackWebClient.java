@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import internal.web.WebClient;
+import java.time.Duration;
 
 /**
  *
@@ -72,5 +73,10 @@ public final class CallStackWebClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return delegate.peekStructureRef(flowRef);
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        return delegate.ping();
     }
 }

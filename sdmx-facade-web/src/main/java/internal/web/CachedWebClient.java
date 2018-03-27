@@ -29,6 +29,7 @@ import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
@@ -92,6 +93,11 @@ final class CachedWebClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return delegate.peekStructureRef(flowRef);
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        return delegate.ping();
     }
 
     private List<Dataflow> loadDataFlowsWithCache() throws IOException {

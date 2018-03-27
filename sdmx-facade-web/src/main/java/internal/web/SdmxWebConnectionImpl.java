@@ -23,11 +23,12 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.DataQueryDetail;
 import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructureRef;
-import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
+import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class WebConnection implements SdmxConnection {
+final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     @lombok.NonNull
     private final WebClient client;
@@ -92,6 +93,12 @@ final class WebConnection implements SdmxConnection {
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
         return client.isSeriesKeysOnlySupported();
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        checkState();
+        return client.ping();
     }
 
     @Override

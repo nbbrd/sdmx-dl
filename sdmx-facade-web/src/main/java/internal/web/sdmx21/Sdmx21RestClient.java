@@ -35,6 +35,9 @@ import java.net.URL;
 import java.util.List;
 import internal.web.WebClient;
 import internal.util.rest.RestClient;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  *
@@ -94,6 +97,17 @@ final class Sdmx21RestClient implements WebClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return null;
+    }
+
+    @Override
+    public Duration ping() throws IOException {
+        Clock clock = Clock.systemDefaultZone();
+        Instant start = clock.instant();
+        try (InputStream stream = executor.openStream(getFlowsQuery(endpoint), "", "")) {
+            while (stream.read() != -1) {
+            }
+        }
+        return Duration.between(start, clock.instant());
     }
 
     private IO.Supplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
