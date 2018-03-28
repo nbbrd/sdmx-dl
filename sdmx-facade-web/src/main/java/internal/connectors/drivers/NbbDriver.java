@@ -35,6 +35,7 @@ public final class NbbDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("nbb@connectors")
             .client(ConnectorRestClient.of(NBB::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();
 }

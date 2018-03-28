@@ -65,7 +65,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         drivers.forEach(driverList::add);
 
         ConcurrentMap<String, SdmxWebSource> sourceByName = new ConcurrentHashMap<>();
-        updateSourceMap(sourceByName, driverList.stream().flatMap(o -> tryGetDefaultSources(o).stream()));
+        updateSourceMap(sourceByName, driverList.stream().flatMap(o -> tryGetDefaultSources(o)));
 
         HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
 
@@ -136,6 +136,16 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
                 .collect(Collectors.toList());
     }
 
+    @Nonnull
+    public Collection<String> getSupportedProperties(@Nonnull String driver) {
+        return drivers
+                .stream()
+                .filter(o -> driver.equals(o.getName()))
+                .map(SdmxWebDriver::getSupportedProperties)
+                .findFirst()
+                .orElse(Collections.emptyList());
+    }
+
     private static SdmxWebBridge lookupBridge() {
         Iterator<SdmxWebBridge> iter = ServiceLoader.load(SdmxWebBridge.class).iterator();
         return iter.hasNext() ? iter.next() : SdmxWebBridge.getDefault();
@@ -172,21 +182,23 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static Collection<SdmxWebSource> tryGetDefaultSources(SdmxWebDriver driver) {
+    private static Stream<SdmxWebSource> tryGetDefaultSources(SdmxWebDriver driver) {
         Collection<SdmxWebSource> result;
 
         try {
             result = driver.getDefaultSources();
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while getting default entry points", ex);
-            return Collections.emptyList();
+            return Stream.empty();
         }
 
         if (result == null) {
             log.log(Level.WARNING, "Unexpected null list");
-            return Collections.emptyList();
+            return Stream.empty();
         }
 
-        return result;
+        return result
+                .stream()
+                .filter(o -> o.getDriver().equals(driver.getName()));
     }
 }

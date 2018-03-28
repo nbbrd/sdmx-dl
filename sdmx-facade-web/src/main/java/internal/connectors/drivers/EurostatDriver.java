@@ -35,6 +35,7 @@ public final class EurostatDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("eurostat@connectors")
             .client(ConnectorRestClient.of(EUROSTAT::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
             .build();
 }

@@ -50,6 +50,9 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     @lombok.Singular
     private final Collection<SdmxWebSource> sources;
 
+    @lombok.Singular
+    private final Collection<String> supportedProperties;
+
     @lombok.Builder.Default
     private final Clock clock = Clock.systemDefaultZone();
 
@@ -77,6 +80,11 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     @Override
     public Collection<SdmxWebSource> getDefaultSources() {
         return sources;
+    }
+
+    @Override
+    public Collection<String> getSupportedProperties() {
+        return supportedProperties;
     }
 
     @Override

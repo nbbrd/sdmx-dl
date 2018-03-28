@@ -53,16 +53,16 @@ public class DriverAssertions {
 
         assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, SdmxWebBridge.getDefault()));
 
-        assertThat(d.getDefaultSources())
-                .allSatisfy(o -> checkSource(o))
-                .allMatch(o -> o.getDriver().equals(d.getName()));
+        assertThat(d.getDefaultSources()).allSatisfy(o -> checkSource(o, d));
 
         assertThat(d.getClass()).isFinal();
     }
 
-    private void checkSource(SdmxWebSource o) {
+    private void checkSource(SdmxWebSource o, SdmxWebDriver d) {
         assertThat(o.getName()).isNotBlank();
         assertThat(o.getDescription()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
+        assertThat(o.getDriver()).isEqualTo(d.getName());
+        assertThat(o.getProperties().keySet()).isSubsetOf(d.getSupportedProperties());
     }
 }

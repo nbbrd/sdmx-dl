@@ -60,6 +60,11 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             .builder()
             .name(NAME)
             .client(ConnectorRestClient.of(Sdmx21Client::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
+            .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)
+            .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY)
+            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .name("ECB")

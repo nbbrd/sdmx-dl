@@ -26,6 +26,9 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
 import internal.util.rest.RestClient;
 import internal.web.SdmxWebClient;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -40,6 +43,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .builder()
             .name("sdmx21")
             .client(Sdmx21Driver2::of)
+            .supportedProperties(CONNECTION_PROPERTIES)
+            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .name("ECB")
@@ -66,4 +71,11 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
         );
     }
+
+    private static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
+            Arrays.asList(
+                    CONNECT_TIMEOUT_PROPERTY,
+                    READ_TIMEOUT_PROPERTY,
+                    MAX_REDIRECTS_PROPERTY
+            ));
 }

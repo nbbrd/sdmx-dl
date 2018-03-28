@@ -35,6 +35,7 @@ public final class AbsDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("abs@connectors")
             .client(ConnectorRestClient.of(ABS::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();
 }

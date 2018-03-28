@@ -43,4 +43,7 @@ public interface SdmxWebDriver {
 
     @Nonnull
     Collection<SdmxWebSource> getDefaultSources();
+
+    @Nonnull
+    Collection<String> getSupportedProperties();
 }

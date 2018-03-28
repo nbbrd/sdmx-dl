@@ -38,6 +38,7 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("uis@connectors")
             .client(ConnectorRestClient.of(UIS2::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_URL)
             .build();
 

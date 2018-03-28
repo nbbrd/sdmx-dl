@@ -35,6 +35,7 @@ public final class ImfDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("imf@connectors")
             .client(ConnectorRestClient.of(IMF2::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
             .build();
 }

@@ -35,6 +35,7 @@ public final class OecdDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("oecd@connectors")
             .client(ConnectorRestClient.of(OECD::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .build();
 }

@@ -44,6 +44,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import internal.web.SdmxWebClient;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -167,6 +169,12 @@ public final class ConnectorRestClient implements SdmxWebClient {
             throw wrap(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
         }
     }
+
+    public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
+            Arrays.asList(
+                    CONNECT_TIMEOUT_PROPERTY,
+                    READ_TIMEOUT_PROPERTY
+            ));
 
     private static DataCursor getCursor(HasDataCursor connector, DataflowRef flowRef, DataStructure dsd, DataQuery query) throws SdmxException, IOException {
         return connector.getDataCursor(flowRef, dsd, query.getKey(), isSeriesKeyOnly(query));

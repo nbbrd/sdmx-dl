@@ -39,6 +39,8 @@ public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
             .builder()
             .name("sdmx20@connectors")
             .client(ConnectorRestClient.of(Sdmx20Client::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

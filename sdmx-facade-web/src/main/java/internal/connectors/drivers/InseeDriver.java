@@ -63,6 +63,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("insee@connectors")
             .client(ConnectorRestClient.of(InseeClient::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_URL)
             .build();
 

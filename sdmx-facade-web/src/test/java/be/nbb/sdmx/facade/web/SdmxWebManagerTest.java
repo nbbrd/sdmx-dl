@@ -86,6 +86,11 @@ public class SdmxWebManagerTest {
         public Collection<SdmxWebSource> getDefaultSources() {
             return Collections.singletonList(HELLO);
         }
+
+        @Override
+        public Collection<String> getSupportedProperties() {
+            return Collections.emptyList();
+        }
     }
 
     @lombok.AllArgsConstructor

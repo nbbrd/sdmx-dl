@@ -48,6 +48,7 @@ public final class IloDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("ilo@connectors")
             .client(ConnectorRestClient.of(ILO2::new))
+            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ILO", "International Labour Office", FALLBACK_URL)
             .build();
 
