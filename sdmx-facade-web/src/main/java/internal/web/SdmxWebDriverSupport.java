@@ -17,7 +17,7 @@
 package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.Property;
@@ -50,7 +50,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     private final SdmxWebClient.Supplier client;
 
     @lombok.Singular
-    private final Collection<SdmxWebEntryPoint> entryPoints;
+    private final Collection<SdmxWebSource> sources;
 
     @lombok.Builder.Default
     private final Clock clock = Clock.systemDefaultZone();
@@ -59,21 +59,21 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
 
     @Override
-    public SdmxWebConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
-        Objects.requireNonNull(entryPoint);
+    public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+        Objects.requireNonNull(source);
         Objects.requireNonNull(languages);
         Objects.requireNonNull(bridge);
-        return SdmxWebConnectionImpl.of(getClient(entryPoint, languages, bridge));
+        return SdmxWebConnectionImpl.of(getClient(source, languages, bridge));
     }
 
     @Override
-    public boolean accepts(SdmxWebEntryPoint entryPoint) throws IOException {
-        return entryPoint.getUri().toString().startsWith(prefix);
+    public boolean accepts(SdmxWebSource source) throws IOException {
+        return source.getUri().toString().startsWith(prefix);
     }
 
     @Override
-    public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
-        return entryPoints;
+    public Collection<SdmxWebSource> getDefaultSources() {
+        return sources;
     }
 
     @Override
@@ -86,22 +86,22 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private SdmxWebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
-        SdmxWebClient origin = client.get(entryPoint, prefix, langs, bridge);
-        SdmxWebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, langs), getCache(), clock, getCacheTtl(entryPoint));
+    private SdmxWebClient getClient(SdmxWebSource source, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+        SdmxWebClient origin = client.get(source, prefix, langs, bridge);
+        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, prefix, langs), getCache(), clock, getCacheTtl(source));
         return FailsafeWebClient.of(cached);
     }
 
-    private long getCacheTtl(SdmxWebEntryPoint entryPoint) {
-        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, entryPoint.getProperties());
+    private long getCacheTtl(SdmxWebSource source) {
+        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, source.getProperties());
     }
 
-    private static String getBase(SdmxWebEntryPoint entryPoint, String prefix, LanguagePriorityList languages) throws IOException {
-        return getEndpoint(entryPoint, prefix).getHost() + languages.toString() + "/";
+    private static String getBase(SdmxWebSource source, String prefix, LanguagePriorityList languages) throws IOException {
+        return getEndpoint(source, prefix).getHost() + languages.toString() + "/";
     }
 
     @Nonnull
-    public static URI getEndpoint(@Nonnull SdmxWebEntryPoint o, @Nonnull String prefix) throws IOException {
+    public static URI getEndpoint(@Nonnull SdmxWebSource o, @Nonnull String prefix) throws IOException {
         try {
             return new URI(o.getUri().toString().substring(prefix.length()));
         } catch (URISyntaxException ex) {
@@ -112,7 +112,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     public static final class Builder {
 
         public Builder entry(@Nonnull String name, @Nonnull String description, @Nonnull String url) {
-            return entryPoint(SdmxWebEntryPoint.builder().name(name).description(description).uri(prefix + url).build());
+            return source(SdmxWebSource.builder().name(name).description(description).uri(prefix + url).build());
         }
     }
 }

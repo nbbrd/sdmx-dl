@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-public final class SdmxWebEntryPoint {
+public final class SdmxWebSource {
 
     @lombok.NonNull
     String name;

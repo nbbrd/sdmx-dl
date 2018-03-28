@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
@@ -59,12 +59,12 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             .builder()
             .prefix(PREFIX)
             .client(ConnectorRestClient.of(Sdmx21Client::new))
-            .entryPoints(getEntryPoints())
+            .sources(getSources())
             .build();
 
-    private static List<SdmxWebEntryPoint> getEntryPoints() {
-        Sdmx21EntryPointBuilder b = new Sdmx21EntryPointBuilder();
-        List<SdmxWebEntryPoint> result = new ArrayList<>();
+    private static List<SdmxWebSource> getSources() {
+        Sdmx21SourceBuilder b = new Sdmx21SourceBuilder();
+        List<SdmxWebSource> result = new ArrayList<>();
         result.add(b.clear()
                 .name("ECB")
                 .description("European Central Bank")
@@ -113,14 +113,14 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static final class Sdmx21EntryPointBuilder {
+    private static final class Sdmx21SourceBuilder {
 
         private String name = null;
         private String description = null;
         private String endpoint = null;
         private final Sdmx21Config.Sdmx21ConfigBuilder config = Sdmx21Config.builder();
 
-        public Sdmx21EntryPointBuilder clear() {
+        public Sdmx21SourceBuilder clear() {
             this.name = null;
             this.description = null;
             this.endpoint = null;
@@ -128,37 +128,37 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             return this;
         }
 
-        public Sdmx21EntryPointBuilder name(String name) {
+        public Sdmx21SourceBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public Sdmx21EntryPointBuilder description(String description) {
+        public Sdmx21SourceBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public Sdmx21EntryPointBuilder endpoint(String endpoint) {
+        public Sdmx21SourceBuilder endpoint(String endpoint) {
             this.endpoint = endpoint;
             return this;
         }
 
-        public Sdmx21EntryPointBuilder needsCredentials(boolean needsCredentials) {
+        public Sdmx21SourceBuilder needsCredentials(boolean needsCredentials) {
             config.needsCredentials(needsCredentials);
             return this;
         }
 
-        public Sdmx21EntryPointBuilder needsURLEncoding(boolean needsURLEncoding) {
+        public Sdmx21SourceBuilder needsURLEncoding(boolean needsURLEncoding) {
             config.needsURLEncoding(needsURLEncoding);
             return this;
         }
 
-        public Sdmx21EntryPointBuilder supportsCompression(boolean supportsCompression) {
+        public Sdmx21SourceBuilder supportsCompression(boolean supportsCompression) {
             config.supportsCompression(supportsCompression);
             return this;
         }
 
-        public Sdmx21EntryPointBuilder seriesKeysOnlySupported(boolean seriesKeysOnlySupported) {
+        public Sdmx21SourceBuilder seriesKeysOnlySupported(boolean seriesKeysOnlySupported) {
             config.seriesKeysOnlySupported(seriesKeysOnlySupported);
             return this;
         }
@@ -169,8 +169,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             return result;
         }
 
-        public SdmxWebEntryPoint build() {
-            return SdmxWebEntryPoint.builder()
+        public SdmxWebSource build() {
+            return SdmxWebSource.builder()
                     .name(name)
                     .description(description)
                     .uri(PREFIX + endpoint)

@@ -63,17 +63,17 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         List<SdmxWebDriver> driverList = new ArrayList<>();
         drivers.forEach(driverList::add);
 
-        ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName = new ConcurrentHashMap<>();
-        updateEntryPointMap(entryPointByName, driverList.stream().flatMap(o -> tryGetDefaultEntryPoints(o).stream()));
+        ConcurrentMap<String, SdmxWebSource> sourceByName = new ConcurrentHashMap<>();
+        updateSourceMap(sourceByName, driverList.stream().flatMap(o -> tryGetDefaultSources(o).stream()));
 
         HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
 
-        return new SdmxWebManager(bridge, driverList, entryPointByName, cacheSupport);
+        return new SdmxWebManager(bridge, driverList, sourceByName, cacheSupport);
     }
 
     private final SdmxWebBridge bridge;
     private final List<SdmxWebDriver> drivers;
-    private final ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName;
+    private final ConcurrentMap<String, SdmxWebSource> sourceByName;
     private final HasCache cacheSupport;
 
     @Override
@@ -81,29 +81,29 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         Objects.requireNonNull(name);
         Objects.requireNonNull(languages);
 
-        SdmxWebEntryPoint entryPoint = entryPointByName.get(name);
-        if (entryPoint == null) {
+        SdmxWebSource source = sourceByName.get(name);
+        if (source == null) {
             throw new IOException("Cannot find entry point for '" + name + "'");
         }
-        return getConnection(entryPoint, languages);
+        return getConnection(source, languages);
     }
 
     @Nonnull
-    public SdmxWebConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException {
-        return getConnection(entryPoint, LanguagePriorityList.ANY);
+    public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source) throws IOException {
+        return getConnection(source, LanguagePriorityList.ANY);
     }
 
     @Nonnull
-    public SdmxWebConnection getConnection(@Nonnull SdmxWebEntryPoint entryPoint, @Nonnull LanguagePriorityList languages) throws IOException {
-        Objects.requireNonNull(entryPoint);
+    public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source, @Nonnull LanguagePriorityList languages) throws IOException {
+        Objects.requireNonNull(source);
         Objects.requireNonNull(languages);
 
         for (SdmxWebDriver o : drivers) {
-            if (tryAccepts(o, entryPoint)) {
-                return tryConnect(o, entryPoint, languages, bridge);
+            if (tryAccepts(o, source)) {
+                return tryConnect(o, source, languages, bridge);
             }
         }
-        throw new IOException("Failed to find a suitable driver for '" + entryPoint + "'");
+        throw new IOException("Failed to find a suitable driver for '" + source + "'");
     }
 
     @Override
@@ -117,12 +117,12 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @Nonnull
-    public List<SdmxWebEntryPoint> getEntryPoints() {
-        return new ArrayList<>(entryPointByName.values());
+    public List<SdmxWebSource> getSources() {
+        return new ArrayList<>(sourceByName.values());
     }
 
-    public void setEntryPoints(@Nonnull List<SdmxWebEntryPoint> list) {
-        updateEntryPointMap(entryPointByName, list.stream());
+    public void setSources(@Nonnull List<SdmxWebSource> list) {
+        updateSourceMap(sourceByName, list.stream());
     }
 
     private static SdmxWebBridge lookupBridge() {
@@ -136,14 +136,14 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
                 .forEach(o -> ((HasCache) o).setCache(cache));
     }
 
-    private static void updateEntryPointMap(ConcurrentMap<String, SdmxWebEntryPoint> entryPointByName, Stream<SdmxWebEntryPoint> list) {
-        entryPointByName.clear();
-        list.forEach(o -> entryPointByName.put(o.getName(), o));
+    private static void updateSourceMap(ConcurrentMap<String, SdmxWebSource> sourceByName, Stream<SdmxWebSource> list) {
+        sourceByName.clear();
+        list.forEach(o -> sourceByName.put(o.getName(), o));
     }
 
-    private static boolean tryAccepts(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint) throws IOException {
+    private static boolean tryAccepts(SdmxWebDriver driver, SdmxWebSource source) throws IOException {
         try {
-            return driver.accepts(entryPoint);
+            return driver.accepts(source);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while parsing URI", ex);
             return false;
@@ -151,11 +151,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource source, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
         SdmxWebConnection result;
 
         try {
-            result = driver.connect(entryPoint, langs, bridge);
+            result = driver.connect(source, langs, bridge);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new UnexpectedIOException(ex);
@@ -170,11 +170,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static Collection<SdmxWebEntryPoint> tryGetDefaultEntryPoints(SdmxWebDriver driver) {
-        Collection<SdmxWebEntryPoint> result;
+    private static Collection<SdmxWebSource> tryGetDefaultSources(SdmxWebDriver driver) {
+        Collection<SdmxWebSource> result;
 
         try {
-            result = driver.getDefaultEntryPoints();
+            result = driver.getDefaultSources();
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while getting default entry points", ex);
             return Collections.emptyList();

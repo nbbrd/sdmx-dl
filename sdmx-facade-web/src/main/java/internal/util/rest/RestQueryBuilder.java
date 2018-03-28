@@ -32,7 +32,7 @@ import java.util.Objects;
 @lombok.RequiredArgsConstructor(staticName = "of")
 public final class RestQueryBuilder {
 
-    private final URL entryPoint;
+    private final URL endPoint;
     private final List<String> paths = new ArrayList<>();
     private final Map<String, String> params = new LinkedHashMap<>();
 
@@ -41,7 +41,7 @@ public final class RestQueryBuilder {
      *
      * @param path a non-null path
      * @return this builder
-     * @throws NullPointerException if entryPoint is null
+     * @throws NullPointerException if path is null
      */
     public RestQueryBuilder path(String path) {
         Objects.requireNonNull(path);
@@ -72,7 +72,7 @@ public final class RestQueryBuilder {
      */
     public URL build() throws IOException {
         StringBuilder result = new StringBuilder();
-        result.append(entryPoint);
+        result.append(endPoint);
 
         for (String path : paths) {
             result.append('/').append(URLEncoder.encode(path, "UTF-8"));

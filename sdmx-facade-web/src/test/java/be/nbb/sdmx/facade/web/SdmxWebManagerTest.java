@@ -52,14 +52,14 @@ public class SdmxWebManagerTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testGetConnectionOfEntryPoint() {
+    public void testGetConnectionOfSource() {
         SdmxWebManager manager = SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO);
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebEntryPoint) null, ANY));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null, ANY));
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
         assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().uri("ko").build(), ANY));
     }
 
-    private static final SdmxWebEntryPoint HELLO = SdmxWebEntryPoint.builder().name("ok").uri(RepoDriver.PREFIX + "r1").build();
+    private static final SdmxWebSource HELLO = SdmxWebSource.builder().name("ok").uri(RepoDriver.PREFIX + "r1").build();
     private static final SdmxWebDriver REPO = new RepoDriver();
 
     private static final class RepoDriver implements SdmxWebDriver {
@@ -69,8 +69,8 @@ public class SdmxWebManagerTest {
         final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("r1").build());
 
         @Override
-        public SdmxWebConnection connect(SdmxWebEntryPoint entryPoint, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
-            String repoName = entryPoint.getUri().toString().substring(PREFIX.length());
+        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+            String repoName = source.getUri().toString().substring(PREFIX.length());
             return repos.stream()
                     .filter(o -> o.getName().equals(repoName))
                     .findFirst()
@@ -79,12 +79,12 @@ public class SdmxWebManagerTest {
         }
 
         @Override
-        public boolean accepts(SdmxWebEntryPoint entryPoint) throws IOException {
-            return entryPoint.getUri().toString().startsWith(PREFIX);
+        public boolean accepts(SdmxWebSource source) throws IOException {
+            return source.getUri().toString().startsWith(PREFIX);
         }
 
         @Override
-        public Collection<SdmxWebEntryPoint> getDefaultEntryPoints() {
+        public Collection<SdmxWebSource> getDefaultSources() {
             return Collections.singletonList(HELLO);
         }
     }

@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.web.spi;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.Nonnull;
@@ -33,13 +33,13 @@ public interface SdmxWebDriver {
 
     @Nonnull
     SdmxWebConnection connect(
-            @Nonnull SdmxWebEntryPoint entryPoint,
+            @Nonnull SdmxWebSource source,
             @Nonnull LanguagePriorityList languages,
             @Nonnull SdmxWebBridge bridge
     ) throws IOException;
 
-    boolean accepts(@Nonnull SdmxWebEntryPoint entryPoint) throws IOException;
+    boolean accepts(@Nonnull SdmxWebSource source) throws IOException;
 
     @Nonnull
-    Collection<SdmxWebEntryPoint> getDefaultEntryPoints();
+    Collection<SdmxWebSource> getDefaultSources();
 }

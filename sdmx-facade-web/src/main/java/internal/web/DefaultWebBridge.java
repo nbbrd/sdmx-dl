@@ -16,7 +16,7 @@
  */
 package internal.web;
 
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.net.ProxySelector;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,12 +31,12 @@ public enum DefaultWebBridge implements SdmxWebBridge {
     INSTANCE;
 
     @Override
-    public ProxySelector getProxySelector(SdmxWebEntryPoint o) {
+    public ProxySelector getProxySelector(SdmxWebSource o) {
         return ProxySelector.getDefault();
     }
 
     @Override
-    public SSLSocketFactory getSslSocketFactory(SdmxWebEntryPoint o) {
+    public SSLSocketFactory getSslSocketFactory(SdmxWebSource o) {
         return HttpsURLConnection.getDefaultSSLSocketFactory();
     }
 }

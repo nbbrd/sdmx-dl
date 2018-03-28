@@ -21,7 +21,7 @@ import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.Property;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
-import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
 import java.net.MalformedURLException;
@@ -44,11 +44,11 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .client(Sdmx21Driver2::of)
             .build();
 
-    private static SdmxWebClient of(SdmxWebEntryPoint o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
+    private static SdmxWebClient of(SdmxWebSource o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
         return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
     }
 
-    private static URL getEndPoint(SdmxWebEntryPoint o, String prefix) {
+    private static URL getEndPoint(SdmxWebSource o, String prefix) {
         try {
             return new URL(o.getUri().toString().substring(prefix.length()));
         } catch (MalformedURLException ex) {
@@ -56,11 +56,11 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         }
     }
 
-    private static boolean isSeriesKeysOnly(SdmxWebEntryPoint o) {
+    private static boolean isSeriesKeysOnly(SdmxWebSource o) {
         return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o.getProperties());
     }
 
-    private static RestClient getRestClient(SdmxWebEntryPoint o, SdmxWebBridge bridge) {
+    private static RestClient getRestClient(SdmxWebSource o, SdmxWebBridge bridge) {
         return RestClientImpl.of(
                 Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, o.getProperties()),
                 Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, o.getProperties()),
