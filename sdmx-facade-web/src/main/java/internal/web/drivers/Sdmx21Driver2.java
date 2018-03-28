@@ -23,6 +23,7 @@ import be.nbb.sdmx.facade.util.Property;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
 import internal.util.rest.RestClient;
 import internal.web.SdmxWebClient;
@@ -36,23 +37,14 @@ import java.util.List;
  */
 public final class Sdmx21Driver2 implements SdmxWebDriver {
 
-    private static final String NAME = "sdmx21";
-
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("sdmx21")
+            .name("sdmx21@facade")
             .client(Sdmx21Driver2::of)
             .supportedProperties(CONNECTION_PROPERTIES)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
-            .source(SdmxWebSource
-                    .builder()
-                    .name("ECB")
-                    .description("European Central Bank")
-                    .driver(NAME)
-                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
-                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
-                    .build())
+            .sources(SdmxWebResource.load("/internal/web/drivers/sdmx21.xml"))
             .build();
 
     private static SdmxWebClient of(SdmxWebSource o, LanguagePriorityList langs, SdmxWebBridge bridge) {

@@ -20,7 +20,6 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.Property;
@@ -42,6 +41,7 @@ import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.Connectors;
 import static internal.connectors.Connectors.*;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
+import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
@@ -53,75 +53,17 @@ import java.net.URI;
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
-    private static final String NAME = "sdmx21@connectors";
-
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name(NAME)
+            .name("sdmx21@connectors")
             .client(ConnectorRestClient.of(Sdmx21Client::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)
             .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
-            .source(SdmxWebSource
-                    .builder()
-                    .name("ECB")
-                    .description("European Central Bank")
-                    .driver(NAME)
-                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
-                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
-                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("ISTAT")
-                    .description("Istituto Nazionale di Statistica")
-                    .driver(NAME)
-                    .endpointOf("http://sdmx.istat.it/SDMXWS/rest")
-                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
-                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("UNDATA")
-                    .description("Data access system to UN databases")
-                    .driver(NAME)
-                    .endpointOf("http://data.un.org/WS/rest")
-                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("WITS")
-                    .description("World Integrated Trade Solutions")
-                    .driver(NAME)
-                    .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("INEGI")
-                    .description("Instituto Nacional de Estadistica y Geografia")
-                    .driver(NAME)
-                    .endpointOf("http://sdmx.snieg.mx/service/Rest")
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("IMF_SDMX_CENTRAL")
-                    .description("International Monetary Fund SDMX Central")
-                    .driver(NAME)
-                    .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
-                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
-                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
-                    .build())
-            .source(SdmxWebSource
-                    .builder()
-                    .name("WB")
-                    .description("World Bank")
-                    .driver(NAME)
-                    .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
-                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
-                    .build())
+            .sources(SdmxWebResource.load("/internal/connectors/drivers/sdmx21.xml"))
             .build();
 
     private final static class Sdmx21Client extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
