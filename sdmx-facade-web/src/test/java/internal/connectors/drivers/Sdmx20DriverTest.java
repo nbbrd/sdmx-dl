@@ -32,12 +32,12 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new Sdmx20Driver(), "sdmx:sdmx20:");
+        assertDriverCompliance(new Sdmx20Driver());
     }
 
     @Test
     public void testConnect() throws IOException {
-        SdmxWebSource x = SdmxWebSource.builder().name("").uri("sdmx:sdmx20:http://localhost").build();
+        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("sdmx20@connectors").endpointOf("http://localhost").build();
         assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, SdmxWebBridge.getDefault()).close()).doesNotThrowAnyException();
     }
 }

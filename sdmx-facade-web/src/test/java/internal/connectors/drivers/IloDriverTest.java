@@ -27,6 +27,6 @@ public class IloDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new IloDriver(), "sdmx:ilo:");
+        assertDriverCompliance(new IloDriver());
     }
 }

@@ -27,6 +27,6 @@ public class ImfDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new ImfDriver(), "sdmx:imf:");
+        assertDriverCompliance(new ImfDriver());
     }
 }

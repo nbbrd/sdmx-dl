@@ -16,7 +16,8 @@
  */
 package be.nbb.sdmx.facade.web;
 
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
@@ -36,7 +37,10 @@ public final class SdmxWebSource {
     String description = "";
 
     @lombok.NonNull
-    URI uri;
+    String driver;
+
+    @lombok.NonNull
+    URL endpoint;
 
     @lombok.Singular
     Map<String, String> properties;
@@ -44,14 +48,17 @@ public final class SdmxWebSource {
     public static class Builder {
 
         @Nonnull
-        public Builder uri(@Nonnull URI uri) {
-            this.uri = uri;
-            return this;
+        public Builder endpointOf(@Nonnull String endpoint) throws IllegalArgumentException {
+            try {
+                return endpoint(new URL(endpoint));
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
 
         @Nonnull
-        public Builder uri(@Nonnull String uri) {
-            return uri(URI.create(uri));
+        public Builder propertyOf(@Nonnull String key, @Nonnull Object value) throws IllegalArgumentException {
+            return property(key, value.toString());
         }
     }
 }

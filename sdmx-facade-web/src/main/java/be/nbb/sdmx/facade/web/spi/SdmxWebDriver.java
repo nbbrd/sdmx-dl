@@ -32,13 +32,14 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface SdmxWebDriver {
 
     @Nonnull
+    String getName();
+
+    @Nonnull
     SdmxWebConnection connect(
             @Nonnull SdmxWebSource source,
             @Nonnull LanguagePriorityList languages,
             @Nonnull SdmxWebBridge bridge
-    ) throws IOException;
-
-    boolean accepts(@Nonnull SdmxWebSource source) throws IOException;
+    ) throws IOException, IllegalArgumentException;
 
     @Nonnull
     Collection<SdmxWebSource> getDefaultSources();

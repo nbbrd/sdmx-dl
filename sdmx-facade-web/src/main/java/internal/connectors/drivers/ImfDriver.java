@@ -33,8 +33,8 @@ public final class ImfDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:imf:")
+            .name("imf@connectors")
             .client(ConnectorRestClient.of(IMF2::new))
-            .entry("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
+            .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
             .build();
 }

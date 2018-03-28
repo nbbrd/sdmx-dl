@@ -28,7 +28,6 @@ import be.nbb.sdmx.facade.parser.ObsParser;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.NoOpCursor;
 import be.nbb.sdmx.facade.util.Property;
-import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
 import java.util.List;
@@ -69,10 +68,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     @Nonnull
     public static SdmxWebClient.Supplier of(@Nonnull SpecificSupplier supplier) {
-        return (x, prefix, langs, bridge) -> {
+        return (x, langs, bridge) -> {
             try {
                 RestSdmxClient client = supplier.get();
-                client.setEndpoint(getEndpoint(x, prefix));
+                client.setEndpoint(x.getEndpoint().toURI());
                 configure(client, x.getProperties(), langs, bridge);
                 return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
@@ -83,9 +82,9 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     @Nonnull
     public static SdmxWebClient.Supplier of(@Nonnull GenericSupplier supplier) {
-        return (x, prefix, langs, bridge) -> {
+        return (x, langs, bridge) -> {
             try {
-                RestSdmxClient client = supplier.get(getEndpoint(x, prefix), x.getProperties());
+                RestSdmxClient client = supplier.get(x.getEndpoint().toURI(), x.getProperties());
                 configure(client, x.getProperties(), langs, bridge);
                 return new ConnectorRestClient(x.getName(), client);
             } catch (URISyntaxException ex) {
@@ -190,9 +189,5 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setConnectTimeout(Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, info));
         client.setReadTimeout(Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, info));
         // TODO: bridge
-    }
-
-    private static URI getEndpoint(SdmxWebSource o, String prefix) throws URISyntaxException {
-        return new URI(o.getUri().toString().substring(prefix.length()));
     }
 }

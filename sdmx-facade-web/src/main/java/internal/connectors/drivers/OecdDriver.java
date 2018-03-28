@@ -33,8 +33,8 @@ public final class OecdDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:oecd:")
+            .name("oecd@connectors")
             .client(ConnectorRestClient.of(OECD::new))
-            .entry("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
+            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .build();
 }

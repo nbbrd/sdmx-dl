@@ -27,6 +27,6 @@ public class Sdmx21DriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new Sdmx21Driver(), "sdmx:sdmx21:");
+        assertDriverCompliance(new Sdmx21Driver());
     }
 }

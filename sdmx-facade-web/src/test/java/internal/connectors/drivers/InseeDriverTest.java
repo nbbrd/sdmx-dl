@@ -27,6 +27,6 @@ public class InseeDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new InseeDriver(), "sdmx:insee:");
+        assertDriverCompliance(new InseeDriver());
     }
 }

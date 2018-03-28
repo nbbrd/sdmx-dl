@@ -16,13 +16,11 @@
  */
 package _test;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
+import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.web.SdmxWebDriverSupport;
-import ioutil.IO;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -33,28 +31,38 @@ import static org.assertj.core.api.Assertions.*;
 public class DriverAssertions {
 
     @SuppressWarnings("null")
-    public void assertDriverCompliance(SdmxWebDriver d, String prefix) {
+    public void assertDriverCompliance(SdmxWebDriver d) {
         if (d instanceof HasCache) {
             CacheAssertions.assertCacheBehavior((HasCache) d);
         }
 
-        assertThatNullPointerException().isThrownBy(() -> d.accepts(null));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(null, LanguagePriorityList.ANY, SdmxWebBridge.getDefault()));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(SdmxWebSource.builder().name("").build(), null, SdmxWebBridge.getDefault()));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(SdmxWebSource.builder().name("").build(), LanguagePriorityList.ANY, null));
+        SdmxWebSource validSource = SdmxWebSource
+                .builder()
+                .name("valid")
+                .driver(d.getName())
+                .endpointOf("http://localhost")
+                .build();
+
+        SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
+
+        assertThat(d.getName()).isNotBlank();
+
+        assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, SdmxWebBridge.getDefault()));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, SdmxWebBridge.getDefault()));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, ANY, null));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, SdmxWebBridge.getDefault()));
 
         assertThat(d.getDefaultSources())
-                .allSatisfy(o -> checkSource(o, prefix))
-                .allMatch(IO.Predicate.unchecked(d::accepts));
+                .allSatisfy(o -> checkSource(o))
+                .allMatch(o -> o.getDriver().equals(d.getName()));
 
         assertThat(d.getClass()).isFinal();
     }
 
-    private void checkSource(SdmxWebSource o, String prefix) {
+    private void checkSource(SdmxWebSource o) {
         assertThat(o.getName()).isNotBlank();
         assertThat(o.getDescription()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
-        assertThat(o.getUri().toString()).startsWith(prefix);
-        assertThatCode(() -> SdmxWebDriverSupport.getEndpoint(o, prefix).toURL()).doesNotThrowAnyException();
     }
 }

@@ -27,6 +27,6 @@ public class UisDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new UisDriver(), "sdmx:uis:");
+        assertDriverCompliance(new UisDriver());
     }
 }

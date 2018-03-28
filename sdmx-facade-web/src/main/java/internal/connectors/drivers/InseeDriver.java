@@ -61,13 +61,13 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:insee:")
+            .name("insee@connectors")
             .client(ConnectorRestClient.of(InseeClient::new))
-            .entry("INSEE", "Institut national de la statistique et des études économiques", URL)
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_URL)
             .build();
 
     @SdmxFix(id = "INSEE#1", cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
-    private static final String URL = "http://bdm.insee.fr/series/sdmx";
+    private static final String FALLBACK_URL = "http://bdm.insee.fr/series/sdmx";
 
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 

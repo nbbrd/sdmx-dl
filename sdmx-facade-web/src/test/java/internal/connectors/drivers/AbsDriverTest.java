@@ -27,6 +27,6 @@ public class AbsDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new AbsDriver(), "sdmx:abs:");
+        assertDriverCompliance(new AbsDriver());
     }
 }

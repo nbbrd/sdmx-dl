@@ -56,31 +56,30 @@ public class SdmxWebManagerTest {
         SdmxWebManager manager = SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO);
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null, ANY));
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
-        assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().uri("ko").build(), ANY));
+        assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().endpointOf("http://ko").build(), ANY));
     }
 
-    private static final SdmxWebSource HELLO = SdmxWebSource.builder().name("ok").uri(RepoDriver.PREFIX + "r1").build();
+    private static final SdmxWebSource HELLO = SdmxWebSource.builder().name("ok").driver(RepoDriver.NAME).endpointOf("http://r1").build();
     private static final SdmxWebDriver REPO = new RepoDriver();
 
     private static final class RepoDriver implements SdmxWebDriver {
 
-        static final String PREFIX = "sdmx:repo:";
+        static final String NAME = "repo";
 
-        final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("r1").build());
+        final List<SdmxRepository> repos = Collections.singletonList(SdmxRepository.builder().name("http://r1").build());
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
-            String repoName = source.getUri().toString().substring(PREFIX.length());
-            return repos.stream()
-                    .filter(o -> o.getName().equals(repoName))
-                    .findFirst()
-                    .map(o -> new RepoWebConnection(o.asConnection()))
-                    .orElseThrow(IOException::new);
+        public String getName() {
+            return NAME;
         }
 
         @Override
-        public boolean accepts(SdmxWebSource source) throws IOException {
-            return source.getUri().toString().startsWith(PREFIX);
+        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+            return repos.stream()
+                    .filter(o -> o.getName().equals(source.getEndpoint().toString()))
+                    .findFirst()
+                    .map(o -> new RepoWebConnection(o.asConnection()))
+                    .orElseThrow(IOException::new);
         }
 
         @Override

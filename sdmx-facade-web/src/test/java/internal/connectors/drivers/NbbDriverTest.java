@@ -27,6 +27,6 @@ public class NbbDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new NbbDriver(), "sdmx:nbb:");
+        assertDriverCompliance(new NbbDriver());
     }
 }

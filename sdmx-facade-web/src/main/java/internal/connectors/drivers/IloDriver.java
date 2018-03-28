@@ -46,13 +46,13 @@ public final class IloDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:ilo:")
+            .name("ilo@connectors")
             .client(ConnectorRestClient.of(ILO2::new))
-            .entry("ILO", "International Labour Office", URL)
+            .sourceOf("ILO", "International Labour Office", FALLBACK_URL)
             .build();
 
     @SdmxFix(id = "ILO#1", cause = "Fallback to http due to servers redirecting to http")
-    private static final String URL = "http://www.ilo.org/ilostat/sdmx/ws/rest";
+    private static final String FALLBACK_URL = "http://www.ilo.org/ilostat/sdmx/ws/rest";
 
     private static final class ILO2 extends ILO implements HasSeriesKeysOnlySupported {
 

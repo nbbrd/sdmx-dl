@@ -56,14 +56,13 @@ public interface SdmxWebClient {
 
     @Nonnull
     Duration ping() throws IOException;
-    
+
     @FunctionalInterface
     interface Supplier {
 
         @Nonnull
         SdmxWebClient get(
                 @Nonnull SdmxWebSource source,
-                @Nonnull String prefix,
                 @Nonnull LanguagePriorityList languages,
                 @Nonnull SdmxWebBridge bridge
         );

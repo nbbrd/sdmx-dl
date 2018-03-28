@@ -24,8 +24,6 @@ import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
-import java.net.MalformedURLException;
-import java.net.URL;
 import internal.util.rest.RestClient;
 import internal.web.SdmxWebClient;
 
@@ -35,25 +33,25 @@ import internal.web.SdmxWebClient;
  */
 public final class Sdmx21Driver2 implements SdmxWebDriver {
 
-    private static final String PREFIX = "sdmx:sdmx21:";
+    private static final String NAME = "sdmx21";
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix(PREFIX)
+            .name("sdmx21")
             .client(Sdmx21Driver2::of)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ECB")
+                    .description("European Central Bank")
+                    .driver(NAME)
+                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
+                    .propertyOf(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, true)
+                    .build())
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
-        return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
-    }
-
-    private static URL getEndPoint(SdmxWebSource o, String prefix) {
-        try {
-            return new URL(o.getUri().toString().substring(prefix.length()));
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException(ex);
-        }
+    private static SdmxWebClient of(SdmxWebSource o, LanguagePriorityList langs, SdmxWebBridge bridge) {
+        return Sdmx21RestClient.of(o.getEndpoint(), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
     }
 
     private static boolean isSeriesKeysOnly(SdmxWebSource o) {

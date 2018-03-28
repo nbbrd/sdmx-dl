@@ -34,6 +34,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
@@ -98,12 +99,13 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         Objects.requireNonNull(source);
         Objects.requireNonNull(languages);
 
-        for (SdmxWebDriver o : drivers) {
-            if (tryAccepts(o, source)) {
-                return tryConnect(o, source, languages, bridge);
-            }
-        }
-        throw new IOException("Failed to find a suitable driver for '" + source + "'");
+        SdmxWebDriver driver = drivers
+                .stream()
+                .filter(o -> source.getDriver().equals(o.getName()))
+                .findFirst()
+                .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
+
+        return tryConnect(driver, source, languages, bridge);
     }
 
     @Override
@@ -125,6 +127,15 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         updateSourceMap(sourceByName, list.stream());
     }
 
+    @Nonnull
+    public List<String> getDrivers() {
+        return drivers
+                .stream()
+                .map(SdmxWebDriver::getName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     private static SdmxWebBridge lookupBridge() {
         Iterator<SdmxWebBridge> iter = ServiceLoader.load(SdmxWebBridge.class).iterator();
         return iter.hasNext() ? iter.next() : SdmxWebBridge.getDefault();
@@ -139,15 +150,6 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     private static void updateSourceMap(ConcurrentMap<String, SdmxWebSource> sourceByName, Stream<SdmxWebSource> list) {
         sourceByName.clear();
         list.forEach(o -> sourceByName.put(o.getName(), o));
-    }
-
-    private static boolean tryAccepts(SdmxWebDriver driver, SdmxWebSource source) throws IOException {
-        try {
-            return driver.accepts(source);
-        } catch (RuntimeException ex) {
-            log.log(Level.WARNING, "Unexpected exception while parsing URI", ex);
-            return false;
-        }
     }
 
     @SuppressWarnings("null")

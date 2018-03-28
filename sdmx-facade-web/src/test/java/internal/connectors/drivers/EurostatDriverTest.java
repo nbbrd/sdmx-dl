@@ -27,6 +27,6 @@ public class EurostatDriverTest {
 
     @Test
     public void testCompliance() {
-        assertDriverCompliance(new EurostatDriver(), "sdmx:eurostat:");
+        assertDriverCompliance(new EurostatDriver());
     }
 }

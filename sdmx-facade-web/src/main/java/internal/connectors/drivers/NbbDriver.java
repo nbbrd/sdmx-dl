@@ -33,8 +33,8 @@ public final class NbbDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:nbb:")
+            .name("nbb@connectors")
             .client(ConnectorRestClient.of(NBB::new))
-            .entry("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
+            .sourceOf("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();
 }

@@ -36,13 +36,13 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .prefix("sdmx:uis:")
+            .name("uis@connectors")
             .client(ConnectorRestClient.of(UIS2::new))
-            .entry("UIS", "Unesco Institute for Statistics", URL)
+            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_URL)
             .build();
 
     @SdmxFix(id = "#UIS1", cause = "API requires auth by key in header and this is not supported yet in facade")
-    private final static String URL = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
+    private final static String FALLBACK_URL = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
 
     private static final class UIS2 extends DotStat {
 
