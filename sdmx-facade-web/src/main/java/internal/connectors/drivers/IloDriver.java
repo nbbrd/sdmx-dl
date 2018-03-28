@@ -23,7 +23,7 @@ import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasSeriesKeysOnlySupported;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.parser.v20.DataflowParser;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public final class IloDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
             .prefix("sdmx:ilo:")
             .client(ConnectorRestClient.of(ILO2::new))

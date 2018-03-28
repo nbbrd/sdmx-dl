@@ -27,15 +27,15 @@ import be.nbb.sdmx.facade.util.SdmxExceptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import internal.web.WebClient;
 import java.time.Duration;
+import internal.web.SdmxWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-public final class RepoWebClient implements WebClient {
+public final class RepoWebClient implements SdmxWebClient {
 
     @lombok.NonNull
     private final SdmxRepository repo;

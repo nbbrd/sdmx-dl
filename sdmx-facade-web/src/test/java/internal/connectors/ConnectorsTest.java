@@ -31,7 +31,7 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class UtilTest {
+public class ConnectorsTest {
 
     @Test
     public void testIsNoResultMatchingQuery() {

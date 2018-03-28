@@ -27,7 +27,7 @@ import _test.client.RepoWebClient;
  *
  * @author Philippe Charles
  */
-public class WebConnectionTest {
+public class SdmxWebConnectionImplTest {
 
     @Test
     public void testCompliance() throws IOException {

@@ -41,17 +41,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
-import internal.web.WebClient;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import internal.web.SdmxWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements WebClient {
+public final class ConnectorRestClient implements SdmxWebClient {
 
     @FunctionalInterface
     public interface SpecificSupplier {
@@ -68,7 +68,7 @@ public final class ConnectorRestClient implements WebClient {
     }
 
     @Nonnull
-    public static WebClient.Supplier of(@Nonnull SpecificSupplier supplier) {
+    public static SdmxWebClient.Supplier of(@Nonnull SpecificSupplier supplier) {
         return (x, prefix, langs, bridge) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -82,7 +82,7 @@ public final class ConnectorRestClient implements WebClient {
     }
 
     @Nonnull
-    public static WebClient.Supplier of(@Nonnull GenericSupplier supplier) {
+    public static SdmxWebClient.Supplier of(@Nonnull GenericSupplier supplier) {
         return (x, prefix, langs, bridge) -> {
             try {
                 RestSdmxClient client = supplier.get(getEndpoint(x, prefix), x.getProperties());
@@ -110,7 +110,7 @@ public final class ConnectorRestClient implements WebClient {
                     .map(Connectors::toFlow)
                     .collect(Collectors.toList());
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get dataflows from '%s'", name);
+            throw wrap(ex, "Failed to get dataflows from '%s'", name);
         }
     }
 
@@ -119,7 +119,7 @@ public final class ConnectorRestClient implements WebClient {
         try {
             return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get dataflow '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get dataflow '%s' from '%s'", ref, name);
         }
     }
 
@@ -128,7 +128,7 @@ public final class ConnectorRestClient implements WebClient {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to get datastructure '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get datastructure '%s' from '%s'", ref, name);
         }
     }
 
@@ -142,7 +142,7 @@ public final class ConnectorRestClient implements WebClient {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();
             }
-            throw expected(ex, "Failed to get data '%s' with %s from '%s'", flowRef, query, name);
+            throw wrap(ex, "Failed to get data '%s' with %s from '%s'", flowRef, query, name);
         }
     }
 
@@ -165,7 +165,7 @@ public final class ConnectorRestClient implements WebClient {
             connector.getDataflows();
             return Duration.between(start, clock.instant());
         } catch (SdmxException ex) {
-            throw expected(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
+            throw wrap(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
         }
     }
 
@@ -181,7 +181,7 @@ public final class ConnectorRestClient implements WebClient {
         return query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
     }
 
-    private static IOException expected(SdmxException ex, String format, Object... args) {
+    private static IOException wrap(SdmxException ex, String format, Object... args) {
         return new IOException(String.format(format, args), ex);
     }
 

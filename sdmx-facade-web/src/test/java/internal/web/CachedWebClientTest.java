@@ -190,8 +190,8 @@ public class CachedWebClientTest {
         }
     }
 
-    private static WebClient getClient(AtomicInteger count) throws IOException {
-        WebClient original = RepoWebClient.of(FacadeResource.ecb());
+    private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
+        SdmxWebClient original = RepoWebClient.of(FacadeResource.ecb());
         return CallStackWebClient.of(original, count);
     }
 }

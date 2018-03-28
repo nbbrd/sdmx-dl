@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.util.HasCache;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 
 /**
@@ -31,7 +31,7 @@ import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 public final class ImfDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
             .prefix("sdmx:imf:")
             .client(ConnectorRestClient.of(IMF2::new))

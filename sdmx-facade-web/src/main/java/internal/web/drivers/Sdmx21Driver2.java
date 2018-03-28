@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.web.drivers;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClientImpl;
@@ -23,11 +23,11 @@ import be.nbb.sdmx.facade.util.Property;
 import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
-import internal.web.WebClient;
 import internal.util.rest.RestClient;
+import internal.web.SdmxWebClient;
 
 /**
  *
@@ -38,13 +38,13 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
             .prefix(PREFIX)
             .client(Sdmx21Driver2::of)
             .build();
 
-    private static WebClient of(SdmxWebEntryPoint o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
+    private static SdmxWebClient of(SdmxWebEntryPoint o, String prefix, LanguagePriorityList langs, SdmxWebBridge bridge) {
         return Sdmx21RestClient.of(getEndPoint(o, prefix), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
     }
 

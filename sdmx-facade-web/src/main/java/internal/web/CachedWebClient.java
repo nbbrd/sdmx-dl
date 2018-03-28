@@ -37,21 +37,21 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Philippe Charles
  */
-final class CachedWebClient implements WebClient {
+final class CachedWebClient implements SdmxWebClient {
 
-    static CachedWebClient of(WebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+    static CachedWebClient of(SdmxWebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         return new CachedWebClient(delegate, base, cache, clock, ttlInMillis);
     }
 
     @lombok.NonNull
-    private final WebClient delegate;
+    private final SdmxWebClient delegate;
     private final TtlCache cache;
     private final TypedId<List<Dataflow>> idOfFlows;
     private final TypedId<Dataflow> idOfFlow;
     private final TypedId<DataStructure> idOfStruct;
     private final TypedId<SdmxRepository> idOfKeysOnly;
 
-    CachedWebClient(WebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+    CachedWebClient(SdmxWebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
         this.delegate = delegate;
         this.cache = TtlCache.of(cache, clock, ttlInMillis);
         this.idOfFlows = TypedId.of("flows://" + base);

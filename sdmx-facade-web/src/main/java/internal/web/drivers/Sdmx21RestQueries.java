@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.web.drivers;
 
 import internal.util.rest.RestQueryBuilder;
 import be.nbb.sdmx.facade.DataQuery;

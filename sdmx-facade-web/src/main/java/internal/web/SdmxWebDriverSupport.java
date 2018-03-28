@@ -41,13 +41,13 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @lombok.Builder(builderClassName = "Builder")
 @ThreadSafe
-public final class WebDriverSupport implements SdmxWebDriver, HasCache {
+public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
 
     @lombok.NonNull
     private final String prefix;
 
     @lombok.NonNull
-    private final WebClient.Supplier client;
+    private final SdmxWebClient.Supplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebEntryPoint> entryPoints;
@@ -86,9 +86,9 @@ public final class WebDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private WebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
-        WebClient origin = client.get(entryPoint, prefix, langs, bridge);
-        WebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, langs), getCache(), clock, getCacheTtl(entryPoint));
+    private SdmxWebClient getClient(SdmxWebEntryPoint entryPoint, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+        SdmxWebClient origin = client.get(entryPoint, prefix, langs, bridge);
+        SdmxWebClient cached = CachedWebClient.of(origin, getBase(entryPoint, prefix, langs), getCache(), clock, getCacheTtl(entryPoint));
         return FailsafeWebClient.of(cached);
     }
 

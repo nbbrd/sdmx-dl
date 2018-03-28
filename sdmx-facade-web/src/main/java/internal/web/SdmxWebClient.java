@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  *
  * @author Philippe Charles
  */
-public interface WebClient {
+public interface SdmxWebClient {
 
     @Nonnull
     List<Dataflow> getFlows() throws IOException;
@@ -61,7 +61,7 @@ public interface WebClient {
     interface Supplier {
 
         @Nonnull
-        WebClient get(
+        SdmxWebClient get(
                 @Nonnull SdmxWebEntryPoint entryPoint,
                 @Nonnull String prefix,
                 @Nonnull LanguagePriorityList languages,

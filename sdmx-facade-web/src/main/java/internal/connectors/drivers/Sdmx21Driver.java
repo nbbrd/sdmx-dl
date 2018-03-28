@@ -41,7 +41,7 @@ import internal.connectors.HasDataCursor;
 import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.Connectors;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
 
@@ -55,7 +55,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     private static final String PREFIX = "sdmx:sdmx21:";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
             .prefix(PREFIX)
             .client(ConnectorRestClient.of(Sdmx21Client::new))

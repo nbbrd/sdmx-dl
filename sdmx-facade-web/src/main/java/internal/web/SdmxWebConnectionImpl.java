@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     @lombok.NonNull
-    private final WebClient client;
+    private final SdmxWebClient client;
     private boolean closed = false;
 
     @Override

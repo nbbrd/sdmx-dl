@@ -25,18 +25,18 @@ import be.nbb.sdmx.facade.DataflowRef;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import internal.web.WebClient;
 import java.time.Duration;
+import internal.web.SdmxWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class CallStackWebClient implements WebClient {
+public final class CallStackWebClient implements SdmxWebClient {
 
     @lombok.NonNull
-    private final WebClient delegate;
+    private final SdmxWebClient delegate;
 
     @lombok.NonNull
     private final AtomicInteger count;

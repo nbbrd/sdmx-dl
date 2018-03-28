@@ -25,14 +25,14 @@ import be.nbb.sdmx.facade.DataflowRef;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import internal.web.WebClient;
 import java.time.Duration;
+import internal.web.SdmxWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum NoOpWebClient implements WebClient {
+public enum NoOpWebClient implements SdmxWebClient {
 
     INSTANCE;
 

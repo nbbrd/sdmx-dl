@@ -21,7 +21,7 @@ import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 
 /**
  *
@@ -31,7 +31,7 @@ import internal.web.WebDriverSupport;
 public final class AbsDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
             .prefix("sdmx:abs:")
             .client(ConnectorRestClient.of(ABS::new))

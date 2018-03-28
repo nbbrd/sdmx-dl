@@ -21,7 +21,7 @@ import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebEntryPoint;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.web.WebDriverSupport;
+import internal.web.SdmxWebDriverSupport;
 import ioutil.IO;
 import static org.assertj.core.api.Assertions.*;
 
@@ -55,6 +55,6 @@ public class DriverAssertions {
         assertThat(o.getDescription()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getUri().toString()).startsWith(prefix);
-        assertThatCode(() -> WebDriverSupport.getEndpoint(o, prefix).toURL()).doesNotThrowAnyException();
+        assertThatCode(() -> SdmxWebDriverSupport.getEndpoint(o, prefix).toURL()).doesNotThrowAnyException();
     }
 }

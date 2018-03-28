@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.sdmx21;
+package internal.web.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataQuery;
@@ -27,24 +27,24 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
 import static be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams.*;
-import static internal.web.sdmx21.Sdmx21RestQueries.*;
+import static internal.web.drivers.Sdmx21RestQueries.*;
 import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import internal.web.WebClient;
 import internal.util.rest.RestClient;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import internal.web.SdmxWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class Sdmx21RestClient implements WebClient {
+final class Sdmx21RestClient implements SdmxWebClient {
 
     private final URL endpoint;
     private final boolean seriesKeysOnlySupported;

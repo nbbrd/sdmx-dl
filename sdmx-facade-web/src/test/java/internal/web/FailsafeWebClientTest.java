@@ -63,7 +63,7 @@ public class FailsafeWebClientTest {
 
     @Test
     public void testIsSeriesKeysOnlySupported() {
-        IO.Consumer<WebClient> op = o -> FailsafeWebClient.of(o).isSeriesKeysOnlySupported();
+        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).isSeriesKeysOnlySupported();
 
         assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
@@ -78,7 +78,7 @@ public class FailsafeWebClientTest {
 
     @Test
     public void testPeekStructureRef() {
-        IO.Consumer<WebClient> op = o -> FailsafeWebClient.of(o).peekStructureRef(ECB_FLOW_REF);
+        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).peekStructureRef(ECB_FLOW_REF);
 
         assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
@@ -91,7 +91,7 @@ public class FailsafeWebClientTest {
                 .doesNotThrowAnyException();
     }
 
-    private static void assertOperation(IO.Consumer<WebClient> op) {
+    private static void assertOperation(IO.Consumer<SdmxWebClient> op) {
         assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
                 .isInstanceOf(IOException.class);
 
