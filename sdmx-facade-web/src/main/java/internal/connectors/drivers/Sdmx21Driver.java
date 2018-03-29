@@ -25,7 +25,7 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
-import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
+import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;

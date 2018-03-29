@@ -16,14 +16,18 @@
  */
 package internal.util.rest;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -32,7 +36,10 @@ import java.util.Objects;
 @lombok.RequiredArgsConstructor(staticName = "of")
 public final class RestQueryBuilder {
 
+    @lombok.NonNull
     private final URL endPoint;
+
+    private final Charset encoding = StandardCharsets.UTF_8;
     private final List<String> paths = new ArrayList<>();
     private final Map<String, String> params = new LinkedHashMap<>();
 
@@ -43,7 +50,8 @@ public final class RestQueryBuilder {
      * @return this builder
      * @throws NullPointerException if path is null
      */
-    public RestQueryBuilder path(String path) {
+    @Nonnull
+    public RestQueryBuilder path(@Nonnull String path) {
         Objects.requireNonNull(path);
         paths.add(path);
         return this;
@@ -57,7 +65,8 @@ public final class RestQueryBuilder {
      * @return this builder
      * @throws NullPointerException if key or value is null
      */
-    public RestQueryBuilder param(String key, String value) {
+    @Nonnull
+    public RestQueryBuilder param(@Nonnull String key, @Nonnull String value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         params.put(key, value);
@@ -68,20 +77,25 @@ public final class RestQueryBuilder {
      * Creates a new URL using the specified path and parameters.
      *
      * @return a URL
-     * @throws IOException
+     * @throws java.io.UnsupportedEncodingException
+     * @throws java.net.MalformedURLException
      */
-    public URL build() throws IOException {
+    @Nonnull
+    public URL build() throws UnsupportedEncodingException, MalformedURLException {
         StringBuilder result = new StringBuilder();
         result.append(endPoint);
 
         for (String path : paths) {
-            result.append('/').append(URLEncoder.encode(path, "UTF-8"));
+            result.append('/').append(URLEncoder.encode(path, encoding.name()));
         }
 
         boolean first = true;
-        for (Map.Entry<String, String> entry : params.entrySet()) {
+        for (Map.Entry<String, String> o : params.entrySet()) {
             result.append(first ? '?' : '&');
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append('=').append(entry.getValue());
+            result
+                    .append(URLEncoder.encode(o.getKey(), encoding.name()))
+                    .append('=')
+                    .append(URLEncoder.encode(o.getValue(), encoding.name()));
             first = false;
         }
 

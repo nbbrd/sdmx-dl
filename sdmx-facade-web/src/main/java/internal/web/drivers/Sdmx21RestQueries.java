@@ -24,6 +24,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.ResourceRef;
 import java.io.IOException;
 import java.net.URL;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -32,7 +33,7 @@ import java.net.URL;
 @lombok.experimental.UtilityClass
 class Sdmx21RestQueries {
 
-    RestQueryBuilder onMeta(URL endpoint, String resourceType, ResourceRef ref) {
+    private RestQueryBuilder onMeta(URL endpoint, String resourceType, ResourceRef ref) {
         return RestQueryBuilder.of(endpoint)
                 .path(resourceType)
                 .path(ref.getAgency())
@@ -40,7 +41,7 @@ class Sdmx21RestQueries {
                 .path(ref.getVersion());
     }
 
-    RestQueryBuilder onData(URL endpoint, DataflowRef flowRef, Key key) throws IOException {
+    private RestQueryBuilder onData(URL endpoint, DataflowRef flowRef, Key key) {
         return RestQueryBuilder.of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(flowRef.toString())
@@ -48,19 +49,23 @@ class Sdmx21RestQueries {
                 .path(DEFAULT_PROVIDER_REF);
     }
 
-    URL getFlowsQuery(URL endpoint) throws IOException {
+    @Nonnull
+    URL getFlowsQuery(@Nonnull URL endpoint) throws IOException {
         return onMeta(endpoint, DATAFLOW_RESOURCE, FLOWS).build();
     }
 
-    URL getFlowQuery(URL endpoint, DataflowRef ref) throws IOException {
+    @Nonnull
+    URL getFlowQuery(@Nonnull URL endpoint, @Nonnull DataflowRef ref) throws IOException {
         return onMeta(endpoint, DATAFLOW_RESOURCE, ref).build();
     }
 
-    URL getStructureQuery(URL endpoint, DataStructureRef ref) throws IOException {
+    @Nonnull
+    URL getStructureQuery(@Nonnull URL endpoint, @Nonnull DataStructureRef ref) throws IOException {
         return onMeta(endpoint, DATASTRUCTURE_RESOURCE, ref).param(REFERENCES_PARAM, "children").build();
     }
 
-    URL getDataQuery(URL endpoint, DataflowRef flowRef, DataQuery query) throws IOException {
+    @Nonnull
+    URL getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException {
         RestQueryBuilder result = onData(endpoint, flowRef, query.getKey());
         switch (query.getDetail()) {
             case SERIES_KEYS_ONLY:

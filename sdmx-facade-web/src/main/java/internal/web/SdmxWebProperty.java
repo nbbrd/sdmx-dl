@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.web;
+package internal.web;
 
 import java.util.concurrent.TimeUnit;
 

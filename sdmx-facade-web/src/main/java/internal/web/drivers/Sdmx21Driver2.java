@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.Property;
-import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
+import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.util.drivers.SdmxWebResource;

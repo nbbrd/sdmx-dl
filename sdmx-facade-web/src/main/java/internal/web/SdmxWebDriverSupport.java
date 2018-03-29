@@ -18,7 +18,7 @@ package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import static be.nbb.sdmx.facade.web.SdmxWebProperty.*;
+import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
