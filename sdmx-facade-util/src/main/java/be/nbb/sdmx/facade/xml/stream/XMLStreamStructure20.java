@@ -21,6 +21,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.xml.Sdmxml;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,15 +29,13 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
 import static be.nbb.sdmx.facade.xml.Sdmxml.NS_V20_URI;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
-import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
-import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
+import java.net.URI;
 
 /**
  *
@@ -106,7 +105,7 @@ final class XMLStreamStructure20 {
 
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
         String ns = reader.getNamespaceURI();
-        check(NS_V20_URI.equals(ns), reader, "Invalid namespace '%s'", ns);
+        check(Sdmxml.equals(NS_V20_URI, URI.create(ns)), reader, "Invalid namespace '%s'", ns);
     }
 
     private void parseCodelists(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {

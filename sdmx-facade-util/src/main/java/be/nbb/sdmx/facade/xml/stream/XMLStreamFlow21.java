@@ -21,12 +21,14 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.xml.Sdmxml;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.*;
 import static be.nbb.sdmx.facade.xml.Sdmxml.NS_V21_URI;
+import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -78,7 +80,7 @@ final class XMLStreamFlow21 {
 
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
         String ns = reader.getNamespaceURI();
-        check(NS_V21_URI.equals(ns), reader, "Invalid namespace '%s'", ns);
+        check(Sdmxml.equals(NS_V21_URI, URI.create(ns)), reader, "Invalid namespace '%s'", ns);
     }
 
     private void parseStructures(XMLStreamReader reader, List<Dataflow> flows) throws XMLStreamException {

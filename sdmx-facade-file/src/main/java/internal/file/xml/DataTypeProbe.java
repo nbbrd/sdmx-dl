@@ -16,6 +16,7 @@
  */
 package internal.file.xml;
 
+import be.nbb.sdmx.facade.xml.Sdmxml;
 import static be.nbb.sdmx.facade.xml.Sdmxml.*;
 import be.nbb.util.StaxUtil;
 import static internal.file.SdmxDecoder.DataType.*;
@@ -26,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import internal.file.SdmxDecoder;
 import ioutil.Stax;
 import ioutil.Xml;
+import java.net.URI;
 
 /**
  *
@@ -41,46 +43,46 @@ final class DataTypeProbe {
         if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot probe data type");
         }
-        
+
         int level = 0;
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
                     level++;
                     if (level == 2 && reader.getLocalName().equals("Header")) {
-                        switch (reader.getNamespaceURI()) {
-                            case NS_V10_URI:
-                                return UNKNOWN;
-                            case NS_V20_URI:
-                                while (reader.hasNext()) {
-                                    switch (reader.next()) {
-                                        case START_ELEMENT:
-                                            level++;
-                                            if (level == 3 && reader.getLocalName().equals("KeyFamilyRef")) {
-                                                return GENERIC20;
-                                            }
-                                            break;
-                                        case END_ELEMENT:
-                                            level--;
-                                            break;
-                                    }
+                        URI uri = URI.create(reader.getNamespaceURI());
+                        if (Sdmxml.equals(NS_V10_URI, uri)) {
+                            return UNKNOWN;
+                        } else if (Sdmxml.equals(NS_V20_URI, uri)) {
+                            while (reader.hasNext()) {
+                                switch (reader.next()) {
+                                    case START_ELEMENT:
+                                        level++;
+                                        if (level == 3 && reader.getLocalName().equals("KeyFamilyRef")) {
+                                            return GENERIC20;
+                                        }
+                                        break;
+                                    case END_ELEMENT:
+                                        level--;
+                                        break;
                                 }
-                                return COMPACT20;
-                            case NS_V21_URI:
-                                while (reader.hasNext()) {
-                                    switch (reader.next()) {
-                                        case START_ELEMENT:
-                                            level++;
-                                            if (level == 4 && reader.getLocalName().equals("SeriesKey")) {
-                                                return GENERIC21;
-                                            }
-                                            break;
-                                        case END_ELEMENT:
-                                            level--;
-                                            break;
-                                    }
+                            }
+                            return COMPACT20;
+                        } else if (Sdmxml.equals(NS_V21_URI, uri)) {
+                            while (reader.hasNext()) {
+                                switch (reader.next()) {
+                                    case START_ELEMENT:
+                                        level++;
+                                        if (level == 4 && reader.getLocalName().equals("SeriesKey")) {
+                                            return GENERIC21;
+                                        }
+                                        break;
+                                    case END_ELEMENT:
+                                        level--;
+                                        break;
                                 }
-                                return COMPACT21;
+                            }
+                            return COMPACT21;
                         }
                     }
                     break;
