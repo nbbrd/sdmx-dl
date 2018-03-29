@@ -93,7 +93,9 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
-        return current.getAttributesMap();
+        Map<String, String> result = current.getAttributesMap();
+        result.remove(PortableTimeSeries.GENERATEDNAME_ATTR_NAME);
+        return result;
     }
 
     @Override

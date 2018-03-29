@@ -22,7 +22,6 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.Series;
-import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import static internal.web.SdmxWebProperty.*;
@@ -43,6 +42,7 @@ import static internal.connectors.Connectors.*;
 import internal.org.springframework.util.xml.XMLEventStreamReader;
 import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
+import internal.web.SdmxWebProperty;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import java.net.URI;
 
@@ -72,10 +72,10 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
         private Sdmx21Client(URI endpoint, Map<?, ?> p) {
             super("", endpoint,
-                    Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, p),
-                    Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, p),
-                    Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, p));
-            this.seriesKeysOnlySupported = Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, p);
+                    Connectors.isNeedsCredentials(p),
+                    Connectors.isNeedsURLEncoding(p),
+                    Connectors.isSupportsCompresson(p));
+            this.seriesKeysOnlySupported = SdmxWebProperty.isSeriesKeysOnlySupported(p);
         }
 
         @Override

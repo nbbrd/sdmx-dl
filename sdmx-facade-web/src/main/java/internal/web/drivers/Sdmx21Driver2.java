@@ -17,19 +17,15 @@
 package internal.web.drivers;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
-import internal.util.rest.RestClientImpl;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.util.Property;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
-import internal.util.rest.RestClient;
 import internal.web.SdmxWebClient;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import internal.web.SdmxWebProperty;
 
 /**
  *
@@ -42,32 +38,18 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .builder()
             .name("sdmx21@facade")
             .client(Sdmx21Driver2::of)
-            .supportedProperties(CONNECTION_PROPERTIES)
+            .supportedProperties(Util.CONNECTION_PROPERTIES)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
             .sources(SdmxWebResource.load("/internal/web/drivers/sdmx21.xml"))
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource o, LanguagePriorityList langs, SdmxWebBridge bridge) {
-        return Sdmx21RestClient.of(o.getEndpoint(), isSeriesKeysOnly(o), langs, getRestClient(o, bridge));
-    }
-
-    private static boolean isSeriesKeysOnly(SdmxWebSource o) {
-        return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o.getProperties());
-    }
-
-    private static RestClient getRestClient(SdmxWebSource o, SdmxWebBridge bridge) {
-        return RestClientImpl.of(
-                Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, o.getProperties()),
-                Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, o.getProperties()),
-                Property.get(MAX_REDIRECTS_PROPERTY, DEFAULT_MAX_REDIRECTS, o.getProperties()),
-                bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
+    private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebBridge b) {
+        return new AbstractSdmx21(
+                s.getEndpoint(),
+                l,
+                Util.getRestClient(s, b),
+                SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
+                DataFactory.sdmx21()
         );
     }
-
-    private static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY,
-                    READ_TIMEOUT_PROPERTY,
-                    MAX_REDIRECTS_PROPERTY
-            ));
 }

@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -83,8 +84,11 @@ public final class RestClientImpl implements RestClient {
         http.addRequestProperty(ACCEPT_ENCODING_HEADER, ContentEncoder.getEncodingHeader());
 
         switch (http.getResponseCode()) {
-            case HttpURLConnection.HTTP_MULT_CHOICE:
+            case HttpURLConnection.HTTP_MOVED_PERM:
+            case HttpURLConnection.HTTP_MOVED_TEMP:
             case HttpURLConnection.HTTP_SEE_OTHER:
+            case 307: // Temporary Redirect
+            case 308: // Permanent Redirect
                 return redirect(http, mediaType, langs, redirects);
             case HttpURLConnection.HTTP_OK:
                 return getBody(http);
@@ -125,10 +129,28 @@ public final class RestClientImpl implements RestClient {
 
     private IOException getError(HttpURLConnection http) throws IOException {
         try {
-            System.out.println(http.getURL());
-            return new IOException(http.getResponseCode() + ": " + http.getResponseMessage());
+            return ResponseError.of(http);
         } finally {
             http.disconnect();
+        }
+    }
+
+    @lombok.Getter
+    public static final class ResponseError extends IOException {
+
+        private static ResponseError of(HttpURLConnection http) throws IOException {
+            return new ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
+        }
+
+        private final int code;
+        private final String message;
+        private final Map<String, List<String>> headers;
+
+        public ResponseError(int code, String message, Map<String, List<String>> headers) {
+            super(code + ": " + message);
+            this.code = code;
+            this.message = message;
+            this.headers = headers;
         }
     }
 

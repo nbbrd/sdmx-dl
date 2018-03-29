@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataQuery;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import static internal.web.drivers.Sdmx21RestQueries.*;
+import static internal.web.drivers.AbstractSdmx21.*;
 import java.io.IOException;
 import java.net.URL;
 import static org.assertj.core.api.Assertions.*;
@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class Sdmx21RestQueriesTest {
+public class AbstractSdmx21Test {
 
     @Test
     @SuppressWarnings("null")
@@ -39,7 +39,7 @@ public class Sdmx21RestQueriesTest {
 
         assertThatNullPointerException().isThrownBy(() -> getFlowsQuery(null));
 
-        assertThat(getFlowsQuery(endpoint))
+        assertThat(getFlowsQuery(endpoint).build())
                 .hasToString("http://localhost/dataflow/all/all/latest");
     }
 
@@ -51,10 +51,10 @@ public class Sdmx21RestQueriesTest {
         assertThatNullPointerException().isThrownBy(() -> getFlowQuery(null, specificFlow));
         assertThatNullPointerException().isThrownBy(() -> getFlowQuery(endpoint, null));
 
-        assertThat(getFlowQuery(endpoint, specificFlow))
+        assertThat(getFlowQuery(endpoint, specificFlow).build())
                 .hasToString("http://localhost/dataflow/ECB/EXR/1.0");
 
-        assertThat(getFlowQuery(endpoint, genericFlow))
+        assertThat(getFlowQuery(endpoint, genericFlow).build())
                 .hasToString("http://localhost/dataflow/all/EXR/latest");
     }
 
@@ -66,10 +66,10 @@ public class Sdmx21RestQueriesTest {
         assertThatNullPointerException().isThrownBy(() -> getStructureQuery(null, specificStruct));
         assertThatNullPointerException().isThrownBy(() -> getStructureQuery(endpoint, null));
 
-        assertThat(getStructureQuery(endpoint, specificStruct))
+        assertThat(getStructureQuery(endpoint, specificStruct).build())
                 .hasToString("http://localhost/datastructure/ECB/EXR/1.0?references=children");
 
-        assertThat(getStructureQuery(endpoint, genericStruct))
+        assertThat(getStructureQuery(endpoint, genericStruct).build())
                 .hasToString("http://localhost/datastructure/all/EXR/latest?references=children");
     }
 
@@ -82,10 +82,10 @@ public class Sdmx21RestQueriesTest {
         assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, null, DataQuery.of(Key.ALL, true)));
         assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, specificFlow, null));
 
-        assertThat(getDataQuery(endpoint, specificFlow, DataQuery.of(Key.ALL, true)))
+        assertThat(getDataQuery(endpoint, specificFlow, DataQuery.of(Key.ALL, true)).build())
                 .hasToString("http://localhost/data/ECB%2CEXR%2C1.0/all/all?detail=serieskeysonly");
 
-        assertThat(getDataQuery(endpoint, genericFlow, DataQuery.of(Key.ALL, true)))
+        assertThat(getDataQuery(endpoint, genericFlow, DataQuery.of(Key.ALL, true)).build())
                 .hasToString("http://localhost/data/all%2CEXR%2Clatest/all/all?detail=serieskeysonly");
     }
 

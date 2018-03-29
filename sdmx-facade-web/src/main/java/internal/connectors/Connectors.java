@@ -19,6 +19,7 @@ package internal.connectors;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.util.Property;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -26,6 +27,7 @@ import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
+import java.util.Map;
 
 /**
  *
@@ -121,9 +123,21 @@ public class Connectors {
     public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
     public static final boolean DEFAULT_SUPPORTS_COMPRESSION = false;
 
+    public boolean isSupportsCompresson(Map<?, ?> o) {
+        return Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, o);
+    }
+
     public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
     public static final boolean DEFAULT_NEEDS_CREDENTIALS = false;
 
+    public boolean isNeedsCredentials(Map<?, ?> o) {
+        return Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, o);
+    }
+
     public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
     public static final boolean DEFAULT_NEEDS_URL_ENCODING = false;
+
+    public boolean isNeedsURLEncoding(Map<?, ?> o) {
+        return Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, o);
+    }
 }

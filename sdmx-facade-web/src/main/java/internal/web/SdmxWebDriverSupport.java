@@ -18,9 +18,7 @@ package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.HasCache;
-import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -99,12 +97,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
 
     private SdmxWebClient getClient(SdmxWebSource source, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
         SdmxWebClient origin = client.get(source, langs, bridge);
-        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, langs), getCache(), clock, getCacheTtl(source));
+        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, langs), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
         return FailsafeWebClient.of(cached);
-    }
-
-    private long getCacheTtl(SdmxWebSource source) {
-        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, source.getProperties());
     }
 
     private static String getBase(SdmxWebSource source, LanguagePriorityList languages) throws IOException {

@@ -27,7 +27,6 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
 import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.NoOpCursor;
-import be.nbb.sdmx.facade.util.Property;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
 import java.util.List;
@@ -194,8 +193,8 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     private static void configure(RestSdmxClient client, Map<?, ?> info, LanguagePriorityList langs, SdmxWebBridge bridge) {
         client.setLanguages(Connectors.fromLanguages(langs));
-        client.setConnectTimeout(Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, info));
-        client.setReadTimeout(Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, info));
+        client.setConnectTimeout(getConnectTimeout(info));
+        client.setReadTimeout(getReadTimeout(info));
         // TODO: bridge
     }
 }

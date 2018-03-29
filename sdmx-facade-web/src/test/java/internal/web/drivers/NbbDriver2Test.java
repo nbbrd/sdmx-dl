@@ -23,10 +23,10 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class Sdmx21Driver2Test {
+public class NbbDriver2Test {
 
     @Test
     public void testCompliance() {
-        DriverAssertions.assertDriverCompliance(new Sdmx21Driver2());
+        DriverAssertions.assertDriverCompliance(new NbbDriver2());
     }
 }
