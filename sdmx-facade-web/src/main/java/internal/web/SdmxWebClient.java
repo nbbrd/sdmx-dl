@@ -24,12 +24,12 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -63,8 +63,8 @@ public interface SdmxWebClient {
         @Nonnull
         SdmxWebClient get(
                 @Nonnull SdmxWebSource source,
-                @Nonnull LanguagePriorityList languages,
-                @Nonnull SdmxWebBridge bridge
+                @Nonnull LanguagePriorityList langs,
+                @Nonnull SdmxWebContext context
         );
     }
 }

@@ -17,7 +17,6 @@
 package internal.web.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
 import internal.web.SdmxWebProperty;
@@ -27,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -35,14 +35,14 @@ import java.util.logging.Logger;
 @lombok.experimental.UtilityClass
 class Util {
 
-    public RestClient getRestClient(SdmxWebSource o, SdmxWebBridge bridge) {
+    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
         return RestClientImpl.of(
                 SdmxWebProperty.getReadTimeout(o.getProperties()),
                 SdmxWebProperty.getConnectTimeout(o.getProperties()),
                 SdmxWebProperty.getMaxRedirects(o.getProperties()),
-                bridge.getProxySelector(o),
-                bridge.getSslSocketFactory(o),
-                new EventListenerImpl(bridge.getLogger(o))
+                context.getProxySelector(),
+                context.getSslSocketFactory(),
+                new EventListenerImpl(context.getLogger())
         );
     }
 

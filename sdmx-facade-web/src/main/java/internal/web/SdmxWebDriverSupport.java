@@ -20,7 +20,6 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.time.Clock;
@@ -30,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -63,16 +63,16 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     }
 
     @Override
-    public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+    public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
-        Objects.requireNonNull(languages);
-        Objects.requireNonNull(bridge);
+        Objects.requireNonNull(langs);
+        Objects.requireNonNull(context);
 
         if (!source.getDriver().equals(name)) {
             throw new IllegalArgumentException(source.toString());
         }
 
-        return SdmxWebConnectionImpl.of(getClient(source, languages, bridge));
+        return SdmxWebConnectionImpl.of(getClient(source, langs, context));
     }
 
     @Override
@@ -95,8 +95,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private SdmxWebClient getClient(SdmxWebSource source, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
-        SdmxWebClient origin = client.get(source, langs, bridge);
+    private SdmxWebClient getClient(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
+        SdmxWebClient origin = client.get(source, langs, context);
         SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, langs), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
         return FailsafeWebClient.of(cached);
     }

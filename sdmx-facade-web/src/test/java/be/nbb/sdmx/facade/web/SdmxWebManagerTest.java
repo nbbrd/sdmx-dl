@@ -16,12 +16,12 @@
  */
 package be.nbb.sdmx.facade.web;
 
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.time.Duration;
@@ -39,21 +39,20 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testCompliance() {
-        ConnectionSupplierAssert.assertCompliance(SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO), HELLO.getName(), "ko");
+        ConnectionSupplierAssert.assertCompliance(SdmxWebManager.of(REPO), HELLO.getName(), "ko");
     }
 
     @Test
     @SuppressWarnings("null")
     public void testFactories() {
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(null, REPO));
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(SdmxWebBridge.getDefault(), (Iterable) null));
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of(SdmxWebBridge.getDefault(), (SdmxWebDriver[]) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((Iterable) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((SdmxWebDriver[]) null));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testGetConnectionOfSource() {
-        SdmxWebManager manager = SdmxWebManager.of(SdmxWebBridge.getDefault(), REPO);
+        SdmxWebManager manager = SdmxWebManager.of(REPO);
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null, ANY));
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
         assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().endpointOf("http://ko").build(), ANY));
@@ -74,7 +73,7 @@ public class SdmxWebManagerTest {
         }
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList languages, SdmxWebBridge bridge) throws IOException {
+        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
             return repos.stream()
                     .filter(o -> o.getName().equals(source.getEndpoint().toString()))
                     .findFirst()

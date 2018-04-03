@@ -21,12 +21,12 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.util.rest.RestQueryBuilder;
 import internal.web.SdmxWebDriverSupport;
 import java.io.IOException;
 import java.net.URL;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -45,8 +45,8 @@ public final class NbbDriver2 implements SdmxWebDriver {
 
     private static final class NbbClient2 extends AbstractDotStat {
 
-        private NbbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebBridge b) {
-            super(s.getEndpoint(), l, Util.getRestClient(s, b));
+        private NbbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
+            super(s.getEndpoint(), l, Util.getRestClient(s, c));
         }
 
         @SdmxFix(id = "NBB#1", cause = "'/all' must be encoded to '%2Fall'")

@@ -16,7 +16,6 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
@@ -26,6 +25,7 @@ import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebClient;
 import internal.web.SdmxWebProperty;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -43,11 +43,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .sources(SdmxWebResource.load("/internal/web/drivers/sdmx21.xml"))
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebBridge b) {
-        return new AbstractSdmx21(
-                s.getEndpoint(),
-                l,
-                Util.getRestClient(s, b),
+    private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
+        return new AbstractSdmx21(s.getEndpoint(), l, Util.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
                 DataFactory.sdmx21()
         );

@@ -16,27 +16,32 @@
  */
 package be.nbb.sdmx.facade.web;
 
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import lombok.AccessLevel;
 
 /**
@@ -49,18 +54,16 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
     @Nonnull
     public static SdmxWebManager ofServiceLoader() {
-        return of(lookupBridge(), ServiceLoader.load(SdmxWebDriver.class));
+        return of(ServiceLoader.load(SdmxWebDriver.class));
     }
 
     @Nonnull
-    public static SdmxWebManager of(@Nonnull SdmxWebBridge bridge, @Nonnull SdmxWebDriver... drivers) {
-        return of(bridge, Arrays.asList(drivers));
+    public static SdmxWebManager of(@Nonnull SdmxWebDriver... drivers) {
+        return of(Arrays.asList(drivers));
     }
 
     @Nonnull
-    public static SdmxWebManager of(@Nonnull SdmxWebBridge bridge, @Nonnull Iterable<? extends SdmxWebDriver> drivers) {
-        Objects.requireNonNull(bridge);
-
+    public static SdmxWebManager of(@Nonnull Iterable<? extends SdmxWebDriver> drivers) {
         List<SdmxWebDriver> driverList = new ArrayList<>();
         drivers.forEach(driverList::add);
 
@@ -69,10 +72,10 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
         HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
 
-        return new SdmxWebManager(bridge, driverList, sourceByName, cacheSupport);
+        return new SdmxWebManager(new AtomicReference<>(SdmxWebContext.builder().build()), driverList, sourceByName, cacheSupport);
     }
 
-    private final SdmxWebBridge bridge;
+    private final AtomicReference<SdmxWebContext> context;
     private final List<SdmxWebDriver> drivers;
     private final ConcurrentMap<String, SdmxWebSource> sourceByName;
     private final HasCache cacheSupport;
@@ -105,7 +108,7 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
                 .findFirst()
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return tryConnect(driver, source, languages, bridge);
+        return tryConnect(driver, source, languages, context.get());
     }
 
     @Override
@@ -116,6 +119,36 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     @Override
     public void setCache(ConcurrentMap cache) {
         this.cacheSupport.setCache(cache);
+    }
+
+    @Nonnull
+    public ProxySelector getProxySelector() {
+        return context.get().getProxySelector();
+    }
+
+    public void setProxySelector(@Nullable ProxySelector proxySelector) {
+        ProxySelector newObj = proxySelector != null ? proxySelector : getDefaultProxySelector();
+        context.set(context.get().toBuilder().proxySelector(newObj).build());
+    }
+
+    @Nonnull
+    public SSLSocketFactory getSSLSocketFactory() {
+        return context.get().getSslSocketFactory();
+    }
+
+    public void setSSLSocketFactory(@Nullable SSLSocketFactory sslSocketFactory) {
+        SSLSocketFactory newObj = sslSocketFactory != null ? sslSocketFactory : getDefaultSSLSocketFactory();
+        context.set(context.get().toBuilder().sslSocketFactory(newObj).build());
+    }
+
+    @Nonnull
+    public Logger getLogger() {
+        return context.get().getLogger();
+    }
+
+    public void setLogger(@Nullable Logger logger) {
+        Logger newObj = logger != null ? logger : getDefaultLogger();
+        context.set(context.get().toBuilder().logger(newObj).build());
     }
 
     @Nonnull
@@ -146,11 +179,6 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
                 .orElse(Collections.emptyList());
     }
 
-    private static SdmxWebBridge lookupBridge() {
-        Iterator<SdmxWebBridge> iter = ServiceLoader.load(SdmxWebBridge.class).iterator();
-        return iter.hasNext() ? iter.next() : SdmxWebBridge.getDefault();
-    }
-
     private static void applyCache(ConcurrentMap cache, List<SdmxWebDriver> drivers) {
         drivers.stream()
                 .filter(HasCache.class::isInstance)
@@ -163,11 +191,11 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
     }
 
     @SuppressWarnings("null")
-    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource source, LanguagePriorityList langs, SdmxWebBridge bridge) throws IOException {
+    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) throws IOException {
         SdmxWebConnection result;
 
         try {
-            result = driver.connect(source, langs, bridge);
+            result = driver.connect(s, l, c);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new UnexpectedIOException(ex);
@@ -200,5 +228,17 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
         return result
                 .stream()
                 .filter(o -> o.getDriver().equals(driver.getName()));
+    }
+
+    private static ProxySelector getDefaultProxySelector() {
+        return ProxySelector.getDefault();
+    }
+
+    private static SSLSocketFactory getDefaultSSLSocketFactory() {
+        return HttpsURLConnection.getDefaultSSLSocketFactory();
+    }
+
+    private static Logger getDefaultLogger() {
+        return Logger.getLogger(SdmxWebManager.class.getName());
     }
 }

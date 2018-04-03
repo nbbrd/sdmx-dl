@@ -23,11 +23,11 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
 import java.io.IOException;
 import java.net.URL;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -46,8 +46,8 @@ public final class WbDriver2 implements SdmxWebDriver {
 
     private static final class WbClient2 extends AbstractSdmx21 {
 
-        private WbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebBridge b) {
-            super(s.getEndpoint(), l, Util.getRestClient(s, b), true, DataFactory.sdmx21());
+        private WbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
+            super(s.getEndpoint(), l, Util.getRestClient(s, c), true, DataFactory.sdmx21());
         }
 
         @SdmxFix(id = "WB#1", cause = "'/' separator required at the end of query")

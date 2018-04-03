@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,10 +14,9 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web;
+package be.nbb.sdmx.facade.web.spi;
 
-import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
+import be.nbb.sdmx.facade.web.SdmxWebManager;
 import java.net.ProxySelector;
 import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
@@ -27,23 +26,19 @@ import javax.net.ssl.SSLSocketFactory;
  *
  * @author Philippe Charles
  */
-@lombok.extern.java.Log
-public enum DefaultWebBridge implements SdmxWebBridge {
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+public class SdmxWebContext {
 
-    INSTANCE;
+    @lombok.NonNull
+    @lombok.Builder.Default
+    ProxySelector proxySelector = ProxySelector.getDefault();
 
-    @Override
-    public ProxySelector getProxySelector(SdmxWebSource o) {
-        return ProxySelector.getDefault();
-    }
+    @lombok.NonNull
+    @lombok.Builder.Default
+    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 
-    @Override
-    public SSLSocketFactory getSslSocketFactory(SdmxWebSource o) {
-        return HttpsURLConnection.getDefaultSSLSocketFactory();
-    }
-
-    @Override
-    public Logger getLogger(SdmxWebSource o) {
-        return log;
-    }
+    @lombok.NonNull
+    @lombok.Builder.Default
+    Logger logger = Logger.getLogger(SdmxWebManager.class.getName());
 }

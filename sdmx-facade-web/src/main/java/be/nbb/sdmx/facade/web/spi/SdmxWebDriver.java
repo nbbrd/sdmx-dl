@@ -38,7 +38,7 @@ public interface SdmxWebDriver {
     SdmxWebConnection connect(
             @Nonnull SdmxWebSource source,
             @Nonnull LanguagePriorityList languages,
-            @Nonnull SdmxWebBridge bridge
+            @Nonnull SdmxWebContext context
     ) throws IOException, IllegalArgumentException;
 
     @Nonnull

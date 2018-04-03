@@ -19,9 +19,9 @@ package _test;
 import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import static org.assertj.core.api.Assertions.*;
+import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 
 /**
  *
@@ -45,13 +45,15 @@ public class DriverAssertions {
 
         SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
 
+        SdmxWebContext context = SdmxWebContext.builder().build();
+        
         assertThat(d.getName()).isNotBlank();
 
-        assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, SdmxWebBridge.getDefault()));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, SdmxWebBridge.getDefault()));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, context));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, context));
         assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, ANY, null));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, SdmxWebBridge.getDefault()));
+        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, context));
 
         assertThat(d.getDefaultSources()).allSatisfy(o -> checkSource(o, d));
 
