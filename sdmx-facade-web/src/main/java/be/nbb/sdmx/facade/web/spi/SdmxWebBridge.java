@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.web.spi;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import internal.web.DefaultWebBridge;
 import java.net.ProxySelector;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLSocketFactory;
@@ -35,6 +36,9 @@ public interface SdmxWebBridge {
 
     @Nonnull
     SSLSocketFactory getSslSocketFactory(@Nonnull SdmxWebSource o);
+
+    @Nonnull
+    Logger getLogger(@Nonnull SdmxWebSource o);
 
     @Nonnull
     static SdmxWebBridge getDefault() {

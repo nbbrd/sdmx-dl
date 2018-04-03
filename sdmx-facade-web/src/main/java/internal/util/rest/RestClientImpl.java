@@ -59,8 +59,12 @@ public final class RestClientImpl implements RestClient {
     @lombok.NonNull
     private final SSLSocketFactory sslSocketFactory;
 
+    @lombok.NonNull
+    private final EventListener listener;
+
     @Override
     public InputStream openStream(URL query, String mediaType, String langs) throws IOException {
+        listener.onOpenStream(query, mediaType, langs);
         return openStream(query, mediaType, langs, 0);
     }
 
@@ -115,7 +119,9 @@ public final class RestClientImpl implements RestClient {
             if (newQuery == null || newQuery.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
-            return openStream(new URL(newQuery), mediaType, langs, redirects + 1);
+            URL newUrl = new URL(newQuery);
+            listener.onRedirection(http.getURL(), newUrl);
+            return openStream(newUrl, mediaType, langs, redirects + 1);
         } finally {
             http.disconnect();
         }
@@ -133,6 +139,13 @@ public final class RestClientImpl implements RestClient {
         } finally {
             http.disconnect();
         }
+    }
+
+    public interface EventListener {
+
+        void onOpenStream(URL query, String mediaType, String langs);
+
+        void onRedirection(URL oldUrl, URL newUrl);
     }
 
     @lombok.Getter

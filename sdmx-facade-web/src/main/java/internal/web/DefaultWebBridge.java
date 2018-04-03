@@ -19,6 +19,7 @@ package internal.web;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import java.net.ProxySelector;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -26,6 +27,7 @@ import javax.net.ssl.SSLSocketFactory;
  *
  * @author Philippe Charles
  */
+@lombok.extern.java.Log
 public enum DefaultWebBridge implements SdmxWebBridge {
 
     INSTANCE;
@@ -38,5 +40,10 @@ public enum DefaultWebBridge implements SdmxWebBridge {
     @Override
     public SSLSocketFactory getSslSocketFactory(SdmxWebSource o) {
         return HttpsURLConnection.getDefaultSSLSocketFactory();
+    }
+
+    @Override
+    public Logger getLogger(SdmxWebSource o) {
+        return log;
     }
 }

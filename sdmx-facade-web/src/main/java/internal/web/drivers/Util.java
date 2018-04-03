@@ -21,9 +21,12 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebBridge;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
 import internal.web.SdmxWebProperty;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,7 +40,9 @@ class Util {
                 SdmxWebProperty.getReadTimeout(o.getProperties()),
                 SdmxWebProperty.getConnectTimeout(o.getProperties()),
                 SdmxWebProperty.getMaxRedirects(o.getProperties()),
-                bridge.getProxySelector(o), bridge.getSslSocketFactory(o)
+                bridge.getProxySelector(o),
+                bridge.getSslSocketFactory(o),
+                new EventListenerImpl(bridge.getLogger(o))
         );
     }
 
@@ -47,4 +52,21 @@ class Util {
                     SdmxWebProperty.READ_TIMEOUT_PROPERTY,
                     SdmxWebProperty.MAX_REDIRECTS_PROPERTY
             ));
+
+    @lombok.AllArgsConstructor
+    private static final class EventListenerImpl implements RestClientImpl.EventListener {
+
+        @lombok.NonNull
+        private final Logger logger;
+
+        @Override
+        public void onOpenStream(URL query, String mediaType, String langs) {
+            logger.log(Level.FINE, "Querying ''{0}''", query);
+        }
+
+        @Override
+        public void onRedirection(URL oldUrl, URL newUrl) {
+            logger.log(Level.FINE, "Redirecting to ''{0}''", newUrl);
+        }
+    }
 }
