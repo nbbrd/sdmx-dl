@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade.file;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import be.nbb.sdmx.facade.util.HasCache;
@@ -35,21 +34,24 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import be.nbb.sdmx.facade.SdmxManager;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
+public final class SdmxFileManager implements SdmxManager, HasCache {
 
     @Nonnull
     public static SdmxFileManager ofServiceLoader() {
         List<SdmxDialect> dialects = new ArrayList<>();
         ServiceLoader.load(SdmxDialect.class).forEach(dialects::add);
         return new SdmxFileManager(
+                new AtomicReference<>(LanguagePriorityList.ANY),
                 new StaxSdmxDecoder(),
                 HasCache.of(ConcurrentHashMap::new),
                 dialects
@@ -58,28 +60,29 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
+    private final AtomicReference<LanguagePriorityList> languages;
     private final SdmxDecoder decoder;
     private final HasCache cacheSupport;
     private final List<SdmxDialect> dialects;
 
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {
-        return getConnection(name, LanguagePriorityList.ANY);
-    }
-
-    @Override
-    public SdmxFileConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
-        return getConnection(getFiles(name), languages);
+        return getConnection(getFiles(name));
     }
 
     @Nonnull
     public SdmxFileConnection getConnection(@Nonnull SdmxFileSet files) throws IOException {
-        return getConnection(files, LanguagePriorityList.ANY);
+        return new SdmxFileConnectionImpl(getResource(files), getDataflow(files));
     }
 
-    @Nonnull
-    public SdmxFileConnection getConnection(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException {
-        return new SdmxFileConnectionImpl(getResource(files, languages), getDataflow(files));
+    @Override
+    public LanguagePriorityList getLanguages() {
+        return languages.get();
+    }
+
+    @Override
+    public void setLanguages(LanguagePriorityList languages) {
+        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
     }
 
     @Override
@@ -100,8 +103,8 @@ public final class SdmxFileManager implements SdmxConnectionSupplier, HasCache {
         }
     }
 
-    private SdmxFileConnectionImpl.Resource getResource(SdmxFileSet files, LanguagePriorityList languages) {
-        return new CachedResource(files, languages, decoder, getDataFactory(files), getCache());
+    private SdmxFileConnectionImpl.Resource getResource(SdmxFileSet files) {
+        return new CachedResource(files, languages.get(), decoder, getDataFactory(files), getCache());
     }
 
     private Dataflow getDataflow(SdmxFileSet files) {

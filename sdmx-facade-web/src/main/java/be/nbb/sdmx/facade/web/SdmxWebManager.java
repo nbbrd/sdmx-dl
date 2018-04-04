@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade.web;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import java.io.IOException;
@@ -43,6 +42,7 @@ import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import lombok.AccessLevel;
+import be.nbb.sdmx.facade.SdmxManager;
 
 /**
  *
@@ -50,7 +50,7 @@ import lombok.AccessLevel;
  */
 @lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.extern.java.Log
-public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
+public final class SdmxWebManager implements SdmxManager, HasCache {
 
     @Nonnull
     public static SdmxWebManager ofServiceLoader() {
@@ -72,35 +72,32 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
 
         HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new, (o, n) -> applyCache(n, driverList));
 
-        return new SdmxWebManager(new AtomicReference<>(SdmxWebContext.builder().build()), driverList, sourceByName, cacheSupport);
+        return new SdmxWebManager(
+                new AtomicReference<>(LanguagePriorityList.ANY),
+                new AtomicReference<>(SdmxWebContext.builder().build()),
+                driverList, sourceByName, cacheSupport);
     }
 
+    private final AtomicReference<LanguagePriorityList> languages;
     private final AtomicReference<SdmxWebContext> context;
     private final List<SdmxWebDriver> drivers;
     private final ConcurrentMap<String, SdmxWebSource> sourceByName;
     private final HasCache cacheSupport;
 
     @Override
-    public SdmxWebConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+    public SdmxWebConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
-        Objects.requireNonNull(languages);
 
         SdmxWebSource source = sourceByName.get(name);
         if (source == null) {
             throw new IOException("Cannot find entry point for '" + name + "'");
         }
-        return getConnection(source, languages);
+        return getConnection(source);
     }
 
     @Nonnull
     public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source) throws IOException {
-        return getConnection(source, LanguagePriorityList.ANY);
-    }
-
-    @Nonnull
-    public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source, @Nonnull LanguagePriorityList languages) throws IOException {
         Objects.requireNonNull(source);
-        Objects.requireNonNull(languages);
 
         SdmxWebDriver driver = drivers
                 .stream()
@@ -108,7 +105,17 @@ public final class SdmxWebManager implements SdmxConnectionSupplier, HasCache {
                 .findFirst()
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return tryConnect(driver, source, languages, context.get());
+        return tryConnect(driver, source, languages.get(), context.get());
+    }
+
+    @Override
+    public LanguagePriorityList getLanguages() {
+        return languages.get();
+    }
+
+    @Override
+    public void setLanguages(LanguagePriorityList languages) {
+        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
     }
 
     @Override

@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.file;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
 import internal.file.SdmxFileUtil;
@@ -51,10 +50,7 @@ public class SdmxFileManagerTest {
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
         assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null));
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null, LanguagePriorityList.ANY));
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection(SdmxFileUtil.toXml(files), null));
         assertThatNullPointerException().isThrownBy(() -> m.getConnection((SdmxFileSet) null));
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection(files, null));
     }
 
     private final SdmxFileSet files = SdmxFileSet.builder().data(new File("hello")).build();

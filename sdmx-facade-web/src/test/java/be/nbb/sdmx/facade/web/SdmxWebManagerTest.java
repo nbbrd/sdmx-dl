@@ -18,7 +18,6 @@ package be.nbb.sdmx.facade.web;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import be.nbb.sdmx.facade.LanguagePriorityList;
-import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
@@ -53,9 +52,8 @@ public class SdmxWebManagerTest {
     @SuppressWarnings("null")
     public void testGetConnectionOfSource() {
         SdmxWebManager manager = SdmxWebManager.of(REPO);
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null, ANY));
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection(HELLO, null));
-        assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().endpointOf("http://ko").build(), ANY));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null));
+        assertThatIOException().isThrownBy(() -> manager.getConnection(HELLO.toBuilder().endpointOf("http://ko").build()));
     }
 
     private static final SdmxWebSource HELLO = SdmxWebSource.builder().name("ok").driver(RepoDriver.NAME).endpointOf("http://r1").build();

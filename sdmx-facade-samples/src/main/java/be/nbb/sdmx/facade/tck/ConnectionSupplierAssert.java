@@ -18,9 +18,9 @@ package be.nbb.sdmx.facade.tck;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
 import org.assertj.core.api.SoftAssertions;
+import be.nbb.sdmx.facade.SdmxManager;
 
 /**
  *
@@ -28,38 +28,33 @@ import org.assertj.core.api.SoftAssertions;
  */
 public final class ConnectionSupplierAssert {
 
-    public static void assertCompliance(SdmxConnectionSupplier supplier, String validName, String invalidName) {
+    public static void assertCompliance(SdmxManager manager, String validName, String invalidName) {
         SoftAssertions s = new SoftAssertions();
         try {
-            assertCompliance(s, supplier, validName, invalidName);
+            assertCompliance(s, manager, validName, invalidName);
         } catch (Exception ex) {
             s.fail("Unexpected exception '" + ex.getClass() + "'", ex);
         }
         s.assertAll();
     }
 
-    public static void assertCompliance(SoftAssertions s, SdmxConnectionSupplier supplier, String name, String invalidName) throws Exception {
-        assertNonnull(s, supplier, name);
+    public static void assertCompliance(SoftAssertions s, SdmxManager manager, String name, String invalidName) throws Exception {
+        assertNonnull(s, manager);
 
-        s.assertThatThrownBy(() -> supplier.getConnection(invalidName)).isInstanceOf(IOException.class);
+        s.assertThatCode(() -> manager.setLanguages(null)).doesNotThrowAnyException();
+        s.assertThat(manager.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
 
-        try (SdmxConnection conn = supplier.getConnection(name)) {
+        s.assertThatThrownBy(() -> manager.getConnection(invalidName)).isInstanceOf(IOException.class);
+
+        try (SdmxConnection conn = manager.getConnection(name)) {
             s.assertThat(conn).isNotNull();
         }
     }
 
     @SuppressWarnings("null")
-    private static void assertNonnull(SoftAssertions s, SdmxConnectionSupplier supplier, String name) {
-        s.assertThatThrownBy(() -> supplier.getConnection(null))
+    private static void assertNonnull(SoftAssertions s, SdmxManager manager) {
+        s.assertThatThrownBy(() -> manager.getConnection(null))
                 .as("Expecting 'getConnection(String, LanguagePriorityList)' to raise NPE when called with null name")
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> supplier.getConnection(null, LanguagePriorityList.ANY))
-                .as("Expecting 'getConnection(String, LanguagePriorityList)' to raise NPE when called with null name")
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> supplier.getConnection(name, null))
-                .as("Expecting 'getConnection(String, LanguagePriorityList)' to raise NPE when called with null language")
                 .isInstanceOf(NullPointerException.class);
     }
 }

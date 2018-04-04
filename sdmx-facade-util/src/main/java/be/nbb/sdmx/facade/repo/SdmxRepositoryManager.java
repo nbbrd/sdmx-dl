@@ -18,10 +18,11 @@ package be.nbb.sdmx.facade.repo;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.SdmxConnectionSupplier;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import be.nbb.sdmx.facade.SdmxManager;
 
 /**
  *
@@ -29,21 +30,32 @@ import java.util.Objects;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public final class SdmxRepositoryManager implements SdmxConnectionSupplier {
+public final class SdmxRepositoryManager implements SdmxManager {
+
+    private final AtomicReference<LanguagePriorityList> languages = new AtomicReference<>(LanguagePriorityList.ANY);
 
     @lombok.NonNull
     @lombok.Singular
     List<SdmxRepository> repositories;
 
     @Override
-    public SdmxConnection getConnection(String name, LanguagePriorityList languages) throws IOException {
+    public SdmxConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
-        Objects.requireNonNull(languages);
 
         return repositories.stream()
                 .filter(o -> o.getName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IOException("Cannot find '" + name + "'"))
                 .asConnection();
+    }
+
+    @Override
+    public LanguagePriorityList getLanguages() {
+        return languages.get();
+    }
+
+    @Override
+    public void setLanguages(LanguagePriorityList languages) {
+        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
     }
 }
