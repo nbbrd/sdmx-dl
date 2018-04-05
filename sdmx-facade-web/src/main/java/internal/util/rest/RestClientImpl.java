@@ -111,20 +111,30 @@ public final class RestClientImpl implements RestClient {
     }
 
     private InputStream redirect(HttpURLConnection http, String mediaType, String langs, int redirects) throws IOException {
+        URL oldUrl;
+        URL newUrl;
         try {
             if (redirects == maxRedirects) {
                 throw new IOException("Max redirections reached");
             }
+
             String newQuery = http.getHeaderField(LOCATION_HEADER);
             if (newQuery == null || newQuery.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
-            URL newUrl = new URL(newQuery);
-            listener.onRedirection(http.getURL(), newUrl);
-            return openStream(newUrl, mediaType, langs, redirects + 1);
+
+            oldUrl = http.getURL();
+            newUrl = new URL(newQuery);
         } finally {
             http.disconnect();
         }
+
+        if (isDowngradingProtocolOnRedirect(oldUrl, newUrl)) {
+            throw new IOException("Downgrading protocol on redirect from '" + oldUrl + "' to '" + newUrl + "'");
+        }
+
+        listener.onRedirection(http.getURL(), newUrl);
+        return openStream(newUrl, mediaType, langs, redirects + 1);
     }
 
     private InputStream getBody(HttpURLConnection http) throws IOException {
@@ -206,5 +216,17 @@ public final class RestClientImpl implements RestClient {
         static String getEncodingHeader() {
             return Stream.of(ContentEncoder.values()).map(ContentEncoder::getName).collect(Collectors.joining(","));
         }
+    }
+
+    /**
+     * https://en.wikipedia.org/wiki/Downgrade_attack
+     *
+     * @param oldUrl
+     * @param newUrl
+     * @return
+     */
+    static boolean isDowngradingProtocolOnRedirect(URL oldUrl, URL newUrl) {
+        return "https".equalsIgnoreCase(oldUrl.getProtocol())
+                && !"https".equalsIgnoreCase(newUrl.getProtocol());
     }
 }
