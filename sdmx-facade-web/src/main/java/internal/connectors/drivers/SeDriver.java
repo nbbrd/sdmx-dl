@@ -30,7 +30,7 @@ import java.net.URISyntaxException;
  * @author Philippe Charles
  */
 @ServiceProvider(service = SdmxWebDriver.class)
-public final class EsDriver implements SdmxWebDriver, HasCache {
+public final class SeDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
@@ -38,13 +38,13 @@ public final class EsDriver implements SdmxWebDriver, HasCache {
             .name("es@connectors")
             .client(ConnectorRestClient.of(EsClient::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("ES", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
+            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
             .build();
 
     private static final class EsClient extends DotStat {
 
         public EsClient() throws URISyntaxException {
-            super("ES", new URI("http://andmebaas.stat.ee/restsdmx/sdmx.ashx"), false);
+            super("SE", new URI("http://andmebaas.stat.ee/restsdmx/sdmx.ashx"), false);
         }
     }
 }
