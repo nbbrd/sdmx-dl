@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PortableTimeSeriesCursorTest {
 
-    static List<PortableTimeSeries> DATA;
+    static List<PortableTimeSeries<Double>> DATA;
 
     @BeforeClass
     public static void beforeClass() throws IOException {

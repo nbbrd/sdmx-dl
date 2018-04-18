@@ -30,6 +30,7 @@ import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import it.bancaditalia.oss.sdmx.api.DoubleObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
@@ -57,7 +58,7 @@ public class ConnectorsResource {
 
         List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE, l);
         List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE, l);
-        List<PortableTimeSeries> data = data20(SdmxSource.NBB_DATA, structs.get(0), l);
+        List<PortableTimeSeries<Double>> data = data20(SdmxSource.NBB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 
@@ -76,7 +77,7 @@ public class ConnectorsResource {
 
         List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE, l);
         List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS, l);
-        List<PortableTimeSeries> data = data21(SdmxSource.ECB_DATA, structs.get(0), l);
+        List<PortableTimeSeries<Double>> data = data21(SdmxSource.ECB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 
@@ -103,7 +104,7 @@ public class ConnectorsResource {
                 .collect(Collectors.toList());
     }
 
-    private List<PortableTimeSeries> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    private List<PortableTimeSeries<Double>> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
         return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
@@ -119,7 +120,7 @@ public class ConnectorsResource {
         return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
-    public List<PortableTimeSeries> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
         // No connectors impl
         return FacadeResource.data21(xml, Connectors.toStructure(dsd))
                 .stream()
@@ -127,25 +128,21 @@ public class ConnectorsResource {
                 .collect(Collectors.toList());
     }
 
-    private PortableTimeSeries toPortableTimeSeries(Series o, List<Dimension> dims) {
-        PortableTimeSeries result = new PortableTimeSeries();
+    private PortableTimeSeries<Double> toPortableTimeSeries(Series o, List<Dimension> dims) {
+        PortableTimeSeries<Double> result = new PortableTimeSeries<>();
         result.setFrequency(String.valueOf(formatByStandardFreq(o.getFreq())));
         o.getMeta().forEach(result::addAttribute);
         Key key = o.getKey();
         for (int i = 0; i < key.size(); i++) {
             result.addDimension(dims.get(i).getId(), key.get(i));
         }
-        o.getObs().forEach(x -> result.addObservation(valueToString(x.getValue()), periodToString(o.getFreq(), x.getPeriod()), null));
+        o.getObs().forEach(x -> result.add(new DoubleObservation(periodToString(o.getFreq(), x.getPeriod()), x.getValue(), null)));
         return result;
-    }
-
-    private String valueToString(Double o) {
-        return o != null ? o.toString() : "";
     }
 
     private String periodToString(Frequency f, LocalDateTime o) {
         if (o == null) {
-            return "";
+            return "NULL";
         }
         switch (f) {
             case ANNUAL:

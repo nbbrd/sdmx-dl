@@ -36,14 +36,14 @@ import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
  */
 public final class PortableTimeSeriesCursor implements DataCursor {
 
-    private final Iterator<PortableTimeSeries> data;
+    private final Iterator<PortableTimeSeries<Double>> data;
     private final ObsParser obs;
-    private PortableTimeSeries current;
+    private PortableTimeSeries<Double> current;
     private int index;
     private boolean closed;
     private boolean hasObs;
 
-    public PortableTimeSeriesCursor(List<PortableTimeSeries> data, ObsParser obs) {
+    public PortableTimeSeriesCursor(List<PortableTimeSeries<Double>> data, ObsParser obs) {
         this.data = data.iterator();
         this.obs = obs;
         this.closed = false;
@@ -68,7 +68,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     public boolean nextObs() throws IOException {
         checkSeriesState();
         index++;
-        return hasObs = (index < current.getObservations().size());
+        return hasObs = (index < current.size());
     }
 
     @Override
@@ -101,13 +101,13 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obs.period(current.getTimeSlots().get(index)).parsePeriod();
+        return obs.period(current.get(index).getTimeslot()).parsePeriod();
     }
 
     @Override
     public Double getObsValue() throws IOException {
         checkObsState();
-        Object result = current.getObservations().get(index);
+        Object result = current.get(index).getValue();
         return result instanceof Double ? (Double) result : null;
     }
 
@@ -137,7 +137,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static Frequency getFrequency(PortableTimeSeries input) {
+    private static Frequency getFrequency(PortableTimeSeries<?> input) {
         if (input.getFrequency() != null) {
             return Freqs.parseByFreq(input.getFrequency());
         }
@@ -148,7 +148,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
         return Frequency.UNDEFINED;
     }
 
-    private static Key parseKey(PortableTimeSeries ts) throws IOException {
+    private static Key parseKey(PortableTimeSeries<?> ts) throws IOException {
         Key result = Key.of(ts.getDimensionsMap().values());
         if (!result.isSeries()) {
             throw new IOException("Invalid series key '" + result + "'");
