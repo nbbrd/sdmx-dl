@@ -14,7 +14,9 @@
         <module>sdmx-facade-util</module>
         <module>sdmx-facade-file</module>
         <module>sdmx-facade-samples</module>
-        <module>sdmx-facade-web</module>
+        <module>sdmx-facade-web-ri</module>
+        <module>sdmx-facade-connectors</module>
+        <module>sdmx-facade-util-web</module>
     </modules>
 
     <properties>
@@ -30,6 +32,7 @@
         <junit.version>4.12</junit.version>
         <assertj.version>3.8.0</assertj.version>
         <java-io-util.version>0.0.1</java-io-util.version>
+        <netbeans.version>RELEASE802</netbeans.version>
     </properties>
     
     <dependencyManagement>
@@ -60,6 +63,11 @@
                 <artifactId>java-io-util</artifactId>
                 <version>${java-io-util.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.netbeans.api</groupId>
+                <artifactId>org-openide-util-lookup</artifactId>
+                <version>${netbeans.version}</version>
+            </dependency>
             <!-- modules -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -73,7 +81,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>sdmx-facade-web</artifactId>
+                <artifactId>sdmx-facade-connectors</artifactId>
+                <version>${project.version}</version>
+            </dependency>            
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-facade-util-web</artifactId>
                 <version>${project.version}</version>
             </dependency>            
             <dependency>
@@ -122,5 +135,9 @@
             <id>oss-jfrog-artifactory-snapshots</id>
             <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
         </repository>
+        <repository>
+            <id>netbeans</id>
+            <url>http://bits.netbeans.org/maven2/</url>
+        </repository>        
     </repositories>
 </project>
