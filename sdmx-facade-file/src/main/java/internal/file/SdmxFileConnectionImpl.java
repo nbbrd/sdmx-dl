@@ -21,8 +21,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.DataQueryDetail;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileConnection;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
@@ -90,28 +89,30 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getCursor(DataQuery query) throws IOException {
+    public DataCursor getCursor(Key key, DataFilter filter) throws IOException {
         checkState();
-        Objects.requireNonNull(query);
-        return resource.loadData(resource.decode(), dataflow.getRef(), query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return resource.loadData(resource.decode(), dataflow.getRef(), key, filter.isSeriesKeyOnly());
     }
 
     @Override
-    public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+    public DataCursor getCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         checkState();
         checkFlowRef(flowRef);
-        Objects.requireNonNull(query);
-        return resource.loadData(resource.decode(), dataflow.getRef(), query.getKey(), query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY));
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return resource.loadData(resource.decode(), dataflow.getRef(), key, filter.isSeriesKeyOnly());
     }
 
     @Override
-    public Stream<Series> getStream(DataQuery query) throws IOException {
-        return SeriesSupport.asStream(() -> getCursor(query));
+    public Stream<Series> getStream(Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(key, filter));
     }
 
     @Override
-    public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
-        return SeriesSupport.asStream(() -> getCursor(flowRef, query));
+    public Stream<Series> getStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(flowRef, key, filter));
     }
 
     @Override

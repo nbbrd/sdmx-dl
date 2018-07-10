@@ -20,9 +20,9 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.DataQueryDetail;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
@@ -70,9 +70,9 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     }
 
     @Override
-    public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+    public DataCursor getCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         checkState();
-        checkQuery(query);
+        checkQuery(filter);
 
         DataStructureRef structRef = client.peekStructureRef(flowRef);
         if (structRef == null) {
@@ -82,12 +82,12 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
-        return client.getData(flowRef, query, structure);
+        return client.getData(flowRef, key, filter, structure);
     }
 
     @Override
-    public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
-        return SeriesSupport.asStream(() -> getCursor(flowRef, query));
+    public Stream<Series> getStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asStream(() -> getCursor(flowRef, key, filter));
     }
 
     @Override
@@ -112,9 +112,8 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
     }
 
-    private void checkQuery(DataQuery query) throws IOException {
-        boolean serieskeysonly = query.getDetail().equals(DataQueryDetail.SERIES_KEYS_ONLY);
-        if (serieskeysonly && !isSeriesKeysOnlySupported()) {
+    private void checkQuery(DataFilter filter) throws IOException {
+        if (filter.isSeriesKeyOnly() && !isSeriesKeysOnlySupported()) {
             throw new IllegalStateException("serieskeysonly not supported");
         }
     }

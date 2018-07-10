@@ -17,7 +17,7 @@
 package internal.web.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
@@ -93,8 +93,8 @@ class AbstractSdmx21 extends AbstractRestClient {
     }
 
     @Override
-    protected URL getDataQuery(DataflowRef flowRef, DataQuery query) throws IOException {
-        return getDataQuery(endpoint, flowRef, query).build();
+    protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return getDataQuery(endpoint, flowRef, key, filter).build();
     }
 
     @Override
@@ -151,9 +151,9 @@ class AbstractSdmx21 extends AbstractRestClient {
     }
 
     @Nonnull
-    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException {
-        RestQueryBuilder result = onData(endpoint, flowRef, query.getKey());
-        switch (query.getDetail()) {
+    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+        RestQueryBuilder result = onData(endpoint, flowRef, key);
+        switch (filter.getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
                 break;

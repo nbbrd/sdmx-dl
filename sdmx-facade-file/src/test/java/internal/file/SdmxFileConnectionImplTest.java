@@ -20,7 +20,7 @@ import internal.file.xml.StaxSdmxDecoder;
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
@@ -58,10 +58,10 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(files.asDataflowRef()));
-        assertThatNullPointerException().isThrownBy(() -> conn.getCursor(null));
-        assertThatNullPointerException().isThrownBy(() -> conn.getStream(null));
-        try (Stream<Series> stream = conn.getStream(DataQuery.of(Key.ALL, false))) {
-            assertThat(stream).containsExactly(conn.getStream(DataQuery.of(Key.ALL, false)).toArray(Series[]::new));
+        assertThatNullPointerException().isThrownBy(() -> conn.getCursor(Key.ALL, null));
+        assertThatNullPointerException().isThrownBy(() -> conn.getStream(Key.ALL, null));
+        try (Stream<Series> stream = conn.getStream(Key.ALL, DataFilter.ALL)) {
+            assertThat(stream).containsExactly(conn.getStream(Key.ALL, DataFilter.ALL).toArray(Series[]::new));
         }
     }
 
@@ -80,7 +80,7 @@ public class SdmxFileConnectionImplTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getCursor(files.asDataflowRef(), DataQuery.of(Key.ALL, false))) {
+        try (DataCursor o = conn.getCursor(files.asDataflowRef(), Key.ALL, DataFilter.ALL)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);

@@ -17,11 +17,12 @@
 package internal.web.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.XML;
@@ -93,8 +94,8 @@ class AbstractDotStat extends AbstractRestClient {
     }
 
     @Override
-    protected URL getDataQuery(DataflowRef flowRef, DataQuery query) throws IOException {
-        return getDataQuery(endpoint, flowRef, query).build();
+    protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return getDataQuery(endpoint, flowRef, key, filter).build();
     }
 
     @Override
@@ -136,11 +137,11 @@ class AbstractDotStat extends AbstractRestClient {
     }
 
     @Nonnull
-    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException {
+    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
         return RestQueryBuilder.of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(flowRef.getId())
-                .path(query.getKey().toString())
+                .path(key.toString())
                 .param("format", "compact_v2");
     }
 

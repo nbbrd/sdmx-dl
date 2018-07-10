@@ -16,8 +16,9 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
@@ -51,11 +52,11 @@ public final class NbbDriver2 implements SdmxWebDriver {
 
         @SdmxFix(id = "NBB#1", cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        protected URL getDataQuery(DataflowRef flowRef, DataQuery query) throws IOException {
+        protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             return RestQueryBuilder.of(endpoint)
                     .path(DATA_RESOURCE)
                     .path(flowRef.getId())
-                    .path(query.getKey().toString() + "/all")
+                    .path(key.toString() + "/all")
                     .param("format", "compact_v2")
                     .build();
         }

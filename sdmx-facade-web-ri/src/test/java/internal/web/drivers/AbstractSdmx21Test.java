@@ -16,7 +16,7 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
@@ -78,14 +78,14 @@ public class AbstractSdmx21Test {
     public void testGetDataQuery() throws IOException {
         URL endpoint = new URL("http://localhost");
 
-        assertThatNullPointerException().isThrownBy(() -> getDataQuery(null, specificFlow, DataQuery.of(Key.ALL, true)));
-        assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, null, DataQuery.of(Key.ALL, true)));
-        assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, specificFlow, null));
+        assertThatNullPointerException().isThrownBy(() -> getDataQuery(null, specificFlow, Key.ALL, DataFilter.SERIES_KEYS_ONLY));
+        assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, null, Key.ALL, DataFilter.SERIES_KEYS_ONLY));
+        assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, specificFlow, Key.ALL, null));
 
-        assertThat(getDataQuery(endpoint, specificFlow, DataQuery.of(Key.ALL, true)).build())
+        assertThat(getDataQuery(endpoint, specificFlow, Key.ALL, DataFilter.SERIES_KEYS_ONLY).build())
                 .hasToString("http://localhost/data/ECB%2CEXR%2C1.0/all/all?detail=serieskeysonly");
 
-        assertThat(getDataQuery(endpoint, genericFlow, DataQuery.of(Key.ALL, true)).build())
+        assertThat(getDataQuery(endpoint, genericFlow, Key.ALL, DataFilter.SERIES_KEYS_ONLY).build())
                 .hasToString("http://localhost/data/all%2CEXR%2Clatest/all/all?detail=serieskeysonly");
     }
 

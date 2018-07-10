@@ -21,8 +21,9 @@ import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
@@ -87,13 +88,13 @@ public class SdmxRepository {
     }
 
     @Nonnull
-    public Optional<DataCursor> getCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
-        return getData(flowRef).map(toCursor(query));
+    public Optional<DataCursor> getCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+        return getData(flowRef).map(toCursor(key, filter));
     }
 
     @Nonnull
-    public Optional<Stream<Series>> getStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) {
-        return getData(flowRef).map(toStream(query));
+    public Optional<Stream<Series>> getStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+        return getData(flowRef).map(toStream(key, filter));
     }
 
     @Nonnull
@@ -103,15 +104,17 @@ public class SdmxRepository {
     }
 
     @Nonnull
-    private static Function<List<Series>, DataCursor> toCursor(@Nonnull DataQuery query) {
-        Objects.requireNonNull(query);
-        return o -> SeriesSupport.asCursor(o, query.getKey());
+    private static Function<List<Series>, DataCursor> toCursor(@Nonnull Key key, @Nonnull DataFilter filter) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return o -> SeriesSupport.asCursor(o, key);
     }
 
     @Nonnull
-    private static Function<List<Series>, Stream<Series>> toStream(@Nonnull DataQuery query) {
-        Objects.requireNonNull(query);
-        return o -> o.stream().filter(s -> query.getKey().contains(s.getKey()));
+    private static Function<List<Series>, Stream<Series>> toStream(@Nonnull Key key, @Nonnull DataFilter filter) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return o -> o.stream().filter(s -> key.contains(s.getKey()));
     }
 
     public static final class Builder {
@@ -177,18 +180,18 @@ public class SdmxRepository {
         }
 
         @Override
-        public DataCursor getCursor(DataflowRef flowRef, DataQuery query) throws IOException {
+        public DataCursor getCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getCursor(flowRef, query)
+                    .getCursor(flowRef, key, filter)
                     .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 
         @Override
-        public Stream<Series> getStream(DataflowRef flowRef, DataQuery query) throws IOException {
+        public Stream<Series> getStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getStream(flowRef, query)
+                    .getStream(flowRef, key, filter)
                     .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 

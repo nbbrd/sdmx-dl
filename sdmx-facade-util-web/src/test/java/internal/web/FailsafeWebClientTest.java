@@ -16,7 +16,7 @@
  */
 package internal.web;
 
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
@@ -55,10 +55,9 @@ public class FailsafeWebClientTest {
 
     @Test
     public void testGetData() {
-        DataQuery all = DataQuery.of(Key.ALL, false);
         DataStructure struct = DataStructure.builder().ref(ECB_STRUCT_REF).label("hello").build();
 
-        assertOperation(o -> FailsafeWebClient.of(o).getData(ECB_FLOW_REF, all, struct));
+        assertOperation(o -> FailsafeWebClient.of(o).getData(ECB_FLOW_REF, Key.ALL, DataFilter.ALL, struct));
     }
 
     @Test

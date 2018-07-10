@@ -17,11 +17,12 @@
 package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 import java.io.IOException;
 import java.util.List;
 import java.time.Duration;
@@ -51,7 +52,7 @@ public enum FailingWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataflowRef flowRef, Key key, DataFilter filter, DataStructure dsd) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

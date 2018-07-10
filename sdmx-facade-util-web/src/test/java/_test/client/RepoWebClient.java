@@ -17,11 +17,12 @@
 package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import java.io.IOException;
@@ -58,8 +59,8 @@ public final class RepoWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, DataQuery query, DataStructure dsd) throws IOException {
-        return repo.getCursor(flowRef, query)
+    public DataCursor getData(DataflowRef flowRef, Key key, DataFilter filter, DataStructure dsd) throws IOException {
+        return repo.getCursor(flowRef, key, filter)
                 .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
     }
 

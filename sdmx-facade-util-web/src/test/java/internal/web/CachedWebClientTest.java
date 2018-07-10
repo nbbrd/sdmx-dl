@@ -17,7 +17,7 @@
 package internal.web;
 
 import _test.client.CallStackWebClient;
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
@@ -139,28 +139,28 @@ public class CachedWebClientTest {
 
         CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
-        assertThatNullPointerException().isThrownBy(() -> target.getData(null, query, null));
+        assertThatNullPointerException().isThrownBy(() -> target.getData(null, Key.ALL, filter, null));
 
-        target.getData(ECB_FLOW_REF, query, null);
+        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(keysId);
 
-        target.getData(ECB_FLOW_REF, query, null);
+        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(keysId);
 
         clock.plus(100);
-        target.getData(ECB_FLOW_REF, query, null);
+        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(keysId);
 
         cache.clear();
-        target.getData(ECB_FLOW_REF, query, null);
+        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(keysId);
     }
 
-    private final DataQuery query = DataQuery.of(Key.ALL, true);
+    private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
     private final TypedId<?> flowsId = TypedId.of("flows://");
     private final TypedId<?> flowId = TypedId.of("flow://").with(ECB_FLOW_REF);
     private final TypedId<?> structId = TypedId.of("struct://").with(ECB_STRUCT_REF);

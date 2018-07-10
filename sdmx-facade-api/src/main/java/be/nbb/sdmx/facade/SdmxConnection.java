@@ -40,10 +40,10 @@ public interface SdmxConnection extends Closeable {
     DataStructure getStructure(@Nonnull DataflowRef flowRef) throws IOException;
 
     @Nonnull
-    DataCursor getCursor(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
+    DataCursor getCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException;
 
     @Nonnull
-    Stream<Series> getStream(@Nonnull DataflowRef flowRef, @Nonnull DataQuery query) throws IOException;
+    Stream<Series> getStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 }

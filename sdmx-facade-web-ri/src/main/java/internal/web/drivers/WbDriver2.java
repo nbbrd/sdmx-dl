@@ -16,9 +16,10 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxFix;
@@ -69,8 +70,8 @@ public final class WbDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        protected URL getDataQuery(DataflowRef flowRef, DataQuery query) throws IOException {
-            return getDataQuery(endpoint, flowRef, query).path(SEP).build();
+        protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+            return getDataQuery(endpoint, flowRef, key, filter).path(SEP).build();
         }
     }
 }

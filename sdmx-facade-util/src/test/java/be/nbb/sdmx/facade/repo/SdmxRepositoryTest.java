@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade.repo;
 
-import be.nbb.sdmx.facade.DataQuery;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
@@ -57,13 +57,14 @@ public class SdmxRepositoryTest {
     @Test
     @SuppressWarnings("null")
     public void testGetCursor() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(null, all));
-        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(goodFlowRef, null));
+        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(null, Key.ALL, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(goodFlowRef, null, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(goodFlowRef, Key.ALL, null));
 
-        DataCursorAssert.assertCompliance(() -> repo.getCursor(goodFlowRef, all).get());
+        DataCursorAssert.assertCompliance(() -> repo.getCursor(goodFlowRef, Key.ALL, DataFilter.ALL).get());
 
-        assertThat(repo.getCursor(goodFlowRef, all)).isNotEmpty();
-        assertThat(repo.getCursor(badFlowRef, all)).isEmpty();
+        assertThat(repo.getCursor(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
+        assertThat(repo.getCursor(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
     }
 
     @Test
@@ -93,10 +94,11 @@ public class SdmxRepositoryTest {
     @Test
     @SuppressWarnings("null")
     public void testGetStream() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getStream(null, all));
-        assertThatNullPointerException().isThrownBy(() -> repo.getStream(goodFlowRef, null));
-        assertThat(repo.getStream(goodFlowRef, all)).isNotEmpty();
-        assertThat(repo.getStream(badFlowRef, all)).isEmpty();
+        assertThatNullPointerException().isThrownBy(() -> repo.getStream(null, Key.ALL, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getStream(goodFlowRef, null, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getStream(goodFlowRef, Key.ALL, null));
+        assertThat(repo.getStream(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
+        assertThat(repo.getStream(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
     }
 
     @Test
@@ -109,7 +111,6 @@ public class SdmxRepositoryTest {
 
     private final DataStructureRef goodStructRef = DataStructureRef.of("NBB","goodStruct", "v1.0");
     private final DataStructureRef badStructRef = DataStructureRef.parse("badStruct");
-    private final DataQuery all = DataQuery.of(Key.ALL, false);
     private final DataflowRef goodFlowRef = DataflowRef.of("NBB", "XYZ", "v2.0");
     private final DataflowRef badFlowRef = DataflowRef.parse("other");
     private final Dataflow flow = Dataflow.of(goodFlowRef, goodStructRef, "flow1");
