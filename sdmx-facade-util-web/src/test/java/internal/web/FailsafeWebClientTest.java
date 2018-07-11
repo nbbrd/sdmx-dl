@@ -16,21 +16,18 @@
  */
 package internal.web;
 
+import _test.client.XFailingWebClient;
+import _test.client.XRepoWebClient;
+import _test.samples.FacadeResource;
+import static _test.samples.FacadeResource.ECB_FLOW_REF;
+import static _test.samples.FacadeResource.ECB_STRUCT_REF;
 import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import ioutil.IO;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import _test.samples.FacadeResource;
-import static _test.samples.FacadeResource.ECB_FLOW_REF;
-import static _test.samples.FacadeResource.ECB_STRUCT_REF;
-import _test.client.FailingWebClient;
-import _test.client.NoOpWebClient;
-import _test.client.NullWebClient;
-import _test.client.RepoWebClient;
 
 /**
  *
@@ -55,23 +52,24 @@ public class FailsafeWebClientTest {
 
     @Test
     public void testGetData() {
+        DataRequest request = new DataRequest(ECB_FLOW_REF, Key.ALL, DataFilter.ALL);
         DataStructure struct = DataStructure.builder().ref(ECB_STRUCT_REF).label("hello").build();
 
-        assertOperation(o -> FailsafeWebClient.of(o).getData(ECB_FLOW_REF, Key.ALL, DataFilter.ALL, struct));
+        assertOperation(o -> FailsafeWebClient.of(o).getData(request, struct));
     }
 
     @Test
     public void testIsSeriesKeysOnlySupported() {
         IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).isSeriesKeysOnlySupported();
 
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.EXPECTED))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
-                .isInstanceOf(UnexpectedIOException.class)
-                .hasCauseInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.UNEXPECTED))
+                .isInstanceOf(IOException.class)
+                .hasCauseInstanceOf(RuntimeException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(XRepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 
@@ -79,30 +77,30 @@ public class FailsafeWebClientTest {
     public void testPeekStructureRef() {
         IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).peekStructureRef(ECB_FLOW_REF);
 
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.EXPECTED))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
-                .isInstanceOf(UnexpectedIOException.class)
-                .hasCauseInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.UNEXPECTED))
+                .isInstanceOf(IOException.class)
+                .hasCauseInstanceOf(RuntimeException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(XRepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 
     private static void assertOperation(IO.Consumer<SdmxWebClient> op) {
-        assertThatThrownBy(() -> op.acceptWithIO(NoOpWebClient.INSTANCE))
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.EXPECTED))
                 .isInstanceOf(IOException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(FailingWebClient.INSTANCE))
-                .isInstanceOf(UnexpectedIOException.class)
-                .hasCauseInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.UNEXPECTED))
+                .isInstanceOf(IOException.class)
+                .hasCauseInstanceOf(RuntimeException.class);
 
-        assertThatThrownBy(() -> op.acceptWithIO(NullWebClient.INSTANCE))
-                .isInstanceOf(UnexpectedIOException.class)
+        assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.NULL))
+                .isInstanceOf(IOException.class)
                 .hasCauseInstanceOf(NullPointerException.class);
 
-        assertThatCode(() -> op.acceptWithIO(RepoWebClient.of(FacadeResource.ecb())))
+        assertThatCode(() -> op.acceptWithIO(XRepoWebClient.of(FacadeResource.ecb())))
                 .doesNotThrowAnyException();
     }
 }

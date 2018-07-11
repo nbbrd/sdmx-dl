@@ -42,7 +42,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
-        return new AbstractDotStat(s.getEndpoint(), l, Util.getRestClient(s, c));
+        return new DotStatRestClient(s.getEndpoint(), l, Util.getRestClient(s, c));
     }
 
     @SdmxFix(id = "#UIS1", cause = "API requires auth by key in header and this is not supported yet in facade")

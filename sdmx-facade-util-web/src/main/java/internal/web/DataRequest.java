@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,19 +14,25 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web.drivers;
+package internal.web;
 
-import _test.DriverAssertions;
-import org.junit.Test;
+import be.nbb.sdmx.facade.DataFilter;
+import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.Key;
 
 /**
  *
  * @author Philippe Charles
  */
-public class DtoStatDriver2Test {
+@lombok.Value
+public class DataRequest {
 
-    @Test
-    public void testCompliance() {
-        DriverAssertions.assertDriverCompliance(new DotStatDriver2());
-    }
+    @lombok.NonNull
+    private DataflowRef flowRef;
+
+    @lombok.NonNull
+    private Key key;
+
+    @lombok.NonNull
+    private DataFilter filter;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2018 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,24 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.web;
+package internal.web.drivers;
 
-import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.tck.ConnectionAssert;
-import java.io.IOException;
+import _test.DriverAssertions;
 import org.junit.Test;
-import _test.samples.FacadeResource;
-import _test.client.XRepoWebClient;
 
 /**
  *
  * @author Philippe Charles
  */
-public class SdmxWebConnectionImplTest {
+public class DotStatDriver2Test {
 
     @Test
-    public void testCompliance() throws IOException {
-        SdmxRepository repo = FacadeResource.ecb();
-        ConnectionAssert.assertCompliance(() -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo)), FacadeResource.ECB_FLOW_REF);
+    public void testCompliance() {
+        DriverAssertions.assertDriverCompliance(new DotStatDriver2());
     }
 }

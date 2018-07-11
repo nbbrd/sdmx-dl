@@ -27,6 +27,7 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
+import internal.web.DataRequest;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
@@ -82,7 +83,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
-        return client.getData(flowRef, key, filter, structure);
+        return client.getData(new DataRequest(flowRef, key, filter), structure);
     }
 
     @Override

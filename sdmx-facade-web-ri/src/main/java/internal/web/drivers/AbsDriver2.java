@@ -16,10 +16,7 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
-import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
@@ -28,6 +25,7 @@ import internal.web.SdmxWebDriverSupport;
 import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import internal.web.DataRequest;
 
 /**
  *
@@ -44,7 +42,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();
 
-    private static final class AbsClient2 extends AbstractDotStat {
+    private static final class AbsClient2 extends DotStatRestClient {
 
         private AbsClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
             super(s.getEndpoint(), l, Util.getRestClient(s, c));
@@ -59,8 +57,8 @@ public final class AbsDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-            return getDataQuery(endpoint, flowRef, key, filter).path(AGENCY).build();
+        protected URL getDataQuery(DataRequest request) throws IOException {
+            return getDataQuery(endpoint, request).path(AGENCY).build();
         }
     }
 }

@@ -33,7 +33,7 @@ import javax.xml.stream.XMLInputFactory;
 
 /**
  *
- * @author charphi
+ * @author Philippe Charles
  */
 public class XMLStreamCompactDataCursorTest {
 

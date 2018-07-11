@@ -17,13 +17,15 @@
 package _test.client;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.util.SdmxExceptions;
+import internal.web.DataRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.Duration;
 import internal.web.SdmxWebClient;
@@ -32,42 +34,47 @@ import internal.web.SdmxWebClient;
  *
  * @author Philippe Charles
  */
-public enum FailingWebClient implements SdmxWebClient {
+@lombok.AllArgsConstructor(staticName = "of")
+public final class XRepoWebClient implements SdmxWebClient {
 
-    INSTANCE;
+    @lombok.NonNull
+    private final SdmxRepository repo;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList(repo.getFlows());
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return repo.getFlow(ref)
+                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return repo.getStructure(ref)
+                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, Key key, DataFilter filter, DataStructure dsd) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        return repo.getCursor(request.getFlowRef(), request.getKey(), request.getFilter())
+                .orElseThrow(() -> SdmxExceptions.missingData(request.getFlowRef()));
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public Duration ping() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Duration.ZERO;
     }
 }

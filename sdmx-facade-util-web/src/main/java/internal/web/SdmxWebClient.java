@@ -17,12 +17,10 @@
 package internal.web;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
@@ -48,12 +46,12 @@ public interface SdmxWebClient {
     DataStructure getStructure(@Nonnull DataStructureRef ref) throws IOException;
 
     @Nonnull
-    DataCursor getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter, @Nonnull DataStructure dsd) throws IOException;
+    DataCursor getData(@Nonnull DataRequest request, @Nonnull DataStructure dsd) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 
     @Nullable
-    DataStructureRef peekStructureRef(@Nonnull DataflowRef flowRef) throws IOException;
+    DataStructureRef peekStructureRef(@Nonnull DataflowRef ref) throws IOException;
 
     @Nonnull
     Duration ping() throws IOException;

@@ -17,12 +17,10 @@
 package internal.web;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.UnexpectedIOException;
 import java.io.IOException;
 import java.time.Duration;
@@ -92,17 +90,17 @@ final class FailsafeWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, Key key, DataFilter filter, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
         DataCursor result;
 
         try {
-            result = delegate.getData(flowRef, key, filter, dsd);
+            result = delegate.getData(request, dsd);
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while getting data from dataset '%s' with key '%s'", flowRef, key);
+            throw unexpected(ex, "Unexpected exception while getting data from '%s'", request);
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while getting data from dataset '%s' with key '%s'", flowRef, key);
+            throw unexpectedNull("Unexpected null while getting data from '%s'", request);
         }
 
         return result;

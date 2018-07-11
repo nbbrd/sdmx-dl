@@ -16,10 +16,8 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxFix;
@@ -29,6 +27,7 @@ import internal.web.SdmxWebDriverSupport;
 import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import internal.web.DataRequest;
 
 /**
  *
@@ -45,7 +44,7 @@ public final class WbDriver2 implements SdmxWebDriver {
             .sourceOf("WB", "World Bank", "https://api.worldbank.org/v2/sdmx/rest")
             .build();
 
-    private static final class WbClient2 extends AbstractSdmx21 {
+    private static final class WbClient2 extends Sdmx21RestClient {
 
         private WbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
             super(s.getEndpoint(), l, Util.getRestClient(s, c), true, DataFactory.sdmx21());
@@ -70,8 +69,8 @@ public final class WbDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-            return getDataQuery(endpoint, flowRef, key, filter).path(SEP).build();
+        protected URL getDataQuery(DataRequest request) throws IOException {
+            return getDataQuery(endpoint, request).path(SEP).build();
         }
     }
 }

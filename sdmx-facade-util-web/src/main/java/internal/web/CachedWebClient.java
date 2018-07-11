@@ -18,7 +18,6 @@ package internal.web;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
@@ -76,11 +75,12 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataflowRef flowRef, Key key, DataFilter filter, DataStructure dsd) throws IOException {
-        if (!filter.isSeriesKeyOnly()) {
-            return delegate.getData(flowRef, key, filter, dsd);
+    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        if (!request.getFilter().isSeriesKeyOnly()) {
+            return delegate.getData(request, dsd);
         }
-        return loadKeysOnlyWithCache(flowRef, dsd, key, filter).getCursor(flowRef, key, filter)
+        return loadKeysOnlyWithCache(request, dsd)
+                .getCursor(request.getFlowRef(), request.getKey(), request.getFilter())
                 .orElseThrow(() -> new IOException("Data not found"));
     }
 
@@ -118,11 +118,11 @@ final class CachedWebClient implements SdmxWebClient {
         return result;
     }
 
-    private SdmxRepository loadKeysOnlyWithCache(DataflowRef flowRef, DataStructure dsd, Key key, DataFilter filter) throws IOException {
-        TypedId<SdmxRepository> id = idOfKeysOnly.with(flowRef);
+    private SdmxRepository loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
+        TypedId<SdmxRepository> id = idOfKeysOnly.with(request.getFlowRef());
         SdmxRepository result = cache.get(id);
-        if (result == null || isBroaderRequest(key, result)) {
-            result = copyDataKeys(flowRef, dsd, key, filter);
+        if (result == null || isBroaderRequest(request.getKey(), result)) {
+            result = copyDataKeys(request, dsd);
             cache.put(id, result);
         }
         return result;
@@ -157,11 +157,11 @@ final class CachedWebClient implements SdmxWebClient {
         return key.supersedes(Key.parse(repo.getName()));
     }
 
-    private SdmxRepository copyDataKeys(DataflowRef flowRef, DataStructure structure, Key key, DataFilter filter) throws IOException {
-        try (DataCursor cursor = delegate.getData(flowRef, key, filter, structure)) {
+    private SdmxRepository copyDataKeys(DataRequest request, DataStructure structure) throws IOException {
+        try (DataCursor cursor = delegate.getData(request, structure)) {
             return SdmxRepository.builder()
-                    .copyOf(flowRef, cursor)
-                    .name(key.toString())
+                    .copyOf(request.getFlowRef(), cursor)
+                    .name(request.getKey().toString())
                     .build();
         }
     }

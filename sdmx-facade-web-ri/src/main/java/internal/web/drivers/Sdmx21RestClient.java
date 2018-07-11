@@ -17,7 +17,6 @@
 package internal.web.drivers;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
@@ -28,7 +27,7 @@ import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
-import static be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams.*;
+import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +35,7 @@ import java.net.URL;
 import java.util.List;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
+import internal.web.DataRequest;
 import javax.annotation.Nonnull;
 
 /**
@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-class AbstractSdmx21 extends AbstractRestClient {
+class Sdmx21RestClient extends AbstractRestClient {
 
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
@@ -58,7 +58,8 @@ class AbstractSdmx21 extends AbstractRestClient {
 
     @Override
     protected List<Dataflow> getFlows(URL url) throws IOException {
-        return flow21(langs)
+        return SdmxXmlStreams
+                .flow21(langs)
                 .parseStream(calling(url, XML));
     }
 
@@ -69,7 +70,8 @@ class AbstractSdmx21 extends AbstractRestClient {
 
     @Override
     protected Dataflow getFlow(URL url, DataflowRef ref) throws IOException {
-        return flow21(langs)
+        return SdmxXmlStreams
+                .flow21(langs)
                 .parseStream(calling(url, XML))
                 .stream()
                 .filter(ref::containsRef)
@@ -84,7 +86,8 @@ class AbstractSdmx21 extends AbstractRestClient {
 
     @Override
     protected DataStructure getStructure(URL url, DataStructureRef ref) throws IOException {
-        return struct21(langs)
+        return SdmxXmlStreams
+                .struct21(langs)
                 .parseStream(calling(url, STRUCTURE_21))
                 .stream()
                 .filter(ref::equalsRef)
@@ -93,13 +96,14 @@ class AbstractSdmx21 extends AbstractRestClient {
     }
 
     @Override
-    protected URL getDataQuery(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return getDataQuery(endpoint, flowRef, key, filter).build();
+    protected URL getDataQuery(DataRequest request) throws IOException {
+        return getDataQuery(endpoint, request).build();
     }
 
     @Override
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
-        return compactData21(dsd, dialect)
+        return SdmxXmlStreams
+                .compactData21(dsd, dialect)
                 .parseStream(calling(url, STRUCTURE_SPECIFIC_DATA_21));
     }
 
@@ -119,7 +123,8 @@ class AbstractSdmx21 extends AbstractRestClient {
 
     @Nonnull
     static RestQueryBuilder onMeta(@Nonnull URL endpoint, @Nonnull String resourceType, @Nonnull ResourceRef ref) {
-        return RestQueryBuilder.of(endpoint)
+        return RestQueryBuilder
+                .of(endpoint)
                 .path(resourceType)
                 .path(ref.getAgency())
                 .path(ref.getId())
@@ -128,7 +133,8 @@ class AbstractSdmx21 extends AbstractRestClient {
 
     @Nonnull
     static RestQueryBuilder onData(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull Key key) {
-        return RestQueryBuilder.of(endpoint)
+        return RestQueryBuilder
+                .of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(flowRef.toString())
                 .path(key.toString())
@@ -151,9 +157,9 @@ class AbstractSdmx21 extends AbstractRestClient {
     }
 
     @Nonnull
-    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
-        RestQueryBuilder result = onData(endpoint, flowRef, key);
-        switch (filter.getDetail()) {
+    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataRequest request) throws IOException {
+        RestQueryBuilder result = onData(endpoint, request.getFlowRef(), request.getKey());
+        switch (request.getFilter().getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
                 break;

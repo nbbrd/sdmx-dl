@@ -16,7 +16,7 @@
  */
 package internal.web;
 
-import _test.client.CallStackWebClient;
+import _test.client.XCallStackWebClient;
 import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.TypedId;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import _test.samples.FacadeResource;
 import static _test.samples.FacadeResource.ECB_FLOW_REF;
 import static _test.samples.FacadeResource.ECB_STRUCT_REF;
-import _test.client.RepoWebClient;
+import _test.client.XRepoWebClient;
 
 /**
  *
@@ -139,23 +139,25 @@ public class CachedWebClientTest {
 
         CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
 
-        assertThatNullPointerException().isThrownBy(() -> target.getData(null, Key.ALL, filter, null));
+        assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
 
-        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
+        DataRequest request = new DataRequest(ECB_FLOW_REF, Key.ALL, filter);
+
+        target.getData(request, null);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(keysId);
 
-        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
+        target.getData(request, null);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(keysId);
 
         clock.plus(100);
-        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
+        target.getData(request, null);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(keysId);
 
         cache.clear();
-        target.getData(ECB_FLOW_REF, Key.ALL, filter, null);
+        target.getData(request, null);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(keysId);
     }
@@ -191,7 +193,7 @@ public class CachedWebClientTest {
     }
 
     private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
-        SdmxWebClient original = RepoWebClient.of(FacadeResource.ecb());
-        return CallStackWebClient.of(original, count);
+        SdmxWebClient original = XRepoWebClient.of(FacadeResource.ecb());
+        return XCallStackWebClient.of(original, count);
     }
 }
