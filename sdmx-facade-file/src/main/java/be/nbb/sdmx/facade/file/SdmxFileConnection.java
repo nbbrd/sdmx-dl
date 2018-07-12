@@ -25,6 +25,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -53,12 +54,17 @@ public interface SdmxFileConnection extends SdmxConnection {
     }
 
     @Nonnull
-    default DataCursor getCursor(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
-        return getCursor(getDataflowRef(), key, filter);
+    default List<Series> getData(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+        return getData(getDataflowRef(), key, filter);
     }
 
     @Nonnull
-    default Stream<Series> getStream(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
-        return getStream(getDataflowRef(), key, filter);
+    default Stream<Series> getDataStream(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+        return getDataStream(getDataflowRef(), key, filter);
+    }
+
+    @Nonnull
+    default DataCursor getDataCursor(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+        return getDataCursor(getDataflowRef(), key, filter);
     }
 }

@@ -58,10 +58,10 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getDataflowRef()).isEqualTo(files.asDataflowRef());
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(files.asDataflowRef()));
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(files.asDataflowRef()));
-        assertThatNullPointerException().isThrownBy(() -> conn.getCursor(Key.ALL, null));
-        assertThatNullPointerException().isThrownBy(() -> conn.getStream(Key.ALL, null));
-        try (Stream<Series> stream = conn.getStream(Key.ALL, DataFilter.ALL)) {
-            assertThat(stream).containsExactly(conn.getStream(Key.ALL, DataFilter.ALL).toArray(Series[]::new));
+        assertThatNullPointerException().isThrownBy(() -> conn.getDataCursor(Key.ALL, null));
+        assertThatNullPointerException().isThrownBy(() -> conn.getDataStream(Key.ALL, null));
+        try (Stream<Series> stream = conn.getDataStream(Key.ALL, DataFilter.ALL)) {
+            assertThat(stream).containsExactly(conn.getDataStream(Key.ALL, DataFilter.ALL).toArray(Series[]::new));
         }
     }
 
@@ -80,7 +80,7 @@ public class SdmxFileConnectionImplTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getCursor(files.asDataflowRef(), Key.ALL, DataFilter.ALL)) {
+        try (DataCursor o = conn.getDataCursor(files.asDataflowRef(), Key.ALL, DataFilter.ALL)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);

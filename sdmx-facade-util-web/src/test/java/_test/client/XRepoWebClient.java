@@ -59,7 +59,7 @@ public final class XRepoWebClient implements SdmxWebClient {
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        return repo.getCursor(request.getFlowRef(), request.getKey(), request.getFilter())
+        return repo.getDataCursor(request.getFlowRef(), request.getKey(), request.getFilter())
                 .orElseThrow(() -> SdmxExceptions.missingData(request.getFlowRef()));
     }
 

@@ -80,7 +80,7 @@ final class CachedWebClient implements SdmxWebClient {
             return delegate.getData(request, dsd);
         }
         return loadKeysOnlyWithCache(request, dsd)
-                .getCursor(request.getFlowRef(), request.getKey(), request.getFilter())
+                .getDataCursor(request.getFlowRef(), request.getKey(), request.getFilter())
                 .orElseThrow(() -> new IOException("Data not found"));
     }
 

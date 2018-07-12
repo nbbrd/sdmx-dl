@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -72,15 +73,22 @@ public class SeriesSupport {
     }
 
     @Nonnull
-    public DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key ref) {
-        Objects.requireNonNull(list);
-        Objects.requireNonNull(ref);
-        return new SeriesCursor(list, ref);
+    public List<Series> asList(@Nonnull IO.Supplier<DataCursor> source) throws IOException {
+        try (Stream<Series> stream = IO.Stream.open(source, SeriesSupport::getDataStream)) {
+            return stream.collect(Collectors.toList());
+        }
     }
 
     @Nonnull
     public Stream<Series> asStream(@Nonnull IO.Supplier<DataCursor> source) throws IOException {
         return IO.Stream.open(source, SeriesSupport::getDataStream);
+    }
+
+    @Nonnull
+    public DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key ref) {
+        Objects.requireNonNull(list);
+        Objects.requireNonNull(ref);
+        return new SeriesCursor(list, ref);
     }
 
     @SuppressWarnings("null")

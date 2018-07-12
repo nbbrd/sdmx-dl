@@ -57,14 +57,14 @@ public class SdmxRepositoryTest {
     @Test
     @SuppressWarnings("null")
     public void testGetCursor() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(null, Key.ALL, DataFilter.ALL));
-        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(goodFlowRef, null, DataFilter.ALL));
-        assertThatNullPointerException().isThrownBy(() -> repo.getCursor(goodFlowRef, Key.ALL, null));
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(null, Key.ALL, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(goodFlowRef, null, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(goodFlowRef, Key.ALL, null));
 
-        DataCursorAssert.assertCompliance(() -> repo.getCursor(goodFlowRef, Key.ALL, DataFilter.ALL).get());
+        DataCursorAssert.assertCompliance(() -> repo.getDataCursor(goodFlowRef, Key.ALL, DataFilter.ALL).get());
 
-        assertThat(repo.getCursor(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
-        assertThat(repo.getCursor(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
+        assertThat(repo.getDataCursor(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
+        assertThat(repo.getDataCursor(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
     }
 
     @Test
@@ -94,11 +94,11 @@ public class SdmxRepositoryTest {
     @Test
     @SuppressWarnings("null")
     public void testGetStream() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getStream(null, Key.ALL, DataFilter.ALL));
-        assertThatNullPointerException().isThrownBy(() -> repo.getStream(goodFlowRef, null, DataFilter.ALL));
-        assertThatNullPointerException().isThrownBy(() -> repo.getStream(goodFlowRef, Key.ALL, null));
-        assertThat(repo.getStream(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
-        assertThat(repo.getStream(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataStream(null, Key.ALL, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataStream(goodFlowRef, null, DataFilter.ALL));
+        assertThatNullPointerException().isThrownBy(() -> repo.getDataStream(goodFlowRef, Key.ALL, null));
+        assertThat(repo.getDataStream(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
+        assertThat(repo.getDataStream(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
     }
 
     @Test

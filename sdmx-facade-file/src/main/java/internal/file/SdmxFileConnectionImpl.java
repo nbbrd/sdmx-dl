@@ -28,6 +28,7 @@ import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -89,7 +90,27 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getCursor(Key key, DataFilter filter) throws IOException {
+    public List<Series> getData(Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asList(() -> getDataCursor(key, filter));
+    }
+
+    @Override
+    public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asList(() -> getDataCursor(flowRef, key, filter));
+    }
+
+    @Override
+    public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asStream(() -> getDataCursor(key, filter));
+    }
+
+    @Override
+    public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return SeriesSupport.asStream(() -> getDataCursor(flowRef, key, filter));
+    }
+
+    @Override
+    public DataCursor getDataCursor(Key key, DataFilter filter) throws IOException {
         checkState();
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
@@ -97,22 +118,12 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         checkState();
         checkFlowRef(flowRef);
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
         return resource.loadData(resource.decode(), dataflow.getRef(), key, filter.isSeriesKeyOnly());
-    }
-
-    @Override
-    public Stream<Series> getStream(Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asStream(() -> getCursor(key, filter));
-    }
-
-    @Override
-    public Stream<Series> getStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asStream(() -> getCursor(flowRef, key, filter));
     }
 
     @Override

@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -88,17 +89,22 @@ public class SdmxRepository {
     }
 
     @Nonnull
-    public Optional<DataCursor> getCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
-        return getData(flowRef).map(toCursor(key, filter));
+    public Optional<List<Series>> getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+        return getDataByFlowRef(flowRef).map(toStream(key, filter)).map(o -> o.collect(Collectors.toList()));
     }
 
     @Nonnull
-    public Optional<Stream<Series>> getStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
-        return getData(flowRef).map(toStream(key, filter));
+    public Optional<Stream<Series>> getDataStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+        return getDataByFlowRef(flowRef).map(toStream(key, filter));
     }
 
     @Nonnull
-    private Optional<List<Series>> getData(@Nonnull DataflowRef flowRef) {
+    public Optional<DataCursor> getDataCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+        return getDataByFlowRef(flowRef).map(toCursor(key, filter));
+    }
+
+    @Nonnull
+    private Optional<List<Series>> getDataByFlowRef(@Nonnull DataflowRef flowRef) {
         Objects.requireNonNull(flowRef);
         return Optional.ofNullable(data.get(flowRef));
     }
@@ -180,18 +186,26 @@ public class SdmxRepository {
         }
 
         @Override
-        public DataCursor getCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getCursor(flowRef, key, filter)
+                    .getData(flowRef, key, filter)
                     .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 
         @Override
-        public Stream<Series> getStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getStream(flowRef, key, filter)
+                    .getDataStream(flowRef, key, filter)
+                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
+        }
+
+        @Override
+        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+            checkState();
+            return repo
+                    .getDataCursor(flowRef, key, filter)
                     .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
         }
 
