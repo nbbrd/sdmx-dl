@@ -21,6 +21,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.QUERY;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
@@ -50,7 +51,7 @@ public final class WbDriver2 implements SdmxWebDriver {
             super(s.getEndpoint(), l, Util.getRestClient(s, c), true, DataFactory.sdmx21());
         }
 
-        @SdmxFix(id = "WB#1", cause = "'/' separator required at the end of query")
+        @SdmxFix(id = 1, category = QUERY, cause = "'/' separator required at the end of query")
         private static final String SEP = "";
 
         @Override

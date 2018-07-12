@@ -18,6 +18,7 @@ package internal.web.drivers;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
@@ -38,13 +39,13 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .supportedProperties(Util.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
-            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_URL)
+            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT)
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
         return new DotStatRestClient(s.getEndpoint(), l, Util.getRestClient(s, c));
     }
 
-    @SdmxFix(id = "#UIS1", cause = "API requires auth by key in header and this is not supported yet in facade")
-    private final static String UIS_URL = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
+    @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")
+    private final static String UIS_ENDPOINT = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
 }

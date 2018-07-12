@@ -24,6 +24,8 @@ import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.CONTENT;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
@@ -64,15 +66,15 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             .name("insee@connectors")
             .client(ConnectorRestClient.of(InseeClient::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_URL)
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)
             .build();
 
-    @SdmxFix(id = "INSEE#1", cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
-    private static final String FALLBACK_URL = "http://bdm.insee.fr/series/sdmx";
+    @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
+    private static final String FALLBACK_ENDPOINT = "http://bdm.insee.fr/series/sdmx";
 
     private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
-        @SdmxFix(id = "INSEE#2", cause = "Does not follow sdmx standard codes")
+        @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
         private final SdmxDialect dialect;
 
         private InseeClient(URI endpoint, Map<?, ?> properties) {
@@ -99,7 +101,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             return true;
         }
 
-        @SdmxFix(id = "INSEE#4", cause = "Some dimension/code ids are invalid")
+        @SdmxFix(id = 3, category = CONTENT, cause = "Some dimension/code ids are invalid")
         private void fixIds(DataFlowStructure dsd) {
             for (Dimension d : dsd.getDimensions()) {
                 if (d.getId().endsWith("6")) {
@@ -113,7 +115,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             return id.substring(0, id.length() - 1);
         }
 
-        @SdmxFix(id = "INSEE#3", cause = "Some codes are missing in dsd even when requested with 'references=children'")
+        @SdmxFix(id = 4, category = CONTENT, cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
                 Codelist codelist = d.getCodeList();

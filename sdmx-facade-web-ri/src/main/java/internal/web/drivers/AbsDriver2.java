@@ -19,6 +19,7 @@ package internal.web.drivers;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.QUERY;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
@@ -48,7 +49,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             super(s.getEndpoint(), l, Util.getRestClient(s, c));
         }
 
-        @SdmxFix(id = "ABS#1", cause = "Agency is required in query")
+        @SdmxFix(id = 1, category = QUERY, cause = "Agency is required in query")
         private static final String AGENCY = "ABS";
 
         @Override

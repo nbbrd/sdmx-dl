@@ -18,6 +18,7 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import it.bancaditalia.oss.sdmx.client.custom.ILO;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -49,11 +50,11 @@ public final class IloDriver implements SdmxWebDriver, HasCache {
             .name("ilo@connectors")
             .client(ConnectorRestClient.of(ILO2::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("ILO", "International Labour Office", FALLBACK_URL)
+            .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT)
             .build();
 
-    @SdmxFix(id = "ILO#1", cause = "Fallback to http due to servers redirecting to http")
-    private static final String FALLBACK_URL = "http://www.ilo.org/ilostat/sdmx/ws/rest";
+    @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to servers redirecting to http")
+    private static final String FALLBACK_ENDPOINT = "http://www.ilo.org/ilostat/sdmx/ws/rest";
 
     private static final class ILO2 extends ILO implements HasSeriesKeysOnlySupported {
 

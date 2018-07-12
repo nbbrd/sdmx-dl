@@ -18,6 +18,7 @@ package internal.web.drivers;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.QUERY;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.util.rest.RestQueryBuilder;
@@ -48,7 +49,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
             super(s.getEndpoint(), l, Util.getRestClient(s, c));
         }
 
-        @SdmxFix(id = "NBB#1", cause = "'/all' must be encoded to '%2Fall'")
+        @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
         protected URL getDataQuery(DataRequest request) throws IOException {
             return RestQueryBuilder

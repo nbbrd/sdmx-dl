@@ -18,6 +18,7 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
+import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
@@ -39,11 +40,11 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
             .name("uis@connectors")
             .client(ConnectorRestClient.of(UIS2::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_URL)
+            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT)
             .build();
 
-    @SdmxFix(id = "#UIS1", cause = "API requires auth by key in header and this is not supported yet in facade")
-    private final static String FALLBACK_URL = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
+    @SdmxFix(id = 1, category = ENDPOINT, cause = "API requires auth by key in header and this is not supported yet in facade")
+    private final static String FALLBACK_ENDPOINT = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
 
     private static final class UIS2 extends DotStat {
 

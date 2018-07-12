@@ -28,7 +28,13 @@ import java.lang.annotation.RetentionPolicy;
 @Documented
 public @interface SdmxFix {
 
-    String id();
+    int id();
+    
+    Category category() default Category.NONE;
 
     String cause();
+
+    enum Category {
+        NONE, ENDPOINT, QUERY, MEDIA_TYPE, CONTENT;
+    }
 }
