@@ -29,9 +29,7 @@ import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -46,9 +44,9 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     private boolean closed = false;
 
     @Override
-    public Set<Dataflow> getFlows() throws IOException {
+    public List<Dataflow> getFlows() throws IOException {
         checkState();
-        return new HashSet<>(client.getFlows());
+        return client.getFlows();
     }
 
     @Override

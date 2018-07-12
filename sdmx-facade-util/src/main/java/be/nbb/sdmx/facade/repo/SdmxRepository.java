@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,7 +56,7 @@ public class SdmxRepository {
 
     @lombok.NonNull
     @lombok.Singular
-    Set<Dataflow> flows;
+    List<Dataflow> flows;
 
     @lombok.NonNull
     Map<DataflowRef, List<Series>> data;
@@ -163,7 +162,7 @@ public class SdmxRepository {
         }
 
         @Override
-        public Set<Dataflow> getFlows() throws IOException {
+        public List<Dataflow> getFlows() throws IOException {
             checkState();
             return repo.getFlows();
         }

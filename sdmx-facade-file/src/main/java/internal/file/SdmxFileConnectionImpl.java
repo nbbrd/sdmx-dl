@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -58,9 +57,9 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public Set<Dataflow> getFlows() throws IOException {
+    public List<Dataflow> getFlows() throws IOException {
         checkState();
-        return Collections.singleton(dataflow);
+        return Collections.singletonList(dataflow);
     }
 
     @Override

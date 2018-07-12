@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -32,7 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 public interface SdmxConnection extends Closeable {
 
     @Nonnull
-    Set<Dataflow> getFlows() throws IOException;
+    List<Dataflow> getFlows() throws IOException;
 
     @Nonnull
     Dataflow getFlow(@Nonnull DataflowRef flowRef) throws IOException;
