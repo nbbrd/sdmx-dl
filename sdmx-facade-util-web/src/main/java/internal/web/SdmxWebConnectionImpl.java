@@ -41,6 +41,10 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     @lombok.NonNull
     private final SdmxWebClient client;
+
+    @lombok.NonNull
+    private final String driver;
+
     private boolean closed = false;
 
     @Override
@@ -103,6 +107,12 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     public Duration ping() throws IOException {
         checkState();
         return client.ping();
+    }
+
+    @Override
+    public String getDriver() throws IOException {
+        checkState();
+        return driver;
     }
 
     @Override

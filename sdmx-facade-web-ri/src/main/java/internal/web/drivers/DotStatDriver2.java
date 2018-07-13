@@ -24,17 +24,20 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebClient;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
+@ServiceProvider(service = SdmxWebDriver.class)
 public final class DotStatDriver2 implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("dotstat@facade")
+            .name("web-ri:dotstat")
+            .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
             .supportedProperties(Util.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")

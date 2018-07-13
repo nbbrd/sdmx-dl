@@ -33,7 +33,8 @@ public final class AbsDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("abs@connectors")
+            .name("connectors:abs")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(ABS::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")

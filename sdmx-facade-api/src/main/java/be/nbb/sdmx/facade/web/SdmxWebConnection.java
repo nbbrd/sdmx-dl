@@ -29,4 +29,7 @@ public interface SdmxWebConnection extends SdmxConnection {
 
     @Nonnull
     Duration ping() throws IOException;
+
+    @Nonnull
+    String getDriver() throws IOException;
 }

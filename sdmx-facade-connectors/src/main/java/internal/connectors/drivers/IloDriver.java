@@ -47,7 +47,8 @@ public final class IloDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("ilo@connectors")
+            .name("connectors:ilo")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(ILO2::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT)

@@ -21,15 +21,12 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.IOException;
 import java.net.ProxySelector;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +38,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.StreamSupport;
 
 /**
  *
@@ -62,31 +63,31 @@ public final class SdmxWebManager implements SdmxManager {
 
     @Nonnull
     public static SdmxWebManager of(@Nonnull Iterable<? extends SdmxWebDriver> drivers) {
-        List<SdmxWebDriver> driverList = new ArrayList<>();
-        drivers.forEach(driverList::add);
+        List<SdmxWebDriver> orderedListOfDrivers = StreamSupport
+                .stream(drivers.spliterator(), false)
+                .sorted(Comparator.comparing(SdmxWebDriver::getRank).reversed().thenComparing(SdmxWebDriver::getName))
+                .collect(Collectors.toList());
 
-        ConcurrentMap<String, SdmxWebSource> sourceByName = new ConcurrentHashMap<>();
-        updateSourceMap(sourceByName, driverList.stream().flatMap(o -> tryGetDefaultSources(o)));
+        CopyOnWriteArrayList<SdmxWebSource> sources = orderedListOfDrivers
+                .stream()
+                .flatMap(SdmxWebManager::tryGetDefaultSources)
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
 
-        return new SdmxWebManager(
-                new AtomicReference<>(LanguagePriorityList.ANY),
-                new AtomicReference<>(SdmxWebContext.builder().build()),
-                driverList, sourceByName);
+        return new SdmxWebManager(orderedListOfDrivers, sources);
     }
 
-    private final AtomicReference<LanguagePriorityList> languages;
-    private final AtomicReference<SdmxWebContext> context;
+    private final AtomicReference<LanguagePriorityList> languages = new AtomicReference<>(LanguagePriorityList.ANY);
+    private final AtomicReference<SdmxWebContext> context = new AtomicReference<>(SdmxWebContext.builder().build());
     private final List<SdmxWebDriver> drivers;
-    private final ConcurrentMap<String, SdmxWebSource> sourceByName;
+    private final CopyOnWriteArrayList<SdmxWebSource> sources;
 
     @Override
     public SdmxWebConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
 
-        SdmxWebSource source = sourceByName.get(name);
-        if (source == null) {
-            throw new IOException("Cannot find entry point for '" + name + "'");
-        }
+        SdmxWebSource source = lookupSource(name)
+                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+
         return getConnection(source);
     }
 
@@ -94,10 +95,7 @@ public final class SdmxWebManager implements SdmxManager {
     public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
-        SdmxWebDriver driver = drivers
-                .stream()
-                .filter(o -> source.getDriver().equals(o.getName()))
-                .findFirst()
+        SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
         return tryConnect(driver, source, languages.get(), context.get());
@@ -145,11 +143,12 @@ public final class SdmxWebManager implements SdmxManager {
 
     @Nonnull
     public List<SdmxWebSource> getSources() {
-        return new ArrayList<>(sourceByName.values());
+        return Collections.unmodifiableList(sources);
     }
 
     public void setSources(@Nonnull List<SdmxWebSource> list) {
-        updateSourceMap(sourceByName, list.stream());
+        sources.clear();
+        sources.addAll(list);
     }
 
     @Nonnull
@@ -163,17 +162,24 @@ public final class SdmxWebManager implements SdmxManager {
 
     @Nonnull
     public Collection<String> getSupportedProperties(@Nonnull String driver) {
-        return drivers
-                .stream()
-                .filter(o -> driver.equals(o.getName()))
+        Objects.requireNonNull(driver);
+        return lookupDriver(driver)
                 .map(SdmxWebDriver::getSupportedProperties)
-                .findFirst()
                 .orElse(Collections.emptyList());
     }
 
-    private static void updateSourceMap(ConcurrentMap<String, SdmxWebSource> sourceByName, Stream<SdmxWebSource> list) {
-        sourceByName.clear();
-        list.forEach(o -> sourceByName.put(o.getName(), o));
+    private Optional<SdmxWebSource> lookupSource(String name) {
+        return sources
+                .stream()
+                .filter(o -> name.equals(o.getName()))
+                .findFirst();
+    }
+
+    private Optional<SdmxWebDriver> lookupDriver(String name) {
+        return drivers
+                .stream()
+                .filter(o -> name.equals(o.getName()))
+                .findFirst();
     }
 
     @SuppressWarnings("null")

@@ -56,7 +56,8 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("sdmx21@connectors")
+            .name("connectors:sdmx21")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(Sdmx21Client::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)

@@ -33,7 +33,8 @@ public final class EurostatDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("eurostat@connectors")
+            .name("connectors:eurostat")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(EUROSTAT::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")

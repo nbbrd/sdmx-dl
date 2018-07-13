@@ -27,17 +27,20 @@ import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
+@ServiceProvider(service = SdmxWebDriver.class)
 public final class NbbDriver2 implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("nbb@facade")
+            .name("web-ri:nbb")
+            .rank(NATIVE_RANK)
             .client(NbbClient2::new)
             .supportedProperties(Util.CONNECTION_PROPERTIES)
             .sourceOf("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")

@@ -27,17 +27,20 @@ import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
+@ServiceProvider(service = SdmxWebDriver.class)
 public final class AbsDriver2 implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("abs@facade")
+            .name("web-ri:abs")
+            .rank(NATIVE_RANK)
             .client(AbsClient2::new)
             .supportedProperties(Util.CONNECTION_PROPERTIES)
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")

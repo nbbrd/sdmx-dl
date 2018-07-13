@@ -35,7 +35,8 @@ public final class SeDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("es@connectors")
+            .name("connectors:es")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(EsClient::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")

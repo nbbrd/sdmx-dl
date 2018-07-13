@@ -34,6 +34,8 @@ public interface SdmxWebDriver {
     @Nonnull
     String getName();
 
+    int getRank();
+
     @Nonnull
     SdmxWebConnection connect(
             @Nonnull SdmxWebSource source,
@@ -46,4 +48,7 @@ public interface SdmxWebDriver {
 
     @Nonnull
     Collection<String> getSupportedProperties();
+
+    static final int NATIVE_RANK = Byte.MAX_VALUE;
+    static final int WRAPPED_RANK = 0;
 }

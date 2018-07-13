@@ -37,7 +37,8 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("uis@connectors")
+            .name("connectors:uis")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(UIS2::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT)

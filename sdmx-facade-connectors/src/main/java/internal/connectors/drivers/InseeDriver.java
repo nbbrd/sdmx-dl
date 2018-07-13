@@ -63,7 +63,8 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("insee@connectors")
+            .name("connectors:insee")
+            .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(InseeClient::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)

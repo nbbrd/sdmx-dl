@@ -39,8 +39,12 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 @ThreadSafe
 public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
 
+    @lombok.Getter
     @lombok.NonNull
     private final String name;
+
+    @lombok.Getter
+    private final int rank;
 
     @lombok.NonNull
     private final SdmxWebClient.Supplier client;
@@ -58,11 +62,6 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(langs);
@@ -72,7 +71,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
             throw new IllegalArgumentException(source.toString());
         }
 
-        return SdmxWebConnectionImpl.of(getClient(source, langs, context));
+        return SdmxWebConnectionImpl.of(getClient(source, langs, context), name);
     }
 
     @Override
