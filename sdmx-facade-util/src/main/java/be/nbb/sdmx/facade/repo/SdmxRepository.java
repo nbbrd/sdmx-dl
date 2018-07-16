@@ -29,6 +29,7 @@ import be.nbb.sdmx.facade.util.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +163,7 @@ public class SdmxRepository {
         }
 
         @Override
-        public List<Dataflow> getFlows() throws IOException {
+        public Collection<Dataflow> getFlows() throws IOException {
             checkState();
             return repo.getFlows();
         }

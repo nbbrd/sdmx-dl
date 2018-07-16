@@ -29,6 +29,7 @@ import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -48,7 +49,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     private boolean closed = false;
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public Collection<Dataflow> getFlows() throws IOException {
         checkState();
         return client.getFlows();
     }
