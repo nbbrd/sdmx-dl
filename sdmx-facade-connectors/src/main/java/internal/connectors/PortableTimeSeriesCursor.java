@@ -100,6 +100,9 @@ public final class PortableTimeSeriesCursor implements DataCursor {
         checkSeriesState();
         Map<String, String> result = current.getAttributesMap();
         result.remove(PortableTimeSeries.GENERATEDNAME_ATTR_NAME);
+        result.remove(ACTION_ATTR_NAME);
+        result.remove(VALID_FROM_ATTR_NAME);
+        result.remove(VALID_TO_ATTR_NAME);
         return result;
     }
 
@@ -140,4 +143,8 @@ public final class PortableTimeSeriesCursor implements DataCursor {
             throw new IllegalStateException();
         }
     }
+
+    private static final String ACTION_ATTR_NAME = "action";
+    private static final String VALID_FROM_ATTR_NAME = "validFromDate";
+    private static final String VALID_TO_ATTR_NAME = "validToDate";
 }

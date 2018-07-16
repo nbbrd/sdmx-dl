@@ -138,9 +138,8 @@ public final class ConnectorRestClient implements SdmxWebClient {
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
         try {
-            return connector instanceof HasDataCursor
-                    ? getNativeCursor((HasDataCursor) connector, request, dsd)
-                    : getAdaptedCursor(connector, dataFactory, request, dsd);
+            List<PortableTimeSeries<Double>> data = getData(connector, request, dsd);
+            return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return NoOpCursor.noOp();
@@ -178,16 +177,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
                     READ_TIMEOUT_PROPERTY
             ));
 
-    private static DataCursor getNativeCursor(HasDataCursor connector, DataRequest request, DataStructure dsd) throws SdmxException, IOException {
-        return connector.getDataCursor(request.getFlowRef(), dsd, request.getKey(), request.getFilter().isSeriesKeyOnly());
-    }
-
-    private static DataCursor getAdaptedCursor(RestSdmxClient connector, DataFactory dataFactory, DataRequest request, DataStructure dsd) throws SdmxException {
-        List<PortableTimeSeries<Double>> data = getTimeSeries(connector, request, dsd);
-        return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
-    }
-
-    private static List<PortableTimeSeries<Double>> getTimeSeries(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
+    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()), Connectors.fromStructure(dsd), request.getKey().toString(), null, null, request.getFilter().isSeriesKeyOnly(), null, false);
     }
 
