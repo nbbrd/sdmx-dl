@@ -22,6 +22,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.Series;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxMediaType;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import static internal.web.SdmxWebProperty.*;
@@ -58,7 +59,7 @@ public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:sdmx21")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx21Client::new))
+            .client(ConnectorRestClient.of(Sdmx21Client::new, DataFactory.sdmx21()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)

@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import org.openide.util.lookup.ServiceProvider;
@@ -35,7 +36,7 @@ public final class OecdDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:oecd")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(OECD::new))
+            .client(ConnectorRestClient.of(OECD::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .build();

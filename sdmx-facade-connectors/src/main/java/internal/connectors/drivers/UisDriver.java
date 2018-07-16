@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
@@ -39,7 +40,7 @@ public final class UisDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:uis")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(UIS2::new))
+            .client(ConnectorRestClient.of(UIS2::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT)
             .build();

@@ -17,8 +17,10 @@
 package internal.connectors;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.ObsParser;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import java.io.IOException;
@@ -28,27 +30,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import be.nbb.sdmx.facade.parser.Freqs;
-import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.RequiredArgsConstructor
 public final class PortableTimeSeriesCursor implements DataCursor {
 
-    private final Iterator<PortableTimeSeries<Double>> data;
-    private final ObsParser obs;
-    private PortableTimeSeries<Double> current;
-    private int index;
-    private boolean closed;
-    private boolean hasObs;
-
-    public PortableTimeSeriesCursor(List<PortableTimeSeries<Double>> data, ObsParser obs) {
-        this.data = data.iterator();
-        this.obs = obs;
-        this.closed = false;
-        this.hasObs = false;
+    public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, DataFactory df, DataStructure dsd) {
+        ObsParser obsParser = new ObsParser(df::getPeriodParser, df.getValueParser());
+        Freqs.Parser freqParser = df.getFreqParser(dsd);
+        return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), obsParser, freqParser);
     }
+
+    private final Iterator<PortableTimeSeries<Double>> data;
+    private final Key.Builder keyBuilder;
+    private final ObsParser obsParser;
+    private final Freqs.Parser freqParser;
+
+    private PortableTimeSeries<Double> current = null;
+    private int index = -1;
+    private boolean closed = false;
+    private boolean hasObs = false;
 
     @Override
     public boolean nextSeries() throws IOException {
@@ -56,7 +60,8 @@ public final class PortableTimeSeriesCursor implements DataCursor {
         boolean result = data.hasNext();
         if (result) {
             current = data.next();
-            obs.frequency(getFrequency(current));
+            current.getDimensionsMap().forEach(keyBuilder::put);
+            obsParser.frequency(freqParser.parse(keyBuilder, current::getAttribute));
             index = -1;
         } else {
             current = null;
@@ -74,13 +79,13 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public Key getSeriesKey() throws IOException {
         checkSeriesState();
-        return parseKey(current);
+        return keyBuilder.build();
     }
 
     @Override
     public Frequency getSeriesFrequency() throws IOException {
         checkSeriesState();
-        return obs.getFrequency();
+        return obsParser.getFrequency();
     }
 
     @Override
@@ -101,7 +106,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obs.period(current.get(index).getTimeslot()).parsePeriod();
+        return obsParser.period(current.get(index).getTimeslot()).parsePeriod();
     }
 
     @Override
@@ -135,25 +140,4 @@ public final class PortableTimeSeriesCursor implements DataCursor {
             throw new IllegalStateException();
         }
     }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static Frequency getFrequency(PortableTimeSeries<?> input) {
-        if (input.getFrequency() != null) {
-            return Freqs.parseByFreq(input.getFrequency());
-        }
-        String value = input.getAttribute(TIME_FORMAT_CONCEPT);
-        if (value != null) {
-            return Freqs.parseByTimeFormat(value);
-        }
-        return Frequency.UNDEFINED;
-    }
-
-    private static Key parseKey(PortableTimeSeries<?> ts) throws IOException {
-        Key result = Key.of(ts.getDimensionsMap().values());
-        if (!result.isSeries()) {
-            throw new IOException("Invalid series key '" + result + "'");
-        }
-        return result;
-    }
-    //</editor-fold>
 }

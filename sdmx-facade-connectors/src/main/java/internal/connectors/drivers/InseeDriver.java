@@ -65,7 +65,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:insee")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(InseeClient::new))
+            .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)
             .build();
@@ -73,14 +73,13 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
     private static final String FALLBACK_ENDPOINT = "http://bdm.insee.fr/series/sdmx";
 
-    private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
+    @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
+    private static final SdmxDialect DIALECT = new InseeDialect();
 
-        @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
-        private final SdmxDialect dialect;
+    private final static class InseeClient extends RestSdmxClient implements HasDataCursor, HasSeriesKeysOnlySupported {
 
         private InseeClient(URI endpoint, Map<?, ?> properties) {
             super("", endpoint, false, false, true);
-            this.dialect = new InseeDialect();
         }
 
         @Override
@@ -120,7 +119,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
                 Codelist codelist = d.getCodeList();
-                if (codelist.getCodes().isEmpty()) {
+                if (codelist.isEmpty()) {
                     loadMissingCodes(codelist);
                 }
             }
@@ -145,7 +144,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
 
         private Parser<List<Series>> getCompactData21Parser(DataStructure dsd) {
             return (r, l) -> {
-                try (DataCursor cursor = SdmxXmlStreams.compactData21(dsd, dialect).parse(new XMLEventStreamReader(r), () -> {
+                try (DataCursor cursor = SdmxXmlStreams.compactData21(dsd, DIALECT).parse(new XMLEventStreamReader(r), () -> {
                 })) {
                     return SeriesSupport.copyOf(cursor);
                 } catch (IOException ex) {

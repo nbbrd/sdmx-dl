@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import org.openide.util.lookup.ServiceProvider;
@@ -35,7 +36,7 @@ public final class NbbDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:nbb")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(NBB::new))
+            .client(ConnectorRestClient.of(NBB::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("NBB", "National Bank Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();

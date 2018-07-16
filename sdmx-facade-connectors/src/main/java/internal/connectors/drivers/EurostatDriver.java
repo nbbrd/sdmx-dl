@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import org.openide.util.lookup.ServiceProvider;
@@ -35,7 +36,7 @@ public final class EurostatDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:eurostat")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EUROSTAT::new))
+            .client(ConnectorRestClient.of(EUROSTAT::new, DataFactory.sdmx21()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
             .build();

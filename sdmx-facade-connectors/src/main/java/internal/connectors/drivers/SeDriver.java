@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -37,7 +38,7 @@ public final class SeDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:es")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EsClient::new))
+            .client(ConnectorRestClient.of(EsClient::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
             .build();

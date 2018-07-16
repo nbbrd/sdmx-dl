@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.connectors.Connectors.*;
 import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
@@ -39,7 +40,7 @@ public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:sdmx20")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx20Client::new))
+            .client(ConnectorRestClient.of(Sdmx20Client::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .build();

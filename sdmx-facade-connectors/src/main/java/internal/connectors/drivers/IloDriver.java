@@ -16,6 +16,7 @@
  */
 package internal.connectors.drivers;
 
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
@@ -49,7 +50,7 @@ public final class IloDriver implements SdmxWebDriver, HasCache {
             .builder()
             .name("connectors:ilo")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ILO2::new))
+            .client(ConnectorRestClient.of(ILO2::new, DataFactory.sdmx20()))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT)
             .build();

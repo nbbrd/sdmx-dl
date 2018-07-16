@@ -23,7 +23,7 @@ import be.nbb.sdmx.facade.samples.ByteSource;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
-import be.nbb.sdmx.facade.parser.ObsParser;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import internal.connectors.PortableTimeSeriesCursor;
 import internal.connectors.Connectors;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
@@ -65,7 +65,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
+                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactory.sdmx20(), Connectors.toStructure(structs.get(0))))
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
@@ -84,7 +84,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, new PortableTimeSeriesCursor(data, ObsParser.standard()))
+                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactory.sdmx21(), Connectors.toStructure(structs.get(0))))
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();

@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.Obs;
-import be.nbb.sdmx.facade.parser.ObsParser;
+import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SeriesSupport;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
@@ -40,18 +40,19 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class PortableTimeSeriesCursorTest {
 
+    static DataFlowStructure DSD;
     static List<PortableTimeSeries<Double>> DATA;
 
     @BeforeClass
     public static void beforeClass() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("en");
-        DataFlowStructure dsd = ConnectorsResource.struct21(SdmxSource.ECB_DATA_STRUCTURE, l).get(0);
-        DATA = ConnectorsResource.data21(SdmxSource.ECB_DATA, dsd, l);
+        DSD = ConnectorsResource.struct21(SdmxSource.ECB_DATA_STRUCTURE, l).get(0);
+        DATA = ConnectorsResource.data21(SdmxSource.ECB_DATA, DSD, l);
     }
 
     @Test
     public void test() throws IOException {
-        assertThat(SeriesSupport.asStream(() -> new PortableTimeSeriesCursor(DATA, ObsParser.standard())))
+        assertThat(SeriesSupport.asStream(() -> PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD))))
                 .hasSize(120)
                 .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
                 .element(0)
@@ -70,6 +71,6 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void testCompliance() {
-        DataCursorAssert.assertCompliance(() -> new PortableTimeSeriesCursor(DATA, ObsParser.standard()));
+        DataCursorAssert.assertCompliance(() -> PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD)));
     }
 }
