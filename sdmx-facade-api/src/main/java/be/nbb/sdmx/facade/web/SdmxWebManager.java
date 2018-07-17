@@ -76,7 +76,6 @@ public final class SdmxWebManager implements SdmxManager {
         return new SdmxWebManager(orderedListOfDrivers, sources);
     }
 
-    private final AtomicReference<LanguagePriorityList> languages = new AtomicReference<>(LanguagePriorityList.ANY);
     private final AtomicReference<SdmxWebContext> context = new AtomicReference<>(SdmxWebContext.builder().build());
     private final List<SdmxWebDriver> drivers;
     private final CopyOnWriteArrayList<SdmxWebSource> sources;
@@ -98,17 +97,18 @@ public final class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return tryConnect(driver, source, languages.get(), context.get());
+        return tryConnect(driver, source, context.get());
     }
 
     @Override
     public LanguagePriorityList getLanguages() {
-        return languages.get();
+        return context.get().getLanguages();
     }
 
     @Override
     public void setLanguages(LanguagePriorityList languages) {
-        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
+        LanguagePriorityList newObj = languages != null ? languages : LanguagePriorityList.ANY;
+        this.context.set(context.get().toBuilder().languages(newObj).build());
     }
 
     @Nonnull
@@ -183,11 +183,11 @@ public final class SdmxWebManager implements SdmxManager {
     }
 
     @SuppressWarnings("null")
-    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) throws IOException {
+    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource s, SdmxWebContext c) throws IOException {
         SdmxWebConnection result;
 
         try {
-            result = driver.connect(s, l, c);
+            result = driver.connect(s, c);
         } catch (RuntimeException ex) {
             log.log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new IOException(ex);

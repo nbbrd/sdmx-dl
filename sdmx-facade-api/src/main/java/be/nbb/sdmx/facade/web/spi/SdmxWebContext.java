@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.web.spi;
 
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebManager;
 import java.net.ProxySelector;
 import java.util.logging.Logger;
@@ -29,6 +30,10 @@ import javax.net.ssl.SSLSocketFactory;
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public class SdmxWebContext {
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
     @lombok.Builder.Default

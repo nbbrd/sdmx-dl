@@ -16,7 +16,6 @@
  */
 package internal.connectors.drivers;
 
-import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
@@ -38,6 +37,6 @@ public class Sdmx20DriverTest {
     @Test
     public void testConnect() throws IOException {
         SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").endpointOf("http://localhost").build();
-        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, SdmxWebContext.builder().build()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> new Sdmx20Driver().connect(x, SdmxWebContext.builder().build()).close()).doesNotThrowAnyException();
     }
 }

@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.util.NoOpCursor;
@@ -69,11 +68,11 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     @Nonnull
     public static SdmxWebClient.Supplier of(@Nonnull SpecificSupplier supplier, @Nonnull DataFactory dataFactory) {
-        return (source, langs, context) -> {
+        return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint().toURI());
-                configure(client, source.getProperties(), langs, context);
+                configure(client, source.getProperties(), context);
                 return new ConnectorRestClient(source.getName(), client, dataFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -83,10 +82,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     @Nonnull
     public static SdmxWebClient.Supplier of(@Nonnull GenericSupplier supplier, @Nonnull DataFactory dataFactory) {
-        return (source, langs, context) -> {
+        return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
-                configure(client, source.getProperties(), langs, context);
+                configure(client, source.getProperties(), context);
                 return new ConnectorRestClient(source.getName(), client, dataFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -185,8 +184,8 @@ public final class ConnectorRestClient implements SdmxWebClient {
         return new IOException(String.format(format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, Map<?, ?> info, LanguagePriorityList langs, SdmxWebContext context) {
-        client.setLanguages(Connectors.fromLanguages(langs));
+    private static void configure(RestSdmxClient client, Map<?, ?> info, SdmxWebContext context) {
+        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(getConnectTimeout(info));
         client.setReadTimeout(getReadTimeout(info));
         client.setProxySelector(context.getProxySelector());

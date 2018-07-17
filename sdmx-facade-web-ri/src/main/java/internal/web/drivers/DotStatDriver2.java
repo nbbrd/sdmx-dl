@@ -16,7 +16,6 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
@@ -45,8 +44,8 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT)
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
-        return new DotStatRestClient(s.getEndpoint(), l, Util.getRestClient(s, c));
+    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {
+        return new DotStatRestClient(s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

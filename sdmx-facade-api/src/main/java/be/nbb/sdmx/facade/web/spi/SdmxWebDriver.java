@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.web.spi;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
@@ -39,7 +38,6 @@ public interface SdmxWebDriver {
     @Nonnull
     SdmxWebConnection connect(
             @Nonnull SdmxWebSource source,
-            @Nonnull LanguagePriorityList languages,
             @Nonnull SdmxWebContext context
     ) throws IOException, IllegalArgumentException;
 

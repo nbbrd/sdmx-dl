@@ -17,7 +17,6 @@
 package be.nbb.sdmx.facade.web;
 
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
@@ -180,7 +179,7 @@ public class SdmxWebManagerTest {
         private final List<SdmxWebSource> sources;
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
+        public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
             return connect(source.getEndpoint());
         }
 

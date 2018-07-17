@@ -16,7 +16,6 @@
  */
 package internal.web.drivers;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.QUERY;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
@@ -48,8 +47,8 @@ public final class NbbDriver2 implements SdmxWebDriver {
 
     private static final class NbbClient2 extends DotStatRestClient {
 
-        private NbbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
-            super(s.getEndpoint(), l, Util.getRestClient(s, c));
+        private NbbClient2(SdmxWebSource s, SdmxWebContext c) {
+            super(s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")

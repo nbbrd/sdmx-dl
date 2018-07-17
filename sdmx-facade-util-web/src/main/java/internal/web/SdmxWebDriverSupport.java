@@ -62,16 +62,15 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
 
     @Override
-    public SdmxWebConnection connect(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
+    public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
-        Objects.requireNonNull(langs);
         Objects.requireNonNull(context);
 
         if (!source.getDriver().equals(name)) {
             throw new IllegalArgumentException(source.toString());
         }
 
-        return SdmxWebConnectionImpl.of(getClient(source, langs, context), name);
+        return SdmxWebConnectionImpl.of(getClient(source, context), name);
     }
 
     @Override
@@ -94,13 +93,13 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
         cacheSupport.setCache(cache);
     }
 
-    private SdmxWebClient getClient(SdmxWebSource source, LanguagePriorityList langs, SdmxWebContext context) throws IOException {
-        SdmxWebClient origin = client.get(source, langs, context);
-        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, langs), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
+    private SdmxWebClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
+        SdmxWebClient origin = client.get(source, context);
+        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, context.getLanguages()), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
         return FailsafeWebClient.of(cached);
     }
 
-    private static String getBase(SdmxWebSource source, LanguagePriorityList languages) throws IOException {
+    private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
         return source.getEndpoint().getHost() + languages.toString() + "/";
     }
 

@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import java.time.Duration;
@@ -62,7 +61,6 @@ public interface SdmxWebClient {
         @Nonnull
         SdmxWebClient get(
                 @Nonnull SdmxWebSource source,
-                @Nonnull LanguagePriorityList langs,
                 @Nonnull SdmxWebContext context
         );
     }

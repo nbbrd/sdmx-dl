@@ -16,7 +16,6 @@
  */
 package _test;
 
-import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -49,11 +48,10 @@ public class DriverAssertions {
         
         assertThat(d.getName()).isNotBlank();
 
-        assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, context));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, context));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, ANY, null));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(null, context));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, context));
+        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, context));
 
         assertThat(d.getDefaultSources()).allSatisfy(o -> checkSource(o, d));
 

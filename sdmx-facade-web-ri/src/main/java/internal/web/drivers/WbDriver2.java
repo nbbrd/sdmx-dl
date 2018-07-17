@@ -18,7 +18,6 @@ package internal.web.drivers;
 
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.QUERY;
@@ -50,8 +49,8 @@ public final class WbDriver2 implements SdmxWebDriver {
 
     private static final class WbClient2 extends Sdmx21RestClient {
 
-        private WbClient2(SdmxWebSource s, LanguagePriorityList l, SdmxWebContext c) {
-            super(s.getEndpoint(), l, Util.getRestClient(s, c), true, DataFactory.sdmx21());
+        private WbClient2(SdmxWebSource s, SdmxWebContext c) {
+            super(s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c), true, DataFactory.sdmx21());
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/' separator required at the end of query")
