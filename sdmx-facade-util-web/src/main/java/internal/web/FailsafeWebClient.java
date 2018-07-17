@@ -26,17 +26,37 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-@lombok.extern.java.Log
 final class FailsafeWebClient implements SdmxWebClient {
 
     @lombok.NonNull
     private final SdmxWebClient delegate;
+
+    @lombok.NonNull
+    private final Logger logger;
+
+    @Override
+    public String getName() throws IOException {
+        String result;
+
+        try {
+            result = delegate.getName();
+        } catch (RuntimeException ex) {
+            throw unexpected(ex, "Unexpected exception while getting name");
+        }
+
+        if (result == null) {
+            throw unexpectedNull("Unexpected null while getting name");
+        }
+
+        return result;
+    }
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
@@ -45,11 +65,11 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             result = delegate.getFlows();
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while getting datasets");
+            throw unexpected(ex, "Unexpected exception while getting datasets with '%s'", getId());
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while getting datasets");
+            throw unexpectedNull("Unexpected null while getting datasets with '%s'", getId());
         }
 
         return result;
@@ -62,11 +82,11 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             result = delegate.getFlow(ref);
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while getting details from dataset '%s'", ref);
+            throw unexpected(ex, "Unexpected exception while getting details for dataset '%s' with '%s'", ref, getId());
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while getting details from dataset '%s'", ref);
+            throw unexpectedNull("Unexpected null while getting details for dataset '%s' with '%s'", ref, getId());
         }
 
         return result;
@@ -79,11 +99,11 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             result = delegate.getStructure(ref);
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while getting data structure from dataset '%s'", ref);
+            throw unexpected(ex, "Unexpected exception while getting data structure for dataset '%s' with '%s'", ref, getId());
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while getting data structure from dataset '%s'", ref);
+            throw unexpectedNull("Unexpected null while getting data structure for dataset '%s' with '%s'", ref, getId());
         }
 
         return result;
@@ -96,11 +116,11 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             result = delegate.getData(request, dsd);
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while getting data from '%s'", request);
+            throw unexpected(ex, "Unexpected exception while getting data '%s' with '%s'", request, getId());
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while getting data from '%s'", request);
+            throw unexpectedNull("Unexpected null while getting data '%s' with '%s'", request, getId());
         }
 
         return result;
@@ -111,7 +131,7 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             return delegate.isSeriesKeysOnlySupported();
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while checking keys-only support");
+            throw unexpected(ex, "Unexpected exception while checking keys-only support with '%s'", getId());
         }
     }
 
@@ -120,7 +140,7 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             return delegate.peekStructureRef(flowRef);
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while peeking struct ref for dataset '%s'", flowRef);
+            throw unexpected(ex, "Unexpected exception while peeking struct ref for dataset '%s' with '%s'", flowRef, getId());
         }
     }
 
@@ -131,24 +151,34 @@ final class FailsafeWebClient implements SdmxWebClient {
         try {
             result = delegate.ping();
         } catch (RuntimeException ex) {
-            throw unexpected(ex, "Unexpected exception while pinging resource");
+            throw unexpected(ex, "Unexpected exception while pinging resource with '%s'", getId());
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null while pinging resource");
+            throw unexpectedNull("Unexpected null while pinging resource with '%s'", getId());
         }
 
         return result;
     }
 
-    private static IOException unexpected(RuntimeException ex, String format, Object... args) {
-        log.log(Level.WARNING, String.format(format, args));
+    @SuppressWarnings("null")
+    private String getId() {
+        try {
+            String result = delegate.getName();
+            return result != null && !result.isEmpty() ? result : "NULL";
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    private IOException unexpected(RuntimeException ex, String format, Object... args) {
+        logger.log(Level.WARNING, String.format(format, args), ex);
         return new UnexpectedIOException(ex);
     }
 
-    private static IOException unexpectedNull(String format, Object... args) {
+    private IOException unexpectedNull(String format, Object... args) {
         String msg = String.format(format, args);
-        log.log(Level.WARNING, msg);
+        logger.log(Level.WARNING, msg);
         return new UnexpectedIOException(new NullPointerException(msg));
     }
 }

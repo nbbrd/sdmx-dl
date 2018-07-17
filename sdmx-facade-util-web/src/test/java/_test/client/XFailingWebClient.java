@@ -36,6 +36,11 @@ public enum XFailingWebClient implements SdmxWebClient {
 
     EXPECTED {
         @Override
+        public String getName() throws IOException {
+            throw new CustomIOException();
+        }
+
+        @Override
         public List<Dataflow> getFlows() throws IOException {
             throw new CustomIOException();
         }
@@ -72,6 +77,11 @@ public enum XFailingWebClient implements SdmxWebClient {
     },
     UNEXPECTED {
         @Override
+        public String getName() throws IOException {
+            throw new CustomRuntimeException();
+        }
+
+        @Override
         public List<Dataflow> getFlows() throws IOException {
             throw new CustomRuntimeException();
         }
@@ -107,6 +117,11 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
     },
     NULL {
+        @Override
+        public String getName() throws IOException {
+            return null;
+        }
+
         @Override
         public List<Dataflow> getFlows() throws IOException {
             return null;

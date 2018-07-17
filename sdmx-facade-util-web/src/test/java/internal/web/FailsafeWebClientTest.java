@@ -33,21 +33,22 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
+@lombok.extern.java.Log
 public class FailsafeWebClientTest {
 
     @Test
     public void testGetFlows() {
-        assertOperation(o -> FailsafeWebClient.of(o).getFlows());
+        assertOperation(o -> FailsafeWebClient.of(o, log).getFlows());
     }
 
     @Test
     public void testGetFlow() {
-        assertOperation(o -> FailsafeWebClient.of(o).getFlow(ECB_FLOW_REF));
+        assertOperation(o -> FailsafeWebClient.of(o, log).getFlow(ECB_FLOW_REF));
     }
 
     @Test
     public void testGetStructure() {
-        assertOperation(o -> FailsafeWebClient.of(o).getStructure(ECB_STRUCT_REF));
+        assertOperation(o -> FailsafeWebClient.of(o, log).getStructure(ECB_STRUCT_REF));
     }
 
     @Test
@@ -55,12 +56,12 @@ public class FailsafeWebClientTest {
         DataRequest request = new DataRequest(ECB_FLOW_REF, Key.ALL, DataFilter.ALL);
         DataStructure struct = DataStructure.builder().ref(ECB_STRUCT_REF).label("hello").build();
 
-        assertOperation(o -> FailsafeWebClient.of(o).getData(request, struct));
+        assertOperation(o -> FailsafeWebClient.of(o, log).getData(request, struct));
     }
 
     @Test
     public void testIsSeriesKeysOnlySupported() {
-        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).isSeriesKeysOnlySupported();
+        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o, log).isSeriesKeysOnlySupported();
 
         assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.EXPECTED))
                 .isInstanceOf(IOException.class);
@@ -75,7 +76,7 @@ public class FailsafeWebClientTest {
 
     @Test
     public void testPeekStructureRef() {
-        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o).peekStructureRef(ECB_FLOW_REF);
+        IO.Consumer<SdmxWebClient> op = o -> FailsafeWebClient.of(o, log).peekStructureRef(ECB_FLOW_REF);
 
         assertThatThrownBy(() -> op.acceptWithIO(XFailingWebClient.EXPECTED))
                 .isInstanceOf(IOException.class);

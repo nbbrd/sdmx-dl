@@ -42,7 +42,6 @@ import java.util.logging.Level;
  *
  * @author Philippe Charles
  */
-@lombok.extern.java.Log
 @ServiceProvider(service = SdmxWebDriver.class)
 public final class InseeDriver implements SdmxWebDriver, HasCache {
 
@@ -112,7 +111,7 @@ public final class InseeDriver implements SdmxWebDriver, HasCache {
                 if (!Connectors.isNoResultMatchingQuery(ex)) {
                     throw ex;
                 }
-                log.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
+                logger.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
             }
         }
     }

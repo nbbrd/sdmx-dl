@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
+import internal.web.SdmxWebClient;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -50,7 +51,7 @@ public final class WbDriver2 implements SdmxWebDriver {
     private static final class WbClient2 extends Sdmx21RestClient {
 
         private WbClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c), true, DataFactory.sdmx21());
+            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c), true, DataFactory.sdmx21());
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/' separator required at the end of query")

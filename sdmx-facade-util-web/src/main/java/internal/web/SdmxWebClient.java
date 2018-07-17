@@ -36,6 +36,9 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 public interface SdmxWebClient {
 
     @Nonnull
+    String getName() throws IOException;
+
+    @Nonnull
     List<Dataflow> getFlows() throws IOException;
 
     @Nonnull
@@ -63,5 +66,10 @@ public interface SdmxWebClient {
                 @Nonnull SdmxWebSource source,
                 @Nonnull SdmxWebContext context
         );
+    }
+    
+    @Nonnull
+    static String getClientName(@Nonnull SdmxWebSource source) {
+        return source.getDriver() + ":" + source.getName();
     }
 }

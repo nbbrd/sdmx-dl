@@ -123,7 +123,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw SdmxExceptions.connectionClosed();
+            throw SdmxExceptions.connectionClosed(client.getName());
         }
     }
 

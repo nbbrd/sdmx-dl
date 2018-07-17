@@ -44,9 +44,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 class DotStatRestClient extends AbstractRestClient {
 
+    protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final RestClient executor;
+
+    @Override
+    public String getName() throws IOException {
+        return name;
+    }
 
     @Override
     protected URL getFlowsQuery() throws IOException {
@@ -76,7 +82,7 @@ class DotStatRestClient extends AbstractRestClient {
                 .stream()
                 .map(DotStatRestClient::getFlowFromStructure)
                 .findFirst()
-                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
+                .orElseThrow(() -> SdmxExceptions.missingFlow(name, ref));
     }
 
     @Override
@@ -91,7 +97,7 @@ class DotStatRestClient extends AbstractRestClient {
                 .parseStream(calling(url, XML))
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
+                .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
     }
 
     @Override

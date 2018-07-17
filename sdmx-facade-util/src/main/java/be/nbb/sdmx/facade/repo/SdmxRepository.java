@@ -173,7 +173,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getFlow(flowRef)
-                    .orElseThrow(() -> SdmxExceptions.missingFlow(flowRef));
+                    .orElseThrow(() -> SdmxExceptions.missingFlow(repo.getName(), flowRef));
         }
 
         @Override
@@ -182,7 +182,7 @@ public class SdmxRepository {
             DataStructureRef structRef = getFlow(flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
-                    .orElseThrow(() -> SdmxExceptions.missingStructure(structRef));
+                    .orElseThrow(() -> SdmxExceptions.missingStructure(repo.getName(), structRef));
         }
 
         @Override
@@ -190,7 +190,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getData(flowRef, key, filter)
-                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
+                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 
         @Override
@@ -198,7 +198,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getDataStream(flowRef, key, filter)
-                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
+                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 
         @Override
@@ -206,7 +206,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getDataCursor(flowRef, key, filter)
-                    .orElseThrow(() -> SdmxExceptions.missingData(flowRef));
+                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 
         @Override
@@ -221,7 +221,7 @@ public class SdmxRepository {
 
         private void checkState() throws IOException {
             if (closed) {
-                throw SdmxExceptions.connectionClosed();
+                throw SdmxExceptions.connectionClosed(repo.getName());
             }
         }
     }

@@ -29,22 +29,22 @@ import javax.annotation.Nonnull;
 public final class SdmxExceptions {
 
     @Nonnull
-    public IOException connectionClosed() {
-        return new IOException("Connection already closed");
+    public IOException connectionClosed(@Nonnull String source) {
+        return new IOException("Connection '" + source + "' already closed");
     }
 
     @Nonnull
-    public IOException missingFlow(@Nonnull DataflowRef ref) {
-        return new IOException("Missing dataflow '" + ref + "'");
+    public IOException missingFlow(@Nonnull String source, @Nonnull DataflowRef ref) {
+        return new IOException("Missing dataflow '" + ref + "' in '" + source + "'");
     }
 
     @Nonnull
-    public IOException missingStructure(@Nonnull DataStructureRef ref) {
-        return new IOException("Missing datastructure '" + ref + "'");
+    public IOException missingStructure(@Nonnull String source, @Nonnull DataStructureRef ref) {
+        return new IOException("Missing datastructure '" + ref + "' in '" + source + "'");
     }
 
     @Nonnull
-    public IOException missingData(@Nonnull DataflowRef ref) {
-        return new IOException("Missing data '" + ref + "'");
+    public IOException missingData(@Nonnull String source, @Nonnull DataflowRef ref) {
+        return new IOException("Missing data '" + ref + "' in '" + source + "'");
     }
 }

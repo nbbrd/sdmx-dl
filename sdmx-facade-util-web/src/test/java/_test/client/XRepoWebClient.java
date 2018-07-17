@@ -41,6 +41,11 @@ public final class XRepoWebClient implements SdmxWebClient {
     private final SdmxRepository repo;
 
     @Override
+    public String getName() throws IOException {
+        return repo.getName();
+    }
+
+    @Override
     public List<Dataflow> getFlows() throws IOException {
         return new ArrayList(repo.getFlows());
     }
@@ -48,19 +53,19 @@ public final class XRepoWebClient implements SdmxWebClient {
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
         return repo.getFlow(ref)
-                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
+                .orElseThrow(() -> SdmxExceptions.missingFlow(repo.getName(), ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
         return repo.getStructure(ref)
-                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
+                .orElseThrow(() -> SdmxExceptions.missingStructure(repo.getName(), ref));
     }
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
         return repo.getDataCursor(request.getFlowRef(), request.getKey(), request.getFilter())
-                .orElseThrow(() -> SdmxExceptions.missingData(request.getFlowRef()));
+                .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), request.getFlowRef()));
     }
 
     @Override

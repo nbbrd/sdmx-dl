@@ -45,11 +45,17 @@ import javax.annotation.Nonnull;
 @lombok.RequiredArgsConstructor
 class Sdmx21RestClient extends AbstractRestClient {
 
+    protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final RestClient executor;
     protected final boolean seriesKeysOnlySupported;
     protected final DataFactory dialect;
+
+    @Override
+    public String getName() throws IOException {
+        return name;
+    }
 
     @Override
     protected URL getFlowsQuery() throws IOException {
@@ -76,7 +82,7 @@ class Sdmx21RestClient extends AbstractRestClient {
                 .stream()
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> SdmxExceptions.missingFlow(ref));
+                .orElseThrow(() -> SdmxExceptions.missingFlow(name, ref));
     }
 
     @Override
@@ -92,7 +98,7 @@ class Sdmx21RestClient extends AbstractRestClient {
                 .stream()
                 .filter(ref::equalsRef)
                 .findFirst()
-                .orElseThrow(() -> SdmxExceptions.missingStructure(ref));
+                .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
     }
 
     @Override

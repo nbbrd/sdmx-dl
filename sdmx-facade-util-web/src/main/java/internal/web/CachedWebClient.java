@@ -59,6 +59,11 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     @Override
+    public String getName() throws IOException {
+        return delegate.getName();
+    }
+
+    @Override
     public List<Dataflow> getFlows() throws IOException {
         return loadDataFlowsWithCache();
     }

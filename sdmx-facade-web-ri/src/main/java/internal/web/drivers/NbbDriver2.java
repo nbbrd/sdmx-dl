@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
+import internal.web.SdmxWebClient;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -48,7 +49,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
     private static final class NbbClient2 extends DotStatRestClient {
 
         private NbbClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
+            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")

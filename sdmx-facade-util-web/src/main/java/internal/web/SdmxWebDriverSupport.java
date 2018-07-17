@@ -96,7 +96,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     private SdmxWebClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
         SdmxWebClient origin = client.get(source, context);
         SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, context.getLanguages()), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
-        return FailsafeWebClient.of(cached);
+        return FailsafeWebClient.of(cached, context.getLogger());
     }
 
     private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {

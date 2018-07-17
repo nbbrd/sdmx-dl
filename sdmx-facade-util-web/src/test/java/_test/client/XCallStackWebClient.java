@@ -42,6 +42,11 @@ public final class XCallStackWebClient implements SdmxWebClient {
     private final AtomicInteger count;
 
     @Override
+    public String getName() throws IOException {
+        return delegate.getName();
+    }
+
+    @Override
     public List<Dataflow> getFlows() throws IOException {
         count.incrementAndGet();
         return delegate.getFlows();

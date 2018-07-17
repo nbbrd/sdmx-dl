@@ -138,7 +138,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw SdmxExceptions.connectionClosed();
+            throw SdmxExceptions.connectionClosed("fixme");
         }
     }
 

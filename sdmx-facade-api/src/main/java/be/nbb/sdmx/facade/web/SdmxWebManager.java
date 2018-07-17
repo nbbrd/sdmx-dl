@@ -189,12 +189,12 @@ public final class SdmxWebManager implements SdmxManager {
         try {
             result = driver.connect(s, c);
         } catch (RuntimeException ex) {
-            log.log(Level.WARNING, "Unexpected exception while connecting", ex);
+            c.getLogger().log(Level.WARNING, "Unexpected exception while connecting", ex);
             throw new IOException(ex);
         }
 
         if (result == null) {
-            log.log(Level.WARNING, "Unexpected null connection");
+            c.getLogger().log(Level.WARNING, "Unexpected null connection");
             throw new IOException("Unexpected null connection");
         }
 

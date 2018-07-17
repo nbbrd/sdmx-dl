@@ -47,6 +47,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {
         return new Sdmx21RestClient(
+                SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
                 Util.getRestClient(s, c),

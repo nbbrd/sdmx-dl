@@ -103,6 +103,11 @@ public final class ConnectorRestClient implements SdmxWebClient {
     private final DataFactory dataFactory;
 
     @Override
+    public String getName() throws IOException {
+        return name;
+    }
+
+    @Override
     public List<Dataflow> getFlows() throws IOException {
         try {
             return connector
