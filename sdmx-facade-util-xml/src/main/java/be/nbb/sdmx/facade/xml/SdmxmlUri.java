@@ -23,14 +23,19 @@ import javax.annotation.Nonnull;
  *
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class Sdmxml {
+public enum SdmxmlUri {
 
-    public static final URI NS_V10_URI = URI.create("http://www.SDMX.org/resources/SDMXML/schemas/v1_0/message");
-    public static final URI NS_V20_URI = URI.create("http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message");
-    public static final URI NS_V21_URI = URI.create("http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message");
+    NS_V10_URI("http://www.SDMX.org/resources/SDMXML/schemas/v1_0/message"),
+    NS_V20_URI("http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"),
+    NS_V21_URI("http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message");
 
-    public boolean equals(@Nonnull URI expected, @Nonnull URI found) {
-        return expected.getRawSchemeSpecificPart().equalsIgnoreCase(found.getRawSchemeSpecificPart());
+    private final URI uri;
+
+    private SdmxmlUri(String uri) {
+        this.uri = URI.create(uri);
+    }
+
+    public boolean is(@Nonnull URI found) {
+        return uri.getRawSchemeSpecificPart().equalsIgnoreCase(found.getRawSchemeSpecificPart());
     }
 }

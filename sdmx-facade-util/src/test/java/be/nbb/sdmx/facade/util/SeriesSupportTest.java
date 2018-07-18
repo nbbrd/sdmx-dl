@@ -17,19 +17,15 @@
 package be.nbb.sdmx.facade.util;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.Key;
-import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.Series;
-import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
@@ -70,13 +66,12 @@ public class SeriesSupportTest {
             assertThat(SeriesSupport.copyOf(c)).isEmpty();
         }
 
-        try (DataCursor c = SeriesSupport.asCursor(Collections.singletonList(series), Key.ALL)) {
-            assertThat(SeriesSupport.copyOf(c)).hasSize(1).element(0).isSameAs(series);
+        try (DataCursor c = SeriesSupport.asCursor(Collections.singletonList(s1), Key.ALL)) {
+            assertThat(SeriesSupport.copyOf(c)).hasSize(1).element(0).isSameAs(s1);
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader);
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.ECB_DATA::openReader)) {
-            assertThat(SeriesSupport.copyOf(c)).hasSize(120);
+        try (DataCursor c = SeriesSupport.asCursor(Arrays.asList(s1, s2), Key.ALL)) {
+            assertThat(SeriesSupport.copyOf(c)).hasSize(2);
         }
     }
 
@@ -89,21 +84,21 @@ public class SeriesSupportTest {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c)).isEmpty();
         }
 
-        try (DataCursor c = SeriesSupport.asCursor(Collections.singletonList(series), Key.ALL)) {
+        try (DataCursor c = SeriesSupport.asCursor(Collections.singletonList(s1), Key.ALL)) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c))
                     .allMatch(o -> o.getObs().isEmpty())
                     .hasSize(1)
                     .element(0)
-                    .isEqualToComparingOnlyGivenFields(series, "key", "freq", "meta");
+                    .isEqualToComparingOnlyGivenFields(s1, "key", "freq", "meta");
         }
 
-        List<DataStructure> dsds = SdmxXmlStreams.struct21(ANY).parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader);
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsds.get(0)).parseReader(SdmxSource.ECB_DATA::openReader)) {
+        try (DataCursor c = SeriesSupport.asCursor(Arrays.asList(s1, s2), Key.ALL)) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c))
                     .allMatch(o -> o.getObs().isEmpty())
-                    .hasSize(120);
+                    .hasSize(2);
         }
     }
 
-    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final Series s1 = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final Series s2 = Series.builder().key(Key.of("FR")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
 }

@@ -6,11 +6,12 @@
         <groupId>be.nbb.sdmx</groupId>
         <artifactId>sdmx-facade-parent</artifactId>
         <version>2.2.3-SNAPSHOT</version>
+
     </parent>
 
-    <artifactId>sdmx-facade-web-ri</artifactId>
+    <artifactId>sdmx-facade-util-xml</artifactId>
     <packaging>jar</packaging>
-    
+
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -36,14 +37,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-facade-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-facade-util-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-facade-util-xml</artifactId>
         </dependency>
         <!-- test only -->
         <dependency>

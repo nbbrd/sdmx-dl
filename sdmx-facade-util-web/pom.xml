@@ -53,6 +53,10 @@
             <artifactId>sdmx-facade-samples</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-facade-util-xml</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-    <name>sdmx-facade-util-web</name>
 </project>

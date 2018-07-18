@@ -38,12 +38,7 @@ import javax.annotation.Nonnull;
 public class SdmxXmlStreams {
 
     @Nonnull
-    public Stax.StreamParser<DataCursor> compactData20(@Nonnull DataStructure dsd) throws IOException {
-        return compactData20(dsd, DataFactory.sdmx20());
-    }
-
-    @Nonnull
-    public Stax.StreamParser<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Xml.Parser<DataCursor> compactData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), new ObsParser(df::getPeriodParser, df.getValueParser()), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
@@ -51,12 +46,7 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public Stax.StreamParser<DataCursor> compactData21(@Nonnull DataStructure dsd) throws IOException {
-        return compactData21(dsd, DataFactory.sdmx21());
-    }
-
-    @Nonnull
-    public Stax.StreamParser<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Xml.Parser<DataCursor> compactData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), new ObsParser(df::getPeriodParser, df.getValueParser()), df.getFreqParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
@@ -64,12 +54,7 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public Stax.StreamParser<DataCursor> genericData20(@Nonnull DataStructure dsd) throws IOException {
-        return genericData20(dsd, DataFactory.sdmx20());
-    }
-
-    @Nonnull
-    public Stax.StreamParser<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Xml.Parser<DataCursor> genericData20(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx20(o, onClose, Key.builder(dsd), new ObsParser(df::getPeriodParser, df.getValueParser()), df.getFreqParser(dsd)))
@@ -77,12 +62,7 @@ public class SdmxXmlStreams {
     }
 
     @Nonnull
-    public Stax.StreamParser<DataCursor> genericData21(@Nonnull DataStructure dsd) throws IOException {
-        return genericData21(dsd, DataFactory.sdmx21());
-    }
-
-    @Nonnull
-    public Stax.StreamParser<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
+    public Xml.Parser<DataCursor> genericData21(@Nonnull DataStructure dsd, @Nonnull DataFactory df) throws IOException {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx21(o, onClose, Key.builder(dsd), new ObsParser(df::getPeriodParser, df.getValueParser()), df.getFreqParser(dsd)))

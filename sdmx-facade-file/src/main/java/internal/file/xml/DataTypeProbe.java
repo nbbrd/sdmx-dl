@@ -16,8 +16,7 @@
  */
 package internal.file.xml;
 
-import be.nbb.sdmx.facade.xml.Sdmxml;
-import static be.nbb.sdmx.facade.xml.Sdmxml.*;
+import static be.nbb.sdmx.facade.xml.SdmxmlUri.*;
 import be.nbb.util.StaxUtil;
 import static internal.file.SdmxDecoder.DataType.*;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
@@ -51,9 +50,9 @@ final class DataTypeProbe {
                     level++;
                     if (level == 2 && reader.getLocalName().equals("Header")) {
                         URI uri = URI.create(reader.getNamespaceURI());
-                        if (Sdmxml.equals(NS_V10_URI, uri)) {
+                        if (NS_V10_URI.is(uri)) {
                             return UNKNOWN;
-                        } else if (Sdmxml.equals(NS_V20_URI, uri)) {
+                        } else if (NS_V20_URI.is(uri)) {
                             while (reader.hasNext()) {
                                 switch (reader.next()) {
                                     case START_ELEMENT:
@@ -68,7 +67,7 @@ final class DataTypeProbe {
                                 }
                             }
                             return COMPACT20;
-                        } else if (Sdmxml.equals(NS_V21_URI, uri)) {
+                        } else if (NS_V21_URI.is(uri)) {
                             while (reader.hasNext()) {
                                 switch (reader.next()) {
                                     case START_ELEMENT:

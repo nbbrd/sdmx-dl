@@ -11,12 +11,13 @@
 
     <modules>
         <module>sdmx-facade-api</module>
-        <module>sdmx-facade-util</module>
-        <module>sdmx-facade-file</module>
         <module>sdmx-facade-samples</module>
+        <module>sdmx-facade-util</module>
+        <module>sdmx-facade-util-xml</module>
+        <module>sdmx-facade-util-web</module>
+        <module>sdmx-facade-file</module>
         <module>sdmx-facade-web-ri</module>
         <module>sdmx-facade-connectors</module>
-        <module>sdmx-facade-util-web</module>
     </modules>
 
     <properties>
@@ -97,6 +98,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-facade-samples</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-facade-util-xml</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
