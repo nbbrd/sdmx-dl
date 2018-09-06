@@ -17,15 +17,13 @@
 package internal.util.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import ioutil.Jaxb;
+import ioutil.Stax;
+import ioutil.Xml;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  *
@@ -36,83 +34,52 @@ public final class SdmxWebResource {
 
     public static List<SdmxWebSource> load(String resource) {
         try {
-            return Jaxb.Parser.of(XSources.class)
-                    .parseStream(() -> SdmxWebResource.class.getResourceAsStream(resource))
-                    .toSources();
+            return getParser().parseStream(() -> SdmxWebResource.class.getResourceAsStream(resource));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    @XmlRootElement(name = "sources")
-    public static final class XSources {
-
-        public XSource[] source;
-
-        public List<SdmxWebSource> toSources() {
-            return source != null
-                    ? Stream.of(source).map(XSource::toSource).collect(Collectors.toList())
-                    : Collections.emptyList();
-        }
-
-        public static XSources of(List<SdmxWebSource> o) {
-            XSources result = new XSources();
-            result.source = o.stream().map(XSource::of).toArray(XSource[]::new);
-            return result;
-        }
+    static Xml.Parser<List<SdmxWebSource>> getParser() throws IOException {
+        return Stax.StreamParser.valueOf(SdmxWebResource::parse);
     }
 
-    public static final class XSource {
-
-        public String name;
-
-        public String description;
-
-        public String driver;
-
-        public String endpoint;
-
-        public XProperty[] property;
-
-        public SdmxWebSource toSource() {
-            SdmxWebSource.Builder result = SdmxWebSource
-                    .builder()
-                    .name(name)
-                    .description(description)
-                    .driver(driver)
-                    .endpointOf(endpoint);
-            if (property != null) {
-                for (XProperty o : property) {
-                    result.property(o.key, o.value);
-                }
+    private static List<SdmxWebSource> parse(XMLStreamReader reader) throws XMLStreamException {
+        List<SdmxWebSource> result = new ArrayList<>();
+        SdmxWebSource.Builder item = SdmxWebSource.builder();
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case XMLStreamReader.START_ELEMENT:
+                    switch (reader.getLocalName()) {
+                        case "source":
+                            item = SdmxWebSource.builder();
+                            break;
+                        case "name":
+                            item.name(reader.getElementText());
+                            break;
+                        case "description":
+                            item.description(reader.getElementText());
+                            break;
+                        case "driver":
+                            item.driver(reader.getElementText());
+                            break;
+                        case "endpoint":
+                            item.endpointOf(reader.getElementText());
+                            break;
+                        case "property":
+                            item.property(reader.getAttributeValue(null, "key"), reader.getAttributeValue(null, "value"));
+                            break;
+                    }
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    switch (reader.getLocalName()) {
+                        case "source":
+                            result.add(item.build());
+                            break;
+                    }
+                    break;
             }
-            return result.build();
         }
-
-        public static XSource of(SdmxWebSource o) {
-            XSource result = new XSource();
-            result.name = o.getName();
-            result.description = o.getDescription();
-            result.driver = o.getDriver();
-            result.endpoint = o.getEndpoint().toString();
-            result.property = o.getProperties().entrySet().stream().map(XProperty::of).toArray(XProperty[]::new);
-            return result;
-        }
-    }
-
-    public static final class XProperty {
-
-        @XmlAttribute
-        String key;
-
-        @XmlAttribute
-        String value;
-
-        public static XProperty of(Map.Entry<String, String> o) {
-            XProperty result = new XProperty();
-            result.key = o.getKey();
-            result.value = o.getValue();
-            return result;
-        }
+        return result;
     }
 }
