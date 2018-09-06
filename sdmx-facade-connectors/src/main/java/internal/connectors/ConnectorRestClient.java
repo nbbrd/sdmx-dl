@@ -44,11 +44,6 @@ import java.util.Collections;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import it.bancaditalia.oss.sdmx.util.Configuration;
-import java.util.HashMap;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 /**
  *
@@ -204,53 +199,6 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     static {
-        fixConfiguration();
-    }
-
-    private static void fixConfiguration() {
-        Handler handler = addVoidHandlerBeforeInit();
-        Map<Object, Object> sysProps = backupSystemPropertiesBeforeInit();
-        Configuration.getConfiguration();
-        restoreSystemPropertiesAfterInit(sysProps);
-        removeVoidHandlerAfterInit(handler);
-    }
-
-    private static Handler addVoidHandlerBeforeInit() {
-        Handler result = new VoidHandler();
-        Logger.getLogger("SDMX").addHandler(result);
-        return result;
-    }
-
-    private static void removeVoidHandlerAfterInit(Handler handler) {
-        Logger.getLogger("SDMX").removeHandler(handler);
-    }
-
-    private static Map<Object, Object> backupSystemPropertiesBeforeInit() {
-        return new HashMap<>(System.getProperties());
-    }
-
-    private static void restoreSystemPropertiesAfterInit(Map<Object, Object> backup) {
-        System.getProperties()
-                .keySet()
-                .stream()
-                .filter(o -> !backup.containsKey(o))
-                .collect(Collectors.toList())
-                .forEach(System.getProperties()::remove);
-        System.getProperties().putAll(backup);
-    }
-
-    private static final class VoidHandler extends Handler {
-
-        @Override
-        public void publish(LogRecord lr) {
-        }
-
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() throws SecurityException {
-        }
+        ConnectorsConfigFix.fixConfiguration();
     }
 }

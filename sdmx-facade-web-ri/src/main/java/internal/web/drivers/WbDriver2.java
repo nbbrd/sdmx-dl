@@ -44,14 +44,14 @@ public final class WbDriver2 implements SdmxWebDriver {
             .name("web-ri:wb")
             .rank(NATIVE_RANK)
             .client(WbClient2::new)
-            .supportedProperties(Util.CONNECTION_PROPERTIES)
+            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .sourceOf("WB", "World Bank", "https://api.worldbank.org/v2/sdmx/rest")
             .build();
 
     private static final class WbClient2 extends Sdmx21RestClient {
 
         private WbClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c), true, DataFactory.sdmx21());
+            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, DataFactory.sdmx21());
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/' separator required at the end of query")

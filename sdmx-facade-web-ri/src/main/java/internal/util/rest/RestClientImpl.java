@@ -104,7 +104,9 @@ public final class RestClientImpl implements RestClient {
     private Proxy getProxy(URL url) throws IOException {
         try {
             List<Proxy> proxies = proxySelector.select(url.toURI());
-            return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
+            Proxy result = proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
+            listener.onProxy(url, result);
+            return result;
         } catch (URISyntaxException ex) {
             throw new IOException(ex);
         }
@@ -156,6 +158,8 @@ public final class RestClientImpl implements RestClient {
         void onOpenStream(URL query, String mediaType, String langs);
 
         void onRedirection(URL oldUrl, URL newUrl);
+        
+        void onProxy(URL query, Proxy proxy);
     }
 
     @lombok.Getter

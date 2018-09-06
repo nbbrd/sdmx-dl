@@ -38,14 +38,14 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .name("web-ri:dotstat")
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
-            .supportedProperties(Util.CONNECTION_PROPERTIES)
+            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
             .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT)
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {
-        return new DotStatRestClient(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
+        return new DotStatRestClient(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

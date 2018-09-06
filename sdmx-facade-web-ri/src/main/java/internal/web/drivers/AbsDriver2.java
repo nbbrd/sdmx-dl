@@ -42,14 +42,14 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .name("web-ri:abs")
             .rank(NATIVE_RANK)
             .client(AbsClient2::new)
-            .supportedProperties(Util.CONNECTION_PROPERTIES)
+            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();
 
     private static final class AbsClient2 extends DotStatRestClient {
 
         private AbsClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), Util.getRestClient(s, c));
+            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "Agency is required in query")

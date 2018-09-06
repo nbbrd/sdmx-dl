@@ -40,7 +40,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .name("web-ri:sdmx21")
             .rank(NATIVE_RANK)
             .client(Sdmx21Driver2::of)
-            .supportedProperties(Util.CONNECTION_PROPERTIES)
+            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
             .sources(SdmxWebResource.load("/internal/web/drivers/sdmx21.xml"))
             .build();
@@ -50,7 +50,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
-                Util.getRestClient(s, c),
+                RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
                 DataFactory.sdmx21()
         );
