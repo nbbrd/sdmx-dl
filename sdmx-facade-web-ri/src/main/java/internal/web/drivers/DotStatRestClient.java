@@ -24,6 +24,7 @@ import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
+import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.XML;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import internal.util.rest.RestClient;
@@ -106,10 +107,12 @@ class DotStatRestClient extends AbstractRestClient {
         return getDataQuery(endpoint, request).build();
     }
 
+    @SdmxFix(id = 1, category = SdmxFix.Category.CONTENT, cause = "Time dimension is always TIME in data")
     @Override
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
+        DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams
-                .compactData20(dsd, DataFactory.sdmx20())
+                .compactData20(modifiedDsd, DataFactory.sdmx20())
                 .parseStream(calling(url, XML));
     }
 

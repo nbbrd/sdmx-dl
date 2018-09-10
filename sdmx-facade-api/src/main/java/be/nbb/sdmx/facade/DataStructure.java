@@ -28,7 +28,7 @@ import java.util.Set;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
 public class DataStructure implements HasLabel {
 
     /**
