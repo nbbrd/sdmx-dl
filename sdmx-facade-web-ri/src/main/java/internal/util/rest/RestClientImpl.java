@@ -62,6 +62,9 @@ public final class RestClientImpl implements RestClient {
     @lombok.NonNull
     private final EventListener listener;
 
+    @lombok.NonNull
+    private final IO.Consumer<HttpURLConnection> validator;
+
     @Override
     public InputStream openStream(URL query, String mediaType, String langs) throws IOException {
         listener.onOpenStream(query, mediaType, langs);
@@ -95,6 +98,7 @@ public final class RestClientImpl implements RestClient {
             case 308: // Permanent Redirect
                 return redirect(http, mediaType, langs, redirects);
             case HttpURLConnection.HTTP_OK:
+                validator.acceptWithIO(http);
                 return getBody(http);
             default:
                 throw getError(http);
@@ -158,7 +162,7 @@ public final class RestClientImpl implements RestClient {
         void onOpenStream(URL query, String mediaType, String langs);
 
         void onRedirection(URL oldUrl, URL newUrl);
-        
+
         void onProxy(URL query, Proxy proxy);
     }
 

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import ioutil.IO;
+import java.net.HttpURLConnection;
 import java.net.Proxy;
 
 /**
@@ -37,13 +39,18 @@ import java.net.Proxy;
 class RestClients {
 
     public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
+        return getRestClient(o, context, IO.Consumer.noOp());
+    }
+
+    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context, IO.Consumer<HttpURLConnection> validator) {
         return RestClientImpl.of(
                 SdmxWebProperty.getReadTimeout(o.getProperties()),
                 SdmxWebProperty.getConnectTimeout(o.getProperties()),
                 SdmxWebProperty.getMaxRedirects(o.getProperties()),
                 context.getProxySelector(),
                 context.getSslSocketFactory(),
-                new Listener(context.getLogger())
+                new Listener(context.getLogger()),
+                validator
         );
     }
 
