@@ -30,10 +30,11 @@ public class DimentionTest {
     final String someLabel = "Dim 1";
 
     @Test
+    @SuppressWarnings("null")
     public void testBuilder() {
-        assertThatNullPointerException().isThrownBy(builder()::build).withMessage("id");
-        assertThatNullPointerException().isThrownBy(builder().id(null)::build).withMessage("id");
-        assertThatNullPointerException().isThrownBy(builder().id(someId).label(null)::build).withMessage("label");
+        assertThatNullPointerException().isThrownBy(() -> builder().build()).withMessageContaining("id");
+        assertThatNullPointerException().isThrownBy(() -> builder().id(null).build()).withMessageContaining("id");
+        assertThatNullPointerException().isThrownBy(() -> builder().id(someId).label(null).build()).withMessageContaining("label");
         assertThatNullPointerException().isThrownBy(() -> builder().codes(null));
 
         assertThatExceptionOfType(UnsupportedOperationException.class)

@@ -25,15 +25,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version> 
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version> 
+
+        <!-- dev support -->
+        <junit.version>4.12</junit.version>
+        <jsr305.version>3.0.2</jsr305.version>
+        <assertj.version>3.11.1</assertj.version>
+        <netbeans.version>RELEASE82</netbeans.version>
+        <lombok.version>edge-SNAPSHOT</lombok.version>
 
         <!-- dependencies -->
-        <jsr305.version>3.0.2</jsr305.version>
-        <lombok.version>1.16.18</lombok.version>
-        <junit.version>4.12</junit.version>
-        <assertj.version>3.8.0</assertj.version>
         <java-io-util.version>0.0.1</java-io-util.version>
-        <netbeans.version>RELEASE802</netbeans.version>
     </properties>
     
     <dependencyManagement>
@@ -109,25 +112,38 @@
     </dependencyManagement>
     
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId> 
-                <version>${jacoco-maven-plugin.version}</version> 
-                <executions> 
-                    <execution> 
-                        <goals> 
-                            <goal>prepare-agent</goal> 
-                        </goals>
-                    </execution>
-                    <execution> 
-                        <id>report</id> 
-                        <phase>prepare-package</phase> 
-                        <goals> 
-                            <goal>report</goal> 
-                        </goals> 
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -144,6 +160,13 @@
         <repository>
             <id>netbeans</id>
             <url>http://bits.netbeans.org/maven2/</url>
-        </repository>        
+        </repository>
+        <repository>
+            <id>projectlombok.org</id>
+            <url>https://projectlombok.org/edge-releases</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 </project>
