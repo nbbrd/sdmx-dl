@@ -36,7 +36,7 @@
         <lombok.version>1.18.4</lombok.version>
 
         <!-- dependencies -->
-        <java-io-util.version>0.0.1</java-io-util.version>
+        <java-io-util.version>0.0.2</java-io-util.version>
     </properties>
     
     <dependencyManagement>
