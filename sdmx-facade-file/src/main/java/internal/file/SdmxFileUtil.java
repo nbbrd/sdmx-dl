@@ -18,9 +18,10 @@ package internal.file;
 
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.util.StaxUtil;
+import ioutil.Stax;
+import ioutil.Xml;
 import java.io.File;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -42,52 +43,71 @@ public class SdmxFileUtil {
     @Nonnull
     @SuppressWarnings("null")
     public String toXml(@Nonnull SdmxFileSet files) {
-        StringWriter result = new StringWriter();
         try {
-            XMLStreamWriter xml = OUTPUT.createXMLStreamWriter(result);
-            xml.writeEmptyElement(ROOT_TAG);
-
-            xml.writeAttribute(DATA_ATTR, files.getData().toString());
-
-            File structure = files.getStructure();
-            if (isValidFile(structure)) {
-                xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
-            }
-
-            String dialect = files.getDialect();
-            if (!isNullOrEmpty(dialect)) {
-                xml.writeAttribute(DIALECT_ATTR, dialect);
-            }
-
-            xml.writeEndDocument();
-            xml.close();
-        } catch (XMLStreamException ex) {
+            return FORMATTER.formatToString(files);
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        return result.toString();
+    }
+
+    private static final XMLOutputFactory OUTPUT = XMLOutputFactory.newInstance();
+
+    private final Xml.Formatter<SdmxFileSet> FORMATTER = Stax.StreamFormatter
+            .<SdmxFileSet>builder()
+            .factory(() -> OUTPUT)
+            .handler(SdmxFileUtil::toXml)
+            .build();
+
+    private void toXml(SdmxFileSet files, XMLStreamWriter xml) throws XMLStreamException {
+        xml.writeEmptyElement(ROOT_TAG);
+
+        xml.writeAttribute(DATA_ATTR, files.getData().toString());
+
+        File structure = files.getStructure();
+        if (isValidFile(structure)) {
+            xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
+        }
+
+        String dialect = files.getDialect();
+        if (!isNullOrEmpty(dialect)) {
+            xml.writeAttribute(DIALECT_ATTR, dialect);
+        }
+
+        xml.writeEndDocument();
     }
 
     @Nonnull
     public static SdmxFileSet fromXml(@Nonnull String input) throws IllegalArgumentException {
+        try {
+            return PARSER.parseChars(input);
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("Cannot parse SdmxFile", ex);
+        }
+    }
+
+    private final Xml.Parser<SdmxFileSet> PARSER = Stax.StreamParser
+            .<SdmxFileSet>builder()
+            .factory(StaxUtil::getInputFactoryWithoutNamespace)
+            .value(SdmxFileUtil::fromXml)
+            .build();
+
+    private static SdmxFileSet fromXml(XMLStreamReader xml) throws XMLStreamException {
         String data = null;
         String structure = null;
         String dialect = null;
-        try {
-            XMLStreamReader xml = StaxUtil.getInputFactoryWithoutNamespace().createXMLStreamReader(new StringReader(input));
-            while (xml.hasNext()) {
-                if (xml.next() == XMLStreamReader.START_ELEMENT && xml.getLocalName().equals(ROOT_TAG)) {
-                    data = xml.getAttributeValue(null, DATA_ATTR);
-                    structure = xml.getAttributeValue(null, STRUCT_ATTR);
-                    dialect = xml.getAttributeValue(null, DIALECT_ATTR);
-                }
+
+        while (xml.hasNext()) {
+            if (xml.next() == XMLStreamReader.START_ELEMENT && xml.getLocalName().equals(ROOT_TAG)) {
+                data = xml.getAttributeValue(null, DATA_ATTR);
+                structure = xml.getAttributeValue(null, STRUCT_ATTR);
+                dialect = xml.getAttributeValue(null, DIALECT_ATTR);
             }
-            xml.close();
-        } catch (XMLStreamException ex) {
-            throw new IllegalArgumentException("Cannot parse SdmxFile", ex);
         }
-        if (data == null || data.isEmpty()) {
-            throw new IllegalArgumentException("Cannot parse SdmxFile from '" + input + "'");
+
+        if (isNullOrEmpty(data)) {
+            throw new XMLStreamException("Missing data attribute");
         }
+
         return SdmxFileSet.builder()
                 .data(new File(data))
                 .structure(!isNullOrEmpty(structure) ? new File(structure) : null)
@@ -107,5 +127,4 @@ public class SdmxFileUtil {
     private static final String DATA_ATTR = "data";
     private static final String STRUCT_ATTR = "structure";
     private static final String DIALECT_ATTR = "dialect";
-    private static final XMLOutputFactory OUTPUT = XMLOutputFactory.newInstance();
 }
