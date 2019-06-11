@@ -19,7 +19,7 @@ package be.nbb.sdmx.facade.util;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.DataflowRef;
 import java.io.IOException;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -28,23 +28,23 @@ import javax.annotation.Nonnull;
 @lombok.experimental.UtilityClass
 public final class SdmxExceptions {
 
-    @Nonnull
-    public IOException connectionClosed(@Nonnull String source) {
+    @NonNull
+    public IOException connectionClosed(@NonNull String source) {
         return new IOException("Connection '" + source + "' already closed");
     }
 
-    @Nonnull
-    public IOException missingFlow(@Nonnull String source, @Nonnull DataflowRef ref) {
+    @NonNull
+    public IOException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
         return new IOException("Missing dataflow '" + ref + "' in '" + source + "'");
     }
 
-    @Nonnull
-    public IOException missingStructure(@Nonnull String source, @Nonnull DataStructureRef ref) {
+    @NonNull
+    public IOException missingStructure(@NonNull String source, @NonNull DataStructureRef ref) {
         return new IOException("Missing datastructure '" + ref + "' in '" + source + "'");
     }
 
-    @Nonnull
-    public IOException missingData(@Nonnull String source, @Nonnull DataflowRef ref) {
+    @NonNull
+    public IOException missingData(@NonNull String source, @NonNull DataflowRef ref) {
         return new IOException("Missing data '" + ref + "' in '" + source + "'");
     }
 }

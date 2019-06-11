@@ -20,8 +20,8 @@ import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -30,21 +30,21 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface SdmxWebDriver {
 
-    @Nonnull
+    @NonNull
     String getName();
 
     int getRank();
 
-    @Nonnull
+    @NonNull
     SdmxWebConnection connect(
-            @Nonnull SdmxWebSource source,
-            @Nonnull SdmxWebContext context
+            @NonNull SdmxWebSource source,
+            @NonNull SdmxWebContext context
     ) throws IOException, IllegalArgumentException;
 
-    @Nonnull
+    @NonNull
     Collection<SdmxWebSource> getDefaultSources();
 
-    @Nonnull
+    @NonNull
     Collection<String> getSupportedProperties();
 
     static final int NATIVE_RANK = Byte.MAX_VALUE;

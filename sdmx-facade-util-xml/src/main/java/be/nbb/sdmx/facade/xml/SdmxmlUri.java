@@ -17,7 +17,7 @@
 package be.nbb.sdmx.facade.xml;
 
 import java.net.URI;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -35,7 +35,7 @@ public enum SdmxmlUri {
         this.uri = URI.create(uri);
     }
 
-    public boolean is(@Nonnull URI found) {
+    public boolean is(@NonNull URI found) {
         return uri.getRawSchemeSpecificPart().equalsIgnoreCase(found.getRawSchemeSpecificPart());
     }
 }

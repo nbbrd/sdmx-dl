@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -31,23 +31,23 @@ import javax.annotation.concurrent.NotThreadSafe;
 @NotThreadSafe
 public interface SdmxConnection extends Closeable {
 
-    @Nonnull
+    @NonNull
     Collection<Dataflow> getFlows() throws IOException;
 
-    @Nonnull
-    Dataflow getFlow(@Nonnull DataflowRef flowRef) throws IOException;
+    @NonNull
+    Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException;
 
-    @Nonnull
-    DataStructure getStructure(@Nonnull DataflowRef flowRef) throws IOException;
+    @NonNull
+    DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException;
 
-    @Nonnull
-    List<Series> getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException;
+    @NonNull
+    List<Series> getData(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
 
-    @Nonnull
-    Stream<Series> getDataStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException;
+    @NonNull
+    Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
 
-    @Nonnull
-    DataCursor getDataCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) throws IOException;
+    @NonNull
+    DataCursor getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 }

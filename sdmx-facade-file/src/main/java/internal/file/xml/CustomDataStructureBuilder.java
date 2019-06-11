@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import internal.file.SdmxDecoder.DataType;
 import java.util.Collection;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -45,48 +45,48 @@ final class CustomDataStructureBuilder {
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
 
-    @Nonnull
-    public CustomDataStructureBuilder dimension(@Nonnull String concept, @Nonnull String value) {
+    @NonNull
+    public CustomDataStructureBuilder dimension(@NonNull String concept, @NonNull String value) {
         putMulti(dimensions, concept, value);
         return this;
     }
 
-    @Nonnull
-    public CustomDataStructureBuilder attribute(@Nonnull String concept, @Nonnull String value) {
+    @NonNull
+    public CustomDataStructureBuilder attribute(@NonNull String concept, @NonNull String value) {
         putMulti(attributes, concept, value);
         return this;
     }
 
-    @Nonnull
-    public CustomDataStructureBuilder fileType(@Nonnull DataType fileType) {
+    @NonNull
+    public CustomDataStructureBuilder fileType(@NonNull DataType fileType) {
         this.fileType = fileType;
         return this;
     }
 
-    @Nonnull
-    public CustomDataStructureBuilder refId(@Nonnull String refId) {
+    @NonNull
+    public CustomDataStructureBuilder refId(@NonNull String refId) {
         return ref(DataStructureRef.of(null, refId, null));
     }
 
-    @Nonnull
-    public CustomDataStructureBuilder ref(@Nonnull DataStructureRef ref) {
+    @NonNull
+    public CustomDataStructureBuilder ref(@NonNull DataStructureRef ref) {
         this.ref = ref;
         return this;
     }
 
-    @Nonnull
+    @NonNull
     public CustomDataStructureBuilder timeDimensionId(@Nullable String timeDimensionId) {
         this.timeDimensionId = timeDimensionId;
         return this;
     }
 
-    @Nonnull
+    @NonNull
     public CustomDataStructureBuilder primaryMeasureId(@Nullable String primaryMeasureId) {
         this.primaryMeasureId = primaryMeasureId;
         return this;
     }
 
-    @Nonnull
+    @NonNull
     public DataStructure build() {
         return DataStructure.builder()
                 .ref(ref)

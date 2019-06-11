@@ -19,7 +19,7 @@ package internal.util.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -27,6 +27,6 @@ import javax.annotation.Nonnull;
  */
 public interface RestClient {
 
-    @Nonnull
-    InputStream openStream(@Nonnull URL query, @Nonnull String mediaType, @Nonnull String langs) throws IOException;
+    @NonNull
+    InputStream openStream(@NonNull URL query, @NonNull String mediaType, @NonNull String langs) throws IOException;
 }

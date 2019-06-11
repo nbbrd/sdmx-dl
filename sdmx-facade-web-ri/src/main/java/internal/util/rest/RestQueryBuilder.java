@@ -27,7 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -50,8 +50,8 @@ public final class RestQueryBuilder {
      * @return this builder
      * @throws NullPointerException if path is null
      */
-    @Nonnull
-    public RestQueryBuilder path(@Nonnull String path) {
+    @NonNull
+    public RestQueryBuilder path(@NonNull String path) {
         Objects.requireNonNull(path);
         paths.add(path);
         return this;
@@ -65,8 +65,8 @@ public final class RestQueryBuilder {
      * @return this builder
      * @throws NullPointerException if key or value is null
      */
-    @Nonnull
-    public RestQueryBuilder param(@Nonnull String key, @Nonnull String value) {
+    @NonNull
+    public RestQueryBuilder param(@NonNull String key, @NonNull String value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         params.put(key, value);
@@ -80,7 +80,7 @@ public final class RestQueryBuilder {
      * @throws java.io.UnsupportedEncodingException
      * @throws java.net.MalformedURLException
      */
-    @Nonnull
+    @NonNull
     public URL build() throws UnsupportedEncodingException, MalformedURLException {
         StringBuilder result = new StringBuilder();
         result.append(endPoint);

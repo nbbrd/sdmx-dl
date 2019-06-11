@@ -27,7 +27,7 @@ import be.nbb.sdmx.facade.Series;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -35,10 +35,10 @@ import javax.annotation.Nonnull;
  */
 public interface SdmxFileConnection extends SdmxConnection {
 
-    @Nonnull
+    @NonNull
     DataflowRef getDataflowRef() throws IOException;
 
-    @Nonnull
+    @NonNull
     default Dataflow getFlow() throws IOException {
         DataflowRef ref = getDataflowRef();
         return getFlows()
@@ -48,23 +48,23 @@ public interface SdmxFileConnection extends SdmxConnection {
                 .orElseThrow(IOException::new);
     }
 
-    @Nonnull
+    @NonNull
     default DataStructure getStructure() throws IOException {
         return getStructure(getDataflowRef());
     }
 
-    @Nonnull
-    default List<Series> getData(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+    @NonNull
+    default List<Series> getData(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
         return getData(getDataflowRef(), key, filter);
     }
 
-    @Nonnull
-    default Stream<Series> getDataStream(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+    @NonNull
+    default Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
         return getDataStream(getDataflowRef(), key, filter);
     }
 
-    @Nonnull
-    default DataCursor getDataCursor(@Nonnull Key key, @Nonnull DataFilter filter) throws IOException {
+    @NonNull
+    default DataCursor getDataCursor(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
         return getDataCursor(getDataflowRef(), key, filter);
     }
 }

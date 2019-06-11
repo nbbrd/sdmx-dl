@@ -17,7 +17,7 @@
 package be.nbb.sdmx.facade.util;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -27,8 +27,8 @@ import javax.annotation.Nonnull;
 @lombok.EqualsAndHashCode
 public final class TypedId<T> {
 
-    @Nonnull
-    public static <T> TypedId<T> of(@Nonnull String content) {
+    @NonNull
+    public static <T> TypedId<T> of(@NonNull String content) {
         Objects.requireNonNull(content);
         return new TypedId<>(content);
     }
@@ -44,8 +44,8 @@ public final class TypedId<T> {
         return content;
     }
 
-    @Nonnull
-    public TypedId<T> with(@Nonnull Object o) {
+    @NonNull
+    public TypedId<T> with(@NonNull Object o) {
         Objects.requireNonNull(o);
         return new TypedId<>(content + o);
     }

@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -65,13 +65,13 @@ public class SdmxRepository {
     @lombok.Builder.Default
     boolean seriesKeysOnlySupported = true;
 
-    @Nonnull
+    @NonNull
     public SdmxConnection asConnection() {
         return new RepoConnection(this);
     }
 
-    @Nonnull
-    public Optional<DataStructure> getStructure(@Nonnull DataStructureRef ref) {
+    @NonNull
+    public Optional<DataStructure> getStructure(@NonNull DataStructureRef ref) {
         Objects.requireNonNull(ref);
         return structures
                 .stream()
@@ -79,8 +79,8 @@ public class SdmxRepository {
                 .findFirst();
     }
 
-    @Nonnull
-    public Optional<Dataflow> getFlow(@Nonnull DataflowRef ref) {
+    @NonNull
+    public Optional<Dataflow> getFlow(@NonNull DataflowRef ref) {
         Objects.requireNonNull(ref);
         return flows
                 .stream()
@@ -88,36 +88,36 @@ public class SdmxRepository {
                 .findFirst();
     }
 
-    @Nonnull
-    public Optional<List<Series>> getData(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+    @NonNull
+    public Optional<List<Series>> getData(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
         return getDataByFlowRef(flowRef).map(toStream(key, filter)).map(o -> o.collect(Collectors.toList()));
     }
 
-    @Nonnull
-    public Optional<Stream<Series>> getDataStream(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+    @NonNull
+    public Optional<Stream<Series>> getDataStream(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
         return getDataByFlowRef(flowRef).map(toStream(key, filter));
     }
 
-    @Nonnull
-    public Optional<DataCursor> getDataCursor(@Nonnull DataflowRef flowRef, @Nonnull Key key, @Nonnull DataFilter filter) {
+    @NonNull
+    public Optional<DataCursor> getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
         return getDataByFlowRef(flowRef).map(toCursor(key, filter));
     }
 
-    @Nonnull
-    private Optional<List<Series>> getDataByFlowRef(@Nonnull DataflowRef flowRef) {
+    @NonNull
+    private Optional<List<Series>> getDataByFlowRef(@NonNull DataflowRef flowRef) {
         Objects.requireNonNull(flowRef);
         return Optional.ofNullable(data.get(flowRef));
     }
 
-    @Nonnull
-    private static Function<List<Series>, DataCursor> toCursor(@Nonnull Key key, @Nonnull DataFilter filter) {
+    @NonNull
+    private static Function<List<Series>, DataCursor> toCursor(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
         return o -> SeriesSupport.asCursor(o, key);
     }
 
-    @Nonnull
-    private static Function<List<Series>, Stream<Series>> toStream(@Nonnull Key key, @Nonnull DataFilter filter) {
+    @NonNull
+    private static Function<List<Series>, Stream<Series>> toStream(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
         return o -> o.stream().filter(s -> key.contains(s.getKey()));
@@ -127,26 +127,26 @@ public class SdmxRepository {
 
         private final Map<DataflowRef, List<Series>> data = new HashMap<>();
 
-        @Nonnull
+        @NonNull
         public Builder clearData() {
             this.data.clear();
             return this;
         }
 
-        @Nonnull
-        public Builder data(@Nonnull DataflowRef flowRef, @Nonnull Series series) {
+        @NonNull
+        public Builder data(@NonNull DataflowRef flowRef, @NonNull Series series) {
             data.computeIfAbsent(flowRef, o -> new ArrayList<>()).add(series);
             return this;
         }
 
-        @Nonnull
-        public Builder data(@Nonnull DataflowRef flowRef, @Nonnull List<Series> list) {
+        @NonNull
+        public Builder data(@NonNull DataflowRef flowRef, @NonNull List<Series> list) {
             data.computeIfAbsent(flowRef, o -> new ArrayList<>()).addAll(list);
             return this;
         }
 
-        @Nonnull
-        public Builder copyOf(@Nonnull DataflowRef flowRef, @Nonnull DataCursor cursor) throws IOException {
+        @NonNull
+        public Builder copyOf(@NonNull DataflowRef flowRef, @NonNull DataCursor cursor) throws IOException {
             return data(flowRef, SeriesSupport.copyOf(cursor));
         }
     }

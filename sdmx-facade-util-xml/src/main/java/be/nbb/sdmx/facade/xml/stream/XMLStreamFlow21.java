@@ -28,8 +28,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.*;
 import java.net.URI;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -57,8 +57,8 @@ final class XMLStreamFlow21 {
         this.flowLabel = new TextBuilder(languages);
     }
 
-    @Nonnull
-    public List<Dataflow> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
+    @NonNull
+    public List<Dataflow> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse flows");
         }

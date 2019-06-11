@@ -31,10 +31,10 @@ import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTags;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
 import static be.nbb.sdmx.facade.xml.SdmxmlUri.NS_V21_URI;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
 import java.net.URI;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -76,8 +76,8 @@ final class XMLStreamStructure21 {
         this.label = new TextBuilder(languages);
     }
 
-    @Nonnull
-    public List<DataStructure> parse(@Nonnull XMLStreamReader reader) throws XMLStreamException {
+    @NonNull
+    public List<DataStructure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }

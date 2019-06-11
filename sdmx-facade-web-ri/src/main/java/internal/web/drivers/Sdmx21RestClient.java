@@ -36,7 +36,7 @@ import java.util.List;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
 import internal.web.DataRequest;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -127,8 +127,8 @@ class Sdmx21RestClient extends AbstractRestClient {
         return () -> executor.openStream(query, mediaType, langs.toString());
     }
 
-    @Nonnull
-    static RestQueryBuilder onMeta(@Nonnull URL endpoint, @Nonnull String resourceType, @Nonnull ResourceRef ref) {
+    @NonNull
+    static RestQueryBuilder onMeta(@NonNull URL endpoint, @NonNull String resourceType, @NonNull ResourceRef ref) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(resourceType)
@@ -137,8 +137,8 @@ class Sdmx21RestClient extends AbstractRestClient {
                 .path(ref.getVersion());
     }
 
-    @Nonnull
-    static RestQueryBuilder onData(@Nonnull URL endpoint, @Nonnull DataflowRef flowRef, @Nonnull Key key) {
+    @NonNull
+    static RestQueryBuilder onData(@NonNull URL endpoint, @NonNull DataflowRef flowRef, @NonNull Key key) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
@@ -147,23 +147,23 @@ class Sdmx21RestClient extends AbstractRestClient {
                 .path(DEFAULT_PROVIDER_REF);
     }
 
-    @Nonnull
-    static RestQueryBuilder getFlowsQuery(@Nonnull URL endpoint) throws IOException {
+    @NonNull
+    static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
         return onMeta(endpoint, DATAFLOW_RESOURCE, FLOWS);
     }
 
-    @Nonnull
-    static RestQueryBuilder getFlowQuery(@Nonnull URL endpoint, @Nonnull DataflowRef ref) throws IOException {
+    @NonNull
+    static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
         return onMeta(endpoint, DATAFLOW_RESOURCE, ref);
     }
 
-    @Nonnull
-    static RestQueryBuilder getStructureQuery(@Nonnull URL endpoint, @Nonnull DataStructureRef ref) throws IOException {
+    @NonNull
+    static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
         return onMeta(endpoint, DATASTRUCTURE_RESOURCE, ref).param(REFERENCES_PARAM, "children");
     }
 
-    @Nonnull
-    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataRequest request) throws IOException {
+    @NonNull
+    static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
         RestQueryBuilder result = onData(endpoint, request.getFlowRef(), request.getKey());
         switch (request.getFilter().getDetail()) {
             case SERIES_KEYS_ONLY:

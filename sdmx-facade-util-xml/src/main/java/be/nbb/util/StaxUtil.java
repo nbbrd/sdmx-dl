@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import javax.annotation.Nonnull;
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.StreamFilter;
 import javax.xml.stream.XMLEventReader;
@@ -33,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.Source;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -51,17 +51,17 @@ public class StaxUtil {
         onClose.close();
     }
 
-    @Nonnull
+    @NonNull
     public XMLInputFactory getInputFactory() {
         return ImmutableInputFactory.DEFAULT;
     }
 
-    @Nonnull
+    @NonNull
     public XMLInputFactory getInputFactoryWithoutNamespace() {
         return ImmutableInputFactory.WITHOUT_NAMESPACE;
     }
 
-    public boolean isNotNamespaceAware(@Nonnull XMLStreamReader f) {
+    public boolean isNotNamespaceAware(@NonNull XMLStreamReader f) {
         return !(Boolean) f.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE);
     }
 

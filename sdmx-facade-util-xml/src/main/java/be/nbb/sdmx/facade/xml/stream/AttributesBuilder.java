@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -31,13 +31,13 @@ final class AttributesBuilder {
 
     private final Map<String, String> data = new HashMap<>();
 
-    @Nonnull
+    @NonNull
     AttributesBuilder clear() {
         data.clear();
         return this;
     }
 
-    @Nonnull
+    @NonNull
     AttributesBuilder put(@Nullable String key, @Nullable String value) {
         if (key != null && value != null) {
             data.put(key, value);
@@ -46,12 +46,12 @@ final class AttributesBuilder {
     }
 
     @Nullable
-    String getAttribute(@Nonnull String key) {
+    String getAttribute(@NonNull String key) {
         Objects.requireNonNull(key);
         return data.get(key);
     }
 
-    @Nonnull
+    @NonNull
     Map<String, String> build() {
         switch (data.size()) {
             case 0:

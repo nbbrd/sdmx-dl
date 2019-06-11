@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade;
 
 import internal.util.ResourceRefs;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Identifier of a data flow used in a data (or meta data) query.
@@ -48,11 +48,11 @@ public final class DataflowRef implements ResourceRef {
     @lombok.NonNull
     private String version;
 
-    public boolean containsRef(@Nonnull Dataflow that) {
+    public boolean containsRef(@NonNull Dataflow that) {
         return contains(that.getRef());
     }
 
-    public boolean contains(@Nonnull DataflowRef that) {
+    public boolean contains(@NonNull DataflowRef that) {
         return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
                 && (this.id.equals(that.id))
                 && (this.version.equals(LATEST_VERSION) || this.version.equals(that.version));
@@ -63,13 +63,13 @@ public final class DataflowRef implements ResourceRef {
         return ResourceRefs.toString(this);
     }
 
-    @Nonnull
-    public static DataflowRef parse(@Nonnull String input) throws IllegalArgumentException {
+    @NonNull
+    public static DataflowRef parse(@NonNull String input) throws IllegalArgumentException {
         return ResourceRefs.parse(input, DataflowRef::new);
     }
 
-    @Nonnull
-    public static DataflowRef of(@Nullable String agency, @Nonnull String id, @Nullable String version) throws IllegalArgumentException {
+    @NonNull
+    public static DataflowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return ResourceRefs.of(agency, id, version, DataflowRef::new);
     }
 }

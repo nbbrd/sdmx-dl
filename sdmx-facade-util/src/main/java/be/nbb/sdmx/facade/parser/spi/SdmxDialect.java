@@ -17,8 +17,8 @@
 package be.nbb.sdmx.facade.parser.spi;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -27,9 +27,9 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface SdmxDialect extends DataFactory {
 
-    @Nonnull
+    @NonNull
     String getName();
 
-    @Nonnull
+    @NonNull
     String getDescription();
 }

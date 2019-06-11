@@ -33,7 +33,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
 import java.time.Clock;
 import java.time.Duration;
@@ -44,6 +43,7 @@ import java.util.Collections;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import internal.web.DataRequest;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -55,19 +55,18 @@ public final class ConnectorRestClient implements SdmxWebClient {
     @FunctionalInterface
     public interface SpecificSupplier {
 
-        @Nonnull
+        @NonNull
         RestSdmxClient get() throws URISyntaxException;
     }
 
     @FunctionalInterface
     public interface GenericSupplier {
 
-        @Nonnull
-        RestSdmxClient get(@Nonnull URI uri, @Nonnull Map<?, ?> properties) throws URISyntaxException;
+        @NonNull
+        RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
     }
 
-    @Nonnull
-    public static SdmxWebClient.Supplier of(@Nonnull SpecificSupplier supplier, @Nonnull DataFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull DataFactory dataFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -80,8 +79,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         };
     }
 
-    @Nonnull
-    public static SdmxWebClient.Supplier of(@Nonnull GenericSupplier supplier, @Nonnull DataFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull DataFactory dataFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());

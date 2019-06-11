@@ -29,7 +29,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -69,27 +69,27 @@ abstract class AbstractRestClient implements SdmxWebClient {
         return Duration.between(start, clock.instant());
     }
 
-    @Nonnull
+    @NonNull
     abstract protected URL getFlowsQuery() throws IOException;
 
-    @Nonnull
-    abstract protected List<Dataflow> getFlows(@Nonnull URL url) throws IOException;
+    @NonNull
+    abstract protected List<Dataflow> getFlows(@NonNull URL url) throws IOException;
 
-    @Nonnull
-    abstract protected URL getFlowQuery(@Nonnull DataflowRef ref) throws IOException;
+    @NonNull
+    abstract protected URL getFlowQuery(@NonNull DataflowRef ref) throws IOException;
 
-    @Nonnull
-    abstract protected Dataflow getFlow(@Nonnull URL url, @Nonnull DataflowRef ref) throws IOException;
+    @NonNull
+    abstract protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException;
 
-    @Nonnull
-    abstract protected URL getStructureQuery(@Nonnull DataStructureRef ref) throws IOException;
+    @NonNull
+    abstract protected URL getStructureQuery(@NonNull DataStructureRef ref) throws IOException;
 
-    @Nonnull
-    abstract protected DataStructure getStructure(@Nonnull URL url, @Nonnull DataStructureRef ref) throws IOException;
+    @NonNull
+    abstract protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException;
 
-    @Nonnull
-    abstract protected URL getDataQuery(@Nonnull DataRequest request) throws IOException;
+    @NonNull
+    abstract protected URL getDataQuery(@NonNull DataRequest request) throws IOException;
 
-    @Nonnull
-    abstract protected DataCursor getData(@Nonnull DataStructure dsd, @Nonnull URL url) throws IOException;
+    @NonNull
+    abstract protected DataCursor getData(@NonNull DataStructure dsd, @NonNull URL url) throws IOException;
 }

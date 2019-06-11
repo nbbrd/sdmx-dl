@@ -19,8 +19,8 @@ package internal.util;
 import be.nbb.sdmx.facade.ResourceRef;
 import static be.nbb.sdmx.facade.ResourceRef.ALL_AGENCIES;
 import static be.nbb.sdmx.facade.ResourceRef.LATEST_VERSION;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -29,23 +29,23 @@ import javax.annotation.Nullable;
 @lombok.experimental.UtilityClass
 public class ResourceRefs {
 
-    @Nonnull
-    private static String emptyToDefault(@Nonnull String input, @Nonnull String defaultValue) {
+    @NonNull
+    private static String emptyToDefault(@NonNull String input, @NonNull String defaultValue) {
         return input.isEmpty() ? defaultValue : input;
     }
 
-    @Nonnull
-    private static String nullOrEmptyToDefault(@Nullable String input, @Nonnull String defaultValue) {
+    @NonNull
+    private static String nullOrEmptyToDefault(@Nullable String input, @NonNull String defaultValue) {
         return input == null || input.isEmpty() ? defaultValue : input;
     }
 
-    @Nonnull
+    @NonNull
     public static String toString(ResourceRef ref) {
         return ref.getAgency() + "," + ref.getId() + "," + ref.getVersion();
     }
 
-    @Nonnull
-    public static <T extends ResourceRef> T parse(@Nonnull String input, @Nonnull RefFactory<T> factory) throws IllegalArgumentException {
+    @NonNull
+    public static <T extends ResourceRef> T parse(@NonNull String input, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
         String[] items = input.split(",", -1);
         switch (items.length) {
             case 3:
@@ -59,8 +59,8 @@ public class ResourceRefs {
         }
     }
 
-    @Nonnull
-    public static <T extends ResourceRef> T of(@Nullable String agencyId, @Nonnull String id, @Nullable String version, @Nonnull RefFactory<T> factory) throws IllegalArgumentException {
+    @NonNull
+    public static <T extends ResourceRef> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
         if (id.contains(",")) {
             throw new IllegalArgumentException(id);
         }
@@ -69,7 +69,7 @@ public class ResourceRefs {
 
     public interface RefFactory<T extends ResourceRef> {
 
-        @Nonnull
-        T create(@Nonnull String agencyId, @Nonnull String id, @Nonnull String version);
+        @NonNull
+        T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);
     }
 }

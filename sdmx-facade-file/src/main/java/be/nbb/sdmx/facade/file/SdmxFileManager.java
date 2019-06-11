@@ -35,9 +35,9 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -46,7 +46,7 @@ import be.nbb.sdmx.facade.SdmxManager;
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SdmxFileManager implements SdmxManager, HasCache {
 
-    @Nonnull
+    @NonNull
     public static SdmxFileManager ofServiceLoader() {
         List<SdmxDialect> dialects = new ArrayList<>();
         ServiceLoader.load(SdmxDialect.class).forEach(dialects::add);
@@ -70,8 +70,8 @@ public final class SdmxFileManager implements SdmxManager, HasCache {
         return getConnection(getFiles(name));
     }
 
-    @Nonnull
-    public SdmxFileConnection getConnection(@Nonnull SdmxFileSet files) throws IOException {
+    @NonNull
+    public SdmxFileConnection getConnection(@NonNull SdmxFileSet files) throws IOException {
         return new SdmxFileConnectionImpl(getResource(files), getDataflow(files));
     }
 

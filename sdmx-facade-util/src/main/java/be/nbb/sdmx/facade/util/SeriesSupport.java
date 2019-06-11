@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -40,8 +40,8 @@ import javax.annotation.Nonnull;
 @lombok.experimental.UtilityClass
 public class SeriesSupport {
 
-    @Nonnull
-    public List<Series> copyOf(@Nonnull DataCursor cursor) throws IOException {
+    @NonNull
+    public List<Series> copyOf(@NonNull DataCursor cursor) throws IOException {
         if (!cursor.nextSeries()) {
             return Collections.emptyList();
         }
@@ -58,8 +58,8 @@ public class SeriesSupport {
         return result;
     }
 
-    @Nonnull
-    public static List<Series> copyOfKeysAndMeta(@Nonnull DataCursor cursor) throws IOException {
+    @NonNull
+    public static List<Series> copyOfKeysAndMeta(@NonNull DataCursor cursor) throws IOException {
         if (!cursor.nextSeries()) {
             return Collections.emptyList();
         }
@@ -72,20 +72,20 @@ public class SeriesSupport {
         return result;
     }
 
-    @Nonnull
-    public List<Series> asList(@Nonnull IO.Supplier<DataCursor> source) throws IOException {
+    @NonNull
+    public List<Series> asList(IO.@NonNull Supplier<DataCursor> source) throws IOException {
         try (Stream<Series> stream = IO.Stream.open(source, SeriesSupport::getDataStream)) {
             return stream.collect(Collectors.toList());
         }
     }
 
-    @Nonnull
-    public Stream<Series> asStream(@Nonnull IO.Supplier<DataCursor> source) throws IOException {
+    @NonNull
+    public Stream<Series> asStream(IO.@NonNull Supplier<DataCursor> source) throws IOException {
         return IO.Stream.open(source, SeriesSupport::getDataStream);
     }
 
-    @Nonnull
-    public DataCursor asCursor(@Nonnull List<Series> list, @Nonnull Key ref) {
+    @NonNull
+    public DataCursor asCursor(@NonNull List<Series> list, @NonNull Key ref) {
         Objects.requireNonNull(list);
         Objects.requireNonNull(ref);
         return new SeriesCursor(list, ref);

@@ -21,8 +21,8 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import internal.parser.DataFactories;
 import java.time.LocalDateTime;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -31,21 +31,18 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface DataFactory {
 
-    @Nonnull
-    Freqs.Parser getFreqParser(@Nonnull DataStructure dsd);
+    Freqs.@NonNull Parser getFreqParser(@NonNull DataStructure dsd);
 
-    @Nonnull
-    Chars.Parser<LocalDateTime> getPeriodParser(@Nonnull Frequency freq);
+    Chars.@NonNull Parser<LocalDateTime> getPeriodParser(@NonNull Frequency freq);
 
-    @Nonnull
-    Chars.Parser<Double> getValueParser();
+    Chars.@NonNull Parser<Double> getValueParser();
 
-    @Nonnull
+    @NonNull
     static DataFactory sdmx20() {
         return DataFactories.SDMX20;
     }
 
-    @Nonnull
+    @NonNull
     static DataFactory sdmx21() {
         return DataFactories.SDMX21;
     }

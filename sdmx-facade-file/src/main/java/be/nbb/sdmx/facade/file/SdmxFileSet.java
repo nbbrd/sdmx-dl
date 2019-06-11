@@ -18,8 +18,8 @@ package be.nbb.sdmx.facade.file;
 
 import be.nbb.sdmx.facade.DataflowRef;
 import java.io.File;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -38,7 +38,7 @@ public class SdmxFileSet {
     @Nullable
     String dialect;
 
-    @Nonnull
+    @NonNull
     public DataflowRef asDataflowRef() {
         return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
     }

@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade;
 
 import java.io.IOException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -28,10 +28,10 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface SdmxManager {
 
-    @Nonnull
-    SdmxConnection getConnection(@Nonnull String name) throws IOException;
+    @NonNull
+    SdmxConnection getConnection(@NonNull String name) throws IOException;
 
-    @Nonnull
+    @NonNull
     LanguagePriorityList getLanguages();
 
     void setLanguages(@Nullable LanguagePriorityList languages);

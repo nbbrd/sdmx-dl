@@ -18,9 +18,9 @@ package be.nbb.sdmx.facade.util;
 
 import java.time.Clock;
 import java.util.concurrent.ConcurrentMap;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
  */
 public final class TtlCache {
 
-    @Nonnull
-    public static TtlCache of(@Nonnull ConcurrentMap cache, @Nonnull Clock clock, @Nonnegative long ttlInMillis) {
+    @NonNull
+    public static TtlCache of(@NonNull ConcurrentMap cache, @NonNull Clock clock, @NonNegative long ttlInMillis) {
         return new TtlCache(cache, clock, ttlInMillis);
     }
 
@@ -44,16 +44,16 @@ public final class TtlCache {
     }
 
     @Nullable
-    public <T> T get(@Nonnull TypedId<T> key) {
+    public <T> T get(@NonNull TypedId<T> key) {
         return get(cache, key, clock);
     }
 
-    public <T> void put(@Nonnull TypedId<T> key, @Nonnull T value) {
+    public <T> void put(@NonNull TypedId<T> key, @NonNull T value) {
         put(cache, key, value, ttlInMillis, clock);
     }
 
     @Nullable
-    public static <X> X get(@Nonnull ConcurrentMap cache, @Nonnull Object key, @Nonnull Clock clock) {
+    public static <X> X get(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Clock clock) {
         Entry entry = (Entry) cache.get(key);
         if (entry == null) {
             return null;
@@ -65,7 +65,7 @@ public final class TtlCache {
         return (X) entry.getValue();
     }
 
-    public static void put(@Nonnull ConcurrentMap cache, @Nonnull Object key, @Nonnull Object value, @Nonnegative long ttlInMillis, @Nonnull Clock clock) {
+    public static void put(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Object value, @NonNegative long ttlInMillis, @NonNull Clock clock) {
         cache.put(key, new Entry(clock.millis() + ttlInMillis, value));
     }
 

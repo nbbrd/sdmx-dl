@@ -16,7 +16,8 @@
  */
 package be.nbb.sdmx.facade;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 
 /**
  * Abstract identifier of a resource.
@@ -28,12 +29,12 @@ public interface ResourceRef {
     public static final String ALL_AGENCIES = "all";
     public static final String LATEST_VERSION = "latest";
 
-    @Nonnull
+    @NonNull
     String getAgency();
 
-    @Nonnull
+    @NonNull
     String getId();
 
-    @Nonnull
+    @NonNull
     String getVersion();
 }

@@ -36,7 +36,7 @@ import ioutil.Xml;
 import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -331,11 +331,11 @@ final class XMLStreamGenericDataCursor implements DataCursor {
             }
         };
 
-        abstract void parseValueElement(@Nonnull XMLStreamReader r, @Nonnull BiConsumer<String, String> c) throws XMLStreamException;
+        abstract void parseValueElement(@NonNull XMLStreamReader r, @NonNull BiConsumer<String, String> c) throws XMLStreamException;
 
-        abstract void parseTimeElement(@Nonnull XMLStreamReader r, @Nonnull Consumer<String> c) throws XMLStreamException;
+        abstract void parseTimeElement(@NonNull XMLStreamReader r, @NonNull Consumer<String> c) throws XMLStreamException;
 
-        @Nonnull
+        @NonNull
         abstract String getTimeELement();
     }
 }

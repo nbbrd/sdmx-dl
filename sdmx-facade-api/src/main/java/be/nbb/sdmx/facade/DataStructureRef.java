@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade;
 
 import internal.util.ResourceRefs;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Identifier of a data structure.
@@ -39,17 +39,17 @@ public final class DataStructureRef implements ResourceRef {
     @lombok.NonNull
     private String version;
 
-    public boolean containsRef(@Nonnull DataStructure that) {
+    public boolean containsRef(@NonNull DataStructure that) {
         return contains(that.getRef());
     }
 
-    public boolean contains(@Nonnull DataStructureRef that) {
+    public boolean contains(@NonNull DataStructureRef that) {
         return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
                 && (this.id.equals(that.id))
                 && (this.version.equals(LATEST_VERSION) || this.version.equals(that.version));
     }
 
-    public boolean equalsRef(@Nonnull DataStructure that) {
+    public boolean equalsRef(@NonNull DataStructure that) {
         return equals(that.getRef());
     }
 
@@ -58,13 +58,13 @@ public final class DataStructureRef implements ResourceRef {
         return ResourceRefs.toString(this);
     }
 
-    @Nonnull
-    public static DataStructureRef parse(@Nonnull String input) throws IllegalArgumentException {
+    @NonNull
+    public static DataStructureRef parse(@NonNull String input) throws IllegalArgumentException {
         return ResourceRefs.parse(input, DataStructureRef::new);
     }
 
-    @Nonnull
-    public static DataStructureRef of(@Nullable String agency, @Nonnull String id, @Nullable String version) throws IllegalArgumentException {
+    @NonNull
+    public static DataStructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return ResourceRefs.of(agency, id, version, DataStructureRef::new);
     }
 }

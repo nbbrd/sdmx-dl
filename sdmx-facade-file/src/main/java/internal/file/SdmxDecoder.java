@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import java.io.IOException;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
  */
 public interface SdmxDecoder {
 
-    @Nonnull
-    Info decode(@Nonnull SdmxFileSet files, @Nonnull LanguagePriorityList languages) throws IOException;
+    @NonNull
+    Info decode(@NonNull SdmxFileSet files, @NonNull LanguagePriorityList languages) throws IOException;
 
     enum DataType {
 

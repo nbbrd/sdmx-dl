@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -30,19 +30,19 @@ import javax.annotation.Nullable;
  */
 public interface HasCache {
 
-    @Nonnull
+    @NonNull
     ConcurrentMap getCache();
 
     void setCache(@Nullable ConcurrentMap cache);
 
-    @Nonnull
-    static HasCache of(@Nonnull Supplier<ConcurrentMap> defaultCache) {
+    @NonNull
+    static HasCache of(@NonNull Supplier<ConcurrentMap> defaultCache) {
         return of(defaultCache, (oldObj, newObj) -> {
         });
     }
 
-    @Nonnull
-    static HasCache of(@Nonnull Supplier<ConcurrentMap> defaultCache, @Nonnull BiConsumer<ConcurrentMap, ConcurrentMap> onCacheChange) {
+    @NonNull
+    static HasCache of(@NonNull Supplier<ConcurrentMap> defaultCache, @NonNull BiConsumer<ConcurrentMap, ConcurrentMap> onCacheChange) {
         ConcurrentMap cache = defaultCache.get();
         onCacheChange.accept(null, cache);
         return new HasCacheSupport(defaultCache, new AtomicReference<>(cache), onCacheChange);

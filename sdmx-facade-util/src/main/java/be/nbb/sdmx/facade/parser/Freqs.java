@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Dimension;
 import be.nbb.sdmx.facade.Frequency;
 import static be.nbb.sdmx.facade.Frequency.*;
-import javax.annotation.Nonnull;
 import be.nbb.sdmx.facade.Key;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -29,6 +28,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -39,28 +39,28 @@ public class Freqs {
 
     public interface Parser {
 
-        @Nonnull
-        Frequency parse(@Nonnull Key.Builder key, @Nonnull Function<String, String> attributes);
+        @NonNull
+        Frequency parse(Key.@NonNull Builder key, @NonNull Function<String, String> attributes);
 
-        @Nonnull
+        @NonNull
         static Parser sdmx20() {
             return Freqs::parseSdmx20;
         }
 
-        @Nonnull
-        static Parser sdmx21(@Nonnull DataStructure dsd) {
+        @NonNull
+        static Parser sdmx21(@NonNull DataStructure dsd) {
             return of(extractorByIndex(dsd), Freqs::parseByFreq);
         }
 
-        @Nonnull
+        @NonNull
         static Parser sdmx21(int frequencyCodeIdIndex) {
             return of(extractorByIndex(frequencyCodeIdIndex), Freqs::parseByFreq);
         }
 
-        @Nonnull
+        @NonNull
         static Parser of(
-                @Nonnull BiFunction<Key.Builder, Function<String, String>, String> extractor,
-                @Nonnull Function<String, Frequency> mapper) {
+                @NonNull BiFunction<Key.Builder, Function<String, String>, String> extractor,
+                @NonNull Function<String, Frequency> mapper) {
             return (k, a) -> {
                 String code = extractor.apply(k, a);
                 if (code == null) {
@@ -80,7 +80,7 @@ public class Freqs {
 
     public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
 
-    public int getFrequencyCodeIdIndex(@Nonnull DataStructure dsd) {
+    public int getFrequencyCodeIdIndex(@NonNull DataStructure dsd) {
         for (Dimension o : dsd.getDimensions()) {
             switch (o.getId()) {
                 case FREQ_CONCEPT:
@@ -91,12 +91,12 @@ public class Freqs {
         return NO_FREQUENCY_CODE_ID_INDEX;
     }
 
-    @Nonnull
-    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(@Nonnull DataStructure dsd) {
+    @NonNull
+    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(@NonNull DataStructure dsd) {
         return extractorByIndex(getFrequencyCodeIdIndex(dsd));
     }
 
-    @Nonnull
+    @NonNull
     public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(int frequencyCodeIdIndex) {
         return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
                 ? (k, a) -> k.getItem(frequencyCodeIdIndex)
@@ -110,8 +110,8 @@ public class Freqs {
      * @see
      * http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
      */
-    @Nonnull
-    public Frequency parseByFreq(@Nonnull String code) {
+    @NonNull
+    public Frequency parseByFreq(@NonNull String code) {
         switch (code.length()) {
             case 0:
                 return UNDEFINED;
@@ -162,8 +162,8 @@ public class Freqs {
      * @return
      * @see http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
      */
-    @Nonnull
-    public Frequency parseByTimeFormat(@Nonnull String code) {
+    @NonNull
+    public Frequency parseByTimeFormat(@NonNull String code) {
         switch (code) {
             case "P1Y":
                 return ANNUAL;
@@ -184,8 +184,7 @@ public class Freqs {
         }
     }
 
-    @Nonnull
-    public static Chars.Parser<LocalDateTime> onStandardFreq(@Nonnull Frequency freq) {
+    public static Chars.@NonNull Parser<LocalDateTime> onStandardFreq(@NonNull Frequency freq) {
         return STANDARD_PARSERS.get(freq);
     }
 

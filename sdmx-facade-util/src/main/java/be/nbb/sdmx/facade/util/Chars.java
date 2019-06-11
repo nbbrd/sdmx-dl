@@ -25,9 +25,9 @@ import java.time.temporal.ChronoField;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -39,26 +39,26 @@ public class Chars {
     public interface Parser<T> {
 
         @Nullable
-        T parse(@Nonnull CharSequence input);
+        T parse(@NonNull CharSequence input);
 
-        @Nonnull
-        default Parser<T> or(@Nonnull Parser<T> r) {
+        @NonNull
+        default Parser<T> or(@NonNull Parser<T> r) {
             return new Fallback(this, r);
         }
 
-        @Nonnull
-        default Parser<T> or(@Nonnull T value) {
+        @NonNull
+        default Parser<T> or(@NonNull T value) {
             return new Fallback(this, o -> value);
         }
 
-        @Nonnull
+        @NonNull
         @SuppressWarnings("null")
         static <T> Parser<T> onNull() {
             return o -> null;
         }
 
-        @Nonnull
-        static Parser<LocalDateTime> onDatePattern(@Nonnull String pattern) {
+        @NonNull
+        static Parser<LocalDateTime> onDatePattern(@NonNull String pattern) {
             DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
                     .appendPattern(pattern)
                     .parseStrict()
@@ -71,12 +71,12 @@ public class Chars {
             return new OnDateTimeFormatter(dateFormat);
         }
 
-        @Nonnull
-        static Parser<LocalDateTime> onYearFreqPos(@Nonnull String freqCode, @Nonnegative int freq) {
+        @NonNull
+        static Parser<LocalDateTime> onYearFreqPos(@NonNull String freqCode, @NonNegative int freq) {
             return new YearFreqPos(freqCode, freq);
         }
 
-        @Nonnull
+        @NonNull
         static Parser<Double> onStandardDouble() {
             return Chars::doubleOrNull;
         }

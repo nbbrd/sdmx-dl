@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -33,26 +33,26 @@ import javax.annotation.Nonnull;
  */
 public interface ByteSource {
 
-    @Nonnull
+    @NonNull
     InputStream openStream() throws IOException;
 
-    @Nonnull
+    @NonNull
     default InputStreamReader openReader() throws IOException {
         return new InputStreamReader(openStream(), StandardCharsets.UTF_8);
     }
 
-    default void copyTo(@Nonnull Path file) throws IOException {
+    default void copyTo(@NonNull Path file) throws IOException {
         try (InputStream stream = openStream()) {
             Files.copy(stream, file, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
-    default void copyTo(@Nonnull File file) throws IOException {
+    default void copyTo(@NonNull File file) throws IOException {
         copyTo(file.toPath());
     }
 
-    @Nonnull
-    static ByteSource of(@Nonnull Class<?> type, @Nonnull String name) {
+    @NonNull
+    static ByteSource of(@NonNull Class<?> type, @NonNull String name) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(name);
         return () -> {

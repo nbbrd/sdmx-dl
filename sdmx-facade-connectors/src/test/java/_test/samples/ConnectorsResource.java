@@ -40,10 +40,10 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -52,7 +52,7 @@ import javax.xml.stream.XMLStreamException;
 @lombok.experimental.UtilityClass
 public class ConnectorsResource {
 
-    @Nonnull
+    @NonNull
     public SdmxRepository nbb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
@@ -71,7 +71,7 @@ public class ConnectorsResource {
                 .build();
     }
 
-    @Nonnull
+    @NonNull
     public SdmxRepository ecb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 

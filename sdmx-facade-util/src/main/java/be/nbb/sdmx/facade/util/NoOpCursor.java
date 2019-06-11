@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.Frequency;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  */
 public final class NoOpCursor implements DataCursor {
 
-    @Nonnull
+    @NonNull
     public static DataCursor noOp() {
         return new NoOpCursor();
     }

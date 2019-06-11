@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import net.jcip.annotations.Immutable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Parameter that defines the dimension values of the data to be returned.
@@ -39,21 +39,21 @@ public final class Key {
 
     private final String[] items;
 
-    private Key(@Nonnull String[] items) {
+    private Key(@NonNull String[] items) {
         this.items = items;
     }
 
-    @Nonnegative
+    @NonNegative
     public int size() {
         return items.length;
     }
 
-    @Nonnull
-    public String get(@Nonnegative int index) throws IndexOutOfBoundsException {
+    @NonNull
+    public String get(@NonNegative int index) throws IndexOutOfBoundsException {
         return items[index];
     }
 
-    public boolean isWildcard(@Nonnegative int index) throws IndexOutOfBoundsException {
+    public boolean isWildcard(@NonNegative int index) throws IndexOutOfBoundsException {
         return WILDCARD.equals(items[index]);
     }
 
@@ -66,7 +66,7 @@ public final class Key {
         return true;
     }
 
-    public boolean contains(@Nonnull Key input) {
+    public boolean contains(@NonNull Key input) {
         if (this == ALL) {
             return true;
         }
@@ -81,7 +81,7 @@ public final class Key {
         return true;
     }
 
-    public boolean supersedes(@Nonnull Key that) {
+    public boolean supersedes(@NonNull Key that) {
         return !equals(that) && contains(that);
     }
 
@@ -104,18 +104,18 @@ public final class Key {
         return Arrays.equals(this.items, that.items);
     }
 
-    @Nonnull
-    public static Key parse(@Nonnull String input) {
+    @NonNull
+    public static Key parse(@NonNull String input) {
         return "all".equals(input.trim()) ? ALL : of(input.split("\\.", -1));
     }
 
-    @Nonnull
-    public static Key of(@Nonnull Collection<String> input) {
+    @NonNull
+    public static Key of(@NonNull Collection<String> input) {
         return input.isEmpty() ? ALL : ofInternal(input.toArray(new String[input.size()]));
     }
 
-    @Nonnull
-    public static Key of(@Nonnull String... input) {
+    @NonNull
+    public static Key of(@NonNull String... input) {
         return input.length == 0 ? ALL : ofInternal(input.clone());
     }
 
@@ -137,15 +137,15 @@ public final class Key {
         return new Key(result);
     }
 
-    @Nonnull
-    public static Builder builder(@Nonnull DataStructure dfs) {
+    @NonNull
+    public static Builder builder(@NonNull DataStructure dfs) {
         Map<String, Integer> index = new HashMap<>();
         dfs.getDimensions().forEach(o -> index.put(o.getId(), o.getPosition() - 1));
         return new BuilderImpl(index);
     }
 
-    @Nonnull
-    public static Builder builder(@Nonnull String... dimensions) {
+    @NonNull
+    public static Builder builder(@NonNull String... dimensions) {
         Map<String, Integer> index = new HashMap<>();
         for (int i = 0; i < dimensions.length; i++) {
             index.put(dimensions[i], i);
@@ -155,20 +155,20 @@ public final class Key {
 
     public interface Builder {
 
-        @Nonnull
+        @NonNull
         Key build();
 
-        @Nonnull
+        @NonNull
         Builder clear();
 
-        @Nonnull
-        String getItem(@Nonnegative int index) throws IndexOutOfBoundsException;
+        @NonNull
+        String getItem(@NonNegative int index) throws IndexOutOfBoundsException;
 
         boolean isDimension(@Nullable String id);
 
         boolean isSeries();
 
-        @Nonnull
+        @NonNull
         Builder put(@Nullable String id, @Nullable String value);
 
         @Override

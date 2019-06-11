@@ -22,11 +22,11 @@ import ioutil.Stax;
 import ioutil.Xml;
 import java.io.File;
 import java.io.IOException;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -35,14 +35,14 @@ import javax.xml.stream.XMLStreamWriter;
 @lombok.experimental.UtilityClass
 public class SdmxFileUtil {
 
-    @Nonnull
-    public String asFlowLabel(@Nonnull SdmxFileSet files) {
+    @NonNull
+    public String asFlowLabel(@NonNull SdmxFileSet files) {
         return files.getData().getName().replace(".xml", "");
     }
 
-    @Nonnull
+    @NonNull
     @SuppressWarnings("null")
-    public String toXml(@Nonnull SdmxFileSet files) {
+    public String toXml(@NonNull SdmxFileSet files) {
         try {
             return FORMATTER.formatToString(files);
         } catch (IOException ex) {
@@ -76,8 +76,8 @@ public class SdmxFileUtil {
         xml.writeEndDocument();
     }
 
-    @Nonnull
-    public static SdmxFileSet fromXml(@Nonnull String input) throws IllegalArgumentException {
+    @NonNull
+    public static SdmxFileSet fromXml(@NonNull String input) throws IllegalArgumentException {
         try {
             return PARSER.parseChars(input);
         } catch (IOException ex) {

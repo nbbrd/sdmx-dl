@@ -25,9 +25,9 @@ import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -35,41 +35,41 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
  */
 public interface SdmxWebClient {
 
-    @Nonnull
+    @NonNull
     String getName() throws IOException;
 
-    @Nonnull
+    @NonNull
     List<Dataflow> getFlows() throws IOException;
 
-    @Nonnull
-    Dataflow getFlow(@Nonnull DataflowRef ref) throws IOException;
+    @NonNull
+    Dataflow getFlow(@NonNull DataflowRef ref) throws IOException;
 
-    @Nonnull
-    DataStructure getStructure(@Nonnull DataStructureRef ref) throws IOException;
+    @NonNull
+    DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException;
 
-    @Nonnull
-    DataCursor getData(@Nonnull DataRequest request, @Nonnull DataStructure dsd) throws IOException;
+    @NonNull
+    DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException;
 
     boolean isSeriesKeysOnlySupported() throws IOException;
 
     @Nullable
-    DataStructureRef peekStructureRef(@Nonnull DataflowRef ref) throws IOException;
+    DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;
 
-    @Nonnull
+    @NonNull
     Duration ping() throws IOException;
 
     @FunctionalInterface
     interface Supplier {
 
-        @Nonnull
+        @NonNull
         SdmxWebClient get(
-                @Nonnull SdmxWebSource source,
-                @Nonnull SdmxWebContext context
+                @NonNull SdmxWebSource source,
+                @NonNull SdmxWebContext context
         );
     }
     
-    @Nonnull
-    static String getClientName(@Nonnull SdmxWebSource source) {
+    @NonNull
+    static String getClientName(@NonNull SdmxWebSource source) {
         return source.getDriver() + ":" + source.getName();
     }
 }

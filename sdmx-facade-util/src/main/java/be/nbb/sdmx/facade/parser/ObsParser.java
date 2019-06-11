@@ -20,8 +20,8 @@ import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDateTime;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  */
 public final class ObsParser {
 
-    @Nonnull
+    @NonNull
     public static ObsParser standard() {
         return new ObsParser(Freqs::onStandardFreq, Chars.Parser.onStandardDouble());
     }
@@ -50,7 +50,7 @@ public final class ObsParser {
         this.value = null;
     }
 
-    @Nonnull
+    @NonNull
     public Frequency getFrequency() {
         return freq;
     }
@@ -65,15 +65,15 @@ public final class ObsParser {
         return value;
     }
 
-    @Nonnull
+    @NonNull
     public ObsParser clear() {
         this.period = null;
         this.value = null;
         return this;
     }
 
-    @Nonnull
-    public ObsParser frequency(@Nonnull Frequency freq) {
+    @NonNull
+    public ObsParser frequency(@NonNull Frequency freq) {
         if (this.freq != freq) {
             this.freq = freq;
             this.periodParser = toPeriodParser.apply(freq);
@@ -81,13 +81,13 @@ public final class ObsParser {
         return this;
     }
 
-    @Nonnull
+    @NonNull
     public ObsParser period(@Nullable String period) {
         this.period = period;
         return this;
     }
 
-    @Nonnull
+    @NonNull
     public ObsParser value(@Nullable String value) {
         this.value = value;
         return this;

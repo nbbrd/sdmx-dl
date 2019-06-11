@@ -27,9 +27,9 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -105,8 +105,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
 
     public static final class Builder {
 
-        @Nonnull
-        public Builder sourceOf(@Nonnull String name, @Nonnull String description, @Nonnull String endpoint) {
+        @NonNull
+        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint) {
             return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).build());
         }
     }

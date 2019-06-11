@@ -32,8 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import lombok.AccessLevel;
@@ -42,6 +40,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.StreamSupport;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -51,18 +51,18 @@ import java.util.stream.StreamSupport;
 @lombok.extern.java.Log
 public final class SdmxWebManager implements SdmxManager {
 
-    @Nonnull
+    @NonNull
     public static SdmxWebManager ofServiceLoader() {
         return of(ServiceLoader.load(SdmxWebDriver.class));
     }
 
-    @Nonnull
-    public static SdmxWebManager of(@Nonnull SdmxWebDriver... drivers) {
+    @NonNull
+    public static SdmxWebManager of(@NonNull SdmxWebDriver... drivers) {
         return of(Arrays.asList(drivers));
     }
 
-    @Nonnull
-    public static SdmxWebManager of(@Nonnull Iterable<? extends SdmxWebDriver> drivers) {
+    @NonNull
+    public static SdmxWebManager of(@NonNull Iterable<? extends SdmxWebDriver> drivers) {
         List<SdmxWebDriver> orderedListOfDrivers = StreamSupport
                 .stream(drivers.spliterator(), false)
                 .sorted(Comparator.comparing(SdmxWebDriver::getRank).reversed().thenComparing(SdmxWebDriver::getName))
@@ -90,8 +90,8 @@ public final class SdmxWebManager implements SdmxManager {
         return getConnection(source);
     }
 
-    @Nonnull
-    public SdmxWebConnection getConnection(@Nonnull SdmxWebSource source) throws IOException {
+    @NonNull
+    public SdmxWebConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
         SdmxWebDriver driver = lookupDriver(source.getDriver())
@@ -111,7 +111,7 @@ public final class SdmxWebManager implements SdmxManager {
         this.context.set(context.get().toBuilder().languages(newObj).build());
     }
 
-    @Nonnull
+    @NonNull
     public ProxySelector getProxySelector() {
         return context.get().getProxySelector();
     }
@@ -121,7 +121,7 @@ public final class SdmxWebManager implements SdmxManager {
         context.set(context.get().toBuilder().proxySelector(newObj).build());
     }
 
-    @Nonnull
+    @NonNull
     public SSLSocketFactory getSSLSocketFactory() {
         return context.get().getSslSocketFactory();
     }
@@ -131,7 +131,7 @@ public final class SdmxWebManager implements SdmxManager {
         context.set(context.get().toBuilder().sslSocketFactory(newObj).build());
     }
 
-    @Nonnull
+    @NonNull
     public Logger getLogger() {
         return context.get().getLogger();
     }
@@ -141,17 +141,17 @@ public final class SdmxWebManager implements SdmxManager {
         context.set(context.get().toBuilder().logger(newObj).build());
     }
 
-    @Nonnull
+    @NonNull
     public List<SdmxWebSource> getSources() {
         return Collections.unmodifiableList(sources);
     }
 
-    public void setSources(@Nonnull List<SdmxWebSource> list) {
+    public void setSources(@NonNull List<SdmxWebSource> list) {
         sources.clear();
         sources.addAll(list);
     }
 
-    @Nonnull
+    @NonNull
     public List<String> getDrivers() {
         return drivers
                 .stream()
@@ -160,8 +160,8 @@ public final class SdmxWebManager implements SdmxManager {
                 .collect(Collectors.toList());
     }
 
-    @Nonnull
-    public Collection<String> getSupportedProperties(@Nonnull String driver) {
+    @NonNull
+    public Collection<String> getSupportedProperties(@NonNull String driver) {
         Objects.requireNonNull(driver);
         return lookupDriver(driver)
                 .map(SdmxWebDriver::getSupportedProperties)

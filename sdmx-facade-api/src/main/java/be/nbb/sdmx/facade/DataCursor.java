@@ -20,9 +20,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -33,16 +33,16 @@ public interface DataCursor extends Closeable {
 
     boolean nextSeries() throws IOException;
 
-    @Nonnull
+    @NonNull
     Key getSeriesKey() throws IOException, IllegalStateException;
 
-    @Nonnull
+    @NonNull
     Frequency getSeriesFrequency() throws IOException, IllegalStateException;
 
     @Nullable
-    String getSeriesAttribute(@Nonnull String key) throws IOException, IllegalStateException;
+    String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException;
 
-    @Nonnull
+    @NonNull
     Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException;
 
     boolean nextObs() throws IOException, IllegalStateException;

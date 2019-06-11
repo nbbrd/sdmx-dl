@@ -36,8 +36,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import lombok.AllArgsConstructor;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -130,32 +130,32 @@ class DotStatRestClient extends AbstractRestClient {
         return () -> executor.openStream(query, mediaType, langs.toString());
     }
 
-    @Nonnull
-    static RestQueryBuilder getFlowsQuery(@Nonnull URL endpoint) throws IOException {
+    @NonNull
+    static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path("ALL");
     }
 
-    @Nonnull
-    static RestQueryBuilder getFlowQuery(@Nonnull URL endpoint, @Nonnull DataflowRef ref) throws IOException {
+    @NonNull
+    static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path(ref.getId());
     }
 
-    @Nonnull
-    static RestQueryBuilder getStructureQuery(@Nonnull URL endpoint, @Nonnull DataStructureRef ref) throws IOException {
+    @NonNull
+    static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path(ref.getId());
     }
 
-    @Nonnull
-    static RestQueryBuilder getDataQuery(@Nonnull URL endpoint, @Nonnull DataRequest request) throws IOException {
+    @NonNull
+    static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
@@ -164,18 +164,18 @@ class DotStatRestClient extends AbstractRestClient {
                 .param("format", "compact_v2");
     }
 
-    @Nonnull
-    static Dataflow getFlowFromStructure(@Nonnull DataStructure o) {
+    @NonNull
+    static Dataflow getFlowFromStructure(@NonNull DataStructure o) {
         return Dataflow.of(getFlowRefFromStructureRef(o.getRef()), o.getRef(), o.getLabel());
     }
 
-    @Nonnull
-    static DataflowRef getFlowRefFromStructureRef(@Nonnull DataStructureRef o) {
+    @NonNull
+    static DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {
         return DataflowRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 
-    @Nonnull
-    static DataStructureRef getStructureRefFromFlowRef(@Nonnull DataflowRef o) {
+    @NonNull
+    static DataStructureRef getStructureRefFromFlowRef(@NonNull DataflowRef o) {
         return DataStructureRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 

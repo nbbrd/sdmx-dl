@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Defines the ability to get a localized label from a resource.
@@ -30,6 +30,6 @@ public interface HasLabel {
      *
      * @return a non-null label
      */
-    @Nonnull
+    @NonNull
     String getLabel();
 }

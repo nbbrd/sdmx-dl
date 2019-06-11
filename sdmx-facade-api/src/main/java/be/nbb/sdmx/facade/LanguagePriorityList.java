@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Represents a language priority list. This class is an immutable convenient
@@ -55,8 +55,8 @@ public final class LanguagePriorityList {
      * @throws IllegalArgumentException if a language range or a weight found in
      * the given {@code ranges} is ill-formed
      */
-    @Nonnull
-    public static LanguagePriorityList parse(@Nonnull String ranges) throws IllegalArgumentException {
+    @NonNull
+    public static LanguagePriorityList parse(@NonNull String ranges) throws IllegalArgumentException {
         return new LanguagePriorityList(Locale.LanguageRange.parse(ranges));
     }
 
@@ -72,7 +72,7 @@ public final class LanguagePriorityList {
      * @throws NullPointerException if {@code tags} is {@code null}
      */
     @Nullable
-    public String lookupTag(@Nonnull Collection<String> tags) {
+    public String lookupTag(@NonNull Collection<String> tags) {
         return Locale.lookupTag(list, tags);
     }
 

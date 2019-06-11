@@ -20,8 +20,8 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -34,14 +34,14 @@ final class TextBuilder {
     private final LanguagePriorityList ranges;
     private final Map<String, String> data = new LinkedHashMap<>();
 
-    @Nonnull
+    @NonNull
     public TextBuilder clear() {
         data.clear();
         return this;
     }
 
-    @Nonnull
-    public TextBuilder put(@Nonnull String lang, @Nullable String text) {
+    @NonNull
+    public TextBuilder put(@NonNull String lang, @Nullable String text) {
         Objects.requireNonNull(lang);
         if (text != null) {
             data.put(lang, text);
@@ -58,8 +58,8 @@ final class TextBuilder {
         return lang != null ? data.get(lang) : data.values().iterator().next();
     }
 
-    @Nonnull
-    public String build(@Nonnull String defaultValue) {
+    @NonNull
+    public String build(@NonNull String defaultValue) {
         Objects.requireNonNull(defaultValue);
         String result = build();
         return result != null ? result : defaultValue;

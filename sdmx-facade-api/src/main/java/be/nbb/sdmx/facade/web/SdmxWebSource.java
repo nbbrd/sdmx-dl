@@ -19,7 +19,7 @@ package be.nbb.sdmx.facade.web;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -47,8 +47,8 @@ public final class SdmxWebSource {
 
     public static class Builder {
 
-        @Nonnull
-        public Builder endpointOf(@Nonnull String endpoint) throws IllegalArgumentException {
+        @NonNull
+        public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
             try {
                 return endpoint(new URL(endpoint));
             } catch (MalformedURLException ex) {
@@ -56,8 +56,8 @@ public final class SdmxWebSource {
             }
         }
 
-        @Nonnull
-        public Builder propertyOf(@Nonnull String key, @Nonnull Object value) throws IllegalArgumentException {
+        @NonNull
+        public Builder propertyOf(@NonNull String key, @NonNull Object value) throws IllegalArgumentException {
             return property(key, value.toString());
         }
     }

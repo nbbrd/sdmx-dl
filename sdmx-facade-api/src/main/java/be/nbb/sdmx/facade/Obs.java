@@ -17,7 +17,7 @@
 package be.nbb.sdmx.facade;
 
 import java.time.LocalDateTime;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *

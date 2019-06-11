@@ -19,7 +19,7 @@ package be.nbb.sdmx.facade.web;
 import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.time.Duration;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -27,9 +27,9 @@ import javax.annotation.Nonnull;
  */
 public interface SdmxWebConnection extends SdmxConnection {
 
-    @Nonnull
+    @NonNull
     Duration ping() throws IOException;
 
-    @Nonnull
+    @NonNull
     String getDriver() throws IOException;
 }
