@@ -20,27 +20,9 @@
         <module>sdmx-facade-connectors</module>
     </modules>
 
-    <properties>
-        <!-- build -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version> 
-
-        <!-- dev support -->
-        <junit.version>4.12</junit.version>
-        <assertj.version>3.12.2</assertj.version>
-        <netbeans.version>RELEASE82</netbeans.version>
-        <lombok.version>1.18.8</lombok.version>
-
-        <!-- dependencies -->
-        <java-io-util.version>0.0.3</java-io-util.version>
-    </properties>
-    
     <dependencyManagement>
         <dependencies>
-            <!-- dev tools -->
+            <!-- annotations & processors -->
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
@@ -54,28 +36,33 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>be.nbb.rd</groupId>
-                <artifactId>java-io-util</artifactId>
-                <version>${java-io-util.version}</version>
+                <version>1.18.8</version>
             </dependency>
             <dependency>
                 <groupId>org.netbeans.api</groupId>
                 <artifactId>org-openide-util-lookup</artifactId>
-                <version>${netbeans.version}</version>
+                <version>RELEASE110</version>
             </dependency>
+            
+            <!-- test libraries -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.12.2</version>
+            </dependency>
+            
+            <!-- dependencies  -->
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-util</artifactId>
+                <version>0.0.3</version>
+            </dependency>
+            
             <!-- modules -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -114,60 +101,106 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>report</id>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId> 
-            </plugin>
-        </plugins>
-    </build>
+
+    <profiles>
+        <!-- Base build java8 -->
+        <profile>
+            <id>base-java8</id>
+            <activation>
+                <property>
+                    <name>!skipBaseJava8</name>
+                </property>
+            </activation>
+            <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>1.8</maven.compiler.source>                
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.1.2</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Enforce Java8 API -->
+        <profile>
+            <id>enforce-java8-api</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
+        
+        <!-- Optional checks -->
+        <profile>
+            <id>optional-checks</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.gaul</groupId>
+                        <artifactId>modernizer-maven-plugin</artifactId>
+                        <version>1.8.0</version>
+                        <configuration>
+                            <javaVersion>1.8</javaVersion>
+                            <!--<failOnViolations>false</failOnViolations>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>modernizer</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>modernizer</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId> 
+                        <version>0.8.4</version> 
+                        <executions> 
+                            <execution> 
+                                <goals> 
+                                    <goal>prepare-agent</goal> 
+                                </goals>
+                            </execution>
+                            <execution> 
+                                <id>report</id> 
+                                <phase>prepare-package</phase> 
+                                <goals> 
+                                    <goal>report</goal> 
+                                </goals> 
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
             <id>oss-jfrog-artifactory-releases</id>
             <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>oss-jfrog-artifactory-snapshots</id>
             <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
-        </repository>
-        <repository>
-            <id>netbeans</id>
-            <url>http://bits.netbeans.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>https://projectlombok.org/edge-releases</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
