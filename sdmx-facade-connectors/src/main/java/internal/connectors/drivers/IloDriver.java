@@ -20,7 +20,6 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
-import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasSeriesKeysOnlySupported;
@@ -37,12 +36,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
+@ServiceProvider(SdmxWebDriver.class)
 public final class IloDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate

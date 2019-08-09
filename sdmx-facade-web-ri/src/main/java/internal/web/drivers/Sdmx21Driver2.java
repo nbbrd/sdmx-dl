@@ -25,13 +25,13 @@ import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebClient;
 import internal.web.SdmxWebProperty;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
+@ServiceProvider(SdmxWebDriver.class)
 public final class Sdmx21Driver2 implements SdmxWebDriver {
 
     @lombok.experimental.Delegate

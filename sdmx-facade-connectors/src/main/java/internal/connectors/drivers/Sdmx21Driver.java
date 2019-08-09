@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.util.Map;
-import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasSeriesKeysOnlySupported;
@@ -31,12 +30,13 @@ import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebProperty;
 import java.net.URI;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
+@ServiceProvider(SdmxWebDriver.class)
 public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate

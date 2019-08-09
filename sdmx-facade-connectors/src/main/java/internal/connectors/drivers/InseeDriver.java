@@ -24,7 +24,6 @@ import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
-import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasSeriesKeysOnlySupported;
@@ -37,12 +36,13 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import java.net.URI;
 import java.util.Map;
 import java.util.logging.Level;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
+@ServiceProvider(SdmxWebDriver.class)
 public final class InseeDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate

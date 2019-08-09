@@ -26,14 +26,14 @@ import be.nbb.sdmx.facade.parser.Freqs;
 import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import java.time.LocalDateTime;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  * https://www.insee.fr/fr/information/2862759
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxDialect.class)
+@ServiceProvider(SdmxDialect.class)
 public final class InseeDialect implements SdmxDialect {
 
     @Override

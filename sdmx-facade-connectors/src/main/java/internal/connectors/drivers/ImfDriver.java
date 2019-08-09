@@ -18,17 +18,17 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.util.HasCache;
-import org.openide.util.lookup.ServiceProvider;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
 import internal.web.SdmxWebDriverSupport;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = SdmxWebDriver.class)
+@ServiceProvider(SdmxWebDriver.class)
 public final class ImfDriver implements SdmxWebDriver, HasCache {
 
     @lombok.experimental.Delegate
