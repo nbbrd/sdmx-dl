@@ -26,17 +26,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
-import java.util.Comparator;
+import internal.util.SdmxWebDriverLoader;
+import internal.util.SdmxWebDriverProc;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.StreamSupport;
@@ -53,7 +51,7 @@ public final class SdmxWebManager implements SdmxManager {
 
     @NonNull
     public static SdmxWebManager ofServiceLoader() {
-        return of(ServiceLoader.load(SdmxWebDriver.class));
+        return of(new SdmxWebDriverLoader().get());
     }
 
     @NonNull
@@ -62,18 +60,18 @@ public final class SdmxWebManager implements SdmxManager {
     }
 
     @NonNull
-    public static SdmxWebManager of(@NonNull Iterable<? extends SdmxWebDriver> drivers) {
-        List<SdmxWebDriver> orderedListOfDrivers = StreamSupport
-                .stream(drivers.spliterator(), false)
-                .sorted(Comparator.comparing(SdmxWebDriver::getRank).reversed().thenComparing(SdmxWebDriver::getName))
+    public static SdmxWebManager of(@NonNull Iterable<SdmxWebDriver> drivers) {
+        List<SdmxWebDriver> orderedList = SdmxWebDriverProc.INSTANCE
+                .apply(StreamSupport.stream(drivers.spliterator(), false))
                 .collect(Collectors.toList());
+        return new SdmxWebManager(orderedList, sourcesOf(orderedList));
+    }
 
-        CopyOnWriteArrayList<SdmxWebSource> sources = orderedListOfDrivers
+    private static CopyOnWriteArrayList sourcesOf(List<SdmxWebDriver> drivers) {
+        return drivers
                 .stream()
-                .flatMap(SdmxWebManager::tryGetDefaultSources)
+                .flatMap(driver -> driver.getDefaultSources().stream())
                 .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
-
-        return new SdmxWebManager(orderedListOfDrivers, sources);
     }
 
     private final AtomicReference<SdmxWebContext> context = new AtomicReference<>(SdmxWebContext.builder().build());
@@ -97,7 +95,7 @@ public final class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return tryConnect(driver, source, context.get());
+        return driver.connect(source, context.get());
     }
 
     @Override
@@ -180,46 +178,6 @@ public final class SdmxWebManager implements SdmxManager {
                 .stream()
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();
-    }
-
-    @SuppressWarnings("null")
-    private static SdmxWebConnection tryConnect(SdmxWebDriver driver, SdmxWebSource s, SdmxWebContext c) throws IOException {
-        SdmxWebConnection result;
-
-        try {
-            result = driver.connect(s, c);
-        } catch (RuntimeException ex) {
-            c.getLogger().log(Level.WARNING, "Unexpected exception while connecting", ex);
-            throw new IOException(ex);
-        }
-
-        if (result == null) {
-            c.getLogger().log(Level.WARNING, "Unexpected null connection");
-            throw new IOException("Unexpected null connection");
-        }
-
-        return result;
-    }
-
-    @SuppressWarnings("null")
-    private static Stream<SdmxWebSource> tryGetDefaultSources(SdmxWebDriver driver) {
-        Collection<SdmxWebSource> result;
-
-        try {
-            result = driver.getDefaultSources();
-        } catch (RuntimeException ex) {
-            log.log(Level.WARNING, "Unexpected exception while getting default entry points", ex);
-            return Stream.empty();
-        }
-
-        if (result == null) {
-            log.log(Level.WARNING, "Unexpected null list");
-            return Stream.empty();
-        }
-
-        return result
-                .stream()
-                .filter(o -> o.getDriver().equals(driver.getName()));
     }
 
     private static ProxySelector getDefaultProxySelector() {

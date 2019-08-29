@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
+import internal.util.EmptyCursor;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -52,4 +53,9 @@ public interface DataCursor extends Closeable {
 
     @Nullable
     Double getObsValue() throws IOException, IllegalStateException;
+
+    @NonNull
+    static DataCursor empty() {
+        return new EmptyCursor();
+    }
 }

@@ -51,7 +51,7 @@ public class SeriesSupportTest {
         assertThatNullPointerException().isThrownBy(() -> SeriesSupport.asStream(null));
 
         assertThatIllegalStateException().isThrownBy(() -> {
-            DataCursor cursor = NoOpCursor.noOp();
+            DataCursor cursor = DataCursor.empty();
             SeriesSupport.asStream(() -> cursor).count();
             cursor.getSeriesKey();
         });
@@ -62,7 +62,7 @@ public class SeriesSupportTest {
     public void testCopyOf() throws IOException, XMLStreamException {
         assertThatNullPointerException().isThrownBy(() -> SeriesSupport.copyOf(null));
 
-        try (DataCursor c = NoOpCursor.noOp()) {
+        try (DataCursor c = DataCursor.empty()) {
             assertThat(SeriesSupport.copyOf(c)).isEmpty();
         }
 
@@ -80,7 +80,7 @@ public class SeriesSupportTest {
     public void testCopyOfKeysAndMeta() throws IOException, XMLStreamException {
         assertThatNullPointerException().isThrownBy(() -> SeriesSupport.copyOfKeysAndMeta(null));
 
-        try (DataCursor c = NoOpCursor.noOp()) {
+        try (DataCursor c = DataCursor.empty()) {
             assertThat(SeriesSupport.copyOfKeysAndMeta(c)).isEmpty();
         }
 

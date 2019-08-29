@@ -18,8 +18,11 @@ package be.nbb.sdmx.facade.web.spi;
 
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
+import internal.util.SdmxWebDriverProc;
 import java.io.IOException;
 import java.util.Collection;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -28,6 +31,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @author Philippe Charles
  */
 @ThreadSafe
+@ServiceDefinition(
+        quantifier = Quantifier.MULTIPLE,
+        preprocessor = SdmxWebDriverProc.class,
+        loaderName = "internal.util.SdmxWebDriverLoader"
+)
 public interface SdmxWebDriver {
 
     @NonNull
@@ -49,4 +57,5 @@ public interface SdmxWebDriver {
 
     static final int NATIVE_RANK = Byte.MAX_VALUE;
     static final int WRAPPED_RANK = 0;
+    static final int UNKNOWN = -1;
 }

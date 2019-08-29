@@ -14,27 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.parser.spi;
+package internal.util;
 
-import be.nbb.sdmx.facade.parser.DataFactory;
-import nbbrd.service.Quantifier;
-import nbbrd.service.ServiceDefinition;
-import net.jcip.annotations.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import be.nbb.sdmx.facade.tck.DataCursorAssert;
+import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
-@ServiceDefinition(
-        quantifier = Quantifier.MULTIPLE
-)
-public interface SdmxDialect extends DataFactory {
+public class EmptyCursorTest {
 
-    @NonNull
-    String getName();
-
-    @NonNull
-    String getDescription();
+    @Test
+    public void testCompliance() {
+        DataCursorAssert.assertCompliance(() -> new EmptyCursor());
+    }
 }

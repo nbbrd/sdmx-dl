@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package internal.util;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.Key;
@@ -22,18 +22,12 @@ import be.nbb.sdmx.facade.Frequency;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class NoOpCursor implements DataCursor {
-
-    @NonNull
-    public static DataCursor noOp() {
-        return new NoOpCursor();
-    }
+public final class EmptyCursor implements DataCursor {
 
     private boolean closed = false;
 

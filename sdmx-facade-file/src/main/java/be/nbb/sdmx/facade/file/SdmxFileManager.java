@@ -28,15 +28,14 @@ import internal.file.SdmxFileConnectionImpl;
 import internal.file.SdmxFileUtil;
 import internal.file.xml.StaxSdmxDecoder;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
+import be.nbb.sdmx.facade.parser.spi.SdmxDialectLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -48,13 +47,11 @@ public final class SdmxFileManager implements SdmxManager, HasCache {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
-        List<SdmxDialect> dialects = new ArrayList<>();
-        ServiceLoader.load(SdmxDialect.class).forEach(dialects::add);
         return new SdmxFileManager(
                 new AtomicReference<>(LanguagePriorityList.ANY),
                 new StaxSdmxDecoder(),
                 HasCache.of(ConcurrentHashMap::new),
-                dialects
+                new SdmxDialectLoader().get()
         );
     }
 

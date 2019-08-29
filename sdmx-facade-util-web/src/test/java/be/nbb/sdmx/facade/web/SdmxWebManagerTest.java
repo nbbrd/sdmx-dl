@@ -46,7 +46,7 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testFactories() {
-        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((Iterable) null));
+        assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((List) null));
         assertThatNullPointerException().isThrownBy(() -> SdmxWebManager.of((SdmxWebDriver[]) null));
 
         assertThat(SdmxWebManager.of()).satisfies(o -> {

@@ -23,7 +23,6 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
-import be.nbb.sdmx.facade.util.NoOpCursor;
 import java.io.IOException;
 import java.util.List;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
@@ -144,7 +143,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
             return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
-                return NoOpCursor.noOp();
+                return DataCursor.empty();
             }
             throw wrap(ex, "Failed to get data '%s' from '%s'", request, name);
         }
