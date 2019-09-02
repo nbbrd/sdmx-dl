@@ -24,7 +24,7 @@ import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Series;
-import be.nbb.sdmx.facade.util.SdmxExceptions;
+import internal.util.SdmxExceptions;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import ioutil.IO;
 import java.io.IOException;

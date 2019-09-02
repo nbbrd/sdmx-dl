@@ -16,7 +16,6 @@
  */
 package be.nbb.sdmx.facade.repo;
 
-import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
@@ -26,10 +25,7 @@ import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.tck.ConnectionAssert;
-import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
@@ -38,16 +34,6 @@ import org.junit.Test;
  * @author Philippe Charles
  */
 public class SdmxRepositoryTest {
-
-    @Test
-    public void testCompliance() {
-        ConnectionAssert.assertCompliance(repo::asConnection, goodFlowRef);
-    }
-
-    @Test
-    public void testDataCursorCompliance() {
-        DataCursorAssert.assertCompliance(() -> DataCursor.of(Collections.singletonList(series), Key.ALL));
-    }
 
     @Test
     public void testBuilder() {
@@ -60,8 +46,6 @@ public class SdmxRepositoryTest {
         assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(null, Key.ALL, DataFilter.ALL));
         assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(goodFlowRef, null, DataFilter.ALL));
         assertThatNullPointerException().isThrownBy(() -> repo.getDataCursor(goodFlowRef, Key.ALL, null));
-
-        DataCursorAssert.assertCompliance(() -> repo.getDataCursor(goodFlowRef, Key.ALL, DataFilter.ALL).get());
 
         assertThat(repo.getDataCursor(goodFlowRef, Key.ALL, DataFilter.ALL)).isNotEmpty();
         assertThat(repo.getDataCursor(badFlowRef, Key.ALL, DataFilter.ALL)).isEmpty();
@@ -109,7 +93,7 @@ public class SdmxRepositoryTest {
         assertThat(repo.getStructure(badStructRef)).isEmpty();
     }
 
-    private final DataStructureRef goodStructRef = DataStructureRef.of("NBB","goodStruct", "v1.0");
+    private final DataStructureRef goodStructRef = DataStructureRef.of("NBB", "goodStruct", "v1.0");
     private final DataStructureRef badStructRef = DataStructureRef.parse("badStruct");
     private final DataflowRef goodFlowRef = DataflowRef.of("NBB", "XYZ", "v2.0");
     private final DataflowRef badFlowRef = DataflowRef.parse("other");

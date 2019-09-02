@@ -22,7 +22,7 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.util.SdmxExceptions;
+import internal.util.SdmxExceptions;
 import internal.web.DataRequest;
 import java.io.IOException;
 import java.util.ArrayList;
