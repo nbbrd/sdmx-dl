@@ -32,18 +32,23 @@ import javax.net.ssl.SSLSocketFactory;
 public class SdmxWebContext {
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
+    LanguagePriorityList languages;
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    ProxySelector proxySelector = ProxySelector.getDefault();
+    ProxySelector proxySelector;
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+    SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    Logger logger = Logger.getLogger(SdmxWebManager.class.getName());
+    Logger logger;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .languages(LanguagePriorityList.ANY)
+                .proxySelector(ProxySelector.getDefault())
+                .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
+                .logger(Logger.getLogger(SdmxWebManager.class.getName()));
+    }
 }

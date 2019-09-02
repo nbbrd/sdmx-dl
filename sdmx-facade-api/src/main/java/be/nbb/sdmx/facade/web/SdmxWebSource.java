@@ -33,8 +33,7 @@ public final class SdmxWebSource {
     String name;
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    String description = "";
+    String description;
 
     @lombok.NonNull
     String driver;
@@ -44,6 +43,12 @@ public final class SdmxWebSource {
 
     @lombok.Singular
     Map<String, String> properties;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .description("");
+    }
 
     public static class Builder {
 

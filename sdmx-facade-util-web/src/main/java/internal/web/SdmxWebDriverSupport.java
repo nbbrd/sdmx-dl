@@ -55,11 +55,18 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     @lombok.Singular
     private final Collection<String> supportedProperties;
 
-    @lombok.Builder.Default
-    private final Clock clock = Clock.systemDefaultZone();
+    @lombok.NonNull
+    private final Clock clock;
 
-    @lombok.Builder.Default
-    private final HasCache cacheSupport = HasCache.of(ConcurrentHashMap::new);
+    @lombok.NonNull
+    private final HasCache cacheSupport;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .clock(Clock.systemDefaultZone())
+                .cacheSupport(HasCache.of(ConcurrentHashMap::new));
+    }
 
     @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {

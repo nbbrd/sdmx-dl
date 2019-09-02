@@ -62,8 +62,13 @@ public class SdmxRepository {
     @lombok.NonNull
     Map<DataflowRef, List<Series>> data;
 
-    @lombok.Builder.Default
-    boolean seriesKeysOnlySupported = true;
+    boolean seriesKeysOnlySupported;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .seriesKeysOnlySupported(true);
+    }
 
     @NonNull
     public SdmxConnection asConnection() {

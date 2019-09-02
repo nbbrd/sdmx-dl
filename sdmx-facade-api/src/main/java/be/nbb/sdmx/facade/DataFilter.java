@@ -28,8 +28,13 @@ public class DataFilter {
     public static final DataFilter SERIES_KEYS_ONLY = builder().detail(Detail.SERIES_KEYS_ONLY).build();
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    Detail detail = Detail.FULL;
+    Detail detail;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .detail(Detail.FULL);
+    }
 
     public boolean isSeriesKeyOnly() {
         return detail.equals(Detail.SERIES_KEYS_ONLY);
