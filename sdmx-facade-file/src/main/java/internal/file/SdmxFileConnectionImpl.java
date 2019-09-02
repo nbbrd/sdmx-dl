@@ -25,12 +25,13 @@ import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileConnection;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
-import be.nbb.sdmx.facade.util.SeriesSupport;
+import ioutil.IO;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -91,22 +92,28 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
 
     @Override
     public List<Series> getData(Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asList(() -> getDataCursor(key, filter));
+        try (DataCursor cursor = getDataCursor(key, filter)) {
+            return cursor.toStream(filter.getDetail()).collect(Collectors.toList());
+        }
     }
 
     @Override
     public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asList(() -> getDataCursor(flowRef, key, filter));
+        try (DataCursor cursor = getDataCursor(flowRef, key, filter)) {
+            return cursor.toStream(filter.getDetail()).collect(Collectors.toList());
+        }
     }
 
     @Override
     public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asStream(() -> getDataCursor(key, filter));
+        DataCursor cursor = getDataCursor(key, filter);
+        return cursor.toStream(filter.getDetail()).onClose(IO.Runnable.unchecked(cursor::close));
     }
 
     @Override
     public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asStream(() -> getDataCursor(flowRef, key, filter));
+        DataCursor cursor = getDataCursor(flowRef, key, filter);
+        return cursor.toStream(filter.getDetail()).onClose(IO.Runnable.unchecked(cursor::close));
     }
 
     @Override

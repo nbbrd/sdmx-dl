@@ -17,11 +17,15 @@
 package internal.util;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
+import be.nbb.sdmx.facade.Series;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  *
@@ -82,6 +86,13 @@ public final class EmptyCursor implements DataCursor {
     @Override
     public void close() throws IOException {
         closed = true;
+    }
+
+    @Override
+    public Stream<Series> toStream(DataFilter.Detail detail) throws IOException {
+        Objects.requireNonNull(detail);
+        checkState();
+        return Stream.empty();
     }
 
     private void checkState() throws IOException {

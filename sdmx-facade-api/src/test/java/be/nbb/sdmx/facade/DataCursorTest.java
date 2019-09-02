@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,23 +14,23 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package be.nbb.sdmx.facade;
 
-import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import java.util.Collections;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-public class SeriesSupportTest {
+public class DataCursorTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testAsCursor() {
-        DataCursorAssert.assertCompliance(() -> DataCursor.of(Collections.emptyList(), Key.ALL));
+    public void testFactories() {
+        assertThatNullPointerException().isThrownBy(() -> DataCursor.of(null, Key.ALL));
+        assertThatNullPointerException().isThrownBy(() -> DataCursor.of(Collections.emptyList(), null));
     }
+
 }

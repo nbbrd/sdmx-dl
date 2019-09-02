@@ -27,6 +27,9 @@ public class DataFilter {
     public static final DataFilter ALL = builder().build();
     public static final DataFilter SERIES_KEYS_ONLY = builder().detail(Detail.SERIES_KEYS_ONLY).build();
 
+    /**
+     * Specifies the desired amount of information to be returned
+     */
     @lombok.NonNull
     Detail detail;
 
@@ -40,7 +43,27 @@ public class DataFilter {
         return detail.equals(Detail.SERIES_KEYS_ONLY);
     }
 
+    /**
+     * Describe an amount of information
+     */
     public enum Detail {
-        FULL, SERIES_KEYS_ONLY
+        /**
+         * All data and documentation, including annotations
+         */
+        FULL,
+        /**
+         * Attributes are excluded
+         */
+        DATA_ONLY,
+        /**
+         * Only the series elements and the dimensions that make up the series
+         * keys
+         */
+        SERIES_KEYS_ONLY,
+        /**
+         * Groups and series, including attributes and annotations, without
+         * observations
+         */
+        NO_DATA;
     }
 }

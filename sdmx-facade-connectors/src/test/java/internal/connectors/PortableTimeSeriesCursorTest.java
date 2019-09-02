@@ -17,13 +17,14 @@
 package internal.connectors;
 
 import _test.samples.ConnectorsResource;
+import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
@@ -52,21 +53,23 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void test() throws IOException {
-        assertThat(SeriesSupport.asStream(() -> PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD))))
-                .hasSize(120)
-                .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
-                .element(0)
-                .satisfies(o -> {
-                    assertThat(o.getKey()).isEqualTo(Key.parse("A.DEU.1.0.319.0.UBLGE"));
-                    assertThat(o.getMeta())
-                            .hasSize(3)
-                            .containsEntry("EXT_UNIT", "Percentage of GDP at market prices (excessive deficit procedure)")
-                            .isNotEmpty();
-                    assertThat(o.getObs())
-                            .hasSize(25)
-                            .startsWith(Obs.of(LocalDate.of(1991, 1, 1).atStartOfDay(), -2.8574221))
-                            .endsWith(Obs.of(LocalDate.of(2015, 1, 1).atStartOfDay(), -0.1420473));
-                });
+        try (DataCursor c = PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD))) {
+            assertThat(c.toStream(DataFilter.Detail.FULL))
+                    .hasSize(120)
+                    .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
+                    .element(0)
+                    .satisfies(o -> {
+                        assertThat(o.getKey()).isEqualTo(Key.parse("A.DEU.1.0.319.0.UBLGE"));
+                        assertThat(o.getMeta())
+                                .hasSize(3)
+                                .containsEntry("EXT_UNIT", "Percentage of GDP at market prices (excessive deficit procedure)")
+                                .isNotEmpty();
+                        assertThat(o.getObs())
+                                .hasSize(25)
+                                .startsWith(Obs.of(LocalDate.of(1991, 1, 1).atStartOfDay(), -2.8574221))
+                                .endsWith(Obs.of(LocalDate.of(2015, 1, 1).atStartOfDay(), -0.1420473));
+                    });
+        }
     }
 
     @Test

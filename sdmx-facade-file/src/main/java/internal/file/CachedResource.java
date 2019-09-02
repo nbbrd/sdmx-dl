@@ -17,13 +17,13 @@
 package internal.file;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -70,11 +71,17 @@ public final class CachedResource extends SdmxDecoderResource {
         if (serieskeysonly) {
             List<Series> result = cache.get(loadDataKey);
             if (result == null) {
-                result = SeriesSupport.copyOfKeysAndMeta(super.loadData(entry, flowRef, key, true));
+                result = copyOfKeysAndMeta(entry, flowRef, key);
                 cache.put(loadDataKey, result);
             }
-            return SeriesSupport.asCursor(result, key);
+            return DataCursor.of(result, key);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
+    }
+
+    private List<Series> copyOfKeysAndMeta(SdmxDecoder.Info entry, DataflowRef flowRef, Key key) throws IOException {
+        try (DataCursor c = super.loadData(entry, flowRef, key, true)) {
+            return c.toStream(DataFilter.Detail.NO_DATA).collect(Collectors.toList());
+        }
     }
 }

@@ -25,12 +25,13 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
+import ioutil.IO;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -75,12 +76,15 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     @Override
     public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asList(() -> getDataCursor(flowRef, key, filter));
+        try (DataCursor cursor = getDataCursor(flowRef, key, filter)) {
+            return cursor.toStream(filter.getDetail()).collect(Collectors.toList());
+        }
     }
 
     @Override
     public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return SeriesSupport.asStream(() -> getDataCursor(flowRef, key, filter));
+        DataCursor cursor = getDataCursor(flowRef, key, filter);
+        return cursor.toStream(filter.getDetail()).onClose(IO.Runnable.unchecked(cursor::close));
     }
 
     @Override

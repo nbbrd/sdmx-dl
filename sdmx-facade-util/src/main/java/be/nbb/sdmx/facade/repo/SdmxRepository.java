@@ -26,7 +26,6 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.util.SdmxExceptions;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,7 +117,7 @@ public class SdmxRepository {
     private static Function<List<Series>, DataCursor> toCursor(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return o -> SeriesSupport.asCursor(o, key);
+        return o -> DataCursor.of(o, key);
     }
 
     @NonNull
@@ -152,7 +151,7 @@ public class SdmxRepository {
 
         @NonNull
         public Builder copyOf(@NonNull DataflowRef flowRef, @NonNull DataCursor cursor) throws IOException {
-            return data(flowRef, SeriesSupport.copyOf(cursor));
+            return data(flowRef, cursor.toStream(DataFilter.Detail.FULL).collect(Collectors.toList()));
         }
     }
 

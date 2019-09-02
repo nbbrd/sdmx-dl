@@ -17,10 +17,19 @@
 package be.nbb.sdmx.facade;
 
 import internal.util.EmptyCursor;
+import internal.util.SeriesCursor;
+import internal.util.SeriesFactory;
+import internal.util.SeriesIterator;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import net.jcip.annotations.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -55,7 +64,20 @@ public interface DataCursor extends Closeable {
     Double getObsValue() throws IOException, IllegalStateException;
 
     @NonNull
+    default Stream<Series> toStream(DataFilter.@NonNull Detail detail) throws IOException, IllegalStateException {
+        Iterator<Series> iterator = new SeriesIterator(this, SeriesFactory.of(detail));
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.NONNULL), false);
+    }
+
+    @NonNull
     static DataCursor empty() {
         return new EmptyCursor();
+    }
+
+    @NonNull
+    static DataCursor of(@NonNull Iterable<Series> list, @NonNull Key ref) {
+        Objects.requireNonNull(list);
+        Objects.requireNonNull(ref);
+        return new SeriesCursor(list.iterator(), ref);
     }
 }

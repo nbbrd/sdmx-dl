@@ -14,23 +14,29 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package internal.util;
 
 import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import java.util.Collections;
+import be.nbb.sdmx.facade.DataFilter;
+import java.io.IOException;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-public class SeriesSupportTest {
+public class EmptyCursorTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testAsCursor() {
-        DataCursorAssert.assertCompliance(() -> DataCursor.of(Collections.emptyList(), Key.ALL));
+    public void testToStream() throws IOException {
+        try (DataCursor c = new EmptyCursor()) {
+            assertThat(c.toStream(DataFilter.Detail.FULL)).isEmpty();
+        }
+
+        try (DataCursor c = new EmptyCursor()) {
+            assertThatNullPointerException().isThrownBy(() -> c.toStream(null));
+        }
     }
 }

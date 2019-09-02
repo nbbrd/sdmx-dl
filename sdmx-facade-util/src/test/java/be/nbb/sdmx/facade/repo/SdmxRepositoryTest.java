@@ -16,6 +16,7 @@
  */
 package be.nbb.sdmx.facade.repo;
 
+import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
@@ -27,7 +28,6 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import static org.assertj.core.api.Assertions.*;
@@ -46,7 +46,7 @@ public class SdmxRepositoryTest {
 
     @Test
     public void testDataCursorCompliance() {
-        DataCursorAssert.assertCompliance(() -> SeriesSupport.asCursor(Collections.singletonList(series), Key.ALL));
+        DataCursorAssert.assertCompliance(() -> DataCursor.of(Collections.singletonList(series), Key.ALL));
     }
 
     @Test

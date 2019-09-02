@@ -17,6 +17,7 @@
 package _test.samples;
 
 import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
@@ -27,7 +28,6 @@ import be.nbb.sdmx.facade.samples.SdmxSource;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.SeriesSupport;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;
 import java.util.List;
@@ -106,7 +106,7 @@ public class FacadeResource {
 
     List<Series> data20(ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData20(dsd, DataFactory.sdmx20()).parseReader(xml::openReader)) {
-            return SeriesSupport.copyOf(c);
+            return c.toStream(DataFilter.Detail.FULL).collect(Collectors.toList());
         }
     }
 
@@ -120,7 +120,7 @@ public class FacadeResource {
 
     List<Series> data21(ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData21(dsd, DataFactory.sdmx21()).parseReader(xml::openReader)) {
-            return SeriesSupport.copyOf(c);
+            return c.toStream(DataFilter.Detail.FULL).collect(Collectors.toList());
         }
     }
 
