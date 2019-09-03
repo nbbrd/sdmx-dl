@@ -17,7 +17,6 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import internal.connectors.ConnectorRestClient;
@@ -29,7 +28,7 @@ import nbbrd.service.ServiceProvider;
  * @author Philippe Charles
  */
 @ServiceProvider(SdmxWebDriver.class)
-public final class EurostatDriver implements SdmxWebDriver, HasCache {
+public final class EurostatDriver implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport

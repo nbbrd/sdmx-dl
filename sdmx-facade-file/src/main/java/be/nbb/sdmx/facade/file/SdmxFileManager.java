@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
-import be.nbb.sdmx.facade.util.HasCache;
 import internal.file.CachedResource;
 import internal.file.SdmxDecoder;
 import internal.file.SdmxFileConnectionImpl;
@@ -36,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialectLoader;
+import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -43,14 +43,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SdmxFileManager implements SdmxManager, HasCache {
+public final class SdmxFileManager implements SdmxManager {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
         return new SdmxFileManager(
                 new AtomicReference<>(LanguagePriorityList.ANY),
                 new StaxSdmxDecoder(),
-                HasCache.of(ConcurrentHashMap::new),
+                new AtomicReference<>(new ConcurrentHashMap<>()),
                 new SdmxDialectLoader().get()
         );
     }
@@ -59,7 +59,7 @@ public final class SdmxFileManager implements SdmxManager, HasCache {
 
     private final AtomicReference<LanguagePriorityList> languages;
     private final SdmxDecoder decoder;
-    private final HasCache cacheSupport;
+    private final AtomicReference<ConcurrentMap> cacheSupport;
     private final List<SdmxDialect> dialects;
 
     @Override
@@ -81,14 +81,14 @@ public final class SdmxFileManager implements SdmxManager, HasCache {
         this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
     }
 
-    @Override
+    @NonNull
     public ConcurrentMap getCache() {
-        return cacheSupport.getCache();
+        return cacheSupport.get();
     }
 
-    @Override
-    public void setCache(ConcurrentMap cache) {
-        this.cacheSupport.setCache(cache);
+    public void setCache(@NonNull ConcurrentMap cache) {
+        Objects.requireNonNull(cache);
+        this.cacheSupport.set(cache);
     }
 
     private SdmxFileSet getFiles(String name) throws IOException {

@@ -18,15 +18,12 @@ package internal.web;
 
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -37,7 +34,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @lombok.Builder(builderClassName = "Builder")
 @ThreadSafe
-public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
+public final class SdmxWebDriverSupport implements SdmxWebDriver {
 
     @lombok.Getter
     @lombok.NonNull
@@ -58,14 +55,10 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
     @lombok.NonNull
     private final Clock clock;
 
-    @lombok.NonNull
-    private final HasCache cacheSupport;
-
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
         return new Builder()
-                .clock(Clock.systemDefaultZone())
-                .cacheSupport(HasCache.of(ConcurrentHashMap::new));
+                .clock(Clock.systemDefaultZone());
     }
 
     @Override
@@ -90,19 +83,9 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver, HasCache {
         return supportedProperties;
     }
 
-    @Override
-    public ConcurrentMap getCache() {
-        return cacheSupport.getCache();
-    }
-
-    @Override
-    public void setCache(ConcurrentMap cache) {
-        cacheSupport.setCache(cache);
-    }
-
     private SdmxWebClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
         SdmxWebClient origin = client.get(source, context);
-        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, context.getLanguages()), getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
+        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, context.getLanguages()), context.getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
         return cached;
     }
 

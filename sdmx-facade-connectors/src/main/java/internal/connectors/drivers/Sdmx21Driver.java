@@ -16,7 +16,6 @@
  */
 package internal.connectors.drivers;
 
-import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
@@ -37,7 +36,7 @@ import nbbrd.service.ServiceProvider;
  * @author Philippe Charles
  */
 @ServiceProvider(SdmxWebDriver.class)
-public final class Sdmx21Driver implements SdmxWebDriver, HasCache {
+public final class Sdmx21Driver implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport

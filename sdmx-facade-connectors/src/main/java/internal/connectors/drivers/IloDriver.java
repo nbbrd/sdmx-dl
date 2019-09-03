@@ -17,7 +17,6 @@
 package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxFix.Category.ENDPOINT;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -43,7 +42,7 @@ import nbbrd.service.ServiceProvider;
  * @author Philippe Charles
  */
 @ServiceProvider(SdmxWebDriver.class)
-public final class IloDriver implements SdmxWebDriver, HasCache {
+public final class IloDriver implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport

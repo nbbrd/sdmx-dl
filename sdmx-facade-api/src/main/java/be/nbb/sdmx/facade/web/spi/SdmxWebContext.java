@@ -19,6 +19,8 @@ package be.nbb.sdmx.facade.web.spi;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebManager;
 import java.net.ProxySelector;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -43,12 +45,16 @@ public class SdmxWebContext {
     @lombok.NonNull
     Logger logger;
 
+    @lombok.NonNull
+    ConcurrentMap cache;
+
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
         return new Builder()
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .logger(Logger.getLogger(SdmxWebManager.class.getName()));
+                .logger(Logger.getLogger(SdmxWebManager.class.getName()))
+                .cache(new ConcurrentHashMap());
     }
 }

@@ -36,6 +36,8 @@ import be.nbb.sdmx.facade.SdmxManager;
 import internal.util.SdmxWebDriverLoader;
 import internal.util.SdmxWebDriverProc;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -136,6 +138,16 @@ public final class SdmxWebManager implements SdmxManager {
     public void setLogger(@Nullable Logger logger) {
         Logger newObj = logger != null ? logger : getDefaultLogger();
         context.set(context.get().toBuilder().logger(newObj).build());
+    }
+
+    @NonNull
+    public ConcurrentMap getCache() {
+        return context.get().getCache();
+    }
+
+    public void setCache(@Nullable ConcurrentMap cache) {
+        ConcurrentMap newObj = cache != null ? cache : new ConcurrentHashMap();
+        context.set(context.get().toBuilder().cache(newObj).build());
     }
 
     @NonNull

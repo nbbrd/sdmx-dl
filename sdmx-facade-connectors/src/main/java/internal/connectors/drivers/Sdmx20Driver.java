@@ -18,7 +18,6 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.connectors.Connectors.*;
-import be.nbb.sdmx.facade.util.HasCache;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import java.util.Map;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -33,7 +32,7 @@ import nbbrd.service.ServiceProvider;
  * @author Philippe Charles
  */
 @ServiceProvider(SdmxWebDriver.class)
-public final class Sdmx20Driver implements SdmxWebDriver, HasCache {
+public final class Sdmx20Driver implements SdmxWebDriver {
 
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport

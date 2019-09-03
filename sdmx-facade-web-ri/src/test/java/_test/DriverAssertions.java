@@ -16,7 +16,6 @@
  */
 package _test;
 
-import be.nbb.sdmx.facade.util.HasCache;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import static org.assertj.core.api.Assertions.*;
@@ -31,10 +30,6 @@ public class DriverAssertions {
 
     @SuppressWarnings("null")
     public void assertDriverCompliance(SdmxWebDriver d) {
-        if (d instanceof HasCache) {
-            CacheAssertions.assertCacheBehavior((HasCache) d);
-        }
-
         SdmxWebSource validSource = SdmxWebSource
                 .builder()
                 .name("valid")
