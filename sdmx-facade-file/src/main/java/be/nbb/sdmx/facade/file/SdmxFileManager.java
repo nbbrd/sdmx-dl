@@ -31,36 +31,46 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReference;
-import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialectLoader;
-import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.experimental.Wither
 public final class SdmxFileManager implements SdmxManager {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
-        return new SdmxFileManager(
-                new AtomicReference<>(LanguagePriorityList.ANY),
-                new StaxSdmxDecoder(),
-                new AtomicReference<>(new ConcurrentHashMap<>()),
-                new SdmxDialectLoader().get()
-        );
+        return builder().dialects(new SdmxDialectLoader().get()).build();
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
-    private final AtomicReference<LanguagePriorityList> languages;
+    @lombok.NonNull
+    private final LanguagePriorityList languages;
+
+    @lombok.NonNull
     private final SdmxDecoder decoder;
-    private final AtomicReference<ConcurrentMap> cacheSupport;
+
+    @lombok.NonNull
+    private final ConcurrentMap cache;
+
+    @lombok.NonNull
+    @lombok.Singular
     private final List<SdmxDialect> dialects;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .languages(LanguagePriorityList.ANY)
+                .decoder(new StaxSdmxDecoder())
+                .cache(new ConcurrentHashMap<>());
+    }
 
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {
@@ -72,25 +82,6 @@ public final class SdmxFileManager implements SdmxManager {
         return new SdmxFileConnectionImpl(getResource(files), getDataflow(files));
     }
 
-    @Override
-    public LanguagePriorityList getLanguages() {
-        return languages.get();
-    }
-
-    public void setLanguages(@NonNull LanguagePriorityList languages) {
-        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
-    }
-
-    @NonNull
-    public ConcurrentMap getCache() {
-        return cacheSupport.get();
-    }
-
-    public void setCache(@NonNull ConcurrentMap cache) {
-        Objects.requireNonNull(cache);
-        this.cacheSupport.set(cache);
-    }
-
     private SdmxFileSet getFiles(String name) throws IOException {
         try {
             return SdmxFileUtil.fromXml(name);
@@ -100,7 +91,7 @@ public final class SdmxFileManager implements SdmxManager {
     }
 
     private SdmxFileConnectionImpl.Resource getResource(SdmxFileSet files) {
-        return new CachedResource(files, languages.get(), decoder, getDataFactory(files), getCache());
+        return new CachedResource(files, languages, decoder, getDataFactory(files), cache);
     }
 
     private Dataflow getDataflow(SdmxFileSet files) {

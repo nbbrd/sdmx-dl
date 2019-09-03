@@ -21,34 +21,29 @@ import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import java.io.IOException;
 import java.net.ProxySelector;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import lombok.AccessLevel;
 import be.nbb.sdmx.facade.SdmxManager;
 import internal.util.SdmxWebDriverLoader;
-import internal.util.SdmxWebDriverProc;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.StreamSupport;
+import javax.net.ssl.HttpsURLConnection;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-@lombok.extern.java.Log
+@lombok.Value
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.experimental.Wither
 public final class SdmxWebManager implements SdmxManager {
 
     @NonNull
@@ -62,23 +57,53 @@ public final class SdmxWebManager implements SdmxManager {
     }
 
     @NonNull
-    public static SdmxWebManager of(@NonNull Iterable<SdmxWebDriver> drivers) {
-        List<SdmxWebDriver> orderedList = SdmxWebDriverProc.INSTANCE
-                .apply(StreamSupport.stream(drivers.spliterator(), false))
-                .collect(Collectors.toList());
-        return new SdmxWebManager(orderedList, sourcesOf(orderedList));
+    public static SdmxWebManager of(@NonNull List<SdmxWebDriver> drivers) {
+        return SdmxWebManager
+                .builder()
+                .drivers(drivers)
+                .sources(sourcesOf(drivers))
+                .build();
     }
 
-    private static CopyOnWriteArrayList sourcesOf(List<SdmxWebDriver> drivers) {
+    private static List<SdmxWebSource> sourcesOf(List<SdmxWebDriver> drivers) {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
-                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+                .collect(Collectors.toList());
     }
 
-    private final AtomicReference<SdmxWebContext> context = new AtomicReference<>(SdmxWebContext.builder().build());
+    @lombok.NonNull
+    @lombok.Singular
     private final List<SdmxWebDriver> drivers;
-    private final CopyOnWriteArrayList<SdmxWebSource> sources;
+
+    @lombok.NonNull
+    @lombok.Singular
+    private final List<SdmxWebSource> sources;
+
+    @lombok.NonNull
+    private final LanguagePriorityList languages;
+
+    @lombok.NonNull
+    private final ProxySelector proxySelector;
+
+    @lombok.NonNull
+    private final SSLSocketFactory sslSocketFactory;
+
+    @lombok.NonNull
+    private final Logger logger;
+
+    @lombok.NonNull
+    private final ConcurrentMap cache;
+
+    // Fix lombok.Builder.Default bug in NetBeans
+    public static Builder builder() {
+        return new Builder()
+                .languages(LanguagePriorityList.ANY)
+                .proxySelector(ProxySelector.getDefault())
+                .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
+                .logger(Logger.getLogger(SdmxWebManager.class.getName()))
+                .cache(new ConcurrentHashMap());
+    }
 
     @Override
     public SdmxWebConnection getConnection(String name) throws IOException {
@@ -97,67 +122,15 @@ public final class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return driver.connect(source, context.get());
-    }
-
-    @Override
-    public LanguagePriorityList getLanguages() {
-        return context.get().getLanguages();
-    }
-
-    public void setLanguages(@NonNull LanguagePriorityList languages) {
-        LanguagePriorityList newObj = languages != null ? languages : LanguagePriorityList.ANY;
-        this.context.set(context.get().toBuilder().languages(newObj).build());
-    }
-
-    @NonNull
-    public ProxySelector getProxySelector() {
-        return context.get().getProxySelector();
-    }
-
-    public void setProxySelector(@Nullable ProxySelector proxySelector) {
-        ProxySelector newObj = proxySelector != null ? proxySelector : getDefaultProxySelector();
-        context.set(context.get().toBuilder().proxySelector(newObj).build());
-    }
-
-    @NonNull
-    public SSLSocketFactory getSSLSocketFactory() {
-        return context.get().getSslSocketFactory();
-    }
-
-    public void setSSLSocketFactory(@Nullable SSLSocketFactory sslSocketFactory) {
-        SSLSocketFactory newObj = sslSocketFactory != null ? sslSocketFactory : getDefaultSSLSocketFactory();
-        context.set(context.get().toBuilder().sslSocketFactory(newObj).build());
-    }
-
-    @NonNull
-    public Logger getLogger() {
-        return context.get().getLogger();
-    }
-
-    public void setLogger(@Nullable Logger logger) {
-        Logger newObj = logger != null ? logger : getDefaultLogger();
-        context.set(context.get().toBuilder().logger(newObj).build());
-    }
-
-    @NonNull
-    public ConcurrentMap getCache() {
-        return context.get().getCache();
-    }
-
-    public void setCache(@Nullable ConcurrentMap cache) {
-        ConcurrentMap newObj = cache != null ? cache : new ConcurrentHashMap();
-        context.set(context.get().toBuilder().cache(newObj).build());
-    }
-
-    @NonNull
-    public List<SdmxWebSource> getSources() {
-        return Collections.unmodifiableList(sources);
-    }
-
-    public void setSources(@NonNull List<SdmxWebSource> list) {
-        sources.clear();
-        sources.addAll(list);
+        return driver.connect(source,
+                SdmxWebContext
+                        .builder()
+                        .cache(cache)
+                        .languages(languages)
+                        .logger(logger)
+                        .proxySelector(proxySelector)
+                        .sslSocketFactory(sslSocketFactory)
+                        .build());
     }
 
     @NonNull
@@ -189,17 +162,5 @@ public final class SdmxWebManager implements SdmxManager {
                 .stream()
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();
-    }
-
-    private static ProxySelector getDefaultProxySelector() {
-        return ProxySelector.getDefault();
-    }
-
-    private static SSLSocketFactory getDefaultSSLSocketFactory() {
-        return HttpsURLConnection.getDefaultSSLSocketFactory();
-    }
-
-    private static Logger getDefaultLogger() {
-        return Logger.getLogger(SdmxWebManager.class.getName());
     }
 }

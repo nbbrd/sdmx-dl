@@ -65,7 +65,7 @@ public class SdmxWebManagerTest {
         SdmxWebDriver driver1 = MockedWebDriver.builder().name("d1").rank(SdmxWebDriver.WRAPPED_RANK).build();
         SdmxWebDriver driver2 = MockedWebDriver.builder().name("d2").rank(SdmxWebDriver.NATIVE_RANK).build();
 
-        assertThat(SdmxWebManager.of(driver1, driver2).getDrivers())
+        assertThat(SdmxWebManager.of(driver2, driver1).getDrivers())
                 .containsExactlyElementsOf(SdmxWebManager.of(driver2, driver1).getDrivers())
                 .containsExactly(driver2.getName(), driver1.getName());
     }
@@ -78,7 +78,7 @@ public class SdmxWebManagerTest {
         SdmxWebSource source2 = SdmxWebSource.builder().name("source").driver("d2").endpointOf("http://xyz").build();
         SdmxWebDriver driver2 = MockedWebDriver.builder().name("d2").rank(SdmxWebDriver.NATIVE_RANK).source(source2).build();
 
-        assertThat(SdmxWebManager.of(driver1, driver2).getSources())
+        assertThat(SdmxWebManager.of(driver2, driver1).getSources())
                 .containsExactlyElementsOf(SdmxWebManager.of(driver2, driver1).getSources())
                 .containsExactly(source2, source1);
     }
@@ -112,7 +112,7 @@ public class SdmxWebManagerTest {
                 .source(SdmxWebSource.builder().name("source").driver("d2").endpointOf("http://xyz").build())
                 .build();
 
-        try (SdmxWebConnection c = SdmxWebManager.of(driver1, driver2).getConnection("source")) {
+        try (SdmxWebConnection c = SdmxWebManager.of(driver2, driver1).getConnection("source")) {
             assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
     }
