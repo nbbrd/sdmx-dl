@@ -19,7 +19,6 @@ package be.nbb.sdmx.facade;
 import java.io.IOException;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -33,6 +32,4 @@ public interface SdmxManager {
 
     @NonNull
     LanguagePriorityList getLanguages();
-
-    void setLanguages(@Nullable LanguagePriorityList languages);
 }

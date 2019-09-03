@@ -18,6 +18,7 @@ package be.nbb.sdmx.facade;
 
 import static be.nbb.sdmx.facade.LanguagePriorityList.ANY;
 import static be.nbb.sdmx.facade.LanguagePriorityList.parse;
+import static be.nbb.sdmx.facade.LanguagePriorityList.tryParse;
 import java.util.Arrays;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
@@ -38,6 +39,18 @@ public class LanguagePriorityListTest {
         assertThat(parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
         assertThatIllegalArgumentException().isThrownBy(() -> parse("fr-BE;"));
         assertThatNullPointerException().isThrownBy(() -> parse(null));
+    }
+
+    @Test
+    @SuppressWarnings("null")
+    public void testTryParse() {
+        assertThat(tryParse("*")).get().hasToString("*");
+        assertThat(tryParse("fr")).get().hasToString("fr");
+        assertThat(tryParse("fr-BE")).get().hasToString("fr-be");
+        assertThat(tryParse("fr-BE,fr;q=0.5")).get().hasToString("fr-be,fr;q=0.5");
+        assertThat(tryParse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).get().hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
+        assertThat(tryParse("fr-BE;")).isEmpty();
+        assertThatNullPointerException().isThrownBy(() -> tryParse(null));
     }
 
     @Test

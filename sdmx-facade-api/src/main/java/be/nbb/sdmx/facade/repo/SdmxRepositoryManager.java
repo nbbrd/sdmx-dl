@@ -21,7 +21,6 @@ import be.nbb.sdmx.facade.SdmxConnection;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import be.nbb.sdmx.facade.SdmxManager;
 
 /**
@@ -31,8 +30,6 @@ import be.nbb.sdmx.facade.SdmxManager;
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
 public final class SdmxRepositoryManager implements SdmxManager {
-
-    private final AtomicReference<LanguagePriorityList> languages = new AtomicReference<>(LanguagePriorityList.ANY);
 
     @lombok.NonNull
     @lombok.Singular
@@ -51,11 +48,6 @@ public final class SdmxRepositoryManager implements SdmxManager {
 
     @Override
     public LanguagePriorityList getLanguages() {
-        return languages.get();
-    }
-
-    @Override
-    public void setLanguages(LanguagePriorityList languages) {
-        this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
+        return LanguagePriorityList.ANY;
     }
 }

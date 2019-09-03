@@ -41,7 +41,6 @@ public final class ConnectionSupplierAssert {
     public static void assertCompliance(SoftAssertions s, SdmxManager manager, String name, String invalidName) throws Exception {
         assertNonnull(s, manager);
 
-        s.assertThatCode(() -> manager.setLanguages(null)).doesNotThrowAnyException();
         s.assertThat(manager.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
 
         s.assertThatThrownBy(() -> manager.getConnection(invalidName)).isInstanceOf(IOException.class);

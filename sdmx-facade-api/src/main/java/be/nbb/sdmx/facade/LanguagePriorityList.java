@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -58,6 +59,15 @@ public final class LanguagePriorityList {
     @NonNull
     public static LanguagePriorityList parse(@NonNull String ranges) throws IllegalArgumentException {
         return new LanguagePriorityList(Locale.LanguageRange.parse(ranges));
+    }
+
+    @NonNull
+    public static Optional<LanguagePriorityList> tryParse(@NonNull String ranges) {
+        try {
+            return Optional.of(parse(ranges));
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
     }
 
     private final List<Locale.LanguageRange> list;

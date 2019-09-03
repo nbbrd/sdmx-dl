@@ -77,8 +77,7 @@ public final class SdmxFileManager implements SdmxManager, HasCache {
         return languages.get();
     }
 
-    @Override
-    public void setLanguages(LanguagePriorityList languages) {
+    public void setLanguages(@NonNull LanguagePriorityList languages) {
         this.languages.set(languages != null ? languages : LanguagePriorityList.ANY);
     }
 

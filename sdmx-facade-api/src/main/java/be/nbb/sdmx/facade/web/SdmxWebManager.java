@@ -103,8 +103,7 @@ public final class SdmxWebManager implements SdmxManager {
         return context.get().getLanguages();
     }
 
-    @Override
-    public void setLanguages(LanguagePriorityList languages) {
+    public void setLanguages(@NonNull LanguagePriorityList languages) {
         LanguagePriorityList newObj = languages != null ? languages : LanguagePriorityList.ANY;
         this.context.set(context.get().toBuilder().languages(newObj).build());
     }
