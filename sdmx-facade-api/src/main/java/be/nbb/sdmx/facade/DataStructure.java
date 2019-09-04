@@ -29,7 +29,7 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-public class DataStructure implements HasLabel {
+public class DataStructure {
 
     /**
      * Non-null unique reference to this data structure.
@@ -49,6 +49,9 @@ public class DataStructure implements HasLabel {
 
     String primaryMeasureId;
 
+    /**
+     * Localized label for this data structure.
+     */
     @lombok.NonNull
     String label;
 }

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util;
+package internal.facade;
 
 import be.nbb.sdmx.facade.ResourceRef;
 import static be.nbb.sdmx.facade.ResourceRef.ALL_AGENCIES;

@@ -16,7 +16,7 @@
  */
 package be.nbb.sdmx.facade;
 
-import internal.util.ResourceRefs;
+import internal.facade.ResourceRefs;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

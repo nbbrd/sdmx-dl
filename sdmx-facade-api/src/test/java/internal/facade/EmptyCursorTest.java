@@ -14,22 +14,29 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade;
+package internal.facade;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import be.nbb.sdmx.facade.DataCursor;
+import be.nbb.sdmx.facade.DataFilter;
+import java.io.IOException;
+import static org.assertj.core.api.Assertions.*;
+import org.junit.Test;
 
 /**
- * Defines the ability to get a localized label from a resource.
  *
  * @author Philippe Charles
  */
-public interface HasLabel {
+public class EmptyCursorTest {
 
-    /**
-     * Gets a localized label for this resource.
-     *
-     * @return a non-null label
-     */
-    @NonNull
-    String getLabel();
+    @Test
+    @SuppressWarnings("null")
+    public void testToStream() throws IOException {
+        try (DataCursor c = new EmptyCursor()) {
+            assertThat(c.toStream(DataFilter.Detail.FULL)).isEmpty();
+        }
+
+        try (DataCursor c = new EmptyCursor()) {
+            assertThatNullPointerException().isThrownBy(() -> c.toStream(null));
+        }
+    }
 }

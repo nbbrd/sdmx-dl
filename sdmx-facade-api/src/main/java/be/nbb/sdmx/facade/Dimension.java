@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class Dimension implements HasLabel {
+public class Dimension {
 
     @lombok.NonNull
     String id;
@@ -41,6 +41,9 @@ public class Dimension implements HasLabel {
     @lombok.Singular
     Map<String, String> codes;
 
+    /**
+     * Localized label for this dimension.
+     */
     @lombok.NonNull
     String label;
 }

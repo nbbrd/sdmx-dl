@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util;
+package internal.facade.web.spi;
 
 import be.nbb.sdmx.facade.DataCursor;
 import be.nbb.sdmx.facade.DataFilter;

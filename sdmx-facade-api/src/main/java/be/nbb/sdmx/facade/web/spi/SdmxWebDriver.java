@@ -18,7 +18,7 @@ package be.nbb.sdmx.facade.web.spi;
 
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import internal.util.SdmxWebDriverProc;
+import internal.facade.web.spi.SdmxWebDriverProc;
 import java.io.IOException;
 import java.util.Collection;
 import nbbrd.service.Quantifier;

@@ -16,10 +16,10 @@
  */
 package be.nbb.sdmx.facade;
 
-import internal.util.EmptyCursor;
-import internal.util.SeriesCursor;
-import internal.util.SeriesFactory;
-import internal.util.SeriesIterator;
+import internal.facade.EmptyCursor;
+import internal.facade.SeriesCursor;
+import internal.facade.SeriesFactory;
+import internal.facade.SeriesIterator;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;

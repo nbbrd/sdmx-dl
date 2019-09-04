@@ -16,6 +16,7 @@
  */
 package internal.util;
 
+import internal.facade.EmptyCursor;
 import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import org.junit.Test;
 
