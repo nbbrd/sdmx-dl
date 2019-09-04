@@ -16,6 +16,7 @@
  */
 package internal.web.drivers;
 
+import be.nbb.sdmx.facade.web.SdmxWebManager;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
@@ -49,7 +50,7 @@ class RestClients {
                 SdmxWebProperty.getMaxRedirects(o.getProperties()),
                 context.getProxySelector(),
                 context.getSslSocketFactory(),
-                new Listener(context.getLogger()),
+                EventLogger.INSTANCE,
                 validator
         );
     }
@@ -62,10 +63,12 @@ class RestClients {
             ));
 
     @lombok.AllArgsConstructor
-    private static final class Listener implements RestClientImpl.EventListener {
+    private enum EventLogger implements RestClientImpl.EventListener {
 
+        INSTANCE;
+        
         @lombok.NonNull
-        private final Logger logger;
+        private final Logger logger = Logger.getLogger(SdmxWebManager.class.getName());
 
         @Override
         public void onOpenStream(URL query, String mediaType, String langs) {

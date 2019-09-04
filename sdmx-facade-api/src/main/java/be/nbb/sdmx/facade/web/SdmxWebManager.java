@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.net.ssl.SSLSocketFactory;
 import be.nbb.sdmx.facade.SdmxManager;
@@ -90,9 +89,6 @@ public final class SdmxWebManager implements SdmxManager {
     private final SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
-    private final Logger logger;
-
-    @lombok.NonNull
     private final ConcurrentMap cache;
 
     // Fix lombok.Builder.Default bug in NetBeans
@@ -101,7 +97,6 @@ public final class SdmxWebManager implements SdmxManager {
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .logger(Logger.getLogger(SdmxWebManager.class.getName()))
                 .cache(new ConcurrentHashMap());
     }
 
@@ -127,7 +122,6 @@ public final class SdmxWebManager implements SdmxManager {
                         .builder()
                         .cache(cache)
                         .languages(languages)
-                        .logger(logger)
                         .proxySelector(proxySelector)
                         .sslSocketFactory(sslSocketFactory)
                         .build());
