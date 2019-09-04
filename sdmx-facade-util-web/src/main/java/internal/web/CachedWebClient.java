@@ -22,14 +22,14 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.Key;
+import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
-import java.time.Clock;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import be.nbb.sdmx.facade.SdmxCache;
+import be.nbb.sdmx.facade.web.SdmxWebSource;
 
 /**
  *
@@ -37,21 +37,29 @@ import java.util.concurrent.ConcurrentMap;
  */
 final class CachedWebClient implements SdmxWebClient {
 
-    static CachedWebClient of(SdmxWebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
-        return new CachedWebClient(delegate, base, cache, clock, ttlInMillis);
+    static SdmxWebClient of(SdmxWebClient origin, SdmxCache cache, long ttlInMillis, SdmxWebSource source, LanguagePriorityList languages) {
+        String base = source.getEndpoint().getHost() + languages.toString() + "/";
+        return new CachedWebClient(origin, cache, Duration.ofMillis(ttlInMillis), base);
     }
 
     @lombok.NonNull
     private final SdmxWebClient delegate;
-    private final TtlCache cache;
+
+    @lombok.NonNull
+    private final SdmxCache cache;
+
+    @lombok.NonNull
+    private final Duration ttl;
+
     private final TypedId<List<Dataflow>> idOfFlows;
     private final TypedId<Dataflow> idOfFlow;
     private final TypedId<DataStructure> idOfStruct;
     private final TypedId<SdmxRepository> idOfKeysOnly;
 
-    CachedWebClient(SdmxWebClient delegate, String base, ConcurrentMap cache, Clock clock, long ttlInMillis) {
+    CachedWebClient(SdmxWebClient delegate, SdmxCache cache, Duration ttl, String base) {
         this.delegate = delegate;
-        this.cache = TtlCache.of(cache, clock, ttlInMillis);
+        this.cache = cache;
+        this.ttl = ttl;
         this.idOfFlows = TypedId.of("flows://" + base);
         this.idOfFlow = TypedId.of("flow://" + base);
         this.idOfStruct = TypedId.of("struct://" + base);
@@ -105,37 +113,37 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private List<Dataflow> loadDataFlowsWithCache() throws IOException {
-        List<Dataflow> result = cache.get(idOfFlows);
+        List<Dataflow> result = idOfFlows.load(cache);
         if (result == null) {
             result = delegate.getFlows();
-            cache.put(idOfFlows, result);
+            idOfFlows.store(cache, result, ttl);
         }
         return result;
     }
 
     private DataStructure loadDataStructureWithCache(DataStructureRef ref) throws IOException {
         TypedId<DataStructure> id = idOfStruct.with(ref);
-        DataStructure result = cache.get(id);
+        DataStructure result = id.load(cache);
         if (result == null) {
             result = delegate.getStructure(ref);
-            cache.put(id, result);
+            id.store(cache, result, ttl);
         }
         return result;
     }
 
     private SdmxRepository loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
         TypedId<SdmxRepository> id = idOfKeysOnly.with(request.getFlowRef());
-        SdmxRepository result = cache.get(id);
+        SdmxRepository result = id.load(cache);
         if (result == null || isBroaderRequest(request.getKey(), result)) {
             result = copyDataKeys(request, dsd);
-            cache.put(id, result);
+            id.store(cache, result, ttl);
         }
         return result;
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
         // check if dataflow has been already loaded by #loadDataFlowsById
-        List<Dataflow> dataFlows = cache.get(idOfFlows);
+        List<Dataflow> dataFlows = idOfFlows.load(cache);
         if (dataFlows == null) {
             return null;
         }
@@ -150,10 +158,10 @@ final class CachedWebClient implements SdmxWebClient {
 
     private Dataflow loadDataflowWithCache(DataflowRef ref) throws IOException {
         TypedId<Dataflow> id = idOfFlow.with(ref);
-        Dataflow result = cache.get(id);
+        Dataflow result = id.load(cache);
         if (result == null) {
             result = delegate.getFlow(ref);
-            cache.put(id, result);
+            id.store(cache, result, ttl);
         }
         return result;
     }

@@ -24,15 +24,13 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import be.nbb.sdmx.facade.util.TtlCache;
 import be.nbb.sdmx.facade.util.TypedId;
 import java.io.IOException;
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import be.nbb.sdmx.facade.SdmxCache;
+import java.time.Duration;
 
 /**
  *
@@ -41,16 +39,15 @@ import java.util.stream.Collectors;
 public final class CachedResource extends SdmxDecoderResource {
 
     // TODO: replace ttl with file last modification time
-    private static final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
-    private static final Clock CLOCK = Clock.systemDefaultZone();
+    private static final Duration DEFAULT_CACHE_TTL = Duration.ofMinutes(5);
 
-    private final TtlCache cache;
+    private final SdmxCache cache;
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<List<Series>> loadDataKey;
 
-    public CachedResource(SdmxFileSet files, LanguagePriorityList languages, SdmxDecoder decoder, Optional<DataFactory> dataFactory, ConcurrentMap cache) {
+    public CachedResource(SdmxFileSet files, LanguagePriorityList languages, SdmxDecoder decoder, Optional<DataFactory> dataFactory, SdmxCache cache) {
         super(files, languages, decoder, dataFactory);
-        this.cache = TtlCache.of(cache, CLOCK, DEFAULT_CACHE_TTL);
+        this.cache = cache;
         String base = SdmxFileUtil.toXml(files) + languages.toString();
         this.decodeKey = TypedId.of("decode://" + base);
         this.loadDataKey = TypedId.of("loadData://" + base);
@@ -58,10 +55,10 @@ public final class CachedResource extends SdmxDecoderResource {
 
     @Override
     public SdmxDecoder.Info decode() throws IOException {
-        SdmxDecoder.Info result = cache.get(decodeKey);
+        SdmxDecoder.Info result = decodeKey.load(cache);
         if (result == null) {
             result = super.decode();
-            cache.put(decodeKey, result);
+            decodeKey.store(cache, result, DEFAULT_CACHE_TTL);
         }
         return result;
     }
@@ -69,10 +66,10 @@ public final class CachedResource extends SdmxDecoderResource {
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            List<Series> result = cache.get(loadDataKey);
+            List<Series> result = loadDataKey.load(cache);
             if (result == null) {
                 result = copyOfKeysAndMeta(entry, flowRef, key);
-                cache.put(loadDataKey, result);
+                loadDataKey.store(cache, result, DEFAULT_CACHE_TTL);
             }
             return DataCursor.of(result, key);
         }

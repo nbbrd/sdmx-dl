@@ -14,9 +14,10 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package internal.facade;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,18 +29,18 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class TtlCacheTest {
+public class DefaultSdmxCacheTest {
 
     @Test
     public void test() {
         ConcurrentMap cache = new ConcurrentHashMap();
-        assertThat((String) TtlCache.get(cache, "KEY1", of(1000))).isNull();
-        TtlCache.put(cache, "KEY1", "VALUE1", 10, of(1000));
-        assertThat((String) TtlCache.get(cache, "KEY1", of(1009))).isEqualTo("VALUE1");
-        assertThat((String) TtlCache.get(cache, "KEY1", of(1010))).isNull();
-        assertThat((String) TtlCache.get(cache, "KEY2", of(1009))).isNull();
-        TtlCache.put(cache, "KEY1", "VALUE2", 10, of(1009));
-        assertThat((String) TtlCache.get(cache, "KEY1", of(1010))).isEqualTo("VALUE2");
+        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1000))).isNull();
+        DefaultSdmxCache.put(cache, "KEY1", "VALUE1", Duration.ofMillis(10), of(1000));
+        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1009))).isEqualTo("VALUE1");
+        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1010))).isNull();
+        assertThat((String) DefaultSdmxCache.get(cache, "KEY2", of(1009))).isNull();
+        DefaultSdmxCache.put(cache, "KEY1", "VALUE2", Duration.ofMillis(10), of(1009));
+        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1010))).isEqualTo("VALUE2");
     }
 
     private static Clock of(long value) {

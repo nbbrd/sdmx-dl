@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.web;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.SdmxCache;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.Collection;
@@ -31,8 +32,6 @@ import be.nbb.sdmx.facade.SdmxManager;
 import internal.util.SdmxWebDriverLoader;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import javax.net.ssl.HttpsURLConnection;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -89,7 +88,7 @@ public final class SdmxWebManager implements SdmxManager {
     private final SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
-    private final ConcurrentMap cache;
+    private final SdmxCache cache;
 
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
@@ -97,7 +96,7 @@ public final class SdmxWebManager implements SdmxManager {
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .cache(new ConcurrentHashMap());
+                .cache(SdmxCache.of());
     }
 
     @Override

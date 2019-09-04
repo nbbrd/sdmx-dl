@@ -33,6 +33,8 @@ import _test.samples.FacadeResource;
 import static _test.samples.FacadeResource.ECB_FLOW_REF;
 import static _test.samples.FacadeResource.ECB_STRUCT_REF;
 import _test.client.XRepoWebClient;
+import be.nbb.sdmx.facade.SdmxCache;
+import java.time.Duration;
 
 /**
  *
@@ -46,7 +48,7 @@ public class CachedWebClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
 
         target.getFlows();
         assertThat(count).hasValue(1);
@@ -73,7 +75,7 @@ public class CachedWebClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
 
@@ -108,7 +110,7 @@ public class CachedWebClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
 
@@ -137,7 +139,7 @@ public class CachedWebClientTest {
         ConcurrentHashMap cache = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), "", cache, clock, 100);
+        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
 

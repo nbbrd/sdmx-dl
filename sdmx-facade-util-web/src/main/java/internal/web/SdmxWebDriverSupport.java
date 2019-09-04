@@ -16,12 +16,10 @@
  */
 package internal.web;
 
-import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 import java.io.IOException;
-import java.time.Clock;
 import java.util.Collection;
 import java.util.Objects;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
@@ -52,13 +50,10 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     @lombok.Singular
     private final Collection<String> supportedProperties;
 
-    @lombok.NonNull
-    private final Clock clock;
-
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
         return new Builder()
-                .clock(Clock.systemDefaultZone());
+                .rank(UNKNOWN);
     }
 
     @Override
@@ -84,13 +79,12 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     }
 
     private SdmxWebClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
-        SdmxWebClient origin = client.get(source, context);
-        SdmxWebClient cached = CachedWebClient.of(origin, getBase(source, context.getLanguages()), context.getCache(), clock, SdmxWebProperty.getCacheTtl(source.getProperties()));
-        return cached;
-    }
-
-    private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
-        return source.getEndpoint().getHost() + languages.toString() + "/";
+        return CachedWebClient.of(
+                client.get(source, context),
+                context.getCache(),
+                SdmxWebProperty.getCacheTtl(source.getProperties()),
+                source,
+                context.getLanguages());
     }
 
     public static final class Builder {

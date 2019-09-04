@@ -18,6 +18,9 @@ package be.nbb.sdmx.facade.util;
 
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import be.nbb.sdmx.facade.SdmxCache;
+import java.time.Duration;
 
 /**
  *
@@ -48,5 +51,14 @@ public final class TypedId<T> {
     public TypedId<T> with(@NonNull Object o) {
         Objects.requireNonNull(o);
         return new TypedId<>(content + o);
+    }
+
+    @Nullable
+    public T load(@NonNull SdmxCache cache) {
+        return (T) cache.get(this);
+    }
+
+    public void store(@NonNull SdmxCache cache, @NonNull T value, Duration ttl) {
+        cache.put(this, value, ttl);
     }
 }

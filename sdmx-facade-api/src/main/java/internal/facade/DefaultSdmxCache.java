@@ -14,46 +14,40 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.util;
+package internal.facade;
 
 import java.time.Clock;
 import java.util.concurrent.ConcurrentMap;
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import be.nbb.sdmx.facade.SdmxCache;
+import java.time.Duration;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class TtlCache {
+@lombok.AllArgsConstructor
+public final class DefaultSdmxCache implements SdmxCache {
 
-    @NonNull
-    public static TtlCache of(@NonNull ConcurrentMap cache, @NonNull Clock clock, @NonNegative long ttlInMillis) {
-        return new TtlCache(cache, clock, ttlInMillis);
-    }
-
+    @lombok.NonNull
     private final ConcurrentMap cache;
+
+    @lombok.NonNull
     private final Clock clock;
-    private final long ttlInMillis;
 
-    private TtlCache(ConcurrentMap cache, Clock clock, long ttlInMillis) {
-        this.cache = cache;
-        this.clock = clock;
-        this.ttlInMillis = ttlInMillis;
-    }
-
-    @Nullable
-    public <T> T get(@NonNull TypedId<T> key) {
+    @Override
+    public Object get(Object key) {
         return get(cache, key, clock);
     }
 
-    public <T> void put(@NonNull TypedId<T> key, @NonNull T value) {
-        put(cache, key, value, ttlInMillis, clock);
+    @Override
+    public void put(Object key, Object value, Duration ttl) {
+        put(cache, key, value, ttl, clock);
     }
 
     @Nullable
-    public static <X> X get(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Clock clock) {
+    static Object get(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Clock clock) {
         Entry entry = (Entry) cache.get(key);
         if (entry == null) {
             return null;
@@ -62,19 +56,17 @@ public final class TtlCache {
             cache.remove(key);
             return null;
         }
-        return (X) entry.getValue();
+        return entry.getValue();
     }
 
-    public static void put(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Object value, @NonNegative long ttlInMillis, @NonNull Clock clock) {
-        cache.put(key, new Entry(clock.millis() + ttlInMillis, value));
+    static void put(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Object value, @NonNull Duration ttl, @NonNull Clock clock) {
+        cache.put(key, new Entry(clock.millis() + ttl.toMillis(), value));
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @lombok.Value
     private static class Entry {
 
         long expirationTimeInMillis;
         Object value;
     }
-    //</editor-fold>
 }

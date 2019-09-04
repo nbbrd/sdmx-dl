@@ -19,6 +19,7 @@ package be.nbb.sdmx.facade.file;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.LanguagePriorityList;
+import be.nbb.sdmx.facade.SdmxCache;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import internal.file.CachedResource;
@@ -29,8 +30,6 @@ import internal.file.xml.StaxSdmxDecoder;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import be.nbb.sdmx.facade.SdmxManager;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialectLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -58,7 +57,7 @@ public final class SdmxFileManager implements SdmxManager {
     private final SdmxDecoder decoder;
 
     @lombok.NonNull
-    private final ConcurrentMap cache;
+    private final SdmxCache cache;
 
     @lombok.NonNull
     @lombok.Singular
@@ -69,7 +68,7 @@ public final class SdmxFileManager implements SdmxManager {
         return new Builder()
                 .languages(LanguagePriorityList.ANY)
                 .decoder(new StaxSdmxDecoder())
-                .cache(new ConcurrentHashMap<>());
+                .cache(SdmxCache.of());
     }
 
     @Override
