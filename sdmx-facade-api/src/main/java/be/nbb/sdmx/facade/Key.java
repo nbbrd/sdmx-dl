@@ -57,9 +57,13 @@ public final class Key {
         return WILDCARD.equals(items[index]);
     }
 
+    private boolean isMultiValue(@NonNegative int index) throws IndexOutOfBoundsException {
+        return items[index].contains("+");
+    }
+
     public boolean isSeries() {
         for (int i = 0; i < items.length; i++) {
-            if (isWildcard(i)) {
+            if (isWildcard(i) || isMultiValue(i)) {
                 return false;
             }
         }

@@ -110,6 +110,7 @@ public class KeyTest {
         assertThat(Key.ALL.isSeries()).isFalse();
         assertThat(Key.of("LOCSTL04", "*").isSeries()).isFalse();
         assertThat(Key.of("LOCSTL04", "AUS").isSeries()).isTrue();
+        assertThat(Key.of("USD+CHF").isSeries()).isFalse();
     }
 
     @Test
