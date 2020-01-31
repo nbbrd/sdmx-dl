@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
-import ioutil.IO;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
+import nbbrd.io.function.IOConsumer;
 
 /**
  *
@@ -40,10 +40,10 @@ import java.net.Proxy;
 class RestClients {
 
     public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return getRestClient(o, context, IO.Consumer.noOp());
+        return getRestClient(o, context, IOConsumer.noOp());
     }
 
-    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context, IO.Consumer<HttpURLConnection> validator) {
+    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context, IOConsumer<HttpURLConnection> validator) {
         return RestClientImpl.of(
                 SdmxWebProperty.getReadTimeout(o.getProperties()),
                 SdmxWebProperty.getConnectTimeout(o.getProperties()),

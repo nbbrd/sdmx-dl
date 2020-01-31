@@ -17,13 +17,13 @@
 package internal.util.drivers;
 
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import ioutil.Stax;
-import ioutil.Xml;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 
 /**
  *

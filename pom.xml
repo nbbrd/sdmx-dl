@@ -49,8 +49,13 @@
             <!-- dependencies  -->
             <dependency>
                 <groupId>be.nbb.rd</groupId>
-                <artifactId>java-io-util</artifactId>
-                <version>0.0.4</version>
+                <artifactId>java-io-base</artifactId>
+                <version>0.0.5-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-xml</artifactId>
+                <version>0.0.5-SNAPSHOT</version>
             </dependency>
             
             <!-- modules -->

@@ -29,7 +29,7 @@ import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.util.List;
 import internal.file.SdmxDecoder;
 import internal.file.SdmxFileUtil;
-import ioutil.Xml;
+import nbbrd.io.xml.Xml;
 
 /**
  *

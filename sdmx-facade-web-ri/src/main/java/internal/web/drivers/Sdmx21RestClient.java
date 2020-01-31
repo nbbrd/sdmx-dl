@@ -28,7 +28,6 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import internal.util.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,6 +35,7 @@ import java.util.List;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
 import internal.web.DataRequest;
+import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -123,7 +123,7 @@ class Sdmx21RestClient extends AbstractRestClient {
         return null;
     }
 
-    private IO.Supplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
+    private IOSupplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
         return () -> executor.openStream(query, mediaType, langs.toString());
     }
 

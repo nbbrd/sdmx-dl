@@ -23,11 +23,11 @@ import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.SdmxConnection;
 import be.nbb.sdmx.facade.Series;
-import ioutil.IO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import nbbrd.io.function.IOConsumer;
 import org.assertj.core.api.SoftAssertions;
 
 /**
@@ -122,7 +122,7 @@ public final class ConnectionAssert {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    private static void assertState(SoftAssertions s, Callable<SdmxConnection> supplier, IO.Consumer<SdmxConnection> consumer, String expression) throws Exception {
+    private static void assertState(SoftAssertions s, Callable<SdmxConnection> supplier, IOConsumer<SdmxConnection> consumer, String expression) throws Exception {
         try (SdmxConnection conn = supplier.call()) {
             conn.close();
             s.assertThatThrownBy(() -> consumer.acceptWithIO(conn))

@@ -32,8 +32,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.parser.Freqs;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
-import ioutil.Xml;
 import java.io.Closeable;
+import nbbrd.io.WrappedIOException;
 
 /**
  *
@@ -83,7 +83,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
-            throw new Xml.WrappedException(ex);
+            throw WrappedIOException.wrap(ex);
         }
     }
 
@@ -94,7 +94,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         try {
             return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
-            throw new Xml.WrappedException(ex);
+            throw WrappedIOException.wrap(ex);
         }
     }
 

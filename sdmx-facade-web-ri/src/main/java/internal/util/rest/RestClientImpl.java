@@ -16,7 +16,6 @@
  */
 package internal.util.rest;
 
-import ioutil.IO;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +34,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+import nbbrd.io.function.IOConsumer;
+import nbbrd.io.function.IOFunction;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -63,7 +64,7 @@ public final class RestClientImpl implements RestClient {
     private final EventListener listener;
 
     @lombok.NonNull
-    private final IO.Consumer<HttpURLConnection> validator;
+    private final IOConsumer<HttpURLConnection> validator;
 
     @Override
     public InputStream openStream(URL query, String mediaType, String langs) throws IOException {
@@ -211,14 +212,14 @@ public final class RestClientImpl implements RestClient {
         DEFLATE("deflate", InflaterInputStream::new);
 
         private final String name;
-        private final IO.Function<InputStream, InputStream> decoder;
+        private final IOFunction<InputStream, InputStream> decoder;
 
-        static IO.Function<InputStream, InputStream> getDecoder(@Nullable String name) {
+        static IOFunction<InputStream, InputStream> getDecoder(@Nullable String name) {
             return Stream.of(values())
                     .filter(o -> Objects.equals(name, o.name))
                     .map(o -> o.getDecoder())
                     .findAny()
-                    .orElse(IO.Function.identity());
+                    .orElse(IOFunction.identity());
         }
 
         static String getEncodingHeader() {

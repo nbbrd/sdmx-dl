@@ -18,14 +18,14 @@ package internal.file;
 
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.util.StaxUtil;
-import ioutil.Stax;
-import ioutil.Xml;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**

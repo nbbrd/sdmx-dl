@@ -20,9 +20,9 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import ioutil.Xml;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
+import nbbrd.io.xml.Xml;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 

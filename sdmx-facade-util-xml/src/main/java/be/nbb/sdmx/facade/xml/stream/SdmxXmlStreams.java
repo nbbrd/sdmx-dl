@@ -24,10 +24,10 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
 import be.nbb.util.StaxUtil;
-import ioutil.Stax;
-import ioutil.Xml;
 import java.io.IOException;
 import java.util.List;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**

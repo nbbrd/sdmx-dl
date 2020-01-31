@@ -16,8 +16,6 @@
  */
 package be.nbb.util;
 
-import ioutil.IO;
-import ioutil.Xml;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +30,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.Source;
+import nbbrd.io.Resource;
+import nbbrd.io.WrappedIOException;
+import nbbrd.io.xml.Stax;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -45,8 +46,8 @@ public class StaxUtil {
         try {
             reader.close();
         } catch (XMLStreamException ex) {
-            IO.ensureClosed(ex, onClose);
-            throw new Xml.WrappedException(ex);
+            Resource.ensureClosed(ex, onClose);
+            throw WrappedIOException.wrap(ex);
         }
         onClose.close();
     }
@@ -77,7 +78,7 @@ public class StaxUtil {
             if (!namespaceAware && delegate.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)) {
                 delegate.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
             }
-            ioutil.Stax.preventXXE(delegate);
+            Stax.preventXXE(delegate);
         }
 
         @Override

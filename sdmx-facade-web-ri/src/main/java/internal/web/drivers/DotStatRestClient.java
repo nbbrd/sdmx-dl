@@ -30,13 +30,13 @@ import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
 import internal.web.DataRequest;
-import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -126,7 +126,7 @@ class DotStatRestClient extends AbstractRestClient {
         return getStructureRefFromFlowRef(flowRef);
     }
 
-    private IO.Supplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
+    private IOSupplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
         return () -> executor.openStream(query, mediaType, langs.toString());
     }
 

@@ -24,9 +24,9 @@ import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.file.SdmxFileSet;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
-import ioutil.Xml;
 import java.io.IOException;
 import java.util.Optional;
+import nbbrd.io.xml.Xml;
 
 /**
  *

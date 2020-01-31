@@ -17,9 +17,9 @@
 package be.nbb.sdmx.facade.tck;
 
 import be.nbb.sdmx.facade.DataCursor;
-import ioutil.IO;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import nbbrd.io.function.IOConsumer;
 import org.assertj.core.api.SoftAssertions;
 
 public final class DataCursorAssert {
@@ -84,14 +84,14 @@ public final class DataCursorAssert {
         s.assertThatThrownBy(() -> c.getSeriesAttribute(null)).isInstanceOf(NullPointerException.class);
     }
 
-    private static void assertState(SoftAssertions s, Callable<DataCursor> supplier, IO.Consumer<DataCursor> consumer, String method) {
+    private static void assertState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
         s.assertThatThrownBy(() -> with(supplier, close().andThen(consumer)))
                 .as("Calling %s after close must throw IOException", method)
                 .isInstanceOf(IOException.class)
                 .hasMessageContaining("closed");
     }
 
-    private static void assertSeriesState(SoftAssertions s, Callable<DataCursor> supplier, IO.Consumer<DataCursor> consumer, String method) {
+    private static void assertSeriesState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
         assertState(s, supplier, consumer, method);
         s.assertThatThrownBy(() -> with(supplier, consumer))
                 .as("Calling %s before first series must throw IllegalStateException", method)
@@ -101,7 +101,7 @@ public final class DataCursorAssert {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    private static void assertObsState(SoftAssertions s, Callable<DataCursor> supplier, IO.Consumer<DataCursor> consumer, String method) throws Exception {
+    private static void assertObsState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) throws Exception {
         assertSeriesState(s, supplier, consumer, method);
         try (DataCursor c = supplier.call()) {
             while (c.nextSeries()) {
@@ -117,20 +117,20 @@ public final class DataCursorAssert {
         }
     }
 
-    private static void with(Callable<DataCursor> supplier, IO.Consumer consumer) throws Exception {
+    private static void with(Callable<DataCursor> supplier, IOConsumer consumer) throws Exception {
         try (DataCursor c = supplier.call()) {
             consumer.acceptWithIO(c);
         }
     }
 
-    static IO.Consumer<DataCursor> nextSeriesToEnd() {
+    static IOConsumer<DataCursor> nextSeriesToEnd() {
         return c -> {
             while (c.nextSeries()) {
             }
         };
     }
 
-    static IO.Consumer<DataCursor> close() {
+    static IOConsumer<DataCursor> close() {
         return DataCursor::close;
     }
 }

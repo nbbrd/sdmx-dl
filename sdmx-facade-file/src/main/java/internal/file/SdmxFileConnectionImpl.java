@@ -25,7 +25,6 @@ import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.Series;
 import be.nbb.sdmx.facade.file.SdmxFileConnection;
 import internal.util.SdmxExceptions;
-import ioutil.IO;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import nbbrd.io.function.IORunnable;
 
 /**
  *
@@ -107,13 +107,13 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     @Override
     public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException {
         DataCursor cursor = getDataCursor(key, filter);
-        return cursor.toStream(filter.getDetail()).onClose(IO.Runnable.unchecked(cursor::close));
+        return cursor.toStream(filter.getDetail()).onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override
     public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         DataCursor cursor = getDataCursor(flowRef, key, filter);
-        return cursor.toStream(filter.getDetail()).onClose(IO.Runnable.unchecked(cursor::close));
+        return cursor.toStream(filter.getDetail()).onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override

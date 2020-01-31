@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>be.nbb.rd</groupId>
-            <artifactId>java-io-util</artifactId>
+            <artifactId>java-io-base</artifactId>
         </dependency>
         <!-- test only -->
         <dependency>

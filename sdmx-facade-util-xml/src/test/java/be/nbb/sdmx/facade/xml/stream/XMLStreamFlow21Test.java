@@ -21,10 +21,10 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.samples.SdmxSource;
-import ioutil.Stax;
-import ioutil.Xml;
 import java.io.IOException;
 import java.util.List;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 

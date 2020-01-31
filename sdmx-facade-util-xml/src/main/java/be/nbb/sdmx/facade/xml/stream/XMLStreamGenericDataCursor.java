@@ -32,10 +32,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import be.nbb.sdmx.facade.parser.Freqs;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.isTagMatch;
-import ioutil.Xml;
 import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import nbbrd.io.WrappedIOException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -97,7 +97,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
-            throw new Xml.WrappedException(ex);
+            throw WrappedIOException.wrap(ex);
         }
     }
 
@@ -115,7 +115,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
             }
             return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
-            throw new Xml.WrappedException(ex);
+            throw WrappedIOException.wrap(ex);
         }
     }
 

@@ -24,9 +24,9 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import internal.file.SdmxDecoder;
-import ioutil.Stax;
-import ioutil.Xml;
 import java.net.URI;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 
 /**
  *

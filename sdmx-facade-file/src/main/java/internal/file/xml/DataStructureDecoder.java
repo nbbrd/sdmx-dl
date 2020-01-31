@@ -20,12 +20,12 @@ import be.nbb.sdmx.facade.DataStructure;
 import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
 import be.nbb.util.StaxUtil;
-import ioutil.Stax;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import ioutil.Xml;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 
 /**
  *
