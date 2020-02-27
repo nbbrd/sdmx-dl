@@ -20,6 +20,10 @@
         <module>sdmx-facade-connectors</module>
     </modules>
 
+    <properties>
+        <java-io-util.version>0.0.6</java-io-util.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <!-- annotations & processors -->
@@ -50,12 +54,12 @@
             <dependency>
                 <groupId>be.nbb.rd</groupId>
                 <artifactId>java-io-base</artifactId>
-                <version>0.0.6</version>
+                <version>${java-io-util.version}</version>
             </dependency>
             <dependency>
                 <groupId>be.nbb.rd</groupId>
                 <artifactId>java-io-xml</artifactId>
-                <version>0.0.5</version>
+                <version>${java-io-util.version}</version>
             </dependency>
             
             <!-- modules -->
