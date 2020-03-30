@@ -20,8 +20,8 @@ import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import be.nbb.sdmx.facade.parser.Freqs;
-import be.nbb.sdmx.facade.util.Chars;
 import java.time.LocalDateTime;
+import nbbrd.io.text.Parser;
 
 /**
  *
@@ -36,13 +36,13 @@ public enum DataFactories implements DataFactory {
         }
 
         @Override
-        public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
+        public Parser<LocalDateTime> getPeriodParser(Frequency freq) {
             return Freqs.onStandardFreq(freq);
         }
 
         @Override
-        public Chars.Parser<Double> getValueParser() {
-            return Chars.Parser.onStandardDouble();
+        public Parser<Double> getValueParser() {
+            return Parser.onDouble();
         }
     },
     SDMX21 {
@@ -52,13 +52,13 @@ public enum DataFactories implements DataFactory {
         }
 
         @Override
-        public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
+        public Parser<LocalDateTime> getPeriodParser(Frequency freq) {
             return Freqs.onStandardFreq(freq);
         }
 
         @Override
-        public Chars.Parser<Double> getValueParser() {
-            return Chars.Parser.onStandardDouble();
+        public Parser<Double> getValueParser() {
+            return Parser.onDouble();
         }
     }
 }

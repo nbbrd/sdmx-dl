@@ -18,11 +18,12 @@ package be.nbb.sdmx.facade.web.spi;
 
 import be.nbb.sdmx.facade.web.SdmxWebConnection;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import internal.facade.web.spi.SdmxWebDriverProc;
+import internal.facade.web.spi.FailsafeSdmxWebDriver;
 import java.io.IOException;
 import java.util.Collection;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceSorter;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -33,7 +34,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @ThreadSafe
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        preprocessor = SdmxWebDriverProc.class,
+        wrapper = FailsafeSdmxWebDriver.class,
         loaderName = "internal.util.SdmxWebDriverLoader"
 )
 public interface SdmxWebDriver {
@@ -41,6 +42,7 @@ public interface SdmxWebDriver {
     @NonNull
     String getName();
 
+    @ServiceSorter(reverse = true)
     int getRank();
 
     @NonNull

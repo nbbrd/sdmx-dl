@@ -16,11 +16,11 @@
  */
 package be.nbb.sdmx.facade.parser;
 
-import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.DataStructure;
 import be.nbb.sdmx.facade.Frequency;
 import internal.parser.DataFactories;
 import java.time.LocalDateTime;
+import nbbrd.io.text.Parser;
 import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -33,9 +33,11 @@ public interface DataFactory {
 
     Freqs.@NonNull Parser getFreqParser(@NonNull DataStructure dsd);
 
-    Chars.@NonNull Parser<LocalDateTime> getPeriodParser(@NonNull Frequency freq);
+    @NonNull
+    Parser<LocalDateTime> getPeriodParser(@NonNull Frequency freq);
 
-    Chars.@NonNull Parser<Double> getValueParser();
+    @NonNull
+    Parser<Double> getValueParser();
 
     @NonNull
     static DataFactory sdmx20() {

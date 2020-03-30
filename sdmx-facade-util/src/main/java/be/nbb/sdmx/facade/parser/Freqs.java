@@ -184,21 +184,21 @@ public class Freqs {
         }
     }
 
-    public static Chars.@NonNull Parser<LocalDateTime> onStandardFreq(@NonNull Frequency freq) {
+    public static nbbrd.io.text.@NonNull Parser<LocalDateTime> onStandardFreq(@NonNull Frequency freq) {
         return STANDARD_PARSERS.get(freq);
     }
 
-    private final Map<Frequency, Chars.Parser<LocalDateTime>> STANDARD_PARSERS = initStandardParsers();
+    private final Map<Frequency, nbbrd.io.text.Parser<LocalDateTime>> STANDARD_PARSERS = initStandardParsers();
 
-    private Map<Frequency, Chars.Parser<LocalDateTime>> initStandardParsers() {
-        Chars.Parser yearMonth = Chars.Parser.onDatePattern("yyyy-MM");
-        Chars.Parser yearMonthDay = Chars.Parser.onDatePattern("yyyy-MM-dd");
+    private Map<Frequency, nbbrd.io.text.Parser<LocalDateTime>> initStandardParsers() {
+        nbbrd.io.text.Parser<LocalDateTime> yearMonth = Chars.onDatePattern("yyyy-MM");
+        nbbrd.io.text.Parser yearMonthDay = Chars.onDatePattern("yyyy-MM-dd");
 
-        Map<Frequency, Chars.Parser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
-        result.put(ANNUAL, Chars.Parser.onDatePattern("yyyy").or(Chars.Parser.onDatePattern("yyyy'-01'")).or(Chars.Parser.onDatePattern("yyyy'-A1'")));
-        result.put(HALF_YEARLY, Chars.Parser.onYearFreqPos("S", 2).or(yearMonth));
-        result.put(QUARTERLY, Chars.Parser.onYearFreqPos("Q", 4).or(yearMonth));
-        result.put(MONTHLY, Chars.Parser.onYearFreqPos("M", 12).or(yearMonth));
+        Map<Frequency, nbbrd.io.text.Parser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
+        result.put(ANNUAL, Chars.onDatePattern("yyyy").orElse(Chars.onDatePattern("yyyy'-01'")).orElse(Chars.onDatePattern("yyyy'-A1'")));
+        result.put(HALF_YEARLY, Chars.onYearFreqPos("S", 2).orElse(yearMonth));
+        result.put(QUARTERLY, Chars.onYearFreqPos("Q", 4).orElse(yearMonth));
+        result.put(MONTHLY, Chars.onYearFreqPos("M", 12).orElse(yearMonth));
         result.put(WEEKLY, yearMonthDay);
         result.put(DAILY, yearMonthDay);
         // FIXME: needs other pattern for time

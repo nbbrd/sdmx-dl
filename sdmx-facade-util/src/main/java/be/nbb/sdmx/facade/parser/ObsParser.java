@@ -16,10 +16,10 @@
  */
 package be.nbb.sdmx.facade.parser;
 
-import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.Frequency;
 import java.time.LocalDateTime;
 import java.util.function.Function;
+import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -31,17 +31,17 @@ public final class ObsParser {
 
     @NonNull
     public static ObsParser standard() {
-        return new ObsParser(Freqs::onStandardFreq, Chars.Parser.onStandardDouble());
+        return new ObsParser(Freqs::onStandardFreq, Parser.onDouble());
     }
 
-    private final Function<Frequency, Chars.Parser<LocalDateTime>> toPeriodParser;
-    private final Chars.Parser<Double> valueParser;
-    private Chars.Parser<LocalDateTime> periodParser;
+    private final Function<Frequency, Parser<LocalDateTime>> toPeriodParser;
+    private final Parser<Double> valueParser;
+    private Parser<LocalDateTime> periodParser;
     private Frequency freq;
     private String period;
     private String value;
 
-    public ObsParser(Function<Frequency, Chars.Parser<LocalDateTime>> toPeriodParser, Chars.Parser<Double> valueParser) {
+    public ObsParser(Function<Frequency, Parser<LocalDateTime>> toPeriodParser, Parser<Double> valueParser) {
         this.toPeriodParser = toPeriodParser;
         this.valueParser = valueParser;
         this.periodParser = toPeriodParser.apply(Frequency.UNDEFINED);

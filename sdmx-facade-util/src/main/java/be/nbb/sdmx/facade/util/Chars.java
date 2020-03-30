@@ -25,9 +25,9 @@ import java.time.temporal.ChronoField;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import nbbrd.io.text.Parser;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -36,67 +36,23 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @lombok.experimental.UtilityClass
 public class Chars {
 
-    public interface Parser<T> {
-
-        @Nullable
-        T parse(@NonNull CharSequence input);
-
-        @NonNull
-        default Parser<T> or(@NonNull Parser<T> r) {
-            return new Fallback(this, r);
-        }
-
-        @NonNull
-        default Parser<T> or(@NonNull T value) {
-            return new Fallback(this, o -> value);
-        }
-
-        @NonNull
-        @SuppressWarnings("null")
-        static <T> Parser<T> onNull() {
-            return o -> null;
-        }
-
-        @NonNull
-        static Parser<LocalDateTime> onDatePattern(@NonNull String pattern) {
-            DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
-                    .appendPattern(pattern)
-                    .parseStrict()
-                    .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
-                    .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
-                    .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                    .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
-                    .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
-                    .toFormatter(Locale.ROOT);
-            return new OnDateTimeFormatter(dateFormat);
-        }
-
-        @NonNull
-        static Parser<LocalDateTime> onYearFreqPos(@NonNull String freqCode, @NonNegative int freq) {
-            return new YearFreqPos(freqCode, freq);
-        }
-
-        @NonNull
-        static Parser<Double> onStandardDouble() {
-            return Chars::doubleOrNull;
-        }
+    @NonNull
+    public static Parser<LocalDateTime> onDatePattern(@NonNull String pattern) {
+        DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
+                .appendPattern(pattern)
+                .parseStrict()
+                .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+                .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                .toFormatter(Locale.ROOT);
+        return new OnDateTimeFormatter(dateFormat);
     }
 
-    private static final class Fallback<T> implements Parser<T> {
-
-        private final Parser<T> first;
-        private final Parser<T> second;
-
-        public Fallback(Parser<T> first, Parser<T> second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        @Override
-        public T parse(CharSequence input) {
-            T result = first.parse(input);
-            return result != null ? result : second.parse(input);
-        }
+    @NonNull
+    public static Parser<LocalDateTime> onYearFreqPos(@NonNull String freqCode, @NonNegative int freq) {
+        return new YearFreqPos(freqCode, freq);
     }
 
     private static final class OnDateTimeFormatter implements Parser<LocalDateTime> {
@@ -135,14 +91,6 @@ public class Chars {
 
         private LocalDateTime toDate(int year, int freq, int pos) {
             return ((pos < 0) || (pos >= freq)) ? null : LocalDate.of(year, pos * (12 / freq) + 1, 1).atStartOfDay();
-        }
-    }
-
-    private Double doubleOrNull(CharSequence input) {
-        try {
-            return Double.valueOf(input.toString());
-        } catch (NumberFormatException ex) {
-            return null;
         }
     }
 }

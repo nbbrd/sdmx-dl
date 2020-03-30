@@ -35,20 +35,14 @@ import lombok.AccessLevel;
  */
 @lombok.extern.java.Log
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class FailsafeSdmxWebDriver implements SdmxWebDriver {
+public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
 
-    static SdmxWebDriver wrap(SdmxWebDriver obj) {
+    public static SdmxWebDriver wrap(SdmxWebDriver obj) {
         return obj instanceof FailsafeSdmxWebDriver
                 ? obj
                 : new FailsafeSdmxWebDriver(obj,
                         FailsafeSdmxWebDriver::logUnexpectedError,
                         FailsafeSdmxWebDriver::logUnexpectedNull);
-    }
-
-    static SdmxWebDriver unwrap(SdmxWebDriver obj) {
-        return obj instanceof FailsafeSdmxWebDriver
-                ? ((FailsafeSdmxWebDriver) obj).delegate
-                : obj;
     }
 
     @lombok.NonNull

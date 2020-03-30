@@ -21,11 +21,11 @@ import be.nbb.sdmx.facade.DataStructureRef;
 import be.nbb.sdmx.facade.Dimension;
 import static be.nbb.sdmx.facade.Frequency.*;
 import be.nbb.sdmx.facade.Key;
-import be.nbb.sdmx.facade.util.Chars;
 import java.util.function.Function;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import _test.DialectAssertions;
+import nbbrd.io.text.Parser;
 
 /**
  *
@@ -68,9 +68,9 @@ public class InseeDialectTest {
     @Test
     @SuppressWarnings("null")
     public void testValueParser() {
-        Chars.Parser<Double> p = new InseeDialect().getValueParser();
+        Parser<Double> p = new InseeDialect().getValueParser();
         assertThat(p.parse("hello")).isNull();
         assertThat(p.parse("3.14")).isEqualTo(3.14);
-        assertThatNullPointerException().isThrownBy(() -> p.parse(null));
+        assertThat(p.parse(null)).isNull();
     }
 }

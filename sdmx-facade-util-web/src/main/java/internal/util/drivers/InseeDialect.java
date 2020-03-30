@@ -26,6 +26,7 @@ import be.nbb.sdmx.facade.parser.Freqs;
 import be.nbb.sdmx.facade.util.Chars;
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 import java.time.LocalDateTime;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 
 /**
@@ -52,13 +53,13 @@ public final class InseeDialect implements SdmxDialect {
     }
 
     @Override
-    public Chars.Parser<LocalDateTime> getPeriodParser(Frequency freq) {
+    public Parser<LocalDateTime> getPeriodParser(Frequency freq) {
         return onInseeTimePeriod(freq);
     }
 
     @Override
-    public Chars.Parser<Double> getValueParser() {
-        return Chars.Parser.onStandardDouble();
+    public Parser<Double> getValueParser() {
+        return Parser.onDouble();
     }
 
     private static Frequency parseInseeFreq(String code) {
@@ -80,7 +81,7 @@ public final class InseeDialect implements SdmxDialect {
         return Frequency.UNDEFINED;
     }
 
-    private static Chars.Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
+    private static Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
         switch (freq) {
             case ANNUAL:
                 return ANNUAL_PARSER;
@@ -95,9 +96,9 @@ public final class InseeDialect implements SdmxDialect {
         }
     }
 
-    private static final Chars.Parser<LocalDateTime> ANNUAL_PARSER = Chars.Parser.onDatePattern("yyyy");
-    private static final Chars.Parser<LocalDateTime> HALF_YEARLY_PARSER = Chars.Parser.onYearFreqPos("S", 2);
-    private static final Chars.Parser<LocalDateTime> QUARTERLY_PARSER = Chars.Parser.onYearFreqPos("Q", 4);
-    private static final Chars.Parser<LocalDateTime> MONTHLY_PARSER = Chars.Parser.onDatePattern("yyyy-MM").or(Chars.Parser.onYearFreqPos("B", 12));
-    private static final Chars.Parser<LocalDateTime> DEFAULT_PARSER = Chars.Parser.onNull();
+    private static final Parser<LocalDateTime> ANNUAL_PARSER = Chars.onDatePattern("yyyy");
+    private static final Parser<LocalDateTime> HALF_YEARLY_PARSER = Chars.onYearFreqPos("S", 2);
+    private static final Parser<LocalDateTime> QUARTERLY_PARSER = Chars.onYearFreqPos("Q", 4);
+    private static final Parser<LocalDateTime> MONTHLY_PARSER = Chars.onDatePattern("yyyy-MM").orElse(Chars.onYearFreqPos("B", 12));
+    private static final Parser<LocalDateTime> DEFAULT_PARSER = Parser.onNull();
 }
