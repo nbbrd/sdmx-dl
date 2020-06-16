@@ -21,14 +21,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
-import net.jcip.annotations.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@NotThreadSafe
+//@NotThreadSafe
 public interface SdmxConnection extends Closeable {
 
     @NonNull

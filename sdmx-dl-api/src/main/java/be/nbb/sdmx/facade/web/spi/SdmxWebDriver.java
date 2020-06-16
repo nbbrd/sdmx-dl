@@ -24,14 +24,13 @@ import java.util.Collection;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceSorter;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
+//@ThreadSafe
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
         wrapper = FailsafeSdmxWebDriver.class,

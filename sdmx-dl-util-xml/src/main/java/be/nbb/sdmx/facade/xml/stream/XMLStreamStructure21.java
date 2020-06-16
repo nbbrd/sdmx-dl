@@ -33,14 +33,13 @@ import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.nextTag;
 import static be.nbb.sdmx.facade.xml.SdmxmlUri.NS_V21_URI;
 import java.net.URI;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.check;
-import net.jcip.annotations.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@NotThreadSafe
+//@NotThreadSafe
 final class XMLStreamStructure21 {
 
     private static final String HEADER_TAG = "Header";

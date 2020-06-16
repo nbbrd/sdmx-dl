@@ -32,12 +32,7 @@
                 <artifactId>checker-qual</artifactId>
                 <version>3.4.1</version>
             </dependency>
-            <dependency>
-                <groupId>com.github.stephenc.jcip</groupId>
-                <artifactId>jcip-annotations</artifactId>            
-                <version>1.0-1</version>
-            </dependency>
-            
+
             <!-- test libraries -->
             <dependency>
                 <groupId>junit</groupId>

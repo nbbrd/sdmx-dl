@@ -19,14 +19,13 @@ package be.nbb.sdmx.facade.parser.spi;
 import be.nbb.sdmx.facade.parser.DataFactory;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
+//@ThreadSafe
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE
 )

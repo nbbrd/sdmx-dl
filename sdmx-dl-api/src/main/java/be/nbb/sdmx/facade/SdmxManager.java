@@ -17,14 +17,13 @@
 package be.nbb.sdmx.facade;
 
 import java.io.IOException;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
+//@ThreadSafe
 public interface SdmxManager {
 
     @NonNull

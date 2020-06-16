@@ -21,14 +21,13 @@ import be.nbb.sdmx.facade.Frequency;
 import internal.parser.DataFactories;
 import java.time.LocalDateTime;
 import nbbrd.io.text.Parser;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ThreadSafe
+//@ThreadSafe
 public interface DataFactory {
 
     Freqs.@NonNull Parser getFreqParser(@NonNull DataStructure dsd);

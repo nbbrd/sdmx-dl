@@ -28,14 +28,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import static be.nbb.sdmx.facade.xml.stream.XMLStreamUtil.*;
 import java.net.URI;
-import net.jcip.annotations.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@NotThreadSafe
+//@NotThreadSafe
 final class XMLStreamFlow21 {
 
     private static final String HEADER_TAG = "Header";

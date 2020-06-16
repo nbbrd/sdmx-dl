@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
-import net.jcip.annotations.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -31,7 +30,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @author Philippe Charles
  */
 @lombok.Builder(builderClassName = "Builder")
-@ThreadSafe
+//@ThreadSafe
 public final class SdmxWebDriverSupport implements SdmxWebDriver {
 
     @lombok.Getter
