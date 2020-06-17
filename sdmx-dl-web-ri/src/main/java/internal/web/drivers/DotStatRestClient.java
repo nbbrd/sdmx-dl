@@ -23,7 +23,7 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import internal.util.SdmxExceptions;
+import be.nbb.sdmx.facade.SdmxExceptions;
 import be.nbb.sdmx.facade.util.SdmxFix;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.XML;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;

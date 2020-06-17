@@ -17,7 +17,9 @@
 package _test;
 
 import be.nbb.sdmx.facade.parser.spi.SdmxDialect;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  *

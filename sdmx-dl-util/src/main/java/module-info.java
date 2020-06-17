@@ -10,6 +10,10 @@ module sdmxdl.util {
     exports be.nbb.sdmx.facade.parser;
     exports be.nbb.sdmx.facade.parser.spi;
     exports be.nbb.sdmx.facade.util;
+    exports internal.web;
+    exports internal.util.drivers;
+
+    provides be.nbb.sdmx.facade.parser.spi.SdmxDialect with internal.util.drivers.InseeDialect;
 
     uses be.nbb.sdmx.facade.parser.spi.SdmxDialect;
 }

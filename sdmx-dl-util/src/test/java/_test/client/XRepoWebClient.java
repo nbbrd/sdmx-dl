@@ -16,72 +16,66 @@
  */
 package _test.client;
 
-import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.DataStructureRef;
-import be.nbb.sdmx.facade.Dataflow;
-import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.*;
+import be.nbb.sdmx.facade.repo.SdmxRepository;
 import internal.web.DataRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.time.Duration;
 import internal.web.SdmxWebClient;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor(staticName = "of")
-public final class XCallStackWebClient implements SdmxWebClient {
+@lombok.AllArgsConstructor(staticName = "of")
+public final class XRepoWebClient implements SdmxWebClient {
 
     @lombok.NonNull
-    private final SdmxWebClient delegate;
-
-    @lombok.NonNull
-    private final AtomicInteger count;
+    private final SdmxRepository repo;
 
     @Override
     public String getName() throws IOException {
-        return delegate.getName();
+        return repo.getName();
     }
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        count.incrementAndGet();
-        return delegate.getFlows();
+        return new ArrayList(repo.getFlows());
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        count.incrementAndGet();
-        return delegate.getFlow(ref);
+        return repo.getFlow(ref)
+                .orElseThrow(() -> SdmxExceptions.missingFlow(repo.getName(), ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        count.incrementAndGet();
-        return delegate.getStructure(ref);
+        return repo.getStructure(ref)
+                .orElseThrow(() -> SdmxExceptions.missingStructure(repo.getName(), ref));
     }
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        count.incrementAndGet();
-        return delegate.getData(request, dsd);
+        return repo.getDataCursor(request.getFlowRef(), request.getKey(), request.getFilter())
+                .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), request.getFlowRef()));
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        return delegate.isSeriesKeysOnlySupported();
+        return true;
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
-        return delegate.peekStructureRef(flowRef);
+        return null;
     }
 
     @Override
     public Duration ping() throws IOException {
-        return delegate.ping();
+        return Duration.ZERO;
     }
 }

@@ -25,7 +25,7 @@ import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.ResourceRef;
 import be.nbb.sdmx.facade.parser.DataFactory;
-import internal.util.SdmxExceptions;
+import be.nbb.sdmx.facade.SdmxExceptions;
 import static be.nbb.sdmx.facade.util.SdmxMediaType.*;
 import be.nbb.sdmx.facade.xml.stream.SdmxXmlStreams;
 import java.io.IOException;

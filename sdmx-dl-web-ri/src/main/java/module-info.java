@@ -6,7 +6,6 @@ module sdmxdl.web.ri {
 
     requires sdmxdl.api;
     requires sdmxdl.util;
-    requires sdmxdl.util.web;
     requires sdmxdl.util.xml;
     requires nbbrd.io.base;
     requires java.logging;

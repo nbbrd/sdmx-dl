@@ -16,13 +16,10 @@
  */
 package _test.client;
 
-import be.nbb.sdmx.facade.DataCursor;
-import be.nbb.sdmx.facade.DataStructure;
-import be.nbb.sdmx.facade.DataStructureRef;
-import be.nbb.sdmx.facade.Dataflow;
-import be.nbb.sdmx.facade.DataflowRef;
+import be.nbb.sdmx.facade.*;
 import internal.web.DataRequest;
 import internal.web.SdmxWebClient;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;

@@ -10,7 +10,6 @@ module sdmxdl.api {
     exports be.nbb.sdmx.facade.repo;
     exports be.nbb.sdmx.facade.web;
     exports be.nbb.sdmx.facade.web.spi;
-    exports internal.util to sdmxdl.file, sdmxdl.util.web, sdmxdl.web.ri;
 
     uses be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
 }
