@@ -9,7 +9,7 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-web-ri</artifactId>
+    <artifactId>sdmx-dl-ri</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

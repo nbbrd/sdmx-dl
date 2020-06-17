@@ -15,7 +15,7 @@
         <module>sdmx-dl-util</module>
         <module>sdmx-dl-util-xml</module>
         <module>sdmx-dl-file</module>
-        <module>sdmx-dl-web-ri</module>
+        <module>sdmx-dl-ri</module>
         <module>sdmx-dl-connectors</module>
     </modules>
 
@@ -85,6 +85,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-util-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-ri</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
