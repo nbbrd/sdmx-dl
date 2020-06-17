@@ -10,7 +10,7 @@
 
     </parent>
 
-    <artifactId>sdmx-dl-util-xml</artifactId>
+    <artifactId>sdmx-dl-xml</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
