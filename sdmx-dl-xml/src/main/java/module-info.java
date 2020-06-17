@@ -9,6 +9,6 @@ module sdmxdl.util.xml {
     requires java.logging;
     requires transitive nbbrd.io.xml;
 
-    exports be.nbb.sdmx.facade.xml;
-    exports be.nbb.sdmx.facade.xml.stream;
+    exports sdmxdl.xml;
+    exports sdmxdl.xml.stream;
 }

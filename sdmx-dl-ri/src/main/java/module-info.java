@@ -10,10 +10,10 @@ module sdmxdl.web.ri {
     requires nbbrd.io.base;
     requires java.logging;
 
-    provides be.nbb.sdmx.facade.web.spi.SdmxWebDriver with
-            internal.web.drivers.AbsDriver2,
-            internal.web.drivers.DotStatDriver2,
-            internal.web.drivers.NbbDriver2,
-            internal.web.drivers.Sdmx21Driver2,
-            internal.web.drivers.WbDriver2;
+    provides sdmxdl.web.spi.SdmxWebDriver with
+            internal.sdmxdl.ri.drivers.AbsDriver2,
+            internal.sdmxdl.ri.drivers.DotStatDriver2,
+            internal.sdmxdl.ri.drivers.NbbDriver2,
+            internal.sdmxdl.ri.drivers.Sdmx21Driver2,
+            internal.sdmxdl.ri.drivers.WbDriver2;
 }

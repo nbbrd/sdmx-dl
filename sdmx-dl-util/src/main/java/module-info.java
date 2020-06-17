@@ -7,13 +7,12 @@ module sdmxdl.util {
     requires sdmxdl.api;
     requires nbbrd.io.base;
 
-    exports be.nbb.sdmx.facade.parser;
-    exports be.nbb.sdmx.facade.parser.spi;
-    exports be.nbb.sdmx.facade.util;
-    exports internal.web;
-    exports internal.util.drivers;
+    exports sdmxdl.util;
+    exports sdmxdl.util.parser;
+    exports sdmxdl.util.parser.spi;
+    exports sdmxdl.util.web;
 
-    provides be.nbb.sdmx.facade.parser.spi.SdmxDialect with internal.util.drivers.InseeDialect;
+    provides sdmxdl.util.parser.spi.SdmxDialect with internal.sdmxdl.util.parser.InseeDialect;
 
-    uses be.nbb.sdmx.facade.parser.spi.SdmxDialect;
+    uses sdmxdl.util.parser.spi.SdmxDialect;
 }

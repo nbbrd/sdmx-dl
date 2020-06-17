@@ -16,14 +16,14 @@
  */
 package internal;
 
-import be.nbb.sdmx.facade.web.SdmxWebConnection;
-import be.nbb.sdmx.facade.web.SdmxWebManager;
-import be.nbb.sdmx.facade.web.SdmxWebSource;
-import be.nbb.sdmx.facade.web.spi.SdmxWebContext;
-import be.nbb.sdmx.facade.SdmxConnection;
-import be.nbb.sdmx.facade.repo.SdmxRepository;
-import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
-import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.SdmxConnection;
+import sdmxdl.repo.SdmxRepository;
+import sdmxdl.tck.ConnectionSupplierAssert;
+import sdmxdl.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;

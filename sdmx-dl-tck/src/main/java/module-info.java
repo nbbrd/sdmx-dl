@@ -7,6 +7,6 @@ module sdmxdl.tck {
     requires org.assertj.core;
     requires nbbrd.io.base;
 
-    exports be.nbb.sdmx.facade.tck;
-    exports be.nbb.sdmx.facade.samples;
+    exports sdmxdl.tck;
+    exports sdmxdl.samples;
 }

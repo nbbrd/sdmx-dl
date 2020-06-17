@@ -6,10 +6,10 @@ module sdmxdl.api {
 
     requires java.logging;
 
-    exports be.nbb.sdmx.facade;
-    exports be.nbb.sdmx.facade.repo;
-    exports be.nbb.sdmx.facade.web;
-    exports be.nbb.sdmx.facade.web.spi;
+    exports sdmxdl;
+    exports sdmxdl.repo;
+    exports sdmxdl.web;
+    exports sdmxdl.web.spi;
 
-    uses be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+    uses sdmxdl.web.spi.SdmxWebDriver;
 }
