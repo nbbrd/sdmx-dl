@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package _test.samples;
+package be.nbb.sdmx.facade.samples;
 
 import be.nbb.sdmx.facade.*;
 import be.nbb.sdmx.facade.repo.SdmxRepository;
@@ -25,20 +25,20 @@ import java.time.LocalDateTime;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class FacadeResource {
+public class RepoSamples {
 
-    public final DataStructureRef goodStructRef = DataStructureRef.of("NBB", "goodStruct", "v1.0");
-    public final DataStructureRef badStructRef = DataStructureRef.parse("badStruct");
-    public final DataflowRef goodFlowRef = DataflowRef.of("NBB", "XYZ", "v2.0");
-    public final DataflowRef badFlowRef = DataflowRef.parse("other");
-    public final Dataflow flow = Dataflow.of(goodFlowRef, goodStructRef, "flow1");
-    public final DataStructure struct = DataStructure.builder().ref(goodStructRef).label("struct1").build();
-    public final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
-    public final SdmxRepository repo = SdmxRepository
+    public final DataStructureRef GOOD_STRUCT_REF = DataStructureRef.of("NBB", "goodStruct", "v1.0");
+    public final DataStructureRef BAD_STRUCT_REF = DataStructureRef.parse("badStruct");
+    public final DataflowRef GOOD_FLOW_REF = DataflowRef.of("NBB", "XYZ", "v2.0");
+    public final DataflowRef BAD_FLOW_REF = DataflowRef.parse("other");
+    public final Dataflow FLOW = Dataflow.of(GOOD_FLOW_REF, GOOD_STRUCT_REF, "flow1");
+    public final DataStructure STRUCT = DataStructure.builder().ref(GOOD_STRUCT_REF).label("struct1").build();
+    public final Series SERIES = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    public final SdmxRepository REPO = SdmxRepository
             .builder()
             .name("test")
-            .structure(struct)
-            .flow(flow)
-            .data(goodFlowRef, series)
+            .structure(STRUCT)
+            .flow(FLOW)
+            .data(GOOD_FLOW_REF, SERIES)
             .build();
 }

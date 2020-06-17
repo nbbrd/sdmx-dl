@@ -88,7 +88,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-samples</artifactId>
+            <artifactId>sdmx-dl-tck</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

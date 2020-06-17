@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.repo.SdmxRepository;
 import be.nbb.sdmx.facade.tck.ConnectionAssert;
 import java.io.IOException;
 import org.junit.Test;
-import _test.samples.FacadeResource;
+import be.nbb.sdmx.facade.samples.RepoSamples;
 import _test.client.XRepoWebClient;
 
 /**
@@ -31,7 +31,7 @@ public class SdmxWebConnectionImplTest {
 
     @Test
     public void testCompliance() throws IOException {
-        SdmxRepository repo = FacadeResource.repo;
-        ConnectionAssert.assertCompliance(() -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""), FacadeResource.goodFlowRef);
+        SdmxRepository repo = RepoSamples.REPO;
+        ConnectionAssert.assertCompliance(() -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""), RepoSamples.GOOD_FLOW_REF);
     }
 }

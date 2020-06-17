@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
-import _test.samples.FacadeResource;
+import be.nbb.sdmx.facade.samples.RepoSamples;
 import _test.client.XRepoWebClient;
 import be.nbb.sdmx.facade.SdmxCache;
 import java.time.Duration;
@@ -77,27 +77,27 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
 
-        target.getFlow(FacadeResource.goodFlowRef);
+        target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(flowId);
 
-        target.getFlow(FacadeResource.goodFlowRef);
+        target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(flowId);
 
         clock.plus(100);
-        target.getFlow(FacadeResource.goodFlowRef);
+        target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(flowId);
 
         cache.clear();
-        target.getFlow(FacadeResource.goodFlowRef);
+        target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(flowId);
 
         cache.clear();
         target.getFlows();
-        target.getFlow(FacadeResource.goodFlowRef);
+        target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(4);
         assertThat(cache).containsOnlyKeys(flowsId);
     }
@@ -112,21 +112,21 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
 
-        target.getStructure(FacadeResource.goodStructRef);
+        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(structId);
 
-        target.getStructure(FacadeResource.goodStructRef);
+        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(structId);
 
         clock.plus(100);
-        target.getStructure(FacadeResource.goodStructRef);
+        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(structId);
 
         cache.clear();
-        target.getStructure(FacadeResource.goodStructRef);
+        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(structId);
     }
@@ -141,7 +141,7 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
 
-        DataRequest request = new DataRequest(FacadeResource.goodFlowRef, Key.ALL, filter);
+        DataRequest request = new DataRequest(RepoSamples.GOOD_FLOW_REF, Key.ALL, filter);
 
         target.getData(request, null);
         assertThat(count).hasValue(1);
@@ -164,9 +164,9 @@ public class CachedWebClientTest {
 
     private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
     private final TypedId<?> flowsId = TypedId.of("flows://");
-    private final TypedId<?> flowId = TypedId.of("flow://").with(FacadeResource.goodFlowRef);
-    private final TypedId<?> structId = TypedId.of("struct://").with(FacadeResource.goodStructRef);
-    private final TypedId<?> keysId = TypedId.of("keys://").with(FacadeResource.goodFlowRef);
+    private final TypedId<?> flowId = TypedId.of("flow://").with(RepoSamples.GOOD_FLOW_REF);
+    private final TypedId<?> structId = TypedId.of("struct://").with(RepoSamples.GOOD_STRUCT_REF);
+    private final TypedId<?> keysId = TypedId.of("keys://").with(RepoSamples.GOOD_FLOW_REF);
 
     private static final class FakeClock extends Clock {
 
@@ -193,7 +193,7 @@ public class CachedWebClientTest {
     }
 
     private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
-        SdmxWebClient original = XRepoWebClient.of(FacadeResource.repo);
+        SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
         return XCallStackWebClient.of(original, count);
     }
 }
