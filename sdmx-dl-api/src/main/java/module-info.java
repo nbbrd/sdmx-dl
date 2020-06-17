@@ -1,0 +1,16 @@
+module sdmxdl.api {
+
+    requires static nbbrd.service;
+    requires static org.checkerframework.checker.qual;
+    requires static lombok;
+
+    requires java.logging;
+
+    exports be.nbb.sdmx.facade;
+    exports be.nbb.sdmx.facade.repo;
+    exports be.nbb.sdmx.facade.web;
+    exports be.nbb.sdmx.facade.web.spi;
+    exports internal.util to sdmxdl.file, sdmxdl.util.web, sdmxdl.web.ri;
+
+    uses be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
+}

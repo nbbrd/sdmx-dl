@@ -39,10 +39,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-util</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.nbb.rd</groupId>
-            <artifactId>java-io-xml</artifactId>
-        </dependency>
 
         <!-- test only -->
         <dependency>
@@ -58,11 +54,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-samples</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-util-xml</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

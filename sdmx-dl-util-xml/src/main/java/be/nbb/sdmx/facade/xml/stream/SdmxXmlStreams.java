@@ -23,7 +23,7 @@ import be.nbb.sdmx.facade.Dataflow;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.LanguagePriorityList;
 import be.nbb.sdmx.facade.parser.ObsParser;
-import be.nbb.util.StaxUtil;
+
 import java.io.IOException;
 import java.util.List;
 import nbbrd.io.xml.Stax;

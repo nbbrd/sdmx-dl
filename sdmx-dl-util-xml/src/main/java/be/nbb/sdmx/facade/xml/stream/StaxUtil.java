@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.util;
+package be.nbb.sdmx.facade.xml.stream;
 
 import java.io.Closeable;
 import java.io.IOException;

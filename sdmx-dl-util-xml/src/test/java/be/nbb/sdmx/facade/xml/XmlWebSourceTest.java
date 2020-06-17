@@ -14,18 +14,19 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.util.drivers;
+package be.nbb.sdmx.facade.xml;
 
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;
+
 import org.junit.Test;
 
 /**
  *
  * @author Philippe Charles
  */
-public class SdmxWebResourceTest {
+public class XmlWebSourceTest {
 
     @Test
     public void testParser() throws IOException {
@@ -39,7 +40,7 @@ public class SdmxWebResourceTest {
                 + "    </source>\n"
                 + "</sources>";
 
-        assertThat(SdmxWebResource.getParser().parseChars(xml))
+        assertThat(XmlWebSource.getParser().parseChars(xml))
                 .hasSize(1)
                 .element(0)
                 .isEqualToComparingFieldByField(SdmxWebSource

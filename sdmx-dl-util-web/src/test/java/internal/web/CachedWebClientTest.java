@@ -30,8 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import _test.samples.FacadeResource;
-import static _test.samples.FacadeResource.ECB_FLOW_REF;
-import static _test.samples.FacadeResource.ECB_STRUCT_REF;
 import _test.client.XRepoWebClient;
 import be.nbb.sdmx.facade.SdmxCache;
 import java.time.Duration;
@@ -79,27 +77,27 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
 
-        target.getFlow(ECB_FLOW_REF);
+        target.getFlow(FacadeResource.goodFlowRef);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(flowId);
 
-        target.getFlow(ECB_FLOW_REF);
+        target.getFlow(FacadeResource.goodFlowRef);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(flowId);
 
         clock.plus(100);
-        target.getFlow(ECB_FLOW_REF);
+        target.getFlow(FacadeResource.goodFlowRef);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(flowId);
 
         cache.clear();
-        target.getFlow(ECB_FLOW_REF);
+        target.getFlow(FacadeResource.goodFlowRef);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(flowId);
 
         cache.clear();
         target.getFlows();
-        target.getFlow(ECB_FLOW_REF);
+        target.getFlow(FacadeResource.goodFlowRef);
         assertThat(count).hasValue(4);
         assertThat(cache).containsOnlyKeys(flowsId);
     }
@@ -114,21 +112,21 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
 
-        target.getStructure(ECB_STRUCT_REF);
+        target.getStructure(FacadeResource.goodStructRef);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(structId);
 
-        target.getStructure(ECB_STRUCT_REF);
+        target.getStructure(FacadeResource.goodStructRef);
         assertThat(count).hasValue(1);
         assertThat(cache).containsOnlyKeys(structId);
 
         clock.plus(100);
-        target.getStructure(ECB_STRUCT_REF);
+        target.getStructure(FacadeResource.goodStructRef);
         assertThat(count).hasValue(2);
         assertThat(cache).containsOnlyKeys(structId);
 
         cache.clear();
-        target.getStructure(ECB_STRUCT_REF);
+        target.getStructure(FacadeResource.goodStructRef);
         assertThat(count).hasValue(3);
         assertThat(cache).containsOnlyKeys(structId);
     }
@@ -143,7 +141,7 @@ public class CachedWebClientTest {
 
         assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
 
-        DataRequest request = new DataRequest(ECB_FLOW_REF, Key.ALL, filter);
+        DataRequest request = new DataRequest(FacadeResource.goodFlowRef, Key.ALL, filter);
 
         target.getData(request, null);
         assertThat(count).hasValue(1);
@@ -166,9 +164,9 @@ public class CachedWebClientTest {
 
     private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
     private final TypedId<?> flowsId = TypedId.of("flows://");
-    private final TypedId<?> flowId = TypedId.of("flow://").with(ECB_FLOW_REF);
-    private final TypedId<?> structId = TypedId.of("struct://").with(ECB_STRUCT_REF);
-    private final TypedId<?> keysId = TypedId.of("keys://").with(ECB_FLOW_REF);
+    private final TypedId<?> flowId = TypedId.of("flow://").with(FacadeResource.goodFlowRef);
+    private final TypedId<?> structId = TypedId.of("struct://").with(FacadeResource.goodStructRef);
+    private final TypedId<?> keysId = TypedId.of("keys://").with(FacadeResource.goodFlowRef);
 
     private static final class FakeClock extends Clock {
 
@@ -195,7 +193,7 @@ public class CachedWebClientTest {
     }
 
     private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
-        SdmxWebClient original = XRepoWebClient.of(FacadeResource.ecb());
+        SdmxWebClient original = XRepoWebClient.of(FacadeResource.repo);
         return XCallStackWebClient.of(original, count);
     }
 }

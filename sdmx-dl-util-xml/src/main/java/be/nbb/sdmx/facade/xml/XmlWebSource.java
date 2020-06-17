@@ -1,47 +1,47 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.drivers;
+package be.nbb.sdmx.facade.xml;
 
 import be.nbb.sdmx.facade.web.SdmxWebSource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public final class SdmxWebResource {
+public final class XmlWebSource {
 
     public static List<SdmxWebSource> load(String resource) {
         try {
-            return getParser().parseStream(() -> SdmxWebResource.class.getResourceAsStream(resource));
+            return getParser().parseResource(XmlWebSource.class, resource);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     static Xml.Parser<List<SdmxWebSource>> getParser() throws IOException {
-        return Stax.StreamParser.valueOf(SdmxWebResource::parse);
+        return Stax.StreamParser.valueOf(XmlWebSource::parse);
     }
 
     private static List<SdmxWebSource> parse(XMLStreamReader reader) throws XMLStreamException {

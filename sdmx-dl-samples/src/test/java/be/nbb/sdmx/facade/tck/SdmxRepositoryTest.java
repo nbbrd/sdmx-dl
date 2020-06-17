@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.repo;
+package be.nbb.sdmx.facade.tck;
 
 import be.nbb.sdmx.facade.DataFilter;
 import be.nbb.sdmx.facade.DataStructure;
@@ -25,8 +25,11 @@ import be.nbb.sdmx.facade.Obs;
 import be.nbb.sdmx.facade.DataflowRef;
 import be.nbb.sdmx.facade.Key;
 import be.nbb.sdmx.facade.Frequency;
-import be.nbb.sdmx.facade.tck.DataCursorAssert;
+
 import java.time.LocalDateTime;
+
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.tck.DataCursorAssert;
 import org.junit.Test;
 
 /**

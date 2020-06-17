@@ -18,6 +18,8 @@ package internal.connectors.drivers;
 
 import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
+
+import be.nbb.sdmx.facade.xml.XmlWebSource;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import java.util.Map;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
@@ -25,7 +27,6 @@ import internal.connectors.ConnectorRestClient;
 import internal.connectors.HasSeriesKeysOnlySupported;
 import internal.connectors.Connectors;
 import static internal.connectors.Connectors.*;
-import internal.util.drivers.SdmxWebResource;
 import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebProperty;
 import java.net.URI;
@@ -49,7 +50,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)
             .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
-            .sources(SdmxWebResource.load("/internal/connectors/drivers/sdmx21.xml"))
+            .sources(XmlWebSource.load("/internal/connectors/drivers/sdmx21.xml"))
             .build();
 
     private final static class Sdmx21Client extends RestSdmxClient implements HasSeriesKeysOnlySupported {

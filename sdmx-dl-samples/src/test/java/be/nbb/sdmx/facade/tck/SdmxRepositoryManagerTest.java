@@ -14,8 +14,10 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package be.nbb.sdmx.facade.repo;
+package be.nbb.sdmx.facade.tck;
 
+import be.nbb.sdmx.facade.repo.SdmxRepository;
+import be.nbb.sdmx.facade.repo.SdmxRepositoryManager;
 import be.nbb.sdmx.facade.tck.ConnectionSupplierAssert;
 import org.junit.Test;
 

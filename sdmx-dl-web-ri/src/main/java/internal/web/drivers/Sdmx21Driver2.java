@@ -20,7 +20,7 @@ import be.nbb.sdmx.facade.parser.DataFactory;
 import static internal.web.SdmxWebProperty.*;
 import be.nbb.sdmx.facade.web.SdmxWebSource;
 import be.nbb.sdmx.facade.web.spi.SdmxWebDriver;
-import internal.util.drivers.SdmxWebResource;
+import be.nbb.sdmx.facade.xml.XmlWebSource;
 import internal.web.SdmxWebDriverSupport;
 import internal.web.SdmxWebClient;
 import internal.web.SdmxWebProperty;
@@ -42,7 +42,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .client(Sdmx21Driver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
-            .sources(SdmxWebResource.load("/internal/web/drivers/sdmx21.xml"))
+            .sources(XmlWebSource.load("/internal/web/drivers/sdmx21.xml"))
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {

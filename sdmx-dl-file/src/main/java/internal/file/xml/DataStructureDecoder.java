@@ -19,7 +19,7 @@ package internal.file.xml;
 import be.nbb.sdmx.facade.DataStructure;
 import static internal.file.SdmxDecoder.DataType.*;
 import static be.nbb.sdmx.facade.parser.Freqs.TIME_FORMAT_CONCEPT;
-import be.nbb.util.StaxUtil;
+import be.nbb.sdmx.facade.xml.stream.StaxUtil;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
