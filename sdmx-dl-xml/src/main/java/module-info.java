@@ -4,8 +4,6 @@ module sdmxdl.util.xml {
     requires static org.checkerframework.checker.qual;
     requires static lombok;
 
-    requires java.logging;
-
     requires transitive sdmxdl.api;
     requires transitive sdmxdl.util;
     requires transitive nbbrd.io.xml;

@@ -38,7 +38,6 @@ import nbbrd.io.WrappedIOException;
  *
  * @author Philippe Charles
  */
-@lombok.extern.java.Log
 final class XMLStreamCompactDataCursor implements DataCursor {
 
     private static final String DATASET_TAG = "DataSet";
@@ -59,7 +58,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, String timeDimensionId, String primaryMeasureId) {
         if (!StaxUtil.isNotNamespaceAware(reader)) {
-            log.fine("Using XMLStreamReader with namespace awareness");
+            throw new IllegalArgumentException("Using XMLStreamReader with namespace awareness");
         }
         this.reader = reader;
         this.onClose = onClose;

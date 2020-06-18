@@ -41,7 +41,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @author Philippe Charles
  */
-@lombok.extern.java.Log
 final class XMLStreamGenericDataCursor implements DataCursor {
 
     static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser) {
@@ -74,7 +73,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, SeriesHeadParser headParser) {
         if (!StaxUtil.isNotNamespaceAware(reader)) {
-            log.fine("Using XMLStreamReader with namespace awareness");
+            throw new IllegalArgumentException("Using XMLStreamReader with namespace awareness");
         }
         this.reader = reader;
         this.onClose = onClose;
