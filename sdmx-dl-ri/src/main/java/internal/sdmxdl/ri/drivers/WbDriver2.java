@@ -16,6 +16,8 @@
  */
 package internal.sdmxdl.ri.drivers;
 
+import internal.sdmxdl.ri.RestClients;
+import internal.sdmxdl.ri.Sdmx21RestClient;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.util.parser.DataFactory;

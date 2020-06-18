@@ -1,68 +1,64 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- *
  * @author Philippe Charles
  */
-abstract class AbstractRestClient implements SdmxWebClient {
+public abstract class RiRestClient implements SdmxWebClient {
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    final public List<Dataflow> getFlows() throws IOException {
         URL url = getFlowsQuery();
         return getFlows(url);
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    final public Dataflow getFlow(DataflowRef ref) throws IOException {
         URL url = getFlowsQuery();
         return getFlow(url, ref);
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    final public DataStructure getStructure(DataStructureRef ref) throws IOException {
         URL url = getStructureQuery(ref);
         return getStructure(url, ref);
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    final public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
         URL url = getDataQuery(request);
         return getData(dsd, url);
     }
 
     @Override
-    public Duration ping() throws IOException {
+    final public Duration ping() throws IOException {
         Clock clock = Clock.systemDefaultZone();
         Instant start = clock.instant();
         getFlows();

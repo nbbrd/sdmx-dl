@@ -16,6 +16,8 @@
  */
 package internal.sdmxdl.ri.drivers;
 
+import internal.sdmxdl.ri.DotStatRestClient;
+import internal.sdmxdl.ri.RestClients;
 import sdmxdl.DataStructureRef;
 import sdmxdl.util.SdmxFix;
 import static sdmxdl.util.SdmxFix.Category.QUERY;

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri;
 
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-class RestClients {
+public class RestClients {
 
     public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
         return getRestClient(o, context, IOConsumer.noOp());

@@ -1,50 +1,45 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.util.parser.DataFactory;
-import sdmxdl.SdmxExceptions;
-import sdmxdl.util.SdmxFix;
-import static sdmxdl.util.SdmxMediaType.XML;
-import sdmxdl.xml.stream.SdmxXmlStreams;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
+import lombok.AllArgsConstructor;
+import nbbrd.io.function.IOSupplier;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.*;
+import sdmxdl.util.SdmxFix;
+import sdmxdl.util.parser.DataFactory;
 import sdmxdl.util.web.DataRequest;
+import sdmxdl.xml.stream.SdmxXmlStreams;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import nbbrd.io.function.IOSupplier;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static sdmxdl.util.SdmxMediaType.XML;
 
 /**
- *
  * @author Philippe Charles
  */
 @AllArgsConstructor
-class DotStatRestClient extends AbstractRestClient {
+public class DotStatRestClient extends RiRestClient {
 
     protected final String name;
     protected final URL endpoint;
@@ -131,7 +126,7 @@ class DotStatRestClient extends AbstractRestClient {
     }
 
     @NonNull
-    static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
+    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -139,7 +134,7 @@ class DotStatRestClient extends AbstractRestClient {
     }
 
     @NonNull
-    static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
+    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -147,7 +142,7 @@ class DotStatRestClient extends AbstractRestClient {
     }
 
     @NonNull
-    static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
+    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -155,7 +150,7 @@ class DotStatRestClient extends AbstractRestClient {
     }
 
     @NonNull
-    static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
+    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
@@ -165,20 +160,20 @@ class DotStatRestClient extends AbstractRestClient {
     }
 
     @NonNull
-    static Dataflow getFlowFromStructure(@NonNull DataStructure o) {
+    public static Dataflow getFlowFromStructure(@NonNull DataStructure o) {
         return Dataflow.of(getFlowRefFromStructureRef(o.getRef()), o.getRef(), o.getLabel());
     }
 
     @NonNull
-    static DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {
+    public static DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {
         return DataflowRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 
     @NonNull
-    static DataStructureRef getStructureRefFromFlowRef(@NonNull DataflowRef o) {
+    public static DataStructureRef getStructureRefFromFlowRef(@NonNull DataflowRef o) {
         return DataStructureRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 
-    static final String DATASTRUCTURE_RESOURCE = "GetDataStructure";
-    static final String DATA_RESOURCE = "GetData";
+    public static final String DATASTRUCTURE_RESOURCE = "GetDataStructure";
+    public static final String DATA_RESOURCE = "GetData";
 }
