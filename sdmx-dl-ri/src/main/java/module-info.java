@@ -4,11 +4,11 @@ module sdmxdl.web.ri {
     requires static org.checkerframework.checker.qual;
     requires static lombok;
 
-    requires sdmxdl.api;
     requires sdmxdl.util;
     requires sdmxdl.util.xml;
-    requires nbbrd.io.base;
     requires java.logging;
+
+    requires transitive sdmxdl.api;
 
     provides sdmxdl.web.spi.SdmxWebDriver with
             internal.sdmxdl.ri.drivers.AbsDriver2,

@@ -4,8 +4,8 @@ module sdmxdl.util {
     requires static org.checkerframework.checker.qual;
     requires static lombok;
 
-    requires sdmxdl.api;
-    requires nbbrd.io.base;
+    requires transitive sdmxdl.api;
+    requires transitive nbbrd.io.base;
 
     exports sdmxdl.util;
     exports sdmxdl.util.parser;
