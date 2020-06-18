@@ -1,47 +1,42 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.web;
 
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import internal.util.SdmxWebDriverLoader;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxCache;
+import sdmxdl.SdmxManager;
+import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.SdmxWebDriver;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.ProxySelector;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.net.ssl.SSLSocketFactory;
-import sdmxdl.SdmxManager;
-import internal.util.SdmxWebDriverLoader;
-import java.util.Arrays;
-import java.util.Optional;
-import javax.net.ssl.HttpsURLConnection;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-@lombok.experimental.Wither
+@lombok.With
 public final class SdmxWebManager implements SdmxManager {
 
     @NonNull
@@ -90,13 +85,17 @@ public final class SdmxWebManager implements SdmxManager {
     @lombok.NonNull
     private final SdmxCache cache;
 
+    @lombok.NonNull
+    SdmxWebListener eventListener;
+
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
         return new Builder()
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .cache(SdmxCache.of());
+                .cache(SdmxCache.of())
+                .eventListener(SdmxWebListener.getDefault());
     }
 
     @Override
@@ -123,6 +122,7 @@ public final class SdmxWebManager implements SdmxManager {
                         .languages(languages)
                         .proxySelector(proxySelector)
                         .sslSocketFactory(sslSocketFactory)
+                        .eventListener(eventListener)
                         .build());
     }
 

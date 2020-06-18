@@ -1,39 +1,37 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.ri.drivers;
 
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
+import nbbrd.io.function.IOConsumer;
 import sdmxdl.util.web.SdmxWebProperty;
+import sdmxdl.web.SdmxWebListener;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebContext;
+
+import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sdmxdl.web.spi.SdmxWebContext;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import nbbrd.io.function.IOConsumer;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
@@ -50,7 +48,7 @@ class RestClients {
                 SdmxWebProperty.getMaxRedirects(o.getProperties()),
                 context.getProxySelector(),
                 context.getSslSocketFactory(),
-                EventLogger.INSTANCE,
+                new DefaultEventListener(o, context.getEventListener()),
                 validator
         );
     }
@@ -63,26 +61,33 @@ class RestClients {
             ));
 
     @lombok.AllArgsConstructor
-    private enum EventLogger implements RestClientImpl.EventListener {
+    private static final class DefaultEventListener implements RestClientImpl.EventListener {
 
-        INSTANCE;
-        
         @lombok.NonNull
-        private final Logger logger = Logger.getLogger(SdmxWebManager.class.getName());
+        private final SdmxWebSource source;
+
+        @lombok.NonNull
+        private final SdmxWebListener listener;
 
         @Override
         public void onOpenStream(URL query, String mediaType, String langs) {
-            logger.log(Level.INFO, "Querying ''{0}''", query);
+            if (listener.isEnabled()) {
+                listener.onSourceEvent(source, String.format("Querying '%s'", query));
+            }
         }
 
         @Override
         public void onRedirection(URL oldUrl, URL newUrl) {
-            logger.log(Level.INFO, "Redirecting to ''{0}''", newUrl);
+            if (listener.isEnabled()) {
+                listener.onSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
+            }
         }
 
         @Override
         public void onProxy(URL query, Proxy proxy) {
-            logger.log(Level.INFO, "Using proxy ''{0}''", proxy);
+            if (listener.isEnabled()) {
+                listener.onSourceEvent(source, String.format("Using proxy '%s'", proxy));
+            }
         }
     }
 }

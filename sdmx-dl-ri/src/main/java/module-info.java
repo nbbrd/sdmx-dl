@@ -6,7 +6,6 @@ module sdmxdl.web.ri {
 
     requires sdmxdl.util;
     requires sdmxdl.util.xml;
-    requires java.logging;
 
     requires transitive sdmxdl.api;
 
