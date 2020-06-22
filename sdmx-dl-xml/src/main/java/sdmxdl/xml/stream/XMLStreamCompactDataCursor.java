@@ -1,41 +1,39 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.WrappedIOException;
 import sdmxdl.DataCursor;
-import sdmxdl.Key;
 import sdmxdl.Frequency;
-import sdmxdl.util.parser.ObsParser;
+import sdmxdl.Key;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.xml.stream.XMLStreamUtil.Status;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.CONTINUE;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.HALT;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.SUSPEND;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import sdmxdl.util.parser.Freqs;
+
+import static sdmxdl.xml.stream.XMLStreamUtil.Status.*;
 import static sdmxdl.xml.stream.XMLStreamUtil.isTagMatch;
-import java.io.Closeable;
-import nbbrd.io.WrappedIOException;
 
 /**
- *
  * @author Philippe Charles
  */
 final class XMLStreamCompactDataCursor implements DataCursor {
@@ -49,14 +47,13 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
-    private final Freqs.Parser freqParser;
     private final String timeDimensionId;
     private final String primaryMeasureId;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, String timeDimensionId, String primaryMeasureId) {
+    XMLStreamCompactDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, String timeDimensionId, String primaryMeasureId) {
         if (!StaxUtil.isNotNamespaceAware(reader)) {
             throw new IllegalArgumentException("Using XMLStreamReader with namespace awareness");
         }
@@ -65,7 +62,6 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = obsParser;
-        this.freqParser = freqParser;
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
         this.closed = false;
@@ -171,7 +167,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.frequency(freqParser.parse(keyBuilder, attributesBuilder::getAttribute));
+        obsParser.frequency(keyBuilder, attributesBuilder::getAttribute);
         return SUSPEND;
     }
 

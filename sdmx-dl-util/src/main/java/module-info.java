@@ -1,3 +1,5 @@
+import sdmxdl.ext.spi.SdmxDialect;
+
 module sdmxdl.util {
 
     requires static nbbrd.service;
@@ -9,10 +11,9 @@ module sdmxdl.util {
 
     exports sdmxdl.util;
     exports sdmxdl.util.parser;
-    exports sdmxdl.util.parser.spi;
     exports sdmxdl.util.web;
 
-    provides sdmxdl.util.parser.spi.SdmxDialect with internal.sdmxdl.util.parser.InseeDialect;
+    provides SdmxDialect with internal.sdmxdl.util.parser.InseeDialect;
 
-    uses sdmxdl.util.parser.spi.SdmxDialect;
+    uses SdmxDialect;
 }

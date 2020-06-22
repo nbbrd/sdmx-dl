@@ -16,6 +16,7 @@
  */
 package _test.sdmxdl.connectors.samples;
 
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.DataflowRef;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
@@ -23,7 +24,6 @@ import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.Series;
-import sdmxdl.util.parser.DataFactory;
 import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
 import internal.sdmxdl.connectors.Connectors;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
@@ -65,7 +65,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactory.sdmx20(), Connectors.toStructure(structs.get(0))))
+                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactories.SDMX20, Connectors.toStructure(structs.get(0))))
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
@@ -84,7 +84,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactory.sdmx21(), Connectors.toStructure(structs.get(0))))
+                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactories.SDMX21, Connectors.toStructure(structs.get(0))))
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();

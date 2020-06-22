@@ -1,35 +1,35 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.util.parser;
 
-import internal.sdmxdl.util.parser.InseeDialect;
+import _test.sdmxdl.util.DialectAssertions;
+import nbbrd.io.text.Parser;
+import org.junit.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dimension;
-import static sdmxdl.Frequency.*;
 import sdmxdl.Key;
-import java.util.function.Function;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
-import _test.sdmxdl.util.DialectAssertions;
-import nbbrd.io.text.Parser;
+
+import java.util.function.UnaryOperator;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.Frequency.*;
 
 /**
- *
  * @author Philippe Charles
  */
 public class InseeDialectTest {
@@ -48,12 +48,12 @@ public class InseeDialectTest {
                 .label("")
                 .build();
         Key.Builder key = Key.builder(dsd);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "A"), Function.identity())).isEqualTo(ANNUAL);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "T"), Function.identity())).isEqualTo(QUARTERLY);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "M"), Function.identity())).isEqualTo(MONTHLY);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "B"), Function.identity())).isEqualTo(MONTHLY);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "S"), Function.identity())).isEqualTo(HALF_YEARLY);
-        assertThat(d.getFreqParser(dsd).parse(key.put("FREQ", "X"), Function.identity())).isEqualTo(UNDEFINED);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
+        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
     }
 
     @Test

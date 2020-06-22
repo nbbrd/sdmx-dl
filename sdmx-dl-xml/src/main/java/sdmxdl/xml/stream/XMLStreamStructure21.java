@@ -1,39 +1,39 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.xml.stream;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dimension;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.xml.SdmxmlUri;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.net.URI;
-import static sdmxdl.xml.stream.XMLStreamUtil.check;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.xml.SdmxmlUri;
+import java.util.function.UnaryOperator;
 
 /**
- *
  * @author Philippe Charles
  */
 //@NotThreadSafe
@@ -159,13 +159,13 @@ final class XMLStreamStructure21 {
         concepts.put(id, label.build(id));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, DATA_STUCTURES_TAG, DATA_STUCTURE_TAG)) {
             parseDataStructure(reader, result, toConceptName, toCodes);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
@@ -186,7 +186,7 @@ final class XMLStreamStructure21 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_LIST_TAG:
@@ -199,7 +199,7 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
         int position = 1;
         while (XMLStreamUtil.nextTags(reader, DIMENSION_LIST_TAG)) {
             switch (reader.getLocalName()) {
@@ -213,7 +213,7 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, Function<String, String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
@@ -231,7 +231,7 @@ final class XMLStreamStructure21 {
         ds.dimension(dimension.build());
     }
 
-    private void parseConceptIdentity(XMLStreamReader reader, Dimension.Builder dimension, Function<String, String> toConceptName) throws XMLStreamException {
+    private void parseConceptIdentity(XMLStreamReader reader, Dimension.Builder dimension, UnaryOperator<String> toConceptName) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, CONCEPT_IDENTITY_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");

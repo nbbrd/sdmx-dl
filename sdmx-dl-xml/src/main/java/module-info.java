@@ -5,7 +5,6 @@ module sdmxdl.util.xml {
     requires static lombok;
 
     requires transitive sdmxdl.api;
-    requires transitive sdmxdl.util;
     requires transitive nbbrd.io.xml;
 
     exports sdmxdl.xml;

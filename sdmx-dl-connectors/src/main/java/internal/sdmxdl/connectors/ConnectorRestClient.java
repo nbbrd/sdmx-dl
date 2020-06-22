@@ -1,51 +1,48 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.connectors;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.util.parser.DataFactory;
-import static sdmxdl.util.web.SdmxWebProperty.*;
-import java.io.IOException;
-import java.util.List;
+import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.*;
+import sdmxdl.ext.ObsFactory;
+import sdmxdl.util.web.DataRequest;
+import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.web.spi.SdmxWebContext;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.stream.Collectors;
-import lombok.AccessLevel;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import sdmxdl.util.web.SdmxWebClient;
 import java.util.Arrays;
 import java.util.Collections;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.util.web.DataRequest;
-import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static sdmxdl.util.web.SdmxWebProperty.*;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -65,7 +62,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull DataFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull ObsFactory dataFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -78,7 +75,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         };
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull DataFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull ObsFactory dataFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
@@ -97,7 +94,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
     private final RestSdmxClient connector;
 
     @lombok.NonNull
-    private final DataFactory dataFactory;
+    private final ObsFactory dataFactory;
 
     @Override
     public String getName() throws IOException {

@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.util.SdmxFix;
 import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -49,7 +49,7 @@ public final class IloDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:ilo")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ILO2::new, DataFactory.sdmx20()))
+            .client(ConnectorRestClient.of(ILO2::new, DataFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT)
             .build();

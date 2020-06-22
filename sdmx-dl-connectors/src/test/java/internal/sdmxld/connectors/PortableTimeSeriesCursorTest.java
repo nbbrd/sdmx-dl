@@ -26,7 +26,7 @@ import sdmxdl.Frequency;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.DataCursorAssert;
 import sdmxdl.Obs;
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
@@ -55,7 +55,7 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void test() throws IOException {
-        try (DataCursor c = PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD))) {
+        try (DataCursor c = PortableTimeSeriesCursor.of(DATA, DataFactories.SDMX21, Connectors.toStructure(DSD))) {
             assertThat(c.toStream(DataFilter.Detail.FULL))
                     .hasSize(120)
                     .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
@@ -76,6 +76,6 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void testCompliance() {
-        DataCursorAssert.assertCompliance(() -> PortableTimeSeriesCursor.of(DATA, DataFactory.sdmx21(), Connectors.toStructure(DSD)));
+        DataCursorAssert.assertCompliance(() -> PortableTimeSeriesCursor.of(DATA, DataFactories.SDMX21, Connectors.toStructure(DSD)));
     }
 }

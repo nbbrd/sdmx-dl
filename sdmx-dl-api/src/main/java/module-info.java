@@ -7,9 +7,12 @@ module sdmxdl.api {
     requires java.logging;
 
     exports sdmxdl;
+    exports sdmxdl.ext;
+    exports sdmxdl.ext.spi;
     exports sdmxdl.repo;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
+    uses sdmxdl.ext.spi.SdmxDialect;
     uses sdmxdl.web.spi.SdmxWebDriver;
 }

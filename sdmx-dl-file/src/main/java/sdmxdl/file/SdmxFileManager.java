@@ -1,46 +1,42 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.file;
 
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxCache;
-import sdmxdl.util.parser.DataFactory;
-import sdmxdl.util.parser.spi.SdmxDialect;
 import internal.sdmxdl.file.CachedResource;
 import internal.sdmxdl.file.SdmxDecoder;
 import internal.sdmxdl.file.SdmxFileConnectionImpl;
 import internal.sdmxdl.file.SdmxFileUtil;
 import internal.sdmxdl.file.xml.StaxSdmxDecoder;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.*;
+import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.SdmxDialectLoader;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import sdmxdl.SdmxManager;
-import sdmxdl.util.parser.spi.SdmxDialectLoader;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-@lombok.experimental.Wither
+@lombok.With
 public final class SdmxFileManager implements SdmxManager {
 
     @NonNull
@@ -97,10 +93,10 @@ public final class SdmxFileManager implements SdmxManager {
         return Dataflow.of(files.asDataflowRef(), EMPTY, SdmxFileUtil.asFlowLabel(files));
     }
 
-    private Optional<DataFactory> getDataFactory(SdmxFileSet files) {
+    private Optional<ObsFactory> getDataFactory(SdmxFileSet files) {
         return dialects.stream()
                 .filter(o -> o.getName().equals(files.getDialect()))
-                .map(DataFactory.class::cast)
-                .findFirst();
+                .findFirst()
+                .map(ObsFactory.class::cast);
     }
 }

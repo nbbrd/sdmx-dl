@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -37,7 +37,7 @@ public final class SeDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:es")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EsClient::new, DataFactory.sdmx20()))
+            .client(ConnectorRestClient.of(EsClient::new, DataFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
             .build();

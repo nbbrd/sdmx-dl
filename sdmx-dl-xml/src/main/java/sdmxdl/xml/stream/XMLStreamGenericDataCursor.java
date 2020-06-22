@@ -1,54 +1,52 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.WrappedIOException;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataCursor;
-import sdmxdl.Key;
 import sdmxdl.Frequency;
-import sdmxdl.util.parser.ObsParser;
+import sdmxdl.Key;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.xml.stream.XMLStreamUtil.Status;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.CONTINUE;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.HALT;
-import static sdmxdl.xml.stream.XMLStreamUtil.Status.SUSPEND;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import sdmxdl.util.parser.Freqs;
-import static sdmxdl.xml.stream.XMLStreamUtil.isTagMatch;
-import java.io.Closeable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import nbbrd.io.WrappedIOException;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static sdmxdl.xml.stream.XMLStreamUtil.Status.*;
+import static sdmxdl.xml.stream.XMLStreamUtil.isTagMatch;
 
 /**
- *
  * @author Philippe Charles
  */
 final class XMLStreamGenericDataCursor implements DataCursor {
 
-    static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser) {
-        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX20);
+    static XMLStreamGenericDataCursor sdmx20(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser) {
+        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, SeriesHeadParser.SDMX20);
     }
 
-    static XMLStreamGenericDataCursor sdmx21(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser) {
-        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, freqParser, SeriesHeadParser.SDMX21);
+    static XMLStreamGenericDataCursor sdmx21(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser) {
+        return new XMLStreamGenericDataCursor(reader, onClose, keyBuilder, obsParser, SeriesHeadParser.SDMX21);
     }
 
     private static final String DATASET_TAG = "DataSet";
@@ -65,13 +63,12 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private final Key.Builder keyBuilder;
     private final AttributesBuilder attributesBuilder;
     private final ObsParser obsParser;
-    private final Freqs.Parser freqParser;
     private final SeriesHeadParser headParser;
     private boolean closed;
     private boolean hasSeries;
     private boolean hasObs;
 
-    private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, Freqs.Parser freqParser, SeriesHeadParser headParser) {
+    private XMLStreamGenericDataCursor(XMLStreamReader reader, Closeable onClose, Key.Builder keyBuilder, ObsParser obsParser, SeriesHeadParser headParser) {
         if (!StaxUtil.isNotNamespaceAware(reader)) {
             throw new IllegalArgumentException("Using XMLStreamReader with namespace awareness");
         }
@@ -80,7 +77,6 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         this.keyBuilder = keyBuilder;
         this.attributesBuilder = new AttributesBuilder();
         this.obsParser = obsParser;
-        this.freqParser = freqParser;
         this.headParser = headParser;
         this.closed = false;
         this.hasSeries = false;
@@ -192,7 +188,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status parseSeries() throws XMLStreamException {
         nextWhile(this::onSeriesHead);
-        obsParser.frequency(freqParser.parse(keyBuilder, attributesBuilder::getAttribute));
+        obsParser.frequency(keyBuilder, attributesBuilder::getAttribute);
         return SUSPEND;
     }
 

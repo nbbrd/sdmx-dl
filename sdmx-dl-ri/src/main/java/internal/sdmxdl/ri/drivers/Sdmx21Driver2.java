@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.drivers;
 
 import internal.sdmxdl.ri.RestClients;
 import internal.sdmxdl.ri.Sdmx21RestClient;
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import static sdmxdl.util.web.SdmxWebProperty.*;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -54,7 +54,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
-                DataFactory.sdmx21()
+                DataFactories.SDMX21
         );
     }
 }

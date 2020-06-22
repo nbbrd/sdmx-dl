@@ -21,7 +21,7 @@ import internal.util.rest.RestQueryBuilder;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -43,7 +43,7 @@ public class Sdmx21RestClient extends RiRestClient {
     protected final LanguagePriorityList langs;
     protected final RestClient executor;
     protected final boolean seriesKeysOnlySupported;
-    protected final DataFactory dialect;
+    protected final ObsFactory dataFactory;
 
     @Override
     public String getName() throws IOException {
@@ -102,7 +102,7 @@ public class Sdmx21RestClient extends RiRestClient {
     @Override
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
         return SdmxXmlStreams
-                .compactData21(dsd, dialect)
+                .compactData21(dsd, dataFactory)
                 .parseStream(calling(url, STRUCTURE_SPECIFIC_DATA_21));
     }
 

@@ -1,35 +1,32 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.file;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.LanguagePriorityList;
+import nbbrd.io.xml.Xml;
+import sdmxdl.*;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.file.SdmxFileSet;
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
+
 import java.io.IOException;
 import java.util.Optional;
-import nbbrd.io.xml.Xml;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
@@ -38,7 +35,7 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     private final SdmxFileSet files;
     private final LanguagePriorityList languages;
     private final SdmxDecoder decoder;
-    private final Optional<DataFactory> dataFactory;
+    private final Optional<ObsFactory> dataFactory;
 
     @Override
     public SdmxDecoder.Info decode() throws IOException {
@@ -54,13 +51,13 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     private Xml.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
         switch (o) {
             case GENERIC20:
-                return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactory.sdmx20()));
+                return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
             case COMPACT20:
-                return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(DataFactory.sdmx20()));
+                return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
             case GENERIC21:
-                return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(DataFactory.sdmx21()));
+                return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
             case COMPACT21:
-                return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(DataFactory.sdmx21()));
+                return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
             default:
                 throw new IOException("Don't known how to handle type '" + o + "'");
         }

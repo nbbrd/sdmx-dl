@@ -20,7 +20,7 @@ import internal.sdmxdl.ri.RestClients;
 import internal.sdmxdl.ri.Sdmx21RestClient;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.util.SdmxFix;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 import sdmxdl.web.SdmxWebSource;
@@ -53,7 +53,7 @@ public final class WbDriver2 implements SdmxWebDriver {
     private static final class WbClient2 extends Sdmx21RestClient {
 
         private WbClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, DataFactory.sdmx21());
+            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, DataFactories.SDMX21);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/' separator required at the end of query")

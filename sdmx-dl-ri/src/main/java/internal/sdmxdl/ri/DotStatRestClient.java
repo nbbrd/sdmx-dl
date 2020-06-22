@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.ri;
 
+import sdmxdl.util.parser.DataFactories;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,6 @@ import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.DataFactory;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -107,7 +107,7 @@ public class DotStatRestClient extends RiRestClient {
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
         DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams
-                .compactData20(modifiedDsd, DataFactory.sdmx20())
+                .compactData20(modifiedDsd, DataFactories.SDMX20)
                 .parseStream(calling(url, XML));
     }
 

@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
@@ -35,7 +35,7 @@ public final class AbsDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:abs")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ABS::new, DataFactory.sdmx20()))
+            .client(ConnectorRestClient.of(ABS::new, DataFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();

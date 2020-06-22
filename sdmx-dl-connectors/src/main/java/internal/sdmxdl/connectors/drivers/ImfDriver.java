@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -35,7 +35,7 @@ public final class ImfDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:imf")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(IMF2::new, DataFactory.sdmx20()))
+            .client(ConnectorRestClient.of(IMF2::new, DataFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
             .build();

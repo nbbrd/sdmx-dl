@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
@@ -35,7 +35,7 @@ public final class OecdDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:oecd")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(OECD::new, DataFactory.sdmx20()))
+            .client(ConnectorRestClient.of(OECD::new, DataFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
             .build();

@@ -1,78 +1,75 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.util.parser;
 
-import sdmxdl.util.Chars;
+import nbbrd.io.text.Parser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Dimension;
 import sdmxdl.Frequency;
-import static sdmxdl.Frequency.*;
 import sdmxdl.Key;
+import sdmxdl.util.Chars;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.util.function.UnaryOperator;
+
+import static sdmxdl.Frequency.*;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
 public class Freqs {
 
-    public interface Parser {
+    @NonNull
+    public static BiFunction<Key.Builder, UnaryOperator<String>, Frequency> sdmx20() {
+        return Freqs::parseSdmx20;
+    }
 
-        @NonNull
-        Frequency parse(Key.@NonNull Builder key, @NonNull Function<String, String> attributes);
+    @NonNull
+    public static BiFunction<Key.Builder, UnaryOperator<String>, Frequency> sdmx21(@NonNull DataStructure dsd) {
+        return of(extractorByIndex(dsd), Freqs::parseByFreq);
+    }
 
-        @NonNull
-        static Parser sdmx20() {
-            return Freqs::parseSdmx20;
-        }
+    @NonNull
+    public static BiFunction<Key.Builder, UnaryOperator<String>, Frequency> sdmx21(int frequencyCodeIdIndex) {
+        return of(extractorByIndex(frequencyCodeIdIndex), Freqs::parseByFreq);
+    }
 
-        @NonNull
-        static Parser sdmx21(@NonNull DataStructure dsd) {
-            return of(extractorByIndex(dsd), Freqs::parseByFreq);
-        }
-
-        @NonNull
-        static Parser sdmx21(int frequencyCodeIdIndex) {
-            return of(extractorByIndex(frequencyCodeIdIndex), Freqs::parseByFreq);
-        }
-
-        @NonNull
-        static Parser of(
-                @NonNull BiFunction<Key.Builder, Function<String, String>, String> extractor,
-                @NonNull Function<String, Frequency> mapper) {
-            return (k, a) -> {
-                String code = extractor.apply(k, a);
-                if (code == null) {
-                    return Frequency.UNDEFINED;
-                }
-                Frequency freq = mapper.apply(code);
-                if (freq == null) {
-                    return Frequency.UNDEFINED;
-                }
-                return freq;
-            };
-        }
+    @NonNull
+    public static BiFunction<Key.Builder, UnaryOperator<String>, Frequency> of(
+            @NonNull BiFunction<Key.Builder, UnaryOperator<String>, String> extractor,
+            @NonNull Function<String, Frequency> mapper) {
+        return (k, a) -> {
+            String code = extractor.apply(k, a);
+            if (code == null) {
+                return Frequency.UNDEFINED;
+            }
+            Frequency freq = mapper.apply(code);
+            if (freq == null) {
+                return Frequency.UNDEFINED;
+            }
+            return freq;
+        };
     }
 
     public final String FREQ_CONCEPT = "FREQ";
@@ -92,23 +89,21 @@ public class Freqs {
     }
 
     @NonNull
-    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(@NonNull DataStructure dsd) {
+    public BiFunction<Key.Builder, UnaryOperator<String>, String> extractorByIndex(@NonNull DataStructure dsd) {
         return extractorByIndex(getFrequencyCodeIdIndex(dsd));
     }
 
     @NonNull
-    public BiFunction<Key.Builder, Function<String, String>, String> extractorByIndex(int frequencyCodeIdIndex) {
+    public BiFunction<Key.Builder, UnaryOperator<String>, String> extractorByIndex(int frequencyCodeIdIndex) {
         return frequencyCodeIdIndex != NO_FREQUENCY_CODE_ID_INDEX
                 ? (k, a) -> k.getItem(frequencyCodeIdIndex)
                 : (k, a) -> null;
     }
 
     /**
-     *
      * @param code
      * @return
-     * @see
-     * http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
+     * @see http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
      */
     @NonNull
     public Frequency parseByFreq(@NonNull String code) {
@@ -157,7 +152,6 @@ public class Freqs {
     }
 
     /**
-     *
      * @param code
      * @return
      * @see http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
@@ -184,7 +178,8 @@ public class Freqs {
         }
     }
 
-    public static nbbrd.io.text.@NonNull Parser<LocalDateTime> onStandardFreq(@NonNull Frequency freq) {
+    @NonNull
+    public static Parser<LocalDateTime> onStandardFreq(@NonNull Frequency freq) {
         return STANDARD_PARSERS.get(freq);
     }
 
@@ -209,7 +204,7 @@ public class Freqs {
         return Collections.unmodifiableMap(result);
     }
 
-    private Frequency parseSdmx20(Key.Builder key, Function<String, String> attributes) {
+    private Frequency parseSdmx20(Key.Builder key, UnaryOperator<String> attributes) {
         String code = attributes.apply(TIME_FORMAT_CONCEPT);
         return code != null ? parseByTimeFormat(code) : Frequency.UNDEFINED;
     }

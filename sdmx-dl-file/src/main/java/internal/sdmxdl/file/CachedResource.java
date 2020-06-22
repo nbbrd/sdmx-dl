@@ -21,15 +21,17 @@ import sdmxdl.DataFilter;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.file.SdmxFileSet;
 import sdmxdl.Series;
-import sdmxdl.util.parser.DataFactory;
 import sdmxdl.util.TypedId;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import sdmxdl.SdmxCache;
+import sdmxdl.ext.spi.SdmxDialect;
+
 import java.time.Duration;
 
 /**
@@ -45,7 +47,7 @@ public final class CachedResource extends SdmxDecoderResource {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<List<Series>> loadDataKey;
 
-    public CachedResource(SdmxFileSet files, LanguagePriorityList languages, SdmxDecoder decoder, Optional<DataFactory> dataFactory, SdmxCache cache) {
+    public CachedResource(SdmxFileSet files, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
         super(files, languages, decoder, dataFactory);
         this.cache = cache;
         String base = SdmxFileUtil.toXml(files) + languages.toString();

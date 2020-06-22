@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import static sdmxdl.util.web.SdmxWebProperty.*;
 
 import sdmxdl.xml.XmlWebSource;
@@ -44,7 +44,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .builder()
             .name("connectors:sdmx21")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx21Client::new, DataFactory.sdmx21()))
+            .client(ConnectorRestClient.of(Sdmx21Client::new, DataFactories.SDMX21))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)

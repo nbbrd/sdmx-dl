@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactory;
+import sdmxdl.util.parser.DataFactories;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
@@ -35,7 +35,7 @@ public final class EurostatDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:eurostat")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EUROSTAT::new, DataFactory.sdmx21()))
+            .client(ConnectorRestClient.of(EUROSTAT::new, DataFactories.SDMX21))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
             .build();
