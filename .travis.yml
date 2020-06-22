@@ -1,0 +1,19 @@
+dist: xenial
+language: java
+jdk:
+  - openjdk8
+  - openjdk11
+  - openjdk-ea
+
+matrix:
+  allow_failures:
+    - jdk: openjdk-ea
+
+env:
+  global:
+    - DEPLOY_JDK=openjdk11
+    - DEPLOY_REPO=nbbrd/sdmx-dl
+
+cache:
+  directories:
+    - $HOME/.m2
