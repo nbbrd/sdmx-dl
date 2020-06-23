@@ -14,13 +14,13 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file;
+package internal.sdmxdl.ri.file;
 
 import nbbrd.io.xml.Xml;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.file.SdmxFileSet;
+import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.parser.DataFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -33,20 +33,20 @@ import java.util.Optional;
 @lombok.AllArgsConstructor
 class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
-    private final SdmxFileSet files;
+    private final SdmxFileSource source;
     private final LanguagePriorityList languages;
     private final SdmxDecoder decoder;
     private final Optional<ObsFactory> dataFactory;
 
     @Override
     public SdmxDecoder.Info decode() throws IOException {
-        return decoder.decode(files, languages);
+        return decoder.decode(source, languages);
     }
 
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         return getDataSupplier(entry.getDataType(), entry.getStructure())
-                .parseFile(files.getData());
+                .parseFile(source.getData());
     }
 
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {

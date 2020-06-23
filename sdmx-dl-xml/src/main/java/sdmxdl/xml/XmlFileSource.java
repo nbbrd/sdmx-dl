@@ -1,50 +1,26 @@
-/*
- * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
- * by the European Commission - subsequent versions of the EUPL (the "Licence");
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at:
- * 
- * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the Licence is distributed on an "AS IS" basis,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
- * limitations under the Licence.
- */
-package internal.sdmxdl.file;
+package sdmxdl.xml;
 
-import sdmxdl.file.SdmxFileSet;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.file.SdmxFileSource;
 import sdmxdl.xml.stream.StaxUtil;
-import java.io.File;
-import java.io.IOException;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import nbbrd.io.xml.Stax;
-import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.io.File;
+import java.io.IOException;
 
-/**
- *
- * @author Philippe Charles
- */
 @lombok.experimental.UtilityClass
-public class SdmxFileUtil {
-
-    @NonNull
-    public String asFlowLabel(@NonNull SdmxFileSet files) {
-        return files.getData().getName().replace(".xml", "");
-    }
+public class XmlFileSource {
 
     @NonNull
     @SuppressWarnings("null")
-    public String toXml(@NonNull SdmxFileSet files) {
+    public String toXml(@NonNull SdmxFileSource source) {
         try {
-            return FORMATTER.formatToString(files);
+            return FORMATTER.formatToString(source);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -52,23 +28,23 @@ public class SdmxFileUtil {
 
     private static final XMLOutputFactory OUTPUT = XMLOutputFactory.newInstance();
 
-    private final Xml.Formatter<SdmxFileSet> FORMATTER = Stax.StreamFormatter
-            .<SdmxFileSet>builder()
+    private final Xml.Formatter<SdmxFileSource> FORMATTER = Stax.StreamFormatter
+            .<SdmxFileSource>builder()
             .factory(() -> OUTPUT)
-            .handler(SdmxFileUtil::toXml)
+            .handler(XmlFileSource::toXml)
             .build();
 
-    private void toXml(SdmxFileSet files, XMLStreamWriter xml) throws XMLStreamException {
+    private void toXml(SdmxFileSource source, XMLStreamWriter xml) throws XMLStreamException {
         xml.writeEmptyElement(ROOT_TAG);
 
-        xml.writeAttribute(DATA_ATTR, files.getData().toString());
+        xml.writeAttribute(DATA_ATTR, source.getData().toString());
 
-        File structure = files.getStructure();
+        File structure = source.getStructure();
         if (isValidFile(structure)) {
-            xml.writeAttribute(STRUCT_ATTR, files.getStructure().toString());
+            xml.writeAttribute(STRUCT_ATTR, source.getStructure().toString());
         }
 
-        String dialect = files.getDialect();
+        String dialect = source.getDialect();
         if (!isNullOrEmpty(dialect)) {
             xml.writeAttribute(DIALECT_ATTR, dialect);
         }
@@ -77,7 +53,7 @@ public class SdmxFileUtil {
     }
 
     @NonNull
-    public static SdmxFileSet fromXml(@NonNull String input) throws IllegalArgumentException {
+    public static SdmxFileSource fromXml(@NonNull String input) throws IllegalArgumentException {
         try {
             return PARSER.parseChars(input);
         } catch (IOException ex) {
@@ -85,13 +61,13 @@ public class SdmxFileUtil {
         }
     }
 
-    private final Xml.Parser<SdmxFileSet> PARSER = Stax.StreamParser
-            .<SdmxFileSet>builder()
+    private final Xml.Parser<SdmxFileSource> PARSER = Stax.StreamParser
+            .<SdmxFileSource>builder()
             .factory(StaxUtil::getInputFactoryWithoutNamespace)
-            .value(SdmxFileUtil::fromXml)
+            .value(XmlFileSource::fromXml)
             .build();
 
-    private static SdmxFileSet fromXml(XMLStreamReader xml) throws XMLStreamException {
+    private static SdmxFileSource fromXml(XMLStreamReader xml) throws XMLStreamException {
         String data = null;
         String structure = null;
         String dialect = null;
@@ -108,7 +84,7 @@ public class SdmxFileUtil {
             throw new XMLStreamException("Missing data attribute");
         }
 
-        return SdmxFileSet.builder()
+        return SdmxFileSource.builder()
                 .data(new File(data))
                 .structure(!isNullOrEmpty(structure) ? new File(structure) : null)
                 .dialect(dialect)

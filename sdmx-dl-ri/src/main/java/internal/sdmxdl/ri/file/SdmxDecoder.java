@@ -14,12 +14,12 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file;
+package internal.sdmxdl.ri.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.file.SdmxFileSet;
+import sdmxdl.file.SdmxFileSource;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ import java.io.IOException;
 public interface SdmxDecoder {
 
     @NonNull
-    Info decode(@NonNull SdmxFileSet files, @NonNull LanguagePriorityList languages) throws IOException;
+    Info decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
 
     @lombok.Value(staticConstructor = "of")
     class Info {

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file.xml;
+package internal.sdmxdl.ri.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

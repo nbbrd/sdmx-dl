@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file.xml;
+package internal.sdmxdl.ri.file;
 
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.sdmxdl.file;
+package internal.sdmxdl.ri.file;
 
 import sdmxdl.DataCursor;
 import sdmxdl.DataStructure;

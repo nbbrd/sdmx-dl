@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.sdmxdl.file;
+package internal.sdmxdl.ri.file;
 
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
@@ -22,7 +22,7 @@ import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.file.SdmxFileSet;
+import sdmxdl.file.SdmxFileSource;
 import sdmxdl.Series;
 import sdmxdl.util.TypedId;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import sdmxdl.SdmxCache;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.xml.XmlFileSource;
 
 import java.time.Duration;
 
@@ -47,10 +47,10 @@ public final class CachedResource extends SdmxDecoderResource {
     private final TypedId<SdmxDecoder.Info> decodeKey;
     private final TypedId<List<Series>> loadDataKey;
 
-    public CachedResource(SdmxFileSet files, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
-        super(files, languages, decoder, dataFactory);
+    public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
+        super(source, languages, decoder, dataFactory);
         this.cache = cache;
-        String base = SdmxFileUtil.toXml(files) + languages.toString();
+        String base = XmlFileSource.toXml(source) + languages.toString();
         this.decodeKey = TypedId.of("decode://" + base);
         this.loadDataKey = TypedId.of("loadData://" + base);
     }

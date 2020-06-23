@@ -9,10 +9,13 @@ module sdmxdl.api {
     exports sdmxdl;
     exports sdmxdl.ext;
     exports sdmxdl.ext.spi;
+    exports sdmxdl.file;
+    exports sdmxdl.file.spi;
     exports sdmxdl.repo;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
     uses sdmxdl.ext.spi.SdmxDialect;
+    uses sdmxdl.file.spi.SdmxFileReader;
     uses sdmxdl.web.spi.SdmxWebDriver;
 }

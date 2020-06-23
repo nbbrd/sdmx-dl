@@ -14,16 +14,15 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file.xml;
+package internal.sdmxdl.ri.file;
 
-import internal.sdmxdl.file.SdmxDecoder;
-import internal.sdmxdl.file.SdmxFileUtil;
 import nbbrd.io.xml.Xml;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.file.SdmxFileSet;
+import sdmxdl.file.SdmxFileSource;
 import sdmxdl.xml.SdmxmlDataTypeProbe;
+import sdmxdl.xml.XmlFileSource;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.File;
@@ -37,12 +36,12 @@ import java.util.List;
 public final class StaxSdmxDecoder implements SdmxDecoder {
 
     @Override
-    public Info decode(SdmxFileSet files, LanguagePriorityList langs) throws IOException {
-        String type = probeDataType(files.getData());
-        File structure = files.getStructure();
-        return Info.of(type, SdmxFileUtil.isValidFile(structure)
+    public Info decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
+        String type = probeDataType(source.getData());
+        File structure = source.getStructure();
+        return Info.of(type, XmlFileSource.isValidFile(structure)
                 ? parseStruct(type, langs, structure)
-                : decodeStruct(type, files.getData()));
+                : decodeStruct(type, source.getData()));
     }
 
     private String probeDataType(File data) throws IOException {
