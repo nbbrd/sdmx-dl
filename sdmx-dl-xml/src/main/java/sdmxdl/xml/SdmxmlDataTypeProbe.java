@@ -1,45 +1,44 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.file.xml;
+package sdmxdl.xml;
 
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
+import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.xml.stream.StaxUtil;
-import static internal.sdmxdl.file.SdmxDecoder.DataType.*;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.net.URI;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import static sdmxdl.xml.SdmxmlUri.*;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import internal.sdmxdl.file.SdmxDecoder;
-import java.net.URI;
-import nbbrd.io.xml.Stax;
-import nbbrd.io.xml.Xml;
-
 /**
- *
  * @author Philippe Charles
  */
-final class DataTypeProbe {
+public final class SdmxmlDataTypeProbe {
 
-    public static Xml.Parser<SdmxDecoder.DataType> of() {
-        return Stax.StreamParser.valueOf(DataTypeProbe::probeDataType);
+    public static Xml.Parser<String> of() {
+        return Stax.StreamParser.valueOf(SdmxmlDataTypeProbe::probeDataType);
     }
 
-    private static SdmxDecoder.DataType probeDataType(XMLStreamReader reader) throws XMLStreamException {
+    private static String probeDataType(XMLStreamReader reader) throws XMLStreamException {
         if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot probe data type");
         }
@@ -52,14 +51,14 @@ final class DataTypeProbe {
                     if (level == 2 && reader.getLocalName().equals("Header")) {
                         URI uri = URI.create(reader.getNamespaceURI());
                         if (NS_V10_URI.is(uri)) {
-                            return UNKNOWN;
+                            return null;
                         } else if (NS_V20_URI.is(uri)) {
                             while (reader.hasNext()) {
                                 switch (reader.next()) {
                                     case START_ELEMENT:
                                         level++;
                                         if (level == 3 && reader.getLocalName().equals("KeyFamilyRef")) {
-                                            return GENERIC20;
+                                            return SdmxMediaType.GENERIC_DATA_20;
                                         }
                                         break;
                                     case END_ELEMENT:
@@ -67,14 +66,14 @@ final class DataTypeProbe {
                                         break;
                                 }
                             }
-                            return COMPACT20;
+                            return SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20;
                         } else if (NS_V21_URI.is(uri)) {
                             while (reader.hasNext()) {
                                 switch (reader.next()) {
                                     case START_ELEMENT:
                                         level++;
                                         if (level == 4 && reader.getLocalName().equals("SeriesKey")) {
-                                            return GENERIC21;
+                                            return SdmxMediaType.GENERIC_DATA_21;
                                         }
                                         break;
                                     case END_ELEMENT:
@@ -82,7 +81,7 @@ final class DataTypeProbe {
                                         break;
                                 }
                             }
-                            return COMPACT21;
+                            return SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21;
                         }
                     }
                     break;
@@ -91,6 +90,6 @@ final class DataTypeProbe {
                     break;
             }
         }
-        return UNKNOWN;
+        return null;
     }
 }

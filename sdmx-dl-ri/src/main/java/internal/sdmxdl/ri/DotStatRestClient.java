@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static sdmxdl.util.SdmxMediaType.XML;
+import static sdmxdl.ext.SdmxMediaType.XML;
 
 /**
  * @author Philippe Charles

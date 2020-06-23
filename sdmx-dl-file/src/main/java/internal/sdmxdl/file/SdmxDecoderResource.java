@@ -19,6 +19,7 @@ package internal.sdmxdl.file;
 import nbbrd.io.xml.Xml;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileSet;
 import sdmxdl.util.parser.DataFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
@@ -44,22 +45,22 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return getDataSupplier(entry.getType(), entry.getStructure())
+        return getDataSupplier(entry.getDataType(), entry.getStructure())
                 .parseFile(files.getData());
     }
 
-    private Xml.Parser<DataCursor> getDataSupplier(SdmxDecoder.DataType o, DataStructure dsd) throws IOException {
-        switch (o) {
-            case GENERIC20:
+    private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {
+        switch (dataType) {
+            case SdmxMediaType.GENERIC_DATA_20:
                 return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
-            case COMPACT20:
+            case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20:
                 return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
-            case GENERIC21:
+            case SdmxMediaType.GENERIC_DATA_21:
                 return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
-            case COMPACT21:
+            case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21:
                 return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
             default:
-                throw new IOException("Don't known how to handle type '" + o + "'");
+                throw new IOException("Don't known how to handle type '" + dataType + "'");
         }
     }
 }

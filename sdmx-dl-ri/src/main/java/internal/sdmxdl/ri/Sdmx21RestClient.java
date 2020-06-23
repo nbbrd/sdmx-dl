@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import static sdmxdl.util.SdmxMediaType.*;
+import static sdmxdl.ext.SdmxMediaType.*;
 
 /**
  * @author Philippe Charles

@@ -1,46 +1,40 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.file.xml;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dimension;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import sdmxdl.ext.SdmxMediaType;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Pattern;
-import internal.sdmxdl.file.SdmxDecoder.DataType;
-import java.util.Collection;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- *
  * @author Philippe Charles
  */
 final class CustomDataStructureBuilder {
 
     private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap();
     private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap();
-    private DataType fileType = DataType.UNKNOWN;
+    private String fileType = null;
     private DataStructureRef ref = null;
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
@@ -58,7 +52,7 @@ final class CustomDataStructureBuilder {
     }
 
     @NonNull
-    public CustomDataStructureBuilder fileType(@NonNull DataType fileType) {
+    public CustomDataStructureBuilder fileType(@NonNull String fileType) {
         this.fileType = fileType;
         return this;
     }
@@ -100,7 +94,7 @@ final class CustomDataStructureBuilder {
     private Set<Dimension> guessDimensions() {
         Set<Dimension> result = new LinkedHashSet<>();
         int position = 1;
-        boolean needsFiltering = fileType.equals(DataType.COMPACT20) || fileType.equals(DataType.COMPACT21);
+        boolean needsFiltering = fileType.equals(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20) || fileType.equals(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         for (Entry<String, Set<String>> item : dimensions.entrySet()) {
             if (needsFiltering && isAttribute(item)) {
                 continue;

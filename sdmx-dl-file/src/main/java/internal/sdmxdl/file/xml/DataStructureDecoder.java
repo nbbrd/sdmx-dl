@@ -1,34 +1,35 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.file.xml;
 
-import sdmxdl.DataStructure;
-import static internal.sdmxdl.file.SdmxDecoder.DataType.*;
-import static sdmxdl.util.parser.Freqs.TIME_FORMAT_CONCEPT;
-import sdmxdl.xml.stream.StaxUtil;
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
+import sdmxdl.DataStructure;
+import sdmxdl.ext.SdmxMediaType;
+import sdmxdl.xml.stream.StaxUtil;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+import static sdmxdl.util.parser.Freqs.TIME_FORMAT_CONCEPT;
 
 /**
- *
  * @author Philippe Charles
  */
 final class DataStructureDecoder {
@@ -67,7 +68,7 @@ final class DataStructureDecoder {
 
     //<editor-fold defaultstate="collapsed" desc="Generic20">
     private static DataStructure generic20(XMLStreamReader reader) throws XMLStreamException {
-        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(GENERIC20);
+        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(SdmxMediaType.GENERIC_DATA_20);
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
@@ -155,7 +156,7 @@ final class DataStructureDecoder {
 
     //<editor-fold defaultstate="collapsed" desc="Compact20">
     private static DataStructure compact20(XMLStreamReader reader) throws XMLStreamException {
-        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(COMPACT20);
+        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20);
         builder.refId("UNKNOWN"); // FIXME: find a way to parse/guess this information
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -196,7 +197,7 @@ final class DataStructureDecoder {
 
     //<editor-fold defaultstate="collapsed" desc="Generic21">
     private static DataStructure generic21(XMLStreamReader reader) throws XMLStreamException {
-        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(GENERIC21);
+        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(SdmxMediaType.GENERIC_DATA_21);
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
@@ -283,7 +284,7 @@ final class DataStructureDecoder {
 
     //<editor-fold defaultstate="collapsed" desc="Compact21">
     private static DataStructure compact21(XMLStreamReader reader) throws XMLStreamException {
-        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(COMPACT21);
+        CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
