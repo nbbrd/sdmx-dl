@@ -1,78 +1,76 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.tck;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.DataFilter;
-import sdmxdl.Obs;
-import sdmxdl.SdmxConnection;
-import sdmxdl.Series;
+import internal.sdmxdl.tck.TckUtil;
+import nbbrd.io.function.IOConsumer;
+import nbbrd.io.function.IOSupplier;
+import org.assertj.core.api.SoftAssertions;
+import sdmxdl.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import nbbrd.io.function.IOConsumer;
-import org.assertj.core.api.SoftAssertions;
 
 /**
- *
  * @author Philippe Charles
  */
-public final class ConnectionAssert {
+@lombok.experimental.UtilityClass
+public class SdmxConnectionAssert {
 
-    public static void assertCompliance(Callable<SdmxConnection> supplier, DataflowRef ref) {
-        SoftAssertions s = new SoftAssertions();
-        try {
-            assertCompliance(s, supplier, ref);
-        } catch (Exception ex) {
-            s.fail("Unexpected exception", ex);
-        }
-        s.assertAll();
+    @lombok.Builder
+    public static class Sample {
+        DataflowRef valid;
+        DataflowRef invalid;
     }
 
-    public static void assertCompliance(SoftAssertions s, Callable<SdmxConnection> supplier, DataflowRef ref) throws Exception {
-        try (SdmxConnection conn = supplier.call()) {
-            assertNonnull(s, conn, ref);
-            DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(ref, Key.ALL, DataFilter.ALL));
-            s.assertThat(conn.getData(ref, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(ref, Key.ALL, DataFilter.ALL, conn));
-            s.assertThat(conn.getDataStream(ref, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(ref, Key.ALL, DataFilter.ALL, conn));
-            s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(ref::containsRef).isNotEmpty();
-            s.assertThat(conn.getFlow(ref)).isNotNull();
-            s.assertThat(conn.getStructure(ref)).isNotNull();
+    public void assertCompliance(IOSupplier<SdmxConnection> supplier, Sample sample) {
+        TckUtil.run(s -> assertCompliance(s, supplier, sample));
+    }
+
+    public void assertCompliance(SoftAssertions s, IOSupplier<SdmxConnection> supplier, Sample sample) {
+        try (SdmxConnection conn = supplier.getWithIO()) {
+            assertNonnull(s, conn, sample.valid);
+            DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, Key.ALL, DataFilter.ALL));
+            s.assertThat(conn.getData(sample.valid, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(sample.valid, Key.ALL, DataFilter.ALL, conn));
+            s.assertThat(conn.getDataStream(sample.valid, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(sample.valid, Key.ALL, DataFilter.ALL, conn));
+            s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(sample.valid::containsRef).isNotEmpty();
+            s.assertThat(conn.getFlow(sample.valid)).isNotNull();
+            s.assertThat(conn.getStructure(sample.valid)).isNotNull();
+        } catch (Exception ex) {
+            s.fail("Not expected to raise exception", ex);
         }
 
-        try (SdmxConnection conn = supplier.call()) {
+        try (SdmxConnection conn = supplier.getWithIO()) {
             conn.close();
         } catch (Exception ex) {
             s.fail("Subsequent calls to #close must not raise exception", ex);
         }
 
-        assertState(s, supplier, o -> o.getData(ref, Key.ALL, DataFilter.ALL), "getData(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataStream(ref, Key.ALL, DataFilter.ALL), "getDataStream(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataCursor(ref, Key.ALL, DataFilter.ALL), "getDataCursor(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getStructure(ref), "getStructure(DataflowRef)");
-        assertState(s, supplier, o -> o.getFlow(ref), "getFlow(DataflowRef)");
+        assertState(s, supplier, o -> o.getData(sample.valid, Key.ALL, DataFilter.ALL), "getData(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataStream(sample.valid, Key.ALL, DataFilter.ALL), "getDataStream(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataCursor(sample.valid, Key.ALL, DataFilter.ALL), "getDataCursor(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getStructure(sample.valid), "getStructure(DataflowRef)");
+        assertState(s, supplier, o -> o.getFlow(sample.valid), "getFlow(DataflowRef)");
         assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
     }
 
     @SuppressWarnings("null")
-    private static void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
+    private void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
         s.assertThatThrownBy(() -> conn.getDataCursor(null, Key.ALL, DataFilter.ALL))
                 .as("Expecting 'getDataCursor(DataflowRef, Key, DataFilter)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
@@ -122,17 +120,19 @@ public final class ConnectionAssert {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    private static void assertState(SoftAssertions s, Callable<SdmxConnection> supplier, IOConsumer<SdmxConnection> consumer, String expression) throws Exception {
-        try (SdmxConnection conn = supplier.call()) {
+    private void assertState(SoftAssertions s, IOSupplier<SdmxConnection> supplier, IOConsumer<SdmxConnection> consumer, String expression) {
+        try (SdmxConnection conn = supplier.getWithIO()) {
             conn.close();
             s.assertThatThrownBy(() -> consumer.acceptWithIO(conn))
                     .as("Expecting '%s' to raise IOException when called after close", expression)
                     .isInstanceOf(IOException.class)
                     .hasMessageContaining("closed");
+        } catch (Exception ex) {
+            s.fail("Not expected to raise exception", ex);
         }
     }
 
-    private static List<Series> cursorToSeries(DataflowRef ref, Key key, DataFilter filter, SdmxConnection conn) throws IOException {
+    private List<Series> cursorToSeries(DataflowRef ref, Key key, DataFilter filter, SdmxConnection conn) throws IOException {
         List<Series> result = new ArrayList();
         try (DataCursor c = conn.getDataCursor(ref, key, filter)) {
             while (c.nextSeries()) {

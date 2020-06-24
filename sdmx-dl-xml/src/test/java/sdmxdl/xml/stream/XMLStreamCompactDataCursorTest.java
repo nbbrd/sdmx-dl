@@ -21,14 +21,16 @@ import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
-import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.DataCursorAssert;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.Freqs;
-import sdmxdl.ext.ObsParser;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +48,11 @@ public class XMLStreamCompactDataCursorTest {
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
             ObsParser obsParser = new DefaultObsParser(Freqs.sdmx20()::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
-            return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
+            try {
+                return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
+            } catch (XMLStreamException e) {
+                throw new IOException(e);
+            }
         });
 
         ObsParser obsParser = new DefaultObsParser(Freqs.sdmx20()::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
@@ -92,7 +98,11 @@ public class XMLStreamCompactDataCursorTest {
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
             ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
-            return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
+            try {
+                return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
+            } catch (XMLStreamException e) {
+                throw new IOException(e);
+            }
         });
 
         ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);

@@ -43,5 +43,5 @@ public interface SdmxFileReader {
     SdmxFileConnection read(
             @NonNull SdmxFileSource source,
             @NonNull SdmxFileContext context
-    ) throws IOException;
+    ) throws IOException, IllegalArgumentException;
 }

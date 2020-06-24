@@ -25,10 +25,12 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.DataCursorAssert;
-import sdmxdl.util.parser.Freqs;
 import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.util.parser.Freqs;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +48,11 @@ public class XMLStreamGenericDataCursorTest {
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
             ObsParser obsParser = new DefaultObsParser(Freqs.sdmx20()::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
-            return XMLStreamGenericDataCursor.sdmx20(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            try {
+                return XMLStreamGenericDataCursor.sdmx20(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            } catch (XMLStreamException e) {
+                throw new IOException(e);
+            }
         });
 
         ObsParser obsParser = new DefaultObsParser(Freqs.sdmx20()::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
@@ -96,7 +102,11 @@ public class XMLStreamGenericDataCursorTest {
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
             ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
-            return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            try {
+                return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            } catch (XMLStreamException e) {
+                throw new IOException(e);
+            }
         });
 
         ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
@@ -138,7 +148,11 @@ public class XMLStreamGenericDataCursorTest {
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
             ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);
-            return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            try {
+                return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
+            } catch (XMLStreamException e) {
+                throw new IOException(e);
+            }
         });
 
         ObsParser obsParser = new DefaultObsParser(Freqs.sdmx21(0)::apply, Freqs::onStandardFreq, Parser.onDouble()::parse);

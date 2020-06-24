@@ -1,41 +1,38 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.tck;
 
-import sdmxdl.DataCursor;
-import java.io.IOException;
-import java.util.concurrent.Callable;
+import internal.sdmxdl.tck.TckUtil;
 import nbbrd.io.function.IOConsumer;
+import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
+import sdmxdl.DataCursor;
 
-public final class DataCursorAssert {
+import java.io.IOException;
 
-    public static void assertCompliance(Callable<DataCursor> supplier) {
-        SoftAssertions s = new SoftAssertions();
-        try {
-            assertCompliance(s, supplier);
-        } catch (Exception ex) {
-            s.fail("Unexpected exception", ex);
-        }
-        s.assertAll();
+@lombok.experimental.UtilityClass
+public class DataCursorAssert {
+
+    public void assertCompliance(IOSupplier<DataCursor> supplier) {
+        TckUtil.run(s -> assertCompliance(s, supplier));
     }
 
-    public static void assertCompliance(SoftAssertions s, Callable<DataCursor> supplier) throws Exception {
-        try (DataCursor c = supplier.call()) {
+    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier) throws Exception {
+        try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
                 assertNonnull(s, c);
                 s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
@@ -55,13 +52,13 @@ public final class DataCursorAssert {
             }
         }
 
-        try (DataCursor c = supplier.call()) {
+        try (DataCursor c = supplier.getWithIO()) {
             c.close();
         } catch (Exception ex) {
             s.fail("Subsequent calls to #close must not raise exception", ex);
         }
 
-        try (DataCursor c = supplier.call()) {
+        try (DataCursor c = supplier.getWithIO()) {
             nextSeriesToEnd().andThen(DataCursor::nextSeries).acceptWithIO(c);
         } catch (Exception ex) {
             s.fail("Subsequent calls to #nextSeries must not raise exception", ex);
@@ -84,14 +81,14 @@ public final class DataCursorAssert {
         s.assertThatThrownBy(() -> c.getSeriesAttribute(null)).isInstanceOf(NullPointerException.class);
     }
 
-    private static void assertState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
+    private void assertState(SoftAssertions s, IOSupplier<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
         s.assertThatThrownBy(() -> with(supplier, close().andThen(consumer)))
                 .as("Calling %s after close must throw IOException", method)
                 .isInstanceOf(IOException.class)
                 .hasMessageContaining("closed");
     }
 
-    private static void assertSeriesState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
+    private void assertSeriesState(SoftAssertions s, IOSupplier<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) {
         assertState(s, supplier, consumer, method);
         s.assertThatThrownBy(() -> with(supplier, consumer))
                 .as("Calling %s before first series must throw IllegalStateException", method)
@@ -101,9 +98,9 @@ public final class DataCursorAssert {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    private static void assertObsState(SoftAssertions s, Callable<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) throws Exception {
+    private void assertObsState(SoftAssertions s, IOSupplier<DataCursor> supplier, IOConsumer<DataCursor> consumer, String method) throws Exception {
         assertSeriesState(s, supplier, consumer, method);
-        try (DataCursor c = supplier.call()) {
+        try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
                 s.assertThatThrownBy(() -> c.getObsPeriod())
                         .as("Calling #getObsPeriod before first obs must throw IllegalStateException")
@@ -117,20 +114,20 @@ public final class DataCursorAssert {
         }
     }
 
-    private static void with(Callable<DataCursor> supplier, IOConsumer consumer) throws Exception {
-        try (DataCursor c = supplier.call()) {
+    private void with(IOSupplier<DataCursor> supplier, IOConsumer consumer) throws Exception {
+        try (DataCursor c = supplier.getWithIO()) {
             consumer.acceptWithIO(c);
         }
     }
 
-    static IOConsumer<DataCursor> nextSeriesToEnd() {
+    private IOConsumer<DataCursor> nextSeriesToEnd() {
         return c -> {
             while (c.nextSeries()) {
             }
         };
     }
 
-    static IOConsumer<DataCursor> close() {
+    private IOConsumer<DataCursor> close() {
         return DataCursor::close;
     }
 }

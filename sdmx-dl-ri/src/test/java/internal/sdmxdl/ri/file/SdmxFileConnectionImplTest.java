@@ -22,7 +22,8 @@ import org.junit.rules.TemporaryFolder;
 import sdmxdl.*;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.ConnectionAssert;
+import sdmxdl.tck.SdmxConnectionAssert;
+import sdmxdl.tck.SdmxFileConnectionAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,14 +40,33 @@ import static sdmxdl.LanguagePriorityList.ANY;
 public class SdmxFileConnectionImplTest {
 
     @Test
+    public void testCompliance() throws IOException {
+        File compact21 = temp.newFile();
+        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
+
+        SdmxFileSource source = sourceOf(compact21);
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+        DataflowRef valid = dataflow.getRef();
+        DataflowRef invalid = DataflowRef.parse("invalid");
+
+        SdmxFileConnectionAssert.assertCompliance(
+                () -> new SdmxFileConnectionImpl(r, dataflow),
+                SdmxFileConnectionAssert.Sample
+                        .builder()
+                        .connection(SdmxConnectionAssert.Sample.builder().valid(valid).invalid(invalid).build())
+                        .build()
+        );
+    }
+
+    @Test
     @SuppressWarnings("null")
     public void testFile() throws IOException {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSource source = SdmxFileSource.builder().data(compact21).build();
-
+        SdmxFileSource source = sourceOf(compact21);
         SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getDataflowRef()).isEqualTo(source.asDataflowRef());
@@ -64,9 +84,9 @@ public class SdmxFileConnectionImplTest {
         File compact21 = temp.newFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSource source = SdmxFileSource.builder().data(compact21).build();
-
+        SdmxFileSource source = sourceOf(compact21);
         SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
         assertThat(conn.getFlows()).hasSize(1);
@@ -95,7 +115,14 @@ public class SdmxFileConnectionImplTest {
             assertThat(o.nextSeries()).isFalse();
         }
 
-        ConnectionAssert.assertCompliance(() -> new SdmxFileConnectionImpl(r, dataflow), source.asDataflowRef());
+        SdmxConnectionAssert.assertCompliance(
+                () -> new SdmxFileConnectionImpl(r, dataflow),
+                SdmxConnectionAssert.Sample.builder().valid(source.asDataflowRef()).build()
+        );
+    }
+
+    private SdmxFileSource sourceOf(File compact21) {
+        return SdmxFileSource.builder().data(compact21).build();
     }
 
     @Rule

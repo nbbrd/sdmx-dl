@@ -24,6 +24,7 @@ import sdmxdl.Key;
 import sdmxdl.ext.ObsFactory;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
@@ -35,6 +36,7 @@ public enum DataFactories implements ObsFactory {
     SDMX20 {
         @Override
         public @NonNull DefaultObsParser getParser(@NonNull DataStructure dsd) {
+            Objects.requireNonNull(dsd);
             return new DefaultObsParser(getFreqParser(dsd), this::getPeriodParser, this.getValueParser());
         }
 
@@ -53,6 +55,7 @@ public enum DataFactories implements ObsFactory {
     SDMX21 {
         @Override
         public @NonNull DefaultObsParser getParser(@NonNull DataStructure dsd) {
+            Objects.requireNonNull(dsd);
             return new DefaultObsParser(getFreqParser(dsd), this::getPeriodParser, this.getValueParser());
         }
 

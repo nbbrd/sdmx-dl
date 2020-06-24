@@ -17,6 +17,7 @@
 package internal.sdmxdl;
 
 import java.time.Clock;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -60,6 +61,7 @@ public final class DefaultSdmxCache implements SdmxCache {
     }
 
     static void put(@NonNull ConcurrentMap cache, @NonNull Object key, @NonNull Object value, @NonNull Duration ttl, @NonNull Clock clock) {
+        Objects.requireNonNull(value);
         cache.put(key, new Entry(clock.millis() + ttl.toMillis(), value));
     }
 

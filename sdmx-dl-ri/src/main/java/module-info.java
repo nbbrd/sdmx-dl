@@ -17,5 +17,5 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.drivers.WbDriver2;
 
     provides sdmxdl.file.spi.SdmxFileReader with
-            internal.sdmxdl.ri.file.DefaultSdmxFileReader;
+            internal.sdmxdl.ri.file.readers.XmlFileReader;
 }

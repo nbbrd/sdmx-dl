@@ -24,6 +24,7 @@ import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -48,7 +49,7 @@ public final class DefaultObsParser implements ObsParser {
         this.freqParser = freqParser;
         this.toPeriodParser = toPeriodParser;
         this.valueParser = valueParser;
-        this.periodParser = toPeriodParser.apply(Frequency.UNDEFINED);
+        this.periodParser = Parser.onNull();
         this.freq = Frequency.UNDEFINED;
         this.period = null;
         this.value = null;
@@ -83,10 +84,15 @@ public final class DefaultObsParser implements ObsParser {
     @Override
     @NonNull
     public ObsParser frequency(Key.@NonNull Builder key, @NonNull UnaryOperator<String> attributes) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(attributes);
         Frequency freq = freqParser.apply(key, attributes);
         if (this.freq != freq) {
             this.freq = freq;
             this.periodParser = toPeriodParser.apply(freq);
+            if (this.periodParser == null) {
+                this.periodParser = Parser.onNull();
+            }
         }
         return this;
     }
