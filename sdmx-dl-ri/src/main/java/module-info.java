@@ -10,11 +10,11 @@ module sdmxdl.web.ri {
     requires transitive sdmxdl.api;
 
     provides sdmxdl.web.spi.SdmxWebDriver with
-            internal.sdmxdl.ri.drivers.AbsDriver2,
-            internal.sdmxdl.ri.drivers.DotStatDriver2,
-            internal.sdmxdl.ri.drivers.NbbDriver2,
-            internal.sdmxdl.ri.drivers.Sdmx21Driver2,
-            internal.sdmxdl.ri.drivers.WbDriver2;
+            internal.sdmxdl.ri.web.drivers.AbsDriver2,
+            internal.sdmxdl.ri.web.drivers.DotStatDriver2,
+            internal.sdmxdl.ri.web.drivers.NbbDriver2,
+            internal.sdmxdl.ri.web.drivers.Sdmx21Driver2,
+            internal.sdmxdl.ri.web.drivers.WbDriver2;
 
     provides sdmxdl.file.spi.SdmxFileReader with
             internal.sdmxdl.ri.file.readers.XmlFileReader;

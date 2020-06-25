@@ -24,10 +24,9 @@ public class XmlFileReader implements SdmxFileReader {
 
     @Override
     public SdmxFileSource getSource(String name) {
-        Objects.requireNonNull(name);
         try {
-            return XmlFileSource.fromXml(name);
-        } catch (IllegalArgumentException ex) {
+            return XmlFileSource.getParser().parseChars(name);
+        } catch (IOException ex) {
             return null;
         }
     }

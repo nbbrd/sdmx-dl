@@ -16,13 +16,12 @@
  */
 package sdmxdl.xml;
 
-import sdmxdl.web.SdmxWebSource;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
+import sdmxdl.web.SdmxWebSource;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,17 +31,11 @@ import java.util.List;
 @lombok.experimental.UtilityClass
 public final class XmlWebSource {
 
-    public static List<SdmxWebSource> load(String resource) {
-        try {
-            return getParser().parseResource(XmlWebSource.class, resource);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+    public static Xml.Parser<List<SdmxWebSource>> getParser() {
+        return PARSER;
     }
 
-    static Xml.Parser<List<SdmxWebSource>> getParser() throws IOException {
-        return Stax.StreamParser.valueOf(XmlWebSource::parse);
-    }
+    private static final Xml.Parser<List<SdmxWebSource>> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parse);
 
     private static List<SdmxWebSource> parse(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();

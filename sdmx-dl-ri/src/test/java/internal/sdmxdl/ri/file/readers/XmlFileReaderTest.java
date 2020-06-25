@@ -20,7 +20,7 @@ public class XmlFileReaderTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource validSource = SdmxFileSource.builder().data(compact21).build();
-        String validName = XmlFileSource.toXml(validSource);
+        String validName = XmlFileSource.getFormatter().formatToString(validSource);
         SdmxFileSource invalidSource = SdmxFileSource.builder().data(temp.newFile("invalid.csv")).build();
         String invalidName = "invalid.csv";
 

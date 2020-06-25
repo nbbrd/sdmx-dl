@@ -14,14 +14,14 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri.web.drivers;
 
 import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.util.web.DataRequest;
-import static internal.sdmxdl.ri.Sdmx21RestClient.*;
+import static internal.sdmxdl.ri.web.Sdmx21RestClient.*;
 import java.io.IOException;
 import java.net.URL;
 import static org.assertj.core.api.Assertions.*;

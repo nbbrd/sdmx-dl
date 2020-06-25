@@ -16,10 +16,12 @@
  */
 package sdmxdl.xml;
 
+import nbbrd.io.xml.Xml;
 import org.junit.Test;
 import sdmxdl.file.SdmxFileSource;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -29,41 +31,45 @@ import static org.assertj.core.api.Assertions.*;
 public class XmlFileSourceTest {
 
     @Test
-    public void testToXml() {
-        assertThat(XmlFileSource.toXml(SdmxFileSource.builder().data(data).structure(structure).dialect("hello").build()))
+    public void testFormatter() throws IOException {
+        Xml.Formatter<SdmxFileSource> x = XmlFileSource.getFormatter();
+
+        assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).dialect("hello").build()))
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\"/>");
 
-        assertThat(XmlFileSource.toXml(SdmxFileSource.builder().data(data).structure(structure).build()))
+        assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).build()))
                 .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
 
-        assertThat(XmlFileSource.toXml(SdmxFileSource.builder().data(data).build()))
+        assertThat(x.formatToString(SdmxFileSource.builder().data(data).build()))
                 .isEqualTo("<file data=\"a.xml\"/>");
     }
 
     @Test
     @SuppressWarnings("null")
-    public void testFromXml() {
-        assertThatNullPointerException().isThrownBy(() -> XmlFileSource.fromXml(null));
-        assertThatIllegalArgumentException().isThrownBy(() -> XmlFileSource.fromXml(""));
-        assertThatIllegalArgumentException().isThrownBy(() -> XmlFileSource.fromXml("<file />"));
-        assertThatIllegalArgumentException().isThrownBy(() -> XmlFileSource.fromXml("<file data=\"\" />"));
+    public void testParser() throws IOException {
+        Xml.Parser<SdmxFileSource> x = XmlFileSource.getParser();
 
-        assertThat(XmlFileSource.fromXml("<file data=\"a.xml\" />"))
+        assertThatNullPointerException().isThrownBy(() -> x.parseChars(null));
+        assertThatIOException().isThrownBy(() -> x.parseChars(""));
+        assertThatIOException().isThrownBy(() -> x.parseChars("<file />"));
+        assertThatIOException().isThrownBy(() -> x.parseChars("<file data=\"\" />"));
+
+        assertThat(x.parseChars("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", null)
                 .hasFieldOrPropertyWithValue("dialect", null);
 
-        assertThat(XmlFileSource.fromXml("<file data=\"a.xml\" structure=\"\" />"))
+        assertThat(x.parseChars("<file data=\"a.xml\" structure=\"\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", null)
                 .hasFieldOrPropertyWithValue("dialect", null);
 
-        assertThat(XmlFileSource.fromXml("<file data=\"a.xml\" structure=\"b.xml\" />"))
+        assertThat(x.parseChars("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure)
                 .hasFieldOrPropertyWithValue("dialect", null);
 
-        assertThat(XmlFileSource.fromXml("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\" />"))
+        assertThat(x.parseChars("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure)
                 .hasFieldOrPropertyWithValue("dialect", dialect);

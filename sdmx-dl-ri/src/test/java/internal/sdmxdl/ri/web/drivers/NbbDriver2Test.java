@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.Test;
 import sdmxdl.tck.SdmxWebDriverAssert;

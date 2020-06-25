@@ -14,10 +14,10 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.RestClients;
-import internal.sdmxdl.ri.Sdmx21RestClient;
+import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.Sdmx21RestClient;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.util.parser.DataFactories;

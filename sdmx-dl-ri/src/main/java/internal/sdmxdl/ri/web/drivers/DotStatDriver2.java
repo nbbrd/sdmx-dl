@@ -14,10 +14,10 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.DotStatRestClient;
-import internal.sdmxdl.ri.RestClients;
+import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.RestClients;
 import sdmxdl.util.SdmxFix;
 import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 import sdmxdl.web.SdmxWebSource;

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.drivers;
+package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.Test;
 import sdmxdl.tck.SdmxWebDriverAssert;
@@ -22,10 +22,10 @@ import sdmxdl.tck.SdmxWebDriverAssert;
 /**
  * @author Philippe Charles
  */
-public class DotStatDriver2Test {
+public class AbsDriver2Test {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new DotStatDriver2());
+        SdmxWebDriverAssert.assertCompliance(new AbsDriver2());
     }
 }

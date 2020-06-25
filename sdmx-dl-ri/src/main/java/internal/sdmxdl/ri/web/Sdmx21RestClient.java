@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 National Bank of Belgium
+ * Copyright 2017 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,16 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri;
+package internal.sdmxdl.ri.web;
 
-import sdmxdl.util.parser.DataFactories;
 import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
-import lombok.AllArgsConstructor;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.SdmxFix;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -31,20 +29,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static sdmxdl.ext.SdmxMediaType.XML;
+import static sdmxdl.ext.SdmxMediaType.*;
 
 /**
  * @author Philippe Charles
  */
-@AllArgsConstructor
-public class DotStatRestClient extends RiRestClient {
+@lombok.RequiredArgsConstructor
+public class Sdmx21RestClient extends RiRestClient {
 
     protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final RestClient executor;
+    protected final boolean seriesKeysOnlySupported;
+    protected final ObsFactory dataFactory;
 
     @Override
     public String getName() throws IOException {
@@ -59,11 +58,8 @@ public class DotStatRestClient extends RiRestClient {
     @Override
     protected List<Dataflow> getFlows(URL url) throws IOException {
         return SdmxXmlStreams
-                .struct20(langs)
-                .parseStream(calling(url, XML))
-                .stream()
-                .map(DotStatRestClient::getFlowFromStructure)
-                .collect(Collectors.toList());
+                .flow21(langs)
+                .parseStream(calling(url, XML));
     }
 
     @Override
@@ -74,10 +70,10 @@ public class DotStatRestClient extends RiRestClient {
     @Override
     protected Dataflow getFlow(URL url, DataflowRef ref) throws IOException {
         return SdmxXmlStreams
-                .struct20(langs)
+                .flow21(langs)
                 .parseStream(calling(url, XML))
                 .stream()
-                .map(DotStatRestClient::getFlowFromStructure)
+                .filter(ref::containsRef)
                 .findFirst()
                 .orElseThrow(() -> SdmxExceptions.missingFlow(name, ref));
     }
@@ -90,9 +86,10 @@ public class DotStatRestClient extends RiRestClient {
     @Override
     protected DataStructure getStructure(URL url, DataStructureRef ref) throws IOException {
         return SdmxXmlStreams
-                .struct20(langs)
-                .parseStream(calling(url, XML))
+                .struct21(langs)
+                .parseStream(calling(url, STRUCTURE_21))
                 .stream()
+                .filter(ref::equalsRef)
                 .findFirst()
                 .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
     }
@@ -102,23 +99,21 @@ public class DotStatRestClient extends RiRestClient {
         return getDataQuery(endpoint, request).build();
     }
 
-    @SdmxFix(id = 1, category = SdmxFix.Category.CONTENT, cause = "Time dimension is always TIME in data")
     @Override
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
-        DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams
-                .compactData20(modifiedDsd, DataFactories.SDMX20)
-                .parseStream(calling(url, XML));
+                .compactData21(dsd, dataFactory)
+                .parseStream(calling(url, STRUCTURE_SPECIFIC_DATA_21));
     }
 
     @Override
     public boolean isSeriesKeysOnlySupported() throws IOException {
-        return false;
+        return seriesKeysOnlySupported;
     }
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
-        return getStructureRefFromFlowRef(flowRef);
+        return null;
     }
 
     private IOSupplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
@@ -126,54 +121,59 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
+    public static RestQueryBuilder onMeta(@NonNull URL endpoint, @NonNull String resourceType, @NonNull ResourceRef ref) {
         return RestQueryBuilder
                 .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path("ALL");
+                .path(resourceType)
+                .path(ref.getAgency())
+                .path(ref.getId())
+                .path(ref.getVersion());
+    }
+
+    @NonNull
+    public static RestQueryBuilder onData(@NonNull URL endpoint, @NonNull DataflowRef flowRef, @NonNull Key key) {
+        return RestQueryBuilder
+                .of(endpoint)
+                .path(DATA_RESOURCE)
+                .path(flowRef.toString())
+                .path(key.toString())
+                .path(DEFAULT_PROVIDER_REF);
+    }
+
+    @NonNull
+    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
+        return onMeta(endpoint, DATAFLOW_RESOURCE, FLOWS);
     }
 
     @NonNull
     public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path(ref.getId());
+        return onMeta(endpoint, DATAFLOW_RESOURCE, ref);
     }
 
     @NonNull
     public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path(ref.getId());
+        return onMeta(endpoint, DATASTRUCTURE_RESOURCE, ref).param(REFERENCES_PARAM, "children");
     }
 
     @NonNull
     public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATA_RESOURCE)
-                .path(request.getFlowRef().getId())
-                .path(request.getKey().toString())
-                .param("format", "compact_v2");
+        RestQueryBuilder result = onData(endpoint, request.getFlowRef(), request.getKey());
+        switch (request.getFilter().getDetail()) {
+            case SERIES_KEYS_ONLY:
+                result.param(DETAIL_PARAM, "serieskeysonly");
+                break;
+        }
+        return result;
     }
 
-    @NonNull
-    public static Dataflow getFlowFromStructure(@NonNull DataStructure o) {
-        return Dataflow.of(getFlowRefFromStructureRef(o.getRef()), o.getRef(), o.getLabel());
-    }
+    public static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
 
-    @NonNull
-    public static DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {
-        return DataflowRef.of(o.getAgency(), o.getId(), o.getVersion());
-    }
+    public static final String DATAFLOW_RESOURCE = "dataflow";
+    public static final String DATASTRUCTURE_RESOURCE = "datastructure";
+    public static final String DATA_RESOURCE = "data";
 
-    @NonNull
-    public static DataStructureRef getStructureRefFromFlowRef(@NonNull DataflowRef o) {
-        return DataStructureRef.of(o.getAgency(), o.getId(), o.getVersion());
-    }
+    public static final String DEFAULT_PROVIDER_REF = "all";
 
-    public static final String DATASTRUCTURE_RESOURCE = "GetDataStructure";
-    public static final String DATA_RESOURCE = "GetData";
+    public static final String REFERENCES_PARAM = "references";
+    public static final String DETAIL_PARAM = "detail";
 }

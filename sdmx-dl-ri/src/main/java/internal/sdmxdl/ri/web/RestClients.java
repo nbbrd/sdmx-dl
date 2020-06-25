@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri;
+package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestClient;
 import internal.util.rest.RestClientImpl;
