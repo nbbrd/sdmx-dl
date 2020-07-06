@@ -16,9 +16,8 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
-import nbbrd.io.function.IOSupplier;
+import internal.util.rest.RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
@@ -26,7 +25,6 @@ import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -35,15 +33,16 @@ import static sdmxdl.ext.SdmxMediaType.*;
 /**
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor
 public class Sdmx21RestClient extends RiRestClient {
 
-    protected final String name;
-    protected final URL endpoint;
-    protected final LanguagePriorityList langs;
-    protected final RestClient executor;
     protected final boolean seriesKeysOnlySupported;
     protected final ObsFactory dataFactory;
+
+    public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
+        super(name, endpoint, langs, executor);
+        this.seriesKeysOnlySupported = seriesKeysOnlySupported;
+        this.dataFactory = dataFactory;
+    }
 
     @Override
     public String getName() throws IOException {
@@ -114,10 +113,6 @@ public class Sdmx21RestClient extends RiRestClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return null;
-    }
-
-    private IOSupplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
-        return () -> executor.openStream(query, mediaType, langs.toString());
     }
 
     @NonNull

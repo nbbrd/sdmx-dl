@@ -16,15 +16,13 @@
  */
 package internal.sdmxdl.ri.web;
 
+import internal.util.rest.Jdk8RestClient;
 import internal.util.rest.RestClient;
-import internal.util.rest.RestClientImpl;
-import nbbrd.io.function.IOConsumer;
 import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
-import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Arrays;
@@ -38,19 +36,15 @@ import java.util.List;
 public class RestClients {
 
     public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return getRestClient(o, context, IOConsumer.noOp());
-    }
-
-    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context, IOConsumer<HttpURLConnection> validator) {
-        return RestClientImpl.of(
-                SdmxWebProperty.getReadTimeout(o.getProperties()),
-                SdmxWebProperty.getConnectTimeout(o.getProperties()),
-                SdmxWebProperty.getMaxRedirects(o.getProperties()),
-                context.getProxySelector(),
-                context.getSslSocketFactory(),
-                new DefaultEventListener(o, context.getEventListener()),
-                validator
-        );
+        return Jdk8RestClient
+                .builder()
+                .readTimeout(SdmxWebProperty.getReadTimeout(o.getProperties()))
+                .connectTimeout(SdmxWebProperty.getConnectTimeout(o.getProperties()))
+                .maxRedirects(SdmxWebProperty.getMaxRedirects(o.getProperties()))
+                .proxySelector(context.getProxySelector())
+                .sslSocketFactory(context.getSslSocketFactory())
+                .listener(new DefaultEventListener(o, context.getEventListener()))
+                .build();
     }
 
     public final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
@@ -61,7 +55,7 @@ public class RestClients {
             ));
 
     @lombok.AllArgsConstructor
-    private static final class DefaultEventListener implements RestClientImpl.EventListener {
+    private static final class DefaultEventListener implements Jdk8RestClient.EventListener {
 
         @lombok.NonNull
         private final SdmxWebSource source;
@@ -70,9 +64,9 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpenStream(URL query, String mediaType, String langs) {
+        public void onOpen(URL query, String mediaType, String langs, Proxy proxy) {
             if (listener.isEnabled()) {
-                listener.onSourceEvent(source, String.format("Querying '%s'", query));
+                listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
             }
         }
 
@@ -80,13 +74,6 @@ public class RestClients {
         public void onRedirection(URL oldUrl, URL newUrl) {
             if (listener.isEnabled()) {
                 listener.onSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
-            }
-        }
-
-        @Override
-        public void onProxy(URL query, Proxy proxy) {
-            if (listener.isEnabled()) {
-                listener.onSourceEvent(source, String.format("Using proxy '%s'", proxy));
             }
         }
     }

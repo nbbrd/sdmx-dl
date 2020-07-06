@@ -16,19 +16,16 @@
  */
 package internal.sdmxdl.ri.web;
 
-import sdmxdl.util.parser.DataFactories;
-import internal.util.rest.RestClient;
 import internal.util.rest.RestQueryBuilder;
-import lombok.AllArgsConstructor;
-import nbbrd.io.function.IOSupplier;
+import internal.util.rest.RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.util.SdmxFix;
+import sdmxdl.util.parser.DataFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,13 +35,11 @@ import static sdmxdl.ext.SdmxMediaType.XML;
 /**
  * @author Philippe Charles
  */
-@AllArgsConstructor
 public class DotStatRestClient extends RiRestClient {
 
-    protected final String name;
-    protected final URL endpoint;
-    protected final LanguagePriorityList langs;
-    protected final RestClient executor;
+    public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor) {
+        super(name, endpoint, langs, executor);
+    }
 
     @Override
     public String getName() throws IOException {
@@ -119,10 +114,6 @@ public class DotStatRestClient extends RiRestClient {
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
         return getStructureRefFromFlowRef(flowRef);
-    }
-
-    private IOSupplier<? extends InputStream> calling(URL query, String mediaType) throws IOException {
-        return () -> executor.openStream(query, mediaType, langs.toString());
     }
 
     @NonNull

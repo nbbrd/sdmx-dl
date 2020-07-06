@@ -18,7 +18,9 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestClient;
 import internal.sdmxdl.ri.web.RestClients;
+import internal.util.rest.RestClient;
 import sdmxdl.DataStructureRef;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.util.SdmxFix;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 import sdmxdl.web.SdmxWebSource;
@@ -50,8 +52,12 @@ public final class AbsDriver2 implements SdmxWebDriver {
 
     private static final class AbsClient2 extends DotStatRestClient {
 
-        private AbsClient2(SdmxWebSource s, SdmxWebContext c) {
-            super(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
+        AbsClient2(SdmxWebSource s, SdmxWebContext c) {
+            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
+        }
+
+        AbsClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor) {
+            super(name, endpoint, langs, executor);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "Agency is required in query")

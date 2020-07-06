@@ -16,12 +16,17 @@
  */
 package internal.sdmxdl.ri.web;
 
+import internal.util.rest.RestClient;
+import nbbrd.io.Resource;
+import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
@@ -31,7 +36,25 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
+@lombok.RequiredArgsConstructor
 public abstract class RiRestClient implements SdmxWebClient {
+
+    protected final String name;
+    protected final URL endpoint;
+    protected final LanguagePriorityList langs;
+    protected final RestClient executor;
+
+    protected IOSupplier<RestClient.Response> opening(URL query, String mediaType) {
+        return () -> open(query, mediaType);
+    }
+
+    protected RestClient.Response open(URL query, String mediaType) throws IOException {
+        return executor.open(query, mediaType, langs.toString());
+    }
+
+    protected IOSupplier<InputStream> calling(URL query, String mediaType) {
+        return opening(query, mediaType).andThen(DisconnectingInputStream::of);
+    }
 
     @Override
     final public List<Dataflow> getFlows() throws IOException {
@@ -88,4 +111,23 @@ public abstract class RiRestClient implements SdmxWebClient {
 
     @NonNull
     abstract protected DataCursor getData(@NonNull DataStructure dsd, @NonNull URL url) throws IOException;
+
+
+    @lombok.RequiredArgsConstructor
+    private static final class DisconnectingInputStream extends InputStream {
+
+        static DisconnectingInputStream of(RestClient.Response response) throws IOException {
+            return new DisconnectingInputStream(response.getBody(), response::close);
+        }
+
+        @lombok.experimental.Delegate(excludes = Closeable.class)
+        private final InputStream delegate;
+
+        private final Closeable onClose;
+
+        @Override
+        public void close() throws IOException {
+            Resource.closeBoth(delegate, onClose);
+        }
+    }
 }
