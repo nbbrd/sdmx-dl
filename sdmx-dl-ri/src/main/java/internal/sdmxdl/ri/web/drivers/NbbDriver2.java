@@ -18,8 +18,9 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestClient;
 import internal.sdmxdl.ri.web.RestClients;
-import internal.util.rest.RestQueryBuilder;
 import internal.util.rest.RestClient;
+import internal.util.rest.RestQueryBuilder;
+import nbbrd.io.Resource;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.util.SdmxFix;
@@ -30,8 +31,10 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
@@ -52,7 +55,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
             .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();
 
-    private static final class NbbClient2 extends DotStatRestClient {
+    static final class NbbClient2 extends DotStatRestClient {
 
         NbbClient2(SdmxWebSource s, SdmxWebContext c) {
             this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
@@ -74,18 +77,23 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .build();
         }
 
-        @SdmxFix(id = 2, category = CONTENT, cause = "Some internal errors redirect to an html page")
         @Override
         protected RestClient.Response open(URL query, String mediaType) throws IOException {
             RestClient.Response result = super.open(query, mediaType);
-            if (result.getContentType().equals("text/html")) {
-                try {
-                    throw new IOException("Service not available");
-                } finally {
-                    result.close();
-                }
+            try {
+                checkInternalErrorRedirect(result);
+            } catch (Throwable ex) {
+                Resource.ensureClosed(ex, result);
+                throw ex;
             }
             return result;
+        }
+
+        @SdmxFix(id = 2, category = CONTENT, cause = "Some internal errors redirect to an html page")
+        static void checkInternalErrorRedirect(RestClient.Response result) throws IOException {
+            if (result.getContentType().contains("text/html")) {
+                throw new RestClient.ResponseError(HttpsURLConnection.HTTP_UNAVAILABLE, "Service unavailable", Collections.emptyMap());
+            }
         }
     }
 }

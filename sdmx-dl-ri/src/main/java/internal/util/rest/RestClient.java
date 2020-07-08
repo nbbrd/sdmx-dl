@@ -22,6 +22,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Philippe Charles
@@ -38,5 +40,20 @@ public interface RestClient {
 
         @NonNull
         InputStream getBody() throws IOException;
+    }
+
+    @lombok.Getter
+    final class ResponseError extends IOException {
+
+        private final int responseCode;
+        private final String responseMessage;
+        private final Map<String, List<String>> headerFields;
+
+        public ResponseError(int responseCode, String responseMessage, Map<String, List<String>> headerFields) {
+            super(responseCode + ": " + responseMessage);
+            this.responseCode = responseCode;
+            this.responseMessage = responseMessage;
+            this.headerFields = headerFields;
+        }
     }
 }

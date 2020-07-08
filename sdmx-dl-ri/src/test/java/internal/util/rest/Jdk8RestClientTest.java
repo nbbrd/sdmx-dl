@@ -27,7 +27,6 @@ import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -116,7 +115,7 @@ public class Jdk8RestClientTest {
         assertThatIOException()
                 .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.XML, ANY_LANG))
                 .withMessage("500: boom")
-                .isInstanceOfSatisfying(Jdk8RestClient.ResponseError.class, o -> {
+                .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
                     assertThat(o.getResponseMessage()).isEqualTo("boom");
                     assertThat(o.getHeaderFields()).containsEntry("key", asList("value"));

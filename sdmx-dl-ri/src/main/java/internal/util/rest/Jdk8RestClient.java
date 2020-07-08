@@ -161,7 +161,7 @@ public final class Jdk8RestClient implements RestClient {
 
     private IOException getError(HttpURLConnection http) throws IOException {
         try {
-            return ResponseError.of(http);
+            return new ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
         } finally {
             http.disconnect();
         }
@@ -181,25 +181,6 @@ public final class Jdk8RestClient implements RestClient {
     public interface StreamDecoder {
 
         InputStream decode(InputStream stream) throws IOException;
-    }
-
-    @lombok.Getter
-    public static final class ResponseError extends IOException {
-
-        private static ResponseError of(HttpURLConnection http) throws IOException {
-            return new ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
-        }
-
-        private final int responseCode;
-        private final String responseMessage;
-        private final Map<String, List<String>> headerFields;
-
-        public ResponseError(int responseCode, String responseMessage, Map<String, List<String>> headerFields) {
-            super(responseCode + ": " + responseMessage);
-            this.responseCode = responseCode;
-            this.responseMessage = responseMessage;
-            this.headerFields = headerFields;
-        }
     }
 
     private enum ResponseType {
