@@ -17,6 +17,7 @@
 package internal.sdmxdl;
 
 import org.junit.Test;
+import sdmxdl.repo.SdmxRepository;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -33,18 +34,39 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultSdmxCacheTest {
 
     @Test
-    public void test() {
-        ConcurrentMap cache = new ConcurrentHashMap();
-        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1000))).isNull();
-        DefaultSdmxCache.put(cache, "KEY1", "VALUE1", Duration.ofMillis(10), of(1000));
-        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1009))).isEqualTo("VALUE1");
-        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1010))).isNull();
-        assertThat((String) DefaultSdmxCache.get(cache, "KEY2", of(1009))).isNull();
-        DefaultSdmxCache.put(cache, "KEY1", "VALUE2", Duration.ofMillis(10), of(1009));
-        assertThat((String) DefaultSdmxCache.get(cache, "KEY1", of(1010))).isEqualTo("VALUE2");
+    public void testGet() {
+        ConcurrentMap map = new ConcurrentHashMap();
+
+        assertThat(DefaultSdmxCache.get(map, clock(1000), "KEY1"))
+                .as("Empty map should return null")
+                .isNull();
+
+        DefaultSdmxCache.put(map, clock(1000), "KEY1", r1, Duration.ofMillis(10));
+        assertThat(DefaultSdmxCache.get(map, clock(1009), "KEY1"))
+                .as("Non-expired key should return value")
+                .isEqualTo(r1);
+
+        assertThat(DefaultSdmxCache.get(map, clock(1010), "KEY1"))
+                .as("Expired key should return null")
+                .isNull();
+        assertThat(map)
+                .as("Expired key should be evicted")
+                .doesNotContainKey("KEY1");
+
+        assertThat(DefaultSdmxCache.get(map, clock(1009), "KEY2"))
+                .as("Non-existing key should return null")
+                .isNull();
+
+        DefaultSdmxCache.put(map, clock(1009), "KEY1", r2, Duration.ofMillis(10));
+        assertThat(DefaultSdmxCache.get(map, clock(1010), "KEY1"))
+                .as("Updated key should return updated value")
+                .isEqualTo(r2);
     }
 
-    private static Clock of(long value) {
+    private final SdmxRepository r1 = SdmxRepository.builder().name("r1").build();
+    private final SdmxRepository r2 = SdmxRepository.builder().name("r2").build();
+
+    private static Clock clock(long value) {
         return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
     }
 }

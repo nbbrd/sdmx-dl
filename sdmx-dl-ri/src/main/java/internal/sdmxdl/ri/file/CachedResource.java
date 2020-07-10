@@ -18,7 +18,9 @@ package internal.sdmxdl.ri.file;
 
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.xml.XmlFileSource;
 
@@ -44,8 +46,14 @@ public final class CachedResource extends SdmxDecoderResource {
         super(source, languages, decoder, dataFactory);
         this.cache = cache;
         String base = getBase(source, languages);
-        this.decodeKey = TypedId.of("decode://" + base);
-        this.loadDataKey = TypedId.of("loadData://" + base);
+        this.decodeKey = TypedId.of("decode://" + base,
+                repo -> SdmxDecoder.Info.of(repo.getName(), repo.getStructures().stream().findFirst().orElse(null)),
+                info -> SdmxRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
+        );
+        this.loadDataKey = TypedId.of("loadData://" + base,
+                repo -> repo.getData().get(DataflowRef.parse("")),
+                data -> SdmxRepository.builder().data(DataflowRef.parse(""), data).build()
+        );
     }
 
     private static String getBase(SdmxFileSource source, LanguagePriorityList languages) {

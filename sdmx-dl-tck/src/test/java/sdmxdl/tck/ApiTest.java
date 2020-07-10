@@ -4,7 +4,7 @@ import internal.sdmxdl.tck.TckUtil;
 import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.web.SdmxWebManager;

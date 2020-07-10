@@ -14,10 +14,12 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package sdmxdl;
+package sdmxdl.ext;
 
 import java.io.IOException;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
 
 /**
  *

@@ -19,7 +19,7 @@ package sdmxdl.web;
 import internal.util.SdmxWebDriverLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.SdmxManager;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;

@@ -20,6 +20,7 @@ import internal.util.rest.RestQueryBuilder;
 import internal.util.rest.RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DataFactories;
 import sdmxdl.util.web.DataRequest;

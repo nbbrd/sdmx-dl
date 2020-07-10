@@ -17,6 +17,7 @@
 package _test.sdmxdl.util.client;
 
 import sdmxdl.*;
+import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;

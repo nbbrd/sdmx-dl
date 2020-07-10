@@ -1,7 +1,7 @@
 package sdmxdl.file.spi;
 
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 
 import java.util.List;

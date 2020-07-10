@@ -16,7 +16,8 @@
  */
 package internal.sdmxdl;
 
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
+import sdmxdl.repo.SdmxRepository;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -29,13 +30,13 @@ public enum NoOpSdmxCache implements SdmxCache {
     INSTANCE;
 
     @Override
-    public Object get(Object key) {
+    public SdmxRepository get(String key) {
         Objects.requireNonNull(key);
         return null;
     }
 
     @Override
-    public void put(Object key, Object value, Duration ttl) {
+    public void put(String key, SdmxRepository value, Duration ttl) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         Objects.requireNonNull(ttl);

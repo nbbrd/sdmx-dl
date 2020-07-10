@@ -18,7 +18,7 @@ package sdmxdl.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;

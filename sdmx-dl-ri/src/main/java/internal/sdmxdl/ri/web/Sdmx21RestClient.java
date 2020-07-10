@@ -21,6 +21,7 @@ import internal.util.rest.RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 

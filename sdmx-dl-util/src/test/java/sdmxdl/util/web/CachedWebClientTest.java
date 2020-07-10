@@ -1,42 +1,44 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.util.web;
 
 import _test.sdmxdl.util.client.XCallStackWebClient;
+import _test.sdmxdl.util.client.XRepoWebClient;
+import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
+import sdmxdl.ext.SdmxCache;
+import sdmxdl.samples.RepoSamples;
 import sdmxdl.util.TypedId;
+
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
-import sdmxdl.samples.RepoSamples;
-import _test.sdmxdl.util.client.XRepoWebClient;
-import sdmxdl.SdmxCache;
+import java.util.function.Function;
 
-import java.time.Duration;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
- *
  * @author Philippe Charles
  */
 public class CachedWebClientTest {
@@ -164,10 +166,10 @@ public class CachedWebClientTest {
     }
 
     private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
-    private final TypedId<?> flowsId = TypedId.of("flows://");
-    private final TypedId<?> flowId = TypedId.of("flow://").with(RepoSamples.GOOD_FLOW_REF);
-    private final TypedId<?> structId = TypedId.of("struct://").with(RepoSamples.GOOD_STRUCT_REF);
-    private final TypedId<?> keysId = TypedId.of("keys://").with(RepoSamples.GOOD_FLOW_REF);
+    private final String flowsId = TypedId.of("flows://", Function.identity(), Function.identity()).getContent();
+    private final String flowId = TypedId.of("flow://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
+    private final String structId = TypedId.of("struct://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_STRUCT_REF).getContent();
+    private final String keysId = TypedId.of("keys://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
 
     private static final class FakeClock extends Clock {
 

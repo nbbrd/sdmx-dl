@@ -24,7 +24,7 @@ import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Key;
 import sdmxdl.Series;
-import sdmxdl.SdmxExceptions;
+import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.web.SdmxWebConnection;
 import java.io.IOException;
 import java.time.Duration;

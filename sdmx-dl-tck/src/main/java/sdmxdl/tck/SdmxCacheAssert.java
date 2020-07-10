@@ -2,7 +2,8 @@ package sdmxdl.tck;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.SdmxCache;
+import sdmxdl.ext.SdmxCache;
+import sdmxdl.samples.RepoSamples;
 
 import java.time.Duration;
 
@@ -19,13 +20,13 @@ public class SdmxCacheAssert {
     }
 
     private static void checkPut(SoftAssertions s, SdmxCache cache) {
-        s.assertThatThrownBy(() -> cache.put(null, "value", Duration.ofMillis(10)))
+        s.assertThatThrownBy(() -> cache.put(null, RepoSamples.REPO, Duration.ofMillis(10)))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> cache.put("key", null, Duration.ofMillis(10)))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> cache.put("key", "value", null))
+        s.assertThatThrownBy(() -> cache.put("key", RepoSamples.REPO, null))
                 .isInstanceOf(NullPointerException.class);
     }
 

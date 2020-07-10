@@ -24,7 +24,7 @@ import sdmxdl.Key;
 import sdmxdl.DataFilter;
 import sdmxdl.Series;
 import sdmxdl.file.SdmxFileConnection;
-import sdmxdl.SdmxExceptions;
+import sdmxdl.ext.SdmxExceptions;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;

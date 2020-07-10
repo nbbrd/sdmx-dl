@@ -1,38 +1,33 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.util.web;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataflowRef;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.Key;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
+import sdmxdl.web.SdmxWebSource;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import sdmxdl.SdmxCache;
-import sdmxdl.web.SdmxWebSource;
+import java.util.function.Function;
 
 /**
- *
  * @author Philippe Charles
  */
 final class CachedWebClient implements SdmxWebClient {
@@ -60,10 +55,22 @@ final class CachedWebClient implements SdmxWebClient {
         this.delegate = delegate;
         this.cache = cache;
         this.ttl = ttl;
-        this.idOfFlows = TypedId.of("flows://" + base);
-        this.idOfFlow = TypedId.of("flow://" + base);
-        this.idOfStruct = TypedId.of("struct://" + base);
-        this.idOfKeysOnly = TypedId.of("keys://" + base);
+        this.idOfFlows = TypedId.of("flows://" + base,
+                repo -> repo.getFlows(),
+                flows -> SdmxRepository.builder().flows(flows).build()
+        );
+        this.idOfFlow = TypedId.of("flow://" + base,
+                repo -> repo.getFlows().stream().findFirst().orElse(null),
+                flow -> SdmxRepository.builder().flow(flow).build()
+        );
+        this.idOfStruct = TypedId.of("struct://" + base,
+                repo -> repo.getStructures().stream().findFirst().orElse(null),
+                struct -> SdmxRepository.builder().structure(struct).build()
+        );
+        this.idOfKeysOnly = TypedId.of("keys://" + base,
+                Function.identity(),
+                Function.identity()
+        );
     }
 
     @Override
