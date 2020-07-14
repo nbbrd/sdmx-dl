@@ -94,7 +94,7 @@ public final class SdmxWebManager implements SdmxManager {
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .cache(SdmxCache.of())
+                .cache(SdmxCache.noOp())
                 .eventListener(SdmxWebListener.getDefault());
     }
 

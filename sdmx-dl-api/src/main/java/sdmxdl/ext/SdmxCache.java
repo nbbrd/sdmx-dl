@@ -16,16 +16,12 @@
  */
 package sdmxdl.ext;
 
-import internal.sdmxdl.DefaultSdmxCache;
 import internal.sdmxdl.NoOpSdmxCache;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.repo.SdmxRepository;
 
-import java.time.Clock;
 import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Philippe Charles
@@ -37,16 +33,6 @@ public interface SdmxCache {
     SdmxRepository get(@NonNull String key);
 
     void put(@NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl);
-
-    @NonNull
-    static SdmxCache of(@NonNull ConcurrentMap cache, @NonNull Clock clock) {
-        return new DefaultSdmxCache(cache, clock);
-    }
-
-    @NonNull
-    static SdmxCache of() {
-        return new DefaultSdmxCache(new ConcurrentHashMap(), Clock.systemDefaultZone());
-    }
 
     @NonNull
     static SdmxCache noOp() {

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl;
+package sdmxdl.util.ext;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -24,53 +24,53 @@ import sdmxdl.repo.SdmxRepository;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
-public final class DefaultSdmxCache implements SdmxCache {
+@lombok.Getter
+@lombok.AllArgsConstructor(staticName = "of")
+public final class MapCache implements SdmxCache {
+
+    @NonNull
+    public static MapCache of() {
+        return of(new ConcurrentHashMap(), Clock.systemDefaultZone());
+    }
 
     @lombok.NonNull
-    private final ConcurrentMap cache;
+    private final ConcurrentMap map;
 
     @lombok.NonNull
     private final Clock clock;
 
     @Override
     public SdmxRepository get(String key) {
-        return get(cache, clock, key);
+        return get(map, clock, key);
     }
 
     @Override
     public void put(String key, SdmxRepository value, Duration ttl) {
-        put(cache, clock, key, value, ttl);
+        put(map, clock, key, value, ttl);
     }
 
     @Nullable
-    static SdmxRepository get(@NonNull ConcurrentMap cache, @NonNull Clock clock, @NonNull String key) {
-        Object value = cache.get(key);
-        if (!(value instanceof Entry)) {
+    static SdmxRepository get(@NonNull ConcurrentMap map, @NonNull Clock clock, @NonNull String key) {
+        Object value = map.get(key);
+        if (!(value instanceof ExpiringRepository)) {
             return null;
         }
-        Entry entry = (Entry) value;
-        if (entry.getExpirationTimeInMillis() <= clock.millis()) {
-            cache.remove(key);
+        ExpiringRepository entry = (ExpiringRepository) value;
+        if (entry.isExpired(clock)) {
+            map.remove(key);
             return null;
         }
         return entry.getValue();
     }
 
-    static void put(@NonNull ConcurrentMap cache, @NonNull Clock clock, @NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
+    static void put(@NonNull ConcurrentMap map, @NonNull Clock clock, @NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
         Objects.requireNonNull(value);
-        cache.put(key, new Entry(clock.millis() + ttl.toMillis(), value));
-    }
-
-    @lombok.Value
-    private static class Entry {
-
-        long expirationTimeInMillis;
-        SdmxRepository value;
+        map.put(key, ExpiringRepository.of(clock, ttl, value));
     }
 }

@@ -17,7 +17,6 @@ public class ApiTest {
 
     @Test
     public void testSdmxCaches() {
-        SdmxCacheAssert.assertCompliance(SdmxCache.of());
         SdmxCacheAssert.assertCompliance(SdmxCache.noOp());
     }
 

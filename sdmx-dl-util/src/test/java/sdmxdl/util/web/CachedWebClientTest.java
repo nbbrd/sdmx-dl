@@ -16,21 +16,18 @@
  */
 package sdmxdl.util.web;
 
+import _test.sdmxdl.util.FakeClock;
 import _test.sdmxdl.util.client.XCallStackWebClient;
 import _test.sdmxdl.util.client.XRepoWebClient;
 import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.ext.SdmxCache;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.util.TypedId;
+import sdmxdl.util.ext.MapCache;
 
 import java.io.IOException;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -46,101 +43,101 @@ public class CachedWebClientTest {
     @Test
     public void testGetFlows() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap cache = new ConcurrentHashMap();
+        ConcurrentHashMap map = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
+        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
 
         target.getFlows();
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(flowsId);
+        assertThat(map).containsOnlyKeys(flowsId);
 
         target.getFlows();
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(flowsId);
+        assertThat(map).containsOnlyKeys(flowsId);
 
         clock.plus(100);
         target.getFlows();
         assertThat(count).hasValue(2);
-        assertThat(cache).containsOnlyKeys(flowsId);
+        assertThat(map).containsOnlyKeys(flowsId);
 
-        cache.clear();
+        map.clear();
         target.getFlows();
         assertThat(count).hasValue(3);
-        assertThat(cache).containsOnlyKeys(flowsId);
+        assertThat(map).containsOnlyKeys(flowsId);
     }
 
     @Test
     public void testGetFlow() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap cache = new ConcurrentHashMap();
+        ConcurrentHashMap map = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
+        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
 
         target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(flowId);
+        assertThat(map).containsOnlyKeys(flowId);
 
         target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(flowId);
+        assertThat(map).containsOnlyKeys(flowId);
 
         clock.plus(100);
         target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(2);
-        assertThat(cache).containsOnlyKeys(flowId);
+        assertThat(map).containsOnlyKeys(flowId);
 
-        cache.clear();
+        map.clear();
         target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(3);
-        assertThat(cache).containsOnlyKeys(flowId);
+        assertThat(map).containsOnlyKeys(flowId);
 
-        cache.clear();
+        map.clear();
         target.getFlows();
         target.getFlow(RepoSamples.GOOD_FLOW_REF);
         assertThat(count).hasValue(4);
-        assertThat(cache).containsOnlyKeys(flowsId);
+        assertThat(map).containsOnlyKeys(flowsId);
     }
 
     @Test
     public void testGetStructure() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap cache = new ConcurrentHashMap();
+        ConcurrentHashMap map = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
+        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
 
         target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(structId);
+        assertThat(map).containsOnlyKeys(structId);
 
         target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(structId);
+        assertThat(map).containsOnlyKeys(structId);
 
         clock.plus(100);
         target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(2);
-        assertThat(cache).containsOnlyKeys(structId);
+        assertThat(map).containsOnlyKeys(structId);
 
-        cache.clear();
+        map.clear();
         target.getStructure(RepoSamples.GOOD_STRUCT_REF);
         assertThat(count).hasValue(3);
-        assertThat(cache).containsOnlyKeys(structId);
+        assertThat(map).containsOnlyKeys(structId);
     }
 
     @Test
     public void testLoadData() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap cache = new ConcurrentHashMap();
+        ConcurrentHashMap map = new ConcurrentHashMap();
         FakeClock clock = new FakeClock();
 
-        CachedWebClient target = new CachedWebClient(getClient(count), SdmxCache.of(cache, clock), Duration.ofMillis(100), "");
+        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
 
         assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
 
@@ -148,21 +145,21 @@ public class CachedWebClientTest {
 
         target.getData(request, null);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(keysId);
+        assertThat(map).containsOnlyKeys(keysId);
 
         target.getData(request, null);
         assertThat(count).hasValue(1);
-        assertThat(cache).containsOnlyKeys(keysId);
+        assertThat(map).containsOnlyKeys(keysId);
 
         clock.plus(100);
         target.getData(request, null);
         assertThat(count).hasValue(2);
-        assertThat(cache).containsOnlyKeys(keysId);
+        assertThat(map).containsOnlyKeys(keysId);
 
-        cache.clear();
+        map.clear();
         target.getData(request, null);
         assertThat(count).hasValue(3);
-        assertThat(cache).containsOnlyKeys(keysId);
+        assertThat(map).containsOnlyKeys(keysId);
     }
 
     private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
@@ -170,30 +167,6 @@ public class CachedWebClientTest {
     private final String flowId = TypedId.of("flow://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
     private final String structId = TypedId.of("struct://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_STRUCT_REF).getContent();
     private final String keysId = TypedId.of("keys://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
-
-    private static final class FakeClock extends Clock {
-
-        private Instant current = Instant.now();
-
-        void plus(long durationInMillis) {
-            current = current.plus(100, ChronoUnit.MILLIS);
-        }
-
-        @Override
-        public ZoneId getZone() {
-            return ZoneId.systemDefault();
-        }
-
-        @Override
-        public Clock withZone(ZoneId zone) {
-            return this;
-        }
-
-        @Override
-        public Instant instant() {
-            return current;
-        }
-    }
 
     private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
         SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);

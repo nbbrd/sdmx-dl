@@ -65,7 +65,7 @@ public final class SdmxFileManager implements SdmxManager {
     public static Builder builder() {
         return new Builder()
                 .languages(LanguagePriorityList.ANY)
-                .cache(SdmxCache.of());
+                .cache(SdmxCache.noOp());
     }
 
     @Override
