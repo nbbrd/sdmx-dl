@@ -19,46 +19,46 @@ package sdmxdl;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DataflowRef.of;
+import static sdmxdl.DataStructureRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
 
 /**
  * @author Philippe Charles
  */
-public class DataflowRefTest {
+public class DataStructureRefTest {
 
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        assertThat(DataflowRef.parse("")).isEqualTo(of(null, "", null));
-        assertThat(DataflowRef.parse("hello")).isEqualTo(of(null, "hello", null));
-        assertThat(DataflowRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
-        assertThat(DataflowRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
-        assertThat(DataflowRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
-        assertThat(DataflowRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
-        assertThat(DataflowRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
-        assertThatIllegalArgumentException().isThrownBy(() -> DataflowRef.parse(",,,,"));
-        assertThatNullPointerException().isThrownBy(() -> DataflowRef.parse(null));
+        assertThat(DataStructureRef.parse("")).isEqualTo(of(null, "", null));
+        assertThat(DataStructureRef.parse("hello")).isEqualTo(of(null, "hello", null));
+        assertThat(DataStructureRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
+        assertThat(DataStructureRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
+        assertThat(DataStructureRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
+        assertThat(DataStructureRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
+        assertThat(DataStructureRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
+        assertThatIllegalArgumentException().isThrownBy(() -> DataStructureRef.parse(",,,,"));
+        assertThatNullPointerException().isThrownBy(() -> DataStructureRef.parse(null));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
                 .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
         assertThat(of("", "hello", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
                 .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
         assertThat(of("world", "hello", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
                 .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
         assertThat(of("world", "hello", "123"))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, DataflowRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));
@@ -83,7 +83,7 @@ public class DataflowRefTest {
     @Test
     @SuppressWarnings("null")
     public void testContains() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        DataStructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.contains(null));
 
@@ -102,42 +102,42 @@ public class DataflowRefTest {
     @Test
     @SuppressWarnings("null")
     public void testContainsRef() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        DataStructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.containsRef(null));
 
-        assertThat(x.containsRef(flowOf(of("ECB", "EXR", "1")))).isTrue();
+        assertThat(x.containsRef(structOf(of("ECB", "EXR", "1")))).isTrue();
 
-        assertThat(of(ALL_AGENCIES, "EXR", "1").containsRef(flowOf(x))).isTrue();
-        assertThat(x.containsRef(flowOf(of(ALL_AGENCIES, "EXR", "1")))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", "1").containsRef(structOf(x))).isTrue();
+        assertThat(x.containsRef(structOf(of(ALL_AGENCIES, "EXR", "1")))).isFalse();
 
-        assertThat(of("ECB", "EXR", LATEST_VERSION).containsRef(flowOf(x))).isTrue();
-        assertThat(x.containsRef(flowOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of("ECB", "EXR", LATEST_VERSION).containsRef(structOf(x))).isTrue();
+        assertThat(x.containsRef(structOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
 
-        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(flowOf(x))).isTrue();
-        assertThat(x.containsRef(flowOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).containsRef(structOf(x))).isTrue();
+        assertThat(x.containsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
     }
 
     @Test
     @SuppressWarnings("null")
     public void testEqualsRef() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        DataStructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.equalsRef(null));
 
-        assertThat(x.equalsRef(flowOf(of("ECB", "EXR", "1")))).isTrue();
+        assertThat(x.equalsRef(structOf(of("ECB", "EXR", "1")))).isTrue();
 
-        assertThat(of(ALL_AGENCIES, "EXR", "1").equalsRef(flowOf(x))).isFalse();
-        assertThat(x.equalsRef(flowOf(of(ALL_AGENCIES, "EXR", "1")))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", "1").equalsRef(structOf(x))).isFalse();
+        assertThat(x.equalsRef(structOf(of(ALL_AGENCIES, "EXR", "1")))).isFalse();
 
-        assertThat(of("ECB", "EXR", LATEST_VERSION).equalsRef(flowOf(x))).isFalse();
-        assertThat(x.equalsRef(flowOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of("ECB", "EXR", LATEST_VERSION).equalsRef(structOf(x))).isFalse();
+        assertThat(x.equalsRef(structOf(of("ECB", "EXR", LATEST_VERSION)))).isFalse();
 
-        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).equalsRef(flowOf(x))).isFalse();
-        assertThat(x.equalsRef(flowOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
+        assertThat(of(ALL_AGENCIES, "EXR", LATEST_VERSION).equalsRef(structOf(x))).isFalse();
+        assertThat(x.equalsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
     }
 
-    private Dataflow flowOf(DataflowRef ref) {
-        return Dataflow.of(ref, DataStructureRef.parse(""), "");
+    private DataStructure structOf(DataStructureRef ref) {
+        return DataStructure.builder().ref(ref).label("").build();
     }
 }

@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class DataSet {
+public class DataSet implements Resource<DataflowRef> {
 
     @lombok.NonNull
     DataflowRef ref;

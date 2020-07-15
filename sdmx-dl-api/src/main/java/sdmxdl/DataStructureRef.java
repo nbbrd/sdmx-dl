@@ -1,17 +1,17 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl;
@@ -28,7 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DataStructureRef implements ResourceRef {
+public final class DataStructureRef implements ResourceRef<DataStructureRef> {
 
     @lombok.NonNull
     private String agency;
@@ -38,20 +38,6 @@ public final class DataStructureRef implements ResourceRef {
 
     @lombok.NonNull
     private String version;
-
-    public boolean containsRef(@NonNull DataStructure that) {
-        return contains(that.getRef());
-    }
-
-    public boolean contains(@NonNull DataStructureRef that) {
-        return (this.agency.equals(ALL_AGENCIES) || this.agency.equals(that.agency))
-                && (this.id.equals(that.id))
-                && (this.version.equals(LATEST_VERSION) || this.version.equals(that.version));
-    }
-
-    public boolean equalsRef(@NonNull DataStructure that) {
-        return equals(that.getRef());
-    }
 
     @Override
     public String toString() {

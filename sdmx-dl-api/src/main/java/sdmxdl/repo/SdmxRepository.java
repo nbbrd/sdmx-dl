@@ -86,7 +86,7 @@ public class SdmxRepository {
         Objects.requireNonNull(ref);
         return dataSets
                 .stream()
-                .filter(dataSet -> dataSet.getRef().equals(ref))
+                .filter(ref::containsRef)
                 .findFirst();
     }
 
