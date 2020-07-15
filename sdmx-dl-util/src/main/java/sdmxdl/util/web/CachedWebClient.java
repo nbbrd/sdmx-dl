@@ -80,7 +80,7 @@ final class CachedWebClient implements SdmxWebClient {
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        return loadDataFlowsWithCache();
+        return loadDataflowsWithCache();
     }
 
     @Override
@@ -118,38 +118,23 @@ final class CachedWebClient implements SdmxWebClient {
         return delegate.ping();
     }
 
-    private List<Dataflow> loadDataFlowsWithCache() throws IOException {
-        List<Dataflow> result = idOfFlows.load(cache);
-        if (result == null) {
-            result = delegate.getFlows();
-            idOfFlows.store(cache, result, ttl);
-        }
-        return result;
+    private List<Dataflow> loadDataflowsWithCache() throws IOException {
+        return idOfFlows.load(cache, () -> delegate.getFlows(), o -> ttl);
     }
 
     private DataStructure loadDataStructureWithCache(DataStructureRef ref) throws IOException {
         TypedId<DataStructure> id = idOfStruct.with(ref);
-        DataStructure result = id.load(cache);
-        if (result == null) {
-            result = delegate.getStructure(ref);
-            id.store(cache, result, ttl);
-        }
-        return result;
+        return id.load(cache, () -> delegate.getStructure(ref), o -> ttl);
     }
 
     private DataSet loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = idOfKeysOnly.with(request.getFlowRef());
-        DataSet result = id.load(cache);
-        if (result == null || isBroaderRequest(request.getKey(), result)) {
-            result = copyDataKeys(request, dsd);
-            id.store(cache, result, ttl);
-        }
-        return result;
+        return id.load(cache, () -> copyDataKeys(request, dsd), o -> ttl, o -> !isBroaderRequest(request.getKey(), o));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
-        // check if dataflow has been already loaded by #loadDataFlowsById
-        List<Dataflow> dataFlows = idOfFlows.load(cache);
+        // check if dataflow has been already loaded by #loadDataflowsWithCache
+        List<Dataflow> dataFlows = idOfFlows.peek(cache);
         if (dataFlows == null) {
             return null;
         }
@@ -164,12 +149,7 @@ final class CachedWebClient implements SdmxWebClient {
 
     private Dataflow loadDataflowWithCache(DataflowRef ref) throws IOException {
         TypedId<Dataflow> id = idOfFlow.with(ref);
-        Dataflow result = id.load(cache);
-        if (result == null) {
-            result = delegate.getFlow(ref);
-            id.store(cache, result, ttl);
-        }
-        return result;
+        return id.load(cache, () -> delegate.getFlow(ref), o -> ttl);
     }
 
     private boolean isBroaderRequest(Key key, DataSet dataSet) {

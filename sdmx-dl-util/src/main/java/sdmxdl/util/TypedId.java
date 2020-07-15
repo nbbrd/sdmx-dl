@@ -17,14 +17,17 @@
 package sdmxdl.util;
 
 import lombok.AccessLevel;
+import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @param <T>
@@ -57,12 +60,23 @@ public final class TypedId<T> {
     }
 
     @Nullable
-    public T load(@NonNull SdmxCache cache) {
+    public T peek(@NonNull SdmxCache cache) {
         SdmxRepository repo = cache.get(content);
         return repo != null ? loader.apply(repo) : null;
     }
 
-    public void store(@NonNull SdmxCache cache, @NonNull T value, Duration ttl) {
-        cache.put(content, storer.apply(value), ttl);
+    @NonNull
+    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<T, Duration> ttl) throws IOException {
+        return load(cache, factory, ttl, o -> true);
+    }
+
+    @NonNull
+    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<T, Duration> ttl, @NonNull Predicate<T> validator) throws IOException {
+        T result = peek(cache);
+        if (result == null || !validator.test(result)) {
+            result = factory.getWithIO();
+            cache.put(content, storer.apply(result), ttl.apply(result));
+        }
+        return result;
     }
 }

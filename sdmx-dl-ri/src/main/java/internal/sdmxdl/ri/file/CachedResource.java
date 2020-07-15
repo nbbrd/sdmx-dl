@@ -38,18 +38,18 @@ public final class CachedResource extends SdmxDecoderResource {
     private static final Duration DEFAULT_CACHE_TTL = Duration.ofMinutes(5);
 
     private final SdmxCache cache;
-    private final TypedId<SdmxDecoder.Info> decodeKey;
-    private final TypedId<DataSet> loadDataKey;
+    private final TypedId<SdmxDecoder.Info> idOfDecode;
+    private final TypedId<DataSet> idOfLoadData;
 
     public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
         super(source, languages, decoder, dataFactory);
         this.cache = cache;
         String base = getBase(source, languages);
-        this.decodeKey = TypedId.of("decode://" + base,
+        this.idOfDecode = TypedId.of("decode://" + base,
                 repo -> SdmxDecoder.Info.of(repo.getName(), repo.getStructures().stream().findFirst().orElse(null)),
                 info -> SdmxRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
         );
-        this.loadDataKey = TypedId.of("loadData://" + base,
+        this.idOfLoadData = TypedId.of("loadData://" + base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 data -> SdmxRepository.builder().dataSet(data).build()
         );
@@ -65,25 +65,16 @@ public final class CachedResource extends SdmxDecoderResource {
 
     @Override
     public SdmxDecoder.Info decode() throws IOException {
-        SdmxDecoder.Info result = decodeKey.load(cache);
-        if (result == null) {
-            result = super.decode();
-            decodeKey.store(cache, result, DEFAULT_CACHE_TTL);
-        }
-        return result;
+        return idOfDecode.load(cache, super::decode, o -> DEFAULT_CACHE_TTL);
     }
 
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            DataSet result = loadDataKey.load(cache);
-            if (result == null) {
-                result = copyOfKeysAndMeta(entry, flowRef, key);
-                loadDataKey.store(cache, result, DEFAULT_CACHE_TTL);
-            }
-            return result.getDataCursor(key, NO_DATA_FILTER);
+            return idOfLoadData.load(cache, () -> copyOfKeysAndMeta(entry, flowRef, key), o -> DEFAULT_CACHE_TTL)
+                    .getDataCursor(key, NO_DATA_FILTER);
         }
-        return super.loadData(entry, flowRef, key, serieskeysonly);
+        return super.loadData(entry, flowRef, key, false);
     }
 
     private DataSet copyOfKeysAndMeta(SdmxDecoder.Info entry, DataflowRef flowRef, Key key) throws IOException {

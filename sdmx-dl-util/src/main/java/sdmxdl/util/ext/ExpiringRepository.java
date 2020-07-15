@@ -11,15 +11,16 @@ public class ExpiringRepository {
 
     @NonNull
     public static ExpiringRepository of(@NonNull Clock clock, @NonNull Duration ttl, @NonNull SdmxRepository value) {
-        return ExpiringRepository.of(clock.millis() + ttl.toMillis(), value);
+        return ExpiringRepository.of(clock.millis(), ttl.toMillis(), value);
     }
 
-    private long expirationTimeInMillis;
+    private long creationTimeInMillis;
+    private long ttlInMillis;
 
     @lombok.NonNull
     private SdmxRepository value;
 
     public boolean isExpired(@NonNull Clock clock) {
-        return expirationTimeInMillis <= clock.millis();
+        return creationTimeInMillis + ttlInMillis <= clock.millis();
     }
 }
