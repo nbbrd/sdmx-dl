@@ -20,15 +20,14 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.xml.XmlFileSource;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
@@ -40,7 +39,7 @@ public final class CachedResource extends SdmxDecoderResource {
 
     private final SdmxCache cache;
     private final TypedId<SdmxDecoder.Info> decodeKey;
-    private final TypedId<List<Series>> loadDataKey;
+    private final TypedId<DataSet> loadDataKey;
 
     public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
         super(source, languages, decoder, dataFactory);
@@ -51,8 +50,8 @@ public final class CachedResource extends SdmxDecoderResource {
                 info -> SdmxRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
         );
         this.loadDataKey = TypedId.of("loadData://" + base,
-                repo -> repo.getData().get(DataflowRef.parse("")),
-                data -> SdmxRepository.builder().data(DataflowRef.parse(""), data).build()
+                repo -> repo.getDataSets().stream().findFirst().orElse(null),
+                data -> SdmxRepository.builder().dataSet(data).build()
         );
     }
 
@@ -77,19 +76,25 @@ public final class CachedResource extends SdmxDecoderResource {
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
         if (serieskeysonly) {
-            List<Series> result = loadDataKey.load(cache);
+            DataSet result = loadDataKey.load(cache);
             if (result == null) {
                 result = copyOfKeysAndMeta(entry, flowRef, key);
                 loadDataKey.store(cache, result, DEFAULT_CACHE_TTL);
             }
-            return DataCursor.of(result, key);
+            return result.getDataCursor(key, NO_DATA_FILTER);
         }
         return super.loadData(entry, flowRef, key, serieskeysonly);
     }
 
-    private List<Series> copyOfKeysAndMeta(SdmxDecoder.Info entry, DataflowRef flowRef, Key key) throws IOException {
+    private DataSet copyOfKeysAndMeta(SdmxDecoder.Info entry, DataflowRef flowRef, Key key) throws IOException {
         try (DataCursor c = super.loadData(entry, flowRef, key, true)) {
-            return c.toStream(DataFilter.Detail.NO_DATA).collect(Collectors.toList());
+            return DataSet
+                    .builder()
+                    .ref(flowRef)
+                    .copyOf(c, NO_DATA_FILTER)
+                    .build();
         }
     }
+
+    private static final DataFilter NO_DATA_FILTER = DataFilter.builder().detail(DataFilter.Detail.NO_DATA).build();
 }

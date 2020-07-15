@@ -65,7 +65,7 @@ public class ApiTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testRepoDataCursor() {
-        DataCursorAssert.assertCompliance(() -> RepoSamples.REPO.getDataCursor(RepoSamples.GOOD_FLOW_REF, Key.ALL, DataFilter.ALL).get());
+    public void testDataSetCursor() {
+        DataCursorAssert.assertCompliance(() -> RepoSamples.REPO.getDataSet(RepoSamples.GOOD_FLOW_REF).get().getDataCursor(Key.ALL, DataFilter.ALL));
     }
 }

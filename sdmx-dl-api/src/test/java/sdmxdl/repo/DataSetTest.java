@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2020 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,7 +16,6 @@
  */
 package sdmxdl.repo;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import sdmxdl.*;
 
@@ -28,43 +27,51 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 /**
  * @author Philippe Charles
  */
-public class SdmxRepositoryTest {
+public class DataSetTest {
 
     @Test
-    public void testBuilder() {
-        assertThat(SdmxRepository.builder().name("test").dataSet(dataSet).build().isSeriesKeysOnlySupported()).isTrue();
+    public void testBuilderCopyOf() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> DataSet.builder().copyOf(null, DataFilter.ALL));
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> DataSet.builder().copyOf(DataCursor.empty(), null));
     }
 
     @Test
     public void testGetData() {
-        Assertions.assertThat(repo.getDataSets()).hasSize(1).contains(dataSet);
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getData(null, DataFilter.ALL));
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getData(Key.ALL, null));
+
+        assertThat(dataSet.getData(Key.ALL, DataFilter.ALL))
+                .containsExactly(series);
     }
 
     @Test
-    @SuppressWarnings("null")
-    public void testGetFlow() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getFlow(null));
-        assertThat(repo.getFlow(goodFlowRef)).isNotEmpty();
-        assertThat(repo.getFlow(badFlowRef)).isEmpty();
-        assertThat(repo.getFlow(DataflowRef.of(null, "XYZ", null))).isNotEmpty();
+    public void testGetDataStream() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.ALL));
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getDataStream(Key.ALL, null));
+
+        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.ALL))
+                .containsExactly(series);
     }
 
     @Test
-    public void testGetStructures() {
-        Assertions.assertThat(repo.getStructures()).containsExactly(struct);
-    }
+    public void testGetDataCursor() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.ALL));
 
-    @Test
-    public void testGetFlows() {
-        assertThat(repo.getFlows()).containsExactly(flow);
-    }
+        assertThatNullPointerException()
+                .isThrownBy(() -> dataSet.getDataCursor(Key.ALL, null));
 
-    @Test
-    @SuppressWarnings("null")
-    public void testGetStructure() {
-        assertThatNullPointerException().isThrownBy(() -> repo.getStructure(null));
-        Assertions.assertThat(repo.getStructure(goodStructRef)).isNotEmpty();
-        Assertions.assertThat(repo.getStructure(badStructRef)).isEmpty();
+        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.ALL))
+                .isNotNull();
     }
 
     private final DataStructureRef goodStructRef = DataStructureRef.of("NBB", "goodStruct", "v1.0");
@@ -75,11 +82,4 @@ public class SdmxRepositoryTest {
     private final DataStructure struct = DataStructure.builder().ref(goodStructRef).label("struct1").build();
     private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
     private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
-    private final SdmxRepository repo = SdmxRepository
-            .builder()
-            .name("test")
-            .structure(struct)
-            .flow(flow)
-            .dataSet(dataSet)
-            .build();
 }

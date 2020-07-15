@@ -18,6 +18,7 @@ package sdmxdl.util.web;
 
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.web.SdmxWebSource;
@@ -25,7 +26,6 @@ import sdmxdl.web.SdmxWebSource;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -49,7 +49,7 @@ final class CachedWebClient implements SdmxWebClient {
     private final TypedId<List<Dataflow>> idOfFlows;
     private final TypedId<Dataflow> idOfFlow;
     private final TypedId<DataStructure> idOfStruct;
-    private final TypedId<SdmxRepository> idOfKeysOnly;
+    private final TypedId<DataSet> idOfKeysOnly;
 
     CachedWebClient(SdmxWebClient delegate, SdmxCache cache, Duration ttl, String base) {
         this.delegate = delegate;
@@ -68,8 +68,8 @@ final class CachedWebClient implements SdmxWebClient {
                 struct -> SdmxRepository.builder().structure(struct).build()
         );
         this.idOfKeysOnly = TypedId.of("keys://" + base,
-                Function.identity(),
-                Function.identity()
+                repo -> repo.getDataSets().stream().findFirst().orElse(null),
+                dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
         );
     }
 
@@ -100,8 +100,7 @@ final class CachedWebClient implements SdmxWebClient {
             return delegate.getData(request, dsd);
         }
         return loadKeysOnlyWithCache(request, dsd)
-                .getDataCursor(request.getFlowRef(), request.getKey(), request.getFilter())
-                .orElseThrow(() -> new IOException("Data not found"));
+                .getDataCursor(request.getKey(), request.getFilter());
     }
 
     @Override
@@ -138,9 +137,9 @@ final class CachedWebClient implements SdmxWebClient {
         return result;
     }
 
-    private SdmxRepository loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
-        TypedId<SdmxRepository> id = idOfKeysOnly.with(request.getFlowRef());
-        SdmxRepository result = id.load(cache);
+    private DataSet loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
+        TypedId<DataSet> id = idOfKeysOnly.with(request.getFlowRef());
+        DataSet result = id.load(cache);
         if (result == null || isBroaderRequest(request.getKey(), result)) {
             result = copyDataKeys(request, dsd);
             id.store(cache, result, ttl);
@@ -173,15 +172,17 @@ final class CachedWebClient implements SdmxWebClient {
         return result;
     }
 
-    private boolean isBroaderRequest(Key key, SdmxRepository repo) {
-        return key.supersedes(Key.parse(repo.getName()));
+    private boolean isBroaderRequest(Key key, DataSet dataSet) {
+        return key.supersedes(Key.parse(dataSet.getMeta().get("requestKey")));
     }
 
-    private SdmxRepository copyDataKeys(DataRequest request, DataStructure structure) throws IOException {
+    private DataSet copyDataKeys(DataRequest request, DataStructure structure) throws IOException {
         try (DataCursor cursor = delegate.getData(request, structure)) {
-            return SdmxRepository.builder()
-                    .copyOf(request.getFlowRef(), cursor)
-                    .name(request.getKey().toString())
+            return DataSet
+                    .builder()
+                    .ref(request.getFlowRef())
+                    .meta("requestKey", request.getKey().toString())
+                    .copyOf(cursor, DataFilter.ALL)
                     .build();
         }
     }

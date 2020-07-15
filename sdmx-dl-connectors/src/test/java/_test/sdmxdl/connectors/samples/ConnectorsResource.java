@@ -1,52 +1,47 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package _test.sdmxdl.connectors.samples;
 
-import sdmxdl.util.parser.DataFactories;
-import sdmxdl.DataflowRef;
-import sdmxdl.Frequency;
-import sdmxdl.Key;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.Series;
-import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
 import internal.sdmxdl.connectors.Connectors;
-import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
-import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
+import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
-import it.bancaditalia.oss.sdmx.api.DoubleObservation;
-import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.*;
+import sdmxdl.repo.DataSet;
+import sdmxdl.repo.SdmxRepository;
+import sdmxdl.samples.ByteSource;
+import sdmxdl.samples.SdmxSource;
+import sdmxdl.util.parser.DataFactories;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
@@ -65,7 +60,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactories.SDMX20, Connectors.toStructure(structs.get(0))))
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, DataFactories.SDMX20, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
@@ -84,7 +79,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .copyOf(ref, PortableTimeSeriesCursor.of(data, DataFactories.SDMX21, Connectors.toStructure(structs.get(0))))
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, DataFactories.SDMX21, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();

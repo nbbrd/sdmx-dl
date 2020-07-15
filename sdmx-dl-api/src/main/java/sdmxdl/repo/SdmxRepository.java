@@ -21,9 +21,10 @@ import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -45,7 +46,8 @@ public class SdmxRepository {
     List<Dataflow> flows;
 
     @lombok.NonNull
-    Map<DataflowRef, List<Series>> data;
+    @lombok.Singular
+    List<DataSet> dataSets;
 
     boolean seriesKeysOnlySupported;
 
@@ -80,66 +82,12 @@ public class SdmxRepository {
     }
 
     @NonNull
-    public Optional<List<Series>> getData(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
-        return getDataByFlowRef(flowRef).map(toStream(key, filter)).map(o -> o.collect(Collectors.toList()));
-    }
-
-    @NonNull
-    public Optional<Stream<Series>> getDataStream(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
-        return getDataByFlowRef(flowRef).map(toStream(key, filter));
-    }
-
-    @NonNull
-    public Optional<DataCursor> getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
-        return getDataByFlowRef(flowRef).map(toCursor(key, filter));
-    }
-
-    @NonNull
-    private Optional<List<Series>> getDataByFlowRef(@NonNull DataflowRef flowRef) {
-        Objects.requireNonNull(flowRef);
-        return Optional.ofNullable(data.get(flowRef));
-    }
-
-    @NonNull
-    private static Function<List<Series>, DataCursor> toCursor(@NonNull Key key, @NonNull DataFilter filter) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return o -> DataCursor.of(o, key);
-    }
-
-    @NonNull
-    private static Function<List<Series>, Stream<Series>> toStream(@NonNull Key key, @NonNull DataFilter filter) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return o -> o.stream().filter(s -> key.contains(s.getKey()));
-    }
-
-    public static final class Builder {
-
-        private final Map<DataflowRef, List<Series>> data = new HashMap<>();
-
-        @NonNull
-        public Builder clearData() {
-            this.data.clear();
-            return this;
-        }
-
-        @NonNull
-        public Builder data(@NonNull DataflowRef flowRef, @NonNull Series series) {
-            data.computeIfAbsent(flowRef, o -> new ArrayList<>()).add(series);
-            return this;
-        }
-
-        @NonNull
-        public Builder data(@NonNull DataflowRef flowRef, @NonNull List<Series> list) {
-            data.computeIfAbsent(flowRef, o -> new ArrayList<>()).addAll(list);
-            return this;
-        }
-
-        @NonNull
-        public Builder copyOf(@NonNull DataflowRef flowRef, @NonNull DataCursor cursor) throws IOException {
-            return data(flowRef, cursor.toStream(DataFilter.Detail.FULL).collect(Collectors.toList()));
-        }
+    public Optional<DataSet> getDataSet(@NonNull DataflowRef ref) {
+        Objects.requireNonNull(ref);
+        return dataSets
+                .stream()
+                .filter(dataSet -> dataSet.getRef().equals(ref))
+                .findFirst();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
@@ -180,7 +128,8 @@ public class SdmxRepository {
         public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getData(flowRef, key, filter)
+                    .getDataSet(flowRef)
+                    .map(dataSet -> dataSet.getData(key, filter))
                     .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 
@@ -188,7 +137,8 @@ public class SdmxRepository {
         public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getDataStream(flowRef, key, filter)
+                    .getDataSet(flowRef)
+                    .map(dataSet -> dataSet.getDataStream(key, filter))
                     .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 
@@ -196,7 +146,8 @@ public class SdmxRepository {
         public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
-                    .getDataCursor(flowRef, key, filter)
+                    .getDataSet(flowRef)
+                    .map(dataSet -> dataSet.getDataCursor(key, filter))
                     .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
         }
 

@@ -17,6 +17,7 @@
 package sdmxdl.samples;
 
 import sdmxdl.*;
+import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 
 import java.time.LocalDateTime;
@@ -34,11 +35,12 @@ public class RepoSamples {
     public final Dataflow FLOW = Dataflow.of(GOOD_FLOW_REF, GOOD_STRUCT_REF, "flow1");
     public final DataStructure STRUCT = DataStructure.builder().ref(GOOD_STRUCT_REF).label("struct1").build();
     public final Series SERIES = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    public final DataSet DATA_SET = DataSet.builder().ref(GOOD_FLOW_REF).series(SERIES).build();
     public final SdmxRepository REPO = SdmxRepository
             .builder()
             .name("test")
             .structure(STRUCT)
             .flow(FLOW)
-            .data(GOOD_FLOW_REF, SERIES)
+            .dataSet(DATA_SET)
             .build();
 }
