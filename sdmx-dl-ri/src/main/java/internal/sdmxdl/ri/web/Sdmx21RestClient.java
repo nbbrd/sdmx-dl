@@ -117,7 +117,7 @@ public class Sdmx21RestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder onMeta(@NonNull URL endpoint, @NonNull String resourceType, @NonNull ResourceRef ref) {
+    public static RestQueryBuilder onMeta(@NonNull URL endpoint, @NonNull String resourceType, @NonNull ResourceRef<?> ref) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(resourceType)

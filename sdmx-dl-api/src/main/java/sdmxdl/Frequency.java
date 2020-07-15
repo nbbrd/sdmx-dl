@@ -32,5 +32,5 @@ public enum Frequency {
     HOURLY,
     DAILY_BUSINESS,
     MINUTELY,
-    UNDEFINED;
+    UNDEFINED
 }

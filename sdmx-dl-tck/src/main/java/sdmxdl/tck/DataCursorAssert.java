@@ -70,7 +70,7 @@ public class DataCursorAssert {
         assertSeriesState(s, supplier, DataCursor::getSeriesAttributes, "#getSeriesAttributes");
         assertSeriesState(s, supplier, DataCursor::getSeriesFrequency, "#getSeriesFrequency");
         assertSeriesState(s, supplier, o -> o.getSeriesAttribute(""), "#getSeriesAttribute");
-        assertSeriesState(s, supplier, o -> o.nextObs(), "#nextObs");
+        assertSeriesState(s, supplier, DataCursor::nextObs, "#nextObs");
 
         assertObsState(s, supplier, DataCursor::getObsPeriod, "#getObsPeriod");
         assertObsState(s, supplier, DataCursor::getObsValue, "#getObsValue");
@@ -102,19 +102,19 @@ public class DataCursorAssert {
         assertSeriesState(s, supplier, consumer, method);
         try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
-                s.assertThatThrownBy(() -> c.getObsPeriod())
+                s.assertThatThrownBy(c::getObsPeriod)
                         .as("Calling #getObsPeriod before first obs must throw IllegalStateException")
                         .isInstanceOf(IllegalStateException.class);
                 while (c.nextObs()) {
                 }
-                s.assertThatThrownBy(() -> c.getObsPeriod())
+                s.assertThatThrownBy(c::getObsPeriod)
                         .as("Calling #getObsPeriod after last must throw IllegalStateException")
                         .isInstanceOf(IllegalStateException.class);
             }
         }
     }
 
-    private void with(IOSupplier<DataCursor> supplier, IOConsumer consumer) throws Exception {
+    private void with(IOSupplier<DataCursor> supplier, IOConsumer<DataCursor> consumer) throws Exception {
         try (DataCursor c = supplier.getWithIO()) {
             consumer.acceptWithIO(c);
         }

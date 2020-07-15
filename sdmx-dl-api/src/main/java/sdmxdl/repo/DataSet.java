@@ -46,14 +46,17 @@ public class DataSet implements Resource<DataflowRef> {
 
     @NonNull
     public List<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
-        return getDataStream(key, filter).collect(Collectors.toList());
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return isNoFilters(key, filter) ? data : getDataStream(key, filter).collect(Collectors.toList());
     }
+
 
     @NonNull
     public Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return data.stream().filter(s -> key.contains(s.getKey()));
+        return data.stream().filter(key::containsKey);
     }
 
     @NonNull
@@ -61,6 +64,10 @@ public class DataSet implements Resource<DataflowRef> {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
         return DataCursor.of(data, key);
+    }
+
+    private boolean isNoFilters(Key key, DataFilter filter) {
+        return Key.ALL.equals(key) && DataFilter.ALL.equals(filter);
     }
 
     public static class Builder {

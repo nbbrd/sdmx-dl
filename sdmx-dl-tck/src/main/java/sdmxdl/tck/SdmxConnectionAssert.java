@@ -133,7 +133,7 @@ public class SdmxConnectionAssert {
     }
 
     private List<Series> cursorToSeries(DataflowRef ref, Key key, DataFilter filter, SdmxConnection conn) throws IOException {
-        List<Series> result = new ArrayList();
+        List<Series> result = new ArrayList<>();
         try (DataCursor c = conn.getDataCursor(ref, key, filter)) {
             while (c.nextSeries()) {
                 Series.Builder series = Series.builder();

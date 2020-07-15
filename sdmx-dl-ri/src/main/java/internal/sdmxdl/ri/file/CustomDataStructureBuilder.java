@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
  */
 final class CustomDataStructureBuilder {
 
-    private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap();
-    private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap();
+    private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap<>();
     private String fileType = null;
     private DataStructureRef ref = null;
     private String timeDimensionId = null;
@@ -114,12 +114,7 @@ final class CustomDataStructureBuilder {
     private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("\\s+");
 
     private static void putMulti(Map<String, Set<String>> map, String key, String value) {
-        Set<String> tmp = map.get(key);
-        if (tmp == null) {
-            tmp = new HashSet<>();
-            map.put(key, tmp);
-        }
-        tmp.add(value);
+        map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
     }
 
     static Dimension dimension(String name, int pos, String... values) {

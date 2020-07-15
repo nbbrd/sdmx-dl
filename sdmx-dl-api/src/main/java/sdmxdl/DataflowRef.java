@@ -37,16 +37,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DataflowRef implements ResourceRef<DataflowRef> {
+public class DataflowRef implements ResourceRef<DataflowRef> {
 
     @lombok.NonNull
-    private String agency;
+    String agency;
 
     @lombok.NonNull
-    private String id;
+    String id;
 
     @lombok.NonNull
-    private String version;
+    String version;
 
     @Override
     public String toString() {

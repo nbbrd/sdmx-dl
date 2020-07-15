@@ -17,6 +17,8 @@
 package sdmxdl;
 
 import java.util.Arrays;
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.*;
 
 import org.assertj.core.api.Assertions;
@@ -69,7 +71,7 @@ public class LanguagePriorityListTest {
         Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
         Assertions.assertThat(LanguagePriorityList.parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
         Assertions.assertThat(LanguagePriorityList.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
-        Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("nl"))).isNull();
+        Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Collections.singletonList("nl"))).isNull();
         assertThatNullPointerException().isThrownBy(() -> LanguagePriorityList.parse("fr").lookupTag(null));
     }
 }

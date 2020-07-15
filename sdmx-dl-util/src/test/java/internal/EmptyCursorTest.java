@@ -27,6 +27,6 @@ public class EmptyCursorTest {
 
     @Test
     public void testCompliance() {
-        DataCursorAssert.assertCompliance(() -> DataCursor.empty());
+        DataCursorAssert.assertCompliance(DataCursor::empty);
     }
 }

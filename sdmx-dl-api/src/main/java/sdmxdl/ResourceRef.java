@@ -24,7 +24,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @author Philippe Charles
  */
-public interface ResourceRef<T extends ResourceRef> {
+public interface ResourceRef<T extends ResourceRef<T>> {
 
     String ALL_AGENCIES = "all";
     String LATEST_VERSION = "latest";

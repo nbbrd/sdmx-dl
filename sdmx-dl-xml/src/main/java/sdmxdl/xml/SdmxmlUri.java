@@ -31,7 +31,7 @@ public enum SdmxmlUri {
 
     private final URI uri;
 
-    private SdmxmlUri(String uri) {
+    SdmxmlUri(String uri) {
         this.uri = URI.create(uri);
     }
 

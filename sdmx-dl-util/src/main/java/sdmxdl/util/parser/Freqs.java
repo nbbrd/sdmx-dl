@@ -187,7 +187,7 @@ public class Freqs {
 
     private Map<Frequency, nbbrd.io.text.Parser<LocalDateTime>> initStandardParsers() {
         nbbrd.io.text.Parser<LocalDateTime> yearMonth = Chars.onDatePattern("yyyy-MM");
-        nbbrd.io.text.Parser yearMonthDay = Chars.onDatePattern("yyyy-MM-dd");
+        nbbrd.io.text.Parser<LocalDateTime> yearMonthDay = Chars.onDatePattern("yyyy-MM-dd");
 
         Map<Frequency, nbbrd.io.text.Parser<LocalDateTime>> result = new EnumMap<>(Frequency.class);
         result.put(ANNUAL, Chars.onDatePattern("yyyy").orElse(Chars.onDatePattern("yyyy'-01'")).orElse(Chars.onDatePattern("yyyy'-A1'")));

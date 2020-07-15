@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 class XMLStreamUtil {
 
     enum Status {
-        HALT, CONTINUE, SUSPEND;
+        HALT, CONTINUE, SUSPEND
     }
 
     interface TagVisitor {

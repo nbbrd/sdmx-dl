@@ -33,10 +33,10 @@ public class Series {
     Frequency freq;
 
     @lombok.NonNull
-    @lombok.Singular(value = "obs")
-    List<Obs> obs;
+    @lombok.Singular("meta")
+    Map<String, String> meta;
 
     @lombok.NonNull
-    @lombok.Singular(value = "meta")
-    Map<String, String> meta;
+    @lombok.Singular("obs")
+    List<Obs> obs;
 }

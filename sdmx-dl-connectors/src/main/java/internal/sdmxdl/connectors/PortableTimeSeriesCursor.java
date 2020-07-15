@@ -111,8 +111,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public Double getObsValue() throws IOException {
         checkObsState();
-        Object result = current.get(index).getValue();
-        return result instanceof Double ? (Double) result : null;
+        return current.get(index).getValue();
     }
 
     @Override

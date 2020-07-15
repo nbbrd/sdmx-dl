@@ -18,8 +18,8 @@ package sdmxdl.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.SdmxCache;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.file.spi.SdmxFileContext;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 @lombok.With
-public final class SdmxFileManager implements SdmxManager {
+public class SdmxFileManager implements SdmxManager {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
@@ -48,18 +48,18 @@ public final class SdmxFileManager implements SdmxManager {
     }
 
     @lombok.NonNull
-    private final LanguagePriorityList languages;
+    LanguagePriorityList languages;
 
     @lombok.NonNull
-    private final SdmxCache cache;
-
-    @lombok.NonNull
-    @lombok.Singular
-    private final List<SdmxDialect> dialects;
+    SdmxCache cache;
 
     @lombok.NonNull
     @lombok.Singular
-    private final List<SdmxFileReader> readers;
+    List<SdmxDialect> dialects;
+
+    @lombok.NonNull
+    @lombok.Singular
+    List<SdmxFileReader> readers;
 
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {

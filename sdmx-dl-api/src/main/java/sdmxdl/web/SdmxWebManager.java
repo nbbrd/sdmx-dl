@@ -19,8 +19,8 @@ package sdmxdl.web;
 import internal.util.SdmxWebDriverLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.SdmxCache;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
 @lombok.With
-public final class SdmxWebManager implements SdmxManager {
+public class SdmxWebManager implements SdmxManager {
 
     @NonNull
     public static SdmxWebManager ofServiceLoader() {
@@ -67,23 +67,23 @@ public final class SdmxWebManager implements SdmxManager {
 
     @lombok.NonNull
     @lombok.Singular
-    private final List<SdmxWebDriver> drivers;
+    List<SdmxWebDriver> drivers;
 
     @lombok.NonNull
     @lombok.Singular
-    private final List<SdmxWebSource> sources;
+    List<SdmxWebSource> sources;
 
     @lombok.NonNull
-    private final LanguagePriorityList languages;
+    LanguagePriorityList languages;
 
     @lombok.NonNull
-    private final ProxySelector proxySelector;
+    ProxySelector proxySelector;
 
     @lombok.NonNull
-    private final SSLSocketFactory sslSocketFactory;
+    SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
-    private final SdmxCache cache;
+    SdmxCache cache;
 
     @lombok.NonNull
     SdmxWebListener eventListener;

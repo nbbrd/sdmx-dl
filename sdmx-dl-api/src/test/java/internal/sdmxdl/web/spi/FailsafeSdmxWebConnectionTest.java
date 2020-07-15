@@ -38,13 +38,13 @@ public class FailsafeSdmxWebConnectionTest {
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.ping())
+                .isThrownBy(failingDriver::ping)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.ping())
+                .isThrownBy(nullDriver::ping)
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -57,13 +57,13 @@ public class FailsafeSdmxWebConnectionTest {
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getDriver())
+                .isThrownBy(failingDriver::getDriver)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getDriver())
+                .isThrownBy(nullDriver::getDriver)
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -76,13 +76,13 @@ public class FailsafeSdmxWebConnectionTest {
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getFlows())
+                .isThrownBy(failingDriver::getFlows)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getFlows())
+                .isThrownBy(nullDriver::getFlows)
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -227,7 +227,7 @@ public class FailsafeSdmxWebConnectionTest {
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.isSeriesKeysOnlySupported())
+                .isThrownBy(failingDriver::isSeriesKeysOnlySupported)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
     }
@@ -235,12 +235,12 @@ public class FailsafeSdmxWebConnectionTest {
     @Test
     public void testClose() throws IOException {
         failsafe.reset();
-        Assertions.assertThatCode(() -> validDriver.close()).doesNotThrowAnyException();
+        Assertions.assertThatCode(validDriver::close).doesNotThrowAnyException();
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.close())
+                .isThrownBy(failingDriver::close)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
     }

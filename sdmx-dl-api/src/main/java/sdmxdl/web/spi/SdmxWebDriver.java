@@ -56,7 +56,7 @@ public interface SdmxWebDriver {
     @NonNull
     Collection<String> getSupportedProperties();
 
-    static final int NATIVE_RANK = Byte.MAX_VALUE;
-    static final int WRAPPED_RANK = 0;
-    static final int UNKNOWN = -1;
+    int NATIVE_RANK = Byte.MAX_VALUE;
+    int WRAPPED_RANK = 0;
+    int UNKNOWN = -1;
 }

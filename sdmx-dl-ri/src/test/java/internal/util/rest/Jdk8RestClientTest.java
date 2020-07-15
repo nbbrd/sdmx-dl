@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static internal.util.rest.Jdk8RestClient.*;
@@ -118,7 +119,7 @@ public class Jdk8RestClientTest {
                 .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
                     assertThat(o.getResponseMessage()).isEqualTo("boom");
-                    assertThat(o.getHeaderFields()).containsEntry("key", asList("value"));
+                    assertThat(o.getHeaderFields()).containsEntry("key", Collections.singletonList("value"));
                 });
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));

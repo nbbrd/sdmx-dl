@@ -28,16 +28,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DataStructureRef implements ResourceRef<DataStructureRef> {
+public class DataStructureRef implements ResourceRef<DataStructureRef> {
 
     @lombok.NonNull
-    private String agency;
+    String agency;
 
     @lombok.NonNull
-    private String id;
+    String id;
 
     @lombok.NonNull
-    private String version;
+    String version;
 
     @Override
     public String toString() {

@@ -1,26 +1,28 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.Key.ALL;
+import static sdmxdl.Key.of;
+
 /**
- *
  * @author Philippe Charles
  */
 public class KeyTest {
@@ -60,19 +62,19 @@ public class KeyTest {
 
     @Test
     public void testValueOf() {
-        assertThat(Key.of()).satisfies(o -> {
+        assertThat(of()).satisfies(o -> {
             assertThat(o.size()).isEqualTo(1);
             assertThat(o.get(0)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("all");
         });
 
-        assertThat(Key.of("")).satisfies(o -> {
+        assertThat(of("")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(1);
             assertThat(o.get(0)).isEqualTo("");
             assertThat(o.toString()).isEqualTo("all");
         });
 
-        assertThat(Key.of("LOCSTL04", "AUS", "M")).satisfies(o -> {
+        assertThat(of("LOCSTL04", "AUS", "M")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(3);
             assertThat(o.get(0)).isEqualTo("LOCSTL04");
             assertThat(o.get(1)).isEqualTo("AUS");
@@ -80,7 +82,7 @@ public class KeyTest {
             assertThat(o.toString()).isEqualTo("LOCSTL04.AUS.M");
         });
 
-        assertThat(Key.of("LOCSTL04", "", "M")).satisfies(o -> {
+        assertThat(of("LOCSTL04", "", "M")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(3);
             assertThat(o.get(0)).isEqualTo("LOCSTL04");
             assertThat(o.get(1)).isEqualTo("");
@@ -88,7 +90,7 @@ public class KeyTest {
             assertThat(o.toString()).isEqualTo("LOCSTL04..M");
         });
 
-        assertThat(Key.of("LOCSTL04", "", "")).satisfies(o -> {
+        assertThat(of("LOCSTL04", "", "")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(3);
             assertThat(o.get(0)).isEqualTo("LOCSTL04");
             assertThat(o.get(1)).isEqualTo("");
@@ -99,42 +101,54 @@ public class KeyTest {
 
     @Test
     public void testEquals() {
-        assertThat(Key.of("")).isEqualTo(Key.of(""));
-        assertThat(Key.of("LOCSTL04", "AUS", "M")).isEqualTo(Key.of("LOCSTL04", "AUS", "M"));
-        assertThat(Key.of("LOCSTL04", "", "M")).isEqualTo(Key.of("LOCSTL04", "*", "M"));
-        assertThat(Key.of("LOCSTL04", "AUS", "M")).isNotEqualTo(Key.of(""));
+        assertThat(of("")).isEqualTo(of(""));
+        assertThat(of("LOCSTL04", "AUS", "M")).isEqualTo(of("LOCSTL04", "AUS", "M"));
+        assertThat(of("LOCSTL04", "", "M")).isEqualTo(of("LOCSTL04", "*", "M"));
+        assertThat(of("LOCSTL04", "AUS", "M")).isNotEqualTo(of(""));
     }
 
     @Test
     public void testIsSeries() {
-        assertThat(Key.ALL.isSeries()).isFalse();
-        assertThat(Key.of("LOCSTL04", "*").isSeries()).isFalse();
-        assertThat(Key.of("LOCSTL04", "AUS").isSeries()).isTrue();
-        assertThat(Key.of("USD+CHF").isSeries()).isFalse();
+        assertThat(ALL.isSeries()).isFalse();
+        assertThat(of("LOCSTL04", "*").isSeries()).isFalse();
+        assertThat(of("LOCSTL04", "AUS").isSeries()).isTrue();
+        assertThat(of("USD+CHF").isSeries()).isFalse();
+    }
+
+    @Test
+    public void testContainsKeys() {
+        assertThat(of("").containsKey(seriesOf(of("")))).isTrue();
+        assertThat(ALL.containsKey(seriesOf(ALL))).isTrue();
+        assertThat(ALL.containsKey(seriesOf(of("hello", "world")))).isTrue();
+        assertThat(of("hello").containsKey(seriesOf(ALL))).isFalse();
+        assertThat(of("LOCSTL04", "*", "M").containsKey(seriesOf(of("LOCSTL04", "AUS", "M")))).isTrue();
+        assertThat(of("LOCSTL04", "*").containsKey(seriesOf(of("LOCSTL04", "AUS", "M")))).isFalse();
+        assertThat(of("LOCSTL04", "AUS", "M").containsKey(seriesOf(of("LOCSTL04", "*", "M")))).isFalse();
+        assertThat(of("LOCSTL04", "AUS").containsKey(seriesOf(of("LOCSTL04", "*", "M")))).isFalse();
     }
 
     @Test
     public void testContains() {
-        assertThat(Key.of("").contains(Key.of(""))).isTrue();
-        assertThat(Key.ALL.contains(Key.ALL)).isTrue();
-        assertThat(Key.ALL.contains(Key.of("hello", "world"))).isTrue();
-        assertThat(Key.of("hello").contains(Key.ALL)).isFalse();
-        assertThat(Key.of("LOCSTL04", "*", "M").contains(Key.of("LOCSTL04", "AUS", "M"))).isTrue();
-        assertThat(Key.of("LOCSTL04", "*").contains(Key.of("LOCSTL04", "AUS", "M"))).isFalse();
-        assertThat(Key.of("LOCSTL04", "AUS", "M").contains(Key.of("LOCSTL04", "*", "M"))).isFalse();
-        assertThat(Key.of("LOCSTL04", "AUS").contains(Key.of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(of("").contains(of(""))).isTrue();
+        assertThat(ALL.contains(ALL)).isTrue();
+        assertThat(ALL.contains(of("hello", "world"))).isTrue();
+        assertThat(of("hello").contains(ALL)).isFalse();
+        assertThat(of("LOCSTL04", "*", "M").contains(of("LOCSTL04", "AUS", "M"))).isTrue();
+        assertThat(of("LOCSTL04", "*").contains(of("LOCSTL04", "AUS", "M"))).isFalse();
+        assertThat(of("LOCSTL04", "AUS", "M").contains(of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(of("LOCSTL04", "AUS").contains(of("LOCSTL04", "*", "M"))).isFalse();
     }
 
     @Test
     public void testSupersedes() {
-        assertThat(Key.of("").supersedes(Key.of(""))).isFalse();
-        assertThat(Key.ALL.supersedes(Key.ALL)).isFalse();
-        assertThat(Key.ALL.supersedes(Key.of("hello", "world"))).isTrue();
-        assertThat(Key.of("hello").supersedes(Key.ALL)).isFalse();
-        assertThat(Key.of("LOCSTL04", "*", "M").supersedes(Key.of("LOCSTL04", "AUS", "M"))).isTrue();
-        assertThat(Key.of("LOCSTL04", "*").supersedes(Key.of("LOCSTL04", "AUS", "M"))).isFalse();
-        assertThat(Key.of("LOCSTL04", "AUS", "M").supersedes(Key.of("LOCSTL04", "*", "M"))).isFalse();
-        assertThat(Key.of("LOCSTL04", "AUS").supersedes(Key.of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(of("").supersedes(of(""))).isFalse();
+        assertThat(ALL.supersedes(ALL)).isFalse();
+        assertThat(ALL.supersedes(of("hello", "world"))).isTrue();
+        assertThat(of("hello").supersedes(ALL)).isFalse();
+        assertThat(of("LOCSTL04", "*", "M").supersedes(of("LOCSTL04", "AUS", "M"))).isTrue();
+        assertThat(of("LOCSTL04", "*").supersedes(of("LOCSTL04", "AUS", "M"))).isFalse();
+        assertThat(of("LOCSTL04", "AUS", "M").supersedes(of("LOCSTL04", "*", "M"))).isFalse();
+        assertThat(of("LOCSTL04", "AUS").supersedes(of("LOCSTL04", "*", "M"))).isFalse();
     }
 
     @Test
@@ -157,5 +171,9 @@ public class KeyTest {
         assertThat(b.clear().isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
+    }
+
+    private static Series seriesOf(Key key) {
+        return Series.builder().key(key).freq(Frequency.MONTHLY).build();
     }
 }

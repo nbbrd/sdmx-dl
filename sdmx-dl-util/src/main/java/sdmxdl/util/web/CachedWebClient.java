@@ -119,7 +119,7 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private List<Dataflow> loadDataflowsWithCache() throws IOException {
-        return idOfFlows.load(cache, () -> delegate.getFlows(), o -> ttl);
+        return idOfFlows.load(cache, delegate::getFlows, o -> ttl);
     }
 
     private DataStructure loadDataStructureWithCache(DataStructureRef ref) throws IOException {

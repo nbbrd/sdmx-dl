@@ -64,6 +64,6 @@ public class DataFilter {
          * Groups and series, including attributes and annotations, without
          * observations
          */
-        NO_DATA;
+        NO_DATA
     }
 }

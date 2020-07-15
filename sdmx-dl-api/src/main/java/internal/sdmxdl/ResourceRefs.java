@@ -40,12 +40,12 @@ public class ResourceRefs {
     }
 
     @NonNull
-    public static String toString(ResourceRef ref) {
+    public static String toString(ResourceRef<?> ref) {
         return ref.getAgency() + "," + ref.getId() + "," + ref.getVersion();
     }
 
     @NonNull
-    public static <T extends ResourceRef> T parse(@NonNull String input, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
+    public static <T extends ResourceRef<T>> T parse(@NonNull String input, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
         String[] items = input.split(",", -1);
         switch (items.length) {
             case 3:
@@ -60,14 +60,14 @@ public class ResourceRefs {
     }
 
     @NonNull
-    public static <T extends ResourceRef> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
+    public static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull RefFactory<T> factory) throws IllegalArgumentException {
         if (id.contains(",")) {
             throw new IllegalArgumentException(id);
         }
         return factory.create(nullOrEmptyToDefault(agencyId, ALL_AGENCIES), id, nullOrEmptyToDefault(version, LATEST_VERSION));
     }
 
-    public interface RefFactory<T extends ResourceRef> {
+    public interface RefFactory<T extends ResourceRef<T>> {
 
         @NonNull
         T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);

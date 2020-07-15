@@ -14,11 +14,11 @@ public class ExpiringRepository {
         return ExpiringRepository.of(clock.millis(), ttl.toMillis(), value);
     }
 
-    private long creationTimeInMillis;
-    private long ttlInMillis;
+    long creationTimeInMillis;
+    long ttlInMillis;
 
     @lombok.NonNull
-    private SdmxRepository value;
+    SdmxRepository value;
 
     public boolean isExpired(@NonNull Clock clock) {
         return creationTimeInMillis + ttlInMillis <= clock.millis();
