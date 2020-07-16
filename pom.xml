@@ -16,6 +16,7 @@
         <module>sdmx-dl-xml</module>
         <module>sdmx-dl-ri</module>
         <module>sdmx-dl-connectors</module>
+        <module>sdmx-dl-kryo</module>
     </modules>
 
     <properties>
@@ -84,6 +85,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-ri</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-kryo</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

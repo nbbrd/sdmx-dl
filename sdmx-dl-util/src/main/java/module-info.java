@@ -10,6 +10,7 @@ module sdmxdl.util {
     requires transitive nbbrd.io.base;
 
     exports sdmxdl.util;
+    exports sdmxdl.util.ext;
     exports sdmxdl.util.parser;
     exports sdmxdl.util.web;
 
