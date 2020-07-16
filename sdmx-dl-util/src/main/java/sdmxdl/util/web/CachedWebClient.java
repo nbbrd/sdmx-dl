@@ -153,7 +153,7 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private boolean isBroaderRequest(Key key, DataSet dataSet) {
-        return key.supersedes(Key.parse(dataSet.getMeta().get("requestKey")));
+        return key.supersedes(dataSet.getKey());
     }
 
     private DataSet copyDataKeys(DataRequest request, DataStructure structure) throws IOException {
@@ -161,7 +161,7 @@ final class CachedWebClient implements SdmxWebClient {
             return DataSet
                     .builder()
                     .ref(request.getFlowRef())
-                    .meta("requestKey", request.getKey().toString())
+                    .key(request.getKey())
                     .copyOf(cursor, DataFilter.ALL)
                     .build();
         }

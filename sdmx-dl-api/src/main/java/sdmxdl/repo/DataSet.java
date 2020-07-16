@@ -21,7 +21,6 @@ import sdmxdl.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,12 +36,15 @@ public class DataSet implements Resource<DataflowRef> {
     DataflowRef ref;
 
     @lombok.NonNull
-    @lombok.Singular("meta")
-    Map<String, String> meta;
+    Key key;
 
     @lombok.NonNull
     @lombok.Singular("series")
     List<Series> data;
+
+    public static Builder builder() {
+        return new Builder().key(Key.ALL);
+    }
 
     @NonNull
     public List<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
