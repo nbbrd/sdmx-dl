@@ -25,7 +25,7 @@ import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -57,7 +57,7 @@ public final class WbDriver2 implements SdmxWebDriver {
     private static final class WbClient2 extends Sdmx21RestClient {
 
         WbClient2(SdmxWebSource s, SdmxWebContext c) {
-            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, DataFactories.SDMX21);
+            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, ObsFactories.SDMX21);
         }
 
         WbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {

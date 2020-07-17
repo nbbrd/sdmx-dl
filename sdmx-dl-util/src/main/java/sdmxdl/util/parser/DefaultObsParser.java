@@ -32,28 +32,17 @@ import java.util.function.UnaryOperator;
 /**
  * @author Philippe Charles
  */
+@lombok.RequiredArgsConstructor
 public final class DefaultObsParser implements ObsParser {
 
-    private final BiFunction<Key.Builder, UnaryOperator<String>, Frequency> freqParser;
-    private final Function<Frequency, Parser<LocalDateTime>> toPeriodParser;
+    private final BiFunction<Key.Builder, UnaryOperator<String>, Frequency> freqFactory;
+    private final Function<Frequency, Parser<LocalDateTime>> periodFactory;
     private final Parser<Double> valueParser;
-    private Parser<LocalDateTime> periodParser;
-    private Frequency freq;
-    private String period;
-    private String value;
 
-    public DefaultObsParser(
-            BiFunction<Key.Builder, UnaryOperator<String>, Frequency> freqParser,
-            Function<Frequency, Parser<LocalDateTime>> toPeriodParser,
-            Parser<Double> valueParser) {
-        this.freqParser = freqParser;
-        this.toPeriodParser = toPeriodParser;
-        this.valueParser = valueParser;
-        this.periodParser = Parser.onNull();
-        this.freq = Frequency.UNDEFINED;
-        this.period = null;
-        this.value = null;
-    }
+    private Parser<LocalDateTime> periodParser = Parser.onNull();
+    private Frequency freq = Frequency.UNDEFINED;
+    private String period = null;
+    private String value = null;
 
     @Override
     @NonNull
@@ -86,10 +75,10 @@ public final class DefaultObsParser implements ObsParser {
     public ObsParser frequency(Key.@NonNull Builder key, @NonNull UnaryOperator<String> attributes) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(attributes);
-        Frequency freq = freqParser.apply(key, attributes);
+        Frequency freq = freqFactory.apply(key, attributes);
         if (this.freq != freq) {
             this.freq = freq;
-            this.periodParser = toPeriodParser.apply(freq);
+            this.periodParser = periodFactory.apply(freq);
             if (this.periodParser == null) {
                 this.periodParser = Parser.onNull();
             }

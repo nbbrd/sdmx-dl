@@ -30,7 +30,7 @@ import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -60,7 +60,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, DataFactories.SDMX20, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
@@ -79,7 +79,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, DataFactories.SDMX21, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();

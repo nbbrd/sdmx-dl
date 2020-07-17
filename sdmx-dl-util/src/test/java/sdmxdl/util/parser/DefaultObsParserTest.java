@@ -36,7 +36,7 @@ public class DefaultObsParserTest {
     @Test
     public void testCompliance() {
         ObsParserAssert.assertCompliance(
-                new DefaultObsParser((key, attributes) -> Frequency.ANNUAL, Freqs::onStandardFreq, Parser.onDouble()::parse),
+                new DefaultObsParser((key, attributes) -> Frequency.ANNUAL, PeriodParsers::onStandardFreq, Parser.onDouble()::parse),
                 ObsParserAssert.Sample
                         .builder()
                         .validKey(Key.builder("a", "b"))
@@ -52,7 +52,7 @@ public class DefaultObsParserTest {
     @Test
     public void testPeriod() {
         AtomicReference<Frequency> freq = new AtomicReference<>();
-        ObsParser p = new DefaultObsParser((key, attributes) -> freq.get(), Freqs::onStandardFreq, Parser.onDouble()::parse);
+        ObsParser p = new DefaultObsParser((key, attributes) -> freq.get(), PeriodParsers::onStandardFreq, Parser.onDouble()::parse);
 
         Key.Builder key = Key.builder("a", "b");
 

@@ -27,7 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static sdmxdl.util.parser.Freqs.TIME_FORMAT_CONCEPT;
+import static sdmxdl.util.parser.FreqFactory.TIME_FORMAT_CONCEPT;
 
 /**
  * @author Philippe Charles

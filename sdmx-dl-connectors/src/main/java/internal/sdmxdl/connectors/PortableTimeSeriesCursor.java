@@ -38,7 +38,7 @@ import java.util.Objects;
 public final class PortableTimeSeriesCursor implements DataCursor {
 
     public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, ObsFactory df, DataStructure dsd) {
-        return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), df.getParser(dsd));
+        return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), df.getObsParser(dsd));
     }
 
     private final Iterator<PortableTimeSeries<Double>> data;

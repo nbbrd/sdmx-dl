@@ -22,7 +22,7 @@ import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebSource;
@@ -48,7 +48,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .builder()
             .name("connectors:sdmx21")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx21Client::new, DataFactories.SDMX21))
+            .client(ConnectorRestClient.of(Sdmx21Client::new, ObsFactories.SDMX21))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)

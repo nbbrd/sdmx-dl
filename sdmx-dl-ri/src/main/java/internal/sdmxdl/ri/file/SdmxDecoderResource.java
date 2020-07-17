@@ -21,7 +21,7 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
@@ -52,13 +52,13 @@ class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {
         switch (dataType) {
             case SdmxMediaType.GENERIC_DATA_20:
-                return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
+                return SdmxXmlStreams.genericData20(dsd, dataFactory.orElse(ObsFactories.SDMX20));
             case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20:
-                return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(DataFactories.SDMX20));
+                return SdmxXmlStreams.compactData20(dsd, dataFactory.orElse(ObsFactories.SDMX20));
             case SdmxMediaType.GENERIC_DATA_21:
-                return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
+                return SdmxXmlStreams.genericData21(dsd, dataFactory.orElse(ObsFactories.SDMX21));
             case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21:
-                return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(DataFactories.SDMX21));
+                return SdmxXmlStreams.compactData21(dsd, dataFactory.orElse(ObsFactories.SDMX21));
             default:
                 throw new IOException("Don't known how to handle type '" + dataType + "'");
         }

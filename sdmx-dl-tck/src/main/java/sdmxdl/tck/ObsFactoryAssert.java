@@ -17,10 +17,10 @@ public class ObsFactoryAssert {
     }
 
     private static void checkGetParser(SoftAssertions s, ObsFactory factory) {
-        s.assertThatThrownBy(() -> factory.getParser(null))
+        s.assertThatThrownBy(() -> factory.getObsParser(null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThat(factory.getParser(RepoSamples.STRUCT))
+        s.assertThat(factory.getObsParser(RepoSamples.STRUCT))
                 .isNotNull();
     }
 }

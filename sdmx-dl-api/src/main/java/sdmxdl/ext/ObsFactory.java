@@ -6,5 +6,5 @@ import sdmxdl.DataStructure;
 public interface ObsFactory {
 
     @NonNull
-    ObsParser getParser(@NonNull DataStructure dsd);
+    ObsParser getObsParser(@NonNull DataStructure dsd);
 }

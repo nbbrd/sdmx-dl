@@ -17,7 +17,6 @@
 package internal.sdmxdl.util.parser;
 
 import _test.sdmxdl.util.DialectAssertions;
-import nbbrd.io.text.Parser;
 import org.junit.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
@@ -48,12 +47,12 @@ public class InseeDialectTest {
                 .label("")
                 .build();
         Key.Builder key = Key.builder(dsd);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
-        assertThat(d.getFreqParser(dsd).apply(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
+        assertThat(d.getFreqFactory(dsd).apply(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
     }
 
     @Test
@@ -64,14 +63,5 @@ public class InseeDialectTest {
         assertThat(d.getPeriodParser(MONTHLY).parse("1990-09")).isEqualTo("1990-09-01T00:00:00");
         assertThat(d.getPeriodParser(HALF_YEARLY).parse("2012-S2")).isEqualTo("2012-07-01T00:00:00");
         assertThat(d.getPeriodParser(MINUTELY).parse("2012-S2")).isNull();
-    }
-
-    @Test
-    @SuppressWarnings("null")
-    public void testValueParser() {
-        Parser<Double> p = new InseeDialect().getValueParser();
-        assertThat(p.parse("hello")).isNull();
-        assertThat(p.parse("3.14")).isEqualTo(3.14);
-        assertThat(p.parse(null)).isNull();
     }
 }

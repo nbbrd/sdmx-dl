@@ -20,7 +20,7 @@ import internal.sdmxdl.ri.web.RestClients;
 import internal.sdmxdl.ri.web.Sdmx21RestClient;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.util.web.SdmxWebProperty;
@@ -62,7 +62,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
-                DataFactories.SDMX21
+                ObsFactories.SDMX21
         );
     }
 }

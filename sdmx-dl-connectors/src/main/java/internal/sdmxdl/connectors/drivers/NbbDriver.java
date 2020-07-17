@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import sdmxdl.web.spi.SdmxWebDriver;
 import internal.sdmxdl.connectors.ConnectorRestClient;
@@ -35,7 +35,7 @@ public final class NbbDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:nbb")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(NBB::new, DataFactories.SDMX20))
+            .client(ConnectorRestClient.of(NBB::new, ObsFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();

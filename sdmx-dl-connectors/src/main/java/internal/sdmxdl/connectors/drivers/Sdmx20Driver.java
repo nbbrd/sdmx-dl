@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.connectors.drivers;
 
-import sdmxdl.util.parser.DataFactories;
+import sdmxdl.util.parser.ObsFactories;
 
 import static internal.sdmxdl.connectors.Connectors.*;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
@@ -40,7 +40,7 @@ public final class Sdmx20Driver implements SdmxWebDriver {
             .builder()
             .name("connectors:sdmx20")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx20Client::new, DataFactories.SDMX20))
+            .client(ConnectorRestClient.of(Sdmx20Client::new, ObsFactories.SDMX20))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .build();
