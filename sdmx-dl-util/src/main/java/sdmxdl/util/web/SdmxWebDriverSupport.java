@@ -89,8 +89,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     public static final class Builder {
 
         @NonNull
-        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint) {
-            return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).build());
+        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint, @NonNull String dialect) {
+            return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).dialect(dialect).build());
         }
     }
 }

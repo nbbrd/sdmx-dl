@@ -21,6 +21,7 @@ import nbbrd.io.Resource;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 
@@ -43,6 +44,7 @@ public abstract class RiRestClient implements SdmxWebClient {
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final RestClient executor;
+    protected final ObsFactory obsFactory;
 
     protected IOSupplier<RestClient.Response> opening(URL query, String mediaType) {
         return () -> open(query, mediaType);

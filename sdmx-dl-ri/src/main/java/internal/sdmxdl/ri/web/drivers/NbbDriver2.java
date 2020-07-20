@@ -23,6 +23,7 @@ import internal.util.rest.RestQueryBuilder;
 import nbbrd.io.Resource;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
@@ -52,17 +53,17 @@ public final class NbbDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(NbbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
+            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx", "SDMX20")
             .build();
 
     static final class NbbClient2 extends DotStatRestClient {
 
         NbbClient2(SdmxWebSource s, SdmxWebContext c) {
-            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c));
+            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), c.getObsFactory());
         }
 
-        NbbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor) {
-            super(name, endpoint, langs, executor);
+        NbbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, ObsFactory obsFactory) {
+            super(name, endpoint, langs, executor, obsFactory);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")

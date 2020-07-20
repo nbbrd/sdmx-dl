@@ -113,5 +113,5 @@ public class FailsafeSdmxWebDriverTest {
     private final FailsafeSdmxWebDriver failingDriver = new FailsafeSdmxWebDriver(TestDriver.FAILING, failsafe, failsafe);
     private final FailsafeSdmxWebDriver nullDriver = new FailsafeSdmxWebDriver(TestDriver.NULL, failsafe, failsafe);
 
-    private final SdmxWebContext context = SdmxWebContext.builder().build();
+    private final SdmxWebContext context = SdmxWebContext.builder().obsFactory(dsd -> null).build();
 }

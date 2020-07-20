@@ -4,6 +4,7 @@
         <name>ECB</name>
         <description>European Central Bank</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>
         <property key="supportsCompression" value="true"/>
         <property key="seriesKeysOnlySupported" value="true"/>
@@ -12,12 +13,14 @@
         <name>INEGI</name>
         <description>Instituto Nacional de Estadistica y Geografia</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>http://sdmx.snieg.mx/service/Rest</endpoint>
     </source>
     <source>
         <name>WB</name>
         <description>World Bank</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>https://api.worldbank.org/v2/sdmx/rest</endpoint>
         <property key="supportsCompression" value="true"/>
     </source>
@@ -25,6 +28,7 @@
         <name>UNDATA</name>
         <description>Data access system to UN databases</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>http://data.un.org/WS/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
     </source>
@@ -32,6 +36,7 @@
         <name>ISTAT</name>
         <description>Istituto Nazionale di Statistica</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>http://sdmx.istat.it/SDMXWS/rest</endpoint>
         <property key="supportsCompression" value="true"/>
         <property key="seriesKeysOnlySupported" value="true"/>
@@ -40,12 +45,14 @@
         <name>WITS</name>
         <description>World Integrated Trade Solutions</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>http://wits.worldbank.org/API/V1/SDMX/V21/rest</endpoint>
     </source>
     <source>
         <name>IMF_SDMX_CENTRAL</name>
         <description>International Monetary Fund SDMX Central</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>SDMX21</dialect>
         <endpoint>https://sdmxcentral.imf.org/ws/public/sdmxapi/rest</endpoint>
         <property key="supportsCompression" value="true"/>
         <property key="seriesKeysOnlySupported" value="true"/>

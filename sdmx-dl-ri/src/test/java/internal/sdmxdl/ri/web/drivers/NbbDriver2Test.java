@@ -21,6 +21,7 @@ import internal.util.rest.RestClient;
 import org.junit.Test;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.tck.SdmxWebDriverAssert;
+import sdmxdl.util.parser.ObsFactories;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class NbbDriver2Test {
     }
 
     private NbbDriver2.NbbClient2 newClient(RestClientResponseMock response) throws MalformedURLException {
-        return new NbbDriver2.NbbClient2("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, (query, mediaType, langs) -> response);
+        return new NbbDriver2.NbbClient2("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, (query, mediaType, langs) -> response, ObsFactories.SDMX20);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

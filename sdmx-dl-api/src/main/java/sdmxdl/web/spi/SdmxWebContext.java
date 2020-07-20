@@ -17,6 +17,7 @@
 package sdmxdl.web.spi;
 
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.web.SdmxWebListener;
 
@@ -42,6 +43,9 @@ public class SdmxWebContext {
 
     @lombok.NonNull
     SdmxCache cache;
+
+    @lombok.NonNull
+    ObsFactory obsFactory;
 
     @lombok.NonNull
     SdmxWebListener eventListener;

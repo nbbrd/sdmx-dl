@@ -62,25 +62,25 @@ public final class ConnectorRestClient implements SdmxWebClient {
         RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull ObsFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint().toURI());
                 configure(client, source.getProperties(), context);
-                return new ConnectorRestClient(source.getName(), client, dataFactory);
+                return new ConnectorRestClient(source.getName(), client, context.getObsFactory());
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull ObsFactory dataFactory) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
                 configure(client, source.getProperties(), context);
-                return new ConnectorRestClient(source.getName(), client, dataFactory);
+                return new ConnectorRestClient(source.getName(), client, context.getObsFactory());
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }

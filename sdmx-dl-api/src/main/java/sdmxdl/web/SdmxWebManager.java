@@ -21,6 +21,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -41,33 +44,20 @@ public class SdmxWebManager implements SdmxManager {
 
     @NonNull
     public static SdmxWebManager ofServiceLoader() {
-        return of(new SdmxWebDriverLoader().get());
-    }
-
-    @NonNull
-    public static SdmxWebManager of(@NonNull SdmxWebDriver... drivers) {
-        return of(Arrays.asList(drivers));
-    }
-
-    @NonNull
-    public static SdmxWebManager of(@NonNull List<SdmxWebDriver> drivers) {
         return SdmxWebManager
                 .builder()
-                .drivers(drivers)
-                .sources(sourcesOf(drivers))
+                .drivers(new SdmxWebDriverLoader().get())
+                .dialects(new SdmxDialectLoader().get())
                 .build();
-    }
-
-    private static List<SdmxWebSource> sourcesOf(List<SdmxWebDriver> drivers) {
-        return drivers
-                .stream()
-                .flatMap(driver -> driver.getDefaultSources().stream())
-                .collect(Collectors.toList());
     }
 
     @lombok.NonNull
     @lombok.Singular
     List<SdmxWebDriver> drivers;
+
+    @lombok.NonNull
+    @lombok.Singular
+    List<SdmxDialect> dialects;
 
     @lombok.NonNull
     @lombok.Singular
@@ -115,6 +105,9 @@ public class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
+        SdmxDialect dialect = lookupDialect(source.getDialect())
+                .orElseThrow(() -> new IOException("Failed to find a suitable dialect for '" + source + "'"));
+
         return driver.connect(source,
                 SdmxWebContext
                         .builder()
@@ -122,12 +115,18 @@ public class SdmxWebManager implements SdmxManager {
                         .languages(languages)
                         .proxySelector(proxySelector)
                         .sslSocketFactory(sslSocketFactory)
+                        .obsFactory(dialect.getObsFactory())
                         .eventListener(eventListener)
                         .build());
     }
 
     @NonNull
-    public List<String> getDrivers() {
+    public List<SdmxWebSource> getDefaultSources() {
+        return defaultSourceStream().collect(Collectors.toList());
+    }
+
+    @NonNull
+    public List<String> getDriverNames() {
         return drivers
                 .stream()
                 .map(SdmxWebDriver::getName)
@@ -143,15 +142,25 @@ public class SdmxWebManager implements SdmxManager {
                 .orElse(Collections.emptyList());
     }
 
+    private Stream<SdmxWebSource> defaultSourceStream() {
+        return drivers.stream().flatMap(driver -> driver.getDefaultSources().stream());
+    }
+
     private Optional<SdmxWebSource> lookupSource(String name) {
-        return sources
-                .stream()
+        return Stream.concat(sources.stream(), defaultSourceStream())
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();
     }
 
     private Optional<SdmxWebDriver> lookupDriver(String name) {
         return drivers
+                .stream()
+                .filter(o -> name.equals(o.getName()))
+                .findFirst();
+    }
+
+    private Optional<SdmxDialect> lookupDialect(String name) {
+        return dialects
                 .stream()
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();

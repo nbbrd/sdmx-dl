@@ -106,5 +106,5 @@ public enum TestDriver implements SdmxWebDriver {
         }
     };
 
-    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().name("123").driver("456").endpointOf("http://localhost").build();
+    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().name("123").driver("456").dialect("SDMX21").endpointOf("http://localhost").build();
 }

@@ -19,7 +19,6 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.Connectors;
 import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
-import internal.sdmxdl.util.parser.InseeDialect;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -27,7 +26,6 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -50,16 +48,16 @@ public final class InseeDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:insee")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(InseeClient::new, DIALECT.getObsFactory()))
+            .client(ConnectorRestClient.of(InseeClient::new))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT, DIALECT)
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
     private static final String FALLBACK_ENDPOINT = "http://bdm.insee.fr/series/sdmx";
 
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
-    private static final SdmxDialect DIALECT = new InseeDialect();
+    private static final String DIALECT = "INSEE2017";
 
     private final static class InseeClient extends RestSdmxClient implements HasSeriesKeysOnlySupported {
 

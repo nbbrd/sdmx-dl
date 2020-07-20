@@ -16,13 +16,13 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestQueryBuilder;
 import internal.util.rest.RestClient;
+import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -38,8 +38,8 @@ import static sdmxdl.ext.SdmxMediaType.XML;
  */
 public class DotStatRestClient extends RiRestClient {
 
-    public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor) {
-        super(name, endpoint, langs, executor);
+    public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, ObsFactory obsFactory) {
+        super(name, endpoint, langs, executor, obsFactory);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class DotStatRestClient extends RiRestClient {
     protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
         DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams
-                .compactData20(modifiedDsd, ObsFactories.SDMX20)
+                .compactData20(modifiedDsd, obsFactory)
                 .parseStream(calling(url, XML));
     }
 

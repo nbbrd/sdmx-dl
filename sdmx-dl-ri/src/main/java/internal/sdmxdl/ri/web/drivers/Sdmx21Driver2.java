@@ -62,7 +62,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
-                ObsFactories.SDMX21
+                c.getObsFactory()
         );
     }
 }

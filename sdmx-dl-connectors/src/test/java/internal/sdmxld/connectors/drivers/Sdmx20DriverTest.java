@@ -38,7 +38,7 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testConnect() throws IOException {
-        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").endpointOf("http://localhost").build();
-        assertThatCode(() -> new Sdmx20Driver().connect(x, SdmxWebContext.builder().build()).close()).doesNotThrowAnyException();
+        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDXM20").endpointOf("http://localhost").build();
+        assertThatCode(() -> new Sdmx20Driver().connect(x, SdmxWebContext.builder().obsFactory(dsd -> null).build()).close()).doesNotThrowAnyException();
     }
 }

@@ -56,6 +56,9 @@ public final class XmlWebSource {
                         case "driver":
                             item.driver(reader.getElementText());
                             break;
+                        case "dialect":
+                            item.dialect(reader.getElementText());
+                            break;
                         case "endpoint":
                             item.endpointOf(reader.getElementText());
                             break;

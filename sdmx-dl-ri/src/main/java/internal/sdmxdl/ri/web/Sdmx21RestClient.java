@@ -40,7 +40,7 @@ public class Sdmx21RestClient extends RiRestClient {
     protected final ObsFactory dataFactory;
 
     public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
-        super(name, endpoint, langs, executor);
+        super(name, endpoint, langs, executor, dataFactory);
         this.seriesKeysOnlySupported = seriesKeysOnlySupported;
         this.dataFactory = dataFactory;
     }

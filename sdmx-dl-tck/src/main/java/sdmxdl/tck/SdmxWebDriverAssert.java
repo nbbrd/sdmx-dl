@@ -15,12 +15,13 @@ public class SdmxWebDriverAssert {
                 .builder()
                 .name("valid")
                 .driver(d.getName())
+                .dialect("azerty")
                 .endpointOf("http://localhost")
                 .build();
 
         SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
 
-        SdmxWebContext context = SdmxWebContext.builder().build();
+        SdmxWebContext context = SdmxWebContext.builder().obsFactory(dsd -> null).build();
 
         assertThat(d.getName()).isNotBlank();
 

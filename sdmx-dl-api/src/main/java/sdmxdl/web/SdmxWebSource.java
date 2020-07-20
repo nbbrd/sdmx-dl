@@ -39,6 +39,9 @@ public class SdmxWebSource {
     String driver;
 
     @lombok.NonNull
+    String dialect;
+
+    @lombok.NonNull
     URL endpoint;
 
     @lombok.Singular

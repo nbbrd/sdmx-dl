@@ -5,6 +5,7 @@ import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.web.SdmxWebManager;
@@ -39,6 +40,7 @@ public class ApiTest {
                 .builder()
                 .name("repoSource")
                 .driver("repoDriver")
+                .dialect("azerty")
                 .endpoint(endpoint)
                 .build();
         SdmxWebDriver driver = MockedWebDriver
@@ -48,8 +50,9 @@ public class ApiTest {
                 .repo(endpoint, RepoSamples.REPO)
                 .source(source)
                 .build();
+        SdmxDialect dialect = new MockedDialect("azerty");
         SdmxManagerAssert.assertCompliance(
-                SdmxWebManager.of(driver),
+                SdmxWebManager.builder().driver(driver).dialect(dialect).build(),
                 SdmxManagerAssert.Sample
                         .builder()
                         .validName("repoSource")
