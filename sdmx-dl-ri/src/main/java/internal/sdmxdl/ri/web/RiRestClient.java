@@ -64,7 +64,7 @@ public abstract class RiRestClient implements SdmxWebClient {
 
     @Override
     final public Dataflow getFlow(DataflowRef ref) throws IOException {
-        URL url = getFlowsQuery();
+        URL url = getFlowQuery(ref);
         return getFlow(url, ref);
     }
 
