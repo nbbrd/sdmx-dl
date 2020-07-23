@@ -49,9 +49,9 @@ public final class IloDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:ilo")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ILO2::new))
+            .client(ConnectorRestClient.of(ILO2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT, "SDMX20")
+            .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT)
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to servers redirecting to http")

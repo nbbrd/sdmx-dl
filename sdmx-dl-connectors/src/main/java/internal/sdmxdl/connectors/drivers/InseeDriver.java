@@ -48,9 +48,9 @@ public final class InseeDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:insee")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(InseeClient::new))
+            .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT, DIALECT)
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")

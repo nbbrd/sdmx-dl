@@ -36,9 +36,9 @@ public final class SeDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:es")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EsClient::new))
+            .client(ConnectorRestClient.of(EsClient::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx", "SDMX20")
+            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
             .build();
 
     private static final class EsClient extends DotStat {

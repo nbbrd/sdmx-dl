@@ -51,13 +51,13 @@ public final class WbDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(WbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("WB", "World Bank", "https://api.worldbank.org/v2/sdmx/rest", "SDMX21")
+            .sourceOf("WB", "World Bank", "https://api.worldbank.org/v2/sdmx/rest")
             .build();
 
     private static final class WbClient2 extends Sdmx21RestClient {
 
-        WbClient2(SdmxWebSource s, SdmxWebContext c) {
-            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, c.getObsFactory());
+        WbClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
+            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, ObsFactories.getObsFactory(c, s, "SDMX21"));
         }
 
         WbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {

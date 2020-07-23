@@ -33,8 +33,8 @@ public final class ImfDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:imf")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(IMF2::new))
+            .client(ConnectorRestClient.of(IMF2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc", "SDMX20")
+            .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc")
             .build();
 }

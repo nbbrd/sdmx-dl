@@ -33,8 +33,8 @@ public final class NbbDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:nbb")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(NBB::new))
+            .client(ConnectorRestClient.of(NBB::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx", "SDMX20")
+            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
             .build();
 }

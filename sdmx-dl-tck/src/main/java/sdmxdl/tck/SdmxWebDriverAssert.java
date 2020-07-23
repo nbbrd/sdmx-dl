@@ -21,7 +21,7 @@ public class SdmxWebDriverAssert {
 
         SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
 
-        SdmxWebContext context = SdmxWebContext.builder().obsFactory(dsd -> null).build();
+        SdmxWebContext context = SdmxWebContext.builder().build();
 
         assertThat(d.getName()).isNotBlank();
 

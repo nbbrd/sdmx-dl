@@ -18,6 +18,7 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
 import org.junit.Test;
+import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.tck.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -37,8 +38,14 @@ public class Sdmx20DriverTest {
     }
 
     @Test
-    public void testConnect() throws IOException {
-        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDXM20").endpointOf("http://localhost").build();
-        assertThatCode(() -> new Sdmx20Driver().connect(x, SdmxWebContext.builder().obsFactory(dsd -> null).build()).close()).doesNotThrowAnyException();
+    public void testConnect() {
+        SdmxWebContext context = SdmxWebContext
+                .builder()
+                .dialects(SdmxDialectLoader.load())
+                .build();
+
+        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDMX20").endpointOf("http://localhost").build();
+
+        assertThatCode(() -> new Sdmx20Driver().connect(x, context).close()).doesNotThrowAnyException();
     }
 }

@@ -55,14 +55,14 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return XmlWebSource.getParser().parseResource(Sdmx21Driver2.class, "sdmx21.xml");
     }
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {
+    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return new Sdmx21RestClient(
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
-                c.getObsFactory()
+                ObsFactories.getObsFactory(c, s, "SDMX21")
         );
     }
 }

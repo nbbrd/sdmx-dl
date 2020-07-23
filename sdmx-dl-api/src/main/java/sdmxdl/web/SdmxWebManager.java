@@ -105,9 +105,6 @@ public class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        SdmxDialect dialect = lookupDialect(source.getDialect())
-                .orElseThrow(() -> new IOException("Failed to find a suitable dialect for '" + source + "'"));
-
         return driver.connect(source,
                 SdmxWebContext
                         .builder()
@@ -115,7 +112,7 @@ public class SdmxWebManager implements SdmxManager {
                         .languages(languages)
                         .proxySelector(proxySelector)
                         .sslSocketFactory(sslSocketFactory)
-                        .obsFactory(dialect.getObsFactory())
+                        .dialects(dialects)
                         .eventListener(eventListener)
                         .build());
     }
@@ -154,13 +151,6 @@ public class SdmxWebManager implements SdmxManager {
 
     private Optional<SdmxWebDriver> lookupDriver(String name) {
         return drivers
-                .stream()
-                .filter(o -> name.equals(o.getName()))
-                .findFirst();
-    }
-
-    private Optional<SdmxDialect> lookupDialect(String name) {
-        return dialects
                 .stream()
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();

@@ -24,6 +24,7 @@ import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -62,25 +63,25 @@ public final class ConnectorRestClient implements SdmxWebClient {
         RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint().toURI());
                 configure(client, source.getProperties(), context);
-                return new ConnectorRestClient(source.getName(), client, context.getObsFactory());
+                return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier) {
+    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
                 configure(client, source.getProperties(), context);
-                return new ConnectorRestClient(source.getName(), client, context.getObsFactory());
+                return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }

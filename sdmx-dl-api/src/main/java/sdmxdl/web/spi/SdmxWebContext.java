@@ -17,13 +17,14 @@
 package sdmxdl.web.spi;
 
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.web.SdmxWebListener;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
+import java.util.List;
 
 /**
  * @author Philippe Charles
@@ -45,7 +46,8 @@ public class SdmxWebContext {
     SdmxCache cache;
 
     @lombok.NonNull
-    ObsFactory obsFactory;
+    @lombok.Singular
+    List<SdmxDialect> dialects;
 
     @lombok.NonNull
     SdmxWebListener eventListener;

@@ -20,11 +20,14 @@ import internal.sdmxdl.ri.web.DotStatRestClient;
 import internal.sdmxdl.ri.web.RestClients;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+
+import java.io.IOException;
 
 import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 
@@ -41,13 +44,13 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx", "SDMX20")
-            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx", "SDMX20")
-            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT, "SDMX20")
+            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
+            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
+            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT)
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) {
-        return new DotStatRestClient(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), c.getObsFactory());
+    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
+        return new DotStatRestClient(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

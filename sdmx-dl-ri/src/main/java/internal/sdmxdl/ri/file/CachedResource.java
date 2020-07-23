@@ -41,8 +41,8 @@ public final class CachedResource extends SdmxDecoderResource {
     private final TypedId<SdmxDecoder.Info> idOfDecode;
     private final TypedId<DataSet> idOfLoadData;
 
-    public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, Optional<ObsFactory> dataFactory, SdmxCache cache) {
-        super(source, languages, decoder, dataFactory);
+    public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, ObsFactory obsFactory, SdmxCache cache) {
+        super(source, languages, decoder, obsFactory);
         this.cache = cache;
         String base = getBase(source, languages);
         this.idOfDecode = TypedId.of("decode://" + base,

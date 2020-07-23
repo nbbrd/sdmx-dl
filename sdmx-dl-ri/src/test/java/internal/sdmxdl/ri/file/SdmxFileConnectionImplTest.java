@@ -45,7 +45,7 @@ public class SdmxFileConnectionImplTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, null);
         DataflowRef valid = dataflow.getRef();
         DataflowRef invalid = DataflowRef.parse("invalid");
 
@@ -65,7 +65,7 @@ public class SdmxFileConnectionImplTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, null);
 
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 
@@ -85,7 +85,7 @@ public class SdmxFileConnectionImplTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, Optional.empty());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, decoder, null);
 
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, dataflow);
 

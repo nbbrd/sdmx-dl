@@ -39,7 +39,7 @@ public final class Sdmx20Driver implements SdmxWebDriver {
             .builder()
             .name("connectors:sdmx20")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx20Client::new))
+            .client(ConnectorRestClient.of(Sdmx20Client::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
             .build();

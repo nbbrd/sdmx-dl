@@ -39,9 +39,9 @@ public final class UisDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:uis")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(UIS2::new))
+            .client(ConnectorRestClient.of(UIS2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT, "SDMX20")
+            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT)
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "API requires auth by key in header and this is not supported yet in facade")

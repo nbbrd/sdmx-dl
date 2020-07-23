@@ -17,6 +17,7 @@
 package sdmxdl.web;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +39,7 @@ public class SdmxWebSource {
     @lombok.NonNull
     String driver;
 
-    @lombok.NonNull
+    @Nullable
     String dialect;
 
     @lombok.NonNull

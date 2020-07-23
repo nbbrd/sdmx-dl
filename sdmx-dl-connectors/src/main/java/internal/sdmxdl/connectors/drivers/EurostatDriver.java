@@ -33,8 +33,8 @@ public final class EurostatDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:eurostat")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EUROSTAT::new))
+            .client(ConnectorRestClient.of(EUROSTAT::new, "SDMX21"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest", "SDMX21")
+            .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
             .build();
 }

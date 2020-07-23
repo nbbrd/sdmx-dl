@@ -33,8 +33,8 @@ public final class AbsDriver implements SdmxWebDriver {
             .builder()
             .name("connectors:abs")
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ABS::new))
+            .client(ConnectorRestClient.of(ABS::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx", "SDMX20")
+            .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
             .build();
 }
