@@ -61,7 +61,7 @@ public class SdmxWebManager implements SdmxManager {
 
     @lombok.NonNull
     @lombok.Singular
-    List<SdmxWebSource> sources;
+    List<SdmxWebSource> customSources;
 
     @lombok.NonNull
     LanguagePriorityList languages;
@@ -144,7 +144,7 @@ public class SdmxWebManager implements SdmxManager {
     }
 
     private Optional<SdmxWebSource> lookupSource(String name) {
-        return Stream.concat(sources.stream(), defaultSourceStream())
+        return Stream.concat(customSources.stream(), defaultSourceStream())
                 .filter(o -> name.equals(o.getName()))
                 .findFirst();
     }

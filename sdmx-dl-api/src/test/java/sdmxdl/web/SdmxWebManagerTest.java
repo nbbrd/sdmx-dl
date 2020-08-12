@@ -46,14 +46,14 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getDialects()).isEmpty();
-            assertThat(o.getSources()).isEmpty();
+            assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
         });
 
         assertThat(SdmxWebManager.builder().driver(repoDriver).build()).satisfies(o -> {
             assertThat(o.getDrivers()).containsExactly(repoDriver);
             assertThat(o.getDialects()).isEmpty();
-            assertThat(o.getSources()).isEmpty();
+            assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).containsAll(repoDriver.getDefaultSources());
         });
     }
