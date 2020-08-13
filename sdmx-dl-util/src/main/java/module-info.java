@@ -15,6 +15,7 @@ module sdmxdl.util {
     exports sdmxdl.util.web;
 
     provides SdmxDialect with
+            internal.sdmxdl.util.parser.EcbDialect,
             internal.sdmxdl.util.parser.InseeDialect,
             internal.sdmxdl.util.parser.Sdmx20Dialect,
             internal.sdmxdl.util.parser.Sdmx21Dialect;

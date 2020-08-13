@@ -4,6 +4,7 @@
         <name>ECB</name>
         <description>European Central Bank</description>
         <driver>connectors:sdmx21</driver>
+        <dialect>ECB2020</dialect>
         <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>
         <property key="supportsCompression" value="true"/>
         <property key="seriesKeysOnlySupported" value="true"/>
