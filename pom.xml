@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>be.nbb.rd</groupId>
@@ -8,6 +9,18 @@
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
+    <organization>
+        <name>National Bank of Belgium</name>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>European Union Public Licence (EUPL)</name>
+            <url>https://joinup.ec.europa.eu/page/eupl-text-11-12</url>
+        </license>
+    </licenses>
 
     <modules>
         <module>sdmx-dl-api</module>
@@ -43,7 +56,7 @@
                 <artifactId>assertj-core</artifactId>
                 <version>3.16.1</version>
             </dependency>
-            
+
             <!-- dependencies  -->
             <dependency>
                 <groupId>be.nbb.rd</groupId>
@@ -107,7 +120,7 @@
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
                 <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>                
+                <maven.compiler.source>1.8</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -124,7 +137,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Base processors -->
         <profile>
             <id>base-processors</id>
@@ -249,7 +262,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Enforce dependency rules -->
         <profile>
             <id>enforce-dependency-rules</id>
@@ -331,20 +344,86 @@
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId> 
-                        <version>0.8.5</version> 
-                        <executions> 
-                            <execution> 
-                                <goals> 
-                                    <goal>prepare-agent</goal> 
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.5</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
                                 </goals>
                             </execution>
-                            <execution> 
-                                <id>report</id> 
-                                <phase>prepare-package</phase> 
-                                <goals> 
-                                    <goal>report</goal> 
-                                </goals> 
+                            <execution>
+                                <id>report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Deploy SNAPSHOTS to jfrog with sources -->
+        <profile>
+            <id>deploy-snapshots</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss-jfrog-artifactory</id>
+                    <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Deploy RELEASES to jfrog with sources -->
+        <profile>
+            <id>deploy-releases</id>
+            <distributionManagement>
+                <repository>
+                    <id>oss-jfrog-artifactory</id>
+                    <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
