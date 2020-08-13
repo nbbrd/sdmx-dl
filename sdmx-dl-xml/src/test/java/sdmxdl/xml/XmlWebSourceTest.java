@@ -34,7 +34,7 @@ public class XmlWebSourceTest {
                 + "    <source>\n"
                 + "        <name>ECB</name>\n"
                 + "        <description>European Central Bank</description>\n"
-                + "        <driver>web-ri:sdmx21</driver>\n"
+                + "        <driver>ri:sdmx21</driver>\n"
                 + "        <dialect>SDMX21</dialect>\n"
                 + "        <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>\n"
                 + "        <property key=\"seriesKeysOnlySupported\" value=\"true\"/>\n"
@@ -48,7 +48,7 @@ public class XmlWebSourceTest {
                         .builder()
                         .name("ECB")
                         .description("European Central Bank")
-                        .driver("web-ri:sdmx21")
+                        .driver("ri:sdmx21")
                         .dialect("SDMX21")
                         .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
                         .property("seriesKeysOnlySupported", "true")

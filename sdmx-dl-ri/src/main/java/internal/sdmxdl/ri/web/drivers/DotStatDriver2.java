@@ -40,7 +40,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("web-ri:dotstat")
+            .name("ri:dotstat")
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)

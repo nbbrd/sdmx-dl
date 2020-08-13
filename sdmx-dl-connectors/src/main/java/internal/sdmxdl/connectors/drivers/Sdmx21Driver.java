@@ -57,7 +57,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .build();
 
     private static List<SdmxWebSource> getSources() throws IOException {
-        return XmlWebSource.getParser().parseResource(Sdmx21Driver.class, "sdmx21.xml");
+        return XmlWebSource.getParser().parseResource(Sdmx21Driver.class, "connectors-sdmx21.xml");
     }
 
     private final static class Sdmx21Client extends RestSdmxClient implements HasSeriesKeysOnlySupported {

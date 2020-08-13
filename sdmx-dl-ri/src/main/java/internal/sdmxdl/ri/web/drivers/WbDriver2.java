@@ -47,7 +47,7 @@ public final class WbDriver2 implements SdmxWebDriver {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("web-ri:wb")
+            .name("ri:wb")
             .rank(NATIVE_RANK)
             .client(WbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)

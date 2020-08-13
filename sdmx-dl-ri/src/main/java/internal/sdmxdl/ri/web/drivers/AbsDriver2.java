@@ -46,7 +46,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("web-ri:abs")
+            .name("ri:abs")
             .rank(NATIVE_RANK)
             .client(AbsClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)

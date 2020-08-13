@@ -50,7 +50,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("web-ri:nbb")
+            .name("ri:nbb")
             .rank(NATIVE_RANK)
             .client(NbbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
