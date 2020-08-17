@@ -69,6 +69,69 @@ public class SdmxWebManagerTest {
     }
 
     @Test
+    public void testGetSources() {
+        SdmxWebSource defaultSource1 = SdmxWebSource.builder().name("s1").driver("d1").endpointOf("http://ds1").build();
+        SdmxWebSource defaultSource2 = SdmxWebSource.builder().name("s2").driver("d1").endpointOf("http://ds2").build();
+
+        SdmxWebDriver driver1 = MockedWebDriver
+                .builder()
+                .name("d1")
+                .rank(SdmxWebDriver.WRAPPED_RANK)
+                .source(defaultSource1)
+                .source(defaultSource2)
+                .build();
+
+        SdmxWebSource customSource1 = SdmxWebSource.builder().name("s1").driver("d1").endpointOf("http://cs1").build();
+        SdmxWebSource customSource3 = SdmxWebSource.builder().name("s3").driver("d1").endpointOf("http://cs3").build();
+
+        assertThat(
+                SdmxWebManager
+                        .builder()
+                        .build()
+                        .getSources()
+        )
+                .isEmpty();
+
+        assertThat(
+                SdmxWebManager
+                        .builder()
+                        .driver(driver1)
+                        .build()
+                        .getSources()
+        )
+                .hasSize(2)
+                .containsEntry("s1", defaultSource1)
+                .containsEntry("s2", defaultSource2);
+
+        assertThat(
+                SdmxWebManager
+                        .builder()
+                        .customSource(defaultSource1)
+                        .customSource(customSource1)
+                        .customSource(customSource3)
+                        .build()
+                        .getSources()
+        )
+                .hasSize(2)
+                .containsEntry("s1", defaultSource1)
+                .containsEntry("s3", customSource3);
+
+        assertThat(
+                SdmxWebManager
+                        .builder()
+                        .driver(driver1)
+                        .customSource(customSource1)
+                        .customSource(customSource3)
+                        .build()
+                        .getSources()
+        )
+                .hasSize(3)
+                .containsEntry("s1", customSource1)
+                .containsEntry("s2", defaultSource2)
+                .containsEntry("s3", customSource3);
+    }
+
+    @Test
     public void testGetDefaultSources() {
         SdmxWebSource source1 = SdmxWebSource.builder().name("source").driver("d1").dialect("SDMX21").endpointOf("http://abc").build();
         SdmxWebDriver driver1 = MockedWebDriver.builder().name("d1").rank(SdmxWebDriver.WRAPPED_RANK).source(source1).build();

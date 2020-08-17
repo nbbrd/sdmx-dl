@@ -17,6 +17,7 @@
 package sdmxdl.web;
 
 import internal.util.SdmxWebDriverLoader;
+import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -31,6 +32,7 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,10 +62,6 @@ public class SdmxWebManager implements SdmxManager {
     List<SdmxDialect> dialects;
 
     @lombok.NonNull
-    @lombok.Singular
-    List<SdmxWebSource> customSources;
-
-    @lombok.NonNull
     LanguagePriorityList languages;
 
     @lombok.NonNull
@@ -77,6 +75,22 @@ public class SdmxWebManager implements SdmxManager {
 
     @lombok.NonNull
     SdmxWebListener eventListener;
+
+    @lombok.NonNull
+    @lombok.Singular
+    List<SdmxWebSource> customSources;
+
+    @lombok.NonNull
+    @lombok.Getter(lazy = true)
+    List<SdmxWebSource> defaultSources = initDefaultSources(getDrivers());
+
+    @lombok.NonNull
+    @lombok.Getter(lazy = true)
+    SortedMap<String, SdmxWebSource> sources = initSourceMap(getCustomSources(), getDefaultSources());
+
+    @lombok.NonNull
+    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
+    SdmxWebContext context = initContext();
 
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
@@ -105,21 +119,7 @@ public class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return driver.connect(source,
-                SdmxWebContext
-                        .builder()
-                        .cache(cache)
-                        .languages(languages)
-                        .proxySelector(proxySelector)
-                        .sslSocketFactory(sslSocketFactory)
-                        .dialects(dialects)
-                        .eventListener(eventListener)
-                        .build());
-    }
-
-    @NonNull
-    public List<SdmxWebSource> getDefaultSources() {
-        return defaultSourceStream().collect(Collectors.toList());
+        return driver.connect(source, getContext());
     }
 
     @NonNull
@@ -127,7 +127,6 @@ public class SdmxWebManager implements SdmxManager {
         return drivers
                 .stream()
                 .map(SdmxWebDriver::getName)
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -139,20 +138,42 @@ public class SdmxWebManager implements SdmxManager {
                 .orElse(Collections.emptyList());
     }
 
-    private Stream<SdmxWebSource> defaultSourceStream() {
-        return drivers.stream().flatMap(driver -> driver.getDefaultSources().stream());
+    private Optional<SdmxWebSource> lookupSource(String sourceName) {
+        return Optional.ofNullable(getSources().get(sourceName));
     }
 
-    private Optional<SdmxWebSource> lookupSource(String name) {
-        return Stream.concat(customSources.stream(), defaultSourceStream())
-                .filter(o -> name.equals(o.getName()))
-                .findFirst();
-    }
-
-    private Optional<SdmxWebDriver> lookupDriver(String name) {
+    private Optional<SdmxWebDriver> lookupDriver(String driverName) {
         return drivers
                 .stream()
-                .filter(o -> name.equals(o.getName()))
+                .filter(webDriver -> driverName.equals(webDriver.getName()))
                 .findFirst();
+    }
+
+    private SdmxWebContext initContext() {
+        return SdmxWebContext
+                .builder()
+                .cache(cache)
+                .languages(languages)
+                .proxySelector(proxySelector)
+                .sslSocketFactory(sslSocketFactory)
+                .dialects(dialects)
+                .eventListener(eventListener)
+                .build();
+    }
+
+    private static List<SdmxWebSource> initDefaultSources(List<SdmxWebDriver> drivers) {
+        return drivers
+                .stream()
+                .flatMap(driver -> driver.getDefaultSources().stream())
+                .collect(Collectors.toList());
+    }
+
+    private static SortedMap<String, SdmxWebSource> initSourceMap(List<SdmxWebSource> customSources, List<SdmxWebSource> defaultSources) {
+        return Stream.concat(customSources.stream(), defaultSources.stream())
+                .collect(Collectors.groupingBy(SdmxWebSource::getName, TreeMap::new, reducingByFirst()));
+    }
+
+    private static Collector<SdmxWebSource, ?, SdmxWebSource> reducingByFirst() {
+        return Collectors.reducing(null, (first, last) -> first == null ? last : first);
     }
 }
