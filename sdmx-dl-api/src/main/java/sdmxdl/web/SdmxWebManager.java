@@ -32,6 +32,9 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,6 +168,7 @@ public class SdmxWebManager implements SdmxManager {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
+                .filter(distinctByKey(SdmxWebSource::getName))
                 .collect(Collectors.toList());
     }
 
@@ -175,5 +179,10 @@ public class SdmxWebManager implements SdmxManager {
 
     private static Collector<SdmxWebSource, ?, SdmxWebSource> reducingByFirst() {
         return Collectors.reducing(null, (first, last) -> first == null ? last : first);
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 }

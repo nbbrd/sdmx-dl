@@ -133,15 +133,19 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetDefaultSources() {
-        SdmxWebSource source1 = SdmxWebSource.builder().name("source").driver("d1").dialect("SDMX21").endpointOf("http://abc").build();
-        SdmxWebDriver driver1 = MockedWebDriver.builder().name("d1").rank(SdmxWebDriver.WRAPPED_RANK).source(source1).build();
+        SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").endpointOf("http://abc").build();
+        SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").endpointOf("http://abc").build();
+        SdmxWebDriver driverX = MockedWebDriver.builder().name("dX").rank(SdmxWebDriver.WRAPPED_RANK).source(source1a).source(source2).build();
 
-        SdmxWebSource source2 = SdmxWebSource.builder().name("source").driver("d2").dialect("SDMX21").endpointOf("http://xyz").build();
-        SdmxWebDriver driver2 = MockedWebDriver.builder().name("d2").rank(SdmxWebDriver.NATIVE_RANK).source(source2).build();
+        SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").endpointOf("http://xyz").build();
+        SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").endpointOf("http://xyz").build();
+        SdmxWebDriver driverY = MockedWebDriver.builder().name("dY").rank(SdmxWebDriver.NATIVE_RANK).source(source1b).source(source3).build();
 
-        assertThat(SdmxWebManager.builder().driver(driver2).driver(driver1).build().getDefaultSources())
-                .containsExactlyElementsOf(SdmxWebManager.builder().driver(driver2).driver(driver1).build().getDefaultSources())
-                .containsExactly(source2, source1);
+        assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
+                .containsExactly(source1a, source2, source3);
+
+        assertThat(SdmxWebManager.builder().driver(driverY).driver(driverX).build().getDefaultSources())
+                .containsExactly(source1b, source3, source2);
     }
 
     @Test
