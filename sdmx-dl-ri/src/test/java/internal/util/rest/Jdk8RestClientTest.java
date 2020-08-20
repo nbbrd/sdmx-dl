@@ -27,6 +27,7 @@ import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -36,6 +37,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static internal.util.rest.Jdk8RestClient.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.ext.SdmxMediaType.GENERIC_DATA_21;
 
 /**
  * @author Philippe Charles
@@ -82,15 +84,12 @@ public class Jdk8RestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG)) {
-            assertThat(response.getContentType()).isEqualTo(SdmxMediaType.XML);
-            try (InputStream stream = response.getBody()) {
-                assertThat(stream).hasContent(SAMPLE_XML);
-            }
+        try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+            assertSameSampleContent(response);
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                .withHeader(ACCEPT_HEADER, equalTo(SdmxMediaType.GENERIC_DATA_21))
+                .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21))
                 .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
                 .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip,deflate"))
                 .withHeader(LOCATION_HEADER, absent())
@@ -151,11 +150,8 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
-                try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG)) {
-                    assertThat(response.getContentType()).isEqualTo(SdmxMediaType.XML);
-                    try (InputStream stream = response.getBody()) {
-                        assertThat(stream).hasContent(SAMPLE_XML);
-                    }
+                try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+                    assertSameSampleContent(response);
                 }
             }
         }
@@ -180,7 +176,7 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
-                        .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG))
+                        .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                         .withMessage("Max redirection reached");
             }
         }
@@ -199,7 +195,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessage("Missing redirection url");
         }
     }
@@ -212,7 +208,7 @@ public class Jdk8RestClientTest {
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
 
-        String location = wire.url(SECOND_URL).replace("https", "http");
+        String location = wireHttpUrl(SECOND_URL);
 
         for (int redirection : HTTP_REDIRECTIONS) {
             wire.resetAll();
@@ -220,7 +216,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }
@@ -235,7 +231,7 @@ public class Jdk8RestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG))
+                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                 .isInstanceOf(SSLHandshakeException.class);
     }
 
@@ -252,8 +248,140 @@ public class Jdk8RestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(20)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.GENERIC_DATA_21, ANY_LANG))
+                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                 .withMessageContaining("Read timed out");
+    }
+
+    @Test
+    public void testValidAuth() throws IOException {
+        for (boolean preemptive : new boolean[]{false, true}) {
+            Jdk8RestClient x = Jdk8RestClient
+                    .builder()
+                    .sslSocketFactory(wireSSLSocketFactory())
+                    .hostnameVerifier(wireHostnameVerifier())
+                    .authenticator(authenticatorOf("user", "password"))
+                    .preemptiveAuthentication(preemptive)
+                    .build();
+
+            wire.resetAll();
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
+
+            try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+                assertSameSampleContent(response);
+            }
+
+            wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        }
+    }
+
+    @Test
+    public void testNoAuth() throws IOException {
+        for (boolean preemptive : new boolean[]{false, true}) {
+            Jdk8RestClient x = Jdk8RestClient
+                    .builder()
+                    .sslSocketFactory(wireSSLSocketFactory())
+                    .hostnameVerifier(wireHostnameVerifier())
+                    .authenticator(Authenticator.NONE)
+                    .preemptiveAuthentication(preemptive)
+                    .build();
+
+            wire.resetAll();
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
+
+            assertThatIOException()
+                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .withMessage("401: Unauthorized")
+                    .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                        assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
+                        assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
+                    });
+
+            wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        }
+    }
+
+    @Test
+    public void testInvalidAuth() throws IOException {
+        for (boolean preemptive : new boolean[]{false, true}) {
+            Jdk8RestClient x = Jdk8RestClient
+                    .builder()
+                    .sslSocketFactory(wireSSLSocketFactory())
+                    .hostnameVerifier(wireHostnameVerifier())
+                    .authenticator(authenticatorOf("user", "xyz"))
+                    .preemptiveAuthentication(preemptive)
+                    .build();
+
+            wire.resetAll();
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+
+            assertThatIOException()
+                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .withMessage("401: Unauthorized")
+                    .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                        assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
+                        assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
+                    });
+
+            wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        }
+    }
+
+    @Test
+    public void testInsecureAuth() throws IOException {
+        for (boolean preemptive : new boolean[]{false, true}) {
+            Jdk8RestClient x = Jdk8RestClient
+                    .builder()
+                    .sslSocketFactory(wireSSLSocketFactory())
+                    .hostnameVerifier(wireHostnameVerifier())
+                    .authenticator(authenticatorOf("user", "password"))
+                    .preemptiveAuthentication(preemptive)
+                    .build();
+
+            wire.resetAll();
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
+
+            String location = wireHttpUrl(SAMPLE_URL);
+
+            assertThatIOException()
+                    .isThrownBy(() -> x.open(new URL(location), GENERIC_DATA_21, ANY_LANG))
+                    .withMessageContaining("Insecure protocol");
+
+            wire.verify(preemptive ? 0 : 1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        }
+    }
+
+    @Test
+    public void testMissingAuth() throws IOException {
+        for (boolean preemptive : new boolean[]{false, true}) {
+            Jdk8RestClient x = Jdk8RestClient
+                    .builder()
+                    .sslSocketFactory(wireSSLSocketFactory())
+                    .hostnameVerifier(wireHostnameVerifier())
+                    .authenticator(authenticatorOf("user", "password"))
+                    .preemptiveAuthentication(preemptive)
+                    .build();
+
+            wire.resetAll();
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
+
+            try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+                assertSameSampleContent(response);
+            }
+
+            wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        }
+    }
+
+    private String wireHttpUrl(String url) {
+        return wire.url(url)
+                .replace("https", "http")
+                .replace(Integer.toString(wire.httpsPort()), Integer.toString(wire.port()));
     }
 
     private SSLSocketFactory wireSSLSocketFactory() {
@@ -280,9 +408,21 @@ public class Jdk8RestClientTest {
         return new URL(wire.url(path));
     }
 
+    private void assertSameSampleContent(Response response) throws IOException {
+        assertThat(response.getContentType()).isEqualTo(SdmxMediaType.XML);
+        try (InputStream stream = response.getBody()) {
+            assertThat(stream).hasContent(SAMPLE_XML);
+        }
+    }
+
+    private Authenticator authenticatorOf(String username, String password) {
+        return url -> new PasswordAuthentication(username, password.toCharArray());
+    }
+
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
     private static final int[] HTTP_REDIRECTIONS = {301, 302, 303, 307, 308};
     private static final String SAMPLE_URL = "/first.xml";
     private static final String SECOND_URL = "/second.xml";
     private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
+    public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
 }

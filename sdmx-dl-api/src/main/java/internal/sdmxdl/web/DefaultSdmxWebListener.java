@@ -1,4 +1,4 @@
-package internal.sdmxdl.web.spi;
+package internal.sdmxdl.web;
 
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;

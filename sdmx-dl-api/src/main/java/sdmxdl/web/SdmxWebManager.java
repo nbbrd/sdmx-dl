@@ -80,6 +80,9 @@ public class SdmxWebManager implements SdmxManager {
     SdmxWebListener eventListener;
 
     @lombok.NonNull
+    SdmxWebAuthenticator authenticator;
+
+    @lombok.NonNull
     @lombok.Singular
     List<SdmxWebSource> customSources;
 
@@ -102,7 +105,8 @@ public class SdmxWebManager implements SdmxManager {
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
                 .cache(SdmxCache.noOp())
-                .eventListener(SdmxWebListener.getDefault());
+                .eventListener(SdmxWebListener.getDefault())
+                .authenticator(SdmxWebAuthenticator.noOp());
     }
 
     @Override
@@ -161,6 +165,7 @@ public class SdmxWebManager implements SdmxManager {
                 .sslSocketFactory(sslSocketFactory)
                 .dialects(dialects)
                 .eventListener(eventListener)
+                .authenticator(authenticator)
                 .build();
     }
 

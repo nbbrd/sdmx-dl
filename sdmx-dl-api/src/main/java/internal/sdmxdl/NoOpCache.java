@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * @author Philippe Charles
  */
-public enum NoOpSdmxCache implements SdmxCache {
+public enum NoOpCache implements SdmxCache {
 
     INSTANCE;
 

@@ -19,6 +19,7 @@ package sdmxdl.web.spi;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -52,6 +53,9 @@ public class SdmxWebContext {
     @lombok.NonNull
     SdmxWebListener eventListener;
 
+    @lombok.NonNull
+    SdmxWebAuthenticator authenticator;
+
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {
         return new Builder()
@@ -59,6 +63,7 @@ public class SdmxWebContext {
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
                 .cache(SdmxCache.noOp())
-                .eventListener(SdmxWebListener.getDefault());
+                .eventListener(SdmxWebListener.getDefault())
+                .authenticator(SdmxWebAuthenticator.noOp());
     }
 }

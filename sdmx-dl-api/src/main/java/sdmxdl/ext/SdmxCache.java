@@ -16,7 +16,7 @@
  */
 package sdmxdl.ext;
 
-import internal.sdmxdl.NoOpSdmxCache;
+import internal.sdmxdl.NoOpCache;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.repo.SdmxRepository;
@@ -36,6 +36,6 @@ public interface SdmxCache {
 
     @NonNull
     static SdmxCache noOp() {
-        return NoOpSdmxCache.INSTANCE;
+        return NoOpCache.INSTANCE;
     }
 }

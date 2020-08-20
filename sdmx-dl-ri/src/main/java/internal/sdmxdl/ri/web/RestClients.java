@@ -18,11 +18,14 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.Jdk8RestClient;
 import internal.util.rest.RestClient;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.util.web.SdmxWebProperty;
+import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Arrays;
@@ -44,6 +47,8 @@ public class RestClients {
                 .proxySelector(context.getProxySelector())
                 .sslSocketFactory(context.getSslSocketFactory())
                 .listener(new DefaultEventListener(o, context.getEventListener()))
+                .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
+                .preemptiveAuthentication(SdmxWebProperty.isPreemptiveAuthentication(o.getProperties()))
                 .build();
     }
 
@@ -51,7 +56,8 @@ public class RestClients {
             Arrays.asList(
                     SdmxWebProperty.CONNECT_TIMEOUT_PROPERTY,
                     SdmxWebProperty.READ_TIMEOUT_PROPERTY,
-                    SdmxWebProperty.MAX_REDIRECTS_PROPERTY
+                    SdmxWebProperty.MAX_REDIRECTS_PROPERTY,
+                    SdmxWebProperty.PREEMPTIVE_AUTHENTICATION_PROPERTY
             ));
 
     @lombok.AllArgsConstructor
@@ -64,9 +70,13 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, String mediaType, String langs, Proxy proxy) {
+        public void onOpen(URL query, String mediaType, String langs, Proxy proxy, Jdk8RestClient.AuthScheme scheme) {
             if (listener.isEnabled()) {
-                listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
+                if (Jdk8RestClient.AuthScheme.NONE.equals(scheme)) {
+                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
+                } else {
+                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
+                }
             }
         }
 
@@ -75,6 +85,33 @@ public class RestClients {
             if (listener.isEnabled()) {
                 listener.onSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
             }
+        }
+
+        @Override
+        public void onUnauthorized(URL url, Jdk8RestClient.AuthScheme oldScheme, Jdk8RestClient.AuthScheme newScheme) {
+            if (listener.isEnabled()) {
+                listener.onSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
+            }
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class DefaultAuthenticator implements Jdk8RestClient.Authenticator {
+
+        @lombok.NonNull
+        private final SdmxWebSource source;
+
+        @lombok.NonNull
+        private final SdmxWebAuthenticator authenticator;
+
+        @Override
+        public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
+            return isSameAuthScope(url) ? authenticator.getPasswordAuthentication(source) : null;
+        }
+
+        private boolean isSameAuthScope(URL url) {
+            return url.getHost().equals(source.getEndpoint().getHost())
+                    && url.getPort() == source.getEndpoint().getPort();
         }
     }
 }

@@ -1,6 +1,6 @@
 package sdmxdl.web;
 
-import internal.sdmxdl.web.spi.DefaultSdmxWebListener;
+import internal.sdmxdl.web.DefaultSdmxWebListener;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface SdmxWebListener {

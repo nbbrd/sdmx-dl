@@ -1,27 +1,27 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.util.web;
 
 import sdmxdl.util.Property;
+
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
@@ -82,5 +82,15 @@ public class SdmxWebProperty {
 
     public boolean isSeriesKeysOnlySupported(Map<?, ?> o) {
         return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o);
+    }
+
+    /**
+     * Defines if preemptive authentication should be used. Default value is false.
+     */
+    public final String PREEMPTIVE_AUTHENTICATION_PROPERTY = "preemptiveAuthentication";
+    public final boolean DEFAULT_PREEMPTIVE_AUTHENTICATION = false;
+
+    public boolean isPreemptiveAuthentication(Map<?, ?> o) {
+        return Property.get(PREEMPTIVE_AUTHENTICATION_PROPERTY, DEFAULT_PREEMPTIVE_AUTHENTICATION, o);
     }
 }
