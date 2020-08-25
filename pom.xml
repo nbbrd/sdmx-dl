@@ -33,7 +33,7 @@
     </modules>
 
     <properties>
-        <java-io-util.version>0.0.7-SNAPSHOT</java-io-util.version>
+        <java-io-util.version>0.0.7</java-io-util.version>
     </properties>
 
     <dependencyManagement>
@@ -441,10 +441,10 @@
             </snapshots>
         </repository>
         <repository>
-            <id>oss-jfrog-artifactory-snapshots</id>
-            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
