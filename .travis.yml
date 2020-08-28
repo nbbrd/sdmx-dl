@@ -6,6 +6,7 @@ env:
     - DEPLOY_OS=linux
     - DEPLOY_JDK=openjdk11
     - DEPLOY_REPO=nbbrd/sdmx-dl
+    - DEPLOY_BIN=sdmx-dl-cli/target/binaries/*
 
 _java_windows_amd64: &_java_windows_amd64
   os: windows
@@ -83,6 +84,8 @@ deploy:
     api_key: "${GITHUB_KEY}"
     skip_cleanup: true
     draft: true
+    file_glob: true
+    file: "${DEPLOY_BIN}"
     on:
       tags: true
       repo: "${DEPLOY_REPO}"

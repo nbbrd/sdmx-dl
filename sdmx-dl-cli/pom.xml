@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>be.nbb.rd</groupId>
+        <artifactId>sdmx-dl-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sdmx-dl-cli</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <!-- dependencies -->
+        <demetra-io.version>be695d469dc7e4d61fc9710c7d91b3f9a865f2e7</demetra-io.version>
+
+        <!-- binaries -->
+        <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
+        <project.x.fileName>sdmx-dl</project.x.fileName>
+        <project.x.binaries>${project.build.directory}/binaries</project.x.binaries>
+    </properties>
+
+    <dependencies>
+        <!-- compile only -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- compile and runtime -->
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-kryo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-jansi-graalvm</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>picocsv</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-net-proxy</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-console-properties</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.26</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jdemetra.jdemetra-core</groupId>
+            <artifactId>demetra-toolkit-api</artifactId>
+            <version>${demetra-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jdemetra.jdemetra-core</groupId>
+            <artifactId>demetra-io-core</artifactId>
+            <version>${demetra-io.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.cache</groupId>
+                    <artifactId>cache-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jsr107.ri</groupId>
+                    <artifactId>cache-ri-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>demetra-toolkit-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- runtime only -->
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-connectors</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-ri</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.18</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- test only -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Generates manifest for executable jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <mainClass>${project.x.mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Generates a all-in-one executable jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                    </transformers>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>bin</shadedClassifierName>
+                    <shadedArtifactId>${project.x.fileName}</shadedArtifactId>
+                    <outputDirectory>${project.x.binaries}</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- Generates SHA256 on binaries -->
+            <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>1.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>files</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <algorithms>
+                        <algorithm>SHA-256</algorithm>
+                    </algorithms>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${project.x.binaries}</directory>
+                            <excludes>
+                                <exclude>*.sha256</exclude>
+                            </excludes>
+                        </fileSet>
+                    </fileSets>
+                    <csvSummary>false</csvSummary>
+                </configuration>
+            </plugin>
+
+            <!-- Skip Maven deploy -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
