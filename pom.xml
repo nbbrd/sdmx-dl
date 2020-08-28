@@ -30,6 +30,7 @@
         <module>sdmx-dl-ri</module>
         <module>sdmx-dl-connectors</module>
         <module>sdmx-dl-kryo</module>
+        <module>sdmx-dl-cli</module>
     </modules>
 
     <properties>
@@ -103,6 +104,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-kryo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
