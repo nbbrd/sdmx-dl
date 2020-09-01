@@ -128,7 +128,9 @@ public final class Jdk8RestClient implements RestClient {
         @Nullable
         PasswordAuthentication getPasswordAuthentication(@NonNull URL url);
 
-        Authenticator NONE = url -> null;
+        void invalidate(@NonNull URL url);
+
+        Authenticator NONE = NoOpAuthenticator.INSTANCE;
     }
 
     private Response open(URL query, String mediaType, String langs, int redirects, AuthScheme requestScheme) throws IOException {
@@ -221,6 +223,7 @@ public final class Jdk8RestClient implements RestClient {
                     listener.onUnauthorized(http.getURL(), requestScheme, responseScheme);
                     return open(http.getURL(), mediaType, langs, redirects + 1, responseScheme);
                 }
+                authenticator.invalidate(http.getURL());
         }
 
         throw getError(http);
@@ -316,6 +319,19 @@ public final class Jdk8RestClient implements RestClient {
                 default:
                     return UNKNOWN;
             }
+        }
+    }
+
+    private enum NoOpAuthenticator implements Authenticator {
+        INSTANCE;
+
+        @Override
+        public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
+            return null;
+        }
+
+        @Override
+        public void invalidate(@NonNull URL url) {
         }
     }
 

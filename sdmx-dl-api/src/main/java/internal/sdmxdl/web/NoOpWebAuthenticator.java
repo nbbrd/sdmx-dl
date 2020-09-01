@@ -17,4 +17,9 @@ public enum NoOpWebAuthenticator implements SdmxWebAuthenticator {
         Objects.requireNonNull(source);
         return null;
     }
+
+    @Override
+    public void invalidate(@NonNull SdmxWebSource source) {
+        Objects.requireNonNull(source);
+    }
 }

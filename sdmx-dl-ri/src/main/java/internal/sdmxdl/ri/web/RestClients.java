@@ -18,6 +18,7 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.Jdk8RestClient;
 import internal.util.rest.RestClient;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebAuthenticator;
@@ -107,6 +108,13 @@ public class RestClients {
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
             return isSameAuthScope(url) ? authenticator.getPasswordAuthentication(source) : null;
+        }
+
+        @Override
+        public void invalidate(@NonNull URL url) {
+            if (isSameAuthScope(url)) {
+                authenticator.invalidate(source);
+            }
         }
 
         private boolean isSameAuthScope(URL url) {

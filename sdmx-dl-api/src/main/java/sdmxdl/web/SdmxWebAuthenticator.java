@@ -11,6 +11,8 @@ public interface SdmxWebAuthenticator {
     @Nullable
     PasswordAuthentication getPasswordAuthentication(@NonNull SdmxWebSource source);
 
+    void invalidate(@NonNull SdmxWebSource source);
+
     @NonNull
     static SdmxWebAuthenticator noOp() {
         return NoOpWebAuthenticator.INSTANCE;

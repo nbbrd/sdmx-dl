@@ -148,7 +148,7 @@ public class WebOptions {
                 : Collections.emptyList();
     }
 
-    private void reportIOException(String message, IOException ex) {
+    protected void reportIOException(String message, IOException ex) {
         if (verbose) {
             System.out.println("IO: " + message + " - " + ex.getMessage());
         }

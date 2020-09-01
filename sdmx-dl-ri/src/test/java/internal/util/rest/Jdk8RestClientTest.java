@@ -18,6 +18,8 @@ package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import sdmxdl.LanguagePriorityList;
@@ -416,7 +418,16 @@ public class Jdk8RestClientTest {
     }
 
     private Authenticator authenticatorOf(String username, String password) {
-        return url -> new PasswordAuthentication(username, password.toCharArray());
+        return new Authenticator() {
+            @Override
+            public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
+                return new PasswordAuthentication(username, password.toCharArray());
+            }
+
+            @Override
+            public void invalidate(@NonNull URL url) {
+            }
+        };
     }
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
