@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Properties;
 
 /**
  * @author Philippe Charles
@@ -108,17 +108,22 @@ public class WebOptions {
     }
 
     private SSLSocketFactory getSSLFactory() {
-        if (isNoSysSsl() || SystemTrustStore.hasStaticSslProperties(System.getProperties())) {
+        if (isNoSysSsl() || hasTrustStoreProperties(System.getProperties())) {
             return HttpsURLConnection.getDefaultSSLSocketFactory();
         }
-        SSLFactory.Builder result = SSLFactory
+        return SSLFactory
                 .builder()
-                .withDefaultTrustMaterial();
-        Stream.of(SystemTrustStore.values())
-                .filter(o -> o.isAvailable(System.getProperties()))
-                .map(SystemTrustStore::load)
-                .forEach(keyStore -> result.withTrustMaterial(keyStore, new char[0]));
-        return result.build().getSslContext().getSocketFactory();
+                .withDefaultTrustMaterial()
+                .withSystemTrustMaterial()
+                .build()
+                .getSslContext()
+                .getSocketFactory();
+    }
+
+    private static boolean hasTrustStoreProperties(Properties p) {
+        return p.containsKey("javax.net.ssl.trustStoreType")
+                || p.containsKey("javax.net.ssl.trustStore")
+                || p.containsKey("javax.net.ssl.trustStorePassword");
     }
 
     private SdmxCache getCache() {
