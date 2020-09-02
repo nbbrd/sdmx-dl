@@ -23,6 +23,7 @@ public class SdmxSystemUtil {
         if (!hasTrustStoreProperties(System.getProperties())) {
             SSLFactory factory = getSSLFactory();
             manager.sslSocketFactory(factory.getSslContext().getSocketFactory());
+            manager.hostnameVerifier(factory.getHostnameVerifier());
         }
     }
 

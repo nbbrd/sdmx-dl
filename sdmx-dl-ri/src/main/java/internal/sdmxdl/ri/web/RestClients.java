@@ -47,6 +47,7 @@ public class RestClients {
                 .maxRedirects(SdmxWebProperty.getMaxRedirects(o.getProperties()))
                 .proxySelector(context.getProxySelector())
                 .sslSocketFactory(context.getSslSocketFactory())
+                .hostnameVerifier(context.getHostnameVerifier())
                 .listener(new DefaultEventListener(o, context.getEventListener()))
                 .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
                 .preemptiveAuthentication(SdmxWebProperty.isPreemptiveAuthentication(o.getProperties()))

@@ -22,6 +22,7 @@ import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
@@ -44,6 +45,9 @@ public class SdmxWebContext {
     SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
+    HostnameVerifier hostnameVerifier;
+
+    @lombok.NonNull
     SdmxCache cache;
 
     @lombok.NonNull
@@ -62,6 +66,7 @@ public class SdmxWebContext {
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
+                .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
                 .cache(SdmxCache.noOp())
                 .eventListener(SdmxWebListener.getDefault())
                 .authenticator(SdmxWebAuthenticator.noOp());

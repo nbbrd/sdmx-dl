@@ -27,6 +27,7 @@ import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
@@ -74,6 +75,9 @@ public class SdmxWebManager implements SdmxManager {
     SSLSocketFactory sslSocketFactory;
 
     @lombok.NonNull
+    HostnameVerifier hostnameVerifier;
+
+    @lombok.NonNull
     SdmxCache cache;
 
     @lombok.NonNull
@@ -104,6 +108,7 @@ public class SdmxWebManager implements SdmxManager {
                 .languages(LanguagePriorityList.ANY)
                 .proxySelector(ProxySelector.getDefault())
                 .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
+                .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
                 .cache(SdmxCache.noOp())
                 .eventListener(SdmxWebListener.getDefault())
                 .authenticator(SdmxWebAuthenticator.noOp());
@@ -163,6 +168,7 @@ public class SdmxWebManager implements SdmxManager {
                 .languages(languages)
                 .proxySelector(proxySelector)
                 .sslSocketFactory(sslSocketFactory)
+                .hostnameVerifier(hostnameVerifier)
                 .dialects(dialects)
                 .eventListener(eventListener)
                 .authenticator(authenticator)
