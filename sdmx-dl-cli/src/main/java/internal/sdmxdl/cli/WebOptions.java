@@ -16,12 +16,11 @@
  */
 package internal.sdmxdl.cli;
 
-import nbbrd.net.proxy.SystemProxySelector;
-import nl.altindag.sslcontext.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.kryo.KryoSerialization;
+import sdmxdl.sys.SdmxSystemUtil;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.Serializer;
 import sdmxdl.web.SdmxWebListener;
@@ -29,14 +28,10 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.xml.XmlWebSource;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @author Philippe Charles
@@ -90,40 +85,22 @@ public class WebOptions {
     private boolean noSysSsl;
 
     public SdmxWebManager getManager() throws IOException {
-        return SdmxWebManager.ofServiceLoader()
+        SdmxWebManager.Builder result = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .languages(langs)
-                .proxySelector(getProxySelector())
-                .sslSocketFactory(getSSLFactory())
                 .cache(getCache())
                 .eventListener(getEventListener())
-                .customSources(getCustomSources())
-                .build();
-    }
+                .customSources(getCustomSources());
 
-    private ProxySelector getProxySelector() {
-        return isNoSysProxy()
-                ? ProxySelector.getDefault()
-                : SystemProxySelector.ofServiceLoader();
-    }
-
-    private SSLSocketFactory getSSLFactory() {
-        if (isNoSysSsl() || hasTrustStoreProperties(System.getProperties())) {
-            return HttpsURLConnection.getDefaultSSLSocketFactory();
+        if (!isNoSysProxy()) {
+            SdmxSystemUtil.configureProxy(result, this::reportIOException);
         }
-        return SSLFactory
-                .builder()
-                .withDefaultTrustMaterial()
-                .withSystemTrustMaterial()
-                .build()
-                .getSslContext()
-                .getSocketFactory();
-    }
 
-    private static boolean hasTrustStoreProperties(Properties p) {
-        return p.containsKey("javax.net.ssl.trustStoreType")
-                || p.containsKey("javax.net.ssl.trustStore")
-                || p.containsKey("javax.net.ssl.trustStorePassword");
+        if (!isNoSysSsl()) {
+            SdmxSystemUtil.configureSsl(result, this::reportIOException);
+        }
+
+        return result.build();
     }
 
     private SdmxCache getCache() {

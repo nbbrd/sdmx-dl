@@ -18,7 +18,7 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
-import sdmxdl.cli.MainCommand;
+import sdmxdl.sys.SdmxSystemUtil;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -81,18 +80,19 @@ public class WebSourceOptions extends WebOptions {
 
     @Override
     public SdmxWebManager getManager() throws IOException {
-        return super.getManager().withAuthenticator(getAuthenticator());
+        SdmxWebManager.Builder result = super.getManager()
+                .toBuilder()
+                .authenticator(getConsoleAuthenticator());
+
+        if (!user.hasUsername() && !isNoSysAuth()) {
+            SdmxSystemUtil.configureAuth(result, this::reportIOException);
+        }
+
+        return result.build();
     }
 
-    private SdmxWebAuthenticator getAuthenticator() {
-        SdmxWebAuthenticator authenticator = !user.hasUsername() && !isNoSysAuth() && isWindows()
-                ? new WinPasswordVaultAuthenticator(this::reportIOException)
-                : new ConsoleAuthenticator(user);
-        return new CachedAuthenticator(authenticator, new ConcurrentHashMap<>());
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty("os.name").toLowerCase().contains("win");
+    private SdmxWebAuthenticator getConsoleAuthenticator() {
+        return new CachedAuthenticator(new ConsoleAuthenticator(user), new ConcurrentHashMap<>());
     }
 
     @lombok.Value
@@ -142,41 +142,6 @@ public class WebSourceOptions extends WebOptions {
 
         @Override
         public void invalidate(SdmxWebSource source) {
-        }
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class WinPasswordVaultAuthenticator implements SdmxWebAuthenticator {
-
-        @lombok.NonNull
-        private final BiConsumer<String, IOException> onIOException;
-
-        @Override
-        public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) {
-            try (WinPasswordVault vault = WinPasswordVault.open()) {
-                String message = "Enter your credentials for " + source.getName();
-                return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
-            } catch (IOException ex) {
-                onIOException.accept("While getting password", ex);
-                return null;
-            }
-        }
-
-        @Override
-        public void invalidate(SdmxWebSource source) {
-            try (WinPasswordVault vault = WinPasswordVault.open()) {
-                vault.invalidate(getResource(source));
-            } catch (IOException ex) {
-                onIOException.accept("While invalidating password", ex);
-            }
-        }
-
-        private String getResource(SdmxWebSource source) {
-            return MainCommand.NAME + ":" + source.getEndpoint().getHost();
-        }
-
-        private PasswordAuthentication toPasswordAuthentication(WinPasswordVault.PasswordCredential credential) {
-            return credential != null ? new PasswordAuthentication(credential.getUserName(), credential.getPassword()) : null;
         }
     }
 

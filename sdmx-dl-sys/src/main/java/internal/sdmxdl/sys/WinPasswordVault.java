@@ -1,14 +1,13 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.sys;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
-import nbbrd.io.Resource;
 import nbbrd.picocsv.Csv;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-final class WinPasswordVault implements Closeable {
+public final class WinPasswordVault implements Closeable {
 
     // https://docs.microsoft.com/en-us/uwp/api/windows.security.credentials.passwordcredential
     @lombok.Value
@@ -87,7 +86,7 @@ final class WinPasswordVault implements Closeable {
     }
 
     private static String[] loadCode() throws IOException {
-        try (InputStream stream = Resource.getResourceAsStream(WinPasswordVault.class, "WinPasswordVault.ps1").orElseThrow(IOException::new)) {
+        try (InputStream stream = WinPasswordVault.class.getResourceAsStream("WinPasswordVault.ps1")) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                 return reader.lines().toArray(String[]::new);
             }
