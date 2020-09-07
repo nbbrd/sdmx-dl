@@ -46,19 +46,19 @@ public class DataStructureRefTest {
     @SuppressWarnings("null")
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
         assertThat(of("", "hello", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
         assertThat(of("world", "hello", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
         assertThat(of("world", "hello", "123"))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, DataStructureRef::toString)
+                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));

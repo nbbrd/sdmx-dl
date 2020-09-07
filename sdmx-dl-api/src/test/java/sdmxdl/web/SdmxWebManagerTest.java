@@ -43,6 +43,14 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testFactories() {
+        assertThat(SdmxWebManager.ofServiceLoader()).satisfies(o -> {
+            assertThat(o).isNotNull();
+            assertThat(o.getDrivers()).isEmpty();
+            assertThat(o.getDialects()).isEmpty();
+            assertThat(o.getCustomSources()).isEmpty();
+            assertThat(o.getDefaultSources()).isEmpty();
+        });
+        
         assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getDialects()).isEmpty();
@@ -56,16 +64,6 @@ public class SdmxWebManagerTest {
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).containsAll(repoDriver.getDefaultSources());
         });
-    }
-
-    @Test
-    public void testGetDriverNames() {
-        SdmxWebDriver driver1 = MockedWebDriver.builder().name("d1").rank(SdmxWebDriver.WRAPPED_RANK).build();
-        SdmxWebDriver driver2 = MockedWebDriver.builder().name("d2").rank(SdmxWebDriver.NATIVE_RANK).build();
-
-        assertThat(SdmxWebManager.builder().driver(driver2).driver(driver1).build().getDriverNames())
-                .containsExactlyElementsOf(SdmxWebManager.builder().driver(driver2).driver(driver1).build().getDriverNames())
-                .containsExactly(driver2.getName(), driver1.getName());
     }
 
     @Test

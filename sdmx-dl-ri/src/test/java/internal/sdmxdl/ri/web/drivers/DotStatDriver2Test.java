@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.Test;
-import sdmxdl.tck.SdmxWebDriverAssert;
+import sdmxdl.tck.web.SdmxWebDriverAssert;
 
 /**
  * @author Philippe Charles

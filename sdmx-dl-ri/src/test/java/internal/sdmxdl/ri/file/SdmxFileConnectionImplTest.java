@@ -23,11 +23,10 @@ import sdmxdl.*;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.SdmxConnectionAssert;
-import sdmxdl.tck.SdmxFileConnectionAssert;
+import sdmxdl.tck.file.SdmxFileConnectionAssert;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;

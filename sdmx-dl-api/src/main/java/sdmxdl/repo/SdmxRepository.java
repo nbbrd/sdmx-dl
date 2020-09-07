@@ -125,7 +125,7 @@ public class SdmxRepository {
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Collection<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
             checkState();
             return repo
                     .getDataSet(flowRef)

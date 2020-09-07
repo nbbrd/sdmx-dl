@@ -18,17 +18,26 @@ package sdmxdl;
 
 import org.junit.Test;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.Key.ALL;
 import static sdmxdl.Key.of;
 
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 public class KeyTest {
 
     @Test
     public void testParse() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Key.parse(null));
+
         assertThat(Key.parse("")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(1);
             assertThat(o.get(0)).isEqualTo("");
@@ -61,7 +70,10 @@ public class KeyTest {
     }
 
     @Test
-    public void testValueOf() {
+    public void testOfArray() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> of((String[]) null));
+
         assertThat(of()).satisfies(o -> {
             assertThat(o.size()).isEqualTo(1);
             assertThat(o.get(0)).isEqualTo("");
@@ -90,7 +102,7 @@ public class KeyTest {
             assertThat(o.toString()).isEqualTo("LOCSTL04..M");
         });
 
-        assertThat(of("LOCSTL04", "", "")).satisfies(o -> {
+        assertThat(of("LOCSTL04", null, "")).satisfies(o -> {
             assertThat(o.size()).isEqualTo(3);
             assertThat(o.get(0)).isEqualTo("LOCSTL04");
             assertThat(o.get(1)).isEqualTo("");
@@ -100,11 +112,60 @@ public class KeyTest {
     }
 
     @Test
-    public void testEquals() {
-        assertThat(of("")).isEqualTo(of(""));
-        assertThat(of("LOCSTL04", "AUS", "M")).isEqualTo(of("LOCSTL04", "AUS", "M"));
-        assertThat(of("LOCSTL04", "", "M")).isEqualTo(of("LOCSTL04", "*", "M"));
-        assertThat(of("LOCSTL04", "AUS", "M")).isNotEqualTo(of(""));
+    public void testOfCollection() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> of((Collection<String>) null));
+
+        assertThat(of(Collections.emptyList())).satisfies(o -> {
+            assertThat(o.size()).isEqualTo(1);
+            assertThat(o.get(0)).isEqualTo("");
+            assertThat(o.toString()).isEqualTo("all");
+        });
+
+        assertThat(of(Collections.singletonList(""))).satisfies(o -> {
+            assertThat(o.size()).isEqualTo(1);
+            assertThat(o.get(0)).isEqualTo("");
+            assertThat(o.toString()).isEqualTo("all");
+        });
+
+        assertThat(of(asList("LOCSTL04", "AUS", "M"))).satisfies(o -> {
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("AUS");
+            assertThat(o.get(2)).isEqualTo("M");
+            assertThat(o.toString()).isEqualTo("LOCSTL04.AUS.M");
+        });
+
+        assertThat(of(asList("LOCSTL04", "", "M"))).satisfies(o -> {
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("M");
+            assertThat(o.toString()).isEqualTo("LOCSTL04..M");
+        });
+
+        assertThat(of(asList("LOCSTL04", null, ""))).satisfies(o -> {
+            assertThat(o.size()).isEqualTo(3);
+            assertThat(o.get(0)).isEqualTo("LOCSTL04");
+            assertThat(o.get(1)).isEqualTo("");
+            assertThat(o.get(2)).isEqualTo("");
+            assertThat(o.toString()).isEqualTo("LOCSTL04..");
+        });
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        assertThat(of(""))
+                .isEqualTo(of(""))
+                .hasSameHashCodeAs(of(""));
+        assertThat(of("LOCSTL04", "AUS", "M"))
+                .isEqualTo(of("LOCSTL04", "AUS", "M"))
+                .hasSameHashCodeAs(of("LOCSTL04", "AUS", "M"));
+        assertThat(of("LOCSTL04", "", "M"))
+                .isEqualTo(of("LOCSTL04", "*", "M"))
+                .hasSameHashCodeAs(of("LOCSTL04", "*", "M"));
+        assertThat(of("LOCSTL04", "AUS", "M"))
+                .isNotEqualTo(of(""));
     }
 
     @Test
@@ -152,21 +213,73 @@ public class KeyTest {
     }
 
     @Test
-    public void testBuilder() {
+    public void testBuilderOfDimensions() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Key.builder((String[]) null));
+
         Key.Builder b;
 
         b = Key.builder();
         assertThat(b.clear().toString()).isEqualTo("all");
         assertThat(b.isDimension("hello")).isFalse();
+        assertThat(b.build()).isEqualTo(ALL);
 
         b = Key.builder("SECTOR", "REGION");
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
         assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
-//        assertThat(b.clear().toString()).isEqualTo("all");
+        assertThat(b.clear().toString()).isEqualTo(".");
         assertThat(b.isDimension("hello")).isFalse();
         assertThat(b.isDimension("SECTOR")).isTrue();
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").build()).isEqualTo(of("IND", "BE"));
+        assertThat(b.clear().put("REGION", "BE").build()).isEqualTo(of("", "BE"));
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0)).isEqualTo("IND");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1)).isEqualTo("BE");
+        assertThat(b.clear().put("REGION", "BE").getItem(0)).isEqualTo("");
+        assertThat(b.clear().put("REGION", "BE").getItem(1)).isEqualTo("BE");
+
+        assertThat(b.clear().isSeries()).isFalse();
+        assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
+    }
+
+    @Test
+    public void testBuilderOfDataStructure() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Key.builder((DataStructure) null));
+
+        Key.Builder b;
+
+        b = Key.builder(DataStructure
+                .builder()
+                .ref(DataStructureRef.parse("ref"))
+                .label("")
+                .build());
+        assertThat(b.clear().toString()).isEqualTo("all");
+        assertThat(b.isDimension("hello")).isFalse();
+        assertThat(b.build()).isEqualTo(ALL);
+
+        b = Key.builder(DataStructure
+                .builder()
+                .ref(DataStructureRef.parse("ref"))
+                .label("")
+                .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
+                .dimension(Dimension.builder().position(2).id("REGION").label("Region").build())
+                .build());
+        assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
+        assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
+        assertThat(b.clear().put("REGION", "BE").toString()).isEqualTo(".BE");
+        assertThat(b.clear().toString()).isEqualTo(".");
+        assertThat(b.isDimension("hello")).isFalse();
+        assertThat(b.isDimension("SECTOR")).isTrue();
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").build()).isEqualTo(of("IND", "BE"));
+        assertThat(b.clear().put("REGION", "BE").build()).isEqualTo(of("", "BE"));
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(0)).isEqualTo("IND");
+        assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").getItem(1)).isEqualTo("BE");
+        assertThat(b.clear().put("REGION", "BE").getItem(0)).isEqualTo("");
+        assertThat(b.clear().put("REGION", "BE").getItem(1)).isEqualTo("BE");
 
         assertThat(b.clear().isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();

@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.web;
 
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;

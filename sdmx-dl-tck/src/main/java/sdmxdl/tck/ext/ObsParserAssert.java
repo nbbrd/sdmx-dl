@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.ext;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.assertj.core.api.SoftAssertions;
@@ -10,6 +10,7 @@ import java.util.function.UnaryOperator;
 @lombok.experimental.UtilityClass
 public class ObsParserAssert {
 
+    @lombok.Value
     @lombok.Builder
     public static class Sample {
         Key.Builder validKey;

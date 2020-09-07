@@ -19,11 +19,9 @@ package internal.sdmxld.connectors.drivers;
 import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
 import org.junit.Test;
 import sdmxdl.ext.spi.SdmxDialectLoader;
-import sdmxdl.tck.SdmxWebDriverAssert;
+import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 

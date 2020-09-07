@@ -24,8 +24,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @author Philippe Charles
  */
-public interface Resource<T extends ResourceRef<T>> {
+//@SealedClass
+public abstract class Resource<T extends ResourceRef<T>> {
 
     @NonNull
-    T getRef();
+    public abstract T getRef();
 }

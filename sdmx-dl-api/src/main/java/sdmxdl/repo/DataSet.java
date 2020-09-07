@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class DataSet implements Resource<DataflowRef> {
+public class DataSet extends Resource<DataflowRef> {
 
     @lombok.NonNull
     DataflowRef ref;
@@ -40,14 +41,14 @@ public class DataSet implements Resource<DataflowRef> {
 
     @lombok.NonNull
     @lombok.Singular("series")
-    List<Series> data;
+    Collection<Series> data;
 
     public static Builder builder() {
         return new Builder().key(Key.ALL);
     }
 
     @NonNull
-    public List<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
+    public Collection<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
         return isNoFilters(key, filter) ? data : getDataStream(key, filter).collect(Collectors.toList());

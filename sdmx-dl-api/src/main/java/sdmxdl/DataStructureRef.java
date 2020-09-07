@@ -16,7 +16,6 @@
  */
 package sdmxdl;
 
-import internal.sdmxdl.ResourceRefs;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -28,7 +27,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DataStructureRef implements ResourceRef<DataStructureRef> {
+public class DataStructureRef extends ResourceRef<DataStructureRef> {
 
     @lombok.NonNull
     String agency;
@@ -41,16 +40,16 @@ public class DataStructureRef implements ResourceRef<DataStructureRef> {
 
     @Override
     public String toString() {
-        return ResourceRefs.toString(this);
+        return toString(this);
     }
 
     @NonNull
     public static DataStructureRef parse(@NonNull String input) throws IllegalArgumentException {
-        return ResourceRefs.parse(input, DataStructureRef::new);
+        return parse(input, DataStructureRef::new);
     }
 
     @NonNull
     public static DataStructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
-        return ResourceRefs.of(agency, id, version, DataStructureRef::new);
+        return of(agency, id, version, DataStructureRef::new);
     }
 }

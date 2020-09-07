@@ -39,64 +39,63 @@ public final class SeriesCursor implements DataCursor {
     @lombok.NonNull
     private final Key ref;
 
-    private Series current = null;
-    private int obsIdx = -1;
+    private Series series = null;
+    private Iterator<Obs> obsIterator = null;
+    private Obs obs = null;
     private boolean closed = false;
-    private boolean hasSeries = false;
-    private boolean hasObs = false;
 
     @Override
     public boolean nextSeries() throws IOException {
         checkState();
         do {
-            current = col.hasNext() ? col.next() : null;
-            obsIdx = -1;
-        } while (current != null && !ref.containsKey(current));
-        return hasSeries = current != null;
+            series = col.hasNext() ? col.next() : null;
+            obsIterator = series != null ? series.getObs().iterator() : null;
+        } while (series != null && !ref.containsKey(series));
+        return series != null;
     }
 
     @Override
     public boolean nextObs() throws IOException {
         checkSeriesState();
-        obsIdx++;
-        return hasObs = (obsIdx < current.getObs().size());
+        obs = obsIterator.hasNext() ? obsIterator.next() : null;
+        return obs != null;
     }
 
     @Override
     public Key getSeriesKey() throws IOException {
         checkSeriesState();
-        return current.getKey();
+        return series.getKey();
     }
 
     @Override
     public Frequency getSeriesFrequency() throws IOException {
         checkSeriesState();
-        return current.getFreq();
+        return series.getFreq();
     }
 
     @Override
     public String getSeriesAttribute(String key) throws IOException {
         checkSeriesState();
         Objects.requireNonNull(key);
-        return current.getMeta().get(key);
+        return series.getMeta().get(key);
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
-        return current.getMeta();
+        return series.getMeta();
     }
 
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return current.getObs().get(obsIdx).getPeriod();
+        return obs.getPeriod();
     }
 
     @Override
     public Double getObsValue() throws IOException {
         checkObsState();
-        return current.getObs().get(obsIdx).getValue();
+        return obs.getValue();
     }
 
     @Override
@@ -130,14 +129,14 @@ public final class SeriesCursor implements DataCursor {
 
     private void checkSeriesState() throws IOException, IllegalStateException {
         checkState();
-        if (!hasSeries) {
+        if (series == null) {
             throw new IllegalStateException();
         }
     }
 
     private void checkObsState() throws IOException, IllegalStateException {
         checkSeriesState();
-        if (!hasObs) {
+        if (obs == null) {
             throw new IllegalStateException();
         }
     }

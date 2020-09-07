@@ -16,6 +16,7 @@
  */
 package sdmxdl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,5 +39,5 @@ public class Series {
 
     @lombok.NonNull
     @lombok.Singular("obs")
-    List<Obs> obs;
+    Collection<Obs> obs;
 }

@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.ext;
 
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.spi.SdmxDialect;

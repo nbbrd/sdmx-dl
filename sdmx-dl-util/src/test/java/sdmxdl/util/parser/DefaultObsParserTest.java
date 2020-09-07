@@ -21,7 +21,7 @@ import org.junit.Test;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.tck.ObsParserAssert;
+import sdmxdl.tck.ext.ObsParserAssert;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;

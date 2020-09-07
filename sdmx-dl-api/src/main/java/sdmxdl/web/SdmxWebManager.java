@@ -52,8 +52,8 @@ public class SdmxWebManager implements SdmxManager {
     public static SdmxWebManager ofServiceLoader() {
         return SdmxWebManager
                 .builder()
-                .drivers(new SdmxWebDriverLoader().get())
-                .dialects(new SdmxDialectLoader().get())
+                .drivers(SdmxWebDriverLoader.load())
+                .dialects(SdmxDialectLoader.load())
                 .build();
     }
 
@@ -132,22 +132,6 @@ public class SdmxWebManager implements SdmxManager {
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
         return driver.connect(source, getContext());
-    }
-
-    @NonNull
-    public List<String> getDriverNames() {
-        return drivers
-                .stream()
-                .map(SdmxWebDriver::getName)
-                .collect(Collectors.toList());
-    }
-
-    @NonNull
-    public Collection<String> getSupportedProperties(@NonNull String driver) {
-        Objects.requireNonNull(driver);
-        return lookupDriver(driver)
-                .map(SdmxWebDriver::getSupportedProperties)
-                .orElse(Collections.emptyList());
     }
 
     private Optional<SdmxWebSource> lookupSource(String sourceName) {

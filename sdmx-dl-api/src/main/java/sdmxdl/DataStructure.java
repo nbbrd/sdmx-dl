@@ -29,7 +29,7 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-public class DataStructure implements Resource<DataStructureRef> {
+public class DataStructure extends Resource<DataStructureRef> {
 
     /**
      * Non-null unique reference to this data structure.

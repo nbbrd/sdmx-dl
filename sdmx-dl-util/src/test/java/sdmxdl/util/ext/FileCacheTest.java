@@ -22,13 +22,12 @@ import com.google.common.jimfs.Jimfs;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.SdmxCacheAssert;
+import sdmxdl.tck.ext.SdmxCacheAssert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;

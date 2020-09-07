@@ -32,6 +32,7 @@ import java.util.List;
 @lombok.experimental.UtilityClass
 public class SdmxConnectionAssert {
 
+    @lombok.Value
     @lombok.Builder
     public static class Sample {
         DataflowRef valid;

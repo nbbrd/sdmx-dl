@@ -1,13 +1,15 @@
-package sdmxdl.tck;
+package sdmxdl.tck.file;
 
 import internal.sdmxdl.tck.TckUtil;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.tck.SdmxConnectionAssert;
 
 @lombok.experimental.UtilityClass
 public class SdmxFileConnectionAssert {
 
+    @lombok.Value
     @lombok.Builder
     public static class Sample {
         SdmxConnectionAssert.Sample connection;
@@ -26,7 +28,7 @@ public class SdmxFileConnectionAssert {
     private static void checkGetDataflowRef(SoftAssertions s, IOSupplier<SdmxFileConnection> supplier, Sample sample) {
         try (SdmxFileConnection conn = supplier.getWithIO()) {
             s.assertThat(conn.getDataflowRef())
-                    .isEqualTo(sample.connection.valid);
+                    .isEqualTo(sample.connection.getValid());
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }
@@ -35,7 +37,7 @@ public class SdmxFileConnectionAssert {
     private static void checkGetFlow(SoftAssertions s, IOSupplier<SdmxFileConnection> supplier, Sample sample) {
         try (SdmxFileConnection conn = supplier.getWithIO()) {
             s.assertThat(conn.getFlow().getRef())
-                    .isEqualTo(sample.connection.valid);
+                    .isEqualTo(sample.connection.getValid());
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }

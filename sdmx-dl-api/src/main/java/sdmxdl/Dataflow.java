@@ -20,7 +20,7 @@ package sdmxdl;
  * @author Philippe Charles
  */
 @lombok.Value(staticConstructor = "of")
-public class Dataflow implements Resource<DataflowRef> {
+public class Dataflow extends Resource<DataflowRef> {
 
     @lombok.NonNull
     DataflowRef ref;

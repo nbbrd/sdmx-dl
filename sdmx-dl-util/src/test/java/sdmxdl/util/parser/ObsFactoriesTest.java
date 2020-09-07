@@ -1,7 +1,7 @@
 package sdmxdl.util.parser;
 
 import org.junit.Test;
-import sdmxdl.tck.ObsFactoryAssert;
+import sdmxdl.tck.ext.ObsFactoryAssert;
 
 public class ObsFactoriesTest {
 

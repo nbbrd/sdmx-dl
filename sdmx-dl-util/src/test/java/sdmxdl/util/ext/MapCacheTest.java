@@ -18,7 +18,7 @@ package sdmxdl.util.ext;
 
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.SdmxCacheAssert;
+import sdmxdl.tck.ext.SdmxCacheAssert;
 
 import java.time.Clock;
 import java.time.Duration;

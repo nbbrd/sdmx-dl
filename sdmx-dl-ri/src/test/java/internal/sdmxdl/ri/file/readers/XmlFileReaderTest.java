@@ -6,7 +6,7 @@ import org.junit.rules.TemporaryFolder;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.SdmxFileContext;
 import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.SdmxFileReaderAssert;
+import sdmxdl.tck.file.SdmxFileReaderAssert;
 import sdmxdl.xml.XmlFileSource;
 
 import java.io.File;

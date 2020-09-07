@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.ext;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.assertj.core.api.SoftAssertions;

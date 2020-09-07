@@ -8,6 +8,13 @@ import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
+import sdmxdl.tck.ext.MockedDialect;
+import sdmxdl.tck.ext.SdmxCacheAssert;
+import sdmxdl.tck.web.MockedWebDriver;
+import sdmxdl.tck.web.SdmxWebAuthenticatorAssert;
+import sdmxdl.tck.web.SdmxWebListenerAssert;
+import sdmxdl.web.SdmxWebAuthenticator;
+import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -70,5 +77,23 @@ public class ApiTest {
     @SuppressWarnings("null")
     public void testDataSetCursor() {
         DataCursorAssert.assertCompliance(() -> RepoSamples.REPO.getDataSet(RepoSamples.GOOD_FLOW_REF).get().getDataCursor(Key.ALL, DataFilter.ALL));
+    }
+
+    @Test
+    public void testNoOpAuthenticator() {
+        SdmxWebAuthenticatorAssert.assertCompliance(
+                SdmxWebAuthenticator.noOp(),
+                SdmxWebAuthenticatorAssert.Sample
+                        .builder()
+                        .source(SdmxWebSource.builder().name("localhost").driver("").endpointOf("http://localhost").build())
+                        .build()
+        );
+    }
+
+    @Test
+    public void testNoOpWebListener() {
+        SdmxWebListenerAssert.assertCompliance(
+                SdmxWebListener.getDefault()
+        );
     }
 }

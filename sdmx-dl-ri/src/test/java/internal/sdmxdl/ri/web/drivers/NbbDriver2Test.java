@@ -20,7 +20,7 @@ import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.util.rest.RestClient;
 import org.junit.Test;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.tck.SdmxWebDriverAssert;
+import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.util.parser.ObsFactories;
 
 import javax.net.ssl.HttpsURLConnection;

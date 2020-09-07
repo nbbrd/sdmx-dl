@@ -1,5 +1,6 @@
 package internal.sdmxdl.web;
 
+import java.util.Objects;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 
@@ -17,6 +18,8 @@ public enum DefaultSdmxWebListener implements SdmxWebListener {
 
     @Override
     public void onSourceEvent(SdmxWebSource source, String message) {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(message);
         log.log(Level.INFO, message);
     }
 }

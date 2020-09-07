@@ -17,6 +17,7 @@
 package sdmxdl;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 
 /**
@@ -24,31 +25,76 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @author Philippe Charles
  */
-public interface ResourceRef<T extends ResourceRef<T>> {
+//@SealedClass
+public abstract class ResourceRef<T extends ResourceRef<T>> {
 
-    String ALL_AGENCIES = "all";
-    String LATEST_VERSION = "latest";
-
-    @NonNull
-    String getAgency();
+    public static final String ALL_AGENCIES = "all";
+    public static final String LATEST_VERSION = "latest";
 
     @NonNull
-    String getId();
+    public abstract String getAgency();
 
     @NonNull
-    String getVersion();
+    public abstract String getId();
 
-    default boolean containsRef(@NonNull Resource<T> that) {
+    @NonNull
+    public abstract String getVersion();
+
+    public boolean containsRef(@NonNull Resource<T> that) {
         return contains(that.getRef());
     }
 
-    default boolean contains(@NonNull T that) {
+    public boolean contains(@NonNull T that) {
         return (this.getAgency().equals(ALL_AGENCIES) || this.getAgency().equals(that.getAgency()))
                 && (this.getId().equals(that.getId()))
                 && (this.getVersion().equals(LATEST_VERSION) || this.getVersion().equals(that.getVersion()));
     }
 
-    default boolean equalsRef(@NonNull Resource<T> that) {
+    public boolean equalsRef(@NonNull Resource<T> that) {
         return equals(that.getRef());
+    }
+
+    @NonNull
+    protected static String toString(ResourceRef<?> ref) {
+        return ref.getAgency() + "," + ref.getId() + "," + ref.getVersion();
+    }
+
+    @NonNull
+    protected static <T extends ResourceRef<T>> T parse(@NonNull String input, @NonNull Factory<T> factory) throws IllegalArgumentException {
+        String[] items = input.split(",", -1);
+        switch (items.length) {
+            case 3:
+                return factory.create(emptyToDefault(items[0], ALL_AGENCIES), items[1], emptyToDefault(items[2], LATEST_VERSION));
+            case 2:
+                return factory.create(emptyToDefault(items[0], ALL_AGENCIES), items[1], LATEST_VERSION);
+            case 1:
+                return factory.create(ALL_AGENCIES, items[0], LATEST_VERSION);
+            default:
+                throw new IllegalArgumentException(input);
+        }
+    }
+
+    @NonNull
+    protected static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory) throws IllegalArgumentException {
+        if (id.contains(",")) {
+            throw new IllegalArgumentException(id);
+        }
+        return factory.create(nullOrEmptyToDefault(agencyId, ALL_AGENCIES), id, nullOrEmptyToDefault(version, LATEST_VERSION));
+    }
+
+    protected interface Factory<T extends ResourceRef<T>> {
+
+        @NonNull
+        T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);
+    }
+
+    @NonNull
+    private static String emptyToDefault(@NonNull String input, @NonNull String defaultValue) {
+        return input.isEmpty() ? defaultValue : input;
+    }
+
+    @NonNull
+    private static String nullOrEmptyToDefault(@Nullable String input, @NonNull String defaultValue) {
+        return input == null || input.isEmpty() ? defaultValue : input;
     }
 }

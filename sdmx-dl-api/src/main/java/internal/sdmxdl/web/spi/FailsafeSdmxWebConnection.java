@@ -1,42 +1,35 @@
 /*
  * Copyright 2019 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.web.spi;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import lombok.AccessLevel;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Stream;
-import lombok.AccessLevel;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.extern.java.Log
@@ -47,9 +40,9 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         return obj instanceof FailsafeSdmxWebConnection
                 ? obj
                 : new FailsafeSdmxWebConnection(obj,
-                        FailsafeSdmxWebConnection::logUnexpectedError,
-                        FailsafeSdmxWebConnection::logUnexpectedNull
-                );
+                FailsafeSdmxWebConnection::logUnexpectedError,
+                FailsafeSdmxWebConnection::logUnexpectedNull
+        );
     }
 
     static SdmxWebConnection unwrap(SdmxWebConnection obj) {
@@ -157,12 +150,12 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public Collection<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         Objects.requireNonNull(flowRef);
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
 
-        List<Series> result;
+        Collection<Series> result;
 
         try {
             result = delegate.getData(flowRef, key, filter);

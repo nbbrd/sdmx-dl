@@ -1,17 +1,17 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.cli;
@@ -25,12 +25,11 @@ import picocli.CommandLine;
 import sdmxdl.Series;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "meta")
@@ -50,7 +49,7 @@ public final class MetaCommand extends BaseCommand {
     public Void call() throws Exception {
         excel.apply(csv);
 
-        List<Series> data = web.getSeries();
+        Collection<Series> data = web.getSeries();
         try (Csv.Writer writer = csv.newCsvWriter(this::getStdOutEncoding)) {
             writeHead(writer, data, excel.isExcelCompatibility());
             writeBody(writer, data);
@@ -59,7 +58,7 @@ public final class MetaCommand extends BaseCommand {
         return null;
     }
 
-    private static void writeHead(Csv.Writer w, List<Series> data, boolean cornerFieldRequired) throws IOException {
+    private static void writeHead(Csv.Writer w, Collection<Series> data, boolean cornerFieldRequired) throws IOException {
         w.writeField(cornerFieldRequired ? "Key" : "");
         for (Series o : data) {
             w.writeField(o.getKey().toString());
@@ -67,7 +66,7 @@ public final class MetaCommand extends BaseCommand {
         w.writeEndOfLine();
     }
 
-    private static void writeBody(Csv.Writer w, List<Series> data) throws IOException {
+    private static void writeBody(Csv.Writer w, Collection<Series> data) throws IOException {
         TreeSet<String> metaKeyRows = data.stream()
                 .flatMap(series -> series.getMeta().keySet().stream())
                 .collect(Collectors.toCollection(TreeSet::new));

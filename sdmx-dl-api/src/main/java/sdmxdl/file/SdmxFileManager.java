@@ -42,8 +42,8 @@ public class SdmxFileManager implements SdmxManager {
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
         return builder()
-                .dialects(new SdmxDialectLoader().get())
-                .readers(new SdmxFileReaderLoader().get())
+                .dialects(SdmxDialectLoader.load())
+                .readers(SdmxFileReaderLoader.load())
                 .build();
     }
 

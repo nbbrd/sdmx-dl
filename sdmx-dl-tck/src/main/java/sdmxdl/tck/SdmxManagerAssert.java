@@ -26,9 +26,11 @@ import java.io.IOException;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 @lombok.experimental.UtilityClass
 public class SdmxManagerAssert {
 
+    @lombok.Value
     @lombok.Builder
     public static class Sample {
         String validName;

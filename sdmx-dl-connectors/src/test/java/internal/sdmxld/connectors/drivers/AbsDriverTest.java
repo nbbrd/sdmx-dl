@@ -18,7 +18,7 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.AbsDriver;
 import org.junit.Test;
-import sdmxdl.tck.SdmxWebDriverAssert;
+import sdmxdl.tck.web.SdmxWebDriverAssert;
 
 /**
  * @author Philippe Charles

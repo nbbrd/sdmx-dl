@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.file;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.assertj.core.api.SoftAssertions;
@@ -10,6 +10,7 @@ import sdmxdl.file.spi.SdmxFileReader;
 @lombok.experimental.UtilityClass
 public class SdmxFileReaderAssert {
 
+    @lombok.Value
     @lombok.Builder
     public static class Sample {
         String validName;

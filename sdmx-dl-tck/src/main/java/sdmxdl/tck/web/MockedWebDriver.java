@@ -1,4 +1,4 @@
-package sdmxdl.tck;
+package sdmxdl.tck.web;
 
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.web.SdmxWebConnection;

@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Philippe Charles
@@ -58,6 +59,7 @@ public class SdmxWebSource {
 
         @NonNull
         public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
+            Objects.requireNonNull(endpoint);
             try {
                 return endpoint(new URL(endpoint));
             } catch (MalformedURLException ex) {
@@ -66,7 +68,8 @@ public class SdmxWebSource {
         }
 
         @NonNull
-        public Builder propertyOf(@NonNull String key, @NonNull Object value) throws IllegalArgumentException {
+        public Builder propertyOf(@NonNull String key, @NonNull Object value) {
+            Objects.requireNonNull(key);
             return property(key, value.toString());
         }
     }
