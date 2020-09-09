@@ -13,7 +13,7 @@
         <name>INEGI</name>
         <description>Instituto Nacional de Estadistica y Geografia</description>
         <driver>connectors:sdmx21</driver>
-        <endpoint>http://sdmx.snieg.mx/service/Rest</endpoint>
+        <endpoint>https://sdmx.snieg.mx/service/Rest</endpoint>
     </source>
     <source>
         <name>WB</name>
@@ -26,7 +26,7 @@
         <name>UNDATA</name>
         <description>Data access system to UN databases</description>
         <driver>connectors:sdmx21</driver>
-        <endpoint>http://data.un.org/WS/rest</endpoint>
+        <endpoint>https://data.un.org/WS/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
     </source>
     <source>

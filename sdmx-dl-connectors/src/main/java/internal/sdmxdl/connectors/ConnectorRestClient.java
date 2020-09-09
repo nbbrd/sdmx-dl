@@ -19,6 +19,9 @@ package internal.sdmxdl.connectors;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
+import it.bancaditalia.oss.sdmx.event.RedirectionEvent;
+import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
+import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -27,6 +30,8 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.web.SdmxWebListener;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
 import java.io.IOException;
@@ -68,7 +73,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint().toURI());
-                configure(client, source.getProperties(), context);
+                configure(client, source, context);
                 return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -80,7 +85,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
-                configure(client, source.getProperties(), context);
+                configure(client, source, context);
                 return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
@@ -184,13 +189,32 @@ public final class ConnectorRestClient implements SdmxWebClient {
         return new IOException(String.format(format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, Map<?, ?> info, SdmxWebContext context) {
+    private static void configure(RestSdmxClient client, SdmxWebSource source, SdmxWebContext context) {
         client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
-        client.setConnectTimeout(getConnectTimeout(info));
-        client.setReadTimeout(getReadTimeout(info));
+        client.setConnectTimeout(getConnectTimeout(source.getProperties()));
+        client.setReadTimeout(getReadTimeout(source.getProperties()));
         client.setProxySelector(context.getProxySelector());
         client.setSslSocketFactory(context.getSslSocketFactory());
+        client.setRedirectionEventListener(new DefaultRedirectionEventListener(source, context.getEventListener()));
         // TODO: maxRedirections
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class DefaultRedirectionEventListener implements RestSdmxEventListener {
+
+        @lombok.NonNull
+        private final SdmxWebSource source;
+
+        @lombok.NonNull
+        private final SdmxWebListener listener;
+
+        @Override
+        public void onSdmxEvent(RestSdmxEvent event) {
+            if (listener.isEnabled() && event instanceof RedirectionEvent) {
+                RedirectionEvent redirectionEvent = (RedirectionEvent) event;
+                listener.onSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+            }
+        }
     }
 
     static {

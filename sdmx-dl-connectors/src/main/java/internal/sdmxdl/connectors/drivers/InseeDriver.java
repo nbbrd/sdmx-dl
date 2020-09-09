@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
-import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 
 /**
  * @author Philippe Charles
@@ -50,11 +49,8 @@ public final class InseeDriver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", FALLBACK_ENDPOINT)
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", "https://bdm.insee.fr/series/sdmx")
             .build();
-
-    @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to some servers that use root certificate unknown to jdk'")
-    private static final String FALLBACK_ENDPOINT = "http://bdm.insee.fr/series/sdmx";
 
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
     private static final String DIALECT = "INSEE2017";
