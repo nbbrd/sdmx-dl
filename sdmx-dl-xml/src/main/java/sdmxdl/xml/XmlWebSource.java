@@ -65,6 +65,9 @@ public final class XmlWebSource {
                         case "property":
                             item.property(reader.getAttributeValue(null, "key"), reader.getAttributeValue(null, "value"));
                             break;
+                        case "alias":
+                            item.alias(reader.getElementText());
+                            break;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:

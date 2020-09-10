@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Philippe Charles
@@ -48,6 +49,22 @@ public class SdmxWebSource {
 
     @lombok.Singular
     Map<String, String> properties;
+
+    @lombok.Singular
+    Set<String> aliases;
+
+    @NonNull
+    public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
+        Objects.requireNonNull(name);
+        if (!aliases.contains(name)) {
+            throw new IllegalArgumentException(name);
+        }
+        return toBuilder().name(name).build();
+    }
+
+    public boolean isAlias() {
+        return aliases.contains(name);
+    }
 
     // Fix lombok.Builder.Default bug in NetBeans
     public static Builder builder() {

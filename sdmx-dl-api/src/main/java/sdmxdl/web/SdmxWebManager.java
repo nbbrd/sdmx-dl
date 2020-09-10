@@ -169,10 +169,18 @@ public class SdmxWebManager implements SdmxManager {
 
     private static SortedMap<String, SdmxWebSource> initSourceMap(List<SdmxWebSource> customSources, List<SdmxWebSource> defaultSources) {
         return Stream.concat(customSources.stream(), defaultSources.stream())
+                .flatMap(SdmxWebManager::expandAliases)
                 .collect(Collectors.groupingBy(SdmxWebSource::getName, TreeMap::new, reducingByFirst()));
     }
 
-    private static Collector<SdmxWebSource, ?, SdmxWebSource> reducingByFirst() {
+    private static Stream<SdmxWebSource> expandAliases(SdmxWebSource source) {
+        Stream<SdmxWebSource> first = Stream.of(source);
+        return !source.getAliases().isEmpty()
+                ? Stream.concat(first, source.getAliases().stream().map(source::alias))
+                : first;
+    }
+
+    private static <T> Collector<T, ?, T> reducingByFirst() {
         return Collectors.reducing(null, (first, last) -> first == null ? last : first);
     }
 

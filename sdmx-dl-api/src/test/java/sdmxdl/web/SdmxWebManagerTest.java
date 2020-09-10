@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -50,7 +47,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
         });
-        
+
         assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getDialects()).isEmpty();
@@ -68,19 +65,20 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetSources() {
-        SdmxWebSource defaultSource1 = SdmxWebSource.builder().name("s1").driver("d1").endpointOf("http://ds1").build();
-        SdmxWebSource defaultSource2 = SdmxWebSource.builder().name("s2").driver("d1").endpointOf("http://ds2").build();
+        SdmxWebSource nbb = SdmxWebSource.builder().name("nbb").alias("bnb").driver("sdmx21").endpointOf("http://nbb").build();
+        SdmxWebSource ecb = SdmxWebSource.builder().name("ecb").driver("sdmx21").endpointOf("http://ecb").build();
+        SdmxWebSource abs = SdmxWebSource.builder().name("abs").driver("sdmx21").endpointOf("http://abs").build();
 
-        SdmxWebDriver driver1 = MockedWebDriver
+        SdmxWebSource nbbAlias = nbb.alias("bnb");
+        SdmxWebSource nbbDialect = nbb.toBuilder().dialect("custom").clearAliases().build();
+
+        SdmxWebDriver sdmx21 = MockedWebDriver
                 .builder()
-                .name("d1")
+                .name("sdmx21")
                 .rank(SdmxWebDriver.WRAPPED_RANK)
-                .source(defaultSource1)
-                .source(defaultSource2)
+                .source(nbb)
+                .source(ecb)
                 .build();
-
-        SdmxWebSource customSource1 = SdmxWebSource.builder().name("s1").driver("d1").endpointOf("http://cs1").build();
-        SdmxWebSource customSource3 = SdmxWebSource.builder().name("s3").driver("d1").endpointOf("http://cs3").build();
 
         assertThat(
                 SdmxWebManager
@@ -88,45 +86,55 @@ public class SdmxWebManagerTest {
                         .build()
                         .getSources()
         )
+                .describedAs("WebManager without driver nor custom-sources has no sources")
                 .isEmpty();
 
         assertThat(
                 SdmxWebManager
                         .builder()
-                        .driver(driver1)
+                        .driver(sdmx21)
                         .build()
                         .getSources()
         )
-                .hasSize(2)
-                .containsEntry("s1", defaultSource1)
-                .containsEntry("s2", defaultSource2);
+                .describedAs("WebManager with driver but without custom-sources has only driver-sources sorted by name with order-based priority")
+                .containsExactly(
+                        entryOf("bnb", nbbAlias),
+                        entryOf("ecb", ecb),
+                        entryOf("nbb", nbb)
+                );
 
         assertThat(
                 SdmxWebManager
                         .builder()
-                        .customSource(defaultSource1)
-                        .customSource(customSource1)
-                        .customSource(customSource3)
+                        .customSource(nbb)
+                        .customSource(nbbDialect)
+                        .customSource(abs)
                         .build()
                         .getSources()
         )
-                .hasSize(2)
-                .containsEntry("s1", defaultSource1)
-                .containsEntry("s3", customSource3);
+                .describedAs("WebManager without driver but with custom-sources has only custom-sources sorted by name with order-based priority")
+                .containsExactly(
+                        entryOf("abs", abs),
+                        entryOf("bnb", nbbAlias),
+                        entryOf("nbb", nbb)
+                );
 
         assertThat(
                 SdmxWebManager
                         .builder()
-                        .driver(driver1)
-                        .customSource(customSource1)
-                        .customSource(customSource3)
+                        .driver(sdmx21)
+                        .customSource(nbbDialect)
+                        .customSource(abs)
                         .build()
                         .getSources()
         )
-                .hasSize(3)
-                .containsEntry("s1", customSource1)
-                .containsEntry("s2", defaultSource2)
-                .containsEntry("s3", customSource3);
+                .describedAs("WebManager with driver and custom-sources has both driver-sources and custom-sources sorted by name with order-based priority")
+                .containsExactly(
+                        entryOf("abs", abs),
+                        entryOf("bnb", nbbAlias),
+                        entryOf("ecb", ecb),
+                        entryOf("nbb", nbbDialect)
+                );
     }
 
     @Test
@@ -296,5 +304,9 @@ public class SdmxWebManagerTest {
         public ObsFactory getObsFactory() {
             return dsd -> null;
         }
+    }
+
+    private static <K, V> AbstractMap.SimpleEntry<K, V> entryOf(K name, V source) {
+        return new AbstractMap.SimpleEntry<>(name, source);
     }
 }

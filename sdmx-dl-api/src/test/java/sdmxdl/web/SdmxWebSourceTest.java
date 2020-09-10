@@ -52,4 +52,26 @@ public class SdmxWebSourceTest {
         assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").name("").description("").driver("").build().getProperties())
                 .containsEntry("hello", "world");
     }
+
+    @Test
+    public void testAlias() {
+        SdmxWebSource estat = SdmxWebSource.builder().name("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(estat.alias("EUROSTAT"))
+                .isEqualTo(estat.toBuilder().name("EUROSTAT").build());
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> estat.alias(null));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> estat.alias("other"));
+    }
+
+    @Test
+    public void testIsAlias() {
+        SdmxWebSource base = SdmxWebSource.builder().name("ESTAT").driver("").endpointOf("http://localhost").build();
+        assertThat(base.isAlias()).isFalse();
+        assertThat(base.toBuilder().alias("EUROSTAT").build().isAlias()).isFalse();
+        assertThat(base.toBuilder().name("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
+    }
 }

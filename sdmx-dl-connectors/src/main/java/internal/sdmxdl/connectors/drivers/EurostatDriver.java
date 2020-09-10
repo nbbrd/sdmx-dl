@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 /**
@@ -35,6 +36,13 @@ public final class EurostatDriver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(EUROSTAT::new, "SDMX21"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("EUROSTAT", "Eurostat", "http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ESTAT")
+                    .alias("EUROSTAT")
+                    .description("Eurostat")
+                    .driver("connectors:eurostat")
+                    .endpointOf("http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+                    .build())
             .build();
 }
