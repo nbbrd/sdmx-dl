@@ -63,30 +63,34 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testNPE() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient.builder().build();
+        HttpRest.Context context = HttpRest.Context
+                .builder()
+                .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.open(null, "", ""));
+                .isThrownBy(() -> x.requestGET(null, "", ""));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.open(new URL("http://here"), null, ""));
+                .isThrownBy(() -> x.requestGET(new URL("http://here"), null, ""));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.open(new URL("http://here"), "", null));
+                .isThrownBy(() -> x.requestGET(new URL("http://here"), "", null));
     }
 
     @Test
     public void testHttpOK() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
             assertSameSampleContent(response);
         }
 
@@ -100,11 +104,12 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testHttpError() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL)
@@ -115,9 +120,9 @@ public class Jdk8RestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), SdmxMediaType.XML, ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), SdmxMediaType.XML, ANY_LANG))
                 .withMessage("500: boom")
-                .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
                     assertThat(o.getResponseMessage()).isEqualTo("boom");
                     assertThat(o.getHeaderFields()).containsEntry("key", Collections.singletonList("value"));
@@ -128,20 +133,24 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testInvalidProtocol() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient.builder().build();
+        HttpRest.Context context = HttpRest.Context
+                .builder()
+                .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(new URL("ftp://localhost"), SdmxMediaType.XML, ""))
+                .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), SdmxMediaType.XML, ""))
                 .withMessage("Unsupported connection type");
     }
 
     @Test
     public void testRedirect() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         String absolute = wire.url(SECOND_URL);
         String relative = SECOND_URL;
@@ -152,7 +161,7 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
-                try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+                try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
                     assertSameSampleContent(response);
                 }
             }
@@ -161,12 +170,13 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testMaxRedirect() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .maxRedirects(0)
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         String absolute = wire.url(SECOND_URL);
         String relative = SECOND_URL;
@@ -178,7 +188,7 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
-                        .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                        .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                         .withMessage("Max redirection reached");
             }
         }
@@ -186,29 +196,31 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testInvalidRedirect() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         for (int redirection : HTTP_REDIRECTIONS) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessage("Missing redirection url");
         }
     }
 
     @Test
     public void testDowngradingRedirect() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         String location = wireHttpUrl(SECOND_URL);
 
@@ -218,58 +230,61 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }
 
     @Test
     public void testInvalidSSL() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                 .isInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
     public void testReadTimeout() throws IOException {
-        Jdk8RestClient x = Jdk8RestClient
+        HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
                 .readTimeout(10)
                 .build();
+        Jdk8RestClient x = new Jdk8RestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(20)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                 .withMessageContaining("Read timed out");
     }
 
     @Test
     public void testValidAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            Jdk8RestClient x = Jdk8RestClient
+            HttpRest.Context context = HttpRest.Context
                     .builder()
                     .sslSocketFactory(wireSSLSocketFactory())
                     .hostnameVerifier(wireHostnameVerifier())
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
+            Jdk8RestClient x = new Jdk8RestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
                 assertSameSampleContent(response);
             }
 
@@ -280,22 +295,23 @@ public class Jdk8RestClientTest {
     @Test
     public void testNoAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            Jdk8RestClient x = Jdk8RestClient
+            HttpRest.Context context = HttpRest.Context
                     .builder()
                     .sslSocketFactory(wireSSLSocketFactory())
                     .hostnameVerifier(wireHostnameVerifier())
-                    .authenticator(Authenticator.NONE)
+                    .authenticator(HttpRest.Authenticator.noOp())
                     .preemptiveAuthentication(preemptive)
                     .build();
+            Jdk8RestClient x = new Jdk8RestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessage("401: Unauthorized")
-                    .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                    .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                         assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
                         assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
                     });
@@ -307,13 +323,14 @@ public class Jdk8RestClientTest {
     @Test
     public void testInvalidAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            Jdk8RestClient x = Jdk8RestClient
+            HttpRest.Context context = HttpRest.Context
                     .builder()
                     .sslSocketFactory(wireSSLSocketFactory())
                     .hostnameVerifier(wireHostnameVerifier())
                     .authenticator(authenticatorOf("user", "xyz"))
                     .preemptiveAuthentication(preemptive)
                     .build();
+            Jdk8RestClient x = new Jdk8RestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -321,9 +338,9 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
                     .withMessage("401: Unauthorized")
-                    .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                    .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                         assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
                         assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
                     });
@@ -335,13 +352,14 @@ public class Jdk8RestClientTest {
     @Test
     public void testInsecureAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            Jdk8RestClient x = Jdk8RestClient
+            HttpRest.Context context = HttpRest.Context
                     .builder()
                     .sslSocketFactory(wireSSLSocketFactory())
                     .hostnameVerifier(wireHostnameVerifier())
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
+            Jdk8RestClient x = new Jdk8RestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -350,7 +368,7 @@ public class Jdk8RestClientTest {
             String location = wireHttpUrl(SAMPLE_URL);
 
             assertThatIOException()
-                    .isThrownBy(() -> x.open(new URL(location), GENERIC_DATA_21, ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new URL(location), GENERIC_DATA_21, ANY_LANG))
                     .withMessageContaining("Insecure protocol");
 
             wire.verify(preemptive ? 0 : 1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -360,19 +378,20 @@ public class Jdk8RestClientTest {
     @Test
     public void testMissingAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            Jdk8RestClient x = Jdk8RestClient
+            HttpRest.Context context = HttpRest.Context
                     .builder()
                     .sslSocketFactory(wireSSLSocketFactory())
                     .hostnameVerifier(wireHostnameVerifier())
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
+            Jdk8RestClient x = new Jdk8RestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (RestClient.Response response = x.open(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
+            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG)) {
                 assertSameSampleContent(response);
             }
 
@@ -410,15 +429,15 @@ public class Jdk8RestClientTest {
         return new URL(wire.url(path));
     }
 
-    private void assertSameSampleContent(Response response) throws IOException {
+    private void assertSameSampleContent(HttpRest.Response response) throws IOException {
         assertThat(response.getContentType()).isEqualTo(SdmxMediaType.XML);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }
     }
 
-    private Authenticator authenticatorOf(String username, String password) {
-        return new Authenticator() {
+    private HttpRest.Authenticator authenticatorOf(String username, String password) {
+        return new HttpRest.Authenticator() {
             @Override
             public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
                 return new PasswordAuthentication(username, password.toCharArray());

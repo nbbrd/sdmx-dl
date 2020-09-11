@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.RestClients;
 import internal.sdmxdl.ri.web.Sdmx21RestClient;
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
@@ -60,7 +60,7 @@ public final class WbDriver2 implements SdmxWebDriver {
             this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), true, ObsFactories.getObsFactory(c, s, "SDMX21"));
         }
 
-        WbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
+        WbClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
             super(name, endpoint, langs, executor, seriesKeysOnlySupported, dataFactory);
         }
 

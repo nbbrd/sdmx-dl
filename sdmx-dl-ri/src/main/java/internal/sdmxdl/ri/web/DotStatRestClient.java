@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -38,7 +38,7 @@ import static sdmxdl.ext.SdmxMediaType.XML;
  */
 public class DotStatRestClient extends RiRestClient {
 
-    public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, ObsFactory obsFactory) {
+    public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
         super(name, endpoint, langs, executor, obsFactory);
     }
 

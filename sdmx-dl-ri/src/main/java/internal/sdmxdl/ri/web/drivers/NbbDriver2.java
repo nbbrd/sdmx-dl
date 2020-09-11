@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestClient;
 import internal.sdmxdl.ri.web.RestClients;
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
 import nbbrd.io.Resource;
 import nbbrd.service.ServiceProvider;
@@ -63,7 +63,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
             this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
         }
 
-        NbbClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, ObsFactory obsFactory) {
+        NbbClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
             super(name, endpoint, langs, executor, obsFactory);
         }
 
@@ -80,8 +80,8 @@ public final class NbbDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        protected RestClient.Response open(URL query, String mediaType) throws IOException {
-            RestClient.Response result = super.open(query, mediaType);
+        protected HttpRest.Response open(URL query, String mediaType) throws IOException {
+            HttpRest.Response result = super.open(query, mediaType);
             try {
                 checkInternalErrorRedirect(result);
             } catch (Throwable ex) {
@@ -92,9 +92,9 @@ public final class NbbDriver2 implements SdmxWebDriver {
         }
 
         @SdmxFix(id = 2, category = CONTENT, cause = "Some internal errors redirect to an html page")
-        static void checkInternalErrorRedirect(RestClient.Response result) throws IOException {
+        static void checkInternalErrorRedirect(HttpRest.Response result) throws IOException {
             if (result.getContentType().contains("text/html")) {
-                throw new RestClient.ResponseError(HttpsURLConnection.HTTP_UNAVAILABLE, "Service unavailable", Collections.emptyMap());
+                throw new HttpRest.ResponseError(HttpsURLConnection.HTTP_UNAVAILABLE, "Service unavailable", Collections.emptyMap());
             }
         }
     }

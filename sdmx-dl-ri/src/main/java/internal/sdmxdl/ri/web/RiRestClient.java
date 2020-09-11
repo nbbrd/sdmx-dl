@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import nbbrd.io.Resource;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -43,15 +43,15 @@ public abstract class RiRestClient implements SdmxWebClient {
     protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
-    protected final RestClient executor;
+    protected final HttpRest.Client executor;
     protected final ObsFactory obsFactory;
 
-    protected IOSupplier<RestClient.Response> opening(URL query, String mediaType) {
+    protected IOSupplier<HttpRest.Response> opening(URL query, String mediaType) {
         return () -> open(query, mediaType);
     }
 
-    protected RestClient.Response open(URL query, String mediaType) throws IOException {
-        return executor.open(query, mediaType, langs.toString());
+    protected HttpRest.Response open(URL query, String mediaType) throws IOException {
+        return executor.requestGET(query, mediaType, langs.toString());
     }
 
     protected IOSupplier<InputStream> calling(URL query, String mediaType) {
@@ -118,7 +118,7 @@ public abstract class RiRestClient implements SdmxWebClient {
     @lombok.RequiredArgsConstructor
     private static final class DisconnectingInputStream extends InputStream {
 
-        static DisconnectingInputStream of(RestClient.Response response) throws IOException {
+        static DisconnectingInputStream of(HttpRest.Response response) throws IOException {
             return new DisconnectingInputStream(response.getBody(), response::close);
         }
 

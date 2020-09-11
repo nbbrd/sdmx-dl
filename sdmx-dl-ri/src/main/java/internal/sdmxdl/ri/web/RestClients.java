@@ -16,8 +16,8 @@
  */
 package internal.sdmxdl.ri.web;
 
+import internal.util.rest.HttpRest;
 import internal.util.rest.Jdk8RestClient;
-import internal.util.rest.RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.util.web.SdmxWebProperty;
@@ -39,19 +39,21 @@ import java.util.List;
 @lombok.experimental.UtilityClass
 public class RestClients {
 
-    public RestClient getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return Jdk8RestClient
-                .builder()
-                .readTimeout(SdmxWebProperty.getReadTimeout(o.getProperties()))
-                .connectTimeout(SdmxWebProperty.getConnectTimeout(o.getProperties()))
-                .maxRedirects(SdmxWebProperty.getMaxRedirects(o.getProperties()))
-                .proxySelector(context.getProxySelector())
-                .sslSocketFactory(context.getSslSocketFactory())
-                .hostnameVerifier(context.getHostnameVerifier())
-                .listener(new DefaultEventListener(o, context.getEventListener()))
-                .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                .preemptiveAuthentication(SdmxWebProperty.isPreemptiveAuthentication(o.getProperties()))
-                .build();
+    public HttpRest.Client getRestClient(SdmxWebSource o, SdmxWebContext context) {
+        return new Jdk8RestClient(
+                HttpRest.Context
+                        .builder()
+                        .readTimeout(SdmxWebProperty.getReadTimeout(o.getProperties()))
+                        .connectTimeout(SdmxWebProperty.getConnectTimeout(o.getProperties()))
+                        .maxRedirects(SdmxWebProperty.getMaxRedirects(o.getProperties()))
+                        .proxySelector(context.getProxySelector())
+                        .sslSocketFactory(context.getSslSocketFactory())
+                        .hostnameVerifier(context.getHostnameVerifier())
+                        .listener(new DefaultEventListener(o, context.getEventListener()))
+                        .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
+                        .preemptiveAuthentication(SdmxWebProperty.isPreemptiveAuthentication(o.getProperties()))
+                        .build()
+        );
     }
 
     public final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
@@ -63,7 +65,7 @@ public class RestClients {
             ));
 
     @lombok.AllArgsConstructor
-    private static final class DefaultEventListener implements Jdk8RestClient.EventListener {
+    private static final class DefaultEventListener implements HttpRest.EventListener {
 
         @lombok.NonNull
         private final SdmxWebSource source;
@@ -72,9 +74,9 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, String mediaType, String langs, Proxy proxy, Jdk8RestClient.AuthScheme scheme) {
+        public void onOpen(URL query, String mediaType, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
             if (listener.isEnabled()) {
-                if (Jdk8RestClient.AuthScheme.NONE.equals(scheme)) {
+                if (HttpRest.AuthScheme.NONE.equals(scheme)) {
                     listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
                 } else {
                     listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
@@ -90,7 +92,7 @@ public class RestClients {
         }
 
         @Override
-        public void onUnauthorized(URL url, Jdk8RestClient.AuthScheme oldScheme, Jdk8RestClient.AuthScheme newScheme) {
+        public void onUnauthorized(URL url, HttpRest.AuthScheme oldScheme, HttpRest.AuthScheme newScheme) {
             if (listener.isEnabled()) {
                 listener.onSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
             }
@@ -98,7 +100,7 @@ public class RestClients {
     }
 
     @lombok.AllArgsConstructor
-    private static final class DefaultAuthenticator implements Jdk8RestClient.Authenticator {
+    private static final class DefaultAuthenticator implements HttpRest.Authenticator {
 
         @lombok.NonNull
         private final SdmxWebSource source;

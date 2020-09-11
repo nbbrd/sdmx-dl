@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import _test.sdmxdl.ri.RestClientResponseMock;
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import org.junit.Test;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
@@ -62,7 +62,7 @@ public class NbbDriver2Test {
                     newClient(response).getFlows();
                 })
                 .withMessage("503: Service unavailable")
-                .isInstanceOfSatisfying(RestClient.ResponseError.class, o -> {
+                .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAVAILABLE);
                     assertThat(o.getResponseMessage()).isEqualTo("Service unavailable");
                     assertThat(o.getHeaderFields()).isEmpty();

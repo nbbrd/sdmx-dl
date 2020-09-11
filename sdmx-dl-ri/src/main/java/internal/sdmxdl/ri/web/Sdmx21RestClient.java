@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
@@ -39,7 +39,7 @@ public class Sdmx21RestClient extends RiRestClient {
     protected final boolean seriesKeysOnlySupported;
     protected final ObsFactory dataFactory;
 
-    public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
+    public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
         super(name, endpoint, langs, executor, dataFactory);
         this.seriesKeysOnlySupported = seriesKeysOnlySupported;
         this.dataFactory = dataFactory;

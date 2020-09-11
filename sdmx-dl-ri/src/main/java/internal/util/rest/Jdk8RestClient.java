@@ -16,143 +16,57 @@
  */
 package internal.util.rest;
 
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.InflaterInputStream;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Builder(builderClassName = "Builder")
-public final class Jdk8RestClient implements RestClient {
-
-    @NonNegative
-    private final int readTimeout;
-
-    @NonNegative
-    private final int connectTimeout;
-
-    @NonNegative
-    private final int maxRedirects;
+@lombok.AllArgsConstructor
+public final class Jdk8RestClient implements HttpRest.Client {
 
     @lombok.NonNull
-    private final ProxySelector proxySelector;
-
-    @lombok.NonNull
-    private final SSLSocketFactory sslSocketFactory;
-
-    @lombok.NonNull
-    private final HostnameVerifier hostnameVerifier;
-
-    @lombok.NonNull
-    private final EventListener listener;
-
-    @lombok.Singular
-    private final Map<String, StreamDecoder> decoders;
-
-    @lombok.NonNull
-    private final Jdk8RestClient.Authenticator authenticator;
-
-    private final boolean preemptiveAuthentication;
-
-    public static Builder builder() {
-        return new Builder()
-                .readTimeout(NO_TIMEOUT)
-                .connectTimeout(NO_TIMEOUT)
-                .maxRedirects(DEFAULT_MAX_REDIRECTS)
-                .proxySelector(ProxySelector.getDefault())
-                .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
-                .listener(EventListener.NONE)
-                .decoder("gzip", StreamDecoder.GZIP)
-                .decoder("deflate", StreamDecoder.DEFLATE)
-                .authenticator(Authenticator.NONE)
-                .preemptiveAuthentication(false);
-    }
+    private final HttpRest.Context context;
 
     @Override
-    public Response open(URL query, String mediaType, String langs) throws IOException {
+    public HttpRest.Response requestGET(URL query, String mediaType, String langs) throws IOException {
         Objects.requireNonNull(query);
         Objects.requireNonNull(mediaType);
         Objects.requireNonNull(langs);
         return open(query, mediaType, langs, 0, getPreemptiveAuthScheme());
     }
 
-    public interface EventListener {
-
-        void onOpen(@NonNull URL url, @NonNull String mediaType, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
-
-        void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl);
-
-        void onUnauthorized(@NonNull URL url, @NonNull AuthScheme oldScheme, @NonNull AuthScheme newScheme);
-
-        EventListener NONE = new EventListener() {
-            @Override
-            public void onOpen(URL url, String mediaType, String langs, Proxy proxy, AuthScheme scheme) {
-            }
-
-            @Override
-            public void onRedirection(URL oldUrl, URL newUrl) {
-            }
-
-            @Override
-            public void onUnauthorized(URL url, AuthScheme oldScheme, AuthScheme newScheme) {
-            }
-        };
-    }
-
-    public interface StreamDecoder {
-
-        @NonNull
-        InputStream decode(@NonNull InputStream stream) throws IOException;
-
-        StreamDecoder GZIP = GZIPInputStream::new;
-        StreamDecoder DEFLATE = InflaterInputStream::new;
-    }
-
-    public interface Authenticator {
-
-        @Nullable
-        PasswordAuthentication getPasswordAuthentication(@NonNull URL url);
-
-        void invalidate(@NonNull URL url);
-
-        Authenticator NONE = NoOpAuthenticator.INSTANCE;
-    }
-
-    private Response open(URL query, String mediaType, String langs, int redirects, AuthScheme requestScheme) throws IOException {
+    private HttpRest.Response open(URL query, String mediaType, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (!requestScheme.isSecureRequest(query)) {
             throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
         }
 
         Proxy proxy = getProxy(query);
 
-        listener.onOpen(query, mediaType, langs, proxy, requestScheme);
+        context.getListener().onOpen(query, mediaType, langs, proxy, requestScheme.authScheme);
 
         URLConnection conn = query.openConnection(proxy);
-        conn.setReadTimeout(readTimeout);
-        conn.setConnectTimeout(connectTimeout);
+        conn.setReadTimeout(context.getReadTimeout());
+        conn.setConnectTimeout(context.getConnectTimeout());
 
         if (!(conn instanceof HttpURLConnection)) {
             throw new IOException("Unsupported connection type");
         }
 
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(sslSocketFactory);
-            ((HttpsURLConnection) conn).setHostnameVerifier(hostnameVerifier);
+            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getSslSocketFactory());
+            ((HttpsURLConnection) conn).setHostnameVerifier(context.getHostnameVerifier());
         }
 
         HttpURLConnection http = (HttpURLConnection) conn;
@@ -161,7 +75,7 @@ public final class Jdk8RestClient implements RestClient {
         http.setRequestProperty(ACCEPT_LANGUAGE_HEADER, langs);
         http.addRequestProperty(ACCEPT_ENCODING_HEADER, getEncodingHeader());
         http.setInstanceFollowRedirects(false);
-        requestScheme.configureRequest(query, authenticator, http);
+        requestScheme.configureRequest(query, context.getAuthenticator(), http);
 
         switch (ResponseType.parse(http.getResponseCode())) {
             case REDIRECTION:
@@ -176,23 +90,27 @@ public final class Jdk8RestClient implements RestClient {
     }
 
     private String getEncodingHeader() {
-        return decoders.keySet().stream().collect(Collectors.joining(","));
+        return context
+                .getDecoders()
+                .stream()
+                .map(HttpRest.StreamDecoder::getName)
+                .collect(Collectors.joining(","));
     }
 
-    private AuthScheme getPreemptiveAuthScheme() {
-        return preemptiveAuthentication ? AuthScheme.BASIC : AuthScheme.NONE;
+    private AuthSchemeHelper getPreemptiveAuthScheme() {
+        return context.isPreemptiveAuthentication() ? AuthSchemeHelper.BASIC : AuthSchemeHelper.NONE;
     }
 
     private Proxy getProxy(URL url) throws IOException {
-        List<Proxy> proxies = proxySelector.select(toURI(url));
+        List<Proxy> proxies = context.getProxySelector().select(toURI(url));
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private Response redirect(HttpURLConnection http, String mediaType, String langs, int redirects) throws IOException {
+    private HttpRest.Response redirect(HttpURLConnection http, String mediaType, String langs, int redirects) throws IOException {
         URL oldUrl;
         URL newUrl;
         try {
-            if (redirects == maxRedirects) {
+            if (redirects == context.getMaxRedirects()) {
                 throw new IOException("Max redirection reached");
             }
 
@@ -211,45 +129,46 @@ public final class Jdk8RestClient implements RestClient {
             throw new IOException("Downgrading protocol on redirect from '" + oldUrl + "' to '" + newUrl + "'");
         }
 
-        listener.onRedirection(http.getURL(), newUrl);
+        context.getListener().onRedirection(http.getURL(), newUrl);
         return open(newUrl, mediaType, langs, redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private Response recoverClientError(HttpURLConnection http, String mediaType, String langs, int redirects, AuthScheme requestScheme) throws IOException {
+    private HttpRest.Response recoverClientError(HttpURLConnection http, String mediaType, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         switch (http.getResponseCode()) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
-                AuthScheme responseScheme = AuthScheme.parse(http).orElse(AuthScheme.BASIC);
+                AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(http).orElse(AuthSchemeHelper.BASIC);
                 if (!requestScheme.equals(responseScheme)) {
-                    listener.onUnauthorized(http.getURL(), requestScheme, responseScheme);
+                    context.getListener().onUnauthorized(http.getURL(), requestScheme.authScheme, responseScheme.authScheme);
                     return open(http.getURL(), mediaType, langs, redirects + 1, responseScheme);
                 }
-                authenticator.invalidate(http.getURL());
+                context.getAuthenticator().invalidate(http.getURL());
         }
 
         throw getError(http);
     }
 
-    private Response getBody(HttpURLConnection connection) throws IOException {
-        return new Jdk8Response(connection, decoders);
+    private HttpRest.Response getBody(HttpURLConnection connection) throws IOException {
+        return new Jdk8Response(connection, context.getDecoders());
     }
 
     private IOException getError(HttpURLConnection http) throws IOException {
         try {
-            return new ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
+            return new HttpRest.ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
         } finally {
             http.disconnect();
         }
     }
 
-    public enum AuthScheme {
-        BASIC {
+    @lombok.AllArgsConstructor
+    private enum AuthSchemeHelper {
+        BASIC(HttpRest.AuthScheme.BASIC) {
             @Override
             boolean isSecureRequest(URL url) {
                 return "https".equalsIgnoreCase(url.getProtocol());
             }
 
             @Override
-            void configureRequest(URL url, Authenticator authenticator, HttpURLConnection http) {
+            void configureRequest(URL url, HttpRest.Authenticator authenticator, HttpURLConnection http) {
                 PasswordAuthentication auth = authenticator.getPasswordAuthentication(url);
                 if (auth != null) {
                     http.addRequestProperty(AUTHORIZATION_HEADER, getBasicAuthHeader(auth));
@@ -262,14 +181,14 @@ public final class Jdk8RestClient implements RestClient {
                 return header != null && header.startsWith("Basic");
             }
         },
-        NONE {
+        NONE(HttpRest.AuthScheme.NONE) {
             @Override
             boolean isSecureRequest(URL query) {
                 return true;
             }
 
             @Override
-            void configureRequest(URL query, Authenticator authenticator, HttpURLConnection http) {
+            void configureRequest(URL query, HttpRest.Authenticator authenticator, HttpURLConnection http) {
             }
 
             @Override
@@ -278,14 +197,16 @@ public final class Jdk8RestClient implements RestClient {
             }
         };
 
+        private final HttpRest.AuthScheme authScheme;
+
         abstract boolean isSecureRequest(URL query);
 
-        abstract void configureRequest(URL query, Authenticator authenticator, HttpURLConnection http);
+        abstract void configureRequest(URL query, HttpRest.Authenticator authenticator, HttpURLConnection http);
 
         abstract boolean hasResponseHeader(HttpURLConnection http);
 
-        static Optional<AuthScheme> parse(HttpURLConnection http) {
-            return Stream.of(AuthScheme.values())
+        static Optional<AuthSchemeHelper> parse(HttpURLConnection http) {
+            return Stream.of(AuthSchemeHelper.values())
                     .filter(authScheme -> authScheme.hasResponseHeader(http))
                     .findFirst();
         }
@@ -322,27 +243,14 @@ public final class Jdk8RestClient implements RestClient {
         }
     }
 
-    private enum NoOpAuthenticator implements Authenticator {
-        INSTANCE;
-
-        @Override
-        public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
-            return null;
-        }
-
-        @Override
-        public void invalidate(@NonNull URL url) {
-        }
-    }
-
     @lombok.RequiredArgsConstructor
-    private static final class Jdk8Response implements RestClient.Response {
+    private static final class Jdk8Response implements HttpRest.Response {
 
         @lombok.NonNull
         private final HttpURLConnection conn;
 
         @lombok.NonNull
-        private final Map<String, StreamDecoder> decoders;
+        private final List<HttpRest.StreamDecoder> decoders;
 
         @Override
         public @NonNull String getContentType() {
@@ -352,7 +260,12 @@ public final class Jdk8RestClient implements RestClient {
         @Override
         public @NonNull InputStream getBody() throws IOException {
             String encoding = conn.getContentEncoding();
-            return decoders.getOrDefault(encoding, o -> o).decode(conn.getInputStream());
+            return decoders
+                    .stream()
+                    .filter(decoder -> decoder.getName().equals(encoding))
+                    .findFirst()
+                    .orElse(HttpRest.StreamDecoder.noOp())
+                    .decode(conn.getInputStream());
         }
 
         @Override
@@ -380,8 +293,6 @@ public final class Jdk8RestClient implements RestClient {
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
-    static final int DEFAULT_MAX_REDIRECTS = 20;
-    static final int NO_TIMEOUT = 0;
 
     private static URI toURI(URL url) throws IOException {
         try {

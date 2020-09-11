@@ -1,6 +1,6 @@
 package _test.sdmxdl.ri;
 
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @lombok.Builder(builderClassName = "Builder")
-public final class RestClientResponseMock implements RestClient.Response {
+public final class RestClientResponseMock implements HttpRest.Response {
 
     @lombok.NonNull
     private final String contentType;

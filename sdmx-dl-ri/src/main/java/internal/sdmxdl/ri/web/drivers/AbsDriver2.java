@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestClient;
 import internal.sdmxdl.ri.web.RestClients;
-import internal.util.rest.RestClient;
+import internal.util.rest.HttpRest;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
@@ -59,7 +59,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
         }
 
-        AbsClient2(String name, URL endpoint, LanguagePriorityList langs, RestClient executor, ObsFactory obsFactory) {
+        AbsClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
             super(name, endpoint, langs, executor, obsFactory);
         }
 
