@@ -85,6 +85,16 @@ public class SdmxWebProperty {
     }
 
     /**
+     * Defines if trailing slash is required in queries. Default value is false.
+     */
+    public final String TRAILING_SLASH_REQUIRED_PROPERTY = "trailingSlashRequired";
+    public final boolean DEFAULT_TRAILING_SLASH_REQUIRED = false;
+
+    public boolean isTrailingSlashRequired(Map<?, ?> o) {
+        return Property.get(TRAILING_SLASH_REQUIRED_PROPERTY, DEFAULT_TRAILING_SLASH_REQUIRED, o);
+    }
+
+    /**
      * Defines if preemptive authentication should be used. Default value is false.
      */
     public final String PREEMPTIVE_AUTHENTICATION_PROPERTY = "preemptiveAuthentication";

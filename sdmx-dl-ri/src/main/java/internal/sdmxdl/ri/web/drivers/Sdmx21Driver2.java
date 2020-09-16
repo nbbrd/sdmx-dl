@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static sdmxdl.util.web.SdmxWebProperty.SERIES_KEYS_ONLY_SUPPORTED_PROPERTY;
+import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -48,6 +49,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .client(Sdmx21Driver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
+            .supportedProperty(TRAILING_SLASH_REQUIRED_PROPERTY)
             .sources(IOSupplier.unchecked(Sdmx21Driver2::getSources).get())
             .build();
 
@@ -62,6 +64,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
+                SdmxWebProperty.isTrailingSlashRequired(s.getProperties()),
                 ObsFactories.getObsFactory(c, s, "SDMX21")
         );
     }

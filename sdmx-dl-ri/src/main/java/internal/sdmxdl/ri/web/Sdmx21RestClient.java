@@ -16,8 +16,8 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestQueryBuilder;
 import internal.util.rest.HttpRest;
+import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
@@ -37,11 +37,14 @@ import static sdmxdl.ext.SdmxMediaType.*;
 public class Sdmx21RestClient extends RiRestClient {
 
     protected final boolean seriesKeysOnlySupported;
+    protected final boolean trailingSlashRequired;
     protected final ObsFactory dataFactory;
 
-    public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, boolean seriesKeysOnlySupported, ObsFactory dataFactory) {
+    public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor,
+                            boolean seriesKeysOnlySupported, boolean trailingSlashRequired, ObsFactory dataFactory) {
         super(name, endpoint, langs, executor, dataFactory);
         this.seriesKeysOnlySupported = seriesKeysOnlySupported;
+        this.trailingSlashRequired = trailingSlashRequired;
         this.dataFactory = dataFactory;
     }
 
@@ -52,7 +55,7 @@ public class Sdmx21RestClient extends RiRestClient {
 
     @Override
     protected URL getFlowsQuery() throws IOException {
-        return getFlowsQuery(endpoint).build();
+        return getFlowsQuery(endpoint).trailingSlash(trailingSlashRequired).build();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class Sdmx21RestClient extends RiRestClient {
 
     @Override
     protected URL getFlowQuery(DataflowRef ref) throws IOException {
-        return getFlowQuery(endpoint, ref).build();
+        return getFlowQuery(endpoint, ref).trailingSlash(trailingSlashRequired).build();
     }
 
     @Override
@@ -80,7 +83,7 @@ public class Sdmx21RestClient extends RiRestClient {
 
     @Override
     protected URL getStructureQuery(DataStructureRef ref) throws IOException {
-        return getStructureQuery(endpoint, ref).build();
+        return getStructureQuery(endpoint, ref).trailingSlash(trailingSlashRequired).build();
     }
 
     @Override
@@ -96,7 +99,7 @@ public class Sdmx21RestClient extends RiRestClient {
 
     @Override
     protected URL getDataQuery(DataRequest request) throws IOException {
-        return getDataQuery(endpoint, request).build();
+        return getDataQuery(endpoint, request).trailingSlash(trailingSlashRequired).build();
     }
 
     @Override

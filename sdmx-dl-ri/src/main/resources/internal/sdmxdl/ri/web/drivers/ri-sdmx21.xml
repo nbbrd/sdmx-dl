@@ -9,12 +9,6 @@
         <property key="seriesKeysOnlySupported" value="true"/>
     </source>
     <source>
-        <name>INEGI</name>
-        <description>Instituto Nacional de Estadistica y Geografia</description>
-        <driver>ri:sdmx21</driver>
-        <endpoint>https://sdmx.snieg.mx/service/Rest</endpoint>
-    </source>
-    <source>
         <name>UNDATA</name>
         <description>Data access system to UN databases</description>
         <driver>ri:sdmx21</driver>
@@ -33,6 +27,7 @@
         <description>World Integrated Trade Solutions</description>
         <driver>ri:sdmx21</driver>
         <endpoint>http://wits.worldbank.org/API/V1/SDMX/V21/rest</endpoint>
+        <property key="trailingSlashRequired" value="true"/>
     </source>
     <source>
         <name>IMF_SDMX_CENTRAL</name>
@@ -40,5 +35,21 @@
         <driver>ri:sdmx21</driver>
         <endpoint>https://sdmxcentral.imf.org/ws/public/sdmxapi/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
+    </source>
+    <source>
+        <name>INEGI</name>
+        <description>Instituto Nacional de Estadistica y Geografia</description>
+        <driver>ri:sdmx21</driver>
+        <endpoint>https://sdmx.snieg.mx/service/Rest</endpoint>
+        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="trailingSlashRequired" value="true"/>
+    </source>
+    <source>
+        <name>WB</name>
+        <description>World Bank</description>
+        <driver>ri:sdmx21</driver>
+        <endpoint>https://api.worldbank.org/v2/sdmx/rest</endpoint>
+        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="trailingSlashRequired" value="true"/>
     </source>
 </sources>
