@@ -6,5 +6,6 @@
 /sdmx-dl-xml/target/
 /sdmx-dl-kryo/target/
 /sdmx-dl-sys/target/
+/sdmx-dl-testing/target/
 /sdmx-dl-cli/target/
 /target/

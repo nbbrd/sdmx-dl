@@ -32,6 +32,7 @@
         <module>sdmx-dl-kryo</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-sys</module>
+        <module>sdmx-dl-testing</module>
     </modules>
 
     <properties>
@@ -110,6 +111,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-sys</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-testing</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

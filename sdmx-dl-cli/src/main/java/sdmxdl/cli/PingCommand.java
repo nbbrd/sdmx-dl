@@ -79,11 +79,11 @@ public final class PingCommand extends BaseCommand {
     }
 
     private static List<PingResult> ping(SdmxWebManager manager, List<String> sourceNames) throws IOException {
-        if (isAllSources(sourceNames)) {
+        if (WebOptions.isAllSources(sourceNames)) {
             sourceNames = getAllSourceNames(manager);
         }
         if (sourceNames.size() > 1) {
-            warmupProxySelector(manager.getProxySelector());
+            WebOptions.warmupProxySelector(manager.getProxySelector());
         }
         return sourceNames
                 .stream()
@@ -100,16 +100,5 @@ public final class PingCommand extends BaseCommand {
                 .filter(entry -> !entry.getValue().isAlias())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-
-    private static boolean isAllSources(List<String> sourceNames) {
-        return sourceNames.size() == 1 && sourceNames.get(0).equals("all");
-    }
-
-    private static void warmupProxySelector(ProxySelector proxySelector) {
-        try {
-            proxySelector.select(new URI("http://localhost"));
-        } catch (URISyntaxException ex) {
-        }
     }
 }

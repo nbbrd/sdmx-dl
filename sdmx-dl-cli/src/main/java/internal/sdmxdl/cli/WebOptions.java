@@ -30,6 +30,9 @@ import sdmxdl.xml.XmlWebSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -148,6 +151,21 @@ public class WebOptions {
                 main.onSourceEvent(source, message);
             }
             System.out.println(source.getName() + ": " + message);
+        }
+    }
+
+    public static boolean isAllSources(List<String> sourceNames) {
+        return sourceNames.size() == 1 && isAllSources(sourceNames.get(0));
+    }
+
+    private static boolean isAllSources(String name) {
+        return "all".equals(name);
+    }
+
+    public static void warmupProxySelector(ProxySelector proxySelector) {
+        try {
+            proxySelector.select(new URI("http://localhost"));
+        } catch (URISyntaxException ex) {
         }
     }
 }

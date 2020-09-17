@@ -36,13 +36,14 @@ import java.util.logging.Logger;
         resourceBundle = "sdmxdl.cli.Messages",
         versionProvider = MainCommand.ManifestVersionProvider.class,
         subcommands = {
-            DataCommand.class,
-            MetaCommand.class,
-            ListCommand.class,
-            PingCommand.class,
-            DebugCommand.class,
-            SetupCommand.class,
-            CommandLine.HelpCommand.class
+                DataCommand.class,
+                MetaCommand.class,
+                ListCommand.class,
+                PingCommand.class,
+                TestCommand.class,
+                DebugCommand.class,
+                SetupCommand.class,
+                CommandLine.HelpCommand.class
         }
 )
 public final class MainCommand extends BaseCommand {
