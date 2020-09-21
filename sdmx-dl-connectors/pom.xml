@@ -14,7 +14,7 @@
 
     <properties>
         <!-- dependencies -->
-        <sdmx-connectors.version>bc99e1485aa022dc4801179cb77657338c124d4f</sdmx-connectors.version>
+        <sdmx-connectors.version>19583312d5358ae8f0c59b16522b8759c276b38f</sdmx-connectors.version>
     </properties>
 
     <dependencyManagement>
