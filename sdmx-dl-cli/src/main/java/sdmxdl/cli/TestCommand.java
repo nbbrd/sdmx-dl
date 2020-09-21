@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebOptions;
 import picocli.CommandLine;
 import sdmxdl.testing.WebReport;
@@ -60,18 +61,23 @@ public final class TestCommand extends BaseCommand {
     )
     private File requests;
 
+    @CommandLine.ArgGroup
+    private DebugOutputOptions output = new DebugOutputOptions();
+
     @Override
     public Void call() throws Exception {
         SdmxWebManager manager = web.getManager();
         WebOptions.warmupProxySelector(manager.getProxySelector());
 
-        getRequests()
+        List<Summary> result = getRequests()
                 .parallelStream()
                 .filter(getSourceFilter())
                 .map(request -> WebResponse.of(request, manager))
                 .map(WebReport::of)
                 .map(Summary::of)
-                .forEachOrdered(TestCommand::print);
+                .collect(Collectors.toList());
+        
+        output.dumpAll(Summary.class, result, this::getStdOutEncoding);
 
         return null;
     }
@@ -89,14 +95,15 @@ public final class TestCommand extends BaseCommand {
     }
 
     private static void print(Summary s) {
-        System.out.println("  Request: " + s.getRequest());
-        System.out.println("   Config: " + s.getConfig());
-        System.out.println("FlowCount: " + s.getFlowCount());
-        System.out.println("     Flow: " + s.isFlow());
-        System.out.println("   Struct: " + s.isStruct());
-        System.out.println("DataCount: " + s.getDataCount());
-        System.out.println("    Error: " + s.getError().replace(System.lineSeparator(), " > "));
-        System.out.println(" Problems: " + s.getProblems().stream().collect(Collectors.joining(", ")));
+        System.out.println("    Request: " + s.getRequest());
+        System.out.println("     Config: " + s.getConfig());
+        System.out.println("  FlowCount: " + s.getFlowCount());
+        System.out.println("       Flow: " + s.isFlow());
+        System.out.println("     Struct: " + s.isStruct());
+        System.out.println("SeriesCount: " + s.getSeriesCount());
+        System.out.println("   ObsCount: " + s.getObsCount());
+        System.out.println("      Error: " + s.getError().replace(System.lineSeparator(), " > "));
+        System.out.println("   Problems: " + s.getProblems().stream().collect(Collectors.joining(", ")));
         System.out.println("");
     }
 
@@ -143,7 +150,9 @@ public final class TestCommand extends BaseCommand {
 
         boolean struct;
 
-        int dataCount;
+        int seriesCount;
+
+        int obsCount;
 
         @lombok.NonNull
         String error;
@@ -159,7 +168,8 @@ public final class TestCommand extends BaseCommand {
                     .flowCount(r.getResponse().hasFlows() ? r.getResponse().getFlows().size() : -1)
                     .flow(r.getResponse().hasFlow())
                     .struct(r.getResponse().hasStructure())
-                    .dataCount(r.getResponse().hasData() ? r.getResponse().getData().size() : -1)
+                    .seriesCount(r.getResponse().hasData() ? r.getResponse().getData().size() : -1)
+                    .obsCount(r.getResponse().hasData() ? r.getResponse().getData().stream().mapToInt(series -> series.getObs().size()).sum() : -1)
                     .error(r.getResponse().hasError() ? r.getResponse().getError() : "")
                     .problems(r.getProblems())
                     .build();

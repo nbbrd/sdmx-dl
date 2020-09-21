@@ -1,17 +1,17 @@
 /*
  * Copyright 2020 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.testing;
@@ -28,7 +28,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.Value
@@ -93,11 +92,11 @@ public final class WebReport {
             public String apply(WebResponse r) {
                 return r.hasFlows()
                         ? r.getFlows()
-                                .stream()
-                                .filter(flow -> isBlank(flow.getLabel()))
-                                .findAny()
-                                .map(flow -> name())
-                                .orElse(null)
+                        .stream()
+                        .filter(flow -> isBlank(flow.getLabel()))
+                        .findAny()
+                        .map(flow -> name())
+                        .orElse(null)
                         : null;
             }
         },
@@ -128,7 +127,7 @@ public final class WebReport {
         STRUCT_INVALID_REF {
             @Override
             public String apply(WebResponse r) {
-                return r.hasStructure() && r.hasFlow() && !r.getStructure().getRef().equals(r.getFlow().getStructureRef())
+                return r.hasStructure() && r.hasFlow() && !r.getStructure().getRef().contains(r.getFlow().getStructureRef())
                         ? name()
                         : null;
             }
@@ -146,12 +145,20 @@ public final class WebReport {
             public String apply(WebResponse r) {
                 return r.hasStructure()
                         ? r.getStructure()
-                                .getDimensions()
-                                .stream()
-                                .map(dimension -> checkDimension(name(), dimension))
-                                .filter(Objects::nonNull)
-                                .findAny()
-                                .orElse(null)
+                        .getDimensions()
+                        .stream()
+                        .map(dimension -> checkDimension(name(), dimension))
+                        .filter(Objects::nonNull)
+                        .findAny()
+                        .orElse(null)
+                        : null;
+            }
+        },
+        DATA_MIN_SERIES_COUNT {
+            @Override
+            public String apply(WebResponse r) {
+                return r.hasData() && r.getData().size() < r.getRequest().getMinSeriesCount()
+                        ? name()
                         : null;
             }
         },
@@ -172,12 +179,12 @@ public final class WebReport {
             public String apply(WebResponse r) {
                 return r.hasData()
                         ? r.getData()
-                                .stream()
-                                .map(Series::getMeta)
-                                .map(meta -> checkMap(name(), meta))
-                                .filter(Objects::nonNull)
-                                .findAny()
-                                .orElse(null)
+                        .stream()
+                        .map(Series::getMeta)
+                        .map(meta -> checkMap(name(), meta))
+                        .filter(Objects::nonNull)
+                        .findAny()
+                        .orElse(null)
                         : null;
             }
         };

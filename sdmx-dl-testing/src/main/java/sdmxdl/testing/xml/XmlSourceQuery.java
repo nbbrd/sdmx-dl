@@ -52,17 +52,18 @@ public class XmlSourceQuery {
 
     private static List<WebRequest> toRequests(List<SourceNode> list) {
         List<WebRequest> result = new ArrayList<>();
-        for (SourceNode endpoint : list) {
-            for (FlowNode flow : endpoint.getFlowQueries()) {
-                for (DataNode q : flow.getData()) {
+        for (SourceNode source : list) {
+            for (FlowNode flow : source.getFlowQueries()) {
+                for (DataNode data : flow.getData()) {
                     result.add(WebRequest
                             .builder()
-                            .source(endpoint.getName())
+                            .source(source.getName())
                             .flow(flow.getRef())
-                            .key(q.getKey())
-                            .minFlowCount(endpoint.getMinFlowCount())
+                            .key(data.getKey())
+                            .minFlowCount(source.getMinFlowCount())
                             .dimensionCount(flow.getDimensionCount())
-                            .minObsCount(q.getMinObsCount())
+                            .minSeriesCount(data.getMinSeriesCount())
+                            .minObsCount(data.getMinObsCount())
                             .build()
                     );
                 }
@@ -122,6 +123,7 @@ public class XmlSourceQuery {
                         case "data":
                             result.data(DataNode.builder()
                                     .key(Key.parse(reader.getAttributeValue(null, "key")))
+                                    .minSeriesCount(Integer.parseInt(reader.getAttributeValue(null, "minSeries")))
                                     .minObsCount(Integer.parseInt(reader.getAttributeValue(null, "minObs")))
                                     .build());
                             break;
@@ -172,6 +174,9 @@ public class XmlSourceQuery {
 
         @lombok.NonNull
         Key key;
+
+        @NonNegative
+        int minSeriesCount;
 
         @NonNegative
         int minObsCount;
