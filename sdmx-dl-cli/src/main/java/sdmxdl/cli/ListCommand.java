@@ -28,6 +28,8 @@ import picocli.CommandLine;
                 ListSourcesCommand.class,
                 ListFlowsCommand.class,
                 ListKeysCommand.class,
+                ListConceptsCommand.class,
+                ListCodesCommand.class,
                 ListFeaturesCommand.class,
                 CommandLine.HelpCommand.class
         }
