@@ -41,7 +41,7 @@ public final class ListFeaturesCommand extends BaseCommand {
         try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
             w.writeField("SupportedFeature");
             w.writeEndOfLine();
-            for (Feature feature : web.getFeatures()) {
+            for (Feature feature : web.getSortedFeatures()) {
                 w.writeField(feature.name());
                 w.writeEndOfLine();
             }

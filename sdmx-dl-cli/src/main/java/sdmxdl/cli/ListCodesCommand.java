@@ -24,6 +24,8 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Philippe Charles
@@ -47,25 +49,25 @@ public final class ListCodesCommand extends BaseCommand {
     @Override
     public Void call() throws Exception {
         try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
-            w.writeField("Id");
+            w.writeField("Code");
             w.writeField("Label");
             w.writeEndOfLine();
-            for (Map.Entry<String, String> o : getCodes().entrySet()) {
-                w.writeField(o.getKey());
-                w.writeField(o.getValue());
+            for (Map.Entry<String, String> entry : getSortedCodes().entrySet()) {
+                w.writeField(entry.getKey());
+                w.writeField(entry.getValue());
                 w.writeEndOfLine();
             }
         }
         return null;
     }
 
-    private Map<String, String> getCodes() throws IOException {
-        return web.getStructure()
+    private SortedMap<String, String> getSortedCodes() throws IOException {
+        return new TreeMap<>(web.getStructure()
                 .getDimensions()
                 .stream()
                 .filter(dimension -> dimension.getId().equals(concept))
                 .findFirst()
                 .orElseThrow(() -> new IOException("Cannot find concept '" + concept + "'"))
-                .getCodes();
+                .getCodes());
     }
 }

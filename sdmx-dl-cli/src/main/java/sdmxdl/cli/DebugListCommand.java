@@ -50,16 +50,16 @@ public final class DebugListCommand extends BaseCommand {
 
     @Command(sortOptions = false, mixinStandardHelpOptions = true)
     public void flows(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Dataflow.class, web.getFlows(), this::getStdOutEncoding);
+        out.dumpAll(Dataflow.class, web.getSortedFlows(), this::getStdOutEncoding);
     }
 
     @Command(sortOptions = false, mixinStandardHelpOptions = true)
     public void keys(@Mixin WebFlowOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Series.class, web.getSeriesKeys(), this::getStdOutEncoding);
+        out.dumpAll(Series.class, web.getSortedSeriesKeys(), this::getStdOutEncoding);
     }
 
     @Command(sortOptions = false, mixinStandardHelpOptions = true)
     public void features(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Feature.class, web.getFeatures(), this::getStdOutEncoding);
+        out.dumpAll(Feature.class, web.getSortedFeatures(), this::getStdOutEncoding);
     }
 }

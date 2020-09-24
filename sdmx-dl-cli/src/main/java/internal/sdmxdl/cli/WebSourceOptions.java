@@ -60,16 +60,15 @@ public class WebSourceOptions extends WebOptions {
     )
     private User user;
 
-    public SortedSet<Feature> getFeatures() throws IOException {
+    public SortedSet<Feature> getSortedFeatures() throws IOException {
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-
             return conn.isSeriesKeysOnlySupported()
                     ? new TreeSet<>(Collections.singleton(Feature.SERIES_KEYS_ONLY))
                     : Collections.emptySortedSet();
         }
     }
 
-    public List<Dataflow> getFlows() throws IOException {
+    public List<Dataflow> getSortedFlows() throws IOException {
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
             return conn.getFlows()
                     .stream()

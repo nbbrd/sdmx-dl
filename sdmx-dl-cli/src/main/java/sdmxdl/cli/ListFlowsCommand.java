@@ -42,7 +42,7 @@ public final class ListFlowsCommand extends BaseCommand {
             w.writeField("Ref");
             w.writeField("Label");
             w.writeEndOfLine();
-            for (Dataflow flow : web.getFlows()) {
+            for (Dataflow flow : web.getSortedFlows()) {
                 w.writeField(flow.getRef().toString());
                 w.writeField(flow.getLabel());
                 w.writeEndOfLine();

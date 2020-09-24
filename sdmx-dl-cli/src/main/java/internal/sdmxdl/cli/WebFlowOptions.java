@@ -41,7 +41,7 @@ public class WebFlowOptions extends WebSourceOptions {
     )
     private DataflowRef flow;
 
-    public List<Series> getSeriesKeys() throws IOException {
+    public List<Series> getSortedSeriesKeys() throws IOException {
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
             try (Stream<Series> stream = conn.getDataStream(getFlow(), Key.ALL, DataFilter.SERIES_KEYS_ONLY)) {
                 return stream

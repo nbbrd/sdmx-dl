@@ -42,7 +42,7 @@ public final class ListKeysCommand extends BaseCommand {
             w.writeField("Key");
             w.writeField("Freq");
             w.writeEndOfLine();
-            for (Series o : web.getSeriesKeys()) {
+            for (Series o : web.getSortedSeriesKeys()) {
                 w.writeField(o.getKey().toString());
                 w.writeField(o.getFreq().toString());
                 w.writeEndOfLine();

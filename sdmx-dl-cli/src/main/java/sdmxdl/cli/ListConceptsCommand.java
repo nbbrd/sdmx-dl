@@ -23,6 +23,11 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Dimension;
 
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 /**
  * @author Philippe Charles
  */
@@ -38,19 +43,25 @@ public final class ListConceptsCommand extends BaseCommand {
     @Override
     public Void call() throws Exception {
         try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
-            w.writeField("Position");
-            w.writeField("Id");
+            w.writeField("Concept");
             w.writeField("Label");
-            w.writeField("IsDimension");
+            w.writeField("Type");
+            w.writeField("Position");
             w.writeEndOfLine();
-            for (Dimension o : web.getStructure().getDimensions()) {
-                w.writeField(Integer.toString(o.getPosition()));
+            for (Dimension o : getSortedDimensions()) {
                 w.writeField(o.getId());
                 w.writeField(o.getLabel());
-                w.writeField(Boolean.TRUE.toString());
+                w.writeField("dimension");
+                w.writeField(Integer.toString(o.getPosition()));
                 w.writeEndOfLine();
             }
         }
         return null;
+    }
+
+    private SortedSet<Dimension> getSortedDimensions() throws IOException {
+        TreeSet<Dimension> result = new TreeSet<>(Comparator.comparingInt(Dimension::getPosition));
+        result.addAll(web.getStructure().getDimensions());
+        return result;
     }
 }

@@ -23,6 +23,8 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebSource;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +46,7 @@ public final class ListSourcesCommand extends BaseCommand {
             w.writeField("Description");
             w.writeField("Aliases");
             w.writeEndOfLine();
-            for (SdmxWebSource source : web.getManager().getSources().values()) {
+            for (SdmxWebSource source : getSortedSources()) {
                 if (!source.isAlias()) {
                     w.writeField(source.getName());
                     w.writeField(source.getDescription());
@@ -54,5 +56,9 @@ public final class ListSourcesCommand extends BaseCommand {
             }
         }
         return null;
+    }
+
+    private Collection<SdmxWebSource> getSortedSources() throws IOException {
+        return web.getManager().getSources().values();
     }
 }

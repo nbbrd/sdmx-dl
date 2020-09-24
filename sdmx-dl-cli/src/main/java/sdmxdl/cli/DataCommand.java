@@ -66,7 +66,7 @@ public final class DataCommand extends BaseCommand {
     }
 
     public static void write(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format, boolean cornerFieldRequired, GridOptions grid) throws IOException {
-        TsCollection data = web.getData(grid.getTitleAttribute());
+        TsCollection data = web.getSortedData(grid.getTitleAttribute());
         GridWriter
                 .builder()
                 .format(format.toObsFormat(hasTime(data)))

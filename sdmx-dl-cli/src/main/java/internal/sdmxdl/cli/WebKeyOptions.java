@@ -45,7 +45,7 @@ public class WebKeyOptions extends WebFlowOptions {
     )
     private Key key;
 
-    public TsCollection getData(String titleAttribute) throws IOException {
+    public TsCollection getSortedData(String titleAttribute) throws IOException {
         DataFilter filter = DataFilter.ALL;
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
             try (Stream<Series> stream = conn.getDataStream(getFlow(), getKey(), filter)) {
