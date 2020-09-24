@@ -43,6 +43,18 @@ import java.util.Map;
  */
 public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
+    static {
+        disableUnsafeIfNotConfigured();
+    }
+
+    public static final String KRYO_UNSAFE_PROPERTY = "kryo.unsafe";
+
+    private static void disableUnsafeIfNotConfigured() {
+        if (System.getProperty(KRYO_UNSAFE_PROPERTY) == null) {
+            System.setProperty(KRYO_UNSAFE_PROPERTY, Boolean.FALSE.toString());
+        }
+    }
+
     private final Pool<Kryo> kryoPool = new Pool<Kryo>(true, false, 8) {
         @Override
         protected Kryo create() {
