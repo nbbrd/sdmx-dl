@@ -7,7 +7,7 @@
     <parent>
         <groupId>be.nbb.rd</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.1</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>sdmx-dl-sys</artifactId>
