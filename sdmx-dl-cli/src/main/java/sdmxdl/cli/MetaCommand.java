@@ -50,7 +50,7 @@ public final class MetaCommand extends BaseCommand {
         excel.apply(csv);
 
         Collection<Series> data = web.getSeries();
-        try (Csv.Writer writer = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer writer = csv.newCsvWriter()) {
             writeHead(writer, data, excel.isExcelCompatibility());
             writeBody(writer, data);
         }

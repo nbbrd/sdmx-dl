@@ -42,7 +42,7 @@ public final class ListConceptsCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer w = csv.newCsvWriter()) {
             w.writeField("Concept");
             w.writeField("Label");
             w.writeField("Type");

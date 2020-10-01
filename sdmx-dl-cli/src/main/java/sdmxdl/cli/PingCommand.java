@@ -25,9 +25,6 @@ import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,7 +52,7 @@ public final class PingCommand extends BaseCommand {
     @Override
     public Void call() throws Exception {
         List<PingResult> data = ping(web.getManager(), sources);
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer w = csv.newCsvWriter()) {
             w.writeField("Source");
             w.writeField("State");
             w.writeField("DurationInMillis");

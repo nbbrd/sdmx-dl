@@ -48,7 +48,7 @@ public final class ListCodesCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer w = csv.newCsvWriter()) {
             w.writeField("Code");
             w.writeField("Label");
             w.writeEndOfLine();

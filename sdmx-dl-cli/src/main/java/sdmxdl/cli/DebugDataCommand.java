@@ -39,7 +39,7 @@ public final class DebugDataCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(Series.class, web.getSeries(), this::getStdOutEncoding);
+        output.dumpAll(Series.class, web.getSeries());
         return null;
     }
 }

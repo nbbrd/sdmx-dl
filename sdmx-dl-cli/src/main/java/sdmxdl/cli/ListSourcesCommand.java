@@ -41,7 +41,7 @@ public final class ListSourcesCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer w = csv.newCsvWriter()) {
             w.writeField("Name");
             w.writeField("Description");
             w.writeField("Aliases");

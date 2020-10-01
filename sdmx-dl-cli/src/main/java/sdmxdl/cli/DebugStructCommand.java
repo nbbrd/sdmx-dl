@@ -39,7 +39,7 @@ public final class DebugStructCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        output.dump(DataStructure.class, web.getStructure(), this::getStdOutEncoding);
+        output.dump(DataStructure.class, web.getStructure());
         return null;
     }
 }

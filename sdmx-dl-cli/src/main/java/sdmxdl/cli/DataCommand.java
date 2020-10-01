@@ -31,7 +31,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- *
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "data")
@@ -58,7 +57,7 @@ public final class DataCommand extends BaseCommand {
         excel.apply(csv);
         excel.apply(format);
 
-        try (Csv.Writer writer = csv.newCsvWriter(this::getStdOutEncoding)) {
+        try (Csv.Writer writer = csv.newCsvWriter()) {
             write(writer, web, format, excel.isExcelCompatibility(), grid);
         }
 

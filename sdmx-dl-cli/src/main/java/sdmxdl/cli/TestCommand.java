@@ -76,8 +76,8 @@ public final class TestCommand extends BaseCommand {
                 .map(WebReport::of)
                 .map(Summary::of)
                 .collect(Collectors.toList());
-        
-        output.dumpAll(Summary.class, result, this::getStdOutEncoding);
+
+        output.dumpAll(Summary.class, result);
 
         return null;
     }
