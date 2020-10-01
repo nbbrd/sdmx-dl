@@ -178,7 +178,8 @@ public final class ConnectorRestClient implements SdmxWebClient {
     public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
             Arrays.asList(
                     CONNECT_TIMEOUT_PROPERTY,
-                    READ_TIMEOUT_PROPERTY
+                    READ_TIMEOUT_PROPERTY,
+                    MAX_REDIRECTS_PROPERTY
             ));
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
@@ -197,7 +198,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setSslSocketFactory(context.getSslSocketFactory());
         client.setHostnameVerifier(context.getHostnameVerifier());
         client.setRedirectionEventListener(new DefaultRedirectionEventListener(source, context.getEventListener()));
-        // TODO: maxRedirections
+        client.setMaxRedirects(getMaxRedirects(source.getProperties()));
     }
 
     @lombok.AllArgsConstructor
