@@ -19,6 +19,7 @@ package internal.sdmxdl.connectors;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
+import it.bancaditalia.oss.sdmx.event.OpenEvent;
 import it.bancaditalia.oss.sdmx.event.RedirectionEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
@@ -197,8 +198,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setProxySelector(context.getProxySelector());
         client.setSslSocketFactory(context.getSslSocketFactory());
         client.setHostnameVerifier(context.getHostnameVerifier());
-        client.setRedirectionEventListener(new DefaultRedirectionEventListener(source, context.getEventListener()));
         client.setMaxRedirects(getMaxRedirects(source.getProperties()));
+        RestSdmxEventListener eventListener = new DefaultRedirectionEventListener(source, context.getEventListener());
+        client.setRedirectionEventListener(eventListener);
+        client.setOpenEventListener(eventListener);
     }
 
     @lombok.AllArgsConstructor
@@ -212,9 +215,14 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
         @Override
         public void onSdmxEvent(RestSdmxEvent event) {
-            if (listener.isEnabled() && event instanceof RedirectionEvent) {
-                RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                listener.onSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+            if (listener.isEnabled()) {
+                if (event instanceof RedirectionEvent) {
+                    RedirectionEvent redirectionEvent = (RedirectionEvent) event;
+                    listener.onSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+                } else if (event instanceof OpenEvent) {
+                    OpenEvent openEvent = (OpenEvent) event;
+                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
+                }
             }
         }
     }
