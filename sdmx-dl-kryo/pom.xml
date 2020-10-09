@@ -25,8 +25,8 @@
             <artifactId>sdmx-dl-util</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>kryo</artifactId>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo5</artifactId>
             <version>5.0.0-RC9</version>
         </dependency>
         <!-- test only -->

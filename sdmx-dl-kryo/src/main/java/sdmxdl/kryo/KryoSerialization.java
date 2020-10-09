@@ -16,14 +16,14 @@
  */
 package sdmxdl.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.CollectionSerializer;
-import com.esotericsoftware.kryo.serializers.ImmutableSerializer;
-import com.esotericsoftware.kryo.serializers.MapSerializer;
-import com.esotericsoftware.kryo.util.Pool;
+import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.kryo5.Serializer;
+import com.esotericsoftware.kryo.kryo5.io.Input;
+import com.esotericsoftware.kryo.kryo5.io.Output;
+import com.esotericsoftware.kryo.kryo5.serializers.CollectionSerializer;
+import com.esotericsoftware.kryo.kryo5.serializers.ImmutableSerializer;
+import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer;
+import com.esotericsoftware.kryo.kryo5.util.Pool;
 import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
