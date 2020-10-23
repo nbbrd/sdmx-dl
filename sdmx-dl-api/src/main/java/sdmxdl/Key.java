@@ -16,6 +16,7 @@
  */
 package sdmxdl;
 
+import nbbrd.design.Immutable;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -30,7 +31,7 @@ import java.util.Map;
  *
  * @author Philippe Charles
  */
-//@Immutable
+@Immutable
 public final class Key {
 
     private static final String WILDCARD = "";

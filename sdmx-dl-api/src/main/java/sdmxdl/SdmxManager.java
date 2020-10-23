@@ -17,13 +17,15 @@
 package sdmxdl;
 
 import java.io.IOException;
+
+import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-//@ThreadSafe
+@ThreadSafe
 public interface SdmxManager {
 
     @NonNull

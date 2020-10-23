@@ -17,6 +17,7 @@
 package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
+import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.repo.SdmxRepository;
@@ -26,7 +27,7 @@ import java.time.Duration;
 /**
  * @author Philippe Charles
  */
-//@ThreadSafe
+@ThreadSafe
 public interface SdmxCache {
 
     @Nullable

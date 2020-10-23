@@ -16,6 +16,7 @@
  */
 package sdmxdl;
 
+import nbbrd.design.SealedType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -25,7 +26,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Philippe Charles
  */
-//@SealedClass
+@SealedType({
+        DataStructureRef.class,
+        DataflowRef.class
+})
 public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     public static final String ALL_AGENCIES = "all";

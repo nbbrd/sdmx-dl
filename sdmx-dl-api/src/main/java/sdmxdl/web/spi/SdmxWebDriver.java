@@ -16,6 +16,7 @@
  */
 package sdmxdl.web.spi;
 
+import nbbrd.design.ThreadSafe;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import internal.sdmxdl.web.spi.FailsafeSdmxWebDriver;
@@ -30,12 +31,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @author Philippe Charles
  */
-//@ThreadSafe
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
         wrapper = FailsafeSdmxWebDriver.class,
         loaderName = "internal.util.SdmxWebDriverLoader"
 )
+@ThreadSafe
 public interface SdmxWebDriver {
 
     @NonNull

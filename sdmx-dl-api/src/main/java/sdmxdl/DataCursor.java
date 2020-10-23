@@ -30,6 +30,8 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -37,7 +39,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Philippe Charles
  */
-//@NotThreadSafe
+@NotThreadSafe
 public interface DataCursor extends Closeable {
 
     boolean nextSeries() throws IOException;
