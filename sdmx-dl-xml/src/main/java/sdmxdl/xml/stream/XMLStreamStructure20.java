@@ -17,10 +17,7 @@
 package sdmxdl.xml.stream;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dimension;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.xml.SdmxmlUri;
 
 import javax.xml.stream.XMLStreamException;
@@ -30,8 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 /**
  * @author Philippe Charles
@@ -53,6 +48,7 @@ final class XMLStreamStructure20 {
     private static final String DIMENSION_TAG = "Dimension";
     private static final String TIME_DIMENSION_TAG = "TimeDimension";
     private static final String PRIMARY_MEASURE_TAG = "PrimaryMeasure";
+    private static final String ATTRIBUTE_TAG = "Attribute";
 
     private static final String ID_ATTR = "id";
     private static final String AGENCY_ID_ATTR = "agencyID";
@@ -77,21 +73,20 @@ final class XMLStreamStructure20 {
         }
 
         List<DataStructure> result = new ArrayList<>();
-        Map<String, Map<String, String>> codelists = new HashMap<>();
-        Map<String, String> concepts = new HashMap<>();
+        DsdContext context = new DsdContext();
         while (XMLStreamUtil.nextTags(reader, "")) {
             switch (reader.getLocalName()) {
                 case HEADER_TAG:
                     parseHeader(reader);
                     break;
                 case CODE_LISTS_TAG:
-                    parseCodelists(reader, codelists);
+                    parseCodelists(reader, context.getCodelists());
                     break;
                 case CONCEPTS_TAG:
-                    parseConcepts(reader, concepts);
+                    parseConcepts(reader, context.getConcepts());
                     break;
                 case KEY_FAMILIES_TAG:
-                    parseDataStructures(reader, result, concepts::get, codelists::get);
+                    parseDataStructures(reader, result, context);
                     break;
             }
         }
@@ -147,13 +142,13 @@ final class XMLStreamStructure20 {
         concepts.put(id, label.build(id));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, KEY_FAMILIES_TAG, KEY_FAMILY_TAG)) {
-            parseDataStructure(reader, result, toConceptName, toCodes);
+            parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
@@ -166,7 +161,7 @@ final class XMLStreamStructure20 {
                     parseNameTag(reader, structureLabel);
                     break;
                 case COMPONENTS_TAG:
-                    parseDataStructureComponents(reader, ds, toConceptName, toCodes);
+                    parseDataStructureComponents(reader, ds, context);
                     break;
             }
         }
@@ -174,12 +169,12 @@ final class XMLStreamStructure20 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
         int position = 1;
         while (XMLStreamUtil.nextTags(reader, COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
-                    parseDimension(reader, ds, toConceptName, toCodes, position++);
+                    parseDimension(reader, ds, context, position++);
                     break;
                 case TIME_DIMENSION_TAG:
                     parseTimeDimension(reader, ds);
@@ -187,28 +182,35 @@ final class XMLStreamStructure20 {
                 case PRIMARY_MEASURE_TAG:
                     parsePrimaryMeasure(reader, ds);
                     break;
+                case ATTRIBUTE_TAG:
+                    parseAttribute(reader, ds, context);
+                    break;
             }
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
+    private void parseComponent(XMLStreamReader reader, Component.Builder component, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
         String codelist = reader.getAttributeValue(null, CODELIST_ATTR);
         XMLStreamUtil.check(codelist != null, reader, "Missing Dimension codelist");
 
-        Dimension.Builder result = Dimension.builder().id(id).position(position);
+        component.id(id);
 
-        String conceptName = toConceptName.apply(id);
-        result.label(conceptName != null ? conceptName : id);
+        String conceptName = context.getConcepts().get(id);
+        component.label(conceptName != null ? conceptName : id);
 
-        Map<String, String> codes = toCodes.apply(codelist);
+        Map<String, String> codes = context.getCodelists().get(codelist);
         if (codes != null) {
-            result.codes(codes);
+            component.codes(codes);
         }
+    }
 
-        ds.dimension(result.build());
+    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context, int position) throws XMLStreamException {
+        Dimension.Builder result = Dimension.builder();
+        parseComponent(reader, result, context);
+        ds.dimension(result.position(position).build());
     }
 
     private void parseTimeDimension(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
@@ -230,5 +232,11 @@ final class XMLStreamStructure20 {
         if (lang != null) {
             langStack.put(lang, reader.getElementText());
         }
+    }
+
+    private void parseAttribute(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+        Attribute.Builder result = Attribute.builder();
+        parseComponent(reader, result, context);
+        ds.attribute(result.build());
     }
 }

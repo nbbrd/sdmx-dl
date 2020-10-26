@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2020 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,18 +16,16 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.index.qual.NonNegative;
-
 import java.util.Map;
 
 /**
- * Statistical concept used in combination with other statistical concepts to identify a statistical series or individual observations.
+ * Statistical concept providing qualitative information about a specific statistical object.
  *
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(builderClassName = "Builder")
-public class Dimension extends Component {
+public class Attribute extends Component {
 
     @lombok.NonNull
     String id;
@@ -39,9 +37,13 @@ public class Dimension extends Component {
     @lombok.NonNull
     String label;
 
-    @NonNegative
-    int position;
+//    @lombok.NonNull
+//    RelationShip relationShip;
+//
+//    public enum RelationShip {
+//        DATASET, SERIES, OBS, OTHER;
+//    }
 
-    public static final class Builder extends Component.Builder<Dimension.Builder> {
+    public static final class Builder extends Component.Builder<Attribute.Builder> {
     }
 }

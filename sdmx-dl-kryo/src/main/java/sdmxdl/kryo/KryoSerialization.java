@@ -127,6 +127,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
         result.register(Dimension.class, new DimensionSerializer());
+        result.register(Attribute.class, new AttributeSerializer());
 
         result.register(ArrayList.class);
         result.register(LocalDateTime.class);
@@ -206,11 +207,13 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
     private static final class DataStructureSerializer extends ImmutableSerializer<DataStructure> {
 
         private final Serializer<Collection<Dimension>> dimensions = new CustomCollectionSerializer<>(Dimension.class);
+        private final Serializer<Collection<Attribute>> attributes = new CustomCollectionSerializer<>(Attribute.class);
 
         @Override
         public void write(Kryo kryo, Output output, DataStructure t) {
             kryo.writeObject(output, t.getRef());
             kryo.writeObject(output, t.getDimensions(), dimensions);
+            kryo.writeObject(output, t.getAttributes(), attributes);
             output.writeString(t.getTimeDimensionId());
             output.writeString(t.getPrimaryMeasureId());
             output.writeString(t.getLabel());
@@ -222,6 +225,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
                     .builder()
                     .ref(kryo.readObject(input, DataStructureRef.class))
                     .dimensions(kryo.readObject(input, ArrayList.class, dimensions))
+                    .attributes(kryo.readObject(input, ArrayList.class, attributes))
                     .timeDimensionId(input.readString())
                     .primaryMeasureId(input.readString())
                     .label(input.readString())
@@ -373,9 +377,9 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         @Override
         public void write(Kryo kryo, Output output, Dimension t) {
             output.writeString(t.getId());
-            output.writeInt(t.getPosition(), true);
             kryo.writeObject(output, t.getCodes(), codes);
             output.writeString(t.getLabel());
+            output.writeInt(t.getPosition(), true);
         }
 
         @Override
@@ -383,7 +387,29 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             return Dimension
                     .builder()
                     .id(input.readString())
+                    .codes(kryo.readObject(input, HashMap.class, codes))
+                    .label(input.readString())
                     .position(input.readInt(true))
+                    .build();
+        }
+    }
+
+    private static final class AttributeSerializer extends ImmutableSerializer<Attribute> {
+
+        private final Serializer<Map<String, String>> codes = new CustomMapSerializer<>(String.class, String.class);
+
+        @Override
+        public void write(Kryo kryo, Output output, Attribute t) {
+            output.writeString(t.getId());
+            kryo.writeObject(output, t.getCodes(), codes);
+            output.writeString(t.getLabel());
+        }
+
+        @Override
+        public Attribute read(Kryo kryo, Input input, Class<? extends Attribute> type) {
+            return Attribute
+                    .builder()
+                    .id(input.readString())
                     .codes(kryo.readObject(input, HashMap.class, codes))
                     .label(input.readString())
                     .build();

@@ -17,10 +17,7 @@
 package sdmxdl.xml.stream;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dimension;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.xml.SdmxmlUri;
 
 import javax.xml.stream.XMLStreamException;
@@ -30,8 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 /**
  * @author Philippe Charles
@@ -58,11 +53,15 @@ final class XMLStreamStructure21 {
     private static final String LOCAL_REPRESENTATION_TAG = "LocalRepresentation";
     private static final String CONCEPT_IDENTITY_TAG = "ConceptIdentity";
     private static final String REF_TAG = "Ref";
+    private static final String ATTRIBUTE_LIST_TAG = "AttributeList";
+    private static final String ATTRIBUTE_TAG = "Attribute";
+    private static final String ATTRIBUTE_RELATIONSHIP_TAG = "AttributeRelationship";
 
     private static final String ID_ATTR = "id";
     private static final String AGENCY_ID_ATTR = "agencyID";
     private static final String VERSION_ATTR = "version";
     private static final String LANG_ATTR = "lang";
+    private static final String POSITION_ATTR = "position";
 
     private final TextBuilder structureLabel;
     private final TextBuilder label;
@@ -98,18 +97,17 @@ final class XMLStreamStructure21 {
     }
 
     private void parseStructures(XMLStreamReader reader, List<DataStructure> structs) throws XMLStreamException {
-        Map<String, Map<String, String>> codelists = new HashMap<>();
-        Map<String, String> concepts = new HashMap<>();
+        DsdContext context = new DsdContext();
         while (XMLStreamUtil.nextTags(reader, STRUCTURES_TAG)) {
             switch (reader.getLocalName()) {
                 case CODELISTS_TAG:
-                    parseCodelists(reader, codelists);
+                    parseCodelists(reader, context.getCodelists());
                     break;
                 case CONCEPTS_TAG:
-                    parseConcepts(reader, concepts);
+                    parseConcepts(reader, context.getConcepts());
                     break;
                 case DATA_STUCTURES_TAG:
-                    parseDataStructures(reader, structs, concepts::get, codelists::get);
+                    parseDataStructures(reader, structs, context);
                     break;
             }
         }
@@ -159,13 +157,13 @@ final class XMLStreamStructure21 {
         concepts.put(id, label.build(id));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, DATA_STUCTURES_TAG, DATA_STUCTURE_TAG)) {
-            parseDataStructure(reader, result, toConceptName, toCodes);
+            parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
@@ -178,7 +176,7 @@ final class XMLStreamStructure21 {
                     parseNameTag(reader, structureLabel);
                     break;
                 case DATA_STUCTURE_COMPONENTS_TAG:
-                    parseDataStructureComponents(reader, ds, toConceptName, toCodes);
+                    parseDataStructureComponents(reader, ds, context);
                     break;
             }
         }
@@ -186,25 +184,27 @@ final class XMLStreamStructure21 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_LIST_TAG:
-                    parseDimensionList(reader, ds, toConceptName, toCodes);
+                    parseDimensionList(reader, ds, context);
                     break;
                 case MEASURE_LIST_TAG:
                     parseMeasureList(reader, ds);
+                    break;
+                case ATTRIBUTE_LIST_TAG:
+                    parseAttributeList(reader, ds, context);
                     break;
             }
         }
     }
 
-    private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
-        int position = 1;
+    private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DIMENSION_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
-                    parseDimension(reader, ds, toConceptName, toCodes, position++);
+                    parseDimension(reader, ds, context);
                     break;
                 case TIME_DIMENSION_TAG:
                     parseTimeDimension(reader, ds);
@@ -213,42 +213,45 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, UnaryOperator<String> toConceptName, Function<String, Map<String, String>> toCodes, int position) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
-        Dimension.Builder dimension = Dimension.builder().id(id).position(position).label(id);
+        String position = reader.getAttributeValue(null, POSITION_ATTR);
+        XMLStreamUtil.check(position != null, reader, "Missing Dimension position");
+
+        Dimension.Builder dimension = Dimension.builder().id(id).position(parseInt(position)).label(id);
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:
-                    parseConceptIdentity(reader, dimension, toConceptName);
+                    parseConceptIdentity(reader, dimension, context);
                     break;
                 case LOCAL_REPRESENTATION_TAG:
-                    parseLocalRepresentation(reader, dimension, toCodes);
+                    parseLocalRepresentation(reader, dimension, context);
                     break;
             }
         }
         ds.dimension(dimension.build());
     }
 
-    private void parseConceptIdentity(XMLStreamReader reader, Dimension.Builder dimension, UnaryOperator<String> toConceptName) throws XMLStreamException {
+    private void parseConceptIdentity(XMLStreamReader reader, Component.Builder<?> concept, DsdContext context) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, CONCEPT_IDENTITY_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");
 
-            String conceptName = toConceptName.apply(id);
-            dimension.label(conceptName != null ? conceptName : id);
+            String conceptName = context.getConcepts().get(id);
+            concept.label(conceptName != null ? conceptName : id);
         }
     }
 
-    private void parseLocalRepresentation(XMLStreamReader reader, Dimension.Builder dimension, Function<String, Map<String, String>> toCodes) throws XMLStreamException {
+    private void parseLocalRepresentation(XMLStreamReader reader, Component.Builder<?> concept, DsdContext context) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, LOCAL_REPRESENTATION_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");
 
-            Map<String, String> codes = toCodes.apply(id);
+            Map<String, String> codes = context.getCodelists().get(id);
             if (codes != null) {
-                dimension.codes(codes);
+                concept.codes(codes);
             }
         }
     }
@@ -273,6 +276,59 @@ final class XMLStreamStructure21 {
         String lang = reader.getAttributeValue(null, LANG_ATTR);
         if (lang != null) {
             langStack.put(lang, reader.getElementText());
+        }
+    }
+
+    private void parseAttributeList(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+        while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_LIST_TAG)) {
+            switch (reader.getLocalName()) {
+                case ATTRIBUTE_TAG:
+                    parseAttribute(reader, ds, context);
+                    break;
+            }
+        }
+    }
+
+    private void parseAttribute(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+        String id = reader.getAttributeValue(null, ID_ATTR);
+        XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
+
+        Attribute.Builder attribute = Attribute.builder().id(id).label(id);
+        while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_TAG)) {
+            switch (reader.getLocalName()) {
+                case CONCEPT_IDENTITY_TAG:
+                    parseConceptIdentity(reader, attribute, context);
+                    break;
+                case LOCAL_REPRESENTATION_TAG:
+                    parseLocalRepresentation(reader, attribute, context);
+                    break;
+                case ATTRIBUTE_RELATIONSHIP_TAG:
+//                    parseAttributeRelationship(reader, attribute);
+                    break;
+            }
+        }
+        ds.attribute(attribute.build());
+    }
+
+//    private void parseAttributeRelationship(XMLStreamReader reader, Attribute.Builder attribute) throws XMLStreamException {
+//        attribute.relationShip(Attribute.RelationShip.OTHER);
+//        while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_RELATIONSHIP_TAG)) {
+//            switch (reader.getLocalName()) {
+//                case PRIMARY_MEASURE_TAG:
+//                    attribute.relationShip(Attribute.RelationShip.OBS);
+//                    break;
+//                case DIMENSION_TAG:
+//                    attribute.relationShip(Attribute.RelationShip.SERIES);
+//                    break;
+//            }
+//        }
+//    }
+
+    private int parseInt(String value) throws XMLStreamException {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            throw new XMLStreamException(ex);
         }
     }
 }

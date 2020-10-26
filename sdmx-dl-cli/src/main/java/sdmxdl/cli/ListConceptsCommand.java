@@ -21,10 +21,12 @@ import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
+import sdmxdl.Attribute;
 import sdmxdl.Dimension;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -46,13 +48,23 @@ public final class ListConceptsCommand extends BaseCommand {
             w.writeField("Concept");
             w.writeField("Label");
             w.writeField("Type");
+            w.writeField("Coded");
             w.writeField("Position");
             w.writeEndOfLine();
             for (Dimension o : getSortedDimensions()) {
                 w.writeField(o.getId());
                 w.writeField(o.getLabel());
                 w.writeField("dimension");
+                w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
                 w.writeField(Integer.toString(o.getPosition()));
+                w.writeEndOfLine();
+            }
+            for (Attribute o : getSortedAttributes()) {
+                w.writeField(o.getId());
+                w.writeField(o.getLabel());
+                w.writeField("attribute");
+                w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
+                w.writeField("");
                 w.writeEndOfLine();
             }
         }
@@ -62,6 +74,12 @@ public final class ListConceptsCommand extends BaseCommand {
     private SortedSet<Dimension> getSortedDimensions() throws IOException {
         TreeSet<Dimension> result = new TreeSet<>(Comparator.comparingInt(Dimension::getPosition));
         result.addAll(web.getStructure().getDimensions());
+        return result;
+    }
+
+    private Set<Attribute> getSortedAttributes() throws IOException {
+        TreeSet<Attribute> result = new TreeSet<>(Comparator.comparing(Attribute::getId));
+        result.addAll(web.getStructure().getAttributes());
         return result;
     }
 }

@@ -16,15 +16,20 @@
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.xml.Xml;
+import org.junit.Test;
+import sdmxdl.Attribute;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.samples.SdmxSource;
-import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
-import nbbrd.io.xml.Xml;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 /**
  *
@@ -46,6 +51,17 @@ public class XMLStreamStructure20Test {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
                 assertThat(x.getLabel()).isEqualTo("Subject");
                 assertThat(x.getPosition()).isEqualTo(1);
+            });
+
+            Set<Attribute> attributes = o.getAttributes();
+            assertThat(attributes).hasSize(2);
+            assertThat(attributes).filteredOn(attr -> attr.getId().equals("TIME_FORMAT")).singleElement().satisfies(x -> {
+                assertThat(x.getLabel()).isEqualTo("Time Format");
+                assertThat(x.getCodes()).isNotEmpty();
+            });
+            assertThat(attributes).filteredOn(attr -> attr.getId().equals("OBS_STATUS")).singleElement().satisfies(x -> {
+                assertThat(x.getLabel()).isEqualTo("Observation Status");
+                assertThat(x.getCodes()).isNotEmpty();
             });
         });
 
