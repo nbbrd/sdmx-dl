@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -62,12 +63,12 @@ public final class ListCodesCommand extends BaseCommand {
     }
 
     private SortedMap<String, String> getSortedCodes() throws IOException {
-        return new TreeMap<>(web.getStructure()
-                .getDimensions()
-                .stream()
-                .filter(dimension -> dimension.getId().equals(concept))
-                .findFirst()
-                .orElseThrow(() -> new IOException("Cannot find concept '" + concept + "'"))
-                .getCodes());
+        return new TreeMap<>(
+                Stream.concat(web.getStructure().getDimensions().stream(), web.getStructure().getAttributes().stream())
+                        .filter(component -> component.getId().equals(concept))
+                        .findFirst()
+                        .orElseThrow(() -> new IOException("Cannot find concept '" + concept + "'"))
+                        .getCodes()
+        );
     }
 }

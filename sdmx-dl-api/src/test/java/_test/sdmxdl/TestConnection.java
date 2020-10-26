@@ -197,7 +197,7 @@ public enum TestConnection implements SdmxWebConnection {
     public static final DataflowRef FLOW_REF = DataflowRef.parse("flow");
     public static final DataStructureRef STRUCT_REF = DataStructureRef.parse("struct");
     public static final Dataflow FLOW = Dataflow.of(FLOW_REF, STRUCT_REF, "label");
-    public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).label("").build();
+    public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).primaryMeasureId("").label("").build();
     public static final List<Series> DATA = Collections.emptyList();
     public static final Key KEY = Key.ALL;
     public static final DataFilter FILTER = DataFilter.ALL;

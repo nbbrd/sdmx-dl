@@ -44,6 +44,7 @@ public class InseeDialectTest {
         DataStructure dsd = DataStructure.builder()
                 .dimension(Dimension.builder().id("FREQ").position(1).label("").build())
                 .ref(DataStructureRef.parse("abc"))
+                .primaryMeasureId("")
                 .label("")
                 .build();
         Key.Builder key = Key.builder(dsd);

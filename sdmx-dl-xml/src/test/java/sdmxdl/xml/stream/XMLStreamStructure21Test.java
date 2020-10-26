@@ -1,33 +1,37 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.xml.Xml;
+import org.junit.Test;
+import sdmxdl.Attribute;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.samples.SdmxSource;
-import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
-import nbbrd.io.xml.Xml;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 /**
- *
  * @author Philippe Charles
  */
 public class XMLStreamStructure21Test {
@@ -37,7 +41,7 @@ public class XMLStreamStructure21Test {
     public void test() throws Exception {
         Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
-        assertThat(parser.parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(parser.parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
@@ -46,6 +50,19 @@ public class XMLStreamStructure21Test {
                 assertThat(x.getId()).isEqualTo("FREQ");
                 assertThat(x.getLabel()).isEqualTo("Frequency");
                 assertThat(x.getPosition()).isEqualTo(1);
+            });
+
+            Set<Attribute> attributes = o.getAttributes();
+            assertThat(attributes).hasSize(11);
+            assertThat(attributes).filteredOn(attr -> attr.getId().equals("TIME_FORMAT")).singleElement().satisfies(x -> {
+                assertThat(x.getLabel()).isEqualTo("Time format code");
+//                assertThat(x.getRelationShip()).isEqualTo(Attribute.RelationShip.SERIES);
+                assertThat(x.getCodes()).isEmpty();
+            });
+            assertThat(attributes).filteredOn(attr -> attr.getId().equals("OBS_STATUS")).singleElement().satisfies(x -> {
+                assertThat(x.getLabel()).isEqualTo("Observation status");
+//                assertThat(x.getRelationShip()).isEqualTo(Attribute.RelationShip.OBS);
+                assertThat(x.getCodes()).isNotEmpty();
             });
         });
 

@@ -254,6 +254,7 @@ public class KeyTest {
         b = Key.builder(DataStructure
                 .builder()
                 .ref(DataStructureRef.parse("ref"))
+                .primaryMeasureId("")
                 .label("")
                 .build());
         assertThat(b.clear().toString()).isEqualTo("all");
@@ -264,6 +265,7 @@ public class KeyTest {
                 .builder()
                 .ref(DataStructureRef.parse("ref"))
                 .label("")
+                .primaryMeasureId("")
                 .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
                 .dimension(Dimension.builder().position(2).id("REGION").label("Region").build())
                 .build());

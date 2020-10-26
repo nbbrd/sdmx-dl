@@ -45,8 +45,17 @@ public class DataStructure extends Resource<DataStructureRef> {
     @lombok.Singular
     Set<Dimension> dimensions;
 
+    /**
+     * Non-null list of statistical concept providing qualitative information
+     * about a specific statistical object
+     */
+    @lombok.NonNull
+    @lombok.Singular
+    Set<Attribute> attributes;
+
     String timeDimensionId;
 
+    @lombok.NonNull
     String primaryMeasureId;
 
     /**
