@@ -4,7 +4,16 @@ import demetra.timeseries.TsDataTable;
 import picocli.CommandLine;
 
 @lombok.Data
-public class GridOptions {
+public class LayoutOptions {
+
+    public enum Layout {GRID, TABLE}
+
+    @CommandLine.Option(
+            names = {"--layout"},
+            defaultValue = "GRID",
+            descriptionKey = "sdmxdl.cli.layout"
+    )
+    private Layout layout;
 
     @CommandLine.Option(
             names = {"-r", "--reverse-chronology"},
@@ -14,7 +23,7 @@ public class GridOptions {
     private boolean reverseChronology;
 
     @CommandLine.Option(
-            names = {"-t", "--title-attribute"},
+            names = {"-t", "--title-attr"},
             paramLabel = "<attr>",
             defaultValue = "",
             descriptionKey = "sdmxdl.cli.titleAttribute"
@@ -23,7 +32,7 @@ public class GridOptions {
 
     @CommandLine.Option(
             names = {"-u", "--distribution"},
-            paramLabel = "<Distribution>",
+            paramLabel = "<distr>",
             defaultValue = "FIRST",
             descriptionKey = "sdmxdl.cli.distribution"
     )

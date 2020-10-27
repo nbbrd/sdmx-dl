@@ -24,12 +24,6 @@ import picocli.CommandLine;
 import sdmxdl.Attribute;
 import sdmxdl.Dimension;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 /**
  * @author Philippe Charles
  */
@@ -51,7 +45,7 @@ public final class ListConceptsCommand extends BaseCommand {
             w.writeField("Coded");
             w.writeField("Position");
             w.writeEndOfLine();
-            for (Dimension o : getSortedDimensions()) {
+            for (Dimension o : WebFlowOptions.getSortedDimensions(web.getStructure())) {
                 w.writeField(o.getId());
                 w.writeField(o.getLabel());
                 w.writeField("dimension");
@@ -59,7 +53,7 @@ public final class ListConceptsCommand extends BaseCommand {
                 w.writeField(Integer.toString(o.getPosition()));
                 w.writeEndOfLine();
             }
-            for (Attribute o : getSortedAttributes()) {
+            for (Attribute o : WebFlowOptions.getSortedAttributes(web.getStructure())) {
                 w.writeField(o.getId());
                 w.writeField(o.getLabel());
                 w.writeField("attribute");
@@ -69,17 +63,5 @@ public final class ListConceptsCommand extends BaseCommand {
             }
         }
         return null;
-    }
-
-    private SortedSet<Dimension> getSortedDimensions() throws IOException {
-        TreeSet<Dimension> result = new TreeSet<>(Comparator.comparingInt(Dimension::getPosition));
-        result.addAll(web.getStructure().getDimensions());
-        return result;
-    }
-
-    private Set<Attribute> getSortedAttributes() throws IOException {
-        TreeSet<Attribute> result = new TreeSet<>(Comparator.comparing(Attribute::getId));
-        result.addAll(web.getStructure().getAttributes());
-        return result;
     }
 }

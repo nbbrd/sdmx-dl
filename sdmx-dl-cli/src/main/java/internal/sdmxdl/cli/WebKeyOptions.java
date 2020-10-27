@@ -28,6 +28,7 @@ import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -45,12 +46,19 @@ public class WebKeyOptions extends WebFlowOptions {
     )
     private Key key;
 
+    public DataFilter getFilter() {
+        return DataFilter.ALL;
+    }
+
+    public List<Series> getSortedSeries() throws IOException {
+        return getSortedSeries(getKey(), getFilter());
+    }
+
     public TsCollection getSortedData(String titleAttribute) throws IOException {
-        DataFilter filter = DataFilter.ALL;
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-            try (Stream<Series> stream = conn.getDataStream(getFlow(), getKey(), filter)) {
+            try (Stream<Series> stream = conn.getDataStream(getFlow(), getKey(), getFilter())) {
                 return stream
-                        .sorted(BY_KEY)
+                        .sorted(SERIES_BY_KEY)
                         .map(series -> getTs(series, titleAttribute))
                         .collect(TO_TS_COLLECTION);
             }
@@ -58,9 +66,8 @@ public class WebKeyOptions extends WebFlowOptions {
     }
 
     public Collection<Series> getSeries() throws IOException {
-        DataFilter filter = DataFilter.ALL;
         try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-            return conn.getData(getFlow(), getKey(), filter);
+            return conn.getData(getFlow(), getKey(), getFilter());
         }
     }
 
