@@ -152,8 +152,13 @@ final class XMLStreamStructure20 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
-        DataStructure.Builder ds = DataStructure.builder();
-        ds.ref(DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
+        String optionalAgency = reader.getAttributeValue(null, AGENCY_ID_ATTR);
+        String optionalVersion = reader.getAttributeValue(null, VERSION_ATTR);
+
+        DataStructure.Builder ds = DataStructure
+                .builder()
+                .ref(DataStructureRef.of(optionalAgency, id, optionalVersion))
+                .primaryMeasureId("");
         structureLabel.clear();
         while (XMLStreamUtil.nextTags(reader, KEY_FAMILY_TAG)) {
             switch (reader.getLocalName()) {
