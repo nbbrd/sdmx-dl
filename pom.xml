@@ -33,10 +33,11 @@
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-sys</module>
         <module>sdmx-dl-testing</module>
+        <module>sdmx-dl-csv</module>
     </modules>
 
     <properties>
-        <java-io-util.version>0.0.7</java-io-util.version>
+        <java-io-util.version>0.0.8</java-io-util.version>
     </properties>
 
     <dependencyManagement>
@@ -121,6 +122,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sdmx-dl-cli</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sdmx-dl-csv</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

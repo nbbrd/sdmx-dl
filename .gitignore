@@ -8,4 +8,5 @@
 /sdmx-dl-sys/target/
 /sdmx-dl-testing/target/
 /sdmx-dl-cli/target/
+/sdmx-dl-csv/target/
 /target/

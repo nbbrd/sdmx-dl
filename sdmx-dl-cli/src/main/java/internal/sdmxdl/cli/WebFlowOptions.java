@@ -59,11 +59,11 @@ public class WebFlowOptions extends WebSourceOptions {
         }
     }
 
-    public static SortedSet<Dimension> getSortedDimensions(DataStructure dsd) throws IOException {
+    public static SortedSet<Dimension> getSortedDimensions(DataStructure dsd) {
         return sortedCopyOf(dsd.getDimensions(), Comparator.comparingInt(Dimension::getPosition));
     }
 
-    public static Set<Attribute> getSortedAttributes(DataStructure dsd) throws IOException {
+    public static Set<Attribute> getSortedAttributes(DataStructure dsd) {
         return sortedCopyOf(dsd.getAttributes(), Comparator.comparing(Attribute::getId));
     }
 
@@ -73,5 +73,5 @@ public class WebFlowOptions extends WebSourceOptions {
         return result;
     }
 
-    static final Comparator<Series> SERIES_BY_KEY = Comparator.comparing(series -> series.getKey().toString());
+    public static final Comparator<Series> SERIES_BY_KEY = Comparator.comparing(series -> series.getKey().toString());
 }

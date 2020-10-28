@@ -21,19 +21,20 @@ import demetra.timeseries.TsUnit;
 import demetra.tsprovider.grid.GridDataType;
 import demetra.tsprovider.grid.GridOutput;
 import demetra.tsprovider.grid.GridWriter;
-import demetra.tsprovider.util.ObsFormat;
 import internal.sdmxdl.cli.*;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
-import sdmxdl.*;
+import sdmxdl.DataCursor;
+import sdmxdl.Obs;
+import sdmxdl.Series;
+import sdmxdl.csv.SdmxPicocsvFormatter;
+import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
@@ -63,76 +64,79 @@ public final class DataCommand extends BaseCommand {
         excel.apply(format);
 
         try (Csv.Writer writer = csv.newCsvWriter()) {
-            write(writer, web, format, excel.isExcelCompatibility(), layout);
+            switch (layout.getLayout()) {
+                case GRID:
+                    writeGrid(writer, web, format, excel.isExcelCompatibility(), layout);
+                    break;
+                case SDMX:
+                    writeTable(writer, web, format.getLocale(), layout.isReverseChronology());
+                    break;
+            }
         }
 
         return null;
     }
 
-    private static void write(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format, boolean cornerFieldRequired, LayoutOptions layout) throws IOException {
-        switch (layout.getLayout()) {
-            case GRID: {
-                TsCollection data = web.getSortedData(layout.getTitleAttribute());
-                GridWriter
-                        .builder()
-                        .format(format.toObsFormat(hasTime(data)))
-                        .cornerLabel("Period")
-                        .reverseChronology(layout.isReverseChronology())
-                        .build()
-                        .write(data, new CsvOutput(w));
-                break;
-            }
-            case TABLE: {
-                try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
-                    DataStructure dsd = conn.getStructure(web.getFlow());
+    private static void writeGrid(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format, boolean cornerFieldRequired, LayoutOptions layout) throws IOException {
+        TsCollection data = web.getSortedData(layout.getTitleAttribute());
+        GridWriter
+                .builder()
+                .format(format.toObsFormat(hasTime(data)))
+                .cornerLabel("Period")
+                .reverseChronology(layout.isReverseChronology())
+                .build()
+                .write(data, new CsvGridOutput(w));
+    }
 
-                    w.writeField("DATAFLOW");
-                    for (Dimension dimension : WebFlowOptions.getSortedDimensions(dsd)) {
-                        w.writeField(dimension.getId());
-                    }
-                    w.writeField(dsd.getTimeDimensionId());
-                    w.writeField("OBS_VALUE");
-                    w.writeField("SERIESKEY");
-                    w.writeEndOfLine();
-
-                    Collection<Series> data = web.getSortedSeries();
-                    String dataflow = toDataflowField(web.getFlow());
-                    boolean hasTime = data.stream().anyMatch(series -> series.getFreq().hasTime());
-
-                    ObsFormat obsFormat = format.toObsFormat(hasTime);
-                    Formatter<LocalDateTime> periodFormatter = obsFormat.dateTimeFormatter();
-                    Formatter<Number> valueFormatter = obsFormat.numberFormatter();
-                    Comparator<Obs> obsComparator = Comparator.comparing(Obs::getPeriod);
-
-                    for (Series series : data) {
-                        String key = series.getKey().toString();
-
-                        List<Obs> sortedObs = series.getObs()
-                                .stream()
-                                .filter(obs -> obs.getPeriod() != null)
-                                .sorted(layout.isReverseChronology() ? obsComparator.reversed() : obsComparator)
-                                .collect(Collectors.toList());
-
-                        for (Obs obs : sortedObs) {
-                            w.writeField(dataflow);
-                            for (int i = 0; i < series.getKey().size(); i++) {
-                                w.writeField(series.getKey().get(i));
-                            }
-                            w.writeField(periodFormatter.format(obs.getPeriod()));
-                            w.writeField(valueFormatter.format(obs.getValue()));
-                            w.writeField(key);
-                            w.writeEndOfLine();
-                        }
-                    }
-                }
-                break;
-            }
+    private static void writeTable(Csv.Writer w, WebKeyOptions web, Locale encoding, boolean reverseChronology) throws IOException {
+        try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
+            SdmxPicocsvFormatter
+                    .builder()
+                    .dsd(conn.getStructure(web.getFlow()))
+                    .encoding(encoding)
+                    .build()
+                    .format(getSortedSeries(conn, web, reverseChronology), w);
         }
     }
 
-    private static String toDataflowField(DataflowRef ref) {
-        return ref.getAgency() + ":" + ref.getId() + "(" + ref.getVersion() + ")";
+    private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web, boolean reverseChronology) throws IOException {
+        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), web.getFilter())) {
+            return DataSet
+                    .builder()
+                    .ref(web.getFlow())
+                    .key(web.getKey())
+                    .data(collectSeries(cursor, reverseChronology ? OBS_BY_PERIOD_DESC : OBS_BY_PERIOD))
+                    .build();
+        }
     }
+
+    private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
+        SortedSet<Series> sortedSeries = new TreeSet<>(WebFlowOptions.SERIES_BY_KEY);
+        while (cursor.nextSeries()) {
+            sortedSeries.add(Series
+                    .builder()
+                    .key(cursor.getSeriesKey())
+                    .freq(cursor.getSeriesFrequency())
+                    .meta(cursor.getSeriesAttributes())
+                    .obs(collectObs(cursor, obsComparator))
+                    .build());
+        }
+        return sortedSeries;
+    }
+
+    private static Collection<Obs> collectObs(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
+        SortedSet<Obs> sortedObs = new TreeSet<>(obsComparator);
+        while (cursor.nextObs()) {
+            LocalDateTime period = cursor.getObsPeriod();
+            if (period != null) {
+                sortedObs.add(Obs.of(period, cursor.getObsValue()));
+            }
+        }
+        return sortedObs;
+    }
+
+    private static final Comparator<Obs> OBS_BY_PERIOD = Comparator.comparing(Obs::getPeriod);
+    private static final Comparator<Obs> OBS_BY_PERIOD_DESC = OBS_BY_PERIOD.reversed();
 
     private static boolean hasTime(TsCollection col) {
         return col.getData().stream().map(ts -> ts.getData().getTsUnit()).anyMatch(DataCommand::hasTime);
@@ -143,7 +147,7 @@ public final class DataCommand extends BaseCommand {
     }
 
     @lombok.RequiredArgsConstructor
-    private static final class CsvOutput implements GridOutput {
+    private static final class CsvGridOutput implements GridOutput {
 
         @lombok.NonNull
         private final Csv.Writer csvWriter;
@@ -155,12 +159,12 @@ public final class DataCommand extends BaseCommand {
 
         @Override
         public Stream open(String name, int rows, int columns) throws IOException {
-            return new CsvOutputStream(csvWriter);
+            return new CsvGridOutputStream(csvWriter);
         }
     }
 
     @lombok.RequiredArgsConstructor
-    private static final class CsvOutputStream implements GridOutput.Stream {
+    private static final class CsvGridOutputStream implements GridOutput.Stream {
 
         @lombok.NonNull
         private final Csv.Writer csvWriter;

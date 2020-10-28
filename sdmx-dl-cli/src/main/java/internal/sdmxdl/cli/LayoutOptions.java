@@ -6,7 +6,7 @@ import picocli.CommandLine;
 @lombok.Data
 public class LayoutOptions {
 
-    public enum Layout {GRID, TABLE}
+    public enum Layout {GRID, SDMX}
 
     @CommandLine.Option(
             names = {"--layout"},

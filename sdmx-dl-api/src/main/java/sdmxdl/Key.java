@@ -182,6 +182,8 @@ public final class Key {
 
         @Override
         String toString();
+
+        int size();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
@@ -253,6 +255,11 @@ public final class Key {
         @Override
         public String toString() {
             return Key.toString(items);
+        }
+
+        @Override
+        public int size() {
+            return items.length;
         }
     }
     //</editor-fold>

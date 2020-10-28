@@ -20,7 +20,7 @@ import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * @author Philippe Charles
@@ -38,17 +38,21 @@ public class RepoSamples {
     public final DataStructure STRUCT = DataStructure
             .builder()
             .ref(GOOD_STRUCT_REF)
-            .dimension(Dimension.builder().id("REGION").label("Region").position(1).build())
+            .dimension(Dimension.builder().id("FREQ").label("Frequency").position(1).build())
+            .dimension(Dimension.builder().id("REGION").label("Region").position(2).build())
+            .dimension(Dimension.builder().id("SECTOR").label("Sector").position(3).build())
             .attribute(Attribute.builder().id("TITLE").label("Title").build())
+            .timeDimensionId("TIME")
             .primaryMeasureId("")
             .label("struct1")
             .build();
 
     public final Series SERIES = Series
             .builder()
-            .key(Key.of("BE"))
+            .key(Key.of("M", "BE", "INDUSTRY"))
             .freq(Frequency.MONTHLY)
-            .obs(Obs.of(LocalDateTime.now(), Math.PI))
+            .obs(Obs.of(LocalDate.of(2010, 1, 1).atStartOfDay(), Math.PI))
+            .obs(Obs.of(LocalDate.of(2010, 2, 1).atStartOfDay(), Math.E))
             .meta("TITLE", "hello world")
             .build();
 

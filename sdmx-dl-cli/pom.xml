@@ -53,6 +53,10 @@
             <artifactId>sdmx-dl-testing</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>sdmx-dl-csv</artifactId>
+        </dependency>
+        <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>4.5.2</version>

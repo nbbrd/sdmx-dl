@@ -48,7 +48,7 @@ public final class ObsFormatOptions {
     @CommandLine.Option(
             names = {"-S", "--datetime"},
             paramLabel = "<pattern>",
-            defaultValue = "yyyy-MM-dd HH:mm:ss",
+            defaultValue = "yyyy-MM-ddTHH:mm:ss",
             descriptionKey = "sdmxdl.cli.datetime"
     )
     private String datetimePattern;
