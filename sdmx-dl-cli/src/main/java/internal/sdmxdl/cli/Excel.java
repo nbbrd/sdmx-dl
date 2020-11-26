@@ -21,6 +21,7 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 
 import java.nio.charset.Charset;
+import java.util.Locale;
 
 /**
  * @author Philippe Charles
@@ -46,7 +47,7 @@ public final class Excel {
 
     public void apply(ObsFormatOptions format) {
         if (excelCompatibility) {
-            format.setLocale(null);
+            format.setLocale(Locale.getDefault());
             format.setDatetimePattern("yyyy-MM-dd HH:mm:ss");
             format.setNumberPattern(null);
             format.setIgnoreNumberGrouping(true);
