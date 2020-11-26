@@ -35,6 +35,6 @@ public final class OecdDriver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(OECD::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
+            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx", "https://stats.oecd.org")
             .build();
 }

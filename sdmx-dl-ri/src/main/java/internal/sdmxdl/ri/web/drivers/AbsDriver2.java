@@ -50,7 +50,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(AbsClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+            .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx", "http://stat.data.abs.gov.au")
             .build();
 
     private static final class AbsClient2 extends DotStatRestClient {

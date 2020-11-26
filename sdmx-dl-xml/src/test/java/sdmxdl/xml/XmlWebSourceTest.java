@@ -38,13 +38,15 @@ public class XmlWebSourceTest {
                 + "        <dialect>SDMX21</dialect>\n"
                 + "        <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>\n"
                 + "        <property key=\"seriesKeysOnlySupported\" value=\"true\"/>\n"
+                + "        <website>https://sdw.ecb.europa.eu</website>\n"
                 + "    </source>\n"
                 + "</sources>";
 
         assertThat(XmlWebSource.getParser().parseChars(xml))
                 .hasSize(1)
                 .element(0)
-                .isEqualToComparingFieldByField(SdmxWebSource
+                .usingRecursiveComparison()
+                .isEqualTo(SdmxWebSource
                         .builder()
                         .name("ECB")
                         .description("European Central Bank")
@@ -52,6 +54,7 @@ public class XmlWebSourceTest {
                         .dialect("SDMX21")
                         .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
                         .property("seriesKeysOnlySupported", "true")
+                        .websiteOf("https://sdw.ecb.europa.eu")
                         .build()
                 );
     }

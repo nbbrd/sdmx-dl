@@ -7,6 +7,7 @@
         <dialect>ECB2020</dialect>
         <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
+        <website>https://sdw.ecb.europa.eu</website>
     </source>
     <source>
         <name>UNDATA</name>
@@ -14,6 +15,7 @@
         <driver>ri:sdmx21</driver>
         <endpoint>https://data.un.org/WS/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
+        <website>https://data.un.org/SdmxBrowser/start</website>
     </source>
     <source>
         <name>ISTAT</name>
@@ -21,6 +23,7 @@
         <driver>ri:sdmx21</driver>
         <endpoint>http://sdmx.istat.it/SDMXWS/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
+        <website>https://www.istat.it/en/analysis-and-products</website>
     </source>
     <source>
         <name>WITS</name>
@@ -28,6 +31,7 @@
         <driver>ri:sdmx21</driver>
         <endpoint>http://wits.worldbank.org/API/V1/SDMX/V21/rest</endpoint>
         <property key="trailingSlashRequired" value="true"/>
+        <website>https://wits.worldbank.org</website>
     </source>
     <source>
         <name>IMF_SDMX_CENTRAL</name>
@@ -35,6 +39,7 @@
         <driver>ri:sdmx21</driver>
         <endpoint>https://sdmxcentral.imf.org/ws/public/sdmxapi/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
+        <website>https://data.imf.org</website>
     </source>
     <source>
         <name>INEGI</name>
@@ -43,6 +48,7 @@
         <endpoint>https://sdmx.snieg.mx/service/Rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
         <property key="trailingSlashRequired" value="true"/>
+        <website>https://sdmx.snieg.mx</website>
     </source>
     <source>
         <name>WB</name>
@@ -51,5 +57,6 @@
         <endpoint>https://api.worldbank.org/v2/sdmx/rest</endpoint>
         <property key="seriesKeysOnlySupported" value="true"/>
         <property key="trailingSlashRequired" value="true"/>
+        <website>https://data.worldbank.org</website>
     </source>
 </sources>

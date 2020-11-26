@@ -74,4 +74,13 @@ public class SdmxWebSourceTest {
         assertThat(base.toBuilder().alias("EUROSTAT").build().isAlias()).isFalse();
         assertThat(base.toBuilder().name("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
     }
+
+    @Test
+    public void testWebsite() {
+        SdmxWebSource base = SdmxWebSource.builder().name("ESTAT").driver("").endpointOf("http://localhost").build();
+        assertThat(base.getWebsite()).isNull();
+        assertThat(base.toBuilder().websiteOf("http://somewhere").build().getWebsite())
+                .asString()
+                .isEqualTo("http://somewhere");
+    }
 }

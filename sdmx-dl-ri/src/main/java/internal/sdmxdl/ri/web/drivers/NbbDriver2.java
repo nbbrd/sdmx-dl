@@ -54,7 +54,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(NbbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx")
+            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx", "https://stat.nbb.be")
             .build();
 
     static final class NbbClient2 extends DotStatRestClient {

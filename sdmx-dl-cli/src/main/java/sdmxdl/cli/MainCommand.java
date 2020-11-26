@@ -41,6 +41,7 @@ import java.util.logging.Logger;
                 ListCommand.class,
                 PingCommand.class,
                 TestCommand.class,
+                OpenCommand.class,
                 DebugCommand.class,
                 SetupCommand.class,
                 CommandLine.HelpCommand.class

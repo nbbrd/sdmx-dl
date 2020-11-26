@@ -45,17 +45,27 @@ public final class ListSourcesCommand extends BaseCommand {
             w.writeField("Name");
             w.writeField("Description");
             w.writeField("Aliases");
+            w.writeField("Website");
             w.writeEndOfLine();
             for (SdmxWebSource source : getSortedSources()) {
                 if (!source.isAlias()) {
                     w.writeField(source.getName());
                     w.writeField(source.getDescription());
-                    w.writeField(source.getAliases().stream().sorted().collect(Collectors.joining(", ")));
+                    w.writeField(getAliasesField(source));
+                    w.writeField(getWebsiteField(source));
                     w.writeEndOfLine();
                 }
             }
         }
         return null;
+    }
+
+    private String getAliasesField(SdmxWebSource source) {
+        return source.getAliases().stream().sorted().collect(Collectors.joining(", "));
+    }
+
+    private String getWebsiteField(SdmxWebSource source) {
+        return source.getWebsite() != null ? source.getWebsite().toString() : null;
     }
 
     private Collection<SdmxWebSource> getSortedSources() throws IOException {

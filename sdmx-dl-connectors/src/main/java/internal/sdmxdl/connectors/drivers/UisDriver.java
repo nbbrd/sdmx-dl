@@ -41,7 +41,7 @@ public final class UisDriver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(UIS2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT)
+            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT, "http://data.uis.unesco.org")
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "API requires auth by key in header and this is not supported yet in facade")

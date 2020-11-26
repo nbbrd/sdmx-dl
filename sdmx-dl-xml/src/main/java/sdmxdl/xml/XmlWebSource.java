@@ -68,6 +68,9 @@ public final class XmlWebSource {
                         case "alias":
                             item.alias(reader.getElementText());
                             break;
+                        case "website":
+                            item.websiteOf(reader.getElementText());
+                            break;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:

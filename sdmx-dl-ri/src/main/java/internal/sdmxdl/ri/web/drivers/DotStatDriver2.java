@@ -44,9 +44,9 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx")
-            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
-            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT)
+            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx", "https://stats.oecd.org")
+            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx", "http://andmebaas.stat.ee")
+            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT, "http://data.uis.unesco.org")
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {

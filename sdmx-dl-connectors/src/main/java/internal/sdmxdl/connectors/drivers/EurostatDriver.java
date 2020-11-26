@@ -43,6 +43,7 @@ public final class EurostatDriver implements SdmxWebDriver {
                     .description("Eurostat")
                     .driver("connectors:eurostat")
                     .endpointOf("http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+                    .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .build())
             .build();
 }

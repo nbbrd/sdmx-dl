@@ -49,7 +49,7 @@ public final class InseeDriver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", "https://bdm.insee.fr/series/sdmx")
+            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", "https://bdm.insee.fr/series/sdmx", "https://www.insee.fr/fr/statistiques")
             .build();
 
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")

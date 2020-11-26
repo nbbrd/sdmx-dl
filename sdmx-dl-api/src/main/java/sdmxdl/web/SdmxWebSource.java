@@ -53,6 +53,9 @@ public class SdmxWebSource {
     @lombok.Singular
     Set<String> aliases;
 
+    @Nullable
+    URL website;
+
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
         Objects.requireNonNull(name);
@@ -88,6 +91,16 @@ public class SdmxWebSource {
         public Builder propertyOf(@NonNull String key, @NonNull Object value) {
             Objects.requireNonNull(key);
             return property(key, value.toString());
+        }
+
+        @NonNull
+        public Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
+            Objects.requireNonNull(website);
+            try {
+                return website(new URL(website));
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
     }
 }
