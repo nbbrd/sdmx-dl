@@ -1,0 +1,38 @@
+name: Maven snapshot on develop
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  maven-release-job:
+    strategy:
+      matrix:
+        java: [11]
+        os: [ubuntu-latest]
+    
+    name: JDK:${{ matrix.java }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        
+      - name: Setup Java 
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          
+      - name: Setup Maven cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+          
+      - name: Deploy with Maven
+        run: mvn -B deploy -Dmaven.test.skip -s ci.settings.xml -P deploy-snapshots
+        env:
+          CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+          CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+      

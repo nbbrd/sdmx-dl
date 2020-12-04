@@ -252,16 +252,18 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testReadTimeout() throws IOException {
+        int readTimeout = isOSX() ? 100 : 10;
+
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
-                .readTimeout(10)
+                .readTimeout(readTimeout)
                 .build();
         Jdk8RestClient x = new Jdk8RestClient(context);
 
         wire.resetAll();
-        wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(20)));
+        wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(readTimeout * 2)));
 
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
@@ -455,4 +457,9 @@ public class Jdk8RestClientTest {
     private static final String SECOND_URL = "/second.xml";
     private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
     public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
+
+    private static boolean isOSX() {
+        String osName = System.getProperty("os.name");
+        return osName != null && osName.toLowerCase().startsWith("mac os x");
+    }
 }
