@@ -1,4 +1,4 @@
-name: Maven Java8+
+name: Build and test
 
 on: [push, pull_request]
 
@@ -22,15 +22,18 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
+        
       - name: Setup Java 
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+        
       - name: Setup Maven cache
         uses: actions/cache@v1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and test
+        
+      - name: Build and test with Maven
         run: mvn -B package --file pom.xml

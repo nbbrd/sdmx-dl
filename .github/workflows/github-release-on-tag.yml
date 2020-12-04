@@ -1,0 +1,46 @@
+name: GitHub release on tag
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  github-release-job:
+    strategy:
+      matrix:
+        java: [11]
+        os: [ubuntu-latest]
+    env:
+      DEPLOY_BIN: sdmx-dl-cli/target/binaries/*
+    
+    name: JDK:${{ matrix.java }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        
+      - name: Setup Java 
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+          
+      - name: Setup Maven cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+          
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -DskipTests=true
+
+      - name: Create release and upload assets
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.DEPLOY_BIN }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+      
