@@ -20,7 +20,7 @@
         <!-- binaries -->
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
         <project.x.fileName>sdmx-dl</project.x.fileName>
-        <project.x.binaries>${project.build.directory}/binaries</project.x.binaries>
+        <project.x.binaries>${project.basedir}/../binaries</project.x.binaries>
     </properties>
 
     <dependencies>
@@ -134,6 +134,19 @@
 
     <build>
         <plugins>
+            <!-- Clean binaries directory -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.x.binaries}</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
             <!-- Generates manifest for executable jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -163,6 +176,15 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                     <transformers>
                         <transformer
                                 implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
@@ -183,6 +205,7 @@
                 <version>1.9</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>files</goal>
                         </goals>
