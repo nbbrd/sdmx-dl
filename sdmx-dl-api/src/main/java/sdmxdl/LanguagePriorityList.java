@@ -25,7 +25,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,15 +62,6 @@ public final class LanguagePriorityList {
     @NonNull
     public static LanguagePriorityList parse(@NonNull CharSequence ranges) throws IllegalArgumentException {
         return new LanguagePriorityList(Locale.LanguageRange.parse(ranges.toString()));
-    }
-
-    @NonNull
-    public static Optional<LanguagePriorityList> tryParse(@NonNull String ranges) {
-        try {
-            return Optional.of(parse(ranges));
-        } catch (IllegalArgumentException ex) {
-            return Optional.empty();
-        }
     }
 
     private final List<Locale.LanguageRange> list;

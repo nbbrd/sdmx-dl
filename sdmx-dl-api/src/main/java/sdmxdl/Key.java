@@ -16,6 +16,7 @@
  */
 package sdmxdl;
 
+import internal.sdmxdl.Chars;
 import nbbrd.design.Immutable;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.StringValue;
@@ -38,6 +39,8 @@ import java.util.Map;
 public final class Key {
 
     private static final String WILDCARD = "";
+    private static final char CODE_SEP = '.';
+    private static final String ALL_CODE = "all";
 
     public static final Key ALL = new Key(new String[]{WILDCARD});
 
@@ -119,36 +122,38 @@ public final class Key {
     @StaticFactoryMethod
     @NonNull
     public static Key parse(@NonNull CharSequence input) {
-        String text = input.toString();
-        return "all".equals(text.trim()) ? ALL : of(text.split("\\.", -1));
+        if (ALL_CODE.contentEquals(input)) {
+            return ALL;
+        }
+        String[] result = Chars.splitToArray(input, CODE_SEP);
+        for (int i = 0; i < result.length; i++) {
+            result[i] = trimAndFixWildcard(result[i]);
+        }
+        return new Key(result);
     }
 
     @StaticFactoryMethod
     @NonNull
     public static Key of(@NonNull Collection<String> input) {
-        return input.isEmpty() ? ALL : ofInternal(input.toArray(new String[input.size()]));
+        if (input.isEmpty()) {
+            return ALL;
+        }
+        return new Key(input
+                .stream()
+                .map(Key::trimAndFixWildcard)
+                .toArray(String[]::new)
+        );
     }
 
     @StaticFactoryMethod
     @NonNull
     public static Key of(@NonNull String... input) {
-        return input.length == 0 ? ALL : ofInternal(input.clone());
-    }
-
-    private static Key ofInternal(String[] result) {
+        if (input.length == 0) {
+            return ALL;
+        }
+        String[] result = new String[input.length];
         for (int i = 0; i < result.length; i++) {
-            String item = result[i];
-            if (item == null) {
-                item = WILDCARD;
-            } else {
-                item = item.trim();
-                switch (item) {
-                    case "*":
-                    case "+":
-                        item = WILDCARD;
-                }
-            }
-            result[i] = item;
+            result[i] = trimAndFixWildcard(input[i]);
         }
         return new Key(result);
     }
@@ -157,7 +162,7 @@ public final class Key {
     public static Builder builder(@NonNull DataStructure dfs) {
         Map<String, Integer> index = new HashMap<>();
         dfs.getDimensions().forEach(o -> index.put(o.getId(), o.getPosition() - 1));
-        return new BuilderImpl(index);
+        return new Builder(index);
     }
 
     @NonNull
@@ -166,59 +171,22 @@ public final class Key {
         for (int i = 0; i < dimensions.length; i++) {
             index.put(dimensions[i], i);
         }
-        return new BuilderImpl(index);
+        return new Builder(index);
     }
 
-    public interface Builder {
-
-        @NonNull
-        Key build();
-
-        @NonNull
-        Builder clear();
-
-        @NonNull
-        String getItem(@NonNegative int index) throws IndexOutOfBoundsException;
-
-        boolean isDimension(@Nullable String id);
-
-        boolean isSeries();
-
-        @NonNull
-        Builder put(@Nullable String id, @Nullable String value);
-
-        @Override
-        String toString();
-
-        int size();
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static String toString(String[] items) {
-        if (items.length == 0 || (items.length == 1 && WILDCARD.equals(items[0]))) {
-            return "all";
-        }
-        StringBuilder result = new StringBuilder();
-        result.append(items[0]);
-        for (int i = 1; i < items.length; i++) {
-            result.append('.').append(items[i]);
-        }
-        return result.toString();
-    }
-
-    private static final class BuilderImpl implements Builder {
+    public static final class Builder {
 
         private final Map<String, Integer> index;
         private final String[] items;
 
-        private BuilderImpl(Map<String, Integer> index) {
+        private Builder(Map<String, Integer> index) {
             this.index = index;
             this.items = new String[index.size()];
             Arrays.fill(items, WILDCARD);
         }
 
-        @Override
-        public Builder put(String id, String value) {
+        @NonNull
+        public Builder put(@Nullable String id, @Nullable String value) {
             if (id != null) {
                 Integer position = index.get(id);
                 if (position != null) {
@@ -228,23 +196,21 @@ public final class Key {
             return this;
         }
 
-        @Override
+        @NonNull
         public Builder clear() {
             Arrays.fill(items, WILDCARD);
             return this;
         }
 
-        @Override
-        public String getItem(int index) throws IndexOutOfBoundsException {
+        @NonNull
+        public String getItem(@NonNegative int index) throws IndexOutOfBoundsException {
             return items[index];
         }
 
-        @Override
-        public boolean isDimension(String id) {
+        public boolean isDimension(@Nullable String id) {
             return index.containsKey(id);
         }
 
-        @Override
         public boolean isSeries() {
             for (String item : items) {
                 if (WILDCARD.equals(item)) {
@@ -254,20 +220,40 @@ public final class Key {
             return true;
         }
 
-        @Override
+        @NonNull
         public Key build() {
             return Key.of(items);
         }
 
-        @Override
         public String toString() {
             return Key.toString(items);
         }
 
-        @Override
+        @NonNegative
         public int size() {
             return items.length;
         }
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Implementation details">
+    private static String trimAndFixWildcard(String item) {
+        if (item == null) {
+            item = WILDCARD;
+        } else {
+            item = item.trim();
+            switch (item) {
+                case "*":
+                case "+":
+                    item = WILDCARD;
+            }
+        }
+        return item;
+    }
+
+    private static String toString(String[] items) {
+        return (items.length == 0 || (items.length == 1 && WILDCARD.equals(items[0])))
+                ? ALL_CODE
+                : Chars.join(CODE_SEP, items);
     }
     //</editor-fold>
 }

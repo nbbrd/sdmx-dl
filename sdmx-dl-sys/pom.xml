@@ -37,7 +37,7 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>io.github.hakky54</groupId>
+            <groupId>io.github.hakky54.sslcontext-kickstart</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
             <version>6.0.0</version>
         </dependency>

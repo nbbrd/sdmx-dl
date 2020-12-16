@@ -16,10 +16,10 @@
  */
 package sdmxdl;
 
+import internal.sdmxdl.Chars;
 import nbbrd.design.SealedType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 
 /**
  * Abstract identifier of a resource.
@@ -34,6 +34,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     public static final String ALL_AGENCIES = "all";
     public static final String LATEST_VERSION = "latest";
+    private static final char SEP = ',';
 
     @NonNull
     public abstract String getAgency();
@@ -60,17 +61,17 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static String toString(ResourceRef<?> ref) {
-        return ref.getAgency() + "," + ref.getId() + "," + ref.getVersion();
+        return ref.getAgency() + SEP + ref.getId() + SEP + ref.getVersion();
     }
 
     @NonNull
     protected static <T extends ResourceRef<T>> T parse(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
-        String[] items = input.toString().split(",", -1);
+        String[] items = Chars.splitToArray(input, SEP);
         switch (items.length) {
             case 3:
-                return factory.create(emptyToDefault(items[0], ALL_AGENCIES), items[1], emptyToDefault(items[2], LATEST_VERSION));
+                return factory.create(Chars.emptyToDefault(items[0], ALL_AGENCIES), items[1], Chars.emptyToDefault(items[2], LATEST_VERSION));
             case 2:
-                return factory.create(emptyToDefault(items[0], ALL_AGENCIES), items[1], LATEST_VERSION);
+                return factory.create(Chars.emptyToDefault(items[0], ALL_AGENCIES), items[1], LATEST_VERSION);
             case 1:
                 return factory.create(ALL_AGENCIES, items[0], LATEST_VERSION);
             default:
@@ -80,25 +81,15 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory) throws IllegalArgumentException {
-        if (id.contains(",")) {
+        if (Chars.contains(id, SEP)) {
             throw new IllegalArgumentException(id);
         }
-        return factory.create(nullOrEmptyToDefault(agencyId, ALL_AGENCIES), id, nullOrEmptyToDefault(version, LATEST_VERSION));
+        return factory.create(Chars.nullOrEmptyToDefault(agencyId, ALL_AGENCIES), id, Chars.nullOrEmptyToDefault(version, LATEST_VERSION));
     }
 
     protected interface Factory<T extends ResourceRef<T>> {
 
         @NonNull
         T create(@NonNull String agencyId, @NonNull String id, @NonNull String version);
-    }
-
-    @NonNull
-    private static String emptyToDefault(@NonNull String input, @NonNull String defaultValue) {
-        return input.isEmpty() ? defaultValue : input;
-    }
-
-    @NonNull
-    private static String nullOrEmptyToDefault(@Nullable String input, @NonNull String defaultValue) {
-        return input == null || input.isEmpty() ? defaultValue : input;
     }
 }
