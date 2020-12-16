@@ -17,6 +17,7 @@
 package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -35,6 +36,7 @@ public interface SdmxCache {
 
     void put(@NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl);
 
+    @StaticFactoryMethod
     @NonNull
     static SdmxCache noOp() {
         return NoOpCache.INSTANCE;

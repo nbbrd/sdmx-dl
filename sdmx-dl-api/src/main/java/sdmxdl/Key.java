@@ -17,6 +17,8 @@
 package sdmxdl;
 
 import nbbrd.design.Immutable;
+import nbbrd.design.StaticFactoryMethod;
+import nbbrd.design.StringValue;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -32,6 +34,7 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @Immutable
+@StringValue
 public final class Key {
 
     private static final String WILDCARD = "";
@@ -113,16 +116,20 @@ public final class Key {
         return Arrays.equals(this.items, that.items);
     }
 
+    @StaticFactoryMethod
     @NonNull
-    public static Key parse(@NonNull String input) {
-        return "all".equals(input.trim()) ? ALL : of(input.split("\\.", -1));
+    public static Key parse(@NonNull CharSequence input) {
+        String text = input.toString();
+        return "all".equals(text.trim()) ? ALL : of(text.split("\\.", -1));
     }
 
+    @StaticFactoryMethod
     @NonNull
     public static Key of(@NonNull Collection<String> input) {
         return input.isEmpty() ? ALL : ofInternal(input.toArray(new String[input.size()]));
     }
 
+    @StaticFactoryMethod
     @NonNull
     public static Key of(@NonNull String... input) {
         return input.length == 0 ? ALL : ofInternal(input.clone());

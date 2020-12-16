@@ -64,8 +64,8 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
     }
 
     @NonNull
-    protected static <T extends ResourceRef<T>> T parse(@NonNull String input, @NonNull Factory<T> factory) throws IllegalArgumentException {
-        String[] items = input.split(",", -1);
+    protected static <T extends ResourceRef<T>> T parse(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
+        String[] items = input.toString().split(",", -1);
         switch (items.length) {
             case 3:
                 return factory.create(emptyToDefault(items[0], ALL_AGENCIES), items[1], emptyToDefault(items[2], LATEST_VERSION));
@@ -74,7 +74,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
             case 1:
                 return factory.create(ALL_AGENCIES, items[0], LATEST_VERSION);
             default:
-                throw new IllegalArgumentException(input);
+                throw new IllegalArgumentException(input.toString());
         }
     }
 

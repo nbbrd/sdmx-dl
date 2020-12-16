@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import nbbrd.design.NotThreadSafe;
+import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -70,11 +71,13 @@ public interface DataCursor extends Closeable {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
+    @StaticFactoryMethod
     @NonNull
     static DataCursor empty() {
         return new EmptyCursor();
     }
 
+    @StaticFactoryMethod
     @NonNull
     static DataCursor of(@NonNull Iterable<Series> list, @NonNull Key ref) {
         Objects.requireNonNull(list);
