@@ -2,7 +2,7 @@ package sdmxdl.sys;
 
 import internal.sdmxdl.sys.WinPasswordVault;
 import nbbrd.net.proxy.SystemProxySelector;
-import nl.altindag.sslcontext.SSLFactory;
+import nl.altindag.ssl.SSLFactory;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
