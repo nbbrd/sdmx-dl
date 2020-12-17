@@ -29,14 +29,15 @@ import java.util.Set;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public class SdmxWebSource {
 
     @lombok.NonNull
     String name;
 
     @lombok.NonNull
-    String description;
+    @lombok.Builder.Default
+    String description = "";
 
     @lombok.NonNull
     String driver;
@@ -67,12 +68,6 @@ public class SdmxWebSource {
 
     public boolean isAlias() {
         return aliases.contains(name);
-    }
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .description("");
     }
 
     public static class Builder {

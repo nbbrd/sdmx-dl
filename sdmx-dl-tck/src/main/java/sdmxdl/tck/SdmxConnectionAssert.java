@@ -33,7 +33,7 @@ import java.util.List;
 public class SdmxConnectionAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         DataflowRef valid;
         DataflowRef invalid;

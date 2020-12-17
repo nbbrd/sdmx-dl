@@ -1,6 +1,5 @@
 package sdmxdl.csv;
 
-import nbbrd.design.LombokWorkaround;
 import nbbrd.io.text.TextParser;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,7 +16,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvParser implements TextParser<DataSet> {
 
     @lombok.NonNull
@@ -27,21 +26,16 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
     private final ObsFactory factory;
 
     @lombok.NonNull
-    private final Csv.Format format;
+    @lombok.Builder.Default
+    private final Csv.Format format = Csv.Format.RFC4180;
 
     @lombok.NonNull
-    private final Csv.Parsing parsing;
+    @lombok.Builder.Default
+    private final Csv.Parsing parsing = Csv.Parsing.STRICT;
 
     @lombok.NonNull
-    private final Locale encoding;
-
-    @LombokWorkaround
-    public static Builder builder() {
-        return new Builder()
-                .format(Csv.Format.RFC4180)
-                .parsing(Csv.Parsing.STRICT)
-                .encoding(Locale.ROOT);
-    }
+    @lombok.Builder.Default
+    private final Locale encoding = Locale.ROOT;
 
     @Override
     public @NonNull DataSet parseReader(@NonNull Reader reader) throws IOException {

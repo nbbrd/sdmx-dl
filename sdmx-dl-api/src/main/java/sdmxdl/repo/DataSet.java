@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public class DataSet extends Resource<DataflowRef> {
 
     @lombok.NonNull

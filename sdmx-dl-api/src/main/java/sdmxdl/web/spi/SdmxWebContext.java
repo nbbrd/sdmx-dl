@@ -32,43 +32,38 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public class SdmxWebContext {
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
-    ProxySelector proxySelector;
+    @lombok.Builder.Default
+    ProxySelector proxySelector = ProxySelector.getDefault();
 
     @lombok.NonNull
-    SSLSocketFactory sslSocketFactory;
+    @lombok.Builder.Default
+    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 
     @lombok.NonNull
-    HostnameVerifier hostnameVerifier;
+    @lombok.Builder.Default
+    HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
     @lombok.NonNull
-    SdmxCache cache;
+    @lombok.Builder.Default
+    SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
     @lombok.Singular
     List<SdmxDialect> dialects;
 
     @lombok.NonNull
-    SdmxWebListener eventListener;
+    @lombok.Builder.Default
+    SdmxWebListener eventListener = SdmxWebListener.getDefault();
 
     @lombok.NonNull
-    SdmxWebAuthenticator authenticator;
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .languages(LanguagePriorityList.ANY)
-                .proxySelector(ProxySelector.getDefault())
-                .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
-                .cache(SdmxCache.noOp())
-                .eventListener(SdmxWebListener.getDefault())
-                .authenticator(SdmxWebAuthenticator.noOp());
-    }
+    @lombok.Builder.Default
+    SdmxWebAuthenticator authenticator = SdmxWebAuthenticator.noOp();
 }

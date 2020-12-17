@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public class Series {
 
     @lombok.NonNull

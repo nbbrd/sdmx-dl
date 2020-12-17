@@ -35,8 +35,7 @@ import java.util.Optional;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
-@lombok.With
+@lombok.Builder(toBuilder = true)
 public class SdmxFileManager implements SdmxManager {
 
     @NonNull
@@ -48,10 +47,12 @@ public class SdmxFileManager implements SdmxManager {
     }
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
-    SdmxCache cache;
+    @lombok.Builder.Default
+    SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
     @lombok.Singular
@@ -60,13 +61,6 @@ public class SdmxFileManager implements SdmxManager {
     @lombok.NonNull
     @lombok.Singular
     List<SdmxFileReader> readers;
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .languages(LanguagePriorityList.ANY)
-                .cache(SdmxCache.noOp());
-    }
 
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {

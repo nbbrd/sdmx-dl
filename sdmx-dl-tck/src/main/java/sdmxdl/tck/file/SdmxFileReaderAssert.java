@@ -11,7 +11,7 @@ import sdmxdl.file.spi.SdmxFileReader;
 public class SdmxFileReaderAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         String validName;
         String invalidName;

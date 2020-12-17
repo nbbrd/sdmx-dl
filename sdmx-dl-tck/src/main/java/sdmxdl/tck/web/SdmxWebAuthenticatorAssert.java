@@ -10,7 +10,7 @@ import sdmxdl.web.SdmxWebSource;
 public class SdmxWebAuthenticatorAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         SdmxWebSource source;
     }

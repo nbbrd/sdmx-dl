@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @lombok.RequiredArgsConstructor
-@lombok.Builder
+@lombok.Builder(toBuilder = true)
 public class MockedWebDriver implements SdmxWebDriver {
 
     @lombok.Getter

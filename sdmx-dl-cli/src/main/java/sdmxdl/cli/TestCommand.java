@@ -108,7 +108,7 @@ public final class TestCommand extends BaseCommand {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static class WebConfig {
 
         @lombok.NonNull
@@ -135,7 +135,7 @@ public final class TestCommand extends BaseCommand {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static class Summary {
 
         @lombok.NonNull

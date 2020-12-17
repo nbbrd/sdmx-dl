@@ -8,24 +8,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
 
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public final class RestClientResponseMock implements HttpRest.Response {
 
     @lombok.NonNull
-    private final String contentType;
+    @lombok.Builder.Default
+    private final String contentType = "";
 
     @lombok.NonNull
-    private final IOSupplier<InputStream> body;
+    @lombok.Builder.Default
+    private final IOSupplier<InputStream> body = IOSupplier.of(null);
 
     @lombok.NonNull
-    private final IORunnable onClose;
-
-    public static Builder builder() {
-        return new Builder()
-                .contentType("")
-                .body(IOSupplier.of(null))
-                .onClose(IORunnable.noOp());
-    }
+    @lombok.Builder.Default
+    private final IORunnable onClose = IORunnable.noOp();
 
     @Override
     public @NonNull String getContentType() throws IOException {

@@ -28,7 +28,7 @@ import java.util.Objects;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public class SdmxRepositoryManager implements SdmxManager {
 
     @lombok.NonNull

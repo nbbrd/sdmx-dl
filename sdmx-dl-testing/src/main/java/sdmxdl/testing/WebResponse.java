@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public final class WebResponse {
 
     @lombok.NonNull

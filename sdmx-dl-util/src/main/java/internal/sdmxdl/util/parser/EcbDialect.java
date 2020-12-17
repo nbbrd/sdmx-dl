@@ -63,7 +63,7 @@ public final class EcbDialect implements SdmxDialect {
     }
 
     private static FreqFactory getFreqFactory(DataStructure dsd) {
-        return FreqFactory.sdmx21(dsd).withParser(EcbDialect::parseFreq);
+        return FreqFactory.sdmx21(dsd).toBuilder().parser(EcbDialect::parseFreq).build();
     }
 
     private static Frequency parseFreq(CharSequence code) {

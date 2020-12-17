@@ -235,7 +235,7 @@ public class SdmxWebManagerTest {
     }
 
     @lombok.RequiredArgsConstructor
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     private static final class MockedWebDriver implements SdmxWebDriver {
 
         @lombok.Getter

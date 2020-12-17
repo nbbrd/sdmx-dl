@@ -7,23 +7,18 @@ import sdmxdl.ext.spi.SdmxDialect;
 import java.util.List;
 
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public class SdmxFileContext {
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
-    SdmxCache cache;
+    @lombok.Builder.Default
+    SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
     @lombok.Singular
     List<SdmxDialect> dialects;
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static SdmxFileContext.Builder builder() {
-        return new SdmxFileContext.Builder()
-                .languages(LanguagePriorityList.ANY)
-                .cache(SdmxCache.noOp());
-    }
 }

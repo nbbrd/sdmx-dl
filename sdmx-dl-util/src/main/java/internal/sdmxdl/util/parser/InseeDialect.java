@@ -64,7 +64,7 @@ public final class InseeDialect implements SdmxDialect {
     }
 
     static FreqFactory getFreqFactory(DataStructure dsd) {
-        return FreqFactory.sdmx21(dsd).withParser(InseeDialect::parseInseeFreq);
+        return FreqFactory.sdmx21(dsd).toBuilder().parser(InseeDialect::parseInseeFreq).build();
     }
 
     static Parser<LocalDateTime> getPeriodParser(Frequency freq) {

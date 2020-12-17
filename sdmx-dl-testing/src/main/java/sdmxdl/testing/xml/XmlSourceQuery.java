@@ -141,7 +141,7 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static final class SourceNode {
 
         @lombok.NonNull
@@ -155,7 +155,7 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static final class FlowNode {
 
         @lombok.NonNull
@@ -169,7 +169,7 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static final class DataNode {
 
         @lombok.NonNull

@@ -36,40 +36,36 @@ import java.util.function.UnaryOperator;
  * @author Philippe Charles
  */
 @lombok.Getter
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
-    private final Path root;
+    @lombok.Builder.Default
+    private final Path root = Paths.get(System.getProperty("java.io.tmpdir")).resolve("sdmxdl");
 
     @lombok.NonNull
-    private final String fileNamePrefix;
+    @lombok.Builder.Default
+    private final String fileNamePrefix = "sdmx_";
 
     @lombok.NonNull
-    private final String fileNameSuffix;
+    @lombok.Builder.Default
+    private final String fileNameSuffix = ".dat";
 
     @lombok.NonNull
-    private final UnaryOperator<String> fileNameGenerator;
+    @lombok.Builder.Default
+    private final UnaryOperator<String> fileNameGenerator = DEFAULT_GENERATOR;
 
     @lombok.NonNull
-    private final Serializer serializer;
+    @lombok.Builder.Default
+    private final Serializer serializer = Serializer.noOp();
 
     @lombok.NonNull
-    private final BiConsumer<String, IOException> onIOException;
+    @lombok.Builder.Default
+    private final BiConsumer<String, IOException> onIOException = DO_NOT_REPORT;
 
     @lombok.NonNull
-    private final Clock clock;
-
-    public static Builder builder() {
-        return new Builder()
-                .root(Paths.get(System.getProperty("java.io.tmpdir")).resolve("sdmxdl"))
-                .fileNamePrefix("sdmx_")
-                .fileNameSuffix(".dat")
-                .fileNameGenerator(DEFAULT_GENERATOR)
-                .serializer(Serializer.noOp())
-                .onIOException(DO_NOT_REPORT)
-                .clock(Clock.systemDefaultZone());
-    }
+    @lombok.Builder.Default
+    private final Clock clock = Clock.systemDefaultZone();
 
     @Override
     public @Nullable SdmxRepository get(@NonNull String key) {

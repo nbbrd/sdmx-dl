@@ -49,54 +49,54 @@ public class HttpRest {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     public static class Context {
 
         static final int DEFAULT_MAX_REDIRECTS = 20;
         static final int NO_TIMEOUT = 0;
 
         @NonNegative
-        int readTimeout;
+        @lombok.Builder.Default
+        int readTimeout = NO_TIMEOUT;
 
         @NonNegative
-        int connectTimeout;
+        @lombok.Builder.Default
+        int connectTimeout = NO_TIMEOUT;
 
         @NonNegative
-        int maxRedirects;
+        @lombok.Builder.Default
+        int maxRedirects = DEFAULT_MAX_REDIRECTS;
 
         @lombok.NonNull
-        ProxySelector proxySelector;
+        @lombok.Builder.Default
+        ProxySelector proxySelector = ProxySelector.getDefault();
 
         @lombok.NonNull
-        SSLSocketFactory sslSocketFactory;
+        @lombok.Builder.Default
+        SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 
         @lombok.NonNull
-        HostnameVerifier hostnameVerifier;
+        @lombok.Builder.Default
+        HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
         @lombok.NonNull
-        HttpRest.EventListener listener;
+        @lombok.Builder.Default
+        HttpRest.EventListener listener = HttpRest.EventListener.noOp();
 
         @lombok.Singular
         List<HttpRest.StreamDecoder> decoders;
 
         @lombok.NonNull
-        HttpRest.Authenticator authenticator;
+        @lombok.Builder.Default
+        HttpRest.Authenticator authenticator = HttpRest.Authenticator.noOp();
 
-        boolean preemptiveAuthentication;
+        @lombok.Builder.Default
+        boolean preemptiveAuthentication = false;
 
         public static Builder builder() {
             return new Builder()
-                    .readTimeout(NO_TIMEOUT)
-                    .connectTimeout(NO_TIMEOUT)
-                    .maxRedirects(DEFAULT_MAX_REDIRECTS)
-                    .proxySelector(ProxySelector.getDefault())
-                    .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                    .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
-                    .listener(HttpRest.EventListener.noOp())
                     .decoder(HttpRest.StreamDecoder.gzip())
-                    .decoder(HttpRest.StreamDecoder.deflate())
-                    .authenticator(HttpRest.Authenticator.noOp())
-                    .preemptiveAuthentication(false);
+                    .decoder(HttpRest.StreamDecoder.deflate());
         }
     }
 

@@ -1,6 +1,5 @@
 package sdmxdl.csv;
 
-import nbbrd.design.LombokWorkaround;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.picocsv.Csv;
@@ -19,24 +18,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
 
     @lombok.NonNull
     private final DataStructure dsd;
 
     @lombok.NonNull
-    private final Csv.Format format;
+    @lombok.Builder.Default
+    private final Csv.Format format = Csv.Format.RFC4180;
 
     @lombok.NonNull
-    private final Locale encoding;
-
-    @LombokWorkaround
-    public static Builder builder() {
-        return new Builder()
-                .format(Csv.Format.RFC4180)
-                .encoding(Locale.ROOT);
-    }
+    @lombok.Builder.Default
+    private final Locale encoding = Locale.ROOT;
 
     @Override
     public void formatWriter(@NonNull DataSet data, @NonNull Writer writer) throws IOException {

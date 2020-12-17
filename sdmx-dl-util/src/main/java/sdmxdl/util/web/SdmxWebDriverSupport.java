@@ -30,8 +30,7 @@ import java.util.Objects;
 /**
  * @author Philippe Charles
  */
-@lombok.Builder(builderClassName = "Builder")
-//@ThreadSafe
+@lombok.Builder(toBuilder = true)
 public final class SdmxWebDriverSupport implements SdmxWebDriver {
 
     @lombok.Getter
@@ -39,7 +38,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     private final String name;
 
     @lombok.Getter
-    private final int rank;
+    @lombok.Builder.Default
+    private final int rank = UNKNOWN;
 
     @lombok.NonNull
     private final SdmxWebClient.Supplier client;
@@ -49,12 +49,6 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
 
     @lombok.Singular
     private final Collection<String> supportedProperties;
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .rank(UNKNOWN);
-    }
 
     @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
