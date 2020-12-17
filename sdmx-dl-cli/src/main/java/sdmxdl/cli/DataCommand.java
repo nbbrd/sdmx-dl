@@ -158,7 +158,7 @@ public final class DataCommand extends BaseCommand {
         }
 
         @Override
-        public Stream open(String name, int rows, int columns) throws IOException {
+        public Stream open(String name, int rows, int columns) {
             return new CsvGridOutputStream(csvWriter);
         }
     }
@@ -180,7 +180,7 @@ public final class DataCommand extends BaseCommand {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // do not close here
         }
     }

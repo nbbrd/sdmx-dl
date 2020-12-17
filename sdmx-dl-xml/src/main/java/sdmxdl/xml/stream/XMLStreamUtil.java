@@ -16,10 +16,10 @@
  */
 package sdmxdl.xml.stream;
 
-import java.util.function.Supplier;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.util.function.Supplier;
 
 /**
  *

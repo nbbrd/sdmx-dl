@@ -16,16 +16,19 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
+import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.util.web.DataRequest;
-import static internal.sdmxdl.ri.web.Sdmx21RestClient.*;
+
 import java.io.IOException;
 import java.net.URL;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+
+import static internal.sdmxdl.ri.web.Sdmx21RestClient.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  *

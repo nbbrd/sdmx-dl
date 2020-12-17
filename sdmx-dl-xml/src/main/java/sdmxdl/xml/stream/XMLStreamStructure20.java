@@ -194,7 +194,7 @@ final class XMLStreamStructure20 {
         }
     }
 
-    private void parseComponent(XMLStreamReader reader, Component.Builder component, DsdContext context) throws XMLStreamException {
+    private void parseComponent(XMLStreamReader reader, Component.Builder<?> component, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 

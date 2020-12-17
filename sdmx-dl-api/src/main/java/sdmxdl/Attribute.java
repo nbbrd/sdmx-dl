@@ -25,6 +25,7 @@ import java.util.Map;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class Attribute extends Component {
 
     @lombok.NonNull

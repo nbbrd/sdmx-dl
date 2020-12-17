@@ -115,7 +115,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

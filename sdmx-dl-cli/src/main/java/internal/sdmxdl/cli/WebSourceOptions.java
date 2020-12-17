@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  * @author Philippe Charles
  */
 @lombok.Data
+@lombok.EqualsAndHashCode(callSuper = true)
 public class WebSourceOptions extends WebOptions {
 
     @CommandLine.Parameters(
@@ -113,7 +114,7 @@ public class WebSourceOptions extends WebOptions {
     private static class UserConverter implements CommandLine.ITypeConverter<User> {
 
         @Override
-        public User convert(String user) throws Exception {
+        public User convert(String user) {
             if (user == null) {
                 return new User(null, null);
             }

@@ -16,19 +16,20 @@
  */
 package sdmxdl.xml.stream;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.xml.SdmxmlUri;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import static sdmxdl.xml.stream.XMLStreamUtil.*;
 import java.net.URI;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.xml.SdmxmlUri;
+import java.util.ArrayList;
+import java.util.List;
+
+import static sdmxdl.xml.stream.XMLStreamUtil.*;
 
 /**
  *

@@ -16,12 +16,14 @@
  */
 package internal.sdmxdl;
 
-import internal.sdmxdl.EmptyCursor;
+import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
+
 import java.io.IOException;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  *

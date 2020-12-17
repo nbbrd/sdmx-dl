@@ -284,7 +284,7 @@ public class SdmxWebManagerTest {
         private final SdmxConnection delegate;
 
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             return Duration.ZERO;
         }
     }

@@ -147,7 +147,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         throw getError(http);
     }
 
-    private HttpRest.Response getBody(HttpURLConnection connection) throws IOException {
+    private HttpRest.Response getBody(HttpURLConnection connection) {
         return new Jdk8Response(connection, context.getDecoders());
     }
 
@@ -212,13 +212,12 @@ public final class Jdk8RestClient implements HttpRest.Client {
         }
 
         private static String getBasicAuthHeader(PasswordAuthentication auth) {
-            byte[] data = new StringBuilder()
-                    .append(auth.getUserName())
-                    .append(':')
-                    .append(auth.getPassword())
-                    .toString()
-                    .getBytes(StandardCharsets.UTF_8);
-            return "Basic " + Base64.getEncoder().encodeToString(data);
+            String basicAuth = auth.getUserName() + ':' + String.valueOf(auth.getPassword());
+            return "Basic " + toBase64(basicAuth);
+        }
+
+        private static String toBase64(String input) {
+            return Base64.getEncoder().encodeToString(input.getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -269,7 +268,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             conn.disconnect();
         }
     }

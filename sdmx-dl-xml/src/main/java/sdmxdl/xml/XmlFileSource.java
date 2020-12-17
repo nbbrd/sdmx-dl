@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
+import java.nio.charset.Charset;
 
 @lombok.experimental.UtilityClass
 public class XmlFileSource {
@@ -27,10 +28,11 @@ public class XmlFileSource {
     private final Xml.Formatter<SdmxFileSource> FORMATTER = Stax.StreamFormatter
             .<SdmxFileSource>builder()
             .factory(() -> OUTPUT)
-            .handler(XmlFileSource::format)
+            .handler2(XmlFileSource::format)
             .build();
 
-    private void format(SdmxFileSource source, XMLStreamWriter xml) throws XMLStreamException {
+    private void format(SdmxFileSource source, XMLStreamWriter xml, Charset encoding) throws XMLStreamException {
+        xml.writeStartDocument(encoding.name(), "1.0");
         xml.writeEmptyElement(ROOT_TAG);
 
         xml.writeAttribute(DATA_ATTR, source.getData().toString());

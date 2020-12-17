@@ -21,7 +21,6 @@ import sdmxdl.*;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +30,7 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataSet extends Resource<DataflowRef> {
 
     @lombok.NonNull

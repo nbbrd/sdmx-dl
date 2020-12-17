@@ -29,6 +29,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Data
+@lombok.EqualsAndHashCode(callSuper = true)
 public class WebFlowOptions extends WebSourceOptions {
 
     @CommandLine.Parameters(

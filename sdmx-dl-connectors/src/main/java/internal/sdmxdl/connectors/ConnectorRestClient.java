@@ -104,7 +104,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
     private final ObsFactory dataFactory;
 
     @Override
-    public String getName() throws IOException {
+    public String getName() {
         return name;
     }
 
@@ -154,13 +154,13 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
+    public boolean isSeriesKeysOnlySupported() {
         return connector instanceof HasSeriesKeysOnlySupported
                 && ((HasSeriesKeysOnlySupported) connector).isSeriesKeysOnlySupported();
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef ref) throws IOException {
+    public DataStructureRef peekStructureRef(DataflowRef ref) {
         return connector instanceof DotStat ? DataStructureRef.of(ref.getAgency(), ref.getId(), ref.getVersion()) : null;
     }
 

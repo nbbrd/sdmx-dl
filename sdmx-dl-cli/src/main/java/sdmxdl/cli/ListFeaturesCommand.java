@@ -33,7 +33,7 @@ public final class ListFeaturesCommand extends BaseCommand {
     private WebSourceOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @Override
     public Void call() throws Exception {

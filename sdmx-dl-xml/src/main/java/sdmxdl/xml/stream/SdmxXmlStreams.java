@@ -23,7 +23,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,49 +31,49 @@ import java.util.List;
 @lombok.experimental.UtilityClass
 public class SdmxXmlStreams {
 
-    public Xml.@NonNull Parser<DataCursor> compactData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) throws IOException {
+    public Xml.@NonNull Parser<DataCursor> compactData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> compactData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) throws IOException {
+    public Xml.@NonNull Parser<DataCursor> compactData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> genericData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) throws IOException {
+    public Xml.@NonNull Parser<DataCursor> genericData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx20(o, onClose, Key.builder(dsd), df.getObsParser(dsd)))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> genericData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) throws IOException {
+    public Xml.@NonNull Parser<DataCursor> genericData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
                 .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx21(o, onClose, Key.builder(dsd), df.getObsParser(dsd)))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<DataStructure>> struct20(@NonNull LanguagePriorityList langs) throws IOException {
+    public Xml.@NonNull Parser<List<DataStructure>> struct20(@NonNull LanguagePriorityList langs) {
         return Stax.StreamParser.<List<DataStructure>>builder()
                 .factory(StaxUtil::getInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamStructure20(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<DataStructure>> struct21(@NonNull LanguagePriorityList langs) throws IOException {
+    public Xml.@NonNull Parser<List<DataStructure>> struct21(@NonNull LanguagePriorityList langs) {
         return Stax.StreamParser.<List<DataStructure>>builder()
                 .factory(StaxUtil::getInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamStructure21(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<Dataflow>> flow21(@NonNull LanguagePriorityList langs) throws IOException {
+    public Xml.@NonNull Parser<List<Dataflow>> flow21(@NonNull LanguagePriorityList langs) {
         return Stax.StreamParser.<List<Dataflow>>builder()
                 .factory(StaxUtil::getInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamFlow21(langs)::parse))

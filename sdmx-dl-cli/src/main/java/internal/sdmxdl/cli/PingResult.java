@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 @lombok.AllArgsConstructor
 @lombok.Value
-public final class PingResult {
+public class PingResult {
 
     public static PingResult of(SdmxWebManager manager, String source) {
         try (final SdmxWebConnection conn = manager.getConnection(source)) {
@@ -50,11 +50,11 @@ public final class PingResult {
     }
 
     @lombok.NonNull
-    private String source;
+    String source;
 
-    private Duration duration;
+    Duration duration;
 
-    private String cause;
+    String cause;
 
     public boolean isSuccess() {
         return cause == null;

@@ -16,8 +16,9 @@
  */
 package sdmxdl.xml;
 
-import java.net.URI;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.net.URI;
 
 /**
  *

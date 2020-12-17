@@ -25,7 +25,7 @@ import sdmxdl.Key;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public final class WebRequest {
+public class WebRequest {
 
     @lombok.NonNull
     String source;

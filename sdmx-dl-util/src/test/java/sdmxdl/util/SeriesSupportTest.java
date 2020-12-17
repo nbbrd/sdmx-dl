@@ -16,11 +16,12 @@
  */
 package sdmxdl.util;
 
+import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.Key;
 import sdmxdl.tck.DataCursorAssert;
+
 import java.util.Collections;
-import org.junit.Test;
 
 /**
  *

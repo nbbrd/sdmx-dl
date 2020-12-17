@@ -16,9 +16,10 @@
  */
 package sdmxdl.util.parser;
 
-import sdmxdl.Frequency;
-import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
+import sdmxdl.Frequency;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

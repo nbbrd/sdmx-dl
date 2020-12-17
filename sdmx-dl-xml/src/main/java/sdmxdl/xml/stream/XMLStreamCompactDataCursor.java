@@ -157,7 +157,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         }
     }
 
-    private Status onDataSet(boolean start, String localName) throws XMLStreamException {
+    private Status onDataSet(boolean start, String localName) {
         if (start) {
             return isTagMatch(localName, SERIES_TAG) ? parseSeries() : CONTINUE;
         } else {
@@ -182,7 +182,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         }
     }
 
-    private Status onSeriesBody(boolean start, String localName) throws XMLStreamException {
+    private Status onSeriesBody(boolean start, String localName) {
         if (start) {
             return isTagMatch(localName, OBS_TAG) ? parseObs() : CONTINUE;
         } else {

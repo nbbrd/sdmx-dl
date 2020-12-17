@@ -40,7 +40,6 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.Data
-@SuppressWarnings("FieldMayBeFinal")
 public class WebOptions {
 
     @CommandLine.Option(

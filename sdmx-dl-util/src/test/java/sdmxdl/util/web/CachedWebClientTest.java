@@ -24,11 +24,13 @@ import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.util.TypedId;
+import sdmxdl.util.ext.ExpiringRepository;
 import sdmxdl.util.ext.MapCache;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -43,7 +45,7 @@ public class CachedWebClientTest {
     @Test
     public void testGetFlows() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
+        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
         FakeClock clock = new FakeClock();
 
         CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
@@ -70,7 +72,7 @@ public class CachedWebClientTest {
     @Test
     public void testGetFlow() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
+        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
         FakeClock clock = new FakeClock();
 
         CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
@@ -105,7 +107,7 @@ public class CachedWebClientTest {
     @Test
     public void testGetStructure() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
+        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
         FakeClock clock = new FakeClock();
 
         CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
@@ -134,7 +136,7 @@ public class CachedWebClientTest {
     @Test
     public void testLoadData() throws IOException {
         AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
+        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
         FakeClock clock = new FakeClock();
 
         CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
@@ -168,7 +170,7 @@ public class CachedWebClientTest {
     private final String structId = TypedId.of("struct://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_STRUCT_REF).getContent();
     private final String keysId = TypedId.of("keys://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
 
-    private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
+    private static SdmxWebClient getClient(AtomicInteger count) {
         SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
         return XCallStackWebClient.of(original, count);
     }

@@ -27,6 +27,7 @@ import java.util.Map;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class Dimension extends Component {
 
     @lombok.NonNull

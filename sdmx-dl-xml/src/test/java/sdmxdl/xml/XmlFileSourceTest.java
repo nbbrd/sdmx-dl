@@ -35,13 +35,13 @@ public class XmlFileSourceTest {
         Xml.Formatter<SdmxFileSource> x = XmlFileSource.getFormatter();
 
         assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).dialect("hello").build()))
-                .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\"/>");
+                .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\"/>");
 
         assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).build()))
-                .isEqualTo("<file data=\"a.xml\" structure=\"b.xml\"/>");
+                .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\" structure=\"b.xml\"/>");
 
         assertThat(x.formatToString(SdmxFileSource.builder().data(data).build()))
-                .isEqualTo("<file data=\"a.xml\"/>");
+                .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\"/>");
     }
 
     @Test
@@ -72,10 +72,9 @@ public class XmlFileSourceTest {
         assertThat(x.parseChars("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
                 .hasFieldOrPropertyWithValue("structure", structure)
-                .hasFieldOrPropertyWithValue("dialect", dialect);
+                .hasFieldOrPropertyWithValue("dialect", "hello");
     }
 
     private final File data = new File("a.xml");
     private final File structure = new File("b.xml");
-    private final String dialect = "hello";
 }

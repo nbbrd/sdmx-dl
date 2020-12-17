@@ -57,6 +57,7 @@ public class SdmxConnectionAssert {
         }
 
         try (SdmxConnection conn = supplier.getWithIO()) {
+            //noinspection RedundantExplicitClose
             conn.close();
         } catch (Exception ex) {
             s.fail("Subsequent calls to #close must not raise exception", ex);

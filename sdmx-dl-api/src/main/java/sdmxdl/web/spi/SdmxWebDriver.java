@@ -16,16 +16,17 @@
  */
 package sdmxdl.web.spi;
 
-import nbbrd.design.ThreadSafe;
-import sdmxdl.web.SdmxWebConnection;
-import sdmxdl.web.SdmxWebSource;
 import internal.sdmxdl.web.spi.FailsafeSdmxWebDriver;
-import java.io.IOException;
-import java.util.Collection;
+import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceSorter;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebSource;
+
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  *

@@ -16,15 +16,11 @@
  */
 package internal.sdmxdl.ri.file;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.DataFilter;
-import sdmxdl.Series;
-import sdmxdl.file.SdmxFileConnection;
+import nbbrd.io.function.IORunnable;
+import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.file.SdmxFileConnection;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import nbbrd.io.function.IORunnable;
 
 /**
  *
@@ -139,7 +134,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

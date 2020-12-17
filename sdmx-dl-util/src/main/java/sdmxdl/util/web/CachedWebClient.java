@@ -56,7 +56,7 @@ final class CachedWebClient implements SdmxWebClient {
         this.cache = cache;
         this.ttl = ttl;
         this.idOfFlows = TypedId.of("flows://" + base,
-                repo -> repo.getFlows(),
+                SdmxRepository::getFlows,
                 flows -> SdmxRepository.builder().flows(flows).build()
         );
         this.idOfFlow = TypedId.of("flow://" + base,

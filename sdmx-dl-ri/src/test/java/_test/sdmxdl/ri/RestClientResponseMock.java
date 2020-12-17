@@ -24,7 +24,7 @@ public final class RestClientResponseMock implements HttpRest.Response {
     private final IORunnable onClose = IORunnable.noOp();
 
     @Override
-    public @NonNull String getContentType() throws IOException {
+    public @NonNull String getContentType() {
         return contentType;
     }
 

@@ -26,7 +26,7 @@ import sdmxdl.DataflowRef;
 public final class DataflowRefConverter implements CommandLine.ITypeConverter<DataflowRef> {
 
     @Override
-    public DataflowRef convert(String string) throws Exception {
+    public DataflowRef convert(String string) {
         return DataflowRef.parse(string);
     }
 }

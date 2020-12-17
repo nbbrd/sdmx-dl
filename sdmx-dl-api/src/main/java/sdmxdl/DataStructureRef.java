@@ -30,6 +30,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @StringValue
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataStructureRef extends ResourceRef<DataStructureRef> {
 
     @lombok.NonNull

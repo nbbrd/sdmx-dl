@@ -1,37 +1,33 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl;
 
-import internal.sdmxdl.SeriesCursor;
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.Frequency;
-import sdmxdl.Key;
-import sdmxdl.Obs;
-import sdmxdl.Series;
+import org.junit.Test;
+import sdmxdl.*;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
- *
  * @author Philippe Charles
  */
 public class SeriesCursorTest {
@@ -57,7 +53,9 @@ public class SeriesCursorTest {
                     .allMatch(o -> o.getObs().isEmpty())
                     .hasSize(1)
                     .element(0)
-                    .isEqualToComparingOnlyGivenFields(s1, "key", "freq", "meta");
+                    .usingRecursiveComparison()
+                    .ignoringFields("obs")
+                    .isEqualTo(s1);
         }
 
         try (DataCursor c = new SeriesCursor(iter(s1, s2), Key.ALL)) {

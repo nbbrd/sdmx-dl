@@ -19,22 +19,20 @@ package internal.sdmxld.connectors;
 import _test.sdmxdl.connectors.samples.ConnectorsResource;
 import internal.sdmxdl.connectors.Connectors;
 import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.Key;
-import sdmxdl.Frequency;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.DataCursorAssert;
-import sdmxdl.Obs;
-import sdmxdl.util.parser.ObsFactories;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import sdmxdl.*;
+import sdmxdl.samples.SdmxSource;
+import sdmxdl.tck.DataCursorAssert;
+import sdmxdl.util.parser.ObsFactories;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

@@ -34,7 +34,7 @@ public final class ListConceptsCommand extends BaseCommand {
     private WebFlowOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @Override
     public Void call() throws Exception {

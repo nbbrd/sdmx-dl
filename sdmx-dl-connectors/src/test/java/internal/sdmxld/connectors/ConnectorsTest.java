@@ -16,16 +16,14 @@
  */
 package internal.sdmxld.connectors;
 
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.Dimension;
+import org.junit.Test;
+import sdmxdl.*;
+
+import java.net.HttpURLConnection;
+
 import static internal.sdmxdl.connectors.Connectors.*;
 import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
-import java.net.HttpURLConnection;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

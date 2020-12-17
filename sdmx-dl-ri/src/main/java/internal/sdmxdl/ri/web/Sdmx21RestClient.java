@@ -49,7 +49,7 @@ public class Sdmx21RestClient extends RiRestClient {
     }
 
     @Override
-    public String getName() throws IOException {
+    public String getName() {
         return name;
     }
 
@@ -110,12 +110,12 @@ public class Sdmx21RestClient extends RiRestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
+    public boolean isSeriesKeysOnlySupported() {
         return seriesKeysOnlySupported;
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
         return null;
     }
 
@@ -140,22 +140,22 @@ public class Sdmx21RestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
+    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
         return onMeta(endpoint, DATAFLOW_RESOURCE, FLOWS);
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
+    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) {
         return onMeta(endpoint, DATAFLOW_RESOURCE, ref);
     }
 
     @NonNull
-    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
+    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) {
         return onMeta(endpoint, DATASTRUCTURE_RESOURCE, ref).param(REFERENCES_PARAM, "children");
     }
 
     @NonNull
-    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
+    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) {
         RestQueryBuilder result = onData(endpoint, request.getFlowRef(), request.getKey());
         switch (request.getFilter().getDetail()) {
             case SERIES_KEYS_ONLY:

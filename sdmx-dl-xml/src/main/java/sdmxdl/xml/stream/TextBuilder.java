@@ -16,12 +16,13 @@
  */
 package sdmxdl.xml.stream;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.LanguagePriorityList;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *

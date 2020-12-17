@@ -16,9 +16,9 @@
  */
 package internal;
 
+import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.tck.DataCursorAssert;
-import org.junit.Test;
 
 /**
  * @author Philippe Charles

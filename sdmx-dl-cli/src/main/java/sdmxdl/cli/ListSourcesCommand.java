@@ -37,7 +37,7 @@ public final class ListSourcesCommand extends BaseCommand {
     private WebOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @Override
     public Void call() throws Exception {

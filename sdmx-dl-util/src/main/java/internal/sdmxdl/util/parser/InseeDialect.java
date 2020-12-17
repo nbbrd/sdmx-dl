@@ -24,8 +24,8 @@ import sdmxdl.Frequency;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.PeriodParsers;
 
 import java.time.LocalDateTime;

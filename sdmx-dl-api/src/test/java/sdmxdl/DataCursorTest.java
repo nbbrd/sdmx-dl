@@ -16,9 +16,11 @@
  */
 package sdmxdl;
 
-import java.util.Collections;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import org.junit.Test;
+
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  *

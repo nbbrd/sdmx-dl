@@ -25,7 +25,6 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,7 +75,7 @@ public final class OpenCommand extends BaseCommand {
         return null;
     }
 
-    private static List<Website> getWebsites(SdmxWebManager manager, List<String> sourceNames) throws IOException {
+    private static List<Website> getWebsites(SdmxWebManager manager, List<String> sourceNames) {
         if (WebOptions.isAllSources(sourceNames)) {
             sourceNames = getAllSourceNames(manager);
         }

@@ -16,17 +16,19 @@
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
+import org.junit.Test;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.samples.SdmxSource;
+
 import java.io.IOException;
 import java.util.List;
-import nbbrd.io.xml.Stax;
-import nbbrd.io.xml.Xml;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

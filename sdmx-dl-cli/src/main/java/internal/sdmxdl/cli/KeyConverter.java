@@ -26,7 +26,7 @@ import sdmxdl.Key;
 public final class KeyConverter implements CommandLine.ITypeConverter<Key> {
 
     @Override
-    public Key convert(String string) throws Exception {
+    public Key convert(String string) {
         return Key.parse(string);
     }
 }

@@ -17,10 +17,11 @@
 package sdmxdl.web;
 
 import nbbrd.design.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.SdmxConnection;
+
 import java.io.IOException;
 import java.time.Duration;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *

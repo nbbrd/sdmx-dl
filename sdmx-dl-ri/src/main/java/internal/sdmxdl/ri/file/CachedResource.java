@@ -27,7 +27,6 @@ import sdmxdl.xml.XmlFileSource;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Optional;
 
 /**
  * @author Philippe Charles

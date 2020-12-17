@@ -16,11 +16,8 @@
  */
 package internal.sdmxdl;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.Key;
-import sdmxdl.Frequency;
-import sdmxdl.Series;
+import sdmxdl.*;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -84,7 +81,7 @@ public final class EmptyCursor implements DataCursor {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

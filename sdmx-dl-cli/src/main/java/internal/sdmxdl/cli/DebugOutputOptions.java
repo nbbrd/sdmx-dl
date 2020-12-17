@@ -36,6 +36,7 @@ import java.util.Collection;
  * @author Philippe Charles
  */
 @lombok.Data
+@lombok.EqualsAndHashCode(callSuper = true)
 public class DebugOutputOptions extends YamlOutputOptions {
 
     public void dump(Class<?> rootType, Object item) throws IOException {
@@ -56,10 +57,10 @@ public class DebugOutputOptions extends YamlOutputOptions {
         Representer result = new Representer() {
             {
                 this.representers.put(LocalDateTime.class, data -> representScalar(Tag.STR, ((LocalDateTime) data).toString()));
-                this.representers.put(Key.class, data -> representScalar(Tag.STR, ((Key) data).toString()));
-                this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, ((DataflowRef) data).toString()));
-                this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, ((DataStructureRef) data).toString()));
-                this.representers.put(URL.class, data -> representScalar(Tag.STR, ((URL) data).toString()));
+                this.representers.put(Key.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(URL.class, data -> representScalar(Tag.STR, data.toString()));
             }
         };
         result.addClassTag(rootType, Tag.MAP);

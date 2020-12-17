@@ -26,7 +26,7 @@ import sdmxdl.LanguagePriorityList;
 public final class LangsConverter implements CommandLine.ITypeConverter<LanguagePriorityList> {
 
     @Override
-    public LanguagePriorityList convert(String string) throws Exception {
+    public LanguagePriorityList convert(String string) {
         return LanguagePriorityList.parse(string);
     }
 }

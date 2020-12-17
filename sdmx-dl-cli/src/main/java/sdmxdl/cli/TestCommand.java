@@ -103,8 +103,8 @@ public final class TestCommand extends BaseCommand {
         System.out.println("SeriesCount: " + s.getSeriesCount());
         System.out.println("   ObsCount: " + s.getObsCount());
         System.out.println("      Error: " + s.getError().replace(System.lineSeparator(), " > "));
-        System.out.println("   Problems: " + s.getProblems().stream().collect(Collectors.joining(", ")));
-        System.out.println("");
+        System.out.println("   Problems: " + String.join(", ", s.getProblems()));
+        System.out.println();
     }
 
     @lombok.Value

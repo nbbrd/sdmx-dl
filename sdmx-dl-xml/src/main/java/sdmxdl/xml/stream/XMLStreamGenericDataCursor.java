@@ -294,7 +294,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
         SDMX20 {
             @Override
-            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) throws XMLStreamException {
+            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) {
                 c.accept(r.getAttributeValue(null, "concept"), r.getAttributeValue(null, "value"));
             }
 
@@ -310,12 +310,12 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         },
         SDMX21 {
             @Override
-            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) throws XMLStreamException {
+            public void parseValueElement(XMLStreamReader r, BiConsumer<String, String> c) {
                 c.accept(r.getAttributeValue(null, "id"), r.getAttributeValue(null, "value"));
             }
 
             @Override
-            public void parseTimeElement(XMLStreamReader r, Consumer<String> c) throws XMLStreamException {
+            public void parseTimeElement(XMLStreamReader r, Consumer<String> c) {
                 c.accept(r.getAttributeValue(null, "value"));
             }
 

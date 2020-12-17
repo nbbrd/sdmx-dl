@@ -16,24 +16,18 @@
  */
 package sdmxdl.xml.stream;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import javax.xml.stream.EventFilter;
-import javax.xml.stream.StreamFilter;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLReporter;
-import javax.xml.stream.XMLResolver;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.util.XMLEventAllocator;
-import javax.xml.transform.Source;
 import nbbrd.io.Resource;
 import nbbrd.io.WrappedIOException;
 import nbbrd.io.xml.Stax;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import javax.xml.stream.*;
+import javax.xml.stream.util.XMLEventAllocator;
+import javax.xml.transform.Source;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  *

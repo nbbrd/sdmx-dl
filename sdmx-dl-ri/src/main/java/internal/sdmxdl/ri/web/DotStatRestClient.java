@@ -43,7 +43,7 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @Override
-    public String getName() throws IOException {
+    public String getName() {
         return name;
     }
 
@@ -108,17 +108,17 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
+    public boolean isSeriesKeysOnlySupported() {
         return false;
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
         return getStructureRefFromFlowRef(flowRef);
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) throws IOException {
+    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -126,7 +126,7 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) throws IOException {
+    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -134,7 +134,7 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) throws IOException {
+    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
@@ -142,7 +142,7 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) throws IOException {
+    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)

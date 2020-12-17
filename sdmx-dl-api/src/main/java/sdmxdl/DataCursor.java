@@ -20,21 +20,17 @@ import internal.sdmxdl.EmptyCursor;
 import internal.sdmxdl.SeriesCursor;
 import internal.sdmxdl.SeriesFactory;
 import internal.sdmxdl.SeriesIterator;
-import java.io.Closeable;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  *

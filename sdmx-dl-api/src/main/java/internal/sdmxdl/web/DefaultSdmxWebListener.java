@@ -1,9 +1,9 @@
 package internal.sdmxdl.web;
 
-import java.util.Objects;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 
+import java.util.Objects;
 import java.util.logging.Level;
 
 @lombok.extern.java.Log

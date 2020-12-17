@@ -86,15 +86,11 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
             case ANNUAL:
                 return DateTimeFormatter.ofPattern("yyyy");
             case HALF_YEARLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM");
             case QUARTERLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM");
             case MONTHLY:
                 return DateTimeFormatter.ofPattern("yyyy-MM");
             case WEEKLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-dd");
             case DAILY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-dd");
             case DAILY_BUSINESS:
                 return DateTimeFormatter.ofPattern("yyyy-MM-dd");
             case HOURLY:

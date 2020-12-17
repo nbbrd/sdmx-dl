@@ -34,7 +34,7 @@ import java.util.Collection;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public final class WebResponse {
+public class WebResponse {
 
     @lombok.NonNull
     WebRequest request;

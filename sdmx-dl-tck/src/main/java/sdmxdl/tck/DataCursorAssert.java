@@ -24,6 +24,7 @@ import sdmxdl.DataCursor;
 
 import java.io.IOException;
 
+@SuppressWarnings("CatchMayIgnoreException")
 @lombok.experimental.UtilityClass
 public class DataCursorAssert {
 
@@ -53,6 +54,7 @@ public class DataCursorAssert {
         }
 
         try (DataCursor c = supplier.getWithIO()) {
+            //noinspection RedundantExplicitClose
             c.close();
         } catch (Exception ex) {
             s.fail("Subsequent calls to #close must not raise exception", ex);

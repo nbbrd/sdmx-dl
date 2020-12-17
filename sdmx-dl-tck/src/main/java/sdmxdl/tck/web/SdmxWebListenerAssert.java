@@ -30,7 +30,7 @@ public class SdmxWebListenerAssert {
     }
 
     private void checkIsEnabled(SoftAssertions s, SdmxWebListener actual) {
-        s.assertThatCode(() -> actual.isEnabled())
+        s.assertThatCode(actual::isEnabled)
                 .doesNotThrowAnyException();
     }
 }

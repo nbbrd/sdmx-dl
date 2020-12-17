@@ -25,7 +25,7 @@ import java.util.Map;
 @lombok.experimental.UtilityClass
 public class Property {
 
-    public boolean get(String key, boolean defaultValue, Map props) {
+    public boolean get(String key, boolean defaultValue, Map<?, ?> props) {
         Object result = props.get(key);
         if (result != null) {
             return Boolean.parseBoolean(result.toString());
@@ -33,7 +33,7 @@ public class Property {
         return defaultValue;
     }
 
-    public int get(String key, int defaultValue, Map props) {
+    public int get(String key, int defaultValue, Map<?, ?> props) {
         Object result = props.get(key);
         if (result != null) {
             try {
@@ -45,7 +45,7 @@ public class Property {
         return defaultValue;
     }
 
-    public long get(String key, long defaultValue, Map props) {
+    public long get(String key, long defaultValue, Map<?, ?> props) {
         Object result = props.get(key);
         if (result != null) {
             try {
@@ -55,17 +55,5 @@ public class Property {
             }
         }
         return defaultValue;
-    }
-
-    public void set(String key, boolean value, Map props) {
-        props.put(key, String.valueOf(value));
-    }
-
-    public void set(String key, int value, Map props) {
-        props.put(key, String.valueOf(value));
-    }
-
-    public void set(String key, long value, Map props) {
-        props.put(key, String.valueOf(value));
     }
 }

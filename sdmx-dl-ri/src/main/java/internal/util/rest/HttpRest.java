@@ -123,7 +123,7 @@ public class HttpRest {
     }
 
     public enum AuthScheme {
-        BASIC, NONE;
+        BASIC, NONE
     }
 
     public interface EventListener {
@@ -222,7 +222,7 @@ public class HttpRest {
     private enum StreamDecoders implements StreamDecoder {
         NONE {
             @Override
-            public @NonNull InputStream decode(@NonNull InputStream stream) throws IOException {
+            public @NonNull InputStream decode(@NonNull InputStream stream) {
                 Objects.requireNonNull(stream);
                 return stream;
             }
@@ -235,7 +235,7 @@ public class HttpRest {
         },
         DEFLATE {
             @Override
-            public @NonNull InputStream decode(@NonNull InputStream stream) throws IOException {
+            public @NonNull InputStream decode(@NonNull InputStream stream) {
                 return new InflaterInputStream(stream);
             }
         };

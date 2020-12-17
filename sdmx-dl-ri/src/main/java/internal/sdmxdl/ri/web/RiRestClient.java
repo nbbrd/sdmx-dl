@@ -119,7 +119,7 @@ public abstract class RiRestClient implements SdmxWebClient {
     private static final class DisconnectingInputStream extends InputStream {
 
         static DisconnectingInputStream of(HttpRest.Response response) throws IOException {
-            return new DisconnectingInputStream(response.getBody(), response::close);
+            return new DisconnectingInputStream(response.getBody(), response);
         }
 
         @lombok.experimental.Delegate(excludes = Closeable.class)

@@ -43,7 +43,7 @@ public class NbbDriver2Test {
     }
 
     @Test
-    public void testNbbFix2() throws IOException {
+    public void testNbbFix2() {
         assertThatCode(() -> checkInternalErrorRedirect(RestClientResponseMock.builder().contentType("text/xml; charset=utf-8").build()))
                 .doesNotThrowAnyException();
 

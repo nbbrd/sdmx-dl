@@ -18,14 +18,7 @@ package sdmxdl.util.parser;
 
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataStructure;
-import sdmxdl.Dimension;
 import sdmxdl.Frequency;
-import sdmxdl.Key;
-
-import java.util.function.BiFunction;
-import java.util.function.UnaryOperator;
 
 import static sdmxdl.Frequency.*;
 

@@ -29,6 +29,7 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataStructure extends Resource<DataStructureRef> {
 
     /**

@@ -16,23 +16,17 @@
  */
 package sdmxdl.util.web;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import nbbrd.io.function.IORunnable;
+import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.web.SdmxWebConnection;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import nbbrd.io.function.IORunnable;
 
 /**
  *
@@ -121,7 +115,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

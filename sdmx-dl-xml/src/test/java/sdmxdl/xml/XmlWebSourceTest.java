@@ -16,11 +16,12 @@
  */
 package sdmxdl.xml;
 
-import sdmxdl.web.SdmxWebSource;
-import java.io.IOException;
-import static org.assertj.core.api.Assertions.*;
-
 import org.junit.Test;
+import sdmxdl.web.SdmxWebSource;
+
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *

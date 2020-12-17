@@ -16,9 +16,9 @@
  */
 package _test.sdmxdl.util.client;
 
+import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -74,88 +74,88 @@ public enum XFailingWebClient implements SdmxWebClient {
     },
     UNEXPECTED {
         @Override
-        public String getName() throws IOException {
+        public String getName() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public List<Dataflow> getFlows() throws IOException {
+        public List<Dataflow> getFlows() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef ref) throws IOException {
+        public Dataflow getFlow(DataflowRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public DataStructure getStructure(DataStructureRef ref) throws IOException {
+        public DataStructure getStructure(DataStructureRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        public DataCursor getData(DataRequest request, DataStructure dsd) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isSeriesKeysOnlySupported() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        public DataStructureRef peekStructureRef(DataflowRef flowRef) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             throw new CustomRuntimeException();
         }
     },
     NULL {
         @Override
-        public String getName() throws IOException {
+        public String getName() {
             return null;
         }
 
         @Override
-        public List<Dataflow> getFlows() throws IOException {
+        public List<Dataflow> getFlows() {
             return null;
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef ref) throws IOException {
+        public Dataflow getFlow(DataflowRef ref) {
             Objects.requireNonNull(ref);
             return null;
         }
 
         @Override
-        public DataStructure getStructure(DataStructureRef ref) throws IOException {
+        public DataStructure getStructure(DataStructureRef ref) {
             Objects.requireNonNull(ref);
             return null;
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        public DataCursor getData(DataRequest request, DataStructure dsd) {
             Objects.requireNonNull(request);
             Objects.requireNonNull(dsd);
             return null;
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isSeriesKeysOnlySupported() {
             return false;
         }
 
         @Override
-        public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        public DataStructureRef peekStructureRef(DataflowRef flowRef) {
             Objects.requireNonNull(flowRef);
             return null;
         }
 
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             return null;
         }
     };

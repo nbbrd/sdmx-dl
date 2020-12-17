@@ -99,7 +99,7 @@ public final class SeriesCursor implements DataCursor {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 

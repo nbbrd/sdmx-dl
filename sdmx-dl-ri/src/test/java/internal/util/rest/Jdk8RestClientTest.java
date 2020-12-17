@@ -62,7 +62,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testNPE() throws IOException {
+    public void testNPE() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .build();
@@ -103,7 +103,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testHttpError() throws IOException {
+    public void testHttpError() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -132,7 +132,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testInvalidProtocol() throws IOException {
+    public void testInvalidProtocol() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .build();
@@ -152,11 +152,10 @@ public class Jdk8RestClientTest {
                 .build();
         Jdk8RestClient x = new Jdk8RestClient(context);
 
-        String absolute = wire.url(SECOND_URL);
-        String relative = SECOND_URL;
+        String absoluteSecondURL = wire.url(SECOND_URL);
 
         for (int redirection : HTTP_REDIRECTIONS) {
-            for (String location : asList(absolute, relative)) {
+            for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
@@ -169,7 +168,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testMaxRedirect() throws IOException {
+    public void testMaxRedirect() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -178,11 +177,10 @@ public class Jdk8RestClientTest {
                 .build();
         Jdk8RestClient x = new Jdk8RestClient(context);
 
-        String absolute = wire.url(SECOND_URL);
-        String relative = SECOND_URL;
+        String absoluteSecondURL = wire.url(SECOND_URL);
 
         for (int redirection : HTTP_REDIRECTIONS) {
-            for (String location : asList(absolute, relative)) {
+            for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
@@ -195,7 +193,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testInvalidRedirect() throws IOException {
+    public void testInvalidRedirect() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -214,7 +212,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testDowngradingRedirect() throws IOException {
+    public void testDowngradingRedirect() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -236,7 +234,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testInvalidSSL() throws IOException {
+    public void testInvalidSSL() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .build();
@@ -251,7 +249,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testReadTimeout() throws IOException {
+    public void testReadTimeout() {
         int readTimeout = isOSX() ? 100 : 10;
 
         HttpRest.Context context = HttpRest.Context
@@ -295,7 +293,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testNoAuth() throws IOException {
+    public void testNoAuth() {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
@@ -323,7 +321,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testInvalidAuth() throws IOException {
+    public void testInvalidAuth() {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
@@ -352,7 +350,7 @@ public class Jdk8RestClientTest {
     }
 
     @Test
-    public void testInsecureAuth() throws IOException {
+    public void testInsecureAuth() {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()

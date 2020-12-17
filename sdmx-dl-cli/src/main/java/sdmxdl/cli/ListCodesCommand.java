@@ -45,7 +45,7 @@ public final class ListCodesCommand extends BaseCommand {
     private String concept;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @Override
     public Void call() throws Exception {

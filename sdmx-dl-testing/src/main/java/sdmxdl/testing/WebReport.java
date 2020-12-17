@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public final class WebReport {
+public class WebReport {
 
     @lombok.NonNull
     WebResponse response;
@@ -187,6 +187,6 @@ public final class WebReport {
                         .orElse(null)
                         : null;
             }
-        };
+        }
     }
 }

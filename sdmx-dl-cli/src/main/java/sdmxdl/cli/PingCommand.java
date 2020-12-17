@@ -24,7 +24,6 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,7 +74,7 @@ public final class PingCommand extends BaseCommand {
         return null;
     }
 
-    private static List<PingResult> ping(SdmxWebManager manager, List<String> sourceNames) throws IOException {
+    private static List<PingResult> ping(SdmxWebManager manager, List<String> sourceNames) {
         if (WebOptions.isAllSources(sourceNames)) {
             sourceNames = getAllSourceNames(manager);
         }

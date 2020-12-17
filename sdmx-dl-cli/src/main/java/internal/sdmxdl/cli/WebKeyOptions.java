@@ -36,6 +36,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Data
+@lombok.EqualsAndHashCode(callSuper = true)
 public class WebKeyOptions extends WebFlowOptions {
 
     @CommandLine.Parameters(
@@ -100,7 +101,6 @@ public class WebKeyOptions extends WebFlowOptions {
             case ANNUAL:
                 return TsUnit.YEAR;
             case DAILY:
-                return TsUnit.DAY;
             case DAILY_BUSINESS:
                 return TsUnit.DAY;
             case HALF_YEARLY:

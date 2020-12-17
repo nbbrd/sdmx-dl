@@ -16,9 +16,9 @@
  */
 package _test.sdmxdl.util.client;
 
+import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.*;
 
 import java.io.IOException;
 import java.time.Duration;

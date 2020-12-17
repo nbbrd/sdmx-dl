@@ -152,7 +152,7 @@ public class SdmxRepository {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             closed = true;
         }
 

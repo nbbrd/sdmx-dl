@@ -233,7 +233,7 @@ public class FailsafeSdmxWebConnectionTest {
     }
 
     @Test
-    public void testClose() throws IOException {
+    public void testClose() {
         failsafe.reset();
         Assertions.assertThatCode(validDriver::close).doesNotThrowAnyException();
         failsafe.assertEmpty();

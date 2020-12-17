@@ -16,10 +16,12 @@
  */
 package sdmxdl.xml.stream;
 
-import sdmxdl.LanguagePriorityList;
-import static sdmxdl.LanguagePriorityList.ANY;
-import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
+import sdmxdl.LanguagePriorityList;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  *

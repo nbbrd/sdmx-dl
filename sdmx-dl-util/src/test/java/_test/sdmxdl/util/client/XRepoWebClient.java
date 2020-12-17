@@ -36,12 +36,12 @@ public final class XRepoWebClient implements SdmxWebClient {
     private final SdmxRepository repo;
 
     @Override
-    public String getName() throws IOException {
+    public String getName() {
         return repo.getName();
     }
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public List<Dataflow> getFlows() {
         return repo.getFlows();
     }
 
@@ -65,17 +65,17 @@ public final class XRepoWebClient implements SdmxWebClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
+    public boolean isSeriesKeysOnlySupported() {
         return true;
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
         return null;
     }
 
     @Override
-    public Duration ping() throws IOException {
+    public Duration ping() {
         return Duration.ZERO;
     }
 }

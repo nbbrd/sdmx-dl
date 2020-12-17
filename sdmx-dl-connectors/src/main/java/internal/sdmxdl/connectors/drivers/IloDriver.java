@@ -81,7 +81,7 @@ public final class IloDriver implements SdmxWebDriver {
         }
 
         @Override
-        protected URL buildDataQuery(Dataflow dataflow, String resource, String startTime, String endTime, boolean serieskeysonly, String updatedAfter, boolean includeHistory) throws SdmxException {
+        protected URL buildDataQuery(Dataflow dataflow, String resource, String startTime, String endTime, boolean serieskeysonly, String updatedAfter, boolean includeHistory) {
             try {
                 return new Sdmx21Queries(endpoint)
                         .addParams(startTime, endTime, serieskeysonly, updatedAfter, includeHistory, format)

@@ -73,7 +73,7 @@ public final class MainCommand extends BaseCommand {
     private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
+    public Void call() {
         spec.commandLine().usage(System.out);
         return null;
     }

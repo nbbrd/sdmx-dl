@@ -16,16 +16,9 @@
  */
 package _test.sdmxdl;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
-import java.io.IOException;
+
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,153 +33,153 @@ public enum TestConnection implements SdmxWebConnection {
     VALID {
 
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             return PING;
         }
 
         @Override
-        public String getDriver() throws IOException {
+        public String getDriver() {
             return DRIVER;
         }
 
         @Override
-        public Collection<Dataflow> getFlows() throws IOException {
+        public Collection<Dataflow> getFlows() {
             return FLOWS;
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+        public Dataflow getFlow(DataflowRef flowRef) {
             return FLOW;
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+        public DataStructure getStructure(DataflowRef flowRef) {
             return STRUCT;
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
             return DATA;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
             return DATA.stream();
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
             return DataCursor.empty();
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isSeriesKeysOnlySupported() {
             return true;
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
     },
     FAILING {
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             throw new CustomException();
         }
 
         @Override
-        public String getDriver() throws IOException {
+        public String getDriver() {
             throw new CustomException();
         }
 
         @Override
-        public Collection<Dataflow> getFlows() throws IOException {
+        public Collection<Dataflow> getFlows() {
             throw new CustomException();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+        public Dataflow getFlow(DataflowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+        public DataStructure getStructure(DataflowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
             throw new CustomException();
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
             throw new CustomException();
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
             throw new CustomException();
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isSeriesKeysOnlySupported() {
             throw new CustomException();
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             throw new CustomException();
         }
     },
     NULL {
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             return null;
         }
 
         @Override
-        public String getDriver() throws IOException {
+        public String getDriver() {
             return null;
         }
 
         @Override
-        public Collection<Dataflow> getFlows() throws IOException {
+        public Collection<Dataflow> getFlows() {
             return null;
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+        public Dataflow getFlow(DataflowRef flowRef) {
             return null;
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+        public DataStructure getStructure(DataflowRef flowRef) {
             return null;
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
             return null;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
             return null;
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
             return null;
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isSeriesKeysOnlySupported() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             throw new UnsupportedOperationException();
         }
     };

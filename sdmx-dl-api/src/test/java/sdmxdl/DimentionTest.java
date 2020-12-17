@@ -16,10 +16,11 @@
  */
 package sdmxdl;
 
-import static org.assertj.core.api.Assertions.*;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  *
