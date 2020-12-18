@@ -1,6 +1,5 @@
 package internal.sdmxdl.cli;
 
-import demetra.timeseries.TsDataTable;
 import picocli.CommandLine;
 
 @lombok.Data
@@ -29,12 +28,4 @@ public class LayoutOptions {
             descriptionKey = "sdmxdl.cli.titleAttribute"
     )
     private String titleAttribute;
-
-    @CommandLine.Option(
-            names = {"-u", "--distribution"},
-            paramLabel = "<distr>",
-            defaultValue = "FIRST",
-            descriptionKey = "sdmxdl.cli.distribution"
-    )
-    private TsDataTable.DistributionType distributionType;
 }

@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.cli;
 
-import demetra.tsprovider.util.ObsFormat;
 import nbbrd.console.picocli.LocaleConverter;
 import picocli.CommandLine;
 
@@ -67,14 +66,4 @@ public final class ObsFormatOptions {
             descriptionKey = "sdmxdl.cli.noGrouping"
     )
     private boolean ignoreNumberGrouping;
-
-    public ObsFormat toObsFormat(boolean hasTime) {
-        return ObsFormat
-                .builder()
-                .locale(locale)
-                .dateTimePattern(hasTime ? datetimePattern : datePattern)
-                .numberPattern(numberPattern)
-                .ignoreNumberGrouping(ignoreNumberGrouping)
-                .build();
-    }
 }
