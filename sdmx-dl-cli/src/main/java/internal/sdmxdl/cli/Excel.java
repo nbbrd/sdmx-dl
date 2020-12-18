@@ -47,9 +47,9 @@ public final class Excel {
 
     public void apply(ObsFormatOptions format) {
         if (excelCompatibility) {
-            format.setLocale(Locale.getDefault());
+            format.setLocale(Locale.getDefault(Locale.Category.FORMAT));
             format.setDatetimePattern("yyyy-MM-dd HH:mm:ss");
-            format.setNumberPattern(null);
+            format.setNumberPattern("");
             format.setIgnoreNumberGrouping(true);
         }
     }

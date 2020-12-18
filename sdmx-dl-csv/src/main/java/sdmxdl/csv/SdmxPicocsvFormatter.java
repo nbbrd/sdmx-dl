@@ -17,6 +17,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 
 @lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
@@ -30,7 +31,11 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Locale encoding = Locale.ROOT;
+    private final Function<DataSet, Formatter<LocalDateTime>> periodFormat = SdmxPicocsvFormatter::getPeriodFormatter;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final Function<DataSet, Formatter<Number>> valueFormat = SdmxPicocsvFormatter::getValueFormatter;
 
     @lombok.Builder.Default
     private final List<SdmxCsvField> fields = Arrays.asList(SdmxCsvField.values());
@@ -79,8 +84,8 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
         }
 
         String dataflow = toDataflowField(data.getRef());
-        Formatter<LocalDateTime> periodFormatter = Formatter.onDateTimeFormatter(getDateTimeFormatter(Frequency.getHighest(data.getData())));
-        Formatter<Number> valueFormatter = Formatter.onNumberFormat(getNumberFormat(encoding));
+        Formatter<LocalDateTime> periodFormatter = periodFormat.apply(data);
+        Formatter<Number> valueFormatter = valueFormat.apply(data);
 
         for (Series series : data.getData()) {
             String key = series.getKey().toString();
@@ -109,6 +114,14 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
                 w.writeEndOfLine();
             }
         }
+    }
+
+    private static Formatter<Number> getValueFormatter(DataSet data) {
+        return Formatter.onNumberFormat(getNumberFormat(Locale.ROOT));
+    }
+
+    private static Formatter<LocalDateTime> getPeriodFormatter(DataSet data) {
+        return Formatter.onDateTimeFormatter(getDateTimeFormatter(Frequency.getHighest(data.getData())));
     }
 
     private static NumberFormat getNumberFormat(Locale encoding) {
@@ -140,7 +153,7 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
         }
     }
 
-    private static String toDataflowField(DataflowRef ref) {
+    public static String toDataflowField(DataflowRef ref) {
         return ref.getAgency() + ":" + ref.getId() + "(" + ref.getVersion() + ")";
     }
 

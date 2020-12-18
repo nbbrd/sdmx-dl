@@ -18,9 +18,11 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.*;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
+import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.DataCursor;
+import sdmxdl.Frequency;
 import sdmxdl.Obs;
 import sdmxdl.Series;
 import sdmxdl.csv.SdmxPicocsvFormatter;
@@ -28,8 +30,13 @@ import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 
 import static sdmxdl.csv.SdmxCsvField.*;
 
@@ -65,8 +72,8 @@ public final class DataCommand extends BaseCommand {
                 case GRID:
                     TsToolkitUtil.writeGrid(writer, web, format, excel.isExcelCompatibility(), layout);
                     break;
-                case SDMX:
-                    writeTable(writer, web, format.getLocale(), layout.isReverseChronology());
+                case TABLE:
+                    writeTable(writer, web, format, layout.isReverseChronology());
                     break;
             }
         }
@@ -74,16 +81,41 @@ public final class DataCommand extends BaseCommand {
         return null;
     }
 
-    private static void writeTable(Csv.Writer w, WebKeyOptions web, Locale encoding, boolean reverseChronology) throws IOException {
+    private static void writeTable(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format, boolean reverseChronology) throws IOException {
+        w.writeField("Flow");
+        w.writeField("Key");
+        w.writeField("TimePeriod");
+        w.writeField("Value");
+        w.writeEndOfLine();
         try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
             SdmxPicocsvFormatter
                     .builder()
                     .dsd(conn.getStructure(web.getFlow()))
-                    .encoding(encoding)
                     .fields(Arrays.asList(DATAFLOW, SERIESKEY, TIME_DIMENSION, OBS_VALUE))
+                    .ignoreHeader(true)
+                    .periodFormat(getPeriodFormat(format))
+                    .valueFormat(getValueFormat(format))
                     .build()
                     .format(getSortedSeries(conn, web, reverseChronology), w);
         }
+    }
+
+    private static Function<DataSet, Formatter<Number>> getValueFormat(ObsFormatOptions format) {
+        return dataSet -> {
+            NumberFormat decimalFormat = new DecimalFormat(format.getNumberPattern(), DecimalFormatSymbols.getInstance(format.getLocale()));
+            if (format.isIgnoreNumberGrouping()) {
+                decimalFormat.setGroupingUsed(false);
+            }
+            return Formatter.onNumberFormat(decimalFormat);
+        };
+    }
+
+    private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ObsFormatOptions format) {
+        return dataSet -> {
+            Frequency freq = Frequency.getHighest(dataSet.getData());
+            String pattern = freq.hasTime() ? format.getDatetimePattern() : format.getDatePattern();
+            return Formatter.onDateTimeFormatter(DateTimeFormatter.ofPattern(pattern, format.getLocale()));
+        };
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web, boolean reverseChronology) throws IOException {

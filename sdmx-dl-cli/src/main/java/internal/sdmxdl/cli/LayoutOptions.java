@@ -5,11 +5,11 @@ import picocli.CommandLine;
 @lombok.Data
 public class LayoutOptions {
 
-    public enum Layout {GRID, SDMX}
+    public enum Layout {GRID, TABLE}
 
     @CommandLine.Option(
             names = {"--layout"},
-            defaultValue = "GRID",
+            defaultValue = "TABLE",
             descriptionKey = "sdmxdl.cli.layout"
     )
     private Layout layout;

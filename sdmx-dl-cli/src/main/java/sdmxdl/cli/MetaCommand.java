@@ -22,12 +22,13 @@ import internal.sdmxdl.cli.WebKeyOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
+import sdmxdl.DataflowRef;
 import sdmxdl.Series;
+import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * @author Philippe Charles
@@ -51,32 +52,32 @@ public final class MetaCommand extends BaseCommand {
 
         Collection<Series> data = web.getSeries();
         try (Csv.Writer writer = csv.newCsvWriter()) {
-            writeHead(writer, data, excel.isExcelCompatibility());
-            writeBody(writer, data);
+            writeHead(writer);
+            writeBody(writer, data, web.getFlow());
         }
 
         return null;
     }
 
-    private static void writeHead(Csv.Writer w, Collection<Series> data, boolean cornerFieldRequired) throws IOException {
-        w.writeField(cornerFieldRequired ? "Key" : "");
-        for (Series o : data) {
-            w.writeField(o.getKey().toString());
-        }
+    private static void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Flow");
+        w.writeField("Key");
+        w.writeField("Concept");
+        w.writeField("Value");
         w.writeEndOfLine();
     }
 
-    private static void writeBody(Csv.Writer w, Collection<Series> data) throws IOException {
-        TreeSet<String> metaKeyRows = data.stream()
-                .flatMap(series -> series.getMeta().keySet().stream())
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        for (String metaKey : metaKeyRows) {
-            w.writeField(metaKey);
-            for (Series series : data) {
-                w.writeField(series.getMeta().get(metaKey));
+    private static void writeBody(Csv.Writer w, Collection<Series> data, DataflowRef flowRef) throws IOException {
+        String dataflow = SdmxPicocsvFormatter.toDataflowField(flowRef);
+        for (Series series : data) {
+            String key = series.getKey().toString();
+            for (Map.Entry<String, String> o : series.getMeta().entrySet()) {
+                w.writeField(dataflow);
+                w.writeField(key);
+                w.writeField(o.getKey());
+                w.writeField(o.getValue());
+                w.writeEndOfLine();
             }
-            w.writeEndOfLine();
         }
     }
 }
