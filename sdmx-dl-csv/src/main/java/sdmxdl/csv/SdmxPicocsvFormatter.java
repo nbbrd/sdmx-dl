@@ -32,6 +32,12 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     @lombok.Builder.Default
     private final Locale encoding = Locale.ROOT;
 
+    @lombok.Builder.Default
+    private final List<SdmxCsvField> fields = Arrays.asList(SdmxCsvField.values());
+
+    @lombok.Builder.Default
+    private final boolean ignoreHeader = false;
+
     @Override
     public void formatWriter(@NonNull DataSet data, @NonNull Writer writer) throws IOException {
         try (Csv.Writer csv = Csv.Writer.of(writer, format)) {
@@ -47,14 +53,30 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     }
 
     public void format(@NonNull DataSet data, Csv.@NonNull Writer w) throws IOException {
-        w.writeField(SdmxCsv.DATAFLOW);
-        for (Dimension dimension : getSortedDimensions(dsd)) {
-            w.writeField(dimension.getId());
+        if (!ignoreHeader) {
+            for (SdmxCsvField field : fields) {
+                switch (field) {
+                    case DATAFLOW:
+                        w.writeField(SdmxCsv.DATAFLOW);
+                        break;
+                    case KEY_DIMENSIONS:
+                        for (Dimension dimension : getSortedDimensions(dsd)) {
+                            w.writeField(dimension.getId());
+                        }
+                        break;
+                    case TIME_DIMENSION:
+                        w.writeField(dsd.getTimeDimensionId());
+                        break;
+                    case OBS_VALUE:
+                        w.writeField(SdmxCsv.OBS_VALUE);
+                        break;
+                    case SERIESKEY:
+                        w.writeField(SdmxCsv.SERIESKEY);
+                        break;
+                }
+            }
+            w.writeEndOfLine();
         }
-        w.writeField(dsd.getTimeDimensionId());
-        w.writeField(SdmxCsv.OBS_VALUE);
-        w.writeField(SdmxCsv.SERIESKEY);
-        w.writeEndOfLine();
 
         String dataflow = toDataflowField(data.getRef());
         Formatter<LocalDateTime> periodFormatter = Formatter.onDateTimeFormatter(getDateTimeFormatter(Frequency.getHighest(data.getData())));
@@ -63,13 +85,27 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
         for (Series series : data.getData()) {
             String key = series.getKey().toString();
             for (Obs obs : series.getObs()) {
-                w.writeField(dataflow);
-                for (int i = 0; i < series.getKey().size(); i++) {
-                    w.writeField(series.getKey().get(i));
+                for (SdmxCsvField field : fields) {
+                    switch (field) {
+                        case DATAFLOW:
+                            w.writeField(dataflow);
+                            break;
+                        case KEY_DIMENSIONS:
+                            for (int i = 0; i < series.getKey().size(); i++) {
+                                w.writeField(series.getKey().get(i));
+                            }
+                            break;
+                        case TIME_DIMENSION:
+                            w.writeField(periodFormatter.format(obs.getPeriod()));
+                            break;
+                        case OBS_VALUE:
+                            w.writeField(valueFormatter.format(obs.getValue()));
+                            break;
+                        case SERIESKEY:
+                            w.writeField(key);
+                            break;
+                    }
                 }
-                w.writeField(periodFormatter.format(obs.getPeriod()));
-                w.writeField(valueFormatter.format(obs.getValue()));
-                w.writeField(key);
                 w.writeEndOfLine();
             }
         }

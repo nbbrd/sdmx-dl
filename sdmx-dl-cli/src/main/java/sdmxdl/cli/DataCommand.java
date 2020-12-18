@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static sdmxdl.csv.SdmxCsvField.*;
+
 /**
  * @author Philippe Charles
  */
@@ -78,6 +80,7 @@ public final class DataCommand extends BaseCommand {
                     .builder()
                     .dsd(conn.getStructure(web.getFlow()))
                     .encoding(encoding)
+                    .fields(Arrays.asList(DATAFLOW, SERIESKEY, TIME_DIMENSION, OBS_VALUE))
                     .build()
                     .format(getSortedSeries(conn, web, reverseChronology), w);
         }
