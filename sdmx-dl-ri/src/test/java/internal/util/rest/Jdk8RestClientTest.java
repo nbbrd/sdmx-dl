@@ -18,6 +18,7 @@ package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.assertj.core.api.Assumptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
@@ -250,7 +251,10 @@ public class Jdk8RestClientTest {
 
     @Test
     public void testReadTimeout() {
-        int readTimeout = isOSX() ? 100 : 10;
+        // ignore on macOS because timeout seems to be unreliable
+        Assumptions.assumeThat(isOSX()).isFalse();
+
+        int readTimeout = 10;
 
         HttpRest.Context context = HttpRest.Context
                 .builder()
