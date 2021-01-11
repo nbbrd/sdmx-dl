@@ -81,30 +81,6 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.27</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.jdemetra.jdemetra-core</groupId>
-            <artifactId>demetra-toolkit-api</artifactId>
-            <version>${demetra-io.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jdemetra.jdemetra-core</groupId>
-            <artifactId>demetra-io-core</artifactId>
-            <version>${demetra-io.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.cache</groupId>
-                    <artifactId>cache-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jsr107.ri</groupId>
-                    <artifactId>cache-ri-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>demetra-toolkit-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <!-- runtime only -->
         <dependency>

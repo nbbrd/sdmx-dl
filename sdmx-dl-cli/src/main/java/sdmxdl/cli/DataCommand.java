@@ -21,10 +21,7 @@ import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
-import sdmxdl.DataCursor;
-import sdmxdl.Frequency;
-import sdmxdl.Obs;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
@@ -50,9 +47,6 @@ public final class DataCommand extends BaseCommand {
     @CommandLine.Mixin
     private WebKeyOptions web;
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "layout")
-    private LayoutOptions layout = new LayoutOptions();
-
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private CsvOutputOptions csv = new CsvOutputOptions();
 
@@ -68,36 +62,37 @@ public final class DataCommand extends BaseCommand {
         excel.apply(format);
 
         try (Csv.Writer writer = csv.newCsvWriter()) {
-            switch (layout.getLayout()) {
-                case GRID:
-                    TsToolkitUtil.writeGrid(writer, web, format, excel.isExcelCompatibility(), layout);
-                    break;
-                case TABLE:
-                    writeTable(writer, web, format, layout.isReverseChronology());
-                    break;
-            }
+            writeHead(writer);
+            writeBody(writer, web, format);
         }
 
         return null;
     }
 
-    private static void writeTable(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format, boolean reverseChronology) throws IOException {
+    private static void writeHead(Csv.Writer w) throws IOException {
         w.writeField("Flow");
         w.writeField("Key");
         w.writeField("TimePeriod");
         w.writeField("Value");
         w.writeEndOfLine();
+    }
+
+    private static void writeBody(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format) throws IOException {
         try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
-            SdmxPicocsvFormatter
-                    .builder()
-                    .dsd(conn.getStructure(web.getFlow()))
-                    .fields(Arrays.asList(DATAFLOW, SERIESKEY, TIME_DIMENSION, OBS_VALUE))
-                    .ignoreHeader(true)
-                    .periodFormat(getPeriodFormat(format))
-                    .valueFormat(getValueFormat(format))
-                    .build()
-                    .format(getSortedSeries(conn, web, reverseChronology), w);
+            DataStructure dsd = conn.getStructure(web.getFlow());
+            getBodyFormatter(dsd, format).format(getSortedSeries(conn, web), w);
         }
+    }
+
+    private static SdmxPicocsvFormatter getBodyFormatter(DataStructure dsd, ObsFormatOptions format) {
+        return SdmxPicocsvFormatter
+                .builder()
+                .dsd(dsd)
+                .fields(Arrays.asList(DATAFLOW, SERIESKEY, TIME_DIMENSION, OBS_VALUE))
+                .ignoreHeader(true)
+                .periodFormat(getPeriodFormat(format))
+                .valueFormat(getValueFormat(format))
+                .build();
     }
 
     private static Function<DataSet, Formatter<Number>> getValueFormat(ObsFormatOptions format) {
@@ -118,13 +113,13 @@ public final class DataCommand extends BaseCommand {
         };
     }
 
-    private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web, boolean reverseChronology) throws IOException {
+    private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
         try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), web.getFilter())) {
             return DataSet
                     .builder()
                     .ref(web.getFlow())
                     .key(web.getKey())
-                    .data(collectSeries(cursor, reverseChronology ? OBS_BY_PERIOD_DESC : OBS_BY_PERIOD))
+                    .data(collectSeries(cursor, OBS_BY_PERIOD))
                     .build();
         }
     }
@@ -155,5 +150,4 @@ public final class DataCommand extends BaseCommand {
     }
 
     private static final Comparator<Obs> OBS_BY_PERIOD = Comparator.comparing(Obs::getPeriod);
-    private static final Comparator<Obs> OBS_BY_PERIOD_DESC = OBS_BY_PERIOD.reversed();
 }
