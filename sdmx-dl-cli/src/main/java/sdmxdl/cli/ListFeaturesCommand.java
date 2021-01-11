@@ -17,11 +17,14 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.WebSourceOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
+
+import java.io.IOException;
 
 /**
  * @author Philippe Charles
@@ -37,14 +40,19 @@ public final class ListFeaturesCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("SupportedFeature");
-            w.writeEndOfLine();
-            for (Feature feature : web.getSortedFeatures()) {
-                w.writeField(feature.name());
-                w.writeEndOfLine();
-            }
-        }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("SupportedFeature");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        for (Feature feature : web.getSortedFeatures()) {
+            w.writeField(feature.name());
+            w.writeEndOfLine();
+        }
     }
 }

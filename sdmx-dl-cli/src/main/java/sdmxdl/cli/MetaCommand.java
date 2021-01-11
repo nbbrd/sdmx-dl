@@ -17,17 +17,16 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebKeyOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
-import sdmxdl.DataflowRef;
 import sdmxdl.Series;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -49,17 +48,11 @@ public final class MetaCommand extends BaseCommand {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-
-        Collection<Series> data = web.getSeries();
-        try (Csv.Writer writer = csv.newCsvWriter()) {
-            writeHead(writer);
-            writeBody(writer, data, web.getFlow());
-        }
-
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }
 
-    private static void writeHead(Csv.Writer w) throws IOException {
+    private void writeHead(Csv.Writer w) throws IOException {
         w.writeField("Flow");
         w.writeField("Key");
         w.writeField("Concept");
@@ -67,9 +60,9 @@ public final class MetaCommand extends BaseCommand {
         w.writeEndOfLine();
     }
 
-    private static void writeBody(Csv.Writer w, Collection<Series> data, DataflowRef flowRef) throws IOException {
-        String dataflow = SdmxPicocsvFormatter.toDataflowField(flowRef);
-        for (Series series : data) {
+    private void writeBody(Csv.Writer w) throws IOException {
+        String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
+        for (Series series : web.getSeries()) {
             String key = series.getKey().toString();
             for (Map.Entry<String, String> o : series.getMeta().entrySet()) {
                 w.writeField(dataflow);

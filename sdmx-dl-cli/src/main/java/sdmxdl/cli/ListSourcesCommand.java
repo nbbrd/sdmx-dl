@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
@@ -41,23 +42,28 @@ public final class ListSourcesCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("Name");
-            w.writeField("Description");
-            w.writeField("Aliases");
-            w.writeField("Website");
-            w.writeEndOfLine();
-            for (SdmxWebSource source : getSortedSources()) {
-                if (!source.isAlias()) {
-                    w.writeField(source.getName());
-                    w.writeField(source.getDescription());
-                    w.writeField(getAliasesField(source));
-                    w.writeField(getWebsiteField(source));
-                    w.writeEndOfLine();
-                }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Name");
+        w.writeField("Description");
+        w.writeField("Aliases");
+        w.writeField("Website");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        for (SdmxWebSource source : getSortedSources()) {
+            if (!source.isAlias()) {
+                w.writeField(source.getName());
+                w.writeField(source.getDescription());
+                w.writeField(getAliasesField(source));
+                w.writeField(getWebsiteField(source));
+                w.writeEndOfLine();
             }
         }
-        return null;
     }
 
     private String getAliasesField(SdmxWebSource source) {

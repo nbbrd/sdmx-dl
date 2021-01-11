@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
@@ -25,6 +26,8 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,28 +54,40 @@ public final class OpenCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        List<Website> data = getWebsites(web.getManager(), sources);
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            try (Csv.Writer w = csv.newCsvWriter()) {
-                w.writeField("Source");
-                w.writeField("State");
-                w.writeEndOfLine();
-                for (Website website : data) {
-                    w.writeField(website.getName());
-                    if (website.getSource() == null) {
-                        w.writeField("Cannot find source");
-                    } else if (website.getSource().getWebsite() == null) {
-                        w.writeField("Source doesn't have a website");
-                    } else {
-                        w.writeField("Opening " + website.getSource().getWebsite().toString());
-                        desktop.browse(website.getSource().getWebsite().toURI());
-                    }
-                    w.writeEndOfLine();
-                }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Source");
+        w.writeField("State");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        for (Website website : getWebsites(web.getManager(), sources)) {
+            w.writeField(website.getName());
+            writeStateField(w, desktop, website);
+            w.writeEndOfLine();
+        }
+    }
+
+    private void writeStateField(Csv.Writer w, Desktop desktop, Website website) throws IOException {
+        if (website.getSource() == null) {
+            w.writeField("Cannot find source");
+        } else if (website.getSource().getWebsite() == null) {
+            w.writeField("Source doesn't have a website");
+        } else if (desktop == null) {
+            w.writeField("Cannot open " + website.getSource().getWebsite().toString());
+        } else {
+            w.writeField("Opening " + website.getSource().getWebsite().toString());
+            try {
+                desktop.browse(website.getSource().getWebsite().toURI());
+            } catch (URISyntaxException ex) {
+                throw new IOException(ex);
             }
         }
-        return null;
     }
 
     private static List<Website> getWebsites(SdmxWebManager manager, List<String> sourceNames) {

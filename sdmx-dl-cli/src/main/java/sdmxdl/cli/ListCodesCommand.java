@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
@@ -49,17 +50,22 @@ public final class ListCodesCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("Code");
-            w.writeField("Label");
-            w.writeEndOfLine();
-            for (Map.Entry<String, String> entry : getSortedCodes().entrySet()) {
-                w.writeField(entry.getKey());
-                w.writeField(entry.getValue());
-                w.writeEndOfLine();
-            }
-        }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Code");
+        w.writeField("Label");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        for (Map.Entry<String, String> entry : getSortedCodes().entrySet()) {
+            w.writeField(entry.getKey());
+            w.writeField(entry.getValue());
+            w.writeEndOfLine();
+        }
     }
 
     private SortedMap<String, String> getSortedCodes() throws IOException {

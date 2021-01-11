@@ -17,12 +17,15 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Attribute;
 import sdmxdl.Dimension;
+
+import java.io.IOException;
 
 /**
  * @author Philippe Charles
@@ -38,30 +41,43 @@ public final class ListConceptsCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("Concept");
-            w.writeField("Label");
-            w.writeField("Type");
-            w.writeField("Coded");
-            w.writeField("Position");
-            w.writeEndOfLine();
-            for (Dimension o : WebFlowOptions.getSortedDimensions(web.getStructure())) {
-                w.writeField(o.getId());
-                w.writeField(o.getLabel());
-                w.writeField("dimension");
-                w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
-                w.writeField(Integer.toString(o.getPosition()));
-                w.writeEndOfLine();
-            }
-            for (Attribute o : WebFlowOptions.getSortedAttributes(web.getStructure())) {
-                w.writeField(o.getId());
-                w.writeField(o.getLabel());
-                w.writeField("attribute");
-                w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
-                w.writeField("");
-                w.writeEndOfLine();
-            }
-        }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Concept");
+        w.writeField("Label");
+        w.writeField("Type");
+        w.writeField("Coded");
+        w.writeField("Position");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        writeDimensions(w);
+        writeAttributes(w);
+    }
+
+    private void writeDimensions(Csv.Writer w) throws IOException {
+        for (Dimension o : WebFlowOptions.getSortedDimensions(web.getStructure())) {
+            w.writeField(o.getId());
+            w.writeField(o.getLabel());
+            w.writeField("dimension");
+            w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
+            w.writeField(Integer.toString(o.getPosition()));
+            w.writeEndOfLine();
+        }
+    }
+
+    private void writeAttributes(Csv.Writer w) throws IOException {
+        for (Attribute o : WebFlowOptions.getSortedAttributes(web.getStructure())) {
+            w.writeField(o.getId());
+            w.writeField(o.getLabel());
+            w.writeField("attribute");
+            w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
+            w.writeField("");
+            w.writeEndOfLine();
+        }
     }
 }

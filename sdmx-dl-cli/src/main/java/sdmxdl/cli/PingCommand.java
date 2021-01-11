@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.PingResult;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -24,6 +25,7 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,28 +52,32 @@ public final class PingCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        List<PingResult> data = ping(web.getManager(), sources);
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("Source");
-            w.writeField("State");
-            w.writeField("DurationInMillis");
-            w.writeField("ErrorMessage");
-            w.writeEndOfLine();
-            for (PingResult ping : data) {
-                w.writeField(ping.getSource());
-                if (ping.isSuccess()) {
-                    w.writeField("OK");
-                    w.writeField(String.valueOf(ping.getDuration().toMillis()));
-                    w.writeField("");
-                } else {
-                    w.writeField("KO");
-                    w.writeField("");
-                    w.writeField(ping.getCause());
-                }
-                w.writeEndOfLine();
-            }
-        }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Source");
+        w.writeField("State");
+        w.writeField("DurationInMillis");
+        w.writeField("ErrorMessage");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        for (PingResult ping : ping(web.getManager(), sources)) {
+            w.writeField(ping.getSource());
+            if (ping.isSuccess()) {
+                w.writeField("OK");
+                w.writeField(String.valueOf(ping.getDuration().toMillis()));
+                w.writeField("");
+            } else {
+                w.writeField("KO");
+                w.writeField("");
+                w.writeField(ping.getCause());
+            }
+            w.writeEndOfLine();
+        }
     }
 
     private static List<PingResult> ping(SdmxWebManager manager, List<String> sourceNames) {

@@ -17,11 +17,14 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.WebSourceOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
+
+import java.io.IOException;
 
 /**
  * @author Philippe Charles
@@ -37,16 +40,21 @@ public final class ListFlowsCommand extends BaseCommand {
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter()) {
-            w.writeField("Ref");
-            w.writeField("Label");
-            w.writeEndOfLine();
-            for (Dataflow flow : web.getSortedFlows()) {
-                w.writeField(flow.getRef().toString());
-                w.writeField(flow.getLabel());
-                w.writeEndOfLine();
-            }
-        }
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
+    }
+
+    private void writeHead(Csv.Writer w) throws IOException {
+        w.writeField("Ref");
+        w.writeField("Label");
+        w.writeEndOfLine();
+    }
+
+    private void writeBody(Csv.Writer w) throws IOException {
+        for (Dataflow flow : web.getSortedFlows()) {
+            w.writeField(flow.getRef().toString());
+            w.writeField(flow.getLabel());
+            w.writeEndOfLine();
+        }
     }
 }

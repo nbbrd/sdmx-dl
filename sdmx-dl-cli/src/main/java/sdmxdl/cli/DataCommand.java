@@ -60,16 +60,11 @@ public final class DataCommand extends BaseCommand {
     public Void call() throws Exception {
         excel.apply(csv);
         excel.apply(format);
-
-        try (Csv.Writer writer = csv.newCsvWriter()) {
-            writeHead(writer);
-            writeBody(writer, web, format);
-        }
-
+        CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }
 
-    private static void writeHead(Csv.Writer w) throws IOException {
+    private void writeHead(Csv.Writer w) throws IOException {
         w.writeField("Flow");
         w.writeField("Key");
         w.writeField("TimePeriod");
@@ -77,7 +72,7 @@ public final class DataCommand extends BaseCommand {
         w.writeEndOfLine();
     }
 
-    private static void writeBody(Csv.Writer w, WebKeyOptions web, ObsFormatOptions format) throws IOException {
+    private void writeBody(Csv.Writer w) throws IOException {
         try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
             getBodyFormatter(dsd, format).format(getSortedSeries(conn, web), w);
