@@ -18,6 +18,7 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.*;
 import picocli.CommandLine;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
@@ -45,23 +46,27 @@ public final class DebugListCommand implements Callable<Void> {
         return null;
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void sources(@Mixin WebOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(SdmxWebSource.class, web.getManager().getSources().values());
+    @Command
+    public void sources(@Mixin WebOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(SdmxWebSource.class, web.getManager().getSources().values());
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void flows(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Dataflow.class, web.getSortedFlows());
+    @Command
+    public void flows(@Mixin WebSourceOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Dataflow.class, web.getSortedFlows());
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void keys(@Mixin WebFlowOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Series.class, web.getSortedSeriesKeys());
+    @Command
+    public void keys(@Mixin WebFlowOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Series.class, web.getSortedSeriesKeys());
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void features(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Feature.class, web.getSortedFeatures());
+    @Command
+    public void features(@Mixin WebSourceOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Feature.class, web.getSortedFeatures());
+    }
+
+    private DebugOutputOptions nonNull(DebugOutputOptions options) {
+        return options != null ? options : new DebugOutputOptions();
     }
 }
