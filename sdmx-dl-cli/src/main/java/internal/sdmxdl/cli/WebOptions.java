@@ -129,7 +129,7 @@ public class WebOptions {
 
     protected void reportIOException(String message, IOException ex) {
         if (verbose) {
-            System.out.println("IO: " + message + " - " + ex.getMessage());
+            doReport("IO", message + " - " + ex.getMessage());
         }
     }
 
@@ -149,8 +149,12 @@ public class WebOptions {
             if (main.isEnabled()) {
                 main.onSourceEvent(source, message);
             }
-            System.out.println(source.getName() + ": " + message);
+            doReport(source.getName(), message);
         }
+    }
+
+    private static void doReport(String anchor, String message) {
+        System.err.println(anchor + ": " + message);
     }
 
     public static boolean isAllSources(List<String> sourceNames) {
