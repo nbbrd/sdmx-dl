@@ -27,12 +27,9 @@ import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 import static sdmxdl.csv.SdmxCsvField.*;
@@ -42,16 +39,16 @@ import static sdmxdl.csv.SdmxCsvField.*;
  */
 @CommandLine.Command(name = "data")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DataCommand extends BaseCommand {
+public final class DataCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebKeyOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.ArgGroup(validate = false, headingKey = "format")
-    private ObsFormatOptions format = new ObsFormatOptions();
+    private final ObsFormatOptions format = new ObsFormatOptions();
 
     @CommandLine.Mixin
     private Excel excel;
@@ -91,21 +88,11 @@ public final class DataCommand extends BaseCommand {
     }
 
     private static Function<DataSet, Formatter<Number>> getValueFormat(ObsFormatOptions format) {
-        return dataSet -> {
-            NumberFormat decimalFormat = new DecimalFormat(format.getNumberPattern(), DecimalFormatSymbols.getInstance(format.getLocale()));
-            if (format.isIgnoreNumberGrouping()) {
-                decimalFormat.setGroupingUsed(false);
-            }
-            return Formatter.onNumberFormat(decimalFormat);
-        };
+        return dataSet -> Formatter.onNumberFormat(format.newNumberFormat());
     }
 
     private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ObsFormatOptions format) {
-        return dataSet -> {
-            Frequency freq = Frequency.getHighest(dataSet.getData());
-            String pattern = freq.hasTime() ? format.getDatetimePattern() : format.getDatePattern();
-            return Formatter.onDateTimeFormatter(DateTimeFormatter.ofPattern(pattern, format.getLocale()));
-        };
+        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(Frequency.getHighest(dataSet.getData()).hasTime()));
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {

@@ -30,7 +30,7 @@ import java.util.Locale;
 public final class Excel {
 
     @CommandLine.Option(
-            names = {"-x", "--excel-compatibility"},
+            names = {"--excel"},
             hidden = true,
             defaultValue = "false"
     )

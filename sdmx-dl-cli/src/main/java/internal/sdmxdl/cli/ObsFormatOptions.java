@@ -19,6 +19,10 @@ package internal.sdmxdl.cli;
 import nbbrd.console.picocli.LocaleConverter;
 import picocli.CommandLine;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
@@ -66,4 +70,17 @@ public final class ObsFormatOptions {
             descriptionKey = "sdmxdl.cli.noGrouping"
     )
     private boolean ignoreNumberGrouping;
+
+    public DateTimeFormatter newDateTimeFormatter(boolean includeTime) throws IllegalArgumentException {
+        String pattern = includeTime ? datetimePattern : datePattern;
+        return DateTimeFormatter.ofPattern(pattern, locale);
+    }
+
+    public NumberFormat newNumberFormat() throws IllegalArgumentException {
+        NumberFormat result = new DecimalFormat(numberPattern, DecimalFormatSymbols.getInstance(locale));
+        if (ignoreNumberGrouping) {
+            result.setGroupingUsed(false);
+        }
+        return result;
+    }
 }

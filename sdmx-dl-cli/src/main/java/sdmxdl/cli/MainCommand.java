@@ -16,8 +16,6 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
-import internal.sdmxdl.cli.CommonHeadings;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
 import nbbrd.console.picocli.ManifestHelper;
@@ -25,6 +23,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.ExecutionException;
 import picocli.jansi.graalvm.AnsiConsole;
 
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +34,14 @@ import java.util.logging.Logger;
         name = MainCommand.NAME,
         resourceBundle = "sdmxdl.cli.Messages",
         versionProvider = MainCommand.ManifestVersionProvider.class,
+        scope = CommandLine.ScopeType.INHERIT,
+        sortOptions = false,
+        mixinStandardHelpOptions = true,
+        descriptionHeading = "%n",
+        parameterListHeading = "%nParameters:%n",
+        optionListHeading = "%nOptions:%n",
+        commandListHeading = "%nCommands:%n",
+        headerHeading = "%n",
         subcommands = {
                 DataCommand.class,
                 MetaCommand.class,
@@ -43,11 +50,10 @@ import java.util.logging.Logger;
                 TestCommand.class,
                 OpenCommand.class,
                 DebugCommand.class,
-                SetupCommand.class,
-                CommandLine.HelpCommand.class
+                SetupCommand.class
         }
 )
-public final class MainCommand extends BaseCommand {
+public final class MainCommand implements Callable<Void> {
 
     public static final String NAME = "sdmx-dl";
 
@@ -60,7 +66,6 @@ public final class MainCommand extends BaseCommand {
             CommandLine cli = new CommandLine(new MainCommand());
             cli.setCaseInsensitiveEnumValuesAllowed(true);
             cli.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(System.getProperties()));
-            CommonHeadings.register(cli);
             exitCode = cli.execute(args);
         } catch (ExecutionException ex) {
             Logger.getLogger(MainCommand.class.getName()).log(Level.SEVERE, "While executing command", ex);

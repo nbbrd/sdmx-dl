@@ -16,8 +16,9 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import picocli.CommandLine;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -30,11 +31,10 @@ import picocli.CommandLine;
                 ListKeysCommand.class,
                 ListConceptsCommand.class,
                 ListCodesCommand.class,
-                ListFeaturesCommand.class,
-                CommandLine.HelpCommand.class
+                ListFeaturesCommand.class
         }
 )
-public final class ListCommand extends BaseCommand {
+public final class ListCommand implements Callable<Void> {
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;

@@ -16,8 +16,8 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.WebSourceOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -25,12 +25,13 @@ import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "features")
-public final class ListFeaturesCommand extends BaseCommand {
+public final class ListFeaturesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourceOptions web;
@@ -38,8 +39,12 @@ public final class ListFeaturesCommand extends BaseCommand {
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
+    @CommandLine.Mixin
+    private Excel excel;
+
     @Override
     public Void call() throws Exception {
+        excel.apply(csv);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }

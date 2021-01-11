@@ -16,8 +16,8 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.picocsv.Csv;
@@ -27,13 +27,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "codes")
-public final class ListCodesCommand extends BaseCommand {
+public final class ListCodesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebFlowOptions web;
@@ -48,8 +49,12 @@ public final class ListCodesCommand extends BaseCommand {
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
+    @CommandLine.Mixin
+    private Excel excel;
+
     @Override
     public Void call() throws Exception {
+        excel.apply(csv);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }

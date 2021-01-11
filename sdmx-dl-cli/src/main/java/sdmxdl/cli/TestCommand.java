@@ -16,7 +16,6 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebOptions;
 import picocli.CommandLine;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
         hidden = true
 )
 @SuppressWarnings("FieldMayBeFinal")
-public final class TestCommand extends BaseCommand {
+public final class TestCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebOptions web;

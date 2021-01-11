@@ -16,7 +16,6 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebKeyOptions;
@@ -28,19 +27,20 @@ import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "meta")
 @SuppressWarnings("FieldMayBeFinal")
-public final class MetaCommand extends BaseCommand {
+public final class MetaCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebKeyOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.Mixin
     private Excel excel;

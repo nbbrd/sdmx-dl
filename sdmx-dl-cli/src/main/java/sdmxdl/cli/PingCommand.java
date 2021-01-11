@@ -16,8 +16,8 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.PingResult;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -28,6 +28,7 @@ import sdmxdl.web.SdmxWebManager;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @CommandLine.Command(name = "ping")
 @SuppressWarnings("FieldMayBeFinal")
-public final class PingCommand extends BaseCommand {
+public final class PingCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebOptions web;
@@ -48,10 +49,14 @@ public final class PingCommand extends BaseCommand {
     private List<String> sources;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private Excel excel;
 
     @Override
     public Void call() throws Exception {
+        excel.apply(csv);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }

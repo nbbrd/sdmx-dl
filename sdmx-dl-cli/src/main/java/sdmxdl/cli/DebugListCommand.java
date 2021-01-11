@@ -25,6 +25,8 @@ import sdmxdl.Dataflow;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebSource;
 
+import java.util.concurrent.Callable;
+
 /**
  * @author Philippe Charles
  */
@@ -32,7 +34,7 @@ import sdmxdl.web.SdmxWebSource;
         name = "list",
         description = "List resources of a remote SDMX server."
 )
-public final class DebugListCommand extends BaseCommand {
+public final class DebugListCommand implements Callable<Void> {
 
     @Spec
     private CommandLine.Model.CommandSpec spec;
