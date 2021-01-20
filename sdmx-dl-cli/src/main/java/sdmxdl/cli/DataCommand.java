@@ -52,13 +52,30 @@ public final class DataCommand implements Callable<Void> {
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.ArgGroup(validate = false, headingKey = "format")
-    private final ObsFormatOptions format = new ObsFormatOptions();
+    private final ExtObsFormatOptions format = new ExtObsFormatOptions();
+
+    @lombok.Data
+    private static class ExtObsFormatOptions extends ObsFormatOptions {
+
+        @CommandLine.Option(
+                names = "--relax-time-period",
+                defaultValue = "false"
+        )
+        private boolean relaxTimePeriod;
+
+        void fixDefaultDatetimePattern() {
+            if (getDatetimePattern().equals("yyyy-MM-ddTHH:mm:ss")) {
+                setDatetimePattern("yyyy-MM-dd'T'HH:mm:ss");
+            }
+        }
+    }
 
     @CommandLine.Mixin
     private Excel excel;
 
     @Override
     public Void call() throws Exception {
+        format.fixDefaultDatetimePattern();
         excel.apply(csv, format);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
@@ -79,7 +96,7 @@ public final class DataCommand implements Callable<Void> {
         }
     }
 
-    private static SdmxPicocsvFormatter getBodyFormatter(DataStructure dsd, ObsFormatOptions format) {
+    private static SdmxPicocsvFormatter getBodyFormatter(DataStructure dsd, ExtObsFormatOptions format) {
         return SdmxPicocsvFormatter
                 .builder()
                 .dsd(dsd)
@@ -94,8 +111,8 @@ public final class DataCommand implements Callable<Void> {
         return dataSet -> Formatter.onNumberFormat(format.newNumberFormat());
     }
 
-    private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ObsFormatOptions format) {
-        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(Frequency.getHighest(dataSet.getData()).hasTime()));
+    private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ExtObsFormatOptions format) {
+        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(!format.isRelaxTimePeriod() || Frequency.getHighest(dataSet.getData()).hasTime()));
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
