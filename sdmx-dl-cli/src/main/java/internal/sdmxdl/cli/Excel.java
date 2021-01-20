@@ -16,18 +16,14 @@
  */
 package internal.sdmxdl.cli;
 
-import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.console.picocli.Profile;
 import picocli.CommandLine;
-
-import java.nio.charset.Charset;
-import java.util.Locale;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Data
-public final class Excel {
+public final class Excel implements Profile {
 
     @CommandLine.Option(
             names = {"--excel"},
@@ -36,21 +32,8 @@ public final class Excel {
     )
     private boolean excelCompatibility;
 
-    public void apply(CsvOutputOptions csv) {
-        if (excelCompatibility) {
-            csv.setDelimiter(Csv.Format.EXCEL.getDelimiter());
-            csv.setQuote(Csv.Format.EXCEL.getQuote());
-            csv.setSeparator(Csv.Format.EXCEL.getSeparator());
-            csv.setEncoding(Charset.defaultCharset());
-        }
-    }
-
-    public void apply(ObsFormatOptions format) {
-        if (excelCompatibility) {
-            format.setLocale(Locale.getDefault(Locale.Category.FORMAT));
-            format.setDatetimePattern("yyyy-MM-dd HH:mm:ss");
-            format.setNumberPattern("");
-            format.setIgnoreNumberGrouping(true);
-        }
+    @Override
+    public String getId() {
+        return excelCompatibility ? "excel" : null;
     }
 }

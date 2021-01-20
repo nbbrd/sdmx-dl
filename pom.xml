@@ -72,6 +72,11 @@
                 <artifactId>java-io-xml</artifactId>
                 <version>${java-io-util.version}</version>
             </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-win</artifactId>
+                <version>${java-io-util.version}</version>
+            </dependency>
 
             <!-- modules -->
             <dependency>

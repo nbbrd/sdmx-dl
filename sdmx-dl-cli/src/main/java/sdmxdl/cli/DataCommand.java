@@ -16,8 +16,12 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.*;
+import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebKeyOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
+import nbbrd.console.picocli.text.ObsFormatOptions;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
@@ -55,8 +59,7 @@ public final class DataCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        excel.apply(csv);
-        excel.apply(format);
+        excel.apply(csv, format);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
     }
