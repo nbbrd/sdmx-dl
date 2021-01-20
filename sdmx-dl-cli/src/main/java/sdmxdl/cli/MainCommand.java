@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.KeychainStoreIgnoredExceptionFix;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
 import nbbrd.console.picocli.ManifestHelper;
@@ -60,6 +61,7 @@ public final class MainCommand implements Callable<Void> {
     public static void main(String[] args) {
         ConfigHelper.of(MainCommand.NAME).loadAll(System.getProperties());
         LoggerHelper.disableDefaultConsoleLogger();
+        KeychainStoreIgnoredExceptionFix.register();
 
         int exitCode = 0;
         try (AnsiConsole ansi = AnsiConsole.windowsInstall()) {
