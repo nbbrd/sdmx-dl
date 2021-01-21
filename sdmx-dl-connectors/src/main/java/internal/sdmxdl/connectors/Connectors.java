@@ -159,24 +159,12 @@ public class Connectors {
         return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
-    public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
-    public static final boolean DEFAULT_SUPPORTS_COMPRESSION = false;
+    public static final Property<Boolean> SUPPORTS_COMPRESSION_PROPERTY =
+            new Property<>("supportsCompression", false, Parser.onBoolean());
 
-    public boolean isSupportsCompression(Map<?, ?> o) {
-        return Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, o, Parser.onBoolean());
-    }
+    public static final Property<Boolean> NEEDS_CREDENTIALS_PROPERTY =
+            new Property<>("needsCredentials", false, Parser.onBoolean());
 
-    public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
-    public static final boolean DEFAULT_NEEDS_CREDENTIALS = false;
-
-    public boolean isNeedsCredentials(Map<?, ?> o) {
-        return Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, o, Parser.onBoolean());
-    }
-
-    public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
-    public static final boolean DEFAULT_NEEDS_URL_ENCODING = false;
-
-    public boolean isNeedsURLEncoding(Map<?, ?> o) {
-        return Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, o, Parser.onBoolean());
-    }
+    public static final Property<Boolean> NEEDS_URL_ENCODING_PROPERTY =
+            new Property<>("needsURLEncoding", false, Parser.onBoolean());
 }

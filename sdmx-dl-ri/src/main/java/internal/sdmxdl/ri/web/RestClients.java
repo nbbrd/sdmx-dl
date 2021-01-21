@@ -20,7 +20,6 @@ import internal.util.rest.HttpRest;
 import internal.util.rest.Jdk8RestClient;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -33,6 +32,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static sdmxdl.util.web.SdmxWebProperty.*;
+
 /**
  * @author Philippe Charles
  */
@@ -43,25 +44,25 @@ public class RestClients {
         return new Jdk8RestClient(
                 HttpRest.Context
                         .builder()
-                        .readTimeout(SdmxWebProperty.getReadTimeout(o.getProperties()))
-                        .connectTimeout(SdmxWebProperty.getConnectTimeout(o.getProperties()))
-                        .maxRedirects(SdmxWebProperty.getMaxRedirects(o.getProperties()))
+                        .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
+                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
+                        .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
                         .proxySelector(context.getProxySelector())
                         .sslSocketFactory(context.getSslSocketFactory())
                         .hostnameVerifier(context.getHostnameVerifier())
                         .listener(new DefaultEventListener(o, context.getEventListener()))
                         .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                        .preemptiveAuthentication(SdmxWebProperty.isPreemptiveAuthentication(o.getProperties()))
+                        .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
                         .build()
         );
     }
 
     public final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
             Arrays.asList(
-                    SdmxWebProperty.CONNECT_TIMEOUT_PROPERTY,
-                    SdmxWebProperty.READ_TIMEOUT_PROPERTY,
-                    SdmxWebProperty.MAX_REDIRECTS_PROPERTY,
-                    SdmxWebProperty.PREEMPTIVE_AUTHENTICATION_PROPERTY
+                    CONNECT_TIMEOUT_PROPERTY.getKey(),
+                    READ_TIMEOUT_PROPERTY.getKey(),
+                    MAX_REDIRECTS_PROPERTY.getKey(),
+                    PREEMPTIVE_AUTHENTICATION_PROPERTY.getKey()
             ));
 
     @lombok.AllArgsConstructor

@@ -7,7 +7,6 @@ import java.util.Properties;
 import static nbbrd.io.text.Parser.onInteger;
 import static nbbrd.io.text.Parser.onString;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.util.Property.get;
 
 public class PropertyTest {
 
@@ -15,14 +14,14 @@ public class PropertyTest {
     public void testGet() {
         Properties props = new Properties();
 
-        assertThat(get("k1", null, props, onString())).isNull();
-        assertThat(get("k1", "v1", props, onString())).isEqualTo("v1");
+        assertThat(new Property<>("k1", null, onString()).get(props)).isNull();
+        assertThat(new Property<>("k1", "v1", onString()).get(props)).isEqualTo("v1");
         props.put("k1", "v2");
-        assertThat(get("k1", "v1", props, onString())).isEqualTo("v2");
+        assertThat(new Property<>("k1", "v1", onString()).get(props)).isEqualTo("v2");
 
-        assertThat(get("k1", null, props, onInteger())).isNull();
-        assertThat(get("k1", 1234, props, onInteger())).isEqualTo(1234);
+        assertThat(new Property<>("k1", null, onInteger()).get(props)).isNull();
+        assertThat(new Property<>("k1", 1234, onInteger()).get(props)).isEqualTo(1234);
         props.put("k1", 5678);
-        assertThat(get("k1", 5678, props, onInteger())).isEqualTo(5678);
+        assertThat(new Property<>("k1", 1234, onInteger()).get(props)).isEqualTo(5678);
     }
 }

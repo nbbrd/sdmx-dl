@@ -178,9 +178,9 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
             Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY,
-                    READ_TIMEOUT_PROPERTY,
-                    MAX_REDIRECTS_PROPERTY
+                    CONNECT_TIMEOUT_PROPERTY.getKey(),
+                    READ_TIMEOUT_PROPERTY.getKey(),
+                    MAX_REDIRECTS_PROPERTY.getKey()
             ));
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
@@ -193,12 +193,12 @@ public final class ConnectorRestClient implements SdmxWebClient {
 
     private static void configure(RestSdmxClient client, SdmxWebSource source, SdmxWebContext context) {
         client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
-        client.setConnectTimeout(getConnectTimeout(source.getProperties()));
-        client.setReadTimeout(getReadTimeout(source.getProperties()));
+        client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
+        client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setProxySelector(context.getProxySelector());
         client.setSslSocketFactory(context.getSslSocketFactory());
         client.setHostnameVerifier(context.getHostnameVerifier());
-        client.setMaxRedirects(getMaxRedirects(source.getProperties()));
+        client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
         RestSdmxEventListener eventListener = new DefaultRedirectionEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);

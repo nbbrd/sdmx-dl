@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
+import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
+
 /**
  * @author Philippe Charles
  */
@@ -73,7 +75,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         return CachedWebClient.of(
                 client.get(source, context),
                 context.getCache(),
-                SdmxWebProperty.getCacheTtl(source.getProperties()),
+                CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 context.getLanguages());
     }

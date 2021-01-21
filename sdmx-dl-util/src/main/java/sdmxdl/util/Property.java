@@ -17,16 +17,27 @@
 package sdmxdl.util;
 
 import nbbrd.io.text.Parser;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 
 /**
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class Property {
+@lombok.RequiredArgsConstructor
+public class Property<T> {
 
-    public <T> T get(String key, T defaultValue, Map<?, ?> props, Parser<T> parser) {
+    @lombok.NonNull
+    @lombok.Getter
+    private final String key;
+
+    private final T defaultValue;
+
+    @lombok.NonNull
+    private final Parser<T> parser;
+
+    public @Nullable T get(@NonNull Map<?, ?> props) {
         Object value = props.get(key);
         if (value == null) return defaultValue;
         T result = parser.parse(value.toString());

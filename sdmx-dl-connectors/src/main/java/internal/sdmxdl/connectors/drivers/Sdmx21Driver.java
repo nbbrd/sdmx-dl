@@ -17,13 +17,11 @@
 package internal.sdmxdl.connectors.drivers;
 
 import internal.sdmxdl.connectors.ConnectorRestClient;
-import internal.sdmxdl.connectors.Connectors;
 import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
-import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.xml.XmlWebSource;
@@ -49,10 +47,10 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(Sdmx21Client::new, "SDMX21"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
-            .supportedProperty(NEEDS_URL_ENCODING_PROPERTY)
-            .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY)
-            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
+            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY.getKey())
+            .supportedProperty(NEEDS_URL_ENCODING_PROPERTY.getKey())
+            .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY.getKey())
+            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.getKey())
             .sources(IOSupplier.unchecked(Sdmx21Driver::getSources).get())
             .build();
 
@@ -66,10 +64,10 @@ public final class Sdmx21Driver implements SdmxWebDriver {
 
         private Sdmx21Client(URI endpoint, Map<?, ?> p) {
             super("", endpoint,
-                    Connectors.isNeedsCredentials(p),
-                    Connectors.isNeedsURLEncoding(p),
-                    Connectors.isSupportsCompression(p));
-            this.seriesKeysOnlySupported = SdmxWebProperty.isSeriesKeysOnlySupported(p);
+                    NEEDS_CREDENTIALS_PROPERTY.get(p),
+                    NEEDS_URL_ENCODING_PROPERTY.get(p),
+                    SUPPORTS_COMPRESSION_PROPERTY.get(p));
+            this.seriesKeysOnlySupported = SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.get(p);
         }
 
         @Override

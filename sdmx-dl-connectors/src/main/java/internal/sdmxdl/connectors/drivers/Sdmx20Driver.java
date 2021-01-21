@@ -17,7 +17,6 @@
 package internal.sdmxdl.connectors.drivers;
 
 import internal.sdmxdl.connectors.ConnectorRestClient;
-import internal.sdmxdl.connectors.Connectors;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -41,13 +40,13 @@ public final class Sdmx20Driver implements SdmxWebDriver {
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(Sdmx20Client::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY)
+            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY.getKey())
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {
 
         private Sdmx20Client(URI endpoint, Map<?, ?> info) {
-            super("", endpoint, Connectors.isNeedsCredentials(info), null, "compact_v2");
+            super("", endpoint, NEEDS_CREDENTIALS_PROPERTY.get(info), null, "compact_v2");
         }
     }
 }

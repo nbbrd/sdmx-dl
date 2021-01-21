@@ -23,7 +23,6 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
-import sdmxdl.util.web.SdmxWebProperty;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -48,8 +47,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(Sdmx21Driver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY)
-            .supportedProperty(TRAILING_SLASH_REQUIRED_PROPERTY)
+            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.getKey())
+            .supportedProperty(TRAILING_SLASH_REQUIRED_PROPERTY.getKey())
             .sources(IOSupplier.unchecked(Sdmx21Driver2::getSources).get())
             .build();
 
@@ -63,8 +62,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 s.getEndpoint(),
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
-                SdmxWebProperty.isSeriesKeysOnlySupported(s.getProperties()),
-                SdmxWebProperty.isTrailingSlashRequired(s.getProperties()),
+                SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.get(s.getProperties()),
+                TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()),
                 ObsFactories.getObsFactory(c, s, "SDMX21")
         );
     }

@@ -22,7 +22,6 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 @ServiceProvider(SdmxWebDriver.class)
@@ -56,14 +55,14 @@ public final class FileDriver implements SdmxWebDriver {
 
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
-        return Collections.singletonList(STRUCTURE_PROPERTY);
+        return Collections.singletonList(STRUCTURE_PROPERTY.getKey());
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
         return SdmxFileSource
                 .builder()
                 .data(toFile(source.getEndpoint()))
-                .structure(getStructure(source.getProperties()))
+                .structure(STRUCTURE_PROPERTY.get(source.getProperties()))
                 .dialect(source.getDialect())
                 .build();
     }
@@ -77,12 +76,8 @@ public final class FileDriver implements SdmxWebDriver {
         }
     }
 
-    private static final String STRUCTURE_PROPERTY = "structure";
-    private static final File DEFAULT_STRUCTURE = null;
-
-    private static File getStructure(Map<?, ?> o) {
-        return Property.get(STRUCTURE_PROPERTY, DEFAULT_STRUCTURE, o, Parser.onFile());
-    }
+    private static final Property<File> STRUCTURE_PROPERTY =
+            new Property<>("structure", null, Parser.onFile());
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor
