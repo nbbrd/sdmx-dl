@@ -54,10 +54,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
-
-        if (!source.getDriver().equals(name)) {
-            throw new IllegalArgumentException(source.toString());
-        }
+        checkSource(source, name);
 
         return SdmxWebConnectionImpl.of(getClient(source, context), name);
     }
@@ -91,6 +88,12 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         @NonNull
         public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint, @Nullable String website) {
             return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).websiteOf(website).build());
+        }
+    }
+
+    public static void checkSource(@NonNull SdmxWebSource source, @NonNull String name) throws IllegalArgumentException {
+        if (!source.getDriver().equals(name)) {
+            throw new IllegalArgumentException(source.toString());
         }
     }
 }

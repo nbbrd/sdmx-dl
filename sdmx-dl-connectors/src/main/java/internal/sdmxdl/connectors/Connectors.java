@@ -21,6 +21,7 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
+import nbbrd.io.text.Parser;
 import sdmxdl.*;
 import sdmxdl.util.Property;
 
@@ -161,21 +162,21 @@ public class Connectors {
     public static final String SUPPORTS_COMPRESSION_PROPERTY = "supportsCompression";
     public static final boolean DEFAULT_SUPPORTS_COMPRESSION = false;
 
-    public boolean isSupportsCompresson(Map<?, ?> o) {
-        return Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, o);
+    public boolean isSupportsCompression(Map<?, ?> o) {
+        return Property.get(SUPPORTS_COMPRESSION_PROPERTY, DEFAULT_SUPPORTS_COMPRESSION, o, Parser.onBoolean());
     }
 
     public static final String NEEDS_CREDENTIALS_PROPERTY = "needsCredentials";
     public static final boolean DEFAULT_NEEDS_CREDENTIALS = false;
 
     public boolean isNeedsCredentials(Map<?, ?> o) {
-        return Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, o);
+        return Property.get(NEEDS_CREDENTIALS_PROPERTY, DEFAULT_NEEDS_CREDENTIALS, o, Parser.onBoolean());
     }
 
     public static final String NEEDS_URL_ENCODING_PROPERTY = "needsURLEncoding";
     public static final boolean DEFAULT_NEEDS_URL_ENCODING = false;
 
     public boolean isNeedsURLEncoding(Map<?, ?> o) {
-        return Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, o);
+        return Property.get(NEEDS_URL_ENCODING_PROPERTY, DEFAULT_NEEDS_URL_ENCODING, o, Parser.onBoolean());
     }
 }

@@ -68,7 +68,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             super("", endpoint,
                     Connectors.isNeedsCredentials(p),
                     Connectors.isNeedsURLEncoding(p),
-                    Connectors.isSupportsCompresson(p));
+                    Connectors.isSupportsCompression(p));
             this.seriesKeysOnlySupported = SdmxWebProperty.isSeriesKeysOnlySupported(p);
         }
 

@@ -31,7 +31,7 @@ import java.io.IOException;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
+public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
     @lombok.NonNull
     private final SdmxFileSource source;

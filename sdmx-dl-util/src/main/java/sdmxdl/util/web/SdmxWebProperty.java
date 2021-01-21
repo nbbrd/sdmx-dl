@@ -16,6 +16,7 @@
  */
 package sdmxdl.util.web;
 
+import nbbrd.io.text.Parser;
 import sdmxdl.util.Property;
 
 import java.util.Map;
@@ -36,7 +37,7 @@ public class SdmxWebProperty {
     public final int DEFAULT_CONNECT_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
 
     public int getConnectTimeout(Map<?, ?> o) {
-        return Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, o);
+        return Property.get(CONNECT_TIMEOUT_PROPERTY, DEFAULT_CONNECT_TIMEOUT, o, Parser.onInteger());
     }
 
     /**
@@ -48,7 +49,7 @@ public class SdmxWebProperty {
     public final int DEFAULT_READ_TIMEOUT = (int) TimeUnit.MINUTES.toMillis(2);
 
     public int getReadTimeout(Map<?, ?> o) {
-        return Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, o);
+        return Property.get(READ_TIMEOUT_PROPERTY, DEFAULT_READ_TIMEOUT, o, Parser.onInteger());
     }
 
     /**
@@ -60,7 +61,7 @@ public class SdmxWebProperty {
     public final long DEFAULT_CACHE_TTL = TimeUnit.MINUTES.toMillis(5);
 
     public long getCacheTtl(Map<?, ?> o) {
-        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, o);
+        return Property.get(CACHE_TTL_PROPERTY, DEFAULT_CACHE_TTL, o, Parser.onLong());
     }
 
     /**
@@ -71,7 +72,7 @@ public class SdmxWebProperty {
     public final int DEFAULT_MAX_REDIRECTS = 5;
 
     public int getMaxRedirects(Map<?, ?> o) {
-        return Property.get(MAX_REDIRECTS_PROPERTY, DEFAULT_MAX_REDIRECTS, o);
+        return Property.get(MAX_REDIRECTS_PROPERTY, DEFAULT_MAX_REDIRECTS, o, Parser.onInteger());
     }
 
     /**
@@ -81,7 +82,7 @@ public class SdmxWebProperty {
     public final boolean DEFAULT_SERIES_KEYS_ONLY_SUPPORTED = false;
 
     public boolean isSeriesKeysOnlySupported(Map<?, ?> o) {
-        return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o);
+        return Property.get(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY, DEFAULT_SERIES_KEYS_ONLY_SUPPORTED, o, Parser.onBoolean());
     }
 
     /**
@@ -91,7 +92,7 @@ public class SdmxWebProperty {
     public final boolean DEFAULT_TRAILING_SLASH_REQUIRED = false;
 
     public boolean isTrailingSlashRequired(Map<?, ?> o) {
-        return Property.get(TRAILING_SLASH_REQUIRED_PROPERTY, DEFAULT_TRAILING_SLASH_REQUIRED, o);
+        return Property.get(TRAILING_SLASH_REQUIRED_PROPERTY, DEFAULT_TRAILING_SLASH_REQUIRED, o, Parser.onBoolean());
     }
 
     /**
@@ -101,6 +102,6 @@ public class SdmxWebProperty {
     public final boolean DEFAULT_PREEMPTIVE_AUTHENTICATION = false;
 
     public boolean isPreemptiveAuthentication(Map<?, ?> o) {
-        return Property.get(PREEMPTIVE_AUTHENTICATION_PROPERTY, DEFAULT_PREEMPTIVE_AUTHENTICATION, o);
+        return Property.get(PREEMPTIVE_AUTHENTICATION_PROPERTY, DEFAULT_PREEMPTIVE_AUTHENTICATION, o, Parser.onBoolean());
     }
 }
