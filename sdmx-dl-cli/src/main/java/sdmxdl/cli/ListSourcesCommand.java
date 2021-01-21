@@ -55,6 +55,9 @@ public final class ListSourcesCommand implements Callable<Void> {
         w.writeField("Name");
         w.writeField("Description");
         w.writeField("Aliases");
+        w.writeField("Driver");
+        w.writeField("Dialect");
+        w.writeField("Endpoint");
         w.writeField("Website");
         w.writeEndOfLine();
     }
@@ -65,6 +68,9 @@ public final class ListSourcesCommand implements Callable<Void> {
                 w.writeField(source.getName());
                 w.writeField(source.getDescription());
                 w.writeField(getAliasesField(source));
+                w.writeField(source.getDriver());
+                w.writeField(source.getDialect());
+                w.writeField(source.getEndpoint().toString());
                 w.writeField(getWebsiteField(source));
                 w.writeEndOfLine();
             }
