@@ -52,8 +52,9 @@ public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        return getDataSupplier(entry.getDataType(), entry.getStructure())
+        DataCursor cursor = getDataSupplier(entry.getDataType(), entry.getStructure())
                 .parseFile(source.getData());
+        return isNoFilters(key) ? cursor : new FilteredDataCursor(cursor, key);
     }
 
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {
@@ -69,5 +70,9 @@ public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
             default:
                 throw new IOException("Don't known how to handle type '" + dataType + "'");
         }
+    }
+
+    private boolean isNoFilters(Key key) {
+        return Key.ALL.equals(key);
     }
 }
