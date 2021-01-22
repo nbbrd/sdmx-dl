@@ -16,11 +16,11 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -59,50 +60,36 @@ public final class OpenCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        getTable(desktop).write(csv, getWebsites(web.getManager(), sources).peek(o -> open(desktop, o)));
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Source");
-        w.writeField("State");
-        w.writeEndOfLine();
+    private CsvTable<Website> getTable(Desktop desktop) {
+        return CsvTable
+                .builderOf(Website.class)
+                .columnOf("Source", Website::getName, Formatter.onString())
+                .columnOf("State", o -> o.getState(desktop), o -> o.name())
+                .build();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        for (Website website : getWebsites(web.getManager(), sources)) {
-            w.writeField(website.getName());
-            writeStateField(w, desktop, website);
-            w.writeEndOfLine();
-        }
-    }
-
-    private void writeStateField(Csv.Writer w, Desktop desktop, Website website) throws IOException {
-        if (website.getSource() == null) {
-            w.writeField("Cannot find source");
-        } else if (website.getSource().getWebsite() == null) {
-            w.writeField("Source doesn't have a website");
-        } else if (desktop == null) {
-            w.writeField("Cannot open " + website.getSource().getWebsite().toString());
-        } else {
-            w.writeField("Opening " + website.getSource().getWebsite().toString());
+    private static void open(Desktop desktop, Website website) {
+        if (website.getState(desktop) == WebsiteState.OK) {
             try {
                 desktop.browse(website.getSource().getWebsite().toURI());
-            } catch (URISyntaxException ex) {
-                throw new IOException(ex);
+            } catch (URISyntaxException | IOException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
 
-    private static List<Website> getWebsites(SdmxWebManager manager, List<String> sourceNames) {
+    private static Stream<Website> getWebsites(SdmxWebManager manager, List<String> sourceNames) {
         if (WebOptions.isAllSources(sourceNames)) {
             sourceNames = getAllSourceNames(manager);
         }
         return sourceNames
                 .stream()
-                .map(name -> new Website(name, manager.getSources().get(name)))
-                .collect(Collectors.toList());
+                .map(name -> new Website(name, manager.getSources().get(name)));
     }
 
     private static List<String> getAllSourceNames(SdmxWebManager manager) {
@@ -118,9 +105,21 @@ public final class OpenCommand implements Callable<Void> {
     @lombok.Value
     private static class Website {
 
+
         @lombok.NonNull
         String name;
 
         SdmxWebSource source;
+
+        public WebsiteState getState(Desktop desktop) {
+            if (desktop == null) return WebsiteState.NO_DESKTOP;
+            if (source == null) return WebsiteState.NO_SOURCE;
+            if (source.getWebsite() == null) return WebsiteState.NO_WEBSITE;
+            return WebsiteState.OK;
+        }
+    }
+
+    private enum WebsiteState {
+        NO_SOURCE, NO_WEBSITE, NO_DESKTOP, OK
     }
 }

@@ -16,18 +16,18 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebKeyOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.Series;
+import sdmxdl.Key;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -48,29 +48,36 @@ public final class MetaCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, getData());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Flow");
-        w.writeField("Key");
-        w.writeField("Concept");
-        w.writeField("Value");
-        w.writeEndOfLine();
+    private CsvTable<MetaResult> getTable() {
+        return CsvTable
+                .builderOf(MetaResult.class)
+                .columnOf("Flow", MetaResult::getDataflow, Formatter.onString())
+                .columnOf("Key", MetaResult::getKey, Formatter.onObjectToString())
+                .columnOf("Concept", MetaResult::getConcept, Formatter.onString())
+                .columnOf("Value", MetaResult::getValue, Formatter.onString())
+                .build();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
+    private Stream<MetaResult> getData() throws IOException {
         String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
-        for (Series series : web.getSeries()) {
-            String key = series.getKey().toString();
-            for (Map.Entry<String, String> o : series.getMeta().entrySet()) {
-                w.writeField(dataflow);
-                w.writeField(key);
-                w.writeField(o.getKey());
-                w.writeField(o.getValue());
-                w.writeEndOfLine();
-            }
-        }
+        return web.getSeries()
+                .stream()
+                .flatMap(series -> getMetaResultStream(dataflow, series));
+    }
+
+    private Stream<MetaResult> getMetaResultStream(String dataflow, sdmxdl.Series series) {
+        return series.getMeta().entrySet().stream().map(o -> new MetaResult(dataflow, series.getKey(), o.getKey(), o.getValue()));
+    }
+
+    @lombok.Value
+    private static class MetaResult {
+        String dataflow;
+        Key key;
+        String concept;
+        String value;
     }
 }

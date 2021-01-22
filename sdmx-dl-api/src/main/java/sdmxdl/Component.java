@@ -31,6 +31,15 @@ public abstract class Component {
     @NonNull
     public abstract String getLabel();
 
+    /**
+     * Check if this component has a codelist.
+     *
+     * @return true if codelist, false otherwise
+     */
+    public boolean isCoded() {
+        return !getCodes().isEmpty();
+    }
+
     public static abstract class Builder<B extends Builder<B>> {
 
         @NonNull

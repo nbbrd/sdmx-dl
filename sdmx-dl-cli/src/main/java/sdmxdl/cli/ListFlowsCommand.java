@@ -16,15 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebSourceOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -45,21 +44,15 @@ public final class ListFlowsCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, web.getSortedFlows());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Ref");
-        w.writeField("Label");
-        w.writeEndOfLine();
-    }
-
-    private void writeBody(Csv.Writer w) throws IOException {
-        for (Dataflow flow : web.getSortedFlows()) {
-            w.writeField(flow.getRef().toString());
-            w.writeField(flow.getLabel());
-            w.writeEndOfLine();
-        }
+    private CsvTable<Dataflow> getTable() {
+        return CsvTable
+                .builderOf(Dataflow.class)
+                .columnOf("Ref", Dataflow::getRef, Formatter.onObjectToString())
+                .columnOf("Label", Dataflow::getLabel, Formatter.onString())
+                .build();
     }
 }

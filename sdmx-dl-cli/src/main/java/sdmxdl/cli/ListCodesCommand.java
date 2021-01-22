@@ -16,11 +16,11 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -55,22 +55,15 @@ public final class ListCodesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, getSortedCodes().entrySet());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Code");
-        w.writeField("Label");
-        w.writeEndOfLine();
-    }
-
-    private void writeBody(Csv.Writer w) throws IOException {
-        for (Map.Entry<String, String> entry : getSortedCodes().entrySet()) {
-            w.writeField(entry.getKey());
-            w.writeField(entry.getValue());
-            w.writeEndOfLine();
-        }
+    private CsvTable<Map.Entry<String, String>> getTable() {
+        CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
+        result.columnOf("Code", Map.Entry::getKey, Formatter.onString());
+        result.columnOf("Label", Map.Entry::getValue, Formatter.onString());
+        return result.build();
     }
 
     private SortedMap<String, String> getSortedCodes() throws IOException {

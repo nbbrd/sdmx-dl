@@ -16,15 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.WebSourceOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -45,19 +44,14 @@ public final class ListFeaturesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, web.getSortedFeatures());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("SupportedFeature");
-        w.writeEndOfLine();
-    }
-
-    private void writeBody(Csv.Writer w) throws IOException {
-        for (Feature feature : web.getSortedFeatures()) {
-            w.writeField(feature.name());
-            w.writeEndOfLine();
-        }
+    private CsvTable<Feature> getTable() {
+        return CsvTable
+                .builderOf(Feature.class)
+                .columnOf("SupportedFeature", Feature::name, Formatter.onString())
+                .build();
     }
 }

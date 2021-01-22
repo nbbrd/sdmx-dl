@@ -16,18 +16,20 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static internal.sdmxdl.cli.CsvUtil.onURL;
 
 /**
  * @author Philippe Charles
@@ -47,45 +49,29 @@ public final class ListSourcesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, getSortedSources());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Name");
-        w.writeField("Description");
-        w.writeField("Aliases");
-        w.writeField("Driver");
-        w.writeField("Dialect");
-        w.writeField("Endpoint");
-        w.writeField("Website");
-        w.writeEndOfLine();
+    private CsvTable<SdmxWebSource> getTable() {
+        return CsvTable
+                .builderOf(SdmxWebSource.class)
+                .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
+                .columnOf("Description", SdmxWebSource::getDescription, Formatter.onString())
+                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromSet(Formatter.onString(), ','))
+                .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
+                .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, onURL())
+                .columnOf("Properties", SdmxWebSource::getProperties, CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '='))
+                .columnOf("Website", SdmxWebSource::getWebsite, onURL())
+                .build();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
-        for (SdmxWebSource source : getSortedSources()) {
-            if (!source.isAlias()) {
-                w.writeField(source.getName());
-                w.writeField(source.getDescription());
-                w.writeField(getAliasesField(source));
-                w.writeField(source.getDriver());
-                w.writeField(source.getDialect());
-                w.writeField(source.getEndpoint().toString());
-                w.writeField(getWebsiteField(source));
-                w.writeEndOfLine();
-            }
-        }
-    }
-
-    private String getAliasesField(SdmxWebSource source) {
-        return source.getAliases().stream().sorted().collect(Collectors.joining(", "));
-    }
-
-    private String getWebsiteField(SdmxWebSource source) {
-        return source.getWebsite() != null ? source.getWebsite().toString() : null;
-    }
-
-    private Collection<SdmxWebSource> getSortedSources() throws IOException {
-        return web.getManager().getSources().values();
+    private Stream<SdmxWebSource> getSortedSources() throws IOException {
+        return web.getManager()
+                .getSources()
+                .values()
+                .stream()
+                .filter(source -> !source.isAlias());
     }
 }

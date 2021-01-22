@@ -54,7 +54,8 @@ public final class DataCommand implements Callable<Void> {
     @CommandLine.ArgGroup(validate = false, headingKey = "format")
     private final ExtObsFormatOptions format = new ExtObsFormatOptions();
 
-    @lombok.Data
+    @lombok.Getter
+    @lombok.Setter
     private static class ExtObsFormatOptions extends ObsFormatOptions {
 
         @CommandLine.Option(

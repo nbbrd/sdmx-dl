@@ -16,17 +16,19 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.Attribute;
+import sdmxdl.Component;
 import sdmxdl.Dimension;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -46,43 +48,33 @@ public final class ListConceptsCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, getComponents());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Concept");
-        w.writeField("Label");
-        w.writeField("Type");
-        w.writeField("Coded");
-        w.writeField("Position");
-        w.writeEndOfLine();
+    private CsvTable<Component> getTable() {
+        return CsvTable
+                .builderOf(Component.class)
+                .columnOf("Concept", Component::getId, Formatter.onString())
+                .columnOf("Label", Component::getLabel, Formatter.onString())
+                .columnOf("Type", Component::getClass, ListConceptsCommand::getTypeName)
+                .columnOf("Coded", Component::isCoded, Formatter.onBoolean())
+                .columnOf("Position", ListConceptsCommand::getPositionOrNull, Formatter.onInteger())
+                .build();
     }
 
-    private void writeBody(Csv.Writer w) throws IOException {
-        writeDimensions(w);
-        writeAttributes(w);
+    private Stream<Component> getComponents() throws IOException {
+        return Stream.concat(
+                WebFlowOptions.getSortedDimensions(web.getStructure()).stream(),
+                WebFlowOptions.getSortedAttributes(web.getStructure()).stream()
+        );
     }
 
-    private void writeDimensions(Csv.Writer w) throws IOException {
-        for (Dimension o : WebFlowOptions.getSortedDimensions(web.getStructure())) {
-            w.writeField(o.getId());
-            w.writeField(o.getLabel());
-            w.writeField("dimension");
-            w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
-            w.writeField(Integer.toString(o.getPosition()));
-            w.writeEndOfLine();
-        }
+    private static String getTypeName(Class<? extends Component> o) {
+        return o.getSimpleName().toLowerCase(Locale.ROOT);
     }
 
-    private void writeAttributes(Csv.Writer w) throws IOException {
-        for (Attribute o : WebFlowOptions.getSortedAttributes(web.getStructure())) {
-            w.writeField(o.getId());
-            w.writeField(o.getLabel());
-            w.writeField("attribute");
-            w.writeField(Boolean.toString(!o.getCodes().isEmpty()));
-            w.writeField("");
-            w.writeEndOfLine();
-        }
+    private static Integer getPositionOrNull(Component o) {
+        return o instanceof Dimension ? ((Dimension) o).getPosition() : null;
     }
 }

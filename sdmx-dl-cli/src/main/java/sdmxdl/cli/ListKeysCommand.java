@@ -16,15 +16,14 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Series;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -45,21 +44,15 @@ public final class ListKeysCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        CsvUtil.write(csv, this::writeHead, this::writeBody);
+        getTable().write(csv, web.getSortedSeriesKeys());
         return null;
     }
 
-    private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Key");
-        w.writeField("Freq");
-        w.writeEndOfLine();
-    }
-
-    private void writeBody(Csv.Writer w) throws IOException {
-        for (Series o : web.getSortedSeriesKeys()) {
-            w.writeField(o.getKey().toString());
-            w.writeField(o.getFreq().toString());
-            w.writeEndOfLine();
-        }
+    private CsvTable<Series> getTable() {
+        return CsvTable
+                .builderOf(Series.class)
+                .columnOf("Key", Series::getKey, Formatter.onObjectToString())
+                .columnOf("Freq", Series::getFreq, Formatter.onObjectToString())
+                .build();
     }
 }
