@@ -60,7 +60,8 @@ public final class DataCommand implements Callable<Void> {
 
         @CommandLine.Option(
                 names = "--relax-time-period",
-                defaultValue = "false"
+                defaultValue = "false",
+                description = "Use date pattern if time is not necessary."
         )
         private boolean relaxTimePeriod;
 

@@ -77,7 +77,7 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     private static final Property<File> STRUCTURE_PROPERTY =
-            new Property<>("structure", null, Parser.onFile());
+            new Property<>("structurePath", null, Parser.onFile());
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor
