@@ -1,7 +1,6 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.SdmxConnection;
@@ -17,6 +16,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
@@ -62,22 +62,36 @@ public final class FileDriver implements SdmxWebDriver {
         return SdmxFileSource
                 .builder()
                 .data(toFile(source.getEndpoint()))
-                .structure(STRUCTURE_PROPERTY.get(source.getProperties()))
+                .structure(toFile(STRUCTURE_PROPERTY.get(source.getProperties())))
                 .dialect(source.getDialect())
                 .build();
     }
 
     @VisibleForTesting
-    static File toFile(URL endpoint) throws IOException {
-        try {
-            return new File(endpoint.toURI());
-        } catch (URISyntaxException | IllegalArgumentException ex) {
-            throw new IOException("Invalid file name: '" + endpoint + "'", ex);
+    static File toFile(URL url) throws IOException {
+        if (url != null) {
+            try {
+                return new File(url.toURI());
+            } catch (URISyntaxException | IllegalArgumentException ex) {
+                throw new IOException("Invalid file name: '" + url + "'", ex);
+            }
         }
+        return null;
     }
 
-    private static final Property<File> STRUCTURE_PROPERTY =
-            new Property<>("structurePath", null, Parser.onFile());
+    @VisibleForTesting
+    static URL parseURL(CharSequence input) {
+        if (input != null) {
+            try {
+                return new URL(input.toString());
+            } catch (MalformedURLException ex) {
+            }
+        }
+        return null;
+    }
+
+    private static final Property<URL> STRUCTURE_PROPERTY =
+            new Property<>("structureURL", null, FileDriver::parseURL);
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor
