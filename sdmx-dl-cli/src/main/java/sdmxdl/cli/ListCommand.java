@@ -31,7 +31,8 @@ import java.util.concurrent.Callable;
                 ListKeysCommand.class,
                 ListConceptsCommand.class,
                 ListCodesCommand.class,
-                ListFeaturesCommand.class
+                ListFeaturesCommand.class,
+                ListDriversCommand.class
         }
 )
 public final class ListCommand implements Callable<Void> {

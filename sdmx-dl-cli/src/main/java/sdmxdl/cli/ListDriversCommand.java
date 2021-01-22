@@ -23,19 +23,17 @@ import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
-
-import static internal.sdmxdl.cli.CsvUtil.onURL;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "sources")
-public final class ListSourcesCommand implements Callable<Void> {
+@CommandLine.Command(name = "drivers")
+public final class ListDriversCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebOptions web;
@@ -49,29 +47,19 @@ public final class ListSourcesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getSortedSources());
+        getTable().write(csv, getData());
         return null;
     }
 
-    private CsvTable<SdmxWebSource> getTable() {
+    private CsvTable<SdmxWebDriver> getTable() {
         return CsvTable
-                .builderOf(SdmxWebSource.class)
-                .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
-                .columnOf("Description", SdmxWebSource::getDescription, Formatter.onString())
-                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
-                .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
-                .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, onURL())
-                .columnOf("Properties", SdmxWebSource::getProperties, CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '='))
-                .columnOf("Website", SdmxWebSource::getWebsite, onURL())
+                .builderOf(SdmxWebDriver.class)
+                .columnOf("Name", SdmxWebDriver::getName, Formatter.onString())
+                .columnOf("SupportedProperties", SdmxWebDriver::getSupportedProperties, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .build();
     }
 
-    private Stream<SdmxWebSource> getSortedSources() throws IOException {
-        return web.getManager()
-                .getSources()
-                .values()
-                .stream()
-                .filter(source -> !source.isAlias());
+    private List<SdmxWebDriver> getData() throws IOException {
+        return web.getManager().getDrivers();
     }
 }
