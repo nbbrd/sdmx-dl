@@ -22,7 +22,8 @@ import picocli.CommandLine;
 /**
  * @author Philippe Charles
  */
-@lombok.Data
+@lombok.Getter
+@lombok.Setter
 public final class Excel implements Profile {
 
     @CommandLine.Option(

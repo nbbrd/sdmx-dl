@@ -39,7 +39,8 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
-@lombok.Data
+@lombok.Getter
+@lombok.Setter
 public class WebOptions {
 
     @CommandLine.Option(

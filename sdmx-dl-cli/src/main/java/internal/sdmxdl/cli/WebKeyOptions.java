@@ -29,8 +29,8 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
-@lombok.Data
-@lombok.EqualsAndHashCode(callSuper = true)
+@lombok.Getter
+@lombok.Setter
 public class WebKeyOptions extends WebFlowOptions {
 
     @CommandLine.Parameters(

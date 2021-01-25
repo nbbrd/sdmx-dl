@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
 /**
  * @author Philippe Charles
  */
-@lombok.Data
-@lombok.EqualsAndHashCode(callSuper = true)
+@lombok.Getter
+@lombok.Setter
 public class WebSourceOptions extends WebOptions {
 
     @CommandLine.Parameters(

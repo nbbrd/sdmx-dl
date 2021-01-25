@@ -37,7 +37,7 @@ import java.util.logging.Logger;
         versionProvider = MainCommand.ManifestVersionProvider.class,
         scope = CommandLine.ScopeType.INHERIT,
         sortOptions = false,
-        mixinStandardHelpOptions = true,
+//        mixinStandardHelpOptions = true,
         descriptionHeading = "%n",
         parameterListHeading = "%nParameters:%n",
         optionListHeading = "%nOptions:%n",

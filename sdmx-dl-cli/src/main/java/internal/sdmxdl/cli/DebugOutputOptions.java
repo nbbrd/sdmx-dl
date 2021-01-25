@@ -23,6 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import picocli.CommandLine;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
@@ -35,9 +36,16 @@ import java.util.Collection;
 /**
  * @author Philippe Charles
  */
-@lombok.Data
-@lombok.EqualsAndHashCode(callSuper = true)
+@lombok.Getter
+@lombok.Setter
 public class DebugOutputOptions extends YamlOutputOptions {
+
+    @CommandLine.Option(
+            names = "--dummy-debug-option",
+            hidden = true,
+            defaultValue = "false"
+    )
+    private boolean dummyDebugOption;
 
     public void dump(Class<?> rootType, Object item) throws IOException {
         dump(toYaml(rootType), item);
