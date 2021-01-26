@@ -228,4 +228,52 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native-image</id>
+            <properties>
+                <graalvm.version>21.0.0</graalvm.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.graalvm.sdk</groupId>
+                    <artifactId>graal-sdk</artifactId>
+                    <version>${graalvm.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.nativeimage</groupId>
+                        <artifactId>native-image-maven-plugin</artifactId>
+                        <version>${graalvm.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>native-image</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <imageName>${project.x.fileName}-${project.version}</imageName>
+                            <!-- FIXME: connectors: allow-incomplete-classpath -->
+                            <!-- FIXME: kryo: report-unsupported-elements-at-runtime -->
+                            <!-- FIXME: sdmx-dl: xml resources -->
+                            <buildArgs>
+                                --no-fallback
+                                --enable-http
+                                --enable-https
+                                --allow-incomplete-classpath
+                                --report-unsupported-elements-at-runtime
+                                -H:IncludeResources=.*\.xml$
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
