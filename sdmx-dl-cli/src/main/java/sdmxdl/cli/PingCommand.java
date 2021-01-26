@@ -16,10 +16,7 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
-import internal.sdmxdl.cli.Excel;
-import internal.sdmxdl.cli.PingResult;
-import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.*;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
@@ -40,14 +37,7 @@ import java.util.stream.Stream;
 public final class PingCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebOptions web;
-
-    @CommandLine.Parameters(
-            arity = "1..*",
-            paramLabel = "<source>",
-            descriptionKey = "sources"
-    )
-    private List<String> sources;
+    private WebSourcesOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
@@ -58,7 +48,7 @@ public final class PingCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, ping(web.getManager(), sources));
+        getTable().write(csv, ping(web.getManager(), web.getSources()));
         return null;
     }
 

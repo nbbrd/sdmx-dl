@@ -17,12 +17,6 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.kryo.KryoSerialization;
-import sdmxdl.sys.SdmxSystemUtil;
-import sdmxdl.util.ext.FileCache;
-import sdmxdl.util.ext.Serializer;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -57,62 +51,11 @@ public class WebOptions {
     )
     private File sourcesFile;
 
-    @CommandLine.Option(
-            names = {"-l", "--languages"},
-            paramLabel = "<langs>",
-            converter = LangsConverter.class,
-            defaultValue = "*",
-            descriptionKey = "sdmxdl.cli.languages"
-    )
-    private LanguagePriorityList langs;
-
-    @CommandLine.Option(
-            names = {"--no-cache"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noCache"
-    )
-    private boolean noCache;
-
-    @CommandLine.Option(
-            names = {"--no-sys-proxy"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysProxy"
-    )
-    private boolean noSysProxy;
-
-    @CommandLine.Option(
-            names = {"--no-sys-ssl"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysSsl"
-    )
-    private boolean noSysSsl;
-
     public SdmxWebManager getManager() throws IOException {
-        SdmxWebManager.Builder result = SdmxWebManager.ofServiceLoader()
+        return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .languages(langs)
-                .cache(getCache())
                 .eventListener(getEventListener())
-                .customSources(getCustomSources());
-
-        if (!isNoSysProxy()) {
-            SdmxSystemUtil.configureProxy(result, this::reportIOException);
-        }
-
-        if (!isNoSysSsl()) {
-            SdmxSystemUtil.configureSsl(result, this::reportIOException);
-        }
-
-        return result.build();
-    }
-
-    private SdmxCache getCache() {
-        return noCache
-                ? SdmxCache.noOp()
-                : FileCache
-                .builder()
-                .serializer(Serializer.gzip(new KryoSerialization()))
-                .onIOException(this::reportIOException)
+                .customSources(getCustomSources())
                 .build();
     }
 
@@ -130,7 +73,7 @@ public class WebOptions {
 
     protected void reportIOException(String message, IOException ex) {
         if (verbose) {
-            doReport("IO", message + " - " + ex.getMessage());
+            reportToErrorStream("IO", message + " - " + ex.getMessage());
         }
     }
 
@@ -150,11 +93,11 @@ public class WebOptions {
             if (main.isEnabled()) {
                 main.onSourceEvent(source, message);
             }
-            doReport(source.getName(), message);
+            reportToErrorStream(source.getName(), message);
         }
     }
 
-    private static void doReport(String anchor, String message) {
+    private static void reportToErrorStream(String anchor, String message) {
         System.err.println(anchor + ": " + message);
     }
 

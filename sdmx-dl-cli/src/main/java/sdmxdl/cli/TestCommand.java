@@ -18,6 +18,7 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.WebSourcesOptions;
 import picocli.CommandLine;
 import sdmxdl.testing.WebReport;
 import sdmxdl.testing.WebRequest;
@@ -46,14 +47,7 @@ import java.util.stream.Collectors;
 public final class TestCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebOptions web;
-
-    @CommandLine.Parameters(
-            arity = "1..*",
-            paramLabel = "<source>",
-            descriptionKey = "sources"
-    )
-    private List<String> sources;
+    private WebSourcesOptions web;
 
     @CommandLine.Option(
             names = {"--requests"},
@@ -89,6 +83,7 @@ public final class TestCommand implements Callable<Void> {
     }
 
     private Predicate<WebRequest> getSourceFilter() {
+        List<String> sources = web.getSources();
         return WebOptions.isAllSources(sources)
                 ? request -> true
                 : request -> sources.contains(request.getSource());

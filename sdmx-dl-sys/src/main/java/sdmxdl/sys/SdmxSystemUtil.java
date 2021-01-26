@@ -1,54 +1,26 @@
 package sdmxdl.sys;
 
 import internal.sdmxdl.sys.WinPasswordVault;
-import nbbrd.net.proxy.SystemProxySelector;
-import nl.altindag.ssl.SSLFactory;
+import nbbrd.io.sys.OS;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.web.SdmxWebAuthenticator;
-import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
-import java.util.Properties;
 import java.util.function.BiConsumer;
 
 @lombok.experimental.UtilityClass
 public class SdmxSystemUtil {
 
-    public void configureProxy(SdmxWebManager.Builder manager, BiConsumer<String, IOException> onIOException) {
-        manager.proxySelector(SystemProxySelector.ofServiceLoader());
+    @Nullable
+    public SdmxWebAuthenticator getAuthenticatorOrNull(PasswordAuthentication user, BiConsumer<String, IOException> onIOException) {
+        return canHandle(user) && OS.NAME.equals(OS.Name.WINDOWS) ? new WinPasswordVaultAuthenticator(onIOException) : null;
     }
 
-    public void configureSsl(SdmxWebManager.Builder manager, BiConsumer<String, IOException> onIOException) {
-        if (!hasTrustStoreProperties(System.getProperties())) {
-            SSLFactory factory = getSSLFactory();
-            manager.sslSocketFactory(factory.getSslContext().getSocketFactory());
-            manager.hostnameVerifier(factory.getHostnameVerifier());
-        }
-    }
-
-    public void configureAuth(SdmxWebManager.Builder manager, BiConsumer<String, IOException> onIOException) {
-        if (isWindows()) {
-            manager.authenticator(new WinPasswordVaultAuthenticator(onIOException));
-        }
-    }
-
-    private SSLFactory getSSLFactory() {
-        return SSLFactory
-                .builder()
-                .withDefaultTrustMaterial()
-                .withSystemTrustMaterial()
-                .build();
-    }
-
-    private boolean hasTrustStoreProperties(Properties p) {
-        return p.containsKey("javax.net.ssl.trustStoreType")
-                || p.containsKey("javax.net.ssl.trustStore")
-                || p.containsKey("javax.net.ssl.trustStorePassword");
-    }
-
-    private boolean isWindows() {
-        return System.getProperty("os.name").toLowerCase().contains("win");
+    // TODO: put user name in vault prompt
+    private boolean canHandle(PasswordAuthentication user) {
+        return user.getUserName() == null || user.getUserName().isEmpty();
     }
 
     @lombok.AllArgsConstructor

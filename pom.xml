@@ -77,6 +77,11 @@
                 <artifactId>java-io-win</artifactId>
                 <version>${java-io-util.version}</version>
             </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>picocsv</artifactId>
+                <version>1.3.0</version>
+            </dependency>
 
             <!-- modules -->
             <dependency>
