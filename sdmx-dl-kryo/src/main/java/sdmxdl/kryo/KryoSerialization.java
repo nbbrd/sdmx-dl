@@ -129,7 +129,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
 
-        result.register(ArrayList.class);
+        result.register(ArrayList.class, new CollectionSerializer());
         result.register(LocalDateTime.class);
 
         return result;
