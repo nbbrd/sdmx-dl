@@ -1,14 +1,12 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.cli.ext;
 
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,10 +18,6 @@ public class CsvUtil {
             if (!csv.isAppending()) head.acceptWithIO(w);
             body.acceptWithIO(w);
         }
-    }
-
-    public static @NonNull Formatter<URL> onURL() {
-        return value -> value != null ? value.toString() : null;
     }
 
     public <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {

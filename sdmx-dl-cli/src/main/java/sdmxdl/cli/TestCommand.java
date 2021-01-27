@@ -17,8 +17,8 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
-import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
+import internal.sdmxdl.cli.ext.ProxyOptions;
 import picocli.CommandLine;
 import sdmxdl.testing.WebReport;
 import sdmxdl.testing.WebRequest;
@@ -60,11 +60,11 @@ public final class TestCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        SdmxWebManager manager = web.getManager();
-        WebOptions.warmupProxySelector(manager.getProxySelector());
+        SdmxWebManager manager = web.loadManager();
+        ProxyOptions.warmupProxySelector(manager.getProxySelector());
 
-        List<Summary> result = getRequests()
-                .parallelStream()
+        List<WebRequest> requests = getRequests();
+        List<Summary> result = (web.isNoParallel() ? requests.stream() : requests.parallelStream())
                 .filter(getSourceFilter())
                 .map(request -> WebResponse.of(request, manager))
                 .map(WebReport::of)
@@ -83,23 +83,9 @@ public final class TestCommand implements Callable<Void> {
     }
 
     private Predicate<WebRequest> getSourceFilter() {
-        List<String> sources = web.getSources();
-        return WebOptions.isAllSources(sources)
+        return web.isAllSources()
                 ? request -> true
-                : request -> sources.contains(request.getSource());
-    }
-
-    private static void print(Summary s) {
-        System.out.println("    Request: " + s.getRequest());
-        System.out.println("     Config: " + s.getConfig());
-        System.out.println("  FlowCount: " + s.getFlowCount());
-        System.out.println("       Flow: " + s.isFlow());
-        System.out.println("     Struct: " + s.isStruct());
-        System.out.println("SeriesCount: " + s.getSeriesCount());
-        System.out.println("   ObsCount: " + s.getObsCount());
-        System.out.println("      Error: " + s.getError().replace(System.lineSeparator(), " > "));
-        System.out.println("   Problems: " + String.join(", ", s.getProblems()));
-        System.out.println();
+                : request -> web.getSources().contains(request.getSource());
     }
 
     @lombok.Value

@@ -1,4 +1,4 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.cli.ext;
 
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
@@ -10,14 +10,14 @@ public class SslOptions {
     @CommandLine.Option(
             names = {"--no-default-ssl"},
             defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noDefaultSsl"
+            descriptionKey = "cli.noDefaultSsl"
     )
     boolean noDefaultSsl;
 
     @CommandLine.Option(
-            names = {"--no-sys-ssl"},
+            names = {"--no-system-ssl"},
             defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysSsl"
+            descriptionKey = "cli.noSystemSsl"
     )
     boolean noSysSsl;
 

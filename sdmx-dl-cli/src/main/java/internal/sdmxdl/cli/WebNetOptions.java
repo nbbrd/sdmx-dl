@@ -16,6 +16,10 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.AuthOptions;
+import internal.sdmxdl.cli.ext.CacheOptions;
+import internal.sdmxdl.cli.ext.ProxyOptions;
+import internal.sdmxdl.cli.ext.SslOptions;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
@@ -42,17 +46,13 @@ public class WebNetOptions extends WebOptions {
             names = {"-l", "--languages"},
             paramLabel = "<langs>",
             converter = LangsConverter.class,
-            defaultValue = "*",
-            descriptionKey = "sdmxdl.cli.languages"
+            defaultValue = LanguagePriorityList.ANY_KEYWORD,
+            descriptionKey = "cli.sdmx.languages"
     )
     private LanguagePriorityList langs;
 
-    @CommandLine.Option(
-            names = {"--no-cache"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noCache"
-    )
-    private boolean noCache;
+    @CommandLine.Mixin
+    private CacheOptions cacheOptions;
 
     @CommandLine.Mixin
     private ProxyOptions proxyOptions;
@@ -64,13 +64,13 @@ public class WebNetOptions extends WebOptions {
     private AuthOptions authOptions;
 
     @Override
-    public SdmxWebManager getManager() throws IOException {
+    public SdmxWebManager loadManager() throws IOException {
         SSLFactory sslFactory = sslOptions.getSSLFactory();
-        return super.getManager()
+        return super.loadManager()
                 .toBuilder()
                 .languages(langs)
                 .proxySelector(proxyOptions.getProxySelector())
-                .sslSocketFactory(sslFactory.getSslContext().getSocketFactory())
+                .sslSocketFactory(sslFactory.getSslSocketFactory())
                 .hostnameVerifier(sslFactory.getHostnameVerifier())
                 .cache(getCache())
                 .authenticator(getAuthenticator())
@@ -78,7 +78,7 @@ public class WebNetOptions extends WebOptions {
     }
 
     private SdmxCache getCache() {
-        return noCache
+        return cacheOptions.isNoCache()
                 ? SdmxCache.noOp()
                 : FileCache
                 .builder()

@@ -16,7 +16,7 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.KeychainStoreIgnoredExceptionFix;
+import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
 import nbbrd.console.picocli.ManifestHelper;

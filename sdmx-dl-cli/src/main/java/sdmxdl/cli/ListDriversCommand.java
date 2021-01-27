@@ -16,8 +16,8 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
-import internal.sdmxdl.cli.CsvUtil;
+import internal.sdmxdl.cli.ext.CsvTable;
+import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -47,7 +47,7 @@ public final class ListDriversCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getData());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -59,7 +59,7 @@ public final class ListDriversCommand implements Callable<Void> {
                 .build();
     }
 
-    private List<SdmxWebDriver> getData() throws IOException {
-        return web.getManager().getDrivers();
+    private List<SdmxWebDriver> getRows() throws IOException {
+        return web.loadManager().getDrivers();
     }
 }

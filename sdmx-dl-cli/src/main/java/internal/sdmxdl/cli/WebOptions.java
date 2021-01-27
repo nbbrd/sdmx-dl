@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.VerboseOptions;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
@@ -24,9 +25,6 @@ import sdmxdl.xml.XmlWebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,44 +35,38 @@ import java.util.List;
 @lombok.Setter
 public class WebOptions {
 
-    @CommandLine.Option(
-            names = {"-v", "--verbose"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.verbose"
-    )
-    private boolean verbose;
+    @CommandLine.Mixin
+    private VerboseOptions verboseOptions;
 
     @CommandLine.Option(
             names = {"-s", "--sources"},
             paramLabel = "<file>",
-            descriptionKey = "sdmxdl.cli.sources"
+            descriptionKey = "cli.sdmx.sourcesFile"
     )
     private File sourcesFile;
 
-    public SdmxWebManager getManager() throws IOException {
+    public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .eventListener(getEventListener())
-                .customSources(getCustomSources())
+                .customSources(parseCustomSources())
                 .build();
     }
 
     private SdmxWebListener getEventListener() {
-        return verbose
-                ? new VerboseWebListener(SdmxWebListener.getDefault())
+        return verboseOptions.isVerbose()
+                ? new VerboseWebListener(SdmxWebListener.getDefault(), verboseOptions)
                 : SdmxWebListener.getDefault();
     }
 
-    private List<SdmxWebSource> getCustomSources() throws IOException {
+    private List<SdmxWebSource> parseCustomSources() throws IOException {
         return sourcesFile != null
                 ? XmlWebSource.getParser().parseFile(sourcesFile)
                 : Collections.emptyList();
     }
 
     protected void reportIOException(String message, IOException ex) {
-        if (verbose) {
-            reportToErrorStream("IO", message + " - " + ex.getMessage());
-        }
+        verboseOptions.reportToErrorStream("IO", message, ex);
     }
 
     @lombok.AllArgsConstructor
@@ -82,6 +74,9 @@ public class WebOptions {
 
         @lombok.NonNull
         private final SdmxWebListener main;
+
+        @lombok.NonNull
+        private final VerboseOptions verboseOptions;
 
         @Override
         public boolean isEnabled() {
@@ -93,26 +88,7 @@ public class WebOptions {
             if (main.isEnabled()) {
                 main.onSourceEvent(source, message);
             }
-            reportToErrorStream(source.getName(), message);
-        }
-    }
-
-    private static void reportToErrorStream(String anchor, String message) {
-        System.err.println(anchor + ": " + message);
-    }
-
-    public static boolean isAllSources(List<String> sourceNames) {
-        return sourceNames.size() == 1 && isAllSources(sourceNames.get(0));
-    }
-
-    private static boolean isAllSources(String name) {
-        return "all".equals(name);
-    }
-
-    public static void warmupProxySelector(ProxySelector proxySelector) {
-        try {
-            proxySelector.select(new URI("http://localhost"));
-        } catch (URISyntaxException ex) {
+            verboseOptions.reportToErrorStream(source.getName(), message);
         }
     }
 }

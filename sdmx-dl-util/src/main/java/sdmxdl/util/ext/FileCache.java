@@ -16,6 +16,7 @@
  */
 package sdmxdl.util.ext;
 
+import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ext.SdmxCache;
@@ -26,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.function.BiConsumer;
@@ -41,7 +41,7 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = Paths.get(System.getProperty("java.io.tmpdir")).resolve("sdmxdl");
+    private final Path root = SystemProperties.DEFAULT.getJavaIoTmpdir().resolve("sdmxdl");
 
     @lombok.NonNull
     @lombok.Builder.Default

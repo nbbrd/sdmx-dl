@@ -42,10 +42,12 @@ import java.util.stream.Collectors;
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LanguagePriorityList {
 
+    public static final String ANY_KEYWORD = "*";
+
     /**
      * Any language.
      */
-    public static final LanguagePriorityList ANY = LanguagePriorityList.parse("*");
+    public static final LanguagePriorityList ANY = LanguagePriorityList.parse(ANY_KEYWORD);
 
     /**
      * Parses the given ranges to generate a priority list.

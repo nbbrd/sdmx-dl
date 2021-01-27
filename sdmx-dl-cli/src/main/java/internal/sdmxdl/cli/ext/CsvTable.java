@@ -1,4 +1,4 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.cli.ext;
 
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
@@ -28,18 +28,18 @@ public class CsvTable<T> {
         }
     }
 
-    public void write(CsvOutputOptions csv, Stream<T> list) throws IOException {
-        write(csv, list.iterator());
+    public void write(CsvOutputOptions csv, Stream<T> rows) throws IOException {
+        write(csv, rows.iterator());
     }
 
-    public void write(CsvOutputOptions csv, Iterable<T> list) throws IOException {
-        write(csv, list.iterator());
+    public void write(CsvOutputOptions csv, Iterable<T> rows) throws IOException {
+        write(csv, rows.iterator());
     }
 
-    public void write(CsvOutputOptions csv, Iterator<T> list) throws IOException {
+    public void write(CsvOutputOptions csv, Iterator<T> rows) throws IOException {
         CsvUtil.write(csv, w -> writeNames(w), w -> {
-            while (list.hasNext()) {
-                writeValues(w, list.next());
+            while (rows.hasNext()) {
+                writeValues(w, rows.next());
             }
         });
     }
@@ -51,9 +51,9 @@ public class CsvTable<T> {
         writer.writeEndOfLine();
     }
 
-    private void writeValues(Csv.Writer writer, T item) throws IOException {
+    private void writeValues(Csv.Writer writer, T row) throws IOException {
         for (CsvColumn<T> column : columns) {
-            column.writeValue(writer, item);
+            column.writeValue(writer, row);
         }
         writer.writeEndOfLine();
     }

@@ -19,10 +19,13 @@ package internal.sdmxdl.cli;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
 import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
 
 /**
  * @author Philippe Charles
@@ -34,24 +37,27 @@ public class WebSourceOptions extends WebNetOptions {
     @CommandLine.Parameters(
             index = "0",
             paramLabel = "<source>",
-            descriptionKey = "sdmxdl.cli.source"
+            descriptionKey = "cli.sdmx.source"
     )
     private String source;
 
-    public SortedSet<Feature> getSortedFeatures() throws IOException {
-        try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
+    public SdmxWebConnection open(SdmxWebManager manager) throws IOException {
+        return manager.getConnection(getSource());
+    }
+
+    public Set<Feature> loadFeatures(SdmxWebManager manager) throws IOException {
+        try (SdmxWebConnection conn = open(manager)) {
             return conn.isSeriesKeysOnlySupported()
-                    ? new TreeSet<>(Collections.singleton(Feature.SERIES_KEYS_ONLY))
+                    ? Collections.singleton(Feature.SERIES_KEYS_ONLY)
                     : Collections.emptySortedSet();
         }
     }
 
-    public List<Dataflow> getSortedFlows() throws IOException {
-        try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-            return conn.getFlows()
-                    .stream()
-                    .sorted(Comparator.comparing(dataflow -> dataflow.getRef().toString()))
-                    .collect(Collectors.toList());
+    public Collection<Dataflow> loadFlows(SdmxWebManager manager) throws IOException {
+        try (SdmxWebConnection conn = open(manager)) {
+            return conn.getFlows();
         }
     }
+
+    public static final Comparator<Dataflow> FLOWS_BY_REF = Comparator.comparing(dataflow -> dataflow.getRef().toString());
 }

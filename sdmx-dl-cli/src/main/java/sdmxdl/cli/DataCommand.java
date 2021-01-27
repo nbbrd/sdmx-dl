@@ -16,10 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
+import internal.sdmxdl.cli.ext.CsvUtil;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.console.picocli.text.ObsFormatOptions;
 import nbbrd.io.text.Formatter;
@@ -64,12 +64,6 @@ public final class DataCommand implements Callable<Void> {
                 description = "Use date pattern if time is not necessary."
         )
         private boolean relaxTimePeriod;
-
-        void fixDefaultDatetimePattern() {
-            if (getDatetimePattern().equals("yyyy-MM-ddTHH:mm:ss")) {
-                setDatetimePattern("yyyy-MM-dd'T'HH:mm:ss");
-            }
-        }
     }
 
     @CommandLine.Mixin
@@ -77,7 +71,6 @@ public final class DataCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        format.fixDefaultDatetimePattern();
         excel.apply(csv, format);
         CsvUtil.write(csv, this::writeHead, this::writeBody);
         return null;
@@ -92,7 +85,7 @@ public final class DataCommand implements Callable<Void> {
     }
 
     private void writeBody(Csv.Writer w) throws IOException {
-        try (SdmxWebConnection conn = web.getManager().getConnection(web.getSource())) {
+        try (SdmxWebConnection conn = web.loadManager().getConnection(web.getSource())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
             getBodyFormatter(dsd, format).format(getSortedSeries(conn, web), w);
         }
@@ -118,7 +111,7 @@ public final class DataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), web.getFilter())) {
+        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), DataFilter.ALL.toBuilder().detail(DataFilter.Detail.DATA_ONLY).build())) {
             return DataSet
                     .builder()
                     .ref(web.getFlow())

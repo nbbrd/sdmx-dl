@@ -16,10 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
-import internal.sdmxdl.cli.CsvUtil;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
+import internal.sdmxdl.cli.ext.CsvUtil;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
@@ -28,8 +28,6 @@ import sdmxdl.web.SdmxWebSource;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
-
-import static internal.sdmxdl.cli.CsvUtil.onURL;
 
 /**
  * @author Philippe Charles
@@ -49,7 +47,7 @@ public final class ListSourcesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getSortedSources());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -61,14 +59,14 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, onURL())
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
                 .columnOf("Properties", SdmxWebSource::getProperties, CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '='))
-                .columnOf("Website", SdmxWebSource::getWebsite, onURL())
+                .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
                 .build();
     }
 
-    private Stream<SdmxWebSource> getSortedSources() throws IOException {
-        return web.getManager()
+    private Stream<SdmxWebSource> getRows() throws IOException {
+        return web.loadManager()
                 .getSources()
                 .values()
                 .stream()

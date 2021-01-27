@@ -16,15 +16,17 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebSourceOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -44,7 +46,7 @@ public final class ListFlowsCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, web.getSortedFlows());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -54,5 +56,9 @@ public final class ListFlowsCommand implements Callable<Void> {
                 .columnOf("Ref", Dataflow::getRef, Formatter.onObjectToString())
                 .columnOf("Label", Dataflow::getLabel, Formatter.onString())
                 .build();
+    }
+
+    private Stream<Dataflow> getRows() throws IOException {
+        return web.loadFlows(web.loadManager()).stream().sorted(WebSourceOptions.FLOWS_BY_REF);
     }
 }

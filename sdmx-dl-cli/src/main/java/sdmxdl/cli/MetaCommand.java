@@ -16,12 +16,13 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebKeyOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 
@@ -48,7 +49,7 @@ public final class MetaCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getData());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -62,9 +63,9 @@ public final class MetaCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<MetaResult> getData() throws IOException {
+    private Stream<MetaResult> getRows() throws IOException {
         String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
-        return web.getSeries()
+        return web.loadSeries(web.loadManager(), DataFilter.ALL.toBuilder().detail(DataFilter.Detail.NO_DATA).build())
                 .stream()
                 .flatMap(series -> getMetaResultStream(dataflow, series));
     }

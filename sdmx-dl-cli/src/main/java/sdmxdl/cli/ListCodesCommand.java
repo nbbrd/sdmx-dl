@@ -16,17 +16,16 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
-import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebConceptOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -37,14 +36,7 @@ import java.util.stream.Stream;
 public final class ListCodesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebFlowOptions web;
-
-    @CommandLine.Parameters(
-            index = "2",
-            paramLabel = "<concept>",
-            descriptionKey = "sdmxdl.cli.concept"
-    )
-    private String concept;
+    private WebConceptOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
@@ -55,7 +47,7 @@ public final class ListCodesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getSortedCodes().entrySet());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -66,13 +58,7 @@ public final class ListCodesCommand implements Callable<Void> {
         return result.build();
     }
 
-    private SortedMap<String, String> getSortedCodes() throws IOException {
-        return new TreeMap<>(
-                Stream.concat(web.getStructure().getDimensions().stream(), web.getStructure().getAttributes().stream())
-                        .filter(component -> component.getId().equals(concept))
-                        .findFirst()
-                        .orElseThrow(() -> new IOException("Cannot find concept '" + concept + "'"))
-                        .getCodes()
-        );
+    private Stream<Map.Entry<String, String>> getRows() throws IOException {
+        return web.loadComponent(web.loadManager()).getCodes().entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey));
     }
 }

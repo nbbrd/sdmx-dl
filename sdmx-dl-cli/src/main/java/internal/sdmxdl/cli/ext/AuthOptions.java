@@ -1,4 +1,4 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
 
@@ -9,9 +9,9 @@ import java.net.PasswordAuthentication;
 public class AuthOptions {
 
     @CommandLine.Option(
-            names = {"--no-sys-auth"},
+            names = {"--no-system-auth"},
             defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysAuth"
+            descriptionKey = "cli.noSystemAuth"
     )
     private boolean noSysAuth;
 
@@ -19,7 +19,7 @@ public class AuthOptions {
             names = {"--user"},
             paramLabel = "<user:password>",
             defaultValue = "",
-            descriptionKey = "sdmxdl.cli.user",
+            descriptionKey = "cli.user",
             converter = UserConverter.class
     )
     private PasswordAuthentication user;

@@ -1,4 +1,4 @@
-package internal.sdmxdl.cli;
+package internal.sdmxdl.cli.ext;
 
 import nbbrd.io.sys.OS;
 

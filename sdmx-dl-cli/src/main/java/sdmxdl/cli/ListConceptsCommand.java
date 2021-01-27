@@ -16,16 +16,19 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.Attribute;
 import sdmxdl.Component;
+import sdmxdl.DataStructure;
 import sdmxdl.Dimension;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -48,7 +51,7 @@ public final class ListConceptsCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, getComponents());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -63,11 +66,17 @@ public final class ListConceptsCommand implements Callable<Void> {
                 .build();
     }
 
-    private Stream<Component> getComponents() throws IOException {
-        return Stream.concat(
-                WebFlowOptions.getSortedDimensions(web.getStructure()).stream(),
-                WebFlowOptions.getSortedAttributes(web.getStructure()).stream()
-        );
+    private Stream<Component> getRows() throws IOException {
+        DataStructure dsd = web.loadStructure(web.loadManager());
+        return Stream.concat(getSortedDimensions(dsd), getSortedAttributes(dsd));
+    }
+
+    private static Stream<Dimension> getSortedDimensions(DataStructure dsd) {
+        return dsd.getDimensions().stream().sorted(Comparator.comparingInt(Dimension::getPosition));
+    }
+
+    private static Stream<Attribute> getSortedAttributes(DataStructure dsd) {
+        return dsd.getAttributes().stream().sorted(Comparator.comparing(Attribute::getId));
     }
 
     private static String getTypeName(Class<? extends Component> o) {

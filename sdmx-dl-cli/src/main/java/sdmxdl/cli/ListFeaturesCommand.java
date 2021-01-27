@@ -16,15 +16,17 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.CsvTable;
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.WebSourceOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -44,7 +46,7 @@ public final class ListFeaturesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         excel.apply(csv);
-        getTable().write(csv, web.getSortedFeatures());
+        getTable().write(csv, getRows());
         return null;
     }
 
@@ -53,5 +55,9 @@ public final class ListFeaturesCommand implements Callable<Void> {
                 .builderOf(Feature.class)
                 .columnOf("SupportedFeature", Feature::name, Formatter.onString())
                 .build();
+    }
+
+    private Stream<Feature> getRows() throws IOException {
+        return web.loadFeatures(web.loadManager()).stream().sorted();
     }
 }

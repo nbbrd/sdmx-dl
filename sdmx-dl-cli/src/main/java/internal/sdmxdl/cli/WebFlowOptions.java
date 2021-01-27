@@ -19,11 +19,11 @@ package internal.sdmxdl.cli;
 import picocli.CommandLine;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.Comparator;
 
 /**
  * @author Philippe Charles
@@ -36,42 +36,20 @@ public class WebFlowOptions extends WebSourceOptions {
             index = "1",
             paramLabel = "<flow>",
             converter = DataflowRefConverter.class,
-            descriptionKey = "sdmxdl.cli.flow"
+            descriptionKey = "cli.sdmx.flow"
     )
     private DataflowRef flow;
 
-    public List<Series> getSortedSeriesKeys() throws IOException {
-        return getSortedSeries(Key.ALL, DataFilter.SERIES_KEYS_ONLY);
-    }
-
-    public List<Series> getSortedSeries(Key key, DataFilter filter) throws IOException {
-        try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-            try (Stream<Series> stream = conn.getDataStream(getFlow(), key, filter)) {
-                return stream
-                        .sorted(SERIES_BY_KEY)
-                        .collect(Collectors.toList());
-            }
-        }
-    }
-
-    public DataStructure getStructure() throws IOException {
-        try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
+    public DataStructure loadStructure(SdmxWebManager manager) throws IOException {
+        try (SdmxWebConnection conn = open(manager)) {
             return conn.getStructure(getFlow());
         }
     }
 
-    public static SortedSet<Dimension> getSortedDimensions(DataStructure dsd) {
-        return sortedCopyOf(dsd.getDimensions(), Comparator.comparingInt(Dimension::getPosition));
-    }
-
-    public static Set<Attribute> getSortedAttributes(DataStructure dsd) {
-        return sortedCopyOf(dsd.getAttributes(), Comparator.comparing(Attribute::getId));
-    }
-
-    private static <T> SortedSet<T> sortedCopyOf(Set<T> origin, Comparator<T> comparator) {
-        TreeSet<T> result = new TreeSet<>(comparator);
-        result.addAll(origin);
-        return result;
+    public Collection<Series> loadSeries(SdmxWebManager manager, Key key, DataFilter filter) throws IOException {
+        try (SdmxWebConnection conn = open(manager)) {
+            return conn.getData(getFlow(), key, filter);
+        }
     }
 
     public static final Comparator<Series> SERIES_BY_KEY = Comparator.comparing(series -> series.getKey().toString());

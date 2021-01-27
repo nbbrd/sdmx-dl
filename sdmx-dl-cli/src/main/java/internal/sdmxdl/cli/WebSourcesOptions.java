@@ -30,7 +30,24 @@ public class WebSourcesOptions extends WebNetOptions {
     @CommandLine.Parameters(
             arity = "1..*",
             paramLabel = "<source>",
-            descriptionKey = "sources"
+            descriptionKey = "cli.sdmx.sources"
     )
     private List<String> sources;
+
+    @CommandLine.Option(
+            names = "--no-parallel",
+            defaultValue = "false",
+            descriptionKey = "cli.sdmx.noParallel"
+    )
+    private boolean noParallel;
+
+    public boolean isAllSources() {
+        return sources.size() == 1 && isAllSources(sources.get(0));
+    }
+
+    private static boolean isAllSources(String name) {
+        return ALL_KEYWORD.equalsIgnoreCase(name);
+    }
+
+    public static final String ALL_KEYWORD = "all";
 }

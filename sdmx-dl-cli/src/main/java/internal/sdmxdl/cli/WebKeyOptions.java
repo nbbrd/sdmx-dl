@@ -20,11 +20,10 @@ import picocli.CommandLine;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.Series;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Philippe Charles
@@ -37,21 +36,11 @@ public class WebKeyOptions extends WebFlowOptions {
             index = "2",
             paramLabel = "<key>",
             converter = KeyConverter.class,
-            descriptionKey = "sdmxdl.cli.key"
+            descriptionKey = "cli.sdmx.key"
     )
     private Key key;
 
-    public DataFilter getFilter() {
-        return DataFilter.ALL;
-    }
-
-    public List<Series> getSortedSeries() throws IOException {
-        return getSortedSeries(getKey(), getFilter());
-    }
-
-    public Collection<Series> getSeries() throws IOException {
-        try (SdmxWebConnection conn = getManager().getConnection(getSource())) {
-            return conn.getData(getFlow(), getKey(), getFilter());
-        }
+    public Collection<Series> loadSeries(SdmxWebManager manager, DataFilter filter) throws IOException {
+        return loadSeries(manager, getKey(), filter);
     }
 }

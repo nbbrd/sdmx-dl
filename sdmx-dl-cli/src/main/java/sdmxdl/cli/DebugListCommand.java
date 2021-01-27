@@ -22,7 +22,9 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
+import sdmxdl.DataFilter;
 import sdmxdl.Dataflow;
+import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebSource;
 
@@ -48,22 +50,22 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void sources(@Mixin WebOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(SdmxWebSource.class, web.getManager().getSources().values());
+        nonNull(out).dumpAll(SdmxWebSource.class, web.loadManager().getSources().values());
     }
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Dataflow.class, web.getSortedFlows());
+        nonNull(out).dumpAll(Dataflow.class, web.loadFlows(web.loadManager()));
     }
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Series.class, web.getSortedSeriesKeys());
+        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY));
     }
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Feature.class, web.getSortedFeatures());
+        nonNull(out).dumpAll(Feature.class, web.loadFeatures(web.loadManager()));
     }
 
     private DebugOutputOptions nonNull(DebugOutputOptions options) {
