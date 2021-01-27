@@ -13,7 +13,7 @@ public class AuthOptions {
             defaultValue = "false",
             descriptionKey = "cli.noSystemAuth"
     )
-    private boolean noSysAuth;
+    private boolean noSystemAuth;
 
     @CommandLine.Option(
             names = {"--user"},

@@ -19,12 +19,12 @@ public class SslOptions {
             defaultValue = "false",
             descriptionKey = "cli.noSystemSsl"
     )
-    boolean noSysSsl;
+    boolean noSystemSsl;
 
     public SSLFactory getSSLFactory() {
-        SSLFactory.Builder result = SSLFactory.builder().withDefaultTrustMaterial();
+        SSLFactory.Builder result = SSLFactory.builder();
         if (!isNoDefaultSsl()) result.withDefaultTrustMaterial();
-        if (!isNoSysSsl() && !isNativeImage()) result.withSystemTrustMaterial();
+        if (!isNoSystemSsl() && !isNativeImage()) result.withSystemTrustMaterial();
         return result.build();
     }
 

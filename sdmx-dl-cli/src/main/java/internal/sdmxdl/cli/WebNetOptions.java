@@ -89,7 +89,7 @@ public class WebNetOptions extends WebOptions {
 
     private SdmxWebAuthenticator getAuthenticator() {
         PasswordAuthentication user = authOptions.getUser();
-        SdmxWebAuthenticator result = !authOptions.isNoSysAuth() ? SdmxSystemUtil.getAuthenticatorOrNull(user, this::reportIOException) : null;
+        SdmxWebAuthenticator result = !authOptions.isNoSystemAuth() ? SdmxSystemUtil.getAuthenticatorOrNull(user, this::reportIOException) : null;
         return result != null ? result : new CachedAuthenticator(new ConsoleAuthenticator(user), new ConcurrentHashMap<>());
     }
 }

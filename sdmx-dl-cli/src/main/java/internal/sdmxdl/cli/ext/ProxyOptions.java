@@ -16,10 +16,10 @@ public class ProxyOptions {
             defaultValue = "false",
             descriptionKey = "cli.noSystemProxy"
     )
-    boolean noSysProxy;
+    boolean noSystemProxy;
 
     public ProxySelector getProxySelector() {
-        return !isNoSysProxy() ? SystemProxySelector.ofServiceLoader() : ProxySelector.getDefault();
+        return !isNoSystemProxy() ? SystemProxySelector.ofServiceLoader() : ProxySelector.getDefault();
     }
 
     public static void warmupProxySelector(ProxySelector proxySelector) {
