@@ -20,7 +20,7 @@ public final class SetupCommand implements Callable<Void> {
 
     @Override
     public Void call() {
-        spec.commandLine().usage(System.out);
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 }

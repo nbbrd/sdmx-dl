@@ -40,6 +40,11 @@
             <artifactId>picocli-codegen</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-design-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- compile and runtime -->
         <dependency>
@@ -241,7 +246,7 @@
 
     <profiles>
         <profile>
-            <id>native-image</id>
+            <id>native</id>
             <properties>
                 <graalvm.version>21.0.0</graalvm.version>
             </properties>
@@ -269,9 +274,9 @@
                         </executions>
                         <configuration>
                             <imageName>${project.x.fileName}-${project.version}</imageName>
-                            <!-- FIXME: connectors: allow-incomplete-classpath -->
-                            <!-- FIXME: kryo: report-unsupported-elements-at-runtime -->
-                            <!-- FIXME: sdmx-dl: xml resources -->
+                            <!-- FIX: connectors: allow-incomplete-classpath -->
+                            <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
+                            <!-- FIX: sdmx-dl: xml resources -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http

@@ -13,11 +13,14 @@ public class VerboseOptions {
     )
     private boolean verbose;
 
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
+
     public void reportToErrorStream(String anchor, String message) {
-        System.err.println(anchor + ": " + message);
+        spec.commandLine().getErr().println(anchor + ": " + message);
     }
 
     public void reportToErrorStream(String anchor, String message, Exception ex) {
-        System.err.println(anchor + ": " + message + " - " + ex.getMessage());
+        spec.commandLine().getErr().println(anchor + ": " + message + " - " + ex.getMessage());
     }
 }
