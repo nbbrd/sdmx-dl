@@ -60,9 +60,13 @@ public class WebOptions {
     }
 
     private List<SdmxWebSource> parseCustomSources() throws IOException {
-        return sourcesFile != null
-                ? XmlWebSource.getParser().parseFile(sourcesFile)
-                : Collections.emptyList();
+        if (sourcesFile != null) {
+            if (verboseOptions.isVerbose()) {
+                verboseOptions.reportToErrorStream("IO", "Using source file '" + sourcesFile + "'");
+            }
+            return XmlWebSource.getParser().parseFile(sourcesFile);
+        }
+        return Collections.emptyList();
     }
 
     protected void reportIOException(String message, IOException ex) {
