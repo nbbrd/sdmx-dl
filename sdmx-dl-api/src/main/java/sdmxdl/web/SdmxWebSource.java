@@ -35,9 +35,8 @@ public class SdmxWebSource {
     @lombok.NonNull
     String name;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    String description = "";
+    @Nullable
+    String description;
 
     @lombok.NonNull
     String driver;
