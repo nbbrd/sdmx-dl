@@ -32,10 +32,7 @@ public class DataSetTest {
     @Test
     public void testBuilderCopyOf() {
         assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.builder().copyOf(null, DataFilter.ALL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.builder().copyOf(DataCursor.empty(), null));
+                .isThrownBy(() -> DataSet.builder().copyOf(null));
     }
 
     @Test

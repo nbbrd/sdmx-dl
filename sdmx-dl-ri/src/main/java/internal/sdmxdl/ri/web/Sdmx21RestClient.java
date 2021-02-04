@@ -161,6 +161,12 @@ public class Sdmx21RestClient extends RiRestClient {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
                 break;
+            case DATA_ONLY:
+                result.param(DETAIL_PARAM, "dataonly");
+                break;
+            case NO_DATA:
+                result.param(DETAIL_PARAM, "nodata");
+                break;
         }
         return result;
     }

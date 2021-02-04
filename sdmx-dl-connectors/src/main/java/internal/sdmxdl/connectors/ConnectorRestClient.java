@@ -184,7 +184,12 @@ public final class ConnectorRestClient implements SdmxWebClient {
             ));
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
-        return connector.getTimeSeries(Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()), Connectors.fromStructure(dsd), request.getKey().toString(), null, null, request.getFilter().isSeriesKeyOnly(), null, false);
+        return connector.getTimeSeries(
+                Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()),
+                Connectors.fromStructure(dsd), request.getKey().toString(),
+                null, null,
+                request.getFilter().isSeriesKeyOnly(),
+                null, false);
     }
 
     private static IOException wrap(SdmxException ex, String format, Object... args) {

@@ -18,12 +18,12 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.DataFilter;
-import sdmxdl.Key;
 import sdmxdl.Series;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 public final class FetchKeysCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebFlowOptions web;
+    private WebKeyOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
@@ -56,11 +56,16 @@ public final class FetchKeysCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(Series.class)
                 .columnOf("Key", Series::getKey, Formatter.onObjectToString())
-                .columnOf("Freq", Series::getFreq, Formatter.onObjectToString())
                 .build();
     }
 
     private Stream<Series> getRows() throws IOException {
-        return web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY).stream().sorted(WebFlowOptions.SERIES_BY_KEY);
+        return web.loadSeries(web.loadManager(), web.getKey(), getFilter())
+                .stream()
+                .sorted(WebFlowOptions.SERIES_BY_KEY);
+    }
+
+    private DataFilter getFilter() {
+        return DataFilter.SERIES_KEYS_ONLY;
     }
 }

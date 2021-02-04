@@ -21,6 +21,8 @@ import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataCursor;
+import sdmxdl.DataFilter;
+import sdmxdl.Key;
 
 import java.io.IOException;
 
@@ -28,26 +30,37 @@ import java.io.IOException;
 @lombok.experimental.UtilityClass
 public class DataCursorAssert {
 
-    public void assertCompliance(IOSupplier<DataCursor> supplier) {
-        TckUtil.run(s -> assertCompliance(s, supplier));
+    public void assertCompliance(IOSupplier<DataCursor> supplier, Key key, DataFilter filter) {
+        TckUtil.run(s -> assertCompliance(s, supplier, key, filter));
     }
 
-    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier) throws Exception {
+    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier, Key key, DataFilter filter) throws Exception {
         try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
                 assertNonnull(s, c);
-                s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
-                s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey());
+                // header
+                s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey()).matches(key::contains);
                 s.assertThat(c.getSeriesFrequency()).isNotNull().isEqualTo(c.getSeriesFrequency());
-                s.assertThat(c.getSeriesAttribute("hello")).isEqualTo(c.getSeriesAttribute("hello"));
-                while (c.nextObs()) {
-                    s.assertThat(c.getObsPeriod()).isEqualTo(c.getObsPeriod());
-                    s.assertThat(c.getObsValue()).isEqualTo(c.getObsValue());
-                    if (c.getObsPeriod() == null) {
-                        // FIXME: problem with scrictDatePattern
+                // attributes
+                if (!filter.getDetail().isMetaRequested()) {
+                    s.assertThat(c.getSeriesAttributes()).isEmpty();
+                } else {
+                    s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
+                    s.assertThat(c.getSeriesAttribute("hello")).isEqualTo(c.getSeriesAttribute("hello"));
+                }
+                // values
+                if (!filter.getDetail().isDataRequested()) {
+                    s.assertThat(c.nextObs()).isFalse();
+                } else {
+                    while (c.nextObs()) {
+                        s.assertThat(c.getObsPeriod()).isEqualTo(c.getObsPeriod());
+                        s.assertThat(c.getObsValue()).isEqualTo(c.getObsValue());
+                        if (c.getObsPeriod() == null) {
+                            // FIXME: problem with scrictDatePattern
 //                        s.assertThat(c.getObsValue())
 //                                .as("Non-null value must have non-null period")
 //                                .isNull();
+                        }
                     }
                 }
             }

@@ -65,9 +65,13 @@ public final class FetchMetaCommand implements Callable<Void> {
 
     private Stream<MetaResult> getRows() throws IOException {
         String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
-        return web.loadSeries(web.loadManager(), DataFilter.ALL.toBuilder().detail(DataFilter.Detail.NO_DATA).build())
+        return web.loadSeries(web.loadManager(), getFilter())
                 .stream()
                 .flatMap(series -> getMetaResultStream(dataflow, series));
+    }
+
+    private DataFilter getFilter() {
+        return DataFilter.ALL.toBuilder().detail(DataFilter.Detail.NO_DATA).build();
     }
 
     private Stream<MetaResult> getMetaResultStream(String dataflow, sdmxdl.Series series) {

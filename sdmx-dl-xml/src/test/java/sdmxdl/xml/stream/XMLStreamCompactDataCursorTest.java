@@ -19,6 +19,7 @@ package sdmxdl.xml.stream;
 import nbbrd.io.text.Parser;
 import org.junit.Test;
 import sdmxdl.DataCursor;
+import sdmxdl.DataFilter;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
@@ -54,7 +55,7 @@ public class XMLStreamCompactDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        });
+        }, Key.ALL, DataFilter.ALL);
 
         ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT), PeriodParsers::onStandardFreq, Parser.onDouble());
         try (InputStream stream = xml.openStream();
@@ -104,7 +105,7 @@ public class XMLStreamCompactDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        });
+        }, Key.ALL, DataFilter.ALL);
 
         ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx21(0), PeriodParsers::onStandardFreq, Parser.onDouble());
         try (InputStream stream = xml.openStream();

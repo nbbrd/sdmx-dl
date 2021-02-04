@@ -46,9 +46,14 @@ public class SdmxConnectionAssert {
     public void assertCompliance(SoftAssertions s, IOSupplier<SdmxConnection> supplier, Sample sample) {
         try (SdmxConnection conn = supplier.getWithIO()) {
             assertNonnull(s, conn, sample.valid);
-            DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, Key.ALL, DataFilter.ALL));
-            s.assertThat(conn.getData(sample.valid, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(sample.valid, Key.ALL, DataFilter.ALL, conn));
-            s.assertThat(conn.getDataStream(sample.valid, Key.ALL, DataFilter.ALL)).containsExactlyElementsOf(cursorToSeries(sample.valid, Key.ALL, DataFilter.ALL, conn));
+            Key key = Key.ALL;
+            for (DataFilter.Detail detail : DataFilter.Detail.values()) {
+                DataFilter filter = DataFilter.ALL.toBuilder().detail(detail).build();
+                DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, key, filter), key, filter);
+                List<Series> data = cursorToSeries(sample.valid, key, filter, conn);
+                s.assertThat(conn.getData(sample.valid, key, filter)).containsExactlyElementsOf(data);
+                s.assertThat(conn.getDataStream(sample.valid, key, filter)).containsExactlyElementsOf(data);
+            }
             s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(sample.valid::containsRef).isNotEmpty();
             s.assertThat(conn.getFlow(sample.valid)).isNotNull();
             s.assertThat(conn.getStructure(sample.valid)).isNotNull();
@@ -135,15 +140,20 @@ public class SdmxConnectionAssert {
     }
 
     private List<Series> cursorToSeries(DataflowRef ref, Key key, DataFilter filter, SdmxConnection conn) throws IOException {
+        DataFilter.Detail detail = filter.getDetail();
         List<Series> result = new ArrayList<>();
         try (DataCursor c = conn.getDataCursor(ref, key, filter)) {
             while (c.nextSeries()) {
                 Series.Builder series = Series.builder();
                 series.key(c.getSeriesKey());
                 series.freq(c.getSeriesFrequency());
-                series.meta(c.getSeriesAttributes());
-                while (c.nextObs()) {
-                    series.obs(Obs.of(c.getObsPeriod(), c.getObsValue()));
+                if (detail.isMetaRequested()) {
+                    series.meta(c.getSeriesAttributes());
+                }
+                if (detail.isDataRequested()) {
+                    while (c.nextObs()) {
+                        series.obs(Obs.of(c.getObsPeriod(), c.getObsValue()));
+                    }
                 }
                 result.add(series.build());
             }

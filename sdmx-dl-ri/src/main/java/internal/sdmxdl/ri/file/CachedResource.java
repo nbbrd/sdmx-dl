@@ -68,23 +68,15 @@ public final class CachedResource extends SdmxDecoderResource {
     }
 
     @Override
-    public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, boolean serieskeysonly) throws IOException {
-        if (serieskeysonly) {
-            return idOfLoadData.load(cache, () -> copyOfKeysAndMeta(entry, flowRef, key), o -> DEFAULT_CACHE_TTL)
-                    .getDataCursor(key, NO_DATA_FILTER);
-        }
-        return super.loadData(entry, flowRef, key, false);
+    public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        return filter.isSeriesKeyOnly()
+                ? idOfLoadData.load(cache, () -> copyOf(entry, flowRef, key, filter), o -> DEFAULT_CACHE_TTL).getDataCursor()
+                : super.loadData(entry, flowRef, key, filter);
     }
 
-    private DataSet copyOfKeysAndMeta(SdmxDecoder.Info entry, DataflowRef flowRef, Key key) throws IOException {
-        try (DataCursor c = super.loadData(entry, flowRef, key, true)) {
-            return DataSet
-                    .builder()
-                    .ref(flowRef)
-                    .copyOf(c, NO_DATA_FILTER)
-                    .build();
+    private DataSet copyOf(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        try (DataCursor cursor = super.loadData(entry, flowRef, key, filter)) {
+            return DataSet.builder().ref(flowRef).copyOf(cursor).build();
         }
     }
-
-    private static final DataFilter NO_DATA_FILTER = DataFilter.builder().detail(DataFilter.Detail.NO_DATA).build();
 }

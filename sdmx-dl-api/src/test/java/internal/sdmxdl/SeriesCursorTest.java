@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  * @author Philippe Charles
@@ -33,35 +32,46 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 public class SeriesCursorTest {
 
     @Test
-    @SuppressWarnings("null")
     public void testSeriesToStream() throws IOException {
-        try (DataCursor c = new SeriesCursor(iter(s1, s2), Key.ALL)) {
-            assertThatNullPointerException().isThrownBy(() -> c.toStream(null));
+        try (DataCursor c = SeriesCursor.of(iter())) {
+            assertThat(c.toStream()).isEmpty();
         }
 
-        try (DataCursor c = new SeriesCursor(iter(s1, s2), Key.ALL)) {
+        try (DataCursor c = SeriesCursor.of(iter(s1))) {
+            assertThat(c.toStream()).containsExactly(s1);
+        }
+
+        try (DataCursor c = SeriesCursor.of(iter(s1, s2))) {
+            assertThat(c.toStream()).containsExactly(s1, s2);
+        }
+
+        try (DataCursor c = SeriesCursor.of(iter(s1, s2))) {
             c.nextSeries(); // skip first
-            assertThat(c.toStream(DataFilter.Detail.FULL)).hasSize(1).element(0).isSameAs(s2);
+            assertThat(c.toStream()).containsExactly(s2);
         }
 
-        try (DataCursor c = new SeriesCursor(iter(s1, s2), Key.ALL)) {
-            assertThat(c.toStream(DataFilter.Detail.FULL)).hasSize(2);
+        try (DataCursor c = SeriesCursor.of(iter(s1, s2))) {
+            c.nextSeries(); // skip first
+            c.nextSeries(); // skip second
+            assertThat(c.toStream()).isEmpty();
+        }
+    }
+
+    @Test
+    public void testNextSeries() throws IOException {
+        try (DataCursor c = SeriesCursor.of(iter())) {
+            assertThat(c.nextSeries()).isFalse();
         }
 
-        try (DataCursor c = new SeriesCursor(iter(s1), Key.ALL)) {
-            assertThat(c.toStream(DataFilter.Detail.NO_DATA))
-                    .allMatch(o -> o.getObs().isEmpty())
-                    .hasSize(1)
-                    .element(0)
-                    .usingRecursiveComparison()
-                    .ignoringFields("obs")
-                    .isEqualTo(s1);
+        try (DataCursor c = SeriesCursor.of(iter(s1))) {
+            assertThat(c.nextSeries()).isTrue();
+            assertThat(c.nextSeries()).isFalse();
         }
 
-        try (DataCursor c = new SeriesCursor(iter(s1, s2), Key.ALL)) {
-            assertThat(c.toStream(DataFilter.Detail.NO_DATA))
-                    .allMatch(o -> o.getObs().isEmpty())
-                    .hasSize(2);
+        try (DataCursor c = SeriesCursor.of(iter(s1, s2))) {
+            assertThat(c.nextSeries()).isTrue();
+            assertThat(c.nextSeries()).isTrue();
+            assertThat(c.nextSeries()).isFalse();
         }
     }
 

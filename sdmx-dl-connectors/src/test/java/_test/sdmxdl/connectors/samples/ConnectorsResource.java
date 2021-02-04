@@ -18,14 +18,15 @@ package _test.sdmxdl.connectors.samples;
 
 import internal.sdmxdl.connectors.Connectors;
 import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
-import it.bancaditalia.oss.sdmx.api.Dataflow;
-import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import sdmxdl.DataflowRef;
+import sdmxdl.Frequency;
+import sdmxdl.Key;
+import sdmxdl.Series;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
@@ -60,7 +61,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))).build())
                 .name("NBB")
                 .seriesKeysOnlySupported(false)
                 .build();
@@ -79,7 +80,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0))), DataFilter.ALL).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))).build())
                 .name("ECB")
                 .seriesKeysOnlySupported(true)
                 .build();

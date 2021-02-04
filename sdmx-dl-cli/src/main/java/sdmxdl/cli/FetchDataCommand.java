@@ -111,7 +111,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), DataFilter.ALL.toBuilder().detail(DataFilter.Detail.DATA_ONLY).build())) {
+        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), getFilter())) {
             return DataSet
                     .builder()
                     .ref(web.getFlow())
@@ -119,6 +119,10 @@ public final class FetchDataCommand implements Callable<Void> {
                     .data(collectSeries(cursor, OBS_BY_PERIOD))
                     .build();
         }
+    }
+
+    private static DataFilter getFilter() {
+        return DataFilter.ALL.toBuilder().detail(DataFilter.Detail.DATA_ONLY).build();
     }
 
     private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {

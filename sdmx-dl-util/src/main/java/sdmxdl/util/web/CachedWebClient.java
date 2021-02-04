@@ -162,7 +162,7 @@ final class CachedWebClient implements SdmxWebClient {
                     .builder()
                     .ref(request.getFlowRef())
                     .key(request.getKey())
-                    .copyOf(cursor, DataFilter.ALL)
+                    .copyOf(cursor)
                     .build();
         }
     }
