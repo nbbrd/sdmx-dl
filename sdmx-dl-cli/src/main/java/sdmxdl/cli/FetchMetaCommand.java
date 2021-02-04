@@ -17,14 +17,14 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
-import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -33,11 +33,12 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "keys")
-public final class ListKeysCommand implements Callable<Void> {
+@CommandLine.Command(name = "meta")
+@SuppressWarnings("FieldMayBeFinal")
+public final class FetchMetaCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebFlowOptions web;
+    private WebKeyOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
@@ -52,15 +53,32 @@ public final class ListKeysCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Series> getTable() {
+    private CsvTable<MetaResult> getTable() {
         return CsvTable
-                .builderOf(Series.class)
-                .columnOf("Key", Series::getKey, Formatter.onObjectToString())
-                .columnOf("Freq", Series::getFreq, Formatter.onObjectToString())
+                .builderOf(MetaResult.class)
+                .columnOf("Flow", MetaResult::getDataflow, Formatter.onString())
+                .columnOf("Key", MetaResult::getKey, Formatter.onObjectToString())
+                .columnOf("Concept", MetaResult::getConcept, Formatter.onString())
+                .columnOf("Value", MetaResult::getValue, Formatter.onString())
                 .build();
     }
 
-    private Stream<Series> getRows() throws IOException {
-        return web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY).stream().sorted(WebFlowOptions.SERIES_BY_KEY);
+    private Stream<MetaResult> getRows() throws IOException {
+        String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
+        return web.loadSeries(web.loadManager(), DataFilter.ALL.toBuilder().detail(DataFilter.Detail.NO_DATA).build())
+                .stream()
+                .flatMap(series -> getMetaResultStream(dataflow, series));
+    }
+
+    private Stream<MetaResult> getMetaResultStream(String dataflow, sdmxdl.Series series) {
+        return series.getMeta().entrySet().stream().map(o -> new MetaResult(dataflow, series.getKey(), o.getKey(), o.getValue()));
+    }
+
+    @lombok.Value
+    private static class MetaResult {
+        String dataflow;
+        Key key;
+        String concept;
+        String value;
     }
 }

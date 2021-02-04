@@ -43,7 +43,7 @@ import static sdmxdl.csv.SdmxCsvField.*;
  */
 @CommandLine.Command(name = "data")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DataCommand implements Callable<Void> {
+public final class FetchDataCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebKeyOptions web;

@@ -6,11 +6,11 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MetaCommandTest {
+public class FetchDataCommandTest {
 
     @Test
     public void test() {
-        CommandLine cmd = new CommandLine(new MetaCommand());
+        CommandLine cmd = new CommandLine(new FetchDataCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.USAGE);

@@ -6,15 +6,15 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ListCommandTest {
+public class FetchCommandTest {
 
     @Test
     public void test() {
-        CommandLine cmd = new CommandLine(new ListCommand());
+        CommandLine cmd = new CommandLine(new FetchCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isNotEmpty().contains("sources", "flows", "concepts", "codes", "features", "drivers");
+        assertThat(watcher.getOut()).isNotEmpty().contains("data", "meta", "keys");
         assertThat(watcher.getErr()).isEmpty();
     }
 }

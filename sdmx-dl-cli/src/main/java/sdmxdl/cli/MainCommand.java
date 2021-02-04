@@ -43,13 +43,12 @@ import java.util.concurrent.Callable;
         commandListHeading = "%nCommands:%n",
         headerHeading = "%n",
         subcommands = {
-                DataCommand.class,
-                MetaCommand.class,
+                FetchCommand.class,
                 ListCommand.class,
                 PingCommand.class,
+                SetupCommand.class,
                 TestCommand.class,
-                DebugCommand.class,
-                SetupCommand.class
+                DebugCommand.class
         }
 )
 public final class MainCommand implements Callable<Void> {

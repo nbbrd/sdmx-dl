@@ -24,17 +24,14 @@ import java.util.concurrent.Callable;
  * @author Philippe Charles
  */
 @CommandLine.Command(
-        name = "list",
+        name = "fetch",
         subcommands = {
-                ListSourcesCommand.class,
-                ListFlowsCommand.class,
-                ListConceptsCommand.class,
-                ListCodesCommand.class,
-                ListFeaturesCommand.class,
-                ListDriversCommand.class
+                FetchDataCommand.class,
+                FetchMetaCommand.class,
+                FetchKeysCommand.class
         }
 )
-public final class ListCommand implements Callable<Void> {
+public final class FetchCommand implements Callable<Void> {
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
