@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>be.nbb.rd</groupId>
-            <artifactId>sdmx-dl-xml</artifactId>
+            <artifactId>java-io-xml</artifactId>
         </dependency>
 
         <!-- test only -->
