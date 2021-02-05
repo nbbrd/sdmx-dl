@@ -65,7 +65,7 @@ public final class XRepoWebClient implements SdmxWebClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isDetailSupported() {
         return true;
     }
 

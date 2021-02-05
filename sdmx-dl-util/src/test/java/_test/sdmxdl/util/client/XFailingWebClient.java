@@ -58,7 +58,7 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() throws IOException {
+        public boolean isDetailSupported() throws IOException {
             throw new CustomIOException();
         }
 
@@ -99,7 +99,7 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             throw new CustomRuntimeException();
         }
 
@@ -144,7 +144,7 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             return false;
         }
 

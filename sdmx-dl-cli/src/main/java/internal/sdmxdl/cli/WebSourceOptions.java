@@ -47,7 +47,7 @@ public class WebSourceOptions extends WebNetOptions {
 
     public Set<Feature> loadFeatures(SdmxWebManager manager) throws IOException {
         try (SdmxWebConnection conn = open(manager)) {
-            return conn.isSeriesKeysOnlySupported()
+            return conn.isDetailSupported()
                     ? Collections.singleton(Feature.SERIES_KEYS_ONLY)
                     : Collections.emptySortedSet();
         }

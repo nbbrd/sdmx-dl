@@ -31,7 +31,7 @@ import sdmxdl.xml.XmlWebSource;
 import java.io.IOException;
 import java.util.List;
 
-import static sdmxdl.util.web.SdmxWebProperty.SERIES_KEYS_ONLY_SUPPORTED_PROPERTY;
+import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
 
 /**
@@ -47,7 +47,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(Sdmx21Driver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.getKey())
+            .supportedProperty(DETAIL_SUPPORTED_PROPERTY.getKey())
             .supportedProperty(TRAILING_SLASH_REQUIRED_PROPERTY.getKey())
             .sources(IOSupplier.unchecked(Sdmx21Driver2::getSources).get())
             .build();
@@ -62,7 +62,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 s.getEndpoint(),
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
-                SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.get(s.getProperties()),
+                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties()),
                 TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()),
                 ObsFactories.getObsFactory(c, s, "SDMX21")
         );

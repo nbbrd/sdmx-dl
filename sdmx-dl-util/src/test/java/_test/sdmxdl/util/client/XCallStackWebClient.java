@@ -68,8 +68,8 @@ public final class XCallStackWebClient implements SdmxWebClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
-        return delegate.isSeriesKeysOnlySupported();
+    public boolean isDetailSupported() throws IOException {
+        return delegate.isDetailSupported();
     }
 
     @Override

@@ -17,7 +17,7 @@
 package internal.sdmxdl.connectors.drivers;
 
 import internal.sdmxdl.connectors.ConnectorRestClient;
-import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
+import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.client.custom.ILO_Legacy;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
@@ -57,13 +57,13 @@ public final class IloDriver implements SdmxWebDriver {
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to servers redirecting to http")
     private static final String FALLBACK_ENDPOINT = "http://www.ilo.org/ilostat/sdmx/ws/rest";
 
-    private static final class ILO2 extends ILO_Legacy implements HasSeriesKeysOnlySupported {
+    private static final class ILO2 extends ILO_Legacy implements HasDetailSupported {
 
         public ILO2() throws URISyntaxException {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             return true;
         }
 

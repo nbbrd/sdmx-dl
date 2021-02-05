@@ -63,7 +63,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
                 .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))).build())
                 .name("NBB")
-                .seriesKeysOnlySupported(false)
+                .detailSupported(false)
                 .build();
     }
 
@@ -82,7 +82,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
                 .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))).build())
                 .name("ECB")
-                .seriesKeysOnlySupported(true)
+                .detailSupported(true)
                 .build();
     }
 

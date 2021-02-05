@@ -54,7 +54,7 @@ public class FacadeResource {
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(NBB_FLOW_REF).data(data).build())
                     .name("NBB")
-                    .seriesKeysOnlySupported(false)
+                    .detailSupported(false)
                     .build();
 
             NBB.set(result);
@@ -76,7 +76,7 @@ public class FacadeResource {
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(ECB_FLOW_REF).data(data).build())
                     .name("ECB")
-                    .seriesKeysOnlySupported(true)
+                    .detailSupported(true)
                     .build();
 
             ECB.set(result);

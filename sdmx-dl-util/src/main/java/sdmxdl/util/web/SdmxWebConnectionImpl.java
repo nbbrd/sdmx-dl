@@ -83,7 +83,6 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     @Override
     public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         checkState();
-        checkQuery(filter);
 
         DataStructureRef structRef = client.peekStructureRef(flowRef);
         if (structRef == null) {
@@ -93,12 +92,15 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
-        return client.getData(new DataRequest(flowRef, key, filter), structure);
+
+        return isDetailSupported()
+                ? client.getData(new DataRequest(flowRef, key, filter), structure)
+                : client.getData(new DataRequest(flowRef, key, DataFilter.ALL), structure).filter(key, filter);
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
-        return client.isSeriesKeysOnlySupported();
+    public boolean isDetailSupported() throws IOException {
+        return client.isDetailSupported();
     }
 
     @Override
@@ -121,12 +123,6 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     private void checkState() throws IOException {
         if (closed) {
             throw SdmxExceptions.connectionClosed(client.getName());
-        }
-    }
-
-    private void checkQuery(DataFilter filter) throws IOException {
-        if (filter.isSeriesKeyOnly() && !isSeriesKeysOnlySupported()) {
-            throw new IllegalStateException("serieskeysonly not supported");
         }
     }
 }

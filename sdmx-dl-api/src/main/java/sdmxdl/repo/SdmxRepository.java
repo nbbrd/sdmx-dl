@@ -51,7 +51,7 @@ public class SdmxRepository {
     List<DataSet> dataSets;
 
     @lombok.Builder.Default
-    boolean seriesKeysOnlySupported = true;
+    boolean detailSupported = true;
 
     @NonNull
     public SdmxConnection asConnection() {
@@ -147,8 +147,8 @@ public class SdmxRepository {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
-            return repo.isSeriesKeysOnlySupported();
+        public boolean isDetailSupported() {
+            return repo.isDetailSupported();
         }
 
         @Override

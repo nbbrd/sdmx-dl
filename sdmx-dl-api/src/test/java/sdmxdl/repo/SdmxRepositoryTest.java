@@ -32,7 +32,7 @@ public class SdmxRepositoryTest {
 
     @Test
     public void testBuilder() {
-        assertThat(SdmxRepository.builder().name("test").dataSet(dataSet).build().isSeriesKeysOnlySupported()).isTrue();
+        assertThat(SdmxRepository.builder().name("test").dataSet(dataSet).build().isDetailSupported()).isTrue();
     }
 
     @Test

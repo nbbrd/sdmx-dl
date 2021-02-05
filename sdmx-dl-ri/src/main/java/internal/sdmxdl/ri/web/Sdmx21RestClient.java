@@ -36,14 +36,14 @@ import static sdmxdl.ext.SdmxMediaType.*;
  */
 public class Sdmx21RestClient extends RiRestClient {
 
-    protected final boolean seriesKeysOnlySupported;
+    protected final boolean detailSupported;
     protected final boolean trailingSlashRequired;
     protected final ObsFactory dataFactory;
 
     public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor,
-                            boolean seriesKeysOnlySupported, boolean trailingSlashRequired, ObsFactory dataFactory) {
+                            boolean detailSupported, boolean trailingSlashRequired, ObsFactory dataFactory) {
         super(name, endpoint, langs, executor, dataFactory);
-        this.seriesKeysOnlySupported = seriesKeysOnlySupported;
+        this.detailSupported = detailSupported;
         this.trailingSlashRequired = trailingSlashRequired;
         this.dataFactory = dataFactory;
     }
@@ -110,8 +110,8 @@ public class Sdmx21RestClient extends RiRestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
-        return seriesKeysOnlySupported;
+    public boolean isDetailSupported() {
+        return detailSupported;
     }
 
     @Override

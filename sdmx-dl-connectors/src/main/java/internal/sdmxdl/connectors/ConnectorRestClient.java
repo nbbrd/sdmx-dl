@@ -154,9 +154,9 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
-        return connector instanceof HasSeriesKeysOnlySupported
-                && ((HasSeriesKeysOnlySupported) connector).isSeriesKeysOnlySupported();
+    public boolean isDetailSupported() {
+        return connector instanceof HasDetailSupported
+                && ((HasDetailSupported) connector).isDetailSupported();
     }
 
     @Override

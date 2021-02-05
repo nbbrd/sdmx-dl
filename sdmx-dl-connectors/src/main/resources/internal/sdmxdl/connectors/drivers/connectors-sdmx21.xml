@@ -7,7 +7,7 @@
         <dialect>ECB2020</dialect>
         <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>
         <property key="supportsCompression" value="true"/>
-        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="detailSupported" value="true"/>
         <website>https://sdw.ecb.europa.eu</website>
     </source>
     <source>
@@ -30,7 +30,7 @@
         <description>Data access system to UN databases</description>
         <driver>connectors:sdmx21</driver>
         <endpoint>https://data.un.org/WS/rest</endpoint>
-        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="detailSupported" value="true"/>
         <website>https://data.un.org/SdmxBrowser/start</website>
     </source>
     <source>
@@ -39,7 +39,7 @@
         <driver>connectors:sdmx21</driver>
         <endpoint>http://sdmx.istat.it/SDMXWS/rest</endpoint>
         <property key="supportsCompression" value="true"/>
-        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="detailSupported" value="true"/>
         <website>https://www.istat.it/en/analysis-and-products</website>
     </source>
     <source>
@@ -55,7 +55,7 @@
         <driver>connectors:sdmx21</driver>
         <endpoint>https://sdmxcentral.imf.org/ws/public/sdmxapi/rest</endpoint>
         <property key="supportsCompression" value="true"/>
-        <property key="seriesKeysOnlySupported" value="true"/>
+        <property key="detailSupported" value="true"/>
         <website>https://data.imf.org</website>
     </source>
 </sources>

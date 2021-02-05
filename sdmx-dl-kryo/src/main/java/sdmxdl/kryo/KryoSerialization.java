@@ -188,7 +188,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
-            output.writeBoolean(t.isSeriesKeysOnlySupported());
+            output.writeBoolean(t.isDetailSupported());
         }
 
         @Override
@@ -199,7 +199,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
-                    .seriesKeysOnlySupported(input.readBoolean())
+                    .detailSupported(input.readBoolean())
                     .build();
         }
     }

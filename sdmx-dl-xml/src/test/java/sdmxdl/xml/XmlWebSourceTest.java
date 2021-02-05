@@ -39,7 +39,7 @@ public class XmlWebSourceTest {
                     .driver("ri:sdmx21")
                     .dialect("SDMX21")
                     .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
-                    .property("seriesKeysOnlySupported", "true")
+                    .property("detailSupported", "true")
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .build(),
@@ -60,7 +60,7 @@ public class XmlWebSourceTest {
             + "        <driver>ri:sdmx21</driver>\n"
             + "        <dialect>SDMX21</dialect>\n"
             + "        <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>\n"
-            + "        <property key=\"seriesKeysOnlySupported\" value=\"true\"/>\n"
+            + "        <property key=\"detailSupported\" value=\"true\"/>\n"
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
             + "    </source>\n"

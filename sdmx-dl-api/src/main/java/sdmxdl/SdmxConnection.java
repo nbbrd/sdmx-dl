@@ -48,5 +48,5 @@ public interface SdmxConnection extends Closeable {
     @NonNull
     DataCursor getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
 
-    boolean isSeriesKeysOnlySupported() throws IOException;
+    boolean isDetailSupported() throws IOException;
 }

@@ -18,7 +18,7 @@ package internal.sdmxdl.connectors.drivers;
 
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.Connectors;
-import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
+import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -55,7 +55,7 @@ public final class InseeDriver implements SdmxWebDriver {
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
     private static final String DIALECT = "INSEE2017";
 
-    private final static class InseeClient extends RestSdmxClient implements HasSeriesKeysOnlySupported {
+    private final static class InseeClient extends RestSdmxClient implements HasDetailSupported {
 
         private InseeClient(URI endpoint, Map<?, ?> properties) {
             super("", endpoint, false, false, true);
@@ -70,7 +70,7 @@ public final class InseeDriver implements SdmxWebDriver {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             return true;
         }
 

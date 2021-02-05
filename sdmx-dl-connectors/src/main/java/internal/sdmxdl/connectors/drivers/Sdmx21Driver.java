@@ -17,7 +17,7 @@
 package internal.sdmxdl.connectors.drivers;
 
 import internal.sdmxdl.connectors.ConnectorRestClient;
-import internal.sdmxdl.connectors.HasSeriesKeysOnlySupported;
+import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import static internal.sdmxdl.connectors.Connectors.*;
-import static sdmxdl.util.web.SdmxWebProperty.SERIES_KEYS_ONLY_SUPPORTED_PROPERTY;
+import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -50,7 +50,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .supportedProperty(NEEDS_CREDENTIALS_PROPERTY.getKey())
             .supportedProperty(NEEDS_URL_ENCODING_PROPERTY.getKey())
             .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY.getKey())
-            .supportedProperty(SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.getKey())
+            .supportedProperty(DETAIL_SUPPORTED_PROPERTY.getKey())
             .sources(IOSupplier.unchecked(Sdmx21Driver::getSources).get())
             .build();
 
@@ -58,21 +58,21 @@ public final class Sdmx21Driver implements SdmxWebDriver {
         return XmlWebSource.getParser().parseResource(Sdmx21Driver.class, "connectors-sdmx21.xml");
     }
 
-    private final static class Sdmx21Client extends RestSdmxClient implements HasSeriesKeysOnlySupported {
+    private final static class Sdmx21Client extends RestSdmxClient implements HasDetailSupported {
 
-        private final boolean seriesKeysOnlySupported;
+        private final boolean detailSupported;
 
         private Sdmx21Client(URI endpoint, Map<?, ?> p) {
             super("", endpoint,
                     NEEDS_CREDENTIALS_PROPERTY.get(p),
                     NEEDS_URL_ENCODING_PROPERTY.get(p),
                     SUPPORTS_COMPRESSION_PROPERTY.get(p));
-            this.seriesKeysOnlySupported = SERIES_KEYS_ONLY_SUPPORTED_PROPERTY.get(p);
+            this.detailSupported = DETAIL_SUPPORTED_PROPERTY.get(p);
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
-            return seriesKeysOnlySupported;
+        public boolean isDetailSupported() {
+            return detailSupported;
         }
     }
 }

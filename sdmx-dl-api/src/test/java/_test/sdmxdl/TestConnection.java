@@ -73,7 +73,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             return true;
         }
 
@@ -123,7 +123,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             throw new CustomException();
         }
 
@@ -174,7 +174,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
+        public boolean isDetailSupported() {
             throw new UnsupportedOperationException();
         }
 

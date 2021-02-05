@@ -108,7 +108,7 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isDetailSupported() {
         return false;
     }
 

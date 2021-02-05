@@ -62,10 +62,10 @@ public final class SdmxWebProperty {
             new Property<>("maxRedirects", 5, Parser.onInteger());
 
     /**
-     * Defines if series-keys-only query is supported. Default value is false.
+     * Defines if detail query is supported. Default value is false.
      */
-    public static final Property<Boolean> SERIES_KEYS_ONLY_SUPPORTED_PROPERTY =
-            new Property<>("seriesKeysOnlySupported", false, Parser.onBoolean());
+    public static final Property<Boolean> DETAIL_SUPPORTED_PROPERTY =
+            new Property<>("detailSupported", false, Parser.onBoolean());
 
     /**
      * Defines if trailing slash is required in queries. Default value is false.

@@ -128,7 +128,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() {
+    public boolean isDetailSupported() {
         return true;
     }
 

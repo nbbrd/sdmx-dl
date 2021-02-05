@@ -20,7 +20,7 @@ package internal.sdmxdl.connectors;
  *
  * @author Philippe Charles
  */
-public interface HasSeriesKeysOnlySupported {
+public interface HasDetailSupported {
 
-    boolean isSeriesKeysOnlySupported();
+    boolean isDetailSupported();
 }
