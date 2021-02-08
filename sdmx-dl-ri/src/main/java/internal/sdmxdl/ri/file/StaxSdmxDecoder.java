@@ -20,12 +20,12 @@ import nbbrd.io.xml.Xml;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxMediaType;
+import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.xml.SdmxmlDataTypeProbe;
 import sdmxdl.xml.XmlFileSource;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,21 +35,38 @@ import java.util.List;
 @lombok.AllArgsConstructor
 public final class StaxSdmxDecoder implements SdmxDecoder {
 
+    @lombok.NonNull
+    private final SdmxFileListener eventListener;
+
     @Override
     public Info decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
-        String type = probeDataType(source.getData());
-        File structure = source.getStructure();
-        return Info.of(type, XmlFileSource.isValidFile(structure)
-                ? parseStruct(type, langs, structure)
-                : decodeStruct(type, source.getData()));
+        String type = probeDataType(source);
+        return Info.of(type, loadStructure(source, langs, type));
     }
 
-    private String probeDataType(File data) throws IOException {
-        return SdmxmlDataTypeProbe.of().parseFile(data);
+    private String probeDataType(SdmxFileSource source) throws IOException {
+        if (eventListener.isEnabled()) {
+            eventListener.onFileSourceEvent(source, "Probing data type from '" + source.getData() + "'");
+        }
+        return SdmxmlDataTypeProbe.of()
+                .parseFile(source.getData());
     }
 
-    private DataStructure parseStruct(String dataType, LanguagePriorityList langs, File structure) throws IOException {
-        return getStructParser(dataType, langs).parseFile(structure).get(0);
+    private DataStructure loadStructure(SdmxFileSource source, LanguagePriorityList langs, String type) throws IOException {
+        return XmlFileSource.isValidFile(source.getStructure())
+                ? parseStruct(type, langs, source)
+                : decodeStruct(type, source);
+    }
+
+    private DataStructure parseStruct(String dataType, LanguagePriorityList langs, SdmxFileSource source) throws IOException {
+        if (eventListener.isEnabled()) {
+            eventListener.onFileSourceEvent(source, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
+        }
+        return getStructParser(dataType, langs)
+                .parseFile(source.getStructure())
+                .stream()
+                .findFirst()
+                .orElseThrow(IOException::new);
     }
 
     private Xml.Parser<List<DataStructure>> getStructParser(String dataType, LanguagePriorityList langs) throws IOException {
@@ -65,8 +82,12 @@ public final class StaxSdmxDecoder implements SdmxDecoder {
         }
     }
 
-    private DataStructure decodeStruct(String dataType, File data) throws IOException {
-        return getStructDecoder(dataType).parseFile(data);
+    private DataStructure decodeStruct(String dataType, SdmxFileSource source) throws IOException {
+        if (eventListener.isEnabled()) {
+            eventListener.onFileSourceEvent(source, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
+        }
+        return getStructDecoder(dataType)
+                .parseFile(source.getData());
     }
 
     private static Xml.Parser<DataStructure> getStructDecoder(String o) throws IOException {

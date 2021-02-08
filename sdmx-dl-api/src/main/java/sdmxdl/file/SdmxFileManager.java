@@ -55,6 +55,10 @@ public class SdmxFileManager implements SdmxManager {
     SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
+    @lombok.Builder.Default
+    SdmxFileListener eventListener = SdmxFileListener.getDefault();
+
+    @lombok.NonNull
     @lombok.Singular
     List<SdmxDialect> dialects;
 
@@ -88,6 +92,7 @@ public class SdmxFileManager implements SdmxManager {
         return SdmxFileContext
                 .builder()
                 .languages(languages)
+                .eventListener(eventListener)
                 .cache(cache)
                 .dialects(dialects)
                 .build();

@@ -78,9 +78,9 @@ public class RestClients {
         public void onOpen(URL query, String mediaType, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
             if (listener.isEnabled()) {
                 if (HttpRest.AuthScheme.NONE.equals(scheme)) {
-                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
+                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
                 } else {
-                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
+                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
                 }
             }
         }
@@ -88,14 +88,14 @@ public class RestClients {
         @Override
         public void onRedirection(URL oldUrl, URL newUrl) {
             if (listener.isEnabled()) {
-                listener.onSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
+                listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
             }
         }
 
         @Override
         public void onUnauthorized(URL url, HttpRest.AuthScheme oldScheme, HttpRest.AuthScheme newScheme) {
             if (listener.isEnabled()) {
-                listener.onSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
+                listener.onWebSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
             }
         }
     }

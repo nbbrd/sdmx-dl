@@ -1,22 +1,24 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.SdmxConnection;
 import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.Property;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
@@ -45,7 +47,7 @@ public final class FileDriver implements SdmxWebDriver {
         Objects.requireNonNull(context, "context");
         SdmxWebDriverSupport.checkSource(source, getName());
 
-        return new WebOverFileConnection(fileManager.getConnection(toFileSource(source)), getName());
+        return new WebOverFileConnection(open(source, context), getName());
     }
 
     @Override
@@ -56,6 +58,14 @@ public final class FileDriver implements SdmxWebDriver {
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
         return Collections.singletonList(STRUCTURE_PROPERTY.getKey());
+    }
+
+    private SdmxFileConnection open(SdmxWebSource source, SdmxWebContext context) throws IOException {
+        return fileManager
+                .toBuilder()
+                .eventListener(new FileOverWebListener(source, context.getEventListener()))
+                .build()
+                .getConnection(toFileSource(source));
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
@@ -79,19 +89,8 @@ public final class FileDriver implements SdmxWebDriver {
         return null;
     }
 
-    @VisibleForTesting
-    static URL parseURL(CharSequence input) {
-        if (input != null) {
-            try {
-                return new URL(input.toString());
-            } catch (MalformedURLException ex) {
-            }
-        }
-        return null;
-    }
-
     private static final Property<URL> STRUCTURE_PROPERTY =
-            new Property<>("structureURL", null, FileDriver::parseURL);
+            new Property<>("structureURL", null, Parser.onURL());
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor
@@ -112,6 +111,26 @@ public final class FileDriver implements SdmxWebDriver {
         @Override
         public @NonNull String getDriver() {
             return driver;
+        }
+    }
+
+    @lombok.RequiredArgsConstructor
+    static final class FileOverWebListener implements SdmxFileListener {
+
+        @lombok.NonNull
+        private final SdmxWebSource webSource;
+
+        @lombok.NonNull
+        private final SdmxWebListener webListener;
+
+        @Override
+        public boolean isEnabled() {
+            return webListener.isEnabled();
+        }
+
+        @Override
+        public void onFileSourceEvent(@NonNull SdmxFileSource source, @NonNull String message) {
+            webListener.onWebSourceEvent(webSource, message);
         }
     }
 }

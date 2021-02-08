@@ -88,9 +88,9 @@ public class WebOptions {
         }
 
         @Override
-        public void onSourceEvent(SdmxWebSource source, String message) {
+        public void onWebSourceEvent(SdmxWebSource source, String message) {
             if (main.isEnabled()) {
-                main.onSourceEvent(source, message);
+                main.onWebSourceEvent(source, message);
             }
             verboseOptions.reportToErrorStream(source.getName(), message);
         }

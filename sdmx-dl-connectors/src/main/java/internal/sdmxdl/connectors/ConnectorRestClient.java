@@ -223,10 +223,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
             if (listener.isEnabled()) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.onSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+                    listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.onSourceEvent(source, String.format("Querying '%s' with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
+                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

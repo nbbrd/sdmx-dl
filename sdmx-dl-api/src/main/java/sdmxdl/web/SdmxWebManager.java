@@ -136,7 +136,7 @@ public class SdmxWebManager implements SdmxManager {
             Collection<String> found = source.getProperties().keySet();
             String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
             if (!diff.isEmpty()) {
-                eventListener.onSourceEvent(source, "Unexpected properties [" + diff + "]");
+                eventListener.onWebSourceEvent(source, "Unexpected properties [" + diff + "]");
             }
         }
     }

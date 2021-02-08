@@ -50,7 +50,14 @@ public class XmlFileReader implements SdmxFileReader {
     }
 
     private SdmxFileConnectionImpl.Resource getResource(SdmxFileSource source, SdmxFileContext context) throws IOException {
-        return new CachedResource(source, context.getLanguages(), new StaxSdmxDecoder(), ObsFactories.getObsFactory(context, source), context.getCache());
+        return new CachedResource(
+                source,
+                context.getLanguages(),
+                new StaxSdmxDecoder(context.getEventListener()),
+                ObsFactories.getObsFactory(context, source),
+                context.getCache(),
+                context.getEventListener()
+        );
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");

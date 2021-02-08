@@ -1,4 +1,4 @@
-package sdmxdl.web;
+package sdmxdl.file;
 
 import internal.sdmxdl.DefaultSdmxListener;
 import internal.sdmxdl.FunctionalSdmxListener;
@@ -9,19 +9,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.function.BiConsumer;
 
 @ThreadSafe
-public interface SdmxWebListener {
+public interface SdmxFileListener {
 
     boolean isEnabled();
 
-    void onWebSourceEvent(@NonNull SdmxWebSource source, @NonNull String message);
+    void onFileSourceEvent(@NonNull SdmxFileSource source, @NonNull String message);
 
     @StaticFactoryMethod
-    static @NonNull SdmxWebListener getDefault() {
+    static @NonNull SdmxFileListener getDefault() {
         return DefaultSdmxListener.LOG_TO_INFO;
     }
 
     @StaticFactoryMethod
-    static @NonNull SdmxWebListener of(@NonNull BiConsumer<? super SdmxWebSource, ? super String> listener) {
-        return FunctionalSdmxListener.builder().onWeb(listener).build();
+    static @NonNull SdmxFileListener of(@NonNull BiConsumer<? super SdmxFileSource, ? super String> listener) {
+        return FunctionalSdmxListener.builder().onFile(listener).build();
     }
 }

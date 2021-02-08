@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
+import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
@@ -45,6 +46,9 @@ public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     @Nullable
     private final ObsFactory obsFactory;
 
+    @lombok.NonNull
+    SdmxFileListener eventListener;
+
     @Override
     public SdmxDecoder.Info decode() throws IOException {
         return decoder.decode(source, languages);
@@ -52,6 +56,9 @@ public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
 
     @Override
     public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        if (eventListener.isEnabled()) {
+            eventListener.onFileSourceEvent(source, "Loading data from file '" + source.getData() + "'");
+        }
         return getDataSupplier(entry.getDataType(), entry.getStructure())
                 .parseFile(source.getData())
                 .filter(key, filter);

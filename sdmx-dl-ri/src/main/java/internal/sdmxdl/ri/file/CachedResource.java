@@ -19,6 +19,7 @@ package internal.sdmxdl.ri.file;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
@@ -40,8 +41,8 @@ public final class CachedResource extends SdmxDecoderResource {
     private final TypedId<SdmxDecoder.Info> idOfDecode;
     private final TypedId<DataSet> idOfLoadData;
 
-    public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, ObsFactory obsFactory, SdmxCache cache) {
-        super(source, languages, decoder, obsFactory);
+    public CachedResource(SdmxFileSource source, LanguagePriorityList languages, SdmxDecoder decoder, ObsFactory obsFactory, SdmxCache cache, SdmxFileListener eventListener) {
+        super(source, languages, decoder, obsFactory, eventListener);
         this.cache = cache;
         String base = getBase(source, languages);
         this.idOfDecode = TypedId.of("decode://" + base,

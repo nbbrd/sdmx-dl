@@ -23,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import sdmxdl.DataflowRef;
+import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.SdmxConnectionAssert;
@@ -53,7 +54,7 @@ public class FileDriverTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = SdmxFileConnectionImplTest.sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, SdmxFileConnectionImplTest.DECODER, null);
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, SdmxFileConnectionImplTest.DECODER, null, SdmxFileListener.getDefault());
         DataflowRef valid = SdmxFileConnectionImplTest.DATAFLOW.getRef();
         DataflowRef invalid = DataflowRef.parse("invalid");
 

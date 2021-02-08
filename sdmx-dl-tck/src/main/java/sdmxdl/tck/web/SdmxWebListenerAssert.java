@@ -19,13 +19,13 @@ public class SdmxWebListenerAssert {
 
     private void checkOnSourceEvent(SoftAssertions s, SdmxWebListener actual) {
         SdmxWebSource source = SdmxWebSource.builder().name("localhost").driver("").endpointOf("http://localhost").build();
-        s.assertThatCode(() -> actual.onSourceEvent(source, "hello"))
+        s.assertThatCode(() -> actual.onWebSourceEvent(source, "hello"))
                 .doesNotThrowAnyException();
 
-        s.assertThatThrownBy(() -> actual.onSourceEvent(null, "hello"))
+        s.assertThatThrownBy(() -> actual.onWebSourceEvent(null, "hello"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> actual.onSourceEvent(source, null))
+        s.assertThatThrownBy(() -> actual.onWebSourceEvent(source, null))
                 .isInstanceOf(NullPointerException.class);
     }
 
