@@ -9,7 +9,7 @@ import java.util.logging.Level;
 @lombok.extern.java.Log
 public enum DefaultSdmxWebListener implements SdmxWebListener {
 
-    INSTANCE;
+    LOG_TO_INFO;
 
     @Override
     public boolean isEnabled() {

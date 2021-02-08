@@ -125,7 +125,20 @@ public class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
+        checkSourceProperties(source, driver);
+
         return driver.connect(source, getContext());
+    }
+
+    private void checkSourceProperties(SdmxWebSource source, SdmxWebDriver driver) {
+        if (eventListener.isEnabled()) {
+            Collection<String> expected = driver.getSupportedProperties();
+            Collection<String> found = source.getProperties().keySet();
+            String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
+            if (!diff.isEmpty()) {
+                eventListener.onSourceEvent(source, "Unexpected properties [" + diff + "]");
+            }
+        }
     }
 
     private Optional<SdmxWebSource> lookupSource(String sourceName) {
