@@ -16,13 +16,12 @@
  */
 package sdmxdl.xml.stream;
 
+import internal.sdmxdl.xml.Sdmxml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.xml.SdmxmlUri;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +94,7 @@ final class XMLStreamStructure20 {
 
     private void parseHeader(XMLStreamReader reader) throws XMLStreamException {
         String ns = reader.getNamespaceURI();
-        XMLStreamUtil.check(SdmxmlUri.NS_V20_URI.is(URI.create(ns)), reader, "Invalid namespace '%s'", ns);
+        XMLStreamUtil.check(Sdmxml.MESSAGE_V20.is(ns), reader, "Invalid namespace '%s'", ns);
     }
 
     private void parseCodelists(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {

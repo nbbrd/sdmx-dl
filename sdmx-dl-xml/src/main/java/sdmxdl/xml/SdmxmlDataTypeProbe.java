@@ -27,7 +27,7 @@ import java.net.URI;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static sdmxdl.xml.SdmxmlUri.*;
+import static internal.sdmxdl.xml.Sdmxml.*;
 
 /**
  * @author Philippe Charles
@@ -38,58 +38,101 @@ public final class SdmxmlDataTypeProbe {
         return Stax.StreamParser.valueOf(SdmxmlDataTypeProbe::probeDataType);
     }
 
+    private static final String UNSUPPORTED_TYPE = null;
+    private static final String UNKNOWN_TYPE = null;
+    private static final String DATASET_TAG = "DataSet";
+    private static final String SERIES_TAG = "Series";
+    private static final String SERIES_KEY_TAG = "SeriesKey";
+
     private static String probeDataType(XMLStreamReader reader) throws XMLStreamException {
         if (StaxUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot probe data type");
         }
 
-        int level = 0;
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case START_ELEMENT:
-                    level++;
-                    if (level == 2 && reader.getLocalName().equals("Header")) {
-                        URI uri = URI.create(reader.getNamespaceURI());
-                        if (NS_V10_URI.is(uri)) {
-                            return null;
-                        } else if (NS_V20_URI.is(uri)) {
-                            while (reader.hasNext()) {
-                                switch (reader.next()) {
-                                    case START_ELEMENT:
-                                        level++;
-                                        if (level == 3 && reader.getLocalName().equals("KeyFamilyRef")) {
-                                            return SdmxMediaType.GENERIC_DATA_20;
-                                        }
-                                        break;
-                                    case END_ELEMENT:
-                                        level--;
-                                        break;
-                                }
-                            }
-                            return SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20;
-                        } else if (NS_V21_URI.is(uri)) {
-                            while (reader.hasNext()) {
-                                switch (reader.next()) {
-                                    case START_ELEMENT:
-                                        level++;
-                                        if (level == 4 && reader.getLocalName().equals("SeriesKey")) {
-                                            return SdmxMediaType.GENERIC_DATA_21;
-                                        }
-                                        break;
-                                    case END_ELEMENT:
-                                        level--;
-                                        break;
-                                }
-                            }
-                            return SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21;
-                        }
+                    URI uri = URI.create(reader.getNamespaceURI());
+                    if (MESSAGE_V10.is(uri)) {
+                        return UNSUPPORTED_TYPE;
+                    } else if (MESSAGE_V20.is(uri)) {
+                        return parse20(reader);
+                    } else if (MESSAGE_V21.is(uri)) {
+                        return parse21(reader);
+                    } else {
+                        return UNKNOWN_TYPE;
                     }
-                    break;
-                case END_ELEMENT:
-                    level--;
-                    break;
             }
         }
         return null;
+    }
+
+    private static String parse21(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    if (reader.getLocalName().equals(DATASET_TAG)) {
+                        return parseDataSet21(reader);
+                    }
+                    break;
+            }
+        }
+        return UNKNOWN_TYPE;
+    }
+
+    private static String parseDataSet21(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    if (reader.getLocalName().equals(SERIES_TAG)) {
+                        return hasSeriesKeyTag(reader) ? SdmxMediaType.GENERIC_DATA_21 : SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21;
+                    }
+                    break;
+            }
+        }
+        return UNKNOWN_TYPE;
+    }
+
+    private static String parse20(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    if (reader.getLocalName().equals(DATASET_TAG)) {
+                        return parseDataSet20(reader);
+                    }
+                    break;
+            }
+        }
+        return UNKNOWN_TYPE;
+    }
+
+    private static String parseDataSet20(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    if (reader.getLocalName().equals(SERIES_TAG)) {
+                        return hasSeriesKeyTag(reader) ? SdmxMediaType.GENERIC_DATA_20 : SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20;
+                    }
+                    break;
+            }
+        }
+        return UNKNOWN_TYPE;
+    }
+
+    private static boolean hasSeriesKeyTag(XMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            switch (reader.next()) {
+                case START_ELEMENT:
+                    if (reader.getLocalName().equals(SERIES_KEY_TAG)) {
+                        return true;
+                    }
+                    break;
+                case END_ELEMENT:
+                    if (reader.getLocalName().equals(SERIES_TAG)) {
+                        return false;
+                    }
+            }
+        }
+        return false;
     }
 }
