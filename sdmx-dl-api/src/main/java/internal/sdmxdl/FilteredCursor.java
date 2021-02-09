@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 @lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FilteredCursor implements DataCursor {
@@ -62,21 +63,20 @@ public final class FilteredCursor implements DataCursor {
     @Override
     public @Nullable String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException {
         checkSeriesState();
-        String result = delegate.getSeriesAttribute(key);
-        return filter.getDetail().isMetaRequested() ? result : null;
+        Objects.requireNonNull(key);
+        return filter.getDetail().isMetaRequested() ? delegate.getSeriesAttribute(key) : null;
     }
 
     @Override
     public @NonNull Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException {
         checkSeriesState();
-        Map<String, String> result = delegate.getSeriesAttributes();
-        return filter.getDetail().isMetaRequested() ? result : Collections.emptyMap();
+        return filter.getDetail().isMetaRequested() ? delegate.getSeriesAttributes() : Collections.emptyMap();
     }
 
     @Override
     public boolean nextObs() throws IOException, IllegalStateException {
         checkSeriesState();
-        return obsAvailable = (delegate.nextObs() && filter.getDetail().isDataRequested());
+        return obsAvailable = (filter.getDetail().isDataRequested() && delegate.nextObs());
     }
 
     @Override

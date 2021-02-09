@@ -16,6 +16,7 @@
  */
 package sdmxdl.file;
 
+import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -66,6 +67,10 @@ public class SdmxFileManager implements SdmxManager {
     @lombok.Singular
     List<SdmxFileReader> readers;
 
+    @lombok.NonNull
+    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
+    SdmxFileContext context = initContext();
+
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
@@ -88,7 +93,7 @@ public class SdmxFileManager implements SdmxManager {
                 .findFirst();
     }
 
-    private SdmxFileContext getContext() {
+    private SdmxFileContext initContext() {
         return SdmxFileContext
                 .builder()
                 .languages(languages)

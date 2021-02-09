@@ -63,7 +63,10 @@ public final class FileDriver implements SdmxWebDriver {
     private SdmxFileConnection open(SdmxWebSource source, SdmxWebContext context) throws IOException {
         return fileManager
                 .toBuilder()
+                .languages(context.getLanguages())
                 .eventListener(new FileOverWebListener(source, context.getEventListener()))
+                .cache(context.getCache())
+                .dialects(context.getDialects())
                 .build()
                 .getConnection(toFileSource(source));
     }
