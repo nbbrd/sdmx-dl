@@ -6,18 +6,19 @@ import sdmxdl.file.SdmxFileSource;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 @lombok.Builder
-public final class FunctionalSdmxListener implements SdmxWebListener, SdmxFileListener {
+public final class FunctionalListener implements SdmxWebListener, SdmxFileListener {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final BiConsumer<? super SdmxWebSource, ? super String> onWeb = FunctionalSdmxListener::doNothing;
+    private final BiConsumer<? super SdmxWebSource, ? super String> onWeb = FunctionalListener::doNothing;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final BiConsumer<? super SdmxFileSource, ? super String> onFile = FunctionalSdmxListener::doNothing;
+    private final BiConsumer<? super SdmxFileSource, ? super String> onFile = FunctionalListener::doNothing;
 
     @Override
     public boolean isEnabled() {
@@ -26,11 +27,15 @@ public final class FunctionalSdmxListener implements SdmxWebListener, SdmxFileLi
 
     @Override
     public void onWebSourceEvent(@NonNull SdmxWebSource source, @NonNull String message) {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(message);
         onWeb.accept(source, message);
     }
 
     @Override
     public void onFileSourceEvent(@NonNull SdmxFileSource source, @NonNull String message) {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(message);
         onFile.accept(source, message);
     }
 

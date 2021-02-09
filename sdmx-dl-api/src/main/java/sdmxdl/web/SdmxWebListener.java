@@ -1,7 +1,7 @@
 package sdmxdl.web;
 
-import internal.sdmxdl.DefaultSdmxListener;
-import internal.sdmxdl.FunctionalSdmxListener;
+import internal.sdmxdl.FunctionalListener;
+import internal.sdmxdl.SdmxListeners;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,11 +17,16 @@ public interface SdmxWebListener {
 
     @StaticFactoryMethod
     static @NonNull SdmxWebListener getDefault() {
-        return DefaultSdmxListener.LOG_TO_INFO;
+        return SdmxListeners.LOG_TO_INFO;
+    }
+
+    @StaticFactoryMethod
+    static @NonNull SdmxWebListener noOp() {
+        return SdmxListeners.NO_OP;
     }
 
     @StaticFactoryMethod
     static @NonNull SdmxWebListener of(@NonNull BiConsumer<? super SdmxWebSource, ? super String> listener) {
-        return FunctionalSdmxListener.builder().onWeb(listener).build();
+        return FunctionalListener.builder().onWeb(listener).build();
     }
 }

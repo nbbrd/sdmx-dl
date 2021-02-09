@@ -1,7 +1,7 @@
 package sdmxdl.file;
 
-import internal.sdmxdl.DefaultSdmxListener;
-import internal.sdmxdl.FunctionalSdmxListener;
+import internal.sdmxdl.SdmxListeners;
+import internal.sdmxdl.FunctionalListener;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,11 +17,16 @@ public interface SdmxFileListener {
 
     @StaticFactoryMethod
     static @NonNull SdmxFileListener getDefault() {
-        return DefaultSdmxListener.LOG_TO_INFO;
+        return SdmxListeners.LOG_TO_INFO;
+    }
+
+    @StaticFactoryMethod
+    static @NonNull SdmxFileListener noOp() {
+        return SdmxListeners.NO_OP;
     }
 
     @StaticFactoryMethod
     static @NonNull SdmxFileListener of(@NonNull BiConsumer<? super SdmxFileSource, ? super String> listener) {
-        return FunctionalSdmxListener.builder().onFile(listener).build();
+        return FunctionalListener.builder().onFile(listener).build();
     }
 }

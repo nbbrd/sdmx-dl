@@ -4,12 +4,10 @@ import internal.sdmxdl.tck.TckUtil;
 import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.tck.ext.MockedDialect;
-import sdmxdl.tck.ext.SdmxCacheAssert;
 import sdmxdl.tck.web.MockedWebDriver;
 import sdmxdl.tck.web.SdmxWebAuthenticatorAssert;
 import sdmxdl.tck.web.SdmxWebListenerAssert;
@@ -22,11 +20,6 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.net.URL;
 
 public class ApiTest {
-
-    @Test
-    public void testSdmxCaches() {
-        SdmxCacheAssert.assertCompliance(SdmxCache.noOp());
-    }
 
     @Test
     public void testSdmxRepositoryManager() {

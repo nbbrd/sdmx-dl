@@ -54,7 +54,7 @@ public class FileDriverTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = SdmxFileConnectionImplTest.sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, SdmxFileConnectionImplTest.DECODER, null, SdmxFileListener.getDefault());
+        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, SdmxFileConnectionImplTest.DECODER, null, SdmxFileListener.noOp());
         DataflowRef valid = SdmxFileConnectionImplTest.DATAFLOW.getRef();
         DataflowRef invalid = DataflowRef.parse("invalid");
 
