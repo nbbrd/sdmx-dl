@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
@@ -43,6 +44,9 @@ public final class FetchKeysCommand implements Callable<Void> {
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
     private Excel excel;
 
     @Override
@@ -60,9 +64,7 @@ public final class FetchKeysCommand implements Callable<Void> {
     }
 
     private Stream<Series> getRows() throws IOException {
-        return web.loadSeries(web.loadManager(), web.getKey(), getFilter())
-                .stream()
-                .sorted(WebFlowOptions.SERIES_BY_KEY);
+        return sort.applySort(web.loadSeries(web.loadManager(), web.getKey(), getFilter()), WebFlowOptions.SERIES_BY_KEY);
     }
 
     private DataFilter getFilter() {

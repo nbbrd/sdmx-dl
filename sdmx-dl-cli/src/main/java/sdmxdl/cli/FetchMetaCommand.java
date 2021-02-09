@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -27,6 +28,7 @@ import sdmxdl.Key;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -42,6 +44,9 @@ public final class FetchMetaCommand implements Callable<Void> {
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
 
     @CommandLine.Mixin
     private Excel excel;
@@ -65,9 +70,10 @@ public final class FetchMetaCommand implements Callable<Void> {
 
     private Stream<MetaResult> getRows() throws IOException {
         String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
-        return web.loadSeries(web.loadManager(), getFilter())
-                .stream()
-                .flatMap(series -> getMetaResultStream(dataflow, series));
+        return sort.applySort(web.loadSeries(web.loadManager(), getFilter())
+                        .stream()
+                        .flatMap(series -> getMetaResultStream(dataflow, series))
+                , BY_FLOW_KEY_CONCEPT);
     }
 
     private DataFilter getFilter() {
@@ -85,4 +91,9 @@ public final class FetchMetaCommand implements Callable<Void> {
         String concept;
         String value;
     }
+
+    private static final Comparator<MetaResult> BY_FLOW_KEY_CONCEPT = Comparator
+            .comparing(MetaResult::getDataflow)
+            .thenComparing(Comparator.comparing(o -> o.getKey().toString()))
+            .thenComparing(Comparator.comparing(MetaResult::getConcept));
 }

@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebConceptOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -42,6 +43,9 @@ public final class ListCodesCommand implements Callable<Void> {
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
     private Excel excel;
 
     @Override
@@ -59,6 +63,8 @@ public final class ListCodesCommand implements Callable<Void> {
     }
 
     private Stream<Map.Entry<String, String>> getRows() throws IOException {
-        return web.loadComponent(web.loadManager()).getCodes().entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey));
+        return sort.applySort(web.loadComponent(web.loadManager()).getCodes().entrySet(), BY_KEY);
     }
+
+    private static final Comparator<Map.Entry<String, String>> BY_KEY = Comparator.comparing(Map.Entry::getKey);
 }

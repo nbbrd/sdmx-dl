@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -46,6 +47,9 @@ public final class ListConceptsCommand implements Callable<Void> {
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
     private Excel excel;
 
     @Override
@@ -68,15 +72,15 @@ public final class ListConceptsCommand implements Callable<Void> {
 
     private Stream<Component> getRows() throws IOException {
         DataStructure dsd = web.loadStructure(web.loadManager());
-        return Stream.concat(getSortedDimensions(dsd), getSortedAttributes(dsd));
+        return Stream.concat(getDimensions(dsd), getAttributes(dsd));
     }
 
-    private static Stream<Dimension> getSortedDimensions(DataStructure dsd) {
-        return dsd.getDimensions().stream().sorted(Comparator.comparingInt(Dimension::getPosition));
+    private Stream<Dimension> getDimensions(DataStructure dsd) {
+        return sort.applySort(dsd.getDimensions(), BY_POSITION);
     }
 
-    private static Stream<Attribute> getSortedAttributes(DataStructure dsd) {
-        return dsd.getAttributes().stream().sorted(Comparator.comparing(Attribute::getId));
+    private Stream<Attribute> getAttributes(DataStructure dsd) {
+        return sort.applySort(dsd.getAttributes(), BY_ID);
     }
 
     private static String getTypeName(Class<? extends Component> o) {
@@ -86,4 +90,7 @@ public final class ListConceptsCommand implements Callable<Void> {
     private static Integer getPositionOrNull(Component o) {
         return o instanceof Dimension ? ((Dimension) o).getPosition() : null;
     }
+
+    private static final Comparator<Dimension> BY_POSITION = Comparator.comparingInt(Dimension::getPosition);
+    private static final Comparator<Attribute> BY_ID = Comparator.comparing(Attribute::getId);
 }

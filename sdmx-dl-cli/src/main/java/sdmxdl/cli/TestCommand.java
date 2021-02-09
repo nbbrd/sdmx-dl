@@ -63,8 +63,7 @@ public final class TestCommand implements Callable<Void> {
         SdmxWebManager manager = web.loadManager();
         ProxyOptions.warmupProxySelector(manager.getProxySelector());
 
-        List<WebRequest> requests = getRequests();
-        List<Summary> result = (web.isNoParallel() ? requests.stream() : requests.parallelStream())
+        List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())
                 .map(request -> WebResponse.of(request, manager))
                 .map(WebReport::of)

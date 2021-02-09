@@ -18,7 +18,9 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -43,6 +45,14 @@ public class WebSourcesOptions extends WebNetOptions {
 
     public boolean isAllSources() {
         return sources.size() == 1 && isAllSources(sources.get(0));
+    }
+
+    public <T> Stream<T> applyParallel(Collection<T> items) {
+        return noParallel ? items.stream() : items.parallelStream();
+    }
+
+    public <T> Stream<T> applyParallel(Stream<T> stream) {
+        return noParallel ? stream : stream.parallel();
     }
 
     private static boolean isAllSources(String name) {

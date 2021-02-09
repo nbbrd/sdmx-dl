@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -41,6 +42,9 @@ public final class ListFlowsCommand implements Callable<Void> {
     private final CsvOutputOptions csv = new CsvOutputOptions();
 
     @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
     private Excel excel;
 
     @Override
@@ -59,6 +63,6 @@ public final class ListFlowsCommand implements Callable<Void> {
     }
 
     private Stream<Dataflow> getRows() throws IOException {
-        return web.loadFlows(web.loadManager()).stream().sorted(WebSourceOptions.FLOWS_BY_REF);
+        return sort.applySort(web.loadFlows(web.loadManager()), WebSourceOptions.FLOWS_BY_REF);
     }
 }

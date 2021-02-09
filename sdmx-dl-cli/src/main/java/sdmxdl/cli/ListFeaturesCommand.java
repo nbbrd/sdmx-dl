@@ -18,6 +18,7 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.Feature;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
@@ -25,6 +26,7 @@ import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -39,6 +41,9 @@ public final class ListFeaturesCommand implements Callable<Void> {
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
 
     @CommandLine.Mixin
     private Excel excel;
@@ -58,6 +63,8 @@ public final class ListFeaturesCommand implements Callable<Void> {
     }
 
     private Stream<Feature> getRows() throws IOException {
-        return web.loadFeatures(web.loadManager()).stream().sorted();
+        return sort.applySort(web.loadFeatures(web.loadManager()), BY_NAME);
     }
+
+    private static final Comparator<Feature> BY_NAME = Comparator.comparing(Enum::name);
 }

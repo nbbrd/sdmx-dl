@@ -18,6 +18,7 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.PingResult;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.ProxyOptions;
@@ -28,6 +29,7 @@ import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -44,6 +46,9 @@ public final class PingCommand implements Callable<Void> {
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
     private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
 
     @CommandLine.Mixin
     private Excel excel;
@@ -69,8 +74,7 @@ public final class PingCommand implements Callable<Void> {
         SdmxWebManager manager = web.loadManager();
         ProxyOptions.warmupProxySelector(manager.getProxySelector());
         Stream<String> sources = web.isAllSources() ? getAllSourceNames(manager) : web.getSources().stream();
-        return (web.isNoParallel() ? sources : sources.parallel())
-                .map(sourceName -> PingResult.of(manager, sourceName));
+        return sort.applySort(web.applyParallel(sources).map(sourceName -> PingResult.of(manager, sourceName)), BY_SOURCE);
     }
 
     private static Stream<String> getAllSourceNames(SdmxWebManager manager) {
@@ -85,4 +89,6 @@ public final class PingCommand implements Callable<Void> {
     private static String formatDuration(Duration o) {
         return o != null ? String.valueOf(o.toMillis()) : null;
     }
+
+    private static final Comparator<PingResult> BY_SOURCE = Comparator.comparing(PingResult::getSource);
 }
