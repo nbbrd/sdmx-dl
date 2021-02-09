@@ -89,7 +89,7 @@ public class WebResponse {
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getFlow()))
                     .structure(conn.getStructure(request.getFlow()))
-                    .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.ALL));
+                    .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.FULL));
         } catch (IOException ex) {
             result.error(toError(ex));
         }

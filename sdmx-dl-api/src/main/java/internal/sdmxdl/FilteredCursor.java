@@ -118,6 +118,6 @@ public final class FilteredCursor implements DataCursor {
     }
 
     public static boolean isNoFilter(@NonNull Key key, @NonNull DataFilter filter) {
-        return Key.ALL.equals(key) && DataFilter.ALL.equals(filter);
+        return Key.ALL.equals(key) && DataFilter.FULL.equals(filter);
     }
 }

@@ -22,6 +22,7 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.util.file.SdmxFileInfo;
 import sdmxdl.xml.SdmxmlDataTypeProbe;
 import sdmxdl.xml.XmlFileSource;
 import sdmxdl.xml.stream.SdmxXmlStreams;
@@ -33,15 +34,15 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class StaxSdmxDecoder implements SdmxDecoder {
+public final class XmlDecoder implements SdmxDecoder {
 
     @lombok.NonNull
     private final SdmxFileListener eventListener;
 
     @Override
-    public Info decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
+    public SdmxFileInfo decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
         String type = probeDataType(source);
-        return Info.of(type, loadStructure(source, langs, type));
+        return SdmxFileInfo.of(type, loadStructure(source, langs, type));
     }
 
     private String probeDataType(SdmxFileSource source) throws IOException {

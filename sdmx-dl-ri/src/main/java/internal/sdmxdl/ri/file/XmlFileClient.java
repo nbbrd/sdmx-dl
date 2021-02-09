@@ -23,6 +23,8 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.util.file.SdmxFileClient;
+import sdmxdl.util.file.SdmxFileInfo;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -32,7 +34,7 @@ import java.io.IOException;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
+public class XmlFileClient implements SdmxFileClient {
 
     @lombok.NonNull
     private final SdmxFileSource source;
@@ -50,16 +52,16 @@ public class SdmxDecoderResource implements SdmxFileConnectionImpl.Resource {
     SdmxFileListener eventListener;
 
     @Override
-    public SdmxDecoder.Info decode() throws IOException {
+    public SdmxFileInfo decode() throws IOException {
         return decoder.decode(source, languages);
     }
 
     @Override
-    public DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public DataCursor loadData(SdmxFileInfo info, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         if (eventListener.isEnabled()) {
             eventListener.onFileSourceEvent(source, "Loading data from file '" + source.getData() + "'");
         }
-        return getDataSupplier(entry.getDataType(), entry.getStructure())
+        return getDataSupplier(info.getDataType(), info.getStructure())
                 .parseFile(source.getData())
                 .filter(key, filter);
     }

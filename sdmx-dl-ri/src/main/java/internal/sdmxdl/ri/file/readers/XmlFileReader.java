@@ -1,8 +1,6 @@
 package internal.sdmxdl.ri.file.readers;
 
-import internal.sdmxdl.ri.file.CachedResource;
-import internal.sdmxdl.ri.file.SdmxFileConnectionImpl;
-import internal.sdmxdl.ri.file.StaxSdmxDecoder;
+import internal.sdmxdl.ri.file.*;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
@@ -10,6 +8,9 @@ import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.SdmxFileContext;
 import sdmxdl.file.spi.SdmxFileReader;
+import sdmxdl.util.file.CachedFileClient;
+import sdmxdl.util.file.SdmxFileClient;
+import sdmxdl.util.file.SdmxFileConnectionImpl;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.XmlFileSource;
 
@@ -42,22 +43,22 @@ public class XmlFileReader implements SdmxFileReader {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }
-        return new SdmxFileConnectionImpl(getResource(source, context), getDataflow(source));
+        return new SdmxFileConnectionImpl(getClient(source, context), getDataflow(source));
     }
 
     private boolean isXmlFileName(File file) {
         return file.toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private SdmxFileConnectionImpl.Resource getResource(SdmxFileSource source, SdmxFileContext context) throws IOException {
-        return new CachedResource(
+    private SdmxFileClient getClient(SdmxFileSource source, SdmxFileContext context) throws IOException {
+        SdmxFileClient client = new XmlFileClient(
                 source,
                 context.getLanguages(),
-                new StaxSdmxDecoder(context.getEventListener()),
+                new XmlDecoder(context.getEventListener()),
                 ObsFactories.getObsFactory(context, source),
-                context.getCache(),
                 context.getEventListener()
         );
+        return CachedFileClient.of(client, context.getCache(), source, context.getLanguages());
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");

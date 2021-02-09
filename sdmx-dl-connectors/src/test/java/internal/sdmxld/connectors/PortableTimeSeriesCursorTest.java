@@ -75,7 +75,7 @@ public class PortableTimeSeriesCursorTest {
     public void testCompliance() {
         DataCursorAssert.assertCompliance(
                 () -> PortableTimeSeriesCursor.of(DATA, ObsFactories.SDMX21, Connectors.toStructure(DSD)),
-                Key.ALL, DataFilter.ALL
+                Key.ALL, DataFilter.FULL
         );
     }
 }

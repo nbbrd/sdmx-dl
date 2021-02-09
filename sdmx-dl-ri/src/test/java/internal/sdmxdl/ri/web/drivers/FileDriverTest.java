@@ -16,27 +16,17 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.file.SdmxDecoderResource;
-import internal.sdmxdl.ri.file.SdmxFileConnectionImpl;
-import internal.sdmxdl.ri.file.SdmxFileConnectionImplTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import sdmxdl.DataflowRef;
-import sdmxdl.file.SdmxFileListener;
-import sdmxdl.file.SdmxFileSource;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.SdmxConnectionAssert;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
-import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  * @author Philippe Charles
@@ -46,26 +36,6 @@ public class FileDriverTest {
     @Test
     public void testCompliance() {
         SdmxWebDriverAssert.assertCompliance(new FileDriver());
-    }
-
-    @Test
-    public void testConnectionCompliance() throws IOException {
-        File compact21 = temp.newFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
-
-        SdmxFileSource source = SdmxFileConnectionImplTest.sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, SdmxFileConnectionImplTest.DECODER, null, SdmxFileListener.noOp());
-        DataflowRef valid = SdmxFileConnectionImplTest.DATAFLOW.getRef();
-        DataflowRef invalid = DataflowRef.parse("invalid");
-
-        SdmxConnectionAssert.assertCompliance(
-                () -> new FileDriver.WebOverFileConnection(new SdmxFileConnectionImpl(r, SdmxFileConnectionImplTest.DATAFLOW), ""),
-                SdmxConnectionAssert.Sample
-                        .builder()
-                        .valid(valid)
-                        .invalid(invalid)
-                        .build()
-        );
     }
 
     @Test

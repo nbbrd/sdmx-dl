@@ -188,7 +188,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
                 Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()),
                 Connectors.fromStructure(dsd), request.getKey().toString(),
                 null, null,
-                request.getFilter().isSeriesKeyOnly(),
+                request.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
                 null, false);
     }
 

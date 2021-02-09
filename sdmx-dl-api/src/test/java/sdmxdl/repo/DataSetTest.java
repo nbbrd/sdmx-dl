@@ -38,36 +38,36 @@ public class DataSetTest {
     @Test
     public void testGetData() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getData(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getData(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getData(Key.ALL, null));
 
-        assertThat(dataSet.getData(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getData(Key.ALL, DataFilter.FULL))
                 .containsExactly(series);
     }
 
     @Test
     public void testGetDataStream() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getDataStream(Key.ALL, null));
 
-        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.FULL))
                 .containsExactly(series);
     }
 
     @Test
     public void testGetDataCursor() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getDataCursor(Key.ALL, null));
 
-        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.FULL))
                 .isNotNull();
     }
 

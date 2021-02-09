@@ -14,7 +14,7 @@ public class DataCursorApiTest {
     public void testEmptyCursor() {
         DataCursorAssert.assertCompliance(
                 DataCursor::empty,
-                Key.ALL, DataFilter.ALL
+                Key.ALL, DataFilter.FULL
         );
     }
 
@@ -22,14 +22,14 @@ public class DataCursorApiTest {
     public void testSeriesCursor() {
         DataCursorAssert.assertCompliance(
                 () -> DataCursor.of(Arrays.asList(RepoSamples.SERIES).iterator()),
-                Key.ALL, DataFilter.ALL
+                Key.ALL, DataFilter.FULL
         );
     }
 
     @Test
     public void testFilteredCursor() {
         for (DataFilter.Detail detail : DataFilter.Detail.values()) {
-            DataFilter filter = DataFilter.ALL.toBuilder().detail(detail).build();
+            DataFilter filter = DataFilter.builder().detail(detail).build();
             DataCursorAssert.assertCompliance(
                     () -> DataCursor.of(Arrays.asList(RepoSamples.SERIES).iterator()).filter(Key.ALL, filter),
                     Key.ALL, filter

@@ -25,8 +25,10 @@ import lombok.AccessLevel;
 @lombok.Builder(toBuilder = true)
 public class DataFilter {
 
-    public static final DataFilter ALL = builder().build();
+    public static final DataFilter FULL = builder().detail(Detail.FULL).build();
     public static final DataFilter SERIES_KEYS_ONLY = builder().detail(Detail.SERIES_KEYS_ONLY).build();
+    public static final DataFilter NO_DATA = builder().detail(Detail.NO_DATA).build();
+    public static final DataFilter DATA_ONLY = builder().detail(Detail.DATA_ONLY).build();
 
     /**
      * Specifies the desired amount of information to be returned
@@ -34,10 +36,6 @@ public class DataFilter {
     @lombok.NonNull
     @lombok.Builder.Default
     Detail detail = Detail.FULL;
-
-    public boolean isSeriesKeyOnly() {
-        return detail.equals(Detail.SERIES_KEYS_ONLY);
-    }
 
     /**
      * Describe an amount of information

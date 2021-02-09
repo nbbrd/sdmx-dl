@@ -20,64 +20,25 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import sdmxdl.*;
+import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.SdmxConnectionAssert;
-import sdmxdl.tck.file.SdmxFileConnectionAssert;
+import sdmxdl.util.file.SdmxFileClient;
+import sdmxdl.util.file.SdmxFileConnectionImpl;
+import sdmxdl.util.file.SdmxFileInfo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  * @author Philippe Charles
  */
-public class SdmxFileConnectionImplTest {
-
-    @Test
-    public void testCompliance() throws IOException {
-        File compact21 = temp.newFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
-
-        SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, DECODER, null, SdmxFileListener.noOp());
-        DataflowRef valid = DATAFLOW.getRef();
-        DataflowRef invalid = DataflowRef.parse("invalid");
-
-        SdmxFileConnectionAssert.assertCompliance(
-                () -> new SdmxFileConnectionImpl(r, DATAFLOW),
-                SdmxFileConnectionAssert.Sample
-                        .builder()
-                        .connection(SdmxConnectionAssert.Sample.builder().valid(valid).invalid(invalid).build())
-                        .build()
-        );
-    }
-
-    @Test
-    @SuppressWarnings("null")
-    public void testFile() throws IOException {
-        File compact21 = temp.newFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
-
-        SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, DECODER, null, SdmxFileListener.noOp());
-
-        SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, DATAFLOW);
-
-        assertThat(conn.getDataflowRef()).isEqualTo(source.asDataflowRef());
-        assertThat(conn.getFlow()).isEqualTo(conn.getFlow(source.asDataflowRef()));
-        assertThat(conn.getStructure()).isEqualTo(conn.getStructure(source.asDataflowRef()));
-        assertThatNullPointerException().isThrownBy(() -> conn.getDataCursor(Key.ALL, null));
-        assertThatNullPointerException().isThrownBy(() -> conn.getDataStream(Key.ALL, null));
-        try (Stream<Series> stream = conn.getDataStream(Key.ALL, DataFilter.ALL)) {
-            assertThat(stream).containsExactly(conn.getDataStream(Key.ALL, DataFilter.ALL).toArray(Series[]::new));
-        }
-    }
+public class XmlFileClientTest {
 
     @Test
     public void testCompactData21() throws IOException {
@@ -85,16 +46,16 @@ public class SdmxFileConnectionImplTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileConnectionImpl.Resource r = new SdmxDecoderResource(source, ANY, DECODER, null, SdmxFileListener.noOp());
+        SdmxFileClient r = new XmlFileClient(source, ANY, DECODER, null, SdmxFileListener.noOp());
 
-        SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, DATAFLOW);
+        SdmxFileInfo info = r.decode();
 
-        assertThat(conn.getFlows()).hasSize(1);
-        assertThat(conn.getStructure(source.asDataflowRef()).getDimensions()).hasSize(7);
+        assertThat(info.getDataType()).isEqualTo(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+        assertThat(info.getStructure().getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = conn.getDataCursor(source.asDataflowRef(), Key.ALL, DataFilter.ALL)) {
+        try (DataCursor o = r.loadData(info, source.asDataflowRef(), Key.ALL, DataFilter.FULL)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(key);
             assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
@@ -128,6 +89,6 @@ public class SdmxFileConnectionImplTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    public static final SdmxDecoder DECODER = new StaxSdmxDecoder(SdmxFileListener.noOp());
+    public static final SdmxDecoder DECODER = new XmlDecoder(SdmxFileListener.noOp());
     public static final Dataflow DATAFLOW = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");
 }

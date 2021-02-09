@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.ext;
 
-import _test.sdmxdl.util.FakeClock;
+import sdmxdl.tck.ext.FakeClock;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.checkerframework.checker.nullness.qual.NonNull;

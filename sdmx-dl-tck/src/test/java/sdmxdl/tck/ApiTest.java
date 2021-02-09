@@ -70,8 +70,8 @@ public class ApiTest {
     @SuppressWarnings("null")
     public void testDataSetCursor() {
         DataCursorAssert.assertCompliance(
-                () -> RepoSamples.DATA_SET.getDataCursor(Key.ALL, DataFilter.ALL),
-                Key.ALL, DataFilter.ALL
+                () -> RepoSamples.DATA_SET.getDataCursor(Key.ALL, DataFilter.FULL),
+                Key.ALL, DataFilter.FULL
         );
     }
 

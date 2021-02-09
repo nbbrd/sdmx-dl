@@ -1,4 +1,4 @@
-package _test.sdmxdl.util;
+package sdmxdl.tck.ext;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -9,16 +9,17 @@ public final class FakeClock extends Clock {
 
     private Instant current = Instant.now();
 
-    public void set(Instant current) {
+    public FakeClock set(Instant current) {
         this.current = current;
+        return this;
     }
 
-    public void set(long epochMilli) {
-        this.current = Instant.ofEpochMilli(epochMilli);
+    public FakeClock set(long epochMilli) {
+        return set(Instant.ofEpochMilli(epochMilli));
     }
 
-    public void plus(long durationInMillis) {
-        current = current.plus(durationInMillis, ChronoUnit.MILLIS);
+    public FakeClock plus(long durationInMillis) {
+        return set(current.plus(durationInMillis, ChronoUnit.MILLIS));
     }
 
     @Override

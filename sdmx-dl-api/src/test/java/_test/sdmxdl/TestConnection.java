@@ -193,5 +193,5 @@ public enum TestConnection implements SdmxWebConnection {
     public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).primaryMeasureId("").label("").build();
     public static final List<Series> DATA = Collections.emptyList();
     public static final Key KEY = Key.ALL;
-    public static final DataFilter FILTER = DataFilter.ALL;
+    public static final DataFilter FILTER = DataFilter.FULL;
 }

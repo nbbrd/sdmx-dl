@@ -16,6 +16,7 @@
  */
 package sdmxdl.util.web;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.DataSet;
@@ -30,11 +31,17 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
+@lombok.RequiredArgsConstructor
 final class CachedWebClient implements SdmxWebClient {
 
-    static SdmxWebClient of(SdmxWebClient origin, SdmxCache cache, long ttlInMillis, SdmxWebSource source, LanguagePriorityList languages) {
-        String base = source.getEndpoint().getHost() + languages.toString() + "/";
-        return new CachedWebClient(origin, cache, Duration.ofMillis(ttlInMillis), base);
+    static @NonNull SdmxWebClient of(
+            @NonNull SdmxWebClient client, @NonNull SdmxCache cache, long ttlInMillis,
+            @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
+        return new CachedWebClient(client, cache, Duration.ofMillis(ttlInMillis), getBase(source, languages));
+    }
+
+    private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
+        return source.getEndpoint().getHost() + languages.toString() + "/";
     }
 
     @lombok.NonNull
@@ -46,28 +53,44 @@ final class CachedWebClient implements SdmxWebClient {
     @lombok.NonNull
     private final Duration ttl;
 
-    private final TypedId<List<Dataflow>> idOfFlows;
-    private final TypedId<Dataflow> idOfFlow;
-    private final TypedId<DataStructure> idOfStruct;
-    private final TypedId<DataSet> idOfKeysOnly;
+    @lombok.NonNull
+    private final String base;
 
-    CachedWebClient(SdmxWebClient delegate, SdmxCache cache, Duration ttl, String base) {
-        this.delegate = delegate;
-        this.cache = cache;
-        this.ttl = ttl;
-        this.idOfFlows = TypedId.of("flows://" + base,
+    @lombok.Getter(lazy = true)
+    private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
+
+    @lombok.Getter(lazy = true)
+    private final TypedId<Dataflow> idOfFlow = initIdOfFlow(base);
+
+    @lombok.Getter(lazy = true)
+    private final TypedId<DataStructure> idOfStruct = initIdOfStruct(base);
+
+    @lombok.Getter(lazy = true)
+    private final TypedId<DataSet> idOfKeysOnly = initIdOfKeysOnly(base);
+
+    private static TypedId<List<Dataflow>> initIdOfFlows(String base) {
+        return TypedId.of("flows://" + base,
                 SdmxRepository::getFlows,
                 flows -> SdmxRepository.builder().flows(flows).build()
         );
-        this.idOfFlow = TypedId.of("flow://" + base,
+    }
+
+    private static TypedId<Dataflow> initIdOfFlow(String base) {
+        return TypedId.of("flow://" + base,
                 repo -> repo.getFlows().stream().findFirst().orElse(null),
                 flow -> SdmxRepository.builder().flow(flow).build()
         );
-        this.idOfStruct = TypedId.of("struct://" + base,
+    }
+
+    private static TypedId<DataStructure> initIdOfStruct(String base) {
+        return TypedId.of("struct://" + base,
                 repo -> repo.getStructures().stream().findFirst().orElse(null),
                 struct -> SdmxRepository.builder().structure(struct).build()
         );
-        this.idOfKeysOnly = TypedId.of("keys://" + base,
+    }
+
+    private static TypedId<DataSet> initIdOfKeysOnly(String base) {
+        return TypedId.of("keys://" + base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
         );
@@ -96,7 +119,7 @@ final class CachedWebClient implements SdmxWebClient {
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        if (!request.getFilter().isSeriesKeyOnly()) {
+        if (!request.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY)) {
             return delegate.getData(request, dsd);
         }
         return loadKeysOnlyWithCache(request, dsd)
@@ -119,22 +142,22 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private List<Dataflow> loadDataflowsWithCache() throws IOException {
-        return idOfFlows.load(cache, delegate::getFlows, o -> ttl);
+        return getIdOfFlows().load(cache, delegate::getFlows, this::getTtl);
     }
 
     private DataStructure loadDataStructureWithCache(DataStructureRef ref) throws IOException {
-        TypedId<DataStructure> id = idOfStruct.with(ref);
-        return id.load(cache, () -> delegate.getStructure(ref), o -> ttl);
+        TypedId<DataStructure> id = getIdOfStruct().with(ref);
+        return id.load(cache, () -> delegate.getStructure(ref), this::getTtl);
     }
 
     private DataSet loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = idOfKeysOnly.with(request.getFlowRef());
-        return id.load(cache, () -> copyDataKeys(request, dsd), o -> ttl, o -> !isBroaderRequest(request.getKey(), o));
+        TypedId<DataSet> id = getIdOfKeysOnly().with(request.getFlowRef());
+        return id.load(cache, () -> copyDataKeys(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
         // check if dataflow has been already loaded by #loadDataflowsWithCache
-        List<Dataflow> dataFlows = idOfFlows.peek(cache);
+        List<Dataflow> dataFlows = getIdOfFlows().peek(cache);
         if (dataFlows == null) {
             return null;
         }
@@ -148,8 +171,8 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private Dataflow loadDataflowWithCache(DataflowRef ref) throws IOException {
-        TypedId<Dataflow> id = idOfFlow.with(ref);
-        return id.load(cache, () -> delegate.getFlow(ref), o -> ttl);
+        TypedId<Dataflow> id = getIdOfFlow().with(ref);
+        return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 
     private boolean isBroaderRequest(Key key, DataSet dataSet) {
@@ -165,5 +188,9 @@ final class CachedWebClient implements SdmxWebClient {
                     .copyOf(cursor)
                     .build();
         }
+    }
+
+    private Duration getTtl(Object o) {
+        return ttl;
     }
 }

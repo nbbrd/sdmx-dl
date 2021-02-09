@@ -17,9 +17,9 @@
 package internal.sdmxdl.ri.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.util.file.SdmxFileInfo;
 
 import java.io.IOException;
 
@@ -28,13 +28,5 @@ import java.io.IOException;
  */
 public interface SdmxDecoder {
 
-    @NonNull
-    Info decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
-
-    @lombok.Value(staticConstructor = "of")
-    class Info {
-
-        String dataType;
-        DataStructure structure;
-    }
+    @NonNull SdmxFileInfo decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
 }

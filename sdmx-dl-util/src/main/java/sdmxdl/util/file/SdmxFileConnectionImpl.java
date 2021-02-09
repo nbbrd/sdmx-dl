@@ -14,12 +14,13 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.file;
+package sdmxdl.util.file;
 
 import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.util.file.SdmxFileClient;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -35,15 +36,12 @@ import java.util.stream.Stream;
 @lombok.RequiredArgsConstructor
 public final class SdmxFileConnectionImpl implements SdmxFileConnection {
 
-    public interface Resource {
+    @lombok.NonNull
+    private final SdmxFileClient client;
 
-        SdmxDecoder.Info decode() throws IOException;
-
-        DataCursor loadData(SdmxDecoder.Info entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException;
-    }
-
-    private final Resource resource;
+    @lombok.NonNull
     private final Dataflow dataflow;
+
     private boolean closed = false;
 
     @Override
@@ -74,14 +72,14 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     @Override
     public DataStructure getStructure() throws IOException {
         checkState();
-        return resource.decode().getStructure();
+        return client.decode().getStructure();
     }
 
     @Override
     public DataStructure getStructure(DataflowRef flowRef) throws IOException {
         checkState();
         checkFlowRef(flowRef);
-        return resource.decode().getStructure();
+        return client.decode().getStructure();
     }
 
     @Override
@@ -115,7 +113,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         checkState();
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return resource.loadData(resource.decode(), dataflow.getRef(), key, filter);
+        return client.loadData(client.decode(), dataflow.getRef(), key, filter);
     }
 
     @Override
@@ -124,7 +122,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         checkFlowRef(flowRef);
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return resource.loadData(resource.decode(), dataflow.getRef(), key, filter);
+        return client.loadData(client.decode(), dataflow.getRef(), key, filter);
     }
 
     @Override

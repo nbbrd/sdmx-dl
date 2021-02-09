@@ -122,7 +122,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataFilter getFilter() {
-        return DataFilter.ALL.toBuilder().detail(DataFilter.Detail.DATA_ONLY).build();
+        return DataFilter.DATA_ONLY;
     }
 
     private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {

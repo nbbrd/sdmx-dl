@@ -48,7 +48,7 @@ public class SdmxConnectionAssert {
             assertNonnull(s, conn, sample.valid);
             Key key = Key.ALL;
             for (DataFilter.Detail detail : DataFilter.Detail.values()) {
-                DataFilter filter = DataFilter.ALL.toBuilder().detail(detail).build();
+                DataFilter filter = DataFilter.builder().detail(detail).build();
                 DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, key, filter), key, filter);
                 List<Series> data = cursorToSeries(sample.valid, key, filter, conn);
                 s.assertThat(conn.getData(sample.valid, key, filter)).containsExactlyElementsOf(data);
@@ -68,9 +68,9 @@ public class SdmxConnectionAssert {
             s.fail("Subsequent calls to #close must not raise exception", ex);
         }
 
-        assertState(s, supplier, o -> o.getData(sample.valid, Key.ALL, DataFilter.ALL), "getData(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataStream(sample.valid, Key.ALL, DataFilter.ALL), "getDataStream(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataCursor(sample.valid, Key.ALL, DataFilter.ALL), "getDataCursor(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getData(sample.valid, Key.ALL, DataFilter.FULL), "getData(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataStream(sample.valid, Key.ALL, DataFilter.FULL), "getDataStream(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataCursor(sample.valid, Key.ALL, DataFilter.FULL), "getDataCursor(DataflowRef, Key, DataFilter)");
         assertState(s, supplier, o -> o.getStructure(sample.valid), "getStructure(DataflowRef)");
         assertState(s, supplier, o -> o.getFlow(sample.valid), "getFlow(DataflowRef)");
         assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
@@ -78,15 +78,15 @@ public class SdmxConnectionAssert {
 
     @SuppressWarnings("null")
     private void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
-        s.assertThatThrownBy(() -> conn.getDataCursor(null, Key.ALL, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getDataCursor(null, Key.ALL, DataFilter.FULL))
                 .as("Expecting 'getDataCursor(DataflowRef, Key, DataFilter)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getData(null, Key.ALL, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getData(null, Key.ALL, DataFilter.FULL))
                 .as("Expecting 'getData(DataflowRef, Key, DataFilter)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getData(ref, null, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getData(ref, null, DataFilter.FULL))
                 .as("Expecting 'getData(DataflowRef, Key, DataFilter)' to raise NPE when called with null key")
                 .isInstanceOf(NullPointerException.class);
 
@@ -94,11 +94,11 @@ public class SdmxConnectionAssert {
                 .as("Expecting 'getData(DataflowRef, Key, DataFilter)' to raise NPE when called with null query")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(null, Key.ALL, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getDataStream(null, Key.ALL, DataFilter.FULL))
                 .as("Expecting 'getDataStream(DataflowRef, Key, DataFilter)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(ref, null, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getDataStream(ref, null, DataFilter.FULL))
                 .as("Expecting 'getDataStream(DataflowRef, Key, DataFilter)' to raise NPE when called with null key")
                 .isInstanceOf(NullPointerException.class);
 
@@ -106,11 +106,11 @@ public class SdmxConnectionAssert {
                 .as("Expecting 'getDataStream(DataflowRef, Key, DataFilter)' to raise NPE when called with null query")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataCursor(null, Key.ALL, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getDataCursor(null, Key.ALL, DataFilter.FULL))
                 .as("Expecting 'getDataCursor(DataflowRef, Key, DataFilter)' to raise NPE when called with null flowRef")
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataCursor(ref, null, DataFilter.ALL))
+        s.assertThatThrownBy(() -> conn.getDataCursor(ref, null, DataFilter.FULL))
                 .as("Expecting 'getDataCursor(DataflowRef, Key, DataFilter)' to raise NPE when called with null key")
                 .isInstanceOf(NullPointerException.class);
 

@@ -77,7 +77,7 @@ public final class FetchMetaCommand implements Callable<Void> {
     }
 
     private DataFilter getFilter() {
-        return DataFilter.ALL.toBuilder().detail(DataFilter.Detail.NO_DATA).build();
+        return DataFilter.NO_DATA;
     }
 
     private Stream<MetaResult> getMetaResultStream(String dataflow, sdmxdl.Series series) {

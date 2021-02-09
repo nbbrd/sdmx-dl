@@ -11,6 +11,7 @@ module sdmxdl.util {
 
     exports sdmxdl.util;
     exports sdmxdl.util.ext;
+    exports sdmxdl.util.file;
     exports sdmxdl.util.parser;
     exports sdmxdl.util.web;
 

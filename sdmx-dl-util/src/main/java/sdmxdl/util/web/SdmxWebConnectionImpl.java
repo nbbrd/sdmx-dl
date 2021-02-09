@@ -95,7 +95,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
         return isDetailSupported()
                 ? client.getData(new DataRequest(flowRef, key, filter), structure)
-                : client.getData(new DataRequest(flowRef, key, DataFilter.ALL), structure).filter(key, filter);
+                : client.getData(new DataRequest(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
     }
 
     @Override

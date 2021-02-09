@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.web;
 
-import _test.sdmxdl.util.FakeClock;
+import sdmxdl.tck.ext.FakeClock;
 import _test.sdmxdl.util.client.XCallStackWebClient;
 import _test.sdmxdl.util.client.XRepoWebClient;
 import org.junit.Test;
