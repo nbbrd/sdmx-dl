@@ -33,7 +33,7 @@ public final class DebugStructCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebFlowOptions web;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override

@@ -55,7 +55,7 @@ public final class TestCommand implements Callable<Void> {
     )
     private File requests;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override

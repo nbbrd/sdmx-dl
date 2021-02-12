@@ -34,7 +34,7 @@ public final class DebugDataCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebKeyOptions web;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
