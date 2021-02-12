@@ -25,7 +25,6 @@ import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -61,7 +60,6 @@ public final class FetchMetaCommand implements Callable<Void> {
     private CsvTable<MetaResult> getTable() {
         return CsvTable
                 .builderOf(MetaResult.class)
-                .columnOf("Flow", MetaResult::getDataflow, Formatter.onString())
                 .columnOf("Key", MetaResult::getKey, Formatter.onObjectToString())
                 .columnOf("Concept", MetaResult::getConcept, Formatter.onString())
                 .columnOf("Value", MetaResult::getValue, Formatter.onString())
@@ -69,10 +67,9 @@ public final class FetchMetaCommand implements Callable<Void> {
     }
 
     private Stream<MetaResult> getRows() throws IOException {
-        String dataflow = SdmxPicocsvFormatter.toDataflowField(web.getFlow());
         return sort.applySort(web.loadSeries(web.loadManager(), getFilter())
                         .stream()
-                        .flatMap(series -> getMetaResultStream(dataflow, series))
+                        .flatMap(this::getMetaResultStream)
                 , BY_FLOW_KEY_CONCEPT);
     }
 
@@ -80,20 +77,18 @@ public final class FetchMetaCommand implements Callable<Void> {
         return DataFilter.NO_DATA;
     }
 
-    private Stream<MetaResult> getMetaResultStream(String dataflow, sdmxdl.Series series) {
-        return series.getMeta().entrySet().stream().map(o -> new MetaResult(dataflow, series.getKey(), o.getKey(), o.getValue()));
+    private Stream<MetaResult> getMetaResultStream(sdmxdl.Series series) {
+        return series.getMeta().entrySet().stream().map(o -> new MetaResult(series.getKey(), o.getKey(), o.getValue()));
     }
 
     @lombok.Value
     private static class MetaResult {
-        String dataflow;
         Key key;
         String concept;
         String value;
     }
 
     private static final Comparator<MetaResult> BY_FLOW_KEY_CONCEPT = Comparator
-            .comparing(MetaResult::getDataflow)
-            .thenComparing(Comparator.comparing(o -> o.getKey().toString()))
-            .thenComparing(Comparator.comparing(MetaResult::getConcept));
+            .comparing((MetaResult o) -> o.getKey().toString())
+            .thenComparing(MetaResult::getConcept);
 }

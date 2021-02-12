@@ -1,5 +1,6 @@
 package sdmxdl.csv;
 
+import nbbrd.io.text.Parser;
 import nbbrd.io.text.TextParser;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -84,6 +85,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
         }
 
         ObsParser obsParser = factory.getObsParser(dsd);
+        Parser<DataflowRef> refParser = SdmxCsv.getDataflowRefParser();
 
         DataflowRef dataflowRef = DataflowRef.of(null, "", null);
 
@@ -93,7 +95,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             if (!reader.readField()) {
                 throw new IOException("Missing dataflow field");
             }
-            dataflowRef = parseDataflowField(reader.toString());
+            dataflowRef = refParser.parse(reader);
 
             keyBuilder.clear();
             for (int i = 0; i < keyBuilder.size(); i++) {
@@ -133,21 +135,5 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             result.add(reader.toString());
         }
         return result;
-    }
-
-    private static DataflowRef parseDataflowField(String ref) throws IOException {
-        int idx1 = ref.indexOf(':');
-        if (idx1 == -1) {
-            throw new IOException("Invalid DataflowRef");
-        }
-        int idx2 = ref.indexOf('(', idx1);
-        if (idx2 == -1) {
-            throw new IOException("Invalid DataflowRef");
-        }
-        return DataflowRef.of(
-                ref.substring(0, idx1),
-                ref.substring(idx1 + 1, idx2),
-                ref.substring(idx2 + 1, ref.length() - 1)
-        );
     }
 }

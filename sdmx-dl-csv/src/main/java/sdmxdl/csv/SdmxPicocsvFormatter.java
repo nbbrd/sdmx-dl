@@ -83,7 +83,7 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
             w.writeEndOfLine();
         }
 
-        String dataflow = toDataflowField(data.getRef());
+        String dataflow = SdmxCsv.getDataflowRefFormatter().formatAsString(data.getRef());
         Formatter<LocalDateTime> periodFormatter = periodFormat.apply(data);
         Formatter<Number> valueFormatter = valueFormat.apply(data);
 
@@ -151,10 +151,6 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
             default:
                 throw new RuntimeException();
         }
-    }
-
-    public static String toDataflowField(DataflowRef ref) {
-        return ref.getAgency() + ":" + ref.getId() + "(" + ref.getVersion() + ")";
     }
 
     private static SortedSet<Dimension> getSortedDimensions(DataStructure dsd) {

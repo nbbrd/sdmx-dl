@@ -77,7 +77,6 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Flow");
         w.writeField("Key");
         w.writeField("TimePeriod");
         w.writeField("Value");
@@ -95,7 +94,7 @@ public final class FetchDataCommand implements Callable<Void> {
         return SdmxPicocsvFormatter
                 .builder()
                 .dsd(dsd)
-                .fields(Arrays.asList(DATAFLOW, SERIESKEY, TIME_DIMENSION, OBS_VALUE))
+                .fields(Arrays.asList(SERIESKEY, TIME_DIMENSION, OBS_VALUE))
                 .ignoreHeader(true)
                 .periodFormat(getPeriodFormat(format))
                 .valueFormat(getValueFormat(format))

@@ -24,6 +24,7 @@ import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
+import sdmxdl.csv.SdmxCsv;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -57,7 +58,7 @@ public final class ListFlowsCommand implements Callable<Void> {
     private CsvTable<Dataflow> getTable() {
         return CsvTable
                 .builderOf(Dataflow.class)
-                .columnOf("Ref", Dataflow::getRef, Formatter.onObjectToString())
+                .columnOf("Ref", Dataflow::getRef, SdmxCsv.getDataflowRefFormatter())
                 .columnOf("Label", Dataflow::getLabel, Formatter.onString())
                 .build();
     }
