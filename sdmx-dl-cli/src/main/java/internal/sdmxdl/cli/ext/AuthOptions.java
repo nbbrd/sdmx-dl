@@ -22,20 +22,24 @@ public class AuthOptions {
             descriptionKey = "cli.user",
             converter = UserConverter.class
     )
-    private PasswordAuthentication user;
+    private PasswordAuthentication user = UserConverter.getNoUser();
 
     private static final class UserConverter implements CommandLine.ITypeConverter<PasswordAuthentication> {
 
         @Override
         public PasswordAuthentication convert(String user) {
-            if (user == null) {
-                return new PasswordAuthentication(null, new char[0]);
+            if (user == null || user.equals("")) {
+                return getNoUser();
             }
             int idx = user.indexOf(':');
             if (idx == -1) {
                 return new PasswordAuthentication(user, new char[0]);
             }
             return new PasswordAuthentication(user.substring(0, idx), user.substring(idx + 1).toCharArray());
+        }
+
+        static PasswordAuthentication getNoUser() {
+            return new PasswordAuthentication(null, new char[0]);
         }
     }
 }

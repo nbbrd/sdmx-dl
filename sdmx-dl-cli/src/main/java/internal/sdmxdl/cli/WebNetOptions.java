@@ -16,10 +16,6 @@
  */
 package internal.sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.AuthOptions;
-import internal.sdmxdl.cli.ext.CacheOptions;
-import internal.sdmxdl.cli.ext.ProxyOptions;
-import internal.sdmxdl.cli.ext.SslOptions;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
@@ -51,25 +47,16 @@ public class WebNetOptions extends WebOptions {
     )
     private LanguagePriorityList langs;
 
-    @CommandLine.Mixin
-    private CacheOptions cacheOptions;
-
-    @CommandLine.Mixin
-    private ProxyOptions proxyOptions;
-
-    @CommandLine.Mixin
-    private SslOptions sslOptions;
-
-    @CommandLine.Mixin
-    private AuthOptions authOptions;
+    @CommandLine.ArgGroup(validate = false, headingKey = "network")
+    private NetworkOptions networkOptions = new NetworkOptions();
 
     @Override
     public SdmxWebManager loadManager() throws IOException {
-        SSLFactory sslFactory = sslOptions.getSSLFactory();
+        SSLFactory sslFactory = networkOptions.getSslOptions().getSSLFactory();
         return super.loadManager()
                 .toBuilder()
                 .languages(langs)
-                .proxySelector(proxyOptions.getProxySelector())
+                .proxySelector(networkOptions.getProxyOptions().getProxySelector())
                 .sslSocketFactory(sslFactory.getSslSocketFactory())
                 .hostnameVerifier(sslFactory.getHostnameVerifier())
                 .cache(getCache())
@@ -78,7 +65,7 @@ public class WebNetOptions extends WebOptions {
     }
 
     private SdmxCache getCache() {
-        return cacheOptions.isNoCache()
+        return networkOptions.getCacheOptions().isNoCache()
                 ? SdmxCache.noOp()
                 : FileCache
                 .builder()
@@ -88,8 +75,8 @@ public class WebNetOptions extends WebOptions {
     }
 
     private SdmxWebAuthenticator getAuthenticator() {
-        PasswordAuthentication user = authOptions.getUser();
-        SdmxWebAuthenticator result = !authOptions.isNoSystemAuth() ? SdmxSystemUtil.getAuthenticatorOrNull(user, this::reportIOException) : null;
+        PasswordAuthentication user = networkOptions.getAuthOptions().getUser();
+        SdmxWebAuthenticator result = !networkOptions.getAuthOptions().isNoSystemAuth() ? SdmxSystemUtil.getAuthenticatorOrNull(user, this::reportIOException) : null;
         return result != null ? result : new CachedAuthenticator(new ConsoleAuthenticator(user), new ConcurrentHashMap<>());
     }
 }

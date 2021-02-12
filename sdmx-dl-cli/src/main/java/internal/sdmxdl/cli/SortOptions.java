@@ -32,7 +32,7 @@ public final class SortOptions {
     @CommandLine.Option(
             names = {"--sort"},
             defaultValue = "false",
-            descriptionKey = "cli.sdmx.sorted"
+            descriptionKey = "cli.sdmx.sort"
     )
     private boolean sort;
 
