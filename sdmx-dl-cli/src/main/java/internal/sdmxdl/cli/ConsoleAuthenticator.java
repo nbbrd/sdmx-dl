@@ -15,6 +15,7 @@ final class ConsoleAuthenticator implements SdmxWebAuthenticator {
     @Override
     public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) {
         Console console = System.console();
+        if (console == null) return null;
         String username = hasUsername() ? user.getUserName() : console.readLine("Enter username: ");
         char[] password = hasPassword() ? user.getPassword() : console.readPassword("Enter password: ");
         return new PasswordAuthentication(username, password);
