@@ -20,13 +20,14 @@ import internal.sdmxdl.Chars;
 import nbbrd.design.Immutable;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.StringValue;
+import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,11 +39,15 @@ import java.util.Map;
 @StringValue
 public final class Key {
 
-    private static final String WILDCARD = "";
-    private static final char CODE_SEP = '.';
-    private static final String ALL_CODE = "all";
+    private static final char SEP_CHAR = '.';
+    private static final char OR_CHAR = '+';
 
-    public static final Key ALL = new Key(new String[]{WILDCARD});
+    private static final String WILDCARD_CODE = "";
+
+    @VisibleForTesting
+    static final String ALL_KEYWORD = "all";
+
+    public static final Key ALL = new Key(new String[]{WILDCARD_CODE});
 
     private final String[] items;
 
@@ -61,16 +66,20 @@ public final class Key {
     }
 
     public boolean isWildcard(@NonNegative int index) throws IndexOutOfBoundsException {
-        return WILDCARD.equals(items[index]);
+        return isWildcardCode(items[index]);
     }
 
-    private boolean isMultiValue(@NonNegative int index) throws IndexOutOfBoundsException {
-        return items[index].contains("+");
+    private boolean isMulti(@NonNegative int index) throws IndexOutOfBoundsException {
+        return isMultiCode(items[index]);
+    }
+
+    private boolean contains(@NonNegative int index, @NonNull String code) throws IndexOutOfBoundsException {
+        return containsCode(items[index], code);
     }
 
     public boolean isSeries() {
         for (int i = 0; i < items.length; i++) {
-            if (isWildcard(i) || isMultiValue(i)) {
+            if (isWildcard(i) || isMulti(i)) {
                 return false;
             }
         }
@@ -81,15 +90,15 @@ public final class Key {
         return contains(series.getKey());
     }
 
-    public boolean contains(@NonNull Key input) {
+    public boolean contains(@NonNull Key that) {
         if (this == ALL) {
             return true;
         }
-        if (size() != input.size()) {
+        if (this.size() != that.size()) {
             return false;
         }
-        for (int i = 0; i < size(); i++) {
-            if (!isWildcard(i) && !get(i).equals(input.get(i))) {
+        for (int i = 0; i < this.size(); i++) {
+            if (!this.isWildcard(i) && !this.contains(i, that.get(i))) {
                 return false;
             }
         }
@@ -102,7 +111,7 @@ public final class Key {
 
     @Override
     public String toString() {
-        return toString(items);
+        return formatToString(items);
     }
 
     @Override
@@ -122,25 +131,25 @@ public final class Key {
     @StaticFactoryMethod
     @NonNull
     public static Key parse(@NonNull CharSequence input) {
-        if (ALL_CODE.contentEquals(input)) {
+        if (ALL_KEYWORD.contentEquals(input)) {
             return ALL;
         }
-        String[] result = Chars.splitToArray(input, CODE_SEP);
+        String[] result = Chars.splitToArray(input, SEP_CHAR);
         for (int i = 0; i < result.length; i++) {
-            result[i] = trimAndFixWildcard(result[i]);
+            result[i] = parseCode(result[i]);
         }
         return new Key(result);
     }
 
     @StaticFactoryMethod
     @NonNull
-    public static Key of(@NonNull Collection<String> input) {
+    public static Key of(@NonNull List<String> input) {
         if (input.isEmpty()) {
             return ALL;
         }
         return new Key(input
                 .stream()
-                .map(Key::trimAndFixWildcard)
+                .map(Key::parseCode)
                 .toArray(String[]::new)
         );
     }
@@ -153,7 +162,7 @@ public final class Key {
         }
         String[] result = new String[input.length];
         for (int i = 0; i < result.length; i++) {
-            result[i] = trimAndFixWildcard(input[i]);
+            result[i] = parseCode(input[i]);
         }
         return new Key(result);
     }
@@ -182,7 +191,7 @@ public final class Key {
         private Builder(Map<String, Integer> index) {
             this.index = index;
             this.items = new String[index.size()];
-            Arrays.fill(items, WILDCARD);
+            Arrays.fill(items, WILDCARD_CODE);
         }
 
         @NonNull
@@ -190,7 +199,7 @@ public final class Key {
             if (id != null) {
                 Integer position = index.get(id);
                 if (position != null) {
-                    items[position] = value != null ? value : WILDCARD;
+                    items[position] = value != null ? value : WILDCARD_CODE;
                 }
             }
             return this;
@@ -198,7 +207,7 @@ public final class Key {
 
         @NonNull
         public Builder clear() {
-            Arrays.fill(items, WILDCARD);
+            Arrays.fill(items, WILDCARD_CODE);
             return this;
         }
 
@@ -213,7 +222,7 @@ public final class Key {
 
         public boolean isSeries() {
             for (String item : items) {
-                if (WILDCARD.equals(item)) {
+                if (WILDCARD_CODE.equals(item)) {
                     return false;
                 }
             }
@@ -226,7 +235,7 @@ public final class Key {
         }
 
         public String toString() {
-            return Key.toString(items);
+            return Key.formatToString(items);
         }
 
         @NonNegative
@@ -235,25 +244,50 @@ public final class Key {
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static String trimAndFixWildcard(String item) {
-        if (item == null) {
-            item = WILDCARD;
-        } else {
-            item = item.trim();
-            switch (item) {
-                case "*":
-                case "+":
-                    item = WILDCARD;
-            }
+    private static String parseCode(String code) {
+        if (code == null) {
+            return WILDCARD_CODE;
         }
-        return item;
+        code = code.trim();
+        switch (code.length()) {
+            case 0:
+                return WILDCARD_CODE;
+            case 1:
+                char c = code.charAt(0);
+                return c == '*' || c == OR_CHAR ? WILDCARD_CODE : code;
+            default:
+                return isMultiCode(code) ? reorderMultiCode(code) : code;
+        }
     }
 
-    private static String toString(String[] items) {
-        return (items.length == 0 || (items.length == 1 && WILDCARD.equals(items[0])))
-                ? ALL_CODE
-                : Chars.join(CODE_SEP, items);
+    private static boolean isWildcardCode(String code) {
+        return WILDCARD_CODE.equals(code);
     }
-    //</editor-fold>
+
+    private static boolean isMultiCode(String code) throws IndexOutOfBoundsException {
+        return Chars.contains(code, OR_CHAR);
+    }
+
+    private static boolean containsCode(String multiCode, String code) throws IndexOutOfBoundsException {
+        int index = multiCode.indexOf(code);
+        if (index == Chars.NOT_FOUND) return false;
+        int left = index - 1;
+        int right = index + code.length();
+        return (left < 0 || multiCode.charAt(left) == OR_CHAR)
+                && (right >= multiCode.length() || multiCode.charAt(right) == OR_CHAR);
+    }
+
+    private static String reorderMultiCode(String multiCode) {
+        String[] result = Chars.splitToArray(multiCode, OR_CHAR);
+        Arrays.sort(result);
+        return String.join(String.valueOf(OR_CHAR), result);
+    }
+
+    private static String formatToString(String[] codes) {
+        return isAll(codes) ? ALL_KEYWORD : Chars.join(SEP_CHAR, codes);
+    }
+
+    private static boolean isAll(String[] codes) {
+        return codes.length == 0 || (codes.length == 1 && isWildcardCode(codes[0]));
+    }
 }
