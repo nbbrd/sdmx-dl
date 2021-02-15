@@ -460,7 +460,7 @@ public class KeyTest {
     }
 
     private static List<String> keyAsList(Key key) {
-        return new AbstractList<>() {
+        return new AbstractList<String>() {
             @Override
             public int size() {
                 return key.size();

@@ -246,7 +246,7 @@ public class Jdk8RestClientTest {
 
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), GENERIC_DATA_21, ANY_LANG))
-                .isInstanceOf(SSLHandshakeException.class);
+                .isInstanceOf(SSLException.class);
     }
 
     @Test
