@@ -274,14 +274,12 @@
                         </executions>
                         <configuration>
                             <imageName>${project.x.fileName}-${project.version}</imageName>
-                            <!-- FIX: connectors: allow-incomplete-classpath -->
                             <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
                             <!-- FIX: sdmx-dl: xml resources -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http
                                 --enable-https
-                                --allow-incomplete-classpath
                                 --report-unsupported-elements-at-runtime
                                 -H:IncludeResources=.*\.xml$
                             </buildArgs>
