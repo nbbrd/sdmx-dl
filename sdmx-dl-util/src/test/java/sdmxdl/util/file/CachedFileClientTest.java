@@ -1,67 +1,99 @@
 package sdmxdl.util.file;
 
-import _test.sdmxdl.util.XCacheAssertions;
+import _test.sdmxdl.util.CachingAssert;
 import _test.sdmxdl.util.XCountingFileClient;
 import _test.sdmxdl.util.XRepoFileClient;
+import nbbrd.io.function.IOConsumer;
+import nbbrd.io.function.IOFunction;
 import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.repo.DataSet;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.ext.FakeClock;
-import sdmxdl.util.ext.ExpiringRepository;
-import sdmxdl.util.ext.MapCache;
+import sdmxdl.samples.RepoSamples;
 
+import java.io.Closeable;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
+import static _test.sdmxdl.util.CachingAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.samples.RepoSamples.*;
+import static sdmxdl.samples.RepoSamples.GOOD_FLOW_REF;
+import static sdmxdl.samples.RepoSamples.REPO;
+import static sdmxdl.tck.DataFilterAssert.filters;
+import static sdmxdl.tck.KeyAssert.keys;
 
 public class CachedFileClientTest {
 
+    private final String base = "abc";
+    private final long ttl = CachedFileClient.DEFAULT_CACHE_TTL.toMillis();
+
+    private CachedFileClient getClient(CachingAssert.Context ctx) {
+        SdmxFileClient original = new XRepoFileClient(REPO);
+        SdmxFileClient counting = new XCountingFileClient(original, ctx.getCount());
+        return new CachedFileClient(counting, ctx.newCache(), base);
+    }
+
+    @FunctionalInterface
+    private interface Method<T> extends IOFunction<CachedFileClient, T> {
+
+        default Consumer<CachedFileClient> andThen(IOConsumer<T> consumer) {
+            return IOConsumer.unchecked(o -> consumer.acceptWithIO(applyWithIO(o)));
+        }
+
+        default Consumer<CachedFileClient> asConsumer() {
+            return IOConsumer.unchecked(this::applyWithIO);
+        }
+    }
+
     @Test
     public void testDecode() throws IOException {
-        XCacheAssertions.Factory factory = (count, map, clock) -> getClient(REPO, count, map, clock)::decode;
-        XCacheAssertions.checkCache(factory, "decode://", CachedFileClient.DEFAULT_CACHE_TTL.toMillis());
+        String decodeKey = "decode://" + base;
+        Method<SdmxFileInfo> method = CachedFileClient::decode;
+
+        checkCacheHit(this::getClient, method.asConsumer(), decodeKey, ttl);
+
+        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
+                .isEqualTo(XRepoFileClient.infoOf(REPO));
     }
 
     @Test
     public void testLoadData() throws IOException {
-        XCacheAssertions.Factory factory = (count, map, clock) -> {
-            CachedFileClient client = getClient(REPO, count, map, clock);
-            SdmxFileInfo info = client.decode();
-            return () -> client.loadData(info, GOOD_FLOW_REF, Key.ALL, DataFilter.SERIES_KEYS_ONLY);
-        };
-        XCacheAssertions.checkCache(factory, "loadData://", CachedFileClient.DEFAULT_CACHE_TTL.toMillis());
+        String loadDataKey = "loadData://" + base;
 
-        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
+        for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
+            for (DataFilter filter : filters(DataFilter.Detail.values())) {
+                Method<DataCursor> method = client -> client.loadData(client.decode(), GOOD_FLOW_REF, key, filter);
 
-        SdmxRepository noData = SdmxRepository.builder().dataSet(dataSetOf(DATA_SET, Key.ALL, DataFilter.NO_DATA)).build();
-        ExpiringRepository expectedEntry = ExpiringRepository.of(0, CachedFileClient.DEFAULT_CACHE_TTL.toMillis(), noData);
+                if (filter.getDetail().isDataRequested()) {
+                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), loadDataKey, ttl);
+                } else {
+                    checkCacheHit(this::getClient, method.andThen(Closeable::close), loadDataKey, ttl);
+                }
 
-        CachedFileClient client = new CachedFileClient(new XRepoFileClient(REPO), MapCache.of(map, new FakeClock().set(0)), "");
-
-        for (Key key : new Key[]{Key.ALL, Key.of("M", "BE", "INDUSTRY"), Key.of("", "BE", "INDUSTRY"), Key.of("A", "BE", "INDUSTRY")}) {
-            try (DataCursor cursor = client.loadData(client.decode(), GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY)) {
-                while (cursor.nextSeries()) {
-                    assertThat(cursor.getSeriesKey()).matches(key::contains);
+                try (DataCursor cursor = method.compose(this::getClient).applyWithIO(new Context())) {
+                    assertThat(cursor.toStream())
+                            .containsExactlyElementsOf(RepoSamples.DATA_SET.getData(key, filter));
                 }
             }
-            assertThat(map).containsEntry("loadData://", expectedEntry);
         }
     }
 
-    private static CachedFileClient getClient(SdmxRepository repo, AtomicInteger count, ConcurrentMap<String, ExpiringRepository> map, FakeClock clock) {
-        return new CachedFileClient(new XCountingFileClient(new XRepoFileClient(repo), count), MapCache.of(map, clock), "");
-    }
+    @Test
+    public void testCopyAllNoData() throws IOException {
+        Context ctx = new Context();
+        CachedFileClient client = getClient(ctx);
 
-    private static DataSet dataSetOf(DataSet dataSet, Key key, DataFilter filter) throws IOException {
-        try (DataCursor cursor = dataSet.getDataCursor(key, filter)) {
-            return DataSet.builder().ref(dataSet.getRef()).copyOf(cursor).build();
-        }
+        SdmxFileInfo info = client.decode();
+        IOConsumer<Key> method = key -> client.loadData(info, GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
+
+        ctx.reset();
+        method.acceptWithIO(Key.ALL);
+        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+        assertThat(ctx.getCount()).hasValue(1);
+
+        ctx.reset();
+        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+        method.acceptWithIO(Key.ALL);
+        assertThat(ctx.getCount()).hasValue(1);
     }
 }

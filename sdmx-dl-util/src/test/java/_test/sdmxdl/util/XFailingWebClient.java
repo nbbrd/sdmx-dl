@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package _test.sdmxdl.util.client;
+package _test.sdmxdl.util;
 
 import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;

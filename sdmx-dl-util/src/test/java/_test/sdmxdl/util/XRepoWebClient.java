@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package _test.sdmxdl.util.client;
+package _test.sdmxdl.util;
 
 import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
@@ -25,6 +25,7 @@ import sdmxdl.util.web.SdmxWebClient;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Philippe Charles
@@ -59,6 +60,8 @@ public final class XRepoWebClient implements SdmxWebClient {
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        Objects.requireNonNull(request);
+        Objects.requireNonNull(dsd);
         return repo.getDataSet(request.getFlowRef())
                 .map(dataSet -> dataSet.getDataCursor(request.getKey(), request.getFilter()))
                 .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), request.getFlowRef()));
@@ -71,6 +74,7 @@ public final class XRepoWebClient implements SdmxWebClient {
 
     @Override
     public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+        Objects.requireNonNull(flowRef);
         return null;
     }
 

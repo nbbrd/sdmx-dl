@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static sdmxdl.tck.DataFilterAssert.filters;
+
 /**
  * @author Philippe Charles
  */
@@ -47,8 +49,7 @@ public class SdmxConnectionAssert {
         try (SdmxConnection conn = supplier.getWithIO()) {
             assertNonnull(s, conn, sample.valid);
             Key key = Key.ALL;
-            for (DataFilter.Detail detail : DataFilter.Detail.values()) {
-                DataFilter filter = DataFilter.builder().detail(detail).build();
+            for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, key, filter), key, filter);
                 List<Series> data = cursorToSeries(sample.valid, key, filter, conn);
                 s.assertThat(conn.getData(sample.valid, key, filter)).containsExactlyElementsOf(data);

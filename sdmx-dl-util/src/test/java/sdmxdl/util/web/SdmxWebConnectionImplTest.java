@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.web;
 
-import _test.sdmxdl.util.client.XRepoWebClient;
+import _test.sdmxdl.util.XRepoWebClient;
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.RepoSamples;

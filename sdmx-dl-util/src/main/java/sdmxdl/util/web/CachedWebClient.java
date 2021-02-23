@@ -37,7 +37,7 @@ final class CachedWebClient implements SdmxWebClient {
     static @NonNull SdmxWebClient of(
             @NonNull SdmxWebClient client, @NonNull SdmxCache cache, long ttlInMillis,
             @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
-        return new CachedWebClient(client, cache, Duration.ofMillis(ttlInMillis), getBase(source, languages));
+        return new CachedWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
     private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
@@ -51,10 +51,10 @@ final class CachedWebClient implements SdmxWebClient {
     private final SdmxCache cache;
 
     @lombok.NonNull
-    private final Duration ttl;
+    private final String base;
 
     @lombok.NonNull
-    private final String base;
+    private final Duration ttl;
 
     @lombok.Getter(lazy = true)
     private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);

@@ -8,6 +8,8 @@ import sdmxdl.samples.RepoSamples;
 
 import java.util.Arrays;
 
+import static sdmxdl.tck.DataFilterAssert.filters;
+
 public class DataCursorApiTest {
 
     @Test
@@ -28,8 +30,7 @@ public class DataCursorApiTest {
 
     @Test
     public void testFilteredCursor() {
-        for (DataFilter.Detail detail : DataFilter.Detail.values()) {
-            DataFilter filter = DataFilter.builder().detail(detail).build();
+        for (DataFilter filter : filters(DataFilter.Detail.values())) {
             DataCursorAssert.assertCompliance(
                     () -> DataCursor.of(Arrays.asList(RepoSamples.SERIES).iterator()).filter(Key.ALL, filter),
                     Key.ALL, filter

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package _test.sdmxdl.util.client;
+package _test.sdmxdl.util;
 
 import sdmxdl.*;
 import sdmxdl.util.web.DataRequest;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class XCallStackWebClient implements SdmxWebClient {
+public final class XCountingWebClient implements SdmxWebClient {
 
     @lombok.NonNull
     private final SdmxWebClient delegate;
