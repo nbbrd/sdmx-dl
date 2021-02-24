@@ -66,7 +66,10 @@ final class CachedWebClient implements SdmxWebClient {
     private final TypedId<DataStructure> idOfStruct = initIdOfStruct(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<DataSet> idOfKeysOnly = initIdOfKeysOnly(base);
+    private final TypedId<DataSet> idOfSeriesKeysOnly = initIdOfSeriesKeysOnly(base);
+
+    @lombok.Getter(lazy = true)
+    private final TypedId<DataSet> idOfNoData = initIdOfNoData(base);
 
     private static TypedId<List<Dataflow>> initIdOfFlows(String base) {
         return TypedId.of("flows://" + base,
@@ -89,8 +92,15 @@ final class CachedWebClient implements SdmxWebClient {
         );
     }
 
-    private static TypedId<DataSet> initIdOfKeysOnly(String base) {
-        return TypedId.of("keys://" + base,
+    private static TypedId<DataSet> initIdOfSeriesKeysOnly(String base) {
+        return TypedId.of("seriesKeysOnly://" + base,
+                repo -> repo.getDataSets().stream().findFirst().orElse(null),
+                dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
+        );
+    }
+
+    private static TypedId<DataSet> initIdOfNoData(String base) {
+        return TypedId.of("noData://" + base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
         );
@@ -119,11 +129,13 @@ final class CachedWebClient implements SdmxWebClient {
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        if (!request.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY)) {
+        if (request.getFilter().getDetail().isDataRequested()) {
             return delegate.getData(request, dsd);
         }
-        return loadKeysOnlyWithCache(request, dsd)
-                .getDataCursor(request.getKey(), request.getFilter());
+        DataSet result = request.getFilter().getDetail().isMetaRequested()
+                ? loadNoDataWithCache(request, dsd)
+                : loadSeriesKeysOnlyWithCache(request, dsd);
+        return result.getDataCursor(request.getKey(), request.getFilter());
     }
 
     @Override
@@ -150,9 +162,14 @@ final class CachedWebClient implements SdmxWebClient {
         return id.load(cache, () -> delegate.getStructure(ref), this::getTtl);
     }
 
-    private DataSet loadKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = getIdOfKeysOnly().with(request.getFlowRef());
-        return id.load(cache, () -> copyDataKeys(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
+    private DataSet loadSeriesKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
+        TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(request.getFlowRef());
+        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
+    }
+
+    private DataSet loadNoDataWithCache(DataRequest request, DataStructure dsd) throws IOException {
+        TypedId<DataSet> id = getIdOfNoData().with(request.getFlowRef());
+        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
@@ -179,7 +196,7 @@ final class CachedWebClient implements SdmxWebClient {
         return key.supersedes(dataSet.getKey());
     }
 
-    private DataSet copyDataKeys(DataRequest request, DataStructure structure) throws IOException {
+    private DataSet copyData(DataRequest request, DataStructure structure) throws IOException {
         try (DataCursor cursor = delegate.getData(request, structure)) {
             return DataSet
                     .builder()

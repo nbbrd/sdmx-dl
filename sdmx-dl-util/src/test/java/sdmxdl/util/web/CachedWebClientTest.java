@@ -48,7 +48,8 @@ public class CachedWebClientTest {
     private final String flowsId = idOf("flows://", base);
     private final String flowId = idOf("flow://", base, GOOD_FLOW_REF);
     private final String structId = idOf("struct://", base, GOOD_STRUCT_REF);
-    private final String keysId = idOf("keys://", base, GOOD_FLOW_REF);
+    private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, GOOD_FLOW_REF);
+    private final String noDataId = idOf("noData://", base, GOOD_FLOW_REF);
 
     private CachedWebClient getClient(CachingAssert.Context ctx) {
         SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
@@ -116,10 +117,15 @@ public class CachedWebClientTest {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<DataCursor> method = client -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT);
 
-                if (filter.getDetail() == DataFilter.Detail.SERIES_KEYS_ONLY) {
-                    checkCacheHit(this::getClient, method.andThen(Closeable::close), keysId, ttl.toMillis());
+                if (filter.getDetail().isDataRequested()) {
+                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
+                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
                 } else {
-                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), keysId, ttl.toMillis());
+                    if (filter.getDetail().isMetaRequested()) {
+                        checkCacheHit(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
+                    } else {
+                        checkCacheHit(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
+                    }
                 }
 
                 try (DataCursor cursor = method.compose(this::getClient).applyWithIO(new Context())) {
@@ -135,16 +141,18 @@ public class CachedWebClientTest {
         Context ctx = new Context();
         CachedWebClient client = getClient(ctx);
 
-        IOConsumer<Key> method = key -> client.getData(new DataRequest(GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY), STRUCT).close();
+        for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
+            IOConsumer<Key> method = key -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT).close();
 
-        ctx.reset();
-        method.acceptWithIO(Key.ALL);
-        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
-        assertThat(ctx.getCount()).hasValue(1);
+            ctx.reset();
+            method.acceptWithIO(Key.ALL);
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(1);
 
-        ctx.reset();
-        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
-        method.acceptWithIO(Key.ALL);
-        assertThat(ctx.getCount()).hasValue(2);
+            ctx.reset();
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            method.acceptWithIO(Key.ALL);
+            assertThat(ctx.getCount()).hasValue(2);
+        }
     }
 }
