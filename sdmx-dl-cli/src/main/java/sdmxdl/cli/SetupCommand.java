@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "setup",
         subcommands = {
-                GenerateCompletion.class,
+//                GenerateCompletion.class,
                 GenerateLauncher.class
         }
 )

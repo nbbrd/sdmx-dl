@@ -36,7 +36,7 @@ import java.util.concurrent.Callable;
         versionProvider = MainCommand.ManifestVersionProvider.class,
         scope = CommandLine.ScopeType.INHERIT,
         sortOptions = false,
-//        mixinStandardHelpOptions = true,
+        mixinStandardHelpOptions = true,
         descriptionHeading = "%n",
         parameterListHeading = "%nParameters:%n",
         optionListHeading = "%nOptions:%n",
