@@ -75,7 +75,7 @@ public class SdmxFileManager implements SdmxManager {
     public SdmxFileConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
         SdmxFileSource source = getSource(name)
-                .orElseThrow(() -> new IOException(name));
+                .orElseThrow(() -> new IOException("Cannot find source for name '" + name + "'"));
         return getConnection(source);
     }
 
@@ -83,7 +83,7 @@ public class SdmxFileManager implements SdmxManager {
     public SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
         Objects.requireNonNull(source);
         SdmxFileReader reader = getReader(source)
-                .orElseThrow(() -> new IOException(source.toString()));
+                .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
         return reader.read(source, getContext());
     }
 

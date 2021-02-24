@@ -45,6 +45,13 @@ public class WebOptions {
     )
     private File sourcesFile;
 
+    @CommandLine.Option(
+            names = {"--no-log"},
+            defaultValue = "false",
+            hidden = true
+    )
+    private boolean noLog;
+
     public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
@@ -54,9 +61,10 @@ public class WebOptions {
     }
 
     private SdmxWebListener getEventListener() {
+        SdmxWebListener original = isNoLog() ? SdmxWebListener.noOp() : SdmxWebListener.getDefault();
         return verboseOptions.isVerbose()
-                ? new VerboseWebListener(SdmxWebListener.getDefault(), verboseOptions)
-                : SdmxWebListener.getDefault();
+                ? new VerboseWebListener(original, verboseOptions)
+                : original;
     }
 
     private List<SdmxWebSource> parseCustomSources() throws IOException {

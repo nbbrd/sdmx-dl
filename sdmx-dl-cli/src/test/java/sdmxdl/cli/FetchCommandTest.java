@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FetchCommandTest {
 
     @Test
-    public void test() {
+    public void testHelp() {
         CommandLine cmd = new CommandLine(new FetchCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
