@@ -37,9 +37,9 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "ping")
+@CommandLine.Command(name = "status")
 @SuppressWarnings("FieldMayBeFinal")
-public final class PingCommand implements Callable<Void> {
+public final class CheckStatusCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourcesOptions web;
@@ -65,7 +65,7 @@ public final class PingCommand implements Callable<Void> {
                 .builderOf(PingResult.class)
                 .columnOf("Source", PingResult::getSource, Formatter.onString())
                 .columnOf("State", PingResult::isSuccess, o -> o ? "OK" : "KO")
-                .columnOf("DurationInMillis", PingResult::getDuration, PingCommand::formatDuration)
+                .columnOf("DurationInMillis", PingResult::getDuration, CheckStatusCommand::formatDuration)
                 .columnOf("ErrorMessage", PingResult::getCause, Formatter.onString())
                 .build();
     }

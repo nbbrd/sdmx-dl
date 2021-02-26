@@ -42,7 +42,7 @@ public class FetchKeysCommandTest {
         assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Key", atIndex(0))
+                .contains("Series", atIndex(0))
                 .contains("A.GBR.1.0.319.0.UBLGE", atIndex(25))
                 .hasSize(121);
     }

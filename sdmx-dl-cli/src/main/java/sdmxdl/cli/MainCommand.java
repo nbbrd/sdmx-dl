@@ -45,7 +45,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 FetchCommand.class,
                 ListCommand.class,
-                PingCommand.class,
+                CheckCommand.class,
                 SetupCommand.class,
                 TestCommand.class,
                 DebugCommand.class

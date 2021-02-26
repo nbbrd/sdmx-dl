@@ -13,14 +13,14 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class PingCommandTest {
+public class CheckStatusCommandTest {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
     @Test
     public void testHelp() {
-        CommandLine cmd = new CommandLine(new PingCommand());
+        CommandLine cmd = new CommandLine(new CheckStatusCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.USAGE);
@@ -30,7 +30,7 @@ public class PingCommandTest {
 
     @Test
     public void testContent() throws IOException {
-        CommandLine cmd = new CommandLine(new PingCommand());
+        CommandLine cmd = new CommandLine(new CheckStatusCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);

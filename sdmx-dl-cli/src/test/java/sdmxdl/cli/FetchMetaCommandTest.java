@@ -42,7 +42,7 @@ public class FetchMetaCommandTest {
         assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Key,Concept,Value", atIndex(0))
+                .contains("Series,Concept,Value", atIndex(0))
                 .contains("A.DEU.1.0.319.0.UBLGE,EXT_UNIT,Percentage of GDP at market prices (excessive deficit procedure)", atIndex(2))
                 .hasSize(4);
     }
