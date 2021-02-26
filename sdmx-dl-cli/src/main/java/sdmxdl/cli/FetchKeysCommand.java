@@ -59,7 +59,7 @@ public final class FetchKeysCommand implements Callable<Void> {
     private CsvTable<Series> getTable() {
         return CsvTable
                 .builderOf(Series.class)
-                .columnOf("Key", Series::getKey, Formatter.onObjectToString())
+                .columnOf("Series", Series::getKey, Formatter.onObjectToString())
                 .build();
     }
 

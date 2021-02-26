@@ -77,9 +77,9 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private void writeHead(Csv.Writer w) throws IOException {
-        w.writeField("Key");
-        w.writeField("TimePeriod");
-        w.writeField("Value");
+        w.writeField("Series");
+        w.writeField("ObsPeriod");
+        w.writeField("ObsValue");
         w.writeEndOfLine();
     }
 
