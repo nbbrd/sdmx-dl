@@ -30,9 +30,9 @@ import java.time.Duration;
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.Value
-public class PingResult {
+public class WebStatus {
 
-    public static @NonNull PingResult of(@NonNull SdmxWebManager manager, @NonNull String source) {
+    public static @NonNull WebStatus of(@NonNull SdmxWebManager manager, @NonNull String source) {
         try (final SdmxWebConnection conn = manager.getConnection(source)) {
             return success(source, conn.ping());
         } catch (IOException ex) {
@@ -40,12 +40,12 @@ public class PingResult {
         }
     }
 
-    public static @NonNull PingResult success(@NonNull String source, @NonNull Duration duration) {
-        return new PingResult(source, duration, null);
+    public static @NonNull WebStatus success(@NonNull String source, @NonNull Duration duration) {
+        return new WebStatus(source, duration, null);
     }
 
-    public static @NonNull PingResult failure(@NonNull String source, @NonNull IOException cause) {
-        return new PingResult(source, null, cause.getMessage());
+    public static @NonNull WebStatus failure(@NonNull String source, @NonNull IOException cause) {
+        return new WebStatus(source, null, cause.getMessage());
     }
 
     @lombok.NonNull

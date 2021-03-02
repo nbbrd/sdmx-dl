@@ -17,7 +17,7 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.Excel;
-import internal.sdmxdl.cli.PingResult;
+import internal.sdmxdl.cli.WebStatus;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
@@ -60,21 +60,21 @@ public final class CheckStatusCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<PingResult> getTable() {
+    private CsvTable<WebStatus> getTable() {
         return CsvTable
-                .builderOf(PingResult.class)
-                .columnOf("Source", PingResult::getSource, Formatter.onString())
-                .columnOf("State", PingResult::isSuccess, o -> o ? "OK" : "KO")
-                .columnOf("DurationInMillis", PingResult::getDuration, CheckStatusCommand::formatDuration)
-                .columnOf("ErrorMessage", PingResult::getCause, Formatter.onString())
+                .builderOf(WebStatus.class)
+                .columnOf("Source", WebStatus::getSource, Formatter.onString())
+                .columnOf("State", WebStatus::isSuccess, o -> o ? "OK" : "KO")
+                .columnOf("DurationInMillis", WebStatus::getDuration, CheckStatusCommand::formatDuration)
+                .columnOf("ErrorMessage", WebStatus::getCause, Formatter.onString())
                 .build();
     }
 
-    private Stream<PingResult> getRows() throws IOException {
+    private Stream<WebStatus> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
         ProxyOptions.warmupProxySelector(manager.getProxySelector());
         Stream<String> sources = web.isAllSources() ? getAllSourceNames(manager) : web.getSources().stream();
-        return sort.applySort(web.applyParallel(sources).map(sourceName -> PingResult.of(manager, sourceName)), BY_SOURCE);
+        return sort.applySort(web.applyParallel(sources).map(sourceName -> WebStatus.of(manager, sourceName)), BY_SOURCE);
     }
 
     private static Stream<String> getAllSourceNames(SdmxWebManager manager) {
@@ -90,5 +90,5 @@ public final class CheckStatusCommand implements Callable<Void> {
         return o != null ? String.valueOf(o.toMillis()) : null;
     }
 
-    private static final Comparator<PingResult> BY_SOURCE = Comparator.comparing(PingResult::getSource);
+    private static final Comparator<WebStatus> BY_SOURCE = Comparator.comparing(WebStatus::getSource);
 }

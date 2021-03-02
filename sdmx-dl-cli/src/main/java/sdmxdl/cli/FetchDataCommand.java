@@ -59,11 +59,11 @@ public final class FetchDataCommand implements Callable<Void> {
     private static class ExtObsFormatOptions extends ObsFormatOptions {
 
         @CommandLine.Option(
-                names = "--relax-time-period",
+                names = "--relax-time",
                 defaultValue = "false",
                 description = "Use date pattern if time is not necessary."
         )
-        private boolean relaxTimePeriod;
+        private boolean relaxTime;
     }
 
     @CommandLine.Mixin
@@ -106,7 +106,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ExtObsFormatOptions format) {
-        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(!format.isRelaxTimePeriod() || Frequency.getHighest(dataSet.getData()).hasTime()));
+        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(!format.isRelaxTime() || Frequency.getHighest(dataSet.getData()).hasTime()));
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
