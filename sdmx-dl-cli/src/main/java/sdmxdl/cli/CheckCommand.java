@@ -26,7 +26,8 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "check",
         subcommands = {
-                CheckStatusCommand.class
+                CheckStatusCommand.class,
+                CheckPropertiesCommand.class
         }
 )
 public final class CheckCommand implements Callable<Void> {
