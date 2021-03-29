@@ -39,4 +39,7 @@ public class Series {
     @lombok.NonNull
     @lombok.Singular("obs")
     Collection<Obs> obs;
+
+    public static final class Builder {
+    }
 }

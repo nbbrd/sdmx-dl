@@ -98,6 +98,9 @@ public class HttpRest {
                     .decoder(HttpRest.StreamDecoder.gzip())
                     .decoder(HttpRest.StreamDecoder.deflate());
         }
+
+        public static final class Builder {
+        }
     }
 
     public interface Response extends Closeable {

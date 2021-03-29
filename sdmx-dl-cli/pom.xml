@@ -13,6 +13,10 @@
     <artifactId>sdmx-dl-cli</artifactId>
     <packaging>jar</packaging>
 
+    <name>sdmx-dl-cli</name>
+    <description>Download data from remote SDMX servers - CLI</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
     <properties>
         <!-- dependencies -->
         <demetra-io.version>be695d469dc7e4d61fc9710c7d91b3f9a865f2e7</demetra-io.version>
@@ -50,26 +54,32 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-kryo</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-xml</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-sys</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-testing</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-csv</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>info.picocli</groupId>
@@ -105,11 +115,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-connectors</artifactId>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-ri</artifactId>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -133,6 +145,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -198,9 +211,58 @@
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>bin</shadedClassifierName>
-                    <shadedArtifactId>${project.x.fileName}</shadedArtifactId>
-                    <outputDirectory>${project.x.binaries}</outputDirectory>
                 </configuration>
+            </plugin>
+
+            <!-- Copies files to binaries -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.x.binaries}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>*-bin.jar</include>
+                                        <include>*-bin.jar.asc</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Renames binaries -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <move todir="${project.x.binaries}">
+                                    <fileset dir="${project.x.binaries}">
+                                        <include name="**/${project.artifactId}-*"/>
+                                    </fileset>
+                                    <mapper type="glob" from="${project.artifactId}-*" to="${project.x.fileName}-*"/>
+                                </move>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Generates SHA256 on binaries -->
@@ -210,7 +272,7 @@
                 <version>1.9</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>files</goal>
                         </goals>
@@ -225,20 +287,11 @@
                             <directory>${project.x.binaries}</directory>
                             <excludes>
                                 <exclude>*.sha256</exclude>
+                                <exclude>*.asc</exclude>
                             </excludes>
                         </fileSet>
                     </fileSets>
                     <csvSummary>false</csvSummary>
-                </configuration>
-            </plugin>
-
-            <!-- Skip Maven deploy -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

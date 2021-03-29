@@ -13,6 +13,10 @@
     <artifactId>sdmx-dl-sys</artifactId>
     <packaging>jar</packaging>
 
+    <name>sdmx-dl-sys</name>
+    <description>Download data from remote SDMX servers - System</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -30,6 +34,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.tuupertunut</groupId>
@@ -55,6 +60,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

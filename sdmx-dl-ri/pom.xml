@@ -12,6 +12,10 @@
     <artifactId>sdmx-dl-ri</artifactId>
     <packaging>jar</packaging>
 
+    <name>sdmx-dl-ri</name>
+    <description>Download data from remote SDMX servers - RI</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -39,14 +43,17 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-util</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-xml</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test only -->
@@ -58,6 +65,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

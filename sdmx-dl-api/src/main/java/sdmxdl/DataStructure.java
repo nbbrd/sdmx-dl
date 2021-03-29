@@ -64,4 +64,7 @@ public class DataStructure extends Resource<DataStructureRef> {
      */
     @lombok.NonNull
     String label;
+
+    public static final class Builder {
+    }
 }

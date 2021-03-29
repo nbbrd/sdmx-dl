@@ -13,6 +13,10 @@
     <artifactId>sdmx-dl-kryo</artifactId>
     <packaging>jar</packaging>
 
+    <name>sdmx-dl-kryo</name>
+    <description>Download data from remote SDMX servers - Kryo</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
     <dependencies>
         <!-- compile only -->
 
@@ -20,10 +24,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-util</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>
@@ -40,6 +46,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

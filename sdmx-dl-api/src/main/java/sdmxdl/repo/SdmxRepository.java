@@ -85,6 +85,9 @@ public class SdmxRepository {
                 .findFirst();
     }
 
+    public static final class Builder {
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static final class RepoConnection implements SdmxConnection {
 

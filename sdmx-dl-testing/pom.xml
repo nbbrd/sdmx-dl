@@ -13,6 +13,10 @@
     <artifactId>sdmx-dl-testing</artifactId>
     <packaging>jar</packaging>
 
+    <name>sdmx-dl-testing</name>
+    <description>Download data from remote SDMX servers - Testing</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -30,6 +34,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>
