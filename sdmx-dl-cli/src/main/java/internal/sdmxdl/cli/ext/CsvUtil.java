@@ -34,7 +34,7 @@ public class CsvUtil {
     private <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {
         try {
             StringWriter result = new StringWriter();
-            try (Csv.Writer w = Csv.Writer.of(result, csvFormat)) {
+            try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
                 while (iterator.hasNext()) {
                     w.writeField(itemFormatter.format(iterator.next()));
                 }
@@ -52,7 +52,7 @@ public class CsvUtil {
     private <K, V> CharSequence formatEntry(Map.Entry<K, V> entry, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
         try {
             StringWriter result = new StringWriter();
-            try (Csv.Writer w = Csv.Writer.of(result, csvFormat)) {
+            try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
                 w.writeField(keyFormatter.format(entry.getKey()));
                 w.writeField(valueFormatter.format(entry.getValue()));
             }

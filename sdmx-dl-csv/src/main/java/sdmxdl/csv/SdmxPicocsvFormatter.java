@@ -7,9 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -45,14 +43,14 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
 
     @Override
     public void formatWriter(@NonNull DataSet data, @NonNull Writer writer) throws IOException {
-        try (Csv.Writer csv = Csv.Writer.of(writer, format)) {
+        try (Csv.Writer csv = Csv.Writer.of(format, Csv.WriterOptions.DEFAULT, writer, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             format(data, csv);
         }
     }
 
     @Override
     public void formatStream(@NonNull DataSet data, @NonNull OutputStream outputStream, @NonNull Charset charset) throws IOException {
-        try (Csv.Writer csv = Csv.Writer.of(outputStream, charset, format)) {
+        try (Csv.Writer csv = Csv.Writer.of(format, Csv.WriterOptions.DEFAULT, new BufferedWriter(new OutputStreamWriter(outputStream, charset)), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             format(data, csv);
         }
     }

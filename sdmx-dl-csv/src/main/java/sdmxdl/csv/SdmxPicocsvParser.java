@@ -9,9 +9,7 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.repo.DataSet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.function.Function;
@@ -32,7 +30,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Csv.Parsing parsing = Csv.Parsing.STRICT;
+    private final Csv.ReaderOptions parsing = Csv.ReaderOptions.DEFAULT;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -40,14 +38,14 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
 
     @Override
     public @NonNull DataSet parseReader(@NonNull Reader reader) throws IOException {
-        try (Csv.Reader csv = Csv.Reader.of(reader, format, parsing)) {
+        try (Csv.Reader csv = Csv.Reader.of(format, parsing, reader, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             return parse(csv);
         }
     }
 
     @Override
     public @NonNull DataSet parseStream(@NonNull InputStream inputStream, @NonNull Charset charset) throws IOException {
-        try (Csv.Reader csv = Csv.Reader.of(inputStream, charset, format, parsing)) {
+        try (Csv.Reader csv = Csv.Reader.of(format, parsing, new BufferedReader(new InputStreamReader(inputStream, charset)), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             return parse(csv);
         }
     }

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>be.nbb.rd</groupId>
+        <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
@@ -41,34 +41,34 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-design-util</groupId>
             <artifactId>java-design-processor</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <!-- compile and runtime -->
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-kryo</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-xml</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-sys</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-testing</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-csv</artifactId>
         </dependency>
         <dependency>
@@ -81,19 +81,19 @@
             <version>1.2.0</version>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-net-proxy</groupId>
             <artifactId>java-net-proxy</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>io.github.hakky54.sslcontext-kickstart</groupId>
+            <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
             <version>6.6.0</version>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-console-properties</groupId>
             <artifactId>java-console-properties</artifactId>
-            <version>1.3.1</version>
+            <version>1.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -103,12 +103,12 @@
 
         <!-- runtime only -->
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-connectors</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-ri</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -119,7 +119,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-io-util</groupId>
             <artifactId>java-io-win</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -131,7 +131,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
             <scope>test</scope>
         </dependency>

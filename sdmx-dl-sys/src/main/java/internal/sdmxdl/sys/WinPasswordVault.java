@@ -68,7 +68,7 @@ public final class WinPasswordVault implements Closeable {
     }
 
     private static PasswordCredential parse(String csv) throws IOException {
-        try (Csv.Reader reader = Csv.Reader.of(new StringReader(csv), Csv.Format.DEFAULT, Csv.Parsing.STRICT)) {
+        try (Csv.Reader reader = Csv.Reader.of(Csv.Format.DEFAULT, Csv.ReaderOptions.DEFAULT, new StringReader(csv), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             if (reader.readLine() && reader.readLine()) {
                 if (reader.readField()) {
                     String resource = reader.toString();
