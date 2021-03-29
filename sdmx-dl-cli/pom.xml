@@ -88,7 +88,7 @@
         <dependency>
             <groupId>io.github.hakky54.sslcontext-kickstart</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>6.5.0</version>
+            <version>6.6.0</version>
         </dependency>
         <dependency>
             <groupId>be.nbb.rd</groupId>
