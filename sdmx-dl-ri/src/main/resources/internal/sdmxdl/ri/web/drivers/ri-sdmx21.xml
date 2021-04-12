@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <sources>
     <source>
+        <name>BIS</name>
+        <description>Bank for International Settlements</description>
+        <driver>ri:sdmx21</driver>
+        <endpoint>https://stats.bis.org/api/v1</endpoint>
+        <property key="detailSupported" value="true"/>
+        <website>https://stats.bis.org/statx/toc/LBS.html</website>
+    </source>
+    <source>
         <name>ECB</name>
         <description>European Central Bank</description>
         <driver>ri:sdmx21</driver>
