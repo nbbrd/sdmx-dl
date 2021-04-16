@@ -18,10 +18,6 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
-        <!-- dependencies -->
-        <demetra-io.version>be695d469dc7e4d61fc9710c7d91b3f9a865f2e7</demetra-io.version>
-
-        <!-- binaries -->
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
         <project.x.fileName>sdmx-dl</project.x.fileName>
         <project.x.binaries>${project.basedir}/../binaries</project.x.binaries>
