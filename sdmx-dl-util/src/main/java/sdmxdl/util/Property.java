@@ -26,10 +26,11 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public class Property<T> {
+public class Property<T> implements CharSequence {
 
     @lombok.NonNull
     @lombok.Getter
+    @lombok.experimental.Delegate(types = CharSequence.class)
     private final String key;
 
     private final T defaultValue;
@@ -42,5 +43,10 @@ public class Property<T> {
         if (value == null) return defaultValue;
         T result = parser.parse(value.toString());
         return result != null ? result : defaultValue;
+    }
+
+    @Override
+    public String toString() {
+        return key;
     }
 }

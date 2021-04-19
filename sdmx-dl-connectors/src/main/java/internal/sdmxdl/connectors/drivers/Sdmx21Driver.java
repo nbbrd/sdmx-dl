@@ -19,16 +19,12 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
-import sdmxdl.xml.XmlWebSource;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 import static internal.sdmxdl.connectors.Connectors.*;
@@ -40,23 +36,94 @@ import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 @ServiceProvider(SdmxWebDriver.class)
 public final class Sdmx21Driver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_SDMX_21 = "connectors:sdmx21";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:sdmx21")
+            .name(CONNECTORS_SDMX_21)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(Sdmx21Client::new, "SDMX21"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY.getKey())
-            .supportedProperty(NEEDS_URL_ENCODING_PROPERTY.getKey())
-            .supportedProperty(SUPPORTS_COMPRESSION_PROPERTY.getKey())
-            .supportedProperty(DETAIL_SUPPORTED_PROPERTY.getKey())
-            .sources(IOSupplier.unchecked(Sdmx21Driver::getSources).get())
+            .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
+            .supportedPropertyOf(NEEDS_URL_ENCODING_PROPERTY)
+            .supportedPropertyOf(SUPPORTS_COMPRESSION_PROPERTY)
+            .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("BIS")
+                    .description("Bank for International Settlements")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://stats.bis.org/api/v1")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ECB")
+                    .description("European Central Bank")
+                    .driver(CONNECTORS_SDMX_21)
+                    .dialect("ECB2020")
+                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
+                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://sdw.ecb.europa.eu")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("IMF_SDMX_CENTRAL")
+                    .description("International Monetary Fund SDMX Central")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
+                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://data.imf.org")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("INEGI")
+                    .description("Instituto Nacional de Estadistica y Geografia")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://sdmx.snieg.mx/service/Rest")
+                    .websiteOf("https://sdmx.snieg.mx")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ISTAT")
+                    .description("Istituto Nazionale di Statistica")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("http://sdmx.istat.it/SDMXWS/rest")
+                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://www.istat.it/en/analysis-and-products")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("UNDATA")
+                    .description("Data access system to UN databases")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://data.un.org/WS/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://data.un.org/SdmxBrowser/start")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("WB")
+                    .description("World Bank")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
+                    .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
+                    .websiteOf("https://data.worldbank.org")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("WITS")
+                    .description("World Integrated Trade Solutions")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
+                    .websiteOf("https://wits.worldbank.org")
+                    .build())
             .build();
-
-    private static List<SdmxWebSource> getSources() throws IOException {
-        return XmlWebSource.getParser().parseResource(Sdmx21Driver.class, "connectors-sdmx21.xml");
-    }
 
     private final static class Sdmx21Client extends RestSdmxClient implements HasDetailSupported {
 

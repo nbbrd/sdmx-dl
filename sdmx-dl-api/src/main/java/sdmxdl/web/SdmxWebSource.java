@@ -82,9 +82,9 @@ public class SdmxWebSource {
         }
 
         @NonNull
-        public Builder propertyOf(@NonNull String key, @NonNull Object value) {
+        public Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             Objects.requireNonNull(key);
-            return property(key, value.toString());
+            return property(key.toString(), value.toString());
         }
 
         @NonNull

@@ -29,10 +29,12 @@ import sdmxdl.web.spi.SdmxWebDriver;
 @ServiceProvider(SdmxWebDriver.class)
 public final class EurostatDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_EUROSTAT = "connectors:eurostat";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:eurostat")
+            .name(CONNECTORS_EUROSTAT)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(EUROSTAT::new, "SDMX21"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
@@ -41,7 +43,7 @@ public final class EurostatDriver implements SdmxWebDriver {
                     .name("ESTAT")
                     .alias("EUROSTAT")
                     .description("Eurostat")
-                    .driver("connectors:eurostat")
+                    .driver(CONNECTORS_EUROSTAT)
                     .endpointOf("http://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .build())

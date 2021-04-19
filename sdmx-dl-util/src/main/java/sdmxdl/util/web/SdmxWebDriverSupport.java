@@ -91,6 +91,11 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint, @Nullable String website) {
             return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).websiteOf(website).build());
         }
+
+        @NonNull
+        public Builder supportedPropertyOf(@NonNull CharSequence property) {
+            return supportedProperty(property.toString());
+        }
     }
 
     public static void checkSource(@NonNull SdmxWebSource source, @NonNull String name) throws IllegalArgumentException {
