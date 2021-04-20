@@ -2,87 +2,92 @@
 <testsuite>
     <source name="ABS" minFlows="361">
         <flow ref="ABS_REGIONAL_ASGS" dims="4">
-            <data key="BANKRUPT_2.AUS.0.A" minSeries="1" minObs="3" />
+            <data key="BANKRUPT_2.AUS.0.A" minSeries="1" minObs="3"/>
         </flow>
     </source>
     <source name="BIS" minFlows="19">
         <flow ref="BISWEB_EERDATAFLOW" dims="4">
-            <data key="M.N.B.AE" minSeries="1" minObs="326" />
+            <data key="M.N.B.AE" minSeries="1" minObs="326"/>
         </flow>
     </source>
     <source name="ECB" minFlows="156">
         <flow ref="ICPF" dims="13">
-            <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8" />
+            <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8"/>
         </flow>
     </source>
     <source name="ESTAT" minFlows="6283">
-        <flow ref="teibp051" dims="7" >
-            <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12" />
+        <flow ref="teibp051" dims="7">
+            <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
         </flow>
     </source>
     <source name="ILO" minFlows="421">
         <flow ref="DF_CP_ALL_EAP_DWAF_NOC_RT" dims="5">
-            <data key="CP.AGO.A.13366.EAP_DWAF_RT" minSeries="1" minObs="1" />
+            <data key="CP.AGO.A.13366.EAP_DWAF_RT" minSeries="1" minObs="1"/>
         </flow>
     </source>
     <source name="IMF" minFlows="120">
         <flow ref="DS-BOPAGG" dims="3">
-            <data key="A.US.BK_CD_BP6_USD" minSeries="1" minObs="4" />
+            <data key="A.US.BK_CD_BP6_USD" minSeries="1" minObs="4"/>
         </flow>
     </source>
     <source name="IMF_SDMX_CENTRAL" minFlows="125">
-        <flow ref="IMF,SBS,1.0" dims="5" >
-            <data key="SBS.AT.NS_CB_AC_EUR._Z.Q" minSeries="1" minObs="46" />
+        <flow ref="IMF,SBS,1.0" dims="5">
+            <data key="SBS.AT.NS_CB_AC_EUR._Z.Q" minSeries="1" minObs="46"/>
         </flow>
     </source>
     <source name="INEGI" minFlows="3">
         <flow ref="INEGI,DF_STES,1.0" dims="6">
-            <data key="M.MX.SLRTCR03.ST.NSA.RG" minSeries="1" minObs="320" />
+            <data key="M.MX.SLRTCR03.ST.NSA.RG" minSeries="1" minObs="320"/>
         </flow>
     </source>
     <source name="INSEE" minFlows="151">
-        <flow ref="IPI-2010" dims="9" >
-            <data key="M.IPI.MIG_CAG.SO.INDICE.FM.SO.BRUT.2010" minSeries="1" minObs="332" />
+        <flow ref="IPI-2010" dims="9">
+            <data key="M.IPI.MIG_CAG.SO.INDICE.FM.SO.BRUT.2010" minSeries="1" minObs="332"/>
         </flow>
     </source>
     <source name="ISTAT" minFlows="388">
-        <flow ref="12_60" dims="3" >
-            <data key="A.IT.ACQ_IMM" minSeries="1" minObs="4" />
+        <flow ref="12_60" dims="3">
+            <data key="A.IT.ACQ_IMM" minSeries="1" minObs="4"/>
+        </flow>
+    </source>
+    <source name="NB" minFlows="9">
+        <flow ref="EXR" dims="4">
+            <data key="A.AUD.NOK.SP" minSeries="1" minObs="40"/>
         </flow>
     </source>
     <source name="NBB" minFlows="124">
         <flow ref="EXR" dims="2">
-            <data key="AUD.M" minSeries="1" minObs="225" />
+            <data key="AUD.M" minSeries="1" minObs="225"/>
         </flow>
     </source>
     <source name="OECD" minFlows="1197">
         <flow ref="G20_PRICES" dims="4">
-            <data key="CAN.CPALTT01.IXOB.M" minSeries="1" minObs="825" />
+            <data key="CAN.CPALTT01.IXOB.M" minSeries="1" minObs="825"/>
         </flow>
     </source>
     <source name="SE" minFlows="4089">
-        <flow ref="RAA0012" dims="3" >
-            <data key="1.1.1" minSeries="1" minObs="23" />
+        <flow ref="RAA0012" dims="3">
+            <data key="1.1.1" minSeries="1" minObs="23"/>
         </flow>
     </source>
     <source name="UIS" minFlows="9">
-        <flow ref="SCN_DS" dims="2" >
-            <data key="20000.AGO" minSeries="1" minObs="1" />
+        <flow ref="SCN_DS" dims="2">
+            <data key="20000.AGO" minSeries="1" minObs="1"/>
         </flow>
     </source>
     <source name="UNDATA" minFlows="7">
-        <flow ref="DF_UNDATA_COUNTRYDATA" dims="8" >
-            <data key="A.AG_PRD_FISH.T.T.NA.NA.KHM.NA" minSeries="1" minObs="20" />
+        <flow ref="DF_UNDATA_COUNTRYDATA" dims="8">
+            <data key="A.AG_PRD_FISH.T.T.NA.NA.KHM.NA" minSeries="1" minObs="20"/>
         </flow>
     </source>
     <source name="WB" minFlows="1">
-        <flow ref="WDI" dims="3" >
-            <data key="A.AG_AGR_TRAC_NO.AUS" minSeries="1" minObs="57" />
+        <flow ref="WDI" dims="3">
+            <data key="A.AG_AGR_TRAC_NO.AUS" minSeries="1" minObs="57"/>
         </flow>
     </source>
     <source name="WITS" minFlows="4">
-        <flow ref="DF_WITS_Tariff_TRAINS" dims="5" >
-            <data key="A.068.000.250490.Reported" minSeries="1" minObs="24" />
+        <flow ref="DF_WITS_Tariff_TRAINS" dims="5">
+            <data key="A.068.000.250490.Reported" minSeries="1" minObs="24"/>
         </flow>
     </source>
 </testsuite>

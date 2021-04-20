@@ -97,6 +97,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("NB")
+                    .description("Norges Bank")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://data.norges-bank.no/api")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .description("Data access system to UN databases")
                     .driver(RI_SDMX_21)
