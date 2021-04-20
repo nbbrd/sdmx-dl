@@ -26,10 +26,16 @@ import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.Serializer;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
@@ -50,10 +56,18 @@ public class WebNetOptions extends WebOptions {
     @CommandLine.ArgGroup(validate = false, headingKey = "network")
     private NetworkOptions networkOptions = new NetworkOptions();
 
+    @CommandLine.Option(
+            names = {"--force-ssl"},
+            defaultValue = "false",
+            hidden = true
+    )
+    private boolean forceSsl;
+
     @Override
     public SdmxWebManager loadManager() throws IOException {
         SSLFactory sslFactory = networkOptions.getSslOptions().getSSLFactory();
-        return super.loadManager()
+        SdmxWebManager defaultManager = super.loadManager();
+        return defaultManager
                 .toBuilder()
                 .languages(langs)
                 .proxySelector(networkOptions.getProxyOptions().getProxySelector())
@@ -61,7 +75,28 @@ public class WebNetOptions extends WebOptions {
                 .hostnameVerifier(sslFactory.getHostnameVerifier())
                 .cache(getCache())
                 .authenticator(getAuthenticator())
+                .customSources(getForcedSslSources(defaultManager))
                 .build();
+    }
+
+    private List<SdmxWebSource> getForcedSslSources(SdmxWebManager manager) {
+        return isForceSsl()
+                ? manager.getSources().values().stream().map(WebNetOptions::toHttps).collect(Collectors.toList())
+                : manager.getCustomSources();
+    }
+
+    private static SdmxWebSource toHttps(SdmxWebSource source) {
+        return source.toBuilder().endpoint(toHttps(source.getEndpoint())).build();
+    }
+
+    private static URL toHttps(URL url) {
+        try {
+            return url.getProtocol().equals("http")
+                    ? new URL("https" + url.toString().substring(4))
+                    : url;
+        } catch (MalformedURLException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     private SdmxCache getCache() {
