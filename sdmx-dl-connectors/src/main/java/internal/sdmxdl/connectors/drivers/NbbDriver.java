@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 /**
@@ -28,13 +29,22 @@ import sdmxdl.web.spi.SdmxWebDriver;
 @ServiceProvider(SdmxWebDriver.class)
 public final class NbbDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_NBB = "connectors:nbb";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:nbb")
+            .name(CONNECTORS_NBB)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(NBB::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx", "https://stat.nbb.be")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("NBB")
+                    .description("National Bank of Belgium")
+                    .driver(CONNECTORS_NBB)
+                    .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stat.nbb.be")
+                    .build())
             .build();
 }

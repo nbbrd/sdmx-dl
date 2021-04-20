@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 /**
@@ -28,13 +29,22 @@ import sdmxdl.web.spi.SdmxWebDriver;
 @ServiceProvider(SdmxWebDriver.class)
 public final class OecdDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_OECD = "connectors:oecd";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:oecd")
+            .name(CONNECTORS_OECD)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(OECD::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx", "https://stats.oecd.org")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("OECD")
+                    .description("The Organisation for Economic Co-operation and Development")
+                    .driver(CONNECTORS_OECD)
+                    .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stats.oecd.org")
+                    .build())
             .build();
 }

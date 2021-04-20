@@ -47,20 +47,35 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 @ServiceProvider(SdmxWebDriver.class)
 public final class NbbDriver2 implements SdmxWebDriver {
 
+    private static final String RI_NBB = "ri:nbb";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("ri:nbb")
+            .name(RI_NBB)
             .rank(NATIVE_RANK)
             .client(NbbClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("NBB", "National Bank of Belgium", "https://stat.nbb.be/restsdmx/sdmx.ashx", "https://stat.nbb.be")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("NBB")
+                    .description("National Bank of Belgium")
+                    .driver(RI_NBB)
+                    .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stat.nbb.be")
+                    .build())
             .build();
 
     static final class NbbClient2 extends DotStatRestClient {
 
         NbbClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
-            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
+            this(
+                    SdmxWebClient.getClientName(s),
+                    s.getEndpoint(),
+                    c.getLanguages(),
+                    RestClients.getRestClient(s, c),
+                    ObsFactories.getObsFactory(c, s, "SDMX20")
+            );
         }
 
         NbbClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
@@ -74,7 +89,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .of(endpoint)
                     .path(DATA_RESOURCE)
                     .path(request.getFlowRef().getId())
-                    .path(request.getKey().toString() + "/all")
+                    .path(request.getKey() + "/all")
                     .param("format", "compact_v2")
                     .build();
         }

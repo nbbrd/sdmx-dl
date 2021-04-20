@@ -28,6 +28,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.net.URI;
@@ -42,14 +43,23 @@ import static sdmxdl.util.SdmxFix.Category.CONTENT;
 @ServiceProvider(SdmxWebDriver.class)
 public final class InseeDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_INSEE = "connectors:insee";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:insee")
+            .name(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("INSEE", "Institut national de la statistique et des études économiques", "https://bdm.insee.fr/series/sdmx", "https://www.insee.fr/fr/statistiques")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("INSEE")
+                    .description("Institut national de la statistique et des études économiques")
+                    .driver(CONNECTORS_INSEE)
+                    .endpointOf("https://bdm.insee.fr/series/sdmx")
+                    .websiteOf("https://www.insee.fr/fr/statistiques")
+                    .build())
             .build();
 
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")

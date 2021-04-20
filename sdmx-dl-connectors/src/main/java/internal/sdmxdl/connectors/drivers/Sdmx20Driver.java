@@ -33,14 +33,16 @@ import static internal.sdmxdl.connectors.Connectors.NEEDS_CREDENTIALS_PROPERTY;
 @ServiceProvider(SdmxWebDriver.class)
 public final class Sdmx20Driver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_SDMX_20 = "connectors:sdmx20";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:sdmx20")
+            .name(CONNECTORS_SDMX_20)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(Sdmx20Client::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .supportedProperty(NEEDS_CREDENTIALS_PROPERTY.getKey())
+            .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

@@ -27,6 +27,7 @@ import it.bancaditalia.oss.sdmx.util.RestQueryBuilder;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.net.MalformedURLException;
@@ -44,14 +45,23 @@ import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 @ServiceProvider(SdmxWebDriver.class)
 public final class IloDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_ILO = "connectors:ilo";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:ilo")
+            .name(CONNECTORS_ILO)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(ILO2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("ILO", "International Labour Office", FALLBACK_ENDPOINT, "https://ilostat.ilo.org/data/")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ILO")
+                    .description("International Labour Office")
+                    .driver(CONNECTORS_ILO)
+                    .endpointOf(FALLBACK_ENDPOINT)
+                    .websiteOf("https://ilostat.ilo.org/data/")
+                    .build())
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to servers redirecting to http")

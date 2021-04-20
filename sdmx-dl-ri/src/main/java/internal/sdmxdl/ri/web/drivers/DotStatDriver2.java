@@ -37,20 +37,49 @@ import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 @ServiceProvider(SdmxWebDriver.class)
 public final class DotStatDriver2 implements SdmxWebDriver {
 
+    private static final String RI_DOTSTAT = "ri:dotstat";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("ri:dotstat")
+            .name(RI_DOTSTAT)
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::of)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("OECD", "The Organisation for Economic Co-operation and Development", "https://stats.oecd.org/restsdmx/sdmx.ashx", "https://stats.oecd.org")
-            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx", "http://andmebaas.stat.ee")
-            .sourceOf("UIS", "Unesco Institute for Statistics", UIS_ENDPOINT, "http://data.uis.unesco.org")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("OECD")
+                    .description("The Organisation for Economic Co-operation and Development")
+                    .driver(RI_DOTSTAT)
+                    .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stats.oecd.org")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("SE")
+                    .description("Statistics Estonia")
+                    .driver(RI_DOTSTAT)
+                    .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
+                    .websiteOf("http://andmebaas.stat.ee")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("UIS")
+                    .description("Unesco Institute for Statistics")
+                    .driver(RI_DOTSTAT)
+                    .endpointOf(UIS_ENDPOINT)
+                    .websiteOf("http://data.uis.unesco.org")
+                    .build())
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new DotStatRestClient(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
+        return new DotStatRestClient(
+                SdmxWebClient.getClientName(s),
+                s.getEndpoint(),
+                c.getLanguages(),
+                RestClients.getRestClient(s, c),
+                ObsFactories.getObsFactory(c, s, "SDMX20")
+        );
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

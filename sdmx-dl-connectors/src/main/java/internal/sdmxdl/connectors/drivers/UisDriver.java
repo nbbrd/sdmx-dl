@@ -21,6 +21,7 @@ import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.net.URI;
@@ -34,14 +35,23 @@ import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 @ServiceProvider(SdmxWebDriver.class)
 public final class UisDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_UIS = "connectors:uis";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:uis")
+            .name(CONNECTORS_UIS)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(UIS2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("UIS", "Unesco Institute for Statistics", FALLBACK_ENDPOINT, "http://data.uis.unesco.org")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("UIS")
+                    .description("Unesco Institute for Statistics")
+                    .driver(CONNECTORS_UIS)
+                    .endpointOf(FALLBACK_ENDPOINT)
+                    .websiteOf("http://data.uis.unesco.org")
+                    .build())
             .build();
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "API requires auth by key in header and this is not supported yet in facade")

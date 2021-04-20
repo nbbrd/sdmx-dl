@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 /**
@@ -28,13 +29,22 @@ import sdmxdl.web.spi.SdmxWebDriver;
 @ServiceProvider(SdmxWebDriver.class)
 public final class ImfDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_IMF = "connectors:imf";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:imf")
+            .name(CONNECTORS_IMF)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(IMF2::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("IMF", "International Monetary Fund", "http://dataservices.imf.org/REST/SDMX_XML.svc", "https://data.imf.org")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("IMF")
+                    .description("International Monetary Fund")
+                    .driver(CONNECTORS_IMF)
+                    .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
+                    .websiteOf("https://data.imf.org")
+                    .build())
             .build();
 }

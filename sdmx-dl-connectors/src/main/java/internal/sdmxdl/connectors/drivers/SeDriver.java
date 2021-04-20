@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.net.URI;
@@ -31,14 +32,23 @@ import java.net.URISyntaxException;
 @ServiceProvider(SdmxWebDriver.class)
 public final class SeDriver implements SdmxWebDriver {
 
+    private static final String CONNECTORS_ES = "connectors:es";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("connectors:es")
+            .name(CONNECTORS_ES)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(EsClient::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .sourceOf("SE", "Statistics Estonia", "http://andmebaas.stat.ee/restsdmx/sdmx.ashx", "http://andmebaas.stat.ee")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("SE")
+                    .description("Statistics Estonia")
+                    .driver(CONNECTORS_ES)
+                    .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
+                    .websiteOf("http://andmebaas.stat.ee")
+                    .build())
             .build();
 
     private static final class EsClient extends DotStat {

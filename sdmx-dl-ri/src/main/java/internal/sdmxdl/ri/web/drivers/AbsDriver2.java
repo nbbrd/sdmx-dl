@@ -43,20 +43,35 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 @ServiceProvider(SdmxWebDriver.class)
 public final class AbsDriver2 implements SdmxWebDriver {
 
+    private static final String RI_ABS = "ri:abs";
+
     @lombok.experimental.Delegate
     private final SdmxWebDriverSupport support = SdmxWebDriverSupport
             .builder()
-            .name("ri:abs")
+            .name(RI_ABS)
             .rank(NATIVE_RANK)
             .client(AbsClient2::new)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
-            .sourceOf("ABS", "Australian Bureau of Statistics", "http://stat.data.abs.gov.au/restsdmx/sdmx.ashx", "http://stat.data.abs.gov.au")
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ABS")
+                    .description("Australian Bureau of Statistics")
+                    .driver(RI_ABS)
+                    .endpointOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+                    .websiteOf("http://stat.data.abs.gov.au")
+                    .build())
             .build();
 
     private static final class AbsClient2 extends DotStatRestClient {
 
         AbsClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
-            this(SdmxWebClient.getClientName(s), s.getEndpoint(), c.getLanguages(), RestClients.getRestClient(s, c), ObsFactories.getObsFactory(c, s, "SDMX20"));
+            this(
+                    SdmxWebClient.getClientName(s),
+                    s.getEndpoint(),
+                    c.getLanguages(),
+                    RestClients.getRestClient(s, c),
+                    ObsFactories.getObsFactory(c, s, "SDMX20")
+            );
         }
 
         AbsClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {

@@ -17,7 +17,6 @@
 package sdmxdl.util.web;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -81,16 +80,6 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     }
 
     public static final class Builder {
-
-        @NonNull
-        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint) {
-            return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).build());
-        }
-
-        @NonNull
-        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint, @Nullable String website) {
-            return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).websiteOf(website).build());
-        }
 
         @NonNull
         public Builder supportedPropertyOf(@NonNull CharSequence property) {
