@@ -17,10 +17,27 @@ public class VerboseOptions {
     private CommandLine.Model.CommandSpec spec;
 
     public void reportToErrorStream(String anchor, String message) {
-        spec.commandLine().getErr().println(anchor + ": " + message);
+        CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+        reportToErrorStream(colorScheme
+                .text("[")
+                .concat(colorScheme.commandText(anchor))
+                .concat(colorScheme.text("] "))
+                .concat(colorScheme.optionText(message))
+        );
     }
 
     public void reportToErrorStream(String anchor, String message, Exception ex) {
-        spec.commandLine().getErr().println(anchor + ": " + message + " - " + ex.getMessage());
+        CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+        reportToErrorStream(colorScheme
+                .text("[")
+                .concat(colorScheme.commandText(anchor))
+                .concat(colorScheme.text("] "))
+                .concat(colorScheme.optionText(message))
+                .concat(colorScheme.stackTraceText(ex.getMessage()))
+        );
+    }
+
+    private void reportToErrorStream(CommandLine.Help.Ansi.Text text) {
+        spec.commandLine().getErr().println(text);
     }
 }
