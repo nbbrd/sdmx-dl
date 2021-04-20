@@ -25,7 +25,6 @@ import it.bancaditalia.oss.sdmx.parser.v20.DataflowParser;
 import it.bancaditalia.oss.sdmx.parser.v21.Sdmx21Queries;
 import it.bancaditalia.oss.sdmx.util.RestQueryBuilder;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -36,8 +35,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 
 /**
  * @author Philippe Charles
@@ -59,13 +56,10 @@ public final class IloDriver implements SdmxWebDriver {
                     .name("ILO")
                     .description("International Labour Office")
                     .driver(CONNECTORS_ILO)
-                    .endpointOf(FALLBACK_ENDPOINT)
+                    .endpointOf("https://www.ilo.org/ilostat/sdmx/ws/rest")
                     .websiteOf("https://ilostat.ilo.org/data/")
                     .build())
             .build();
-
-    @SdmxFix(id = 1, category = ENDPOINT, cause = "Fallback to http due to servers redirecting to http")
-    private static final String FALLBACK_ENDPOINT = "http://www.ilo.org/ilostat/sdmx/ws/rest";
 
     private static final class ILO2 extends ILO_Legacy implements HasDetailSupported {
 
