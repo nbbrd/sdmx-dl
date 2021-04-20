@@ -77,7 +77,7 @@ public final class CheckPropertiesCommand implements Callable<Void> {
         return ConfigHelper
                 .builder()
                 .appName(MainCommand.NAME)
-                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream("IO", path.toString(), ex))
+                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream("CONFIG", path.toString(), ex))
                 .build();
     }
 
@@ -109,7 +109,8 @@ public final class CheckPropertiesCommand implements Callable<Void> {
             for (CommandLine.Model.OptionSpec option : cmd.getCommandSpec().options()) {
                 String descriptionKey = option.descriptionKey();
                 if (descriptionKey != null) {
-                    if (key.equals(cmd.getCommandSpec().qualifiedName(".") + "." + descriptionKey)) return NARROW_OPTION;
+                    if (key.equals(cmd.getCommandSpec().qualifiedName(".") + "." + descriptionKey))
+                        return NARROW_OPTION;
                     if (key.equals(descriptionKey)) return WIDE_OPTION;
                 }
                 String longestName = stripPrefix(option.longestName());

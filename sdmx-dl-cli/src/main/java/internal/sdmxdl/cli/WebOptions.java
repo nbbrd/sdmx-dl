@@ -62,23 +62,17 @@ public class WebOptions {
 
     private SdmxWebListener getEventListener() {
         SdmxWebListener original = isNoLog() ? SdmxWebListener.noOp() : SdmxWebListener.getDefault();
-        return verboseOptions.isVerbose()
-                ? new VerboseWebListener(original, verboseOptions)
-                : original;
+        return new VerboseWebListener(original, verboseOptions);
     }
 
     private List<SdmxWebSource> parseCustomSources() throws IOException {
         if (sourcesFile != null) {
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream("IO", "Using source file '" + sourcesFile + "'");
+                verboseOptions.reportToErrorStream("CONFIG", "Using source file '" + sourcesFile + "'");
             }
             return XmlWebSource.getParser().parseFile(sourcesFile);
         }
         return Collections.emptyList();
-    }
-
-    protected void reportIOException(String message, IOException ex) {
-        verboseOptions.reportToErrorStream("IO", message, ex);
     }
 
     @lombok.AllArgsConstructor
@@ -100,7 +94,9 @@ public class WebOptions {
             if (main.isEnabled()) {
                 main.onWebSourceEvent(source, message);
             }
-            verboseOptions.reportToErrorStream(source.getName(), message);
+            if (verboseOptions.isVerbose()) {
+                verboseOptions.reportToErrorStream("WEB", source.getName() + ": " + message);
+            }
         }
     }
 }

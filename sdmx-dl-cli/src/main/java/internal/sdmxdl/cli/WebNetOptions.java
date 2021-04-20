@@ -70,13 +70,15 @@ public class WebNetOptions extends WebOptions {
                 : FileCache
                 .builder()
                 .serializer(Serializer.gzip(new KryoSerialization()))
-                .onIOException(this::reportIOException)
+                .onIOException((msg, ex) -> getVerboseOptions().reportToErrorStream("CACHE", msg, ex))
                 .build();
     }
 
     private SdmxWebAuthenticator getAuthenticator() {
         PasswordAuthentication user = networkOptions.getAuthOptions().getUser();
-        SdmxWebAuthenticator result = !networkOptions.getAuthOptions().isNoSystemAuth() ? SdmxSystemUtil.getAuthenticatorOrNull(user, this::reportIOException) : null;
+        SdmxWebAuthenticator result = !networkOptions.getAuthOptions().isNoSystemAuth()
+                ? SdmxSystemUtil.getAuthenticatorOrNull(user, (msg, ex) -> getVerboseOptions().reportToErrorStream("AUTH", msg, ex))
+                : null;
         return result != null ? result : new CachedAuthenticator(new ConsoleAuthenticator(user), new ConcurrentHashMap<>());
     }
 }
