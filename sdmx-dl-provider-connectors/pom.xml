@@ -9,10 +9,10 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-connectors</artifactId>
+    <artifactId>sdmx-dl-provider-connectors</artifactId>
     <packaging>jar</packaging>
 
-    <name>sdmx-dl-connectors</name>
+    <name>sdmx-dl-provider-connectors</name>
     <description>Download data from remote SDMX servers - Connectors</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-xml</artifactId>
+            <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

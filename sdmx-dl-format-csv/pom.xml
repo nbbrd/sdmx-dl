@@ -10,10 +10,10 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-csv</artifactId>
+    <artifactId>sdmx-dl-format-csv</artifactId>
     <packaging>jar</packaging>
 
-    <name>sdmx-dl-csv</name>
+    <name>sdmx-dl-format-csv</name>
     <description>Download data from remote SDMX servers - CSV</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 

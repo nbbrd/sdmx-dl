@@ -87,13 +87,13 @@
         <module>sdmx-dl-api</module>
         <module>sdmx-dl-tck</module>
         <module>sdmx-dl-util</module>
-        <module>sdmx-dl-xml</module>
-        <module>sdmx-dl-ri</module>
-        <module>sdmx-dl-connectors</module>
+        <module>sdmx-dl-format-xml</module>
+        <module>sdmx-dl-format-csv</module>
+        <module>sdmx-dl-provider-ri</module>
+        <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-kryo</module>
         <module>sdmx-dl-sys</module>
         <module>sdmx-dl-testing</module>
-        <module>sdmx-dl-csv</module>
     </modules>
 
     <profiles>

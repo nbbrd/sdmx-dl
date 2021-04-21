@@ -9,10 +9,10 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-ri</artifactId>
+    <artifactId>sdmx-dl-provider-ri</artifactId>
     <packaging>jar</packaging>
 
-    <name>sdmx-dl-ri</name>
+    <name>sdmx-dl-provider-ri</name>
     <description>Download data from remote SDMX servers - RI</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-xml</artifactId>
+            <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
 
