@@ -26,9 +26,8 @@ public class CsvUtil {
     }
 
     public <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
-        Csv.Format listFormat = Csv.Format.RFC4180.toBuilder().delimiter(listDelimiter).build();
-        Csv.Format entryFormat = Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).build();
-        return map -> formatMap(map, listFormat, entryFormat, keyFormatter, valueFormatter);
+        Csv.Format csvFormat = Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build();
+        return map -> formatMap(map, csvFormat, keyFormatter, valueFormatter);
     }
 
     private <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {
@@ -45,16 +44,22 @@ public class CsvUtil {
         }
     }
 
-    private <K, V> CharSequence formatMap(Map<K, V> map, Csv.Format listFormat, Csv.Format entryFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
-        return formatIterator(map.entrySet().iterator(), listFormat, entry -> formatEntry(entry, entryFormat, keyFormatter, valueFormatter));
-    }
-
-    private <K, V> CharSequence formatEntry(Map.Entry<K, V> entry, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
+    private <K, V> CharSequence formatMap(Map<K, V> map, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
         try {
             StringWriter result = new StringWriter();
             try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
-                w.writeField(keyFormatter.format(entry.getKey()));
-                w.writeField(valueFormatter.format(entry.getValue()));
+                Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
+                if (iterator.hasNext()) {
+                    Map.Entry<K, V> first = iterator.next();
+                    w.writeField(keyFormatter.format(first.getKey()));
+                    w.writeField(valueFormatter.format(first.getValue()));
+                }
+                while (iterator.hasNext()) {
+                    Map.Entry<K, V> next = iterator.next();
+                    w.writeEndOfLine();
+                    w.writeField(keyFormatter.format(next.getKey()));
+                    w.writeField(valueFormatter.format(next.getValue()));
+                }
             }
             return result.toString();
         } catch (IOException ex) {
