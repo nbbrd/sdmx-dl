@@ -17,9 +17,11 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
+import sdmxdl.web.SdmxWebManager;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -60,4 +62,13 @@ public class WebSourcesOptions extends WebNetOptions {
     }
 
     public static final String ALL_KEYWORD = "all";
+
+    public static Stream<String> getAllSourceNames(SdmxWebManager manager) {
+        return manager
+                .getSources()
+                .entrySet()
+                .stream()
+                .filter(entry -> !entry.getValue().isAlias())
+                .map(Map.Entry::getKey);
+    }
 }

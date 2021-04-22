@@ -1,3 +1,5 @@
+import sdmxdl.web.spi.SdmxWebMonitoring;
+
 module sdmxdl.api {
 
     requires static nbbrd.design;
@@ -16,6 +18,7 @@ module sdmxdl.api {
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
+    uses SdmxWebMonitoring;
     uses sdmxdl.ext.spi.SdmxDialect;
     uses sdmxdl.file.spi.SdmxFileReader;
     uses sdmxdl.web.spi.SdmxWebDriver;

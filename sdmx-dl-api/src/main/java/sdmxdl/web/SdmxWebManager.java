@@ -17,6 +17,7 @@
 package sdmxdl.web;
 
 import internal.util.SdmxWebDriverLoader;
+import internal.util.SdmxWebMonitoringLoader;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
@@ -26,6 +27,7 @@ import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.SdmxWebMonitoring;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -53,6 +55,7 @@ public class SdmxWebManager implements SdmxManager {
                 .builder()
                 .drivers(SdmxWebDriverLoader.load())
                 .dialects(SdmxDialectLoader.load())
+                .monitorings(SdmxWebMonitoringLoader.load())
                 .build();
     }
 
@@ -63,6 +66,10 @@ public class SdmxWebManager implements SdmxManager {
     @lombok.NonNull
     @lombok.Singular
     List<SdmxDialect> dialects;
+
+    @lombok.NonNull
+    @lombok.Singular
+    List<SdmxWebMonitoring> monitorings;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -130,6 +137,32 @@ public class SdmxWebManager implements SdmxManager {
         return driver.connect(source, getContext());
     }
 
+    @NonNull
+    public SdmxWebMonitorReport getMonitorReport(@NonNull String name) throws IOException {
+        Objects.requireNonNull(name);
+
+        SdmxWebSource source = lookupSource(name)
+                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+
+        return getMonitorReport(source);
+    }
+
+    @NonNull
+    public SdmxWebMonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
+        Objects.requireNonNull(source);
+
+        SdmxWebMonitor monitor = source.getMonitor();
+
+        if (monitor == null) {
+            throw new IOException("Missing monitor for '" + source + "'");
+        }
+
+        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getProvider())
+                .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
+
+        return monitoring.getReport(source, getContext());
+    }
+
     private void checkSourceProperties(SdmxWebSource source, SdmxWebDriver driver) {
         if (eventListener.isEnabled()) {
             Collection<String> expected = driver.getSupportedProperties();
@@ -149,6 +182,13 @@ public class SdmxWebManager implements SdmxManager {
         return drivers
                 .stream()
                 .filter(webDriver -> driverName.equals(webDriver.getName()))
+                .findFirst();
+    }
+
+    private Optional<SdmxWebMonitoring> lookupMonitoring(String monitoringName) {
+        return monitorings
+                .stream()
+                .filter(monitoring -> monitoringName.equals(monitoring.getProviderName()))
                 .findFirst();
     }
 

@@ -27,6 +27,7 @@ import java.util.concurrent.Callable;
         name = "check",
         subcommands = {
                 CheckStatusCommand.class,
+                CheckAccessCommand.class,
                 CheckPropertiesCommand.class
         }
 )

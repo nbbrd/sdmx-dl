@@ -51,6 +51,7 @@ public final class UisDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_UIS)
                     .endpointOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
+                    .monitorOf("UptimeRobot", "m783847149-7753fbe93eefc48f2ac9983f")
                     .build())
             .build();
 

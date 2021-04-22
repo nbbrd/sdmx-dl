@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.parser;
+package internal.sdmxdl.util.ext;
 
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -28,21 +28,19 @@ import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.PeriodParsers;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static sdmxdl.Frequency.*;
 
 /**
- * https://www.insee.fr/fr/information/2862759
- *
  * @author Philippe Charles
  */
 @ServiceProvider(SdmxDialect.class)
-public final class InseeDialect implements SdmxDialect {
+public final class EcbDialect implements SdmxDialect {
 
     @Override
     public String getName() {
-        return "INSEE2017";
+        return "ECB2020";
     }
 
     @Override
@@ -52,62 +50,46 @@ public final class InseeDialect implements SdmxDialect {
 
     @Override
     public @NonNull ObsFactory getObsFactory() {
-        return InseeDialect::getObsParser;
+        return EcbDialect::getObsParser;
     }
 
     private static ObsParser getObsParser(DataStructure dsd) {
+        Objects.requireNonNull(dsd);
         return new DefaultObsParser(
                 getFreqFactory(dsd),
-                InseeDialect::getPeriodParser,
+                PeriodParsers::onStandardFreq,
                 Parser.onDouble()
         );
     }
 
-    static FreqFactory getFreqFactory(DataStructure dsd) {
-        return FreqFactory.sdmx21(dsd).toBuilder().parser(InseeDialect::parseInseeFreq).build();
+    private static FreqFactory getFreqFactory(DataStructure dsd) {
+        return FreqFactory.sdmx21(dsd).toBuilder().parser(EcbDialect::parseFreq).build();
     }
 
-    static Parser<LocalDateTime> getPeriodParser(Frequency freq) {
-        return onInseeTimePeriod(freq);
-    }
-
-    private static Frequency parseInseeFreq(CharSequence code) {
+    private static Frequency parseFreq(CharSequence code) {
         if (code != null && code.length() == 1) {
             switch (code.charAt(0)) {
                 case 'A':
                     return ANNUAL;
                 case 'S':
+                case 'H':
                     return HALF_YEARLY;
-                case 'T':
+                case 'Q':
                     return QUARTERLY;
                 case 'M':
                     return MONTHLY;
+                case 'W':
+                    return WEEKLY;
+                case 'D':
+                    return DAILY;
                 case 'B':
-                    // FIXME: define new freq?
-                    return MONTHLY;
+                    return DAILY_BUSINESS;
+                case 'N':
+                    return MINUTELY;
+                default:
+                    return null;
             }
         }
         return Frequency.UNDEFINED;
     }
-
-    private static Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
-        switch (freq) {
-            case ANNUAL:
-                return ANNUAL_PARSER;
-            case HALF_YEARLY:
-                return HALF_YEARLY_PARSER;
-            case QUARTERLY:
-                return QUARTERLY_PARSER;
-            case MONTHLY:
-                return MONTHLY_PARSER;
-            default:
-                return DEFAULT_PARSER;
-        }
-    }
-
-    private static final Parser<LocalDateTime> ANNUAL_PARSER = PeriodParsers.onDatePattern("yyyy");
-    private static final Parser<LocalDateTime> HALF_YEARLY_PARSER = PeriodParsers.onYearFreqPos("S", 2);
-    private static final Parser<LocalDateTime> QUARTERLY_PARSER = PeriodParsers.onYearFreqPos("Q", 4);
-    private static final Parser<LocalDateTime> MONTHLY_PARSER = PeriodParsers.onDatePattern("yyyy-MM").orElse(PeriodParsers.onYearFreqPos("B", 12));
-    private static final Parser<LocalDateTime> DEFAULT_PARSER = Parser.onNull();
 }

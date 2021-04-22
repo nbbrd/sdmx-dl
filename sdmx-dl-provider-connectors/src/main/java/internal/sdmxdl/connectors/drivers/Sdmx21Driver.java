@@ -57,6 +57,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .endpointOf("https://stats.bis.org/api/v1")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
+                    .monitorOf("UptimeRobot", "m787932103-5b1ea6eac87a4f436c565169")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -68,6 +69,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://sdw.ecb.europa.eu")
+                    .monitorOf("UptimeRobot", "m783846981-b55d7e635c5cdc16e16bac2a")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -78,6 +80,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.imf.org")
+                    .monitorOf("UptimeRobot", "m783847101-ba94f8b8442fc1c13a36ad89")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -86,6 +89,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://sdmx.snieg.mx/service/Rest")
                     .websiteOf("https://sdmx.snieg.mx")
+                    .monitorOf("UptimeRobot", "m783847104-047f5d4a8e6dacc0effb488b")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -96,6 +100,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.istat.it/en/analysis-and-products")
+                    .monitorOf("UptimeRobot", "m783847124-82c4c955d73e33fa148f72b8")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -105,6 +110,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .endpointOf("https://data.norges-bank.no/api")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
+                    .monitorOf("UptimeRobot", "m787932098-8e50275369b8d0e7bdc64354")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -114,6 +120,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .endpointOf("https://data.un.org/WS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.un.org/SdmxBrowser/start")
+                    .monitorOf("UptimeRobot", "m783847155-179810527371702e70b1c1b3")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -123,6 +130,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .websiteOf("https://data.worldbank.org")
+                    .monitorOf("UptimeRobot", "m783847161-28762547004598b9cc9311bc")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -131,6 +139,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .websiteOf("https://wits.worldbank.org")
+                    .monitorOf("UptimeRobot", "m783847171-e363f4fe1930586228b1dc39")
                     .build())
             .build();
 

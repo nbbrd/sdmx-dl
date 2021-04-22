@@ -45,6 +45,7 @@ public final class AbsDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_ABS)
                     .endpointOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
                     .websiteOf("http://stat.data.abs.gov.au")
+                    .monitorOf("UptimeRobot", "m783847060-975767bc3a033ea3f3ac8ca2")
                     .build())
             .build();
 }

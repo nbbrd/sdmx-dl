@@ -45,6 +45,7 @@ public final class OecdDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_OECD)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
+                    .monitorOf("UptimeRobot", "m783847142-c1c97c88fd0d958b6478d961")
                     .build())
             .build();
 }

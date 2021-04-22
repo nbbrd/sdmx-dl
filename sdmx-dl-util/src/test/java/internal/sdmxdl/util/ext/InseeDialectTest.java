@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.parser;
+package internal.sdmxdl.util.ext;
 
 import _test.sdmxdl.util.DialectAssertions;
 import org.junit.Test;

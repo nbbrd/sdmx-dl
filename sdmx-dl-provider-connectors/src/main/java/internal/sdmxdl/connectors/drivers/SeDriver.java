@@ -48,6 +48,7 @@ public final class SeDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_ES)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
+                    .monitorOf("UptimeRobot", "m783847065-e1d117d7c62688abdfec4734")
                     .build())
             .build();
 

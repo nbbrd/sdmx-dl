@@ -23,9 +23,13 @@ import internal.sdmxdl.cli.ext.CsvUtil;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -60,8 +64,9 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
-                .columnOf("Properties", SdmxWebSource::getProperties, CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '='))
+                .columnOf("Properties", SdmxWebSource::getProperties, MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
+                .columnOf("Monitor", SdmxWebSource::getMonitor, MAP_FORMATTER.compose(ListSourcesCommand::asMap))
                 .build();
     }
 
@@ -72,4 +77,16 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .stream()
                 .filter(source -> !source.isAlias());
     }
+
+    private static Map<String, String> asMap(SdmxWebMonitor monitor) {
+        if (monitor != null) {
+            Map<String, String> result = new HashMap<>();
+            result.put("provider", monitor.getProvider());
+            result.put("id", monitor.getId());
+            return result;
+        }
+        return Collections.emptyMap();
+    }
+
+    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 }

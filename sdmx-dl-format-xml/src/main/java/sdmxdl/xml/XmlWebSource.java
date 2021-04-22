@@ -57,6 +57,9 @@ public final class XmlWebSource {
     private static final String WEBSITE_TAG = "website";
     private static final String KEY_ATTR = "key";
     private static final String VALUE_ATTR = "value";
+    private static final String MONITOR_TAG = "monitor";
+    private static final String PROVIDER_ATTR = "provider";
+    private static final String ID_ATTR = "id";
 
     private static List<SdmxWebSource> parse(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();
@@ -92,6 +95,9 @@ public final class XmlWebSource {
                         case WEBSITE_TAG:
                             item.websiteOf(reader.getElementText());
                             break;
+                        case MONITOR_TAG:
+                            item.monitorOf(reader.getAttributeValue(null, PROVIDER_ATTR), reader.getAttributeValue(null, ID_ATTR));
+                            break;
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:
@@ -126,6 +132,12 @@ public final class XmlWebSource {
                 writeTextElement(writer, ALIAS_TAG, alias);
             }
             writeTextElement(writer, WEBSITE_TAG, source.getWebsite());
+            if (source.getMonitor() != null) {
+                writer.writeStartElement(MONITOR_TAG);
+                writer.writeAttribute(PROVIDER_ATTR, source.getMonitor().getProvider());
+                writer.writeAttribute(ID_ATTR, source.getMonitor().getId());
+                writer.writeEndElement();
+            }
             writer.writeEndElement();
         }
         writer.writeEndElement();

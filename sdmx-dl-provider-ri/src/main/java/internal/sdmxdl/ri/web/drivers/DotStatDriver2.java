@@ -53,6 +53,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
+                    .monitorOf("UptimeRobot", "m783847142-c1c97c88fd0d958b6478d961")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -61,6 +62,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
+                    .monitorOf("UptimeRobot", "m783847065-e1d117d7c62688abdfec4734")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -69,6 +71,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
+                    .monitorOf("UptimeRobot", "m783847149-7753fbe93eefc48f2ac9983f")
                     .build())
             .build();
 

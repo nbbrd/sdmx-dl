@@ -27,11 +27,11 @@ import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
+import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebMonitorReport;
-import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -39,9 +39,9 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "status")
+@CommandLine.Command(name = "access")
 @SuppressWarnings("FieldMayBeFinal")
-public final class CheckStatusCommand implements Callable<Void> {
+public final class CheckAccessCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourcesOptions web;
@@ -62,65 +62,60 @@ public final class CheckStatusCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Status> getTable() {
+    private CsvTable<Access> getTable() {
         return CsvTable
-                .builderOf(Status.class)
-                .columnOf("Source", Status::getSource, Formatter.onString())
-                .columnOf("Status", Status::getStatus, Formatter.onObjectToString())
-                .columnOf("UptimeRatio", Status::getUptimeRatio, Formatter.onObjectToString())
-                .columnOf("AverageResponseTime", Status::getAverageResponseTime, Formatter.onObjectToString())
-                .columnOf("ErrorMessage", Status::getCause, Formatter.onString())
+                .builderOf(Access.class)
+                .columnOf("Source", Access::getSource, Formatter.onString())
+                .columnOf("Accessible", Access::isAccessible, o -> o ? "YES" : "NO")
+                .columnOf("DurationInMillis", Access::getDuration, CheckAccessCommand::formatDuration)
+                .columnOf("ErrorMessage", Access::getCause, Formatter.onString())
                 .build();
     }
 
-    private Stream<Status> getRows() throws IOException {
+    private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
         ProxyOptions.warmupProxySelector(manager.getProxySelector());
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
-        return sort.applySort(web.applyParallel(sources).map(sourceName -> Status.of(manager, sourceName)), BY_SOURCE);
+        return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, sourceName)), BY_SOURCE);
     }
 
-    private static final Comparator<Status> BY_SOURCE = Comparator.comparing(Status::getSource);
+    private static String formatDuration(Duration o) {
+        return o != null ? String.valueOf(o.toMillis()) : null;
+    }
+
+    private static final Comparator<Access> BY_SOURCE = Comparator.comparing(Access::getSource);
 
     @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
     @lombok.Value
-    private static class Status {
+    private static class Access {
 
-        static Status of(SdmxWebManager manager, String sourceName) {
-            SdmxWebSource source = manager.getSources().get(sourceName);
-            if (source == null) {
-                return failure(sourceName, "Cannot find source");
-            }
-            if (source.getMonitor() == null) {
-                return failure(sourceName, "No monitor defined");
-            }
-            try {
-                return success(sourceName, manager.getMonitorReport(source));
+        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
+            try (final SdmxWebConnection conn = manager.getConnection(source)) {
+                return success(source, conn.ping());
             } catch (IOException ex) {
-                return failure(sourceName, ex);
+                return failure(source, ex);
             }
         }
 
-        static @NonNull Status success(@NonNull String source, @NonNull SdmxWebMonitorReport report) {
-            return new Status(source, report, null);
+        static @NonNull Access success(@NonNull String source, @NonNull Duration duration) {
+            return new Access(source, duration, null);
         }
 
-        static @NonNull Status failure(@NonNull String source, @NonNull IOException cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause.getMessage());
-        }
-
-        static @NonNull Status failure(@NonNull String source, @NonNull String cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause);
+        static @NonNull Access failure(@NonNull String source, @NonNull IOException cause) {
+            return new Access(source, null, cause.getMessage());
         }
 
         @lombok.NonNull
         String source;
 
-        @lombok.NonNull
-        @lombok.experimental.Delegate
-        SdmxWebMonitorReport report;
+        @Nullable
+        Duration duration;
 
         @Nullable
         String cause;
+
+        public boolean isAccessible() {
+            return cause == null;
+        }
     }
 }

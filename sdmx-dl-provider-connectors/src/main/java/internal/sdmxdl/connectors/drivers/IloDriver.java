@@ -58,6 +58,7 @@ public final class IloDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_ILO)
                     .endpointOf("https://www.ilo.org/ilostat/sdmx/ws/rest")
                     .websiteOf("https://ilostat.ilo.org/data/")
+                    .monitorOf("UptimeRobot", "m783847083-609d3e4ebc1da9455baeb63e")
                     .build())
             .build();
 

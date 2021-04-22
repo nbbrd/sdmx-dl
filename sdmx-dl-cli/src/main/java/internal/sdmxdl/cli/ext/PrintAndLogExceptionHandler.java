@@ -14,7 +14,9 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
     @Override
     public int handleExecutionException(Exception ex, CommandLine cmd, CommandLine.ParseResult parseResult) throws Exception {
         Logger.getLogger(logAnchor.getName()).log(Level.SEVERE, "While executing command", ex);
-        cmd.getErr().println(cmd.getColorScheme().errorText(ex.getMessage()));
+        String errorMessage = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
+        cmd.getErr().println(cmd.getColorScheme().errorText(errorMessage));
+//        cmd.getErr().println(cmd.getColorScheme().stackTraceText(ex));
         return cmd.getExitCodeExceptionMapper() != null
                 ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                 : cmd.getCommandSpec().exitCodeOnExecutionException();
