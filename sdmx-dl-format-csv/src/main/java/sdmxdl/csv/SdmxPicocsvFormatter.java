@@ -1,21 +1,25 @@
 package sdmxdl.csv;
 
-import nbbrd.io.text.Formatter;
+import nbbrd.design.MightBePromoted;
+import nbbrd.io.text.TextBuffers;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import sdmxdl.DataStructure;
+import sdmxdl.Obs;
+import sdmxdl.Series;
 import sdmxdl.repo.DataSet;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.nio.charset.CharsetEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
+
+import static sdmxdl.csv.SdmxCsvFields.*;
 
 @lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
@@ -23,141 +27,97 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     @lombok.NonNull
     private final DataStructure dsd;
 
+    @lombok.Builder.Default
+    private final List<String> fields = Arrays.asList(DATAFLOW, KEY_DIMENSIONS, TIME_DIMENSION, OBS_VALUE, ATTRIBUTES, SERIESKEY);
+
+    @lombok.Singular
+    private final Map<String, Function<DataSet, SdmxCsvFieldWriter>> customFactories;
+
     @lombok.NonNull
     @lombok.Builder.Default
     private final Csv.Format format = Csv.Format.RFC4180;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Function<DataSet, Formatter<LocalDateTime>> periodFormat = SdmxPicocsvFormatter::getPeriodFormatter;
+    private final Csv.WriterOptions options = Csv.WriterOptions.DEFAULT;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Function<DataSet, Formatter<Number>> valueFormat = SdmxPicocsvFormatter::getValueFormatter;
-
-    @lombok.Builder.Default
-    private final List<SdmxCsvField> fields = Arrays.asList(SdmxCsvField.values());
+    private final Locale locale = Locale.ROOT;
 
     @lombok.Builder.Default
     private final boolean ignoreHeader = false;
 
     @Override
-    public void formatWriter(@NonNull DataSet data, @NonNull Writer writer) throws IOException {
-        try (Csv.Writer csv = Csv.Writer.of(format, Csv.WriterOptions.DEFAULT, writer, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
+    public void formatWriter(DataSet data, Writer charWriter) throws IOException {
+        try (Csv.Writer csv = newCsvWriter(charWriter, TextBuffers.UNKNOWN)) {
             format(data, csv);
         }
     }
 
     @Override
-    public void formatStream(@NonNull DataSet data, @NonNull OutputStream outputStream, @NonNull Charset charset) throws IOException {
-        try (Csv.Writer csv = Csv.Writer.of(format, Csv.WriterOptions.DEFAULT, new BufferedWriter(new OutputStreamWriter(outputStream, charset)), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
+    public void formatStream(DataSet data, OutputStream stream, Charset charset) throws IOException {
+        CharsetEncoder encoder = charset.newEncoder();
+        try (Csv.Writer csv = newCsvWriter(newBufferedWriter(stream, encoder), TextBuffers.of(stream, encoder))) {
             format(data, csv);
         }
     }
 
     public void format(@NonNull DataSet data, Csv.@NonNull Writer w) throws IOException {
+        SdmxCsvFieldWriter[] writers = fields.stream()
+                .map(field -> getFieldWriter(data, field))
+                .toArray(SdmxCsvFieldWriter[]::new);
+
         if (!ignoreHeader) {
-            for (SdmxCsvField field : fields) {
-                switch (field) {
-                    case DATAFLOW:
-                        w.writeField(SdmxCsv.DATAFLOW);
-                        break;
-                    case KEY_DIMENSIONS:
-                        for (Dimension dimension : getSortedDimensions(dsd)) {
-                            w.writeField(dimension.getId());
-                        }
-                        break;
-                    case TIME_DIMENSION:
-                        w.writeField(dsd.getTimeDimensionId());
-                        break;
-                    case OBS_VALUE:
-                        w.writeField(SdmxCsv.OBS_VALUE);
-                        break;
-                    case SERIESKEY:
-                        w.writeField(SdmxCsv.SERIESKEY);
-                        break;
-                }
+            for (SdmxCsvFieldWriter writer : writers) {
+                writer.writeHead(w::writeField);
             }
             w.writeEndOfLine();
         }
 
-        String dataflow = SdmxCsv.getDataflowRefFormatter().formatAsString(data.getRef());
-        Formatter<LocalDateTime> periodFormatter = periodFormat.apply(data);
-        Formatter<Number> valueFormatter = valueFormat.apply(data);
-
         for (Series series : data.getData()) {
-            String key = series.getKey().toString();
             for (Obs obs : series.getObs()) {
-                for (SdmxCsvField field : fields) {
-                    switch (field) {
-                        case DATAFLOW:
-                            w.writeField(dataflow);
-                            break;
-                        case KEY_DIMENSIONS:
-                            for (int i = 0; i < series.getKey().size(); i++) {
-                                w.writeField(series.getKey().get(i));
-                            }
-                            break;
-                        case TIME_DIMENSION:
-                            w.writeField(periodFormatter.format(obs.getPeriod()));
-                            break;
-                        case OBS_VALUE:
-                            w.writeField(valueFormatter.format(obs.getValue()));
-                            break;
-                        case SERIESKEY:
-                            w.writeField(key);
-                            break;
-                    }
+                for (SdmxCsvFieldWriter writer : writers) {
+                    writer.writeBody(series, obs, w::writeField);
                 }
                 w.writeEndOfLine();
             }
         }
     }
 
-    private static Formatter<Number> getValueFormatter(DataSet data) {
-        return Formatter.onNumberFormat(getNumberFormat(Locale.ROOT));
+    private Csv.Writer newCsvWriter(Writer charWriter, TextBuffers buffers) throws IOException {
+        return Csv.Writer.of(format, options, charWriter, buffers.getCharBufferSize());
     }
 
-    private static Formatter<LocalDateTime> getPeriodFormatter(DataSet data) {
-        return Formatter.onDateTimeFormatter(getDateTimeFormatter(Frequency.getHighest(data.getData())));
+    private SdmxCsvFieldWriter getFieldWriter(DataSet dataSet, String field) {
+        Function<DataSet, SdmxCsvFieldWriter> factory = customFactories.get(field);
+        if (factory == null) {
+            factory = getDefaultFactory(field);
+        }
+        return factory.apply(dataSet);
     }
 
-    private static NumberFormat getNumberFormat(Locale encoding) {
-        DecimalFormat decimalFormat = new DecimalFormat("", DecimalFormatSymbols.getInstance(encoding));
-        decimalFormat.setGroupingUsed(false);
-        return decimalFormat;
-    }
-
-    private static DateTimeFormatter getDateTimeFormatter(Frequency freq) {
-        switch (freq) {
-            case ANNUAL:
-                return DateTimeFormatter.ofPattern("yyyy");
-            case HALF_YEARLY:
-            case QUARTERLY:
-            case MONTHLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM");
-            case WEEKLY:
-            case DAILY:
-            case DAILY_BUSINESS:
-                return DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            case HOURLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-ddTHH");
-            case MINUTELY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
-            case UNDEFINED:
-                return DateTimeFormatter.ISO_DATE_TIME;
+    private Function<DataSet, SdmxCsvFieldWriter> getDefaultFactory(String field) {
+        switch (field) {
+            case DATAFLOW:
+                return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef());
+            case KEY_DIMENSIONS:
+                return dataSet -> SdmxCsvFieldWriter.onKeyDimensions(dsd);
+            case TIME_DIMENSION:
+                return dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormatter(dataSet.getData()));
+            case OBS_VALUE:
+                return dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormatter(locale));
+            case ATTRIBUTES:
+                return dataSet -> SdmxCsvFieldWriter.onAttributes(dsd);
+            case SERIESKEY:
+                return dataSet -> SdmxCsvFieldWriter.onSeriesKey(SERIESKEY);
             default:
-                throw new RuntimeException();
+                return dataSet -> SdmxCsvFieldWriter.onConstant(field, "");
         }
     }
 
-    private static SortedSet<Dimension> getSortedDimensions(DataStructure dsd) {
-        return sortedCopyOf(dsd.getDimensions(), Comparator.comparingInt(Dimension::getPosition));
-    }
-
-    private static <T> SortedSet<T> sortedCopyOf(Set<T> origin, Comparator<T> comparator) {
-        TreeSet<T> result = new TreeSet<>(comparator);
-        result.addAll(origin);
-        return result;
+    @MightBePromoted
+    private static BufferedWriter newBufferedWriter(OutputStream outputStream, CharsetEncoder encoder) {
+        return new BufferedWriter(new OutputStreamWriter(outputStream, encoder));
     }
 }

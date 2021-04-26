@@ -115,6 +115,12 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     @Override
+    public Map<String, String> getObsAttributes() throws IOException, IllegalStateException {
+        checkObsState();
+        return current.get(index).getAttributes();
+    }
+
+    @Override
     public void close() {
         closed = true;
     }

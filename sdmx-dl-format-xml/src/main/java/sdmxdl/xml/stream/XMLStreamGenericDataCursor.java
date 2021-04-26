@@ -61,8 +61,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     private final XMLStreamReader reader;
     private final Closeable onClose;
     private final Key.Builder keyBuilder;
-    private final AttributesBuilder attributesBuilder;
+    private final AttributesBuilder seriesAttributes;
     private final ObsParser obsParser;
+    private final AttributesBuilder obsAttributes;
     private final SeriesHeadParser headParser;
     private boolean closed;
     private boolean hasSeries;
@@ -75,8 +76,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         this.reader = reader;
         this.onClose = onClose;
         this.keyBuilder = keyBuilder;
-        this.attributesBuilder = new AttributesBuilder();
+        this.seriesAttributes = new AttributesBuilder();
         this.obsParser = obsParser;
+        this.obsAttributes = new AttributesBuilder();
         this.headParser = headParser;
         this.closed = false;
         this.hasSeries = false;
@@ -87,7 +89,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     public boolean nextSeries() throws IOException {
         checkState();
         keyBuilder.clear();
-        attributesBuilder.clear();
+        seriesAttributes.clear();
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
@@ -99,6 +101,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     public boolean nextObs() throws IOException {
         checkSeriesState();
         obsParser.clear();
+        obsAttributes.clear();
         try {
             if (isCurrentElementStartOfObs()) {
                 parseObs();
@@ -131,13 +134,13 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     @Override
     public String getSeriesAttribute(String key) throws IOException {
         checkSeriesState();
-        return attributesBuilder.getAttribute(key);
+        return seriesAttributes.getAttribute(key);
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
-        return attributesBuilder.build();
+        return seriesAttributes.build();
     }
 
     @Override
@@ -150,6 +153,12 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     public Double getObsValue() throws IOException {
         checkObsState();
         return obsParser.parseValue();
+    }
+
+    @Override
+    public Map<String, String> getObsAttributes() throws IOException {
+        checkObsState();
+        return obsAttributes.build();
     }
 
     @Override
@@ -188,7 +197,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status parseSeries() throws XMLStreamException {
         nextWhile(this::onSeriesHead);
-        obsParser.frequency(keyBuilder, attributesBuilder::getAttribute);
+        obsParser.frequency(keyBuilder, seriesAttributes::getAttribute);
         return SUSPEND;
     }
 
@@ -197,7 +206,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
             if (isTagMatch(localName, SERIES_KEY_TAG)) {
                 return parseSeriesKey();
             } else if (isTagMatch(localName, ATTRIBUTES_TAG)) {
-                return parseAttributes();
+                return parseAttributes(seriesAttributes);
             } else if (isTagMatch(localName, OBS_TAG)) {
                 return HALT;
             } else {
@@ -213,8 +222,8 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         return CONTINUE;
     }
 
-    private Status parseAttributes() throws XMLStreamException {
-        nextWhile(this::onAttributes);
+    private Status parseAttributes(AttributesBuilder builder) throws XMLStreamException {
+        nextWhile((start, localName) -> onAttributes(start, localName, builder));
         return CONTINUE;
     }
 
@@ -226,9 +235,9 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         }
     }
 
-    private Status onAttributes(boolean start, String localName) throws XMLStreamException {
+    private Status onAttributes(boolean start, String localName, AttributesBuilder builder) throws XMLStreamException {
         if (start) {
-            return isTagMatch(localName, VALUE_TAG) ? parseAttributesValue() : CONTINUE;
+            return isTagMatch(localName, VALUE_TAG) ? parseAttributesValue(builder) : CONTINUE;
         } else {
             return isTagMatch(localName, ATTRIBUTES_TAG) ? HALT : CONTINUE;
         }
@@ -239,8 +248,8 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         return CONTINUE;
     }
 
-    private Status parseAttributesValue() throws XMLStreamException {
-        headParser.parseValueElement(reader, attributesBuilder::put);
+    private Status parseAttributesValue(AttributesBuilder builder) throws XMLStreamException {
+        headParser.parseValueElement(reader, builder::put);
         return CONTINUE;
     }
 
@@ -264,8 +273,13 @@ final class XMLStreamGenericDataCursor implements DataCursor {
         if (start) {
             if (isTagMatch(localName, headParser.getTimeELement())) {
                 return parseObsTime();
+            } else if (isTagMatch(localName, ATTRIBUTES_TAG)) {
+                return parseAttributes(obsAttributes);
+            } else if (isTagMatch(localName, OBS_VALUE_TAG)) {
+                return parseObsValue();
+            } else {
+                return CONTINUE;
             }
-            return isTagMatch(localName, OBS_VALUE_TAG) ? parseObsValue() : CONTINUE;
         } else {
             return isTagMatch(localName, OBS_TAG) ? HALT : CONTINUE;
         }

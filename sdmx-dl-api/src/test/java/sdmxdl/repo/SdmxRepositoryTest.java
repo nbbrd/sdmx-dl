@@ -73,7 +73,8 @@ public class SdmxRepositoryTest {
     private final DataflowRef badFlowRef = DataflowRef.parse("other");
     private final Dataflow flow = Dataflow.of(goodFlowRef, goodStructRef, "flow1");
     private final DataStructure struct = DataStructure.builder().ref(goodStructRef).primaryMeasureId("").label("struct1").build();
-    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final Obs obs1 = Obs.builder().period(LocalDateTime.now()).value(Math.PI).build();
+    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(obs1).meta("hello", "world").build();
     private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
     private final SdmxRepository repo = SdmxRepository
             .builder()

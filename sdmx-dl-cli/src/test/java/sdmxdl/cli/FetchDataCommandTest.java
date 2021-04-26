@@ -42,8 +42,8 @@ public class FetchDataCommandTest {
         assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Series,ObsPeriod,ObsValue", atIndex(0))
-                .contains("A.DEU.1.0.319.0.UBLGE,2015-01-01T00:00:00,-.1420473", atIndex(25))
+                .contains("Series,ObsAttributes,ObsPeriod,ObsValue", atIndex(0))
+                .contains("A.DEU.1.0.319.0.UBLGE,OBS_STATUS=A,2015-01-01T00:00:00,-.1420473", atIndex(25))
                 .hasSize(26);
     }
 }

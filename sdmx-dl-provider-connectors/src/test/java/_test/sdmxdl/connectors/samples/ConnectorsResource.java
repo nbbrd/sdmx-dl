@@ -124,15 +124,15 @@ public class ConnectorsResource {
                 .collect(Collectors.toList());
     }
 
-    private PortableTimeSeries<Double> toPortableTimeSeries(Series o, List<Dimension> dims) {
+    private PortableTimeSeries<Double> toPortableTimeSeries(Series series, List<Dimension> dims) {
         PortableTimeSeries<Double> result = new PortableTimeSeries<>();
-        result.setFrequency(String.valueOf(formatByStandardFreq(o.getFreq())));
-        o.getMeta().forEach(result::addAttribute);
-        Key key = o.getKey();
+        result.setFrequency(String.valueOf(formatByStandardFreq(series.getFreq())));
+        series.getMeta().forEach(result::addAttribute);
+        Key key = series.getKey();
         for (int i = 0; i < key.size(); i++) {
             result.addDimension(dims.get(i).getId(), key.get(i));
         }
-        o.getObs().forEach(x -> result.add(new DoubleObservation(periodToString(o.getFreq(), x.getPeriod()), x.getValue(), null)));
+        series.getObs().forEach(obs -> result.add(new DoubleObservation(periodToString(series.getFreq(), obs.getPeriod()), obs.getValue(), obs.getMeta())));
         return result;
     }
 

@@ -64,6 +64,9 @@ public interface DataCursor extends Closeable {
     Double getObsValue() throws IOException, IllegalStateException;
 
     @NonNull
+    Map<String, String> getObsAttributes() throws IOException, IllegalStateException;
+
+    @NonNull
     default Stream<Series> toStream() {
         Iterator<Series> iterator = SeriesIterator.of(this);
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.NONNULL), false);

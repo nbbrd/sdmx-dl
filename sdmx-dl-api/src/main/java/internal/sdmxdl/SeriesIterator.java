@@ -79,11 +79,20 @@ public final class SeriesIterator implements Iterator<Series> {
     }
 
     private static void fill(Series.Builder builder, DataCursor cursor) throws IOException {
-        builder.key(cursor.getSeriesKey()).freq(cursor.getSeriesFrequency());
-        builder.clearMeta().meta(cursor.getSeriesAttributes());
-        builder.clearObs();
+        builder.clearMeta()
+                .clearObs()
+                .key(cursor.getSeriesKey())
+                .freq(cursor.getSeriesFrequency())
+                .meta(cursor.getSeriesAttributes());
+        Obs.Builder obs = Obs.builder();
         while (cursor.nextObs()) {
-            builder.obs(Obs.of(cursor.getObsPeriod(), cursor.getObsValue()));
+            builder.obs(obs
+                    .clearMeta()
+                    .period(cursor.getObsPeriod())
+                    .value(cursor.getObsValue())
+                    .meta(cursor.getObsAttributes())
+                    .build()
+            );
         }
     }
 }

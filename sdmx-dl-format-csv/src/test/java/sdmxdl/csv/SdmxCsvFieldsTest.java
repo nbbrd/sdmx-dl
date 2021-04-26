@@ -7,11 +7,11 @@ import sdmxdl.DataflowRef;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SdmxCsvTest {
+public class SdmxCsvFieldsTest {
 
     @Test
     public void testParser() {
-        Parser<DataflowRef> parser = SdmxCsv.getDataflowRefParser();
+        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser();
 
         assertThat(parser.parse("ECB:EXR(1.0)"))
                 .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));
@@ -29,7 +29,7 @@ public class SdmxCsvTest {
 
     @Test
     public void testCombinedParser() {
-        Parser<DataflowRef> parser = SdmxCsv.getDataflowRefParser().orElse(DataflowRef::parse);
+        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(DataflowRef::parse);
 
         assertThat(parser.parse("ECB:EXR(1.0)"))
                 .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));
@@ -43,7 +43,7 @@ public class SdmxCsvTest {
 
     @Test
     public void testFormatter() {
-        Formatter<DataflowRef> formatter = SdmxCsv.getDataflowRefFormatter();
+        Formatter<DataflowRef> formatter = SdmxCsvFields.getDataflowRefFormatter();
 
         assertThat(formatter.format(DataflowRef.of("ECB", "EXR", "1.0")))
                 .isEqualTo("ECB:EXR(1.0)");

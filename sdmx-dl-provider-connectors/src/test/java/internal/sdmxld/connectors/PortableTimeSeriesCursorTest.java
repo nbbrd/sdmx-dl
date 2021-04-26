@@ -65,8 +65,8 @@ public class PortableTimeSeriesCursorTest {
                                 .isNotEmpty();
                         assertThat(o.getObs())
                                 .hasSize(25)
-                                .startsWith(Obs.of(LocalDate.of(1991, 1, 1).atStartOfDay(), -2.8574221))
-                                .endsWith(Obs.of(LocalDate.of(2015, 1, 1).atStartOfDay(), -0.1420473));
+                                .startsWith(Obs.builder().period(LocalDate.of(1991, 1, 1).atStartOfDay()).value(-2.8574221).meta("OBS_STATUS", "A").build())
+                                .endsWith(Obs.builder().period(LocalDate.of(2015, 1, 1).atStartOfDay()).value(-0.1420473).meta("OBS_STATUS", "A").build());
                     });
         }
     }

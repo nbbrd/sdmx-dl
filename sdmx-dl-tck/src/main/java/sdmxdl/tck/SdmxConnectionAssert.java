@@ -144,16 +144,25 @@ public class SdmxConnectionAssert {
         DataFilter.Detail detail = filter.getDetail();
         List<Series> result = new ArrayList<>();
         try (DataCursor c = conn.getDataCursor(ref, key, filter)) {
+            Series.Builder series = Series.builder();
             while (c.nextSeries()) {
-                Series.Builder series = Series.builder();
-                series.key(c.getSeriesKey());
-                series.freq(c.getSeriesFrequency());
+                series.clearMeta()
+                        .clearObs()
+                        .key(c.getSeriesKey())
+                        .freq(c.getSeriesFrequency());
                 if (detail.isMetaRequested()) {
                     series.meta(c.getSeriesAttributes());
                 }
                 if (detail.isDataRequested()) {
+                    Obs.Builder obs = Obs.builder();
                     while (c.nextObs()) {
-                        series.obs(Obs.of(c.getObsPeriod(), c.getObsValue()));
+                        series.obs(obs
+                                .clearMeta()
+                                .period(c.getObsPeriod())
+                                .value(c.getObsValue())
+                                .meta(c.getObsAttributes())
+                                .build()
+                        );
                     }
                 }
                 result.add(series.build());

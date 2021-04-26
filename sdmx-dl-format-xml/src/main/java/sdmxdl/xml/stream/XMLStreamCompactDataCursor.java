@@ -45,8 +45,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private final XMLStreamReader reader;
     private final Closeable onClose;
     private final Key.Builder keyBuilder;
-    private final AttributesBuilder attributesBuilder;
+    private final AttributesBuilder seriesAttributes;
     private final ObsParser obsParser;
+    private final AttributesBuilder obsAttributes;
     private final String timeDimensionId;
     private final String primaryMeasureId;
     private boolean closed;
@@ -60,8 +61,9 @@ final class XMLStreamCompactDataCursor implements DataCursor {
         this.reader = reader;
         this.onClose = onClose;
         this.keyBuilder = keyBuilder;
-        this.attributesBuilder = new AttributesBuilder();
+        this.seriesAttributes = new AttributesBuilder();
         this.obsParser = obsParser;
+        this.obsAttributes = new AttributesBuilder();
         this.timeDimensionId = timeDimensionId;
         this.primaryMeasureId = primaryMeasureId;
         this.closed = false;
@@ -73,7 +75,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     public boolean nextSeries() throws IOException {
         checkState();
         keyBuilder.clear();
-        attributesBuilder.clear();
+        seriesAttributes.clear();
         try {
             return hasSeries = nextWhile(this::onDataSet);
         } catch (XMLStreamException ex) {
@@ -85,6 +87,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     public boolean nextObs() throws IOException {
         checkSeriesState();
         obsParser.clear();
+        obsAttributes.clear();
         try {
             return hasObs = nextWhile(this::onSeriesBody);
         } catch (XMLStreamException ex) {
@@ -110,13 +113,13 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     @Override
     public String getSeriesAttribute(String key) throws IOException {
         checkSeriesState();
-        return attributesBuilder.getAttribute(key);
+        return seriesAttributes.getAttribute(key);
     }
 
     @Override
     public Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
-        return attributesBuilder.build();
+        return seriesAttributes.build();
     }
 
     @Override
@@ -129,6 +132,12 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     public Double getObsValue() throws IOException {
         checkObsState();
         return obsParser.parseValue();
+    }
+
+    @Override
+    public Map<String, String> getObsAttributes() throws IOException {
+        checkObsState();
+        return obsAttributes.build();
     }
 
     @Override
@@ -167,7 +176,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.frequency(keyBuilder, attributesBuilder::getAttribute);
+        obsParser.frequency(keyBuilder, seriesAttributes::getAttribute);
         return SUSPEND;
     }
 
@@ -177,7 +186,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
             if (keyBuilder.isDimension(id)) {
                 keyBuilder.put(id, reader.getAttributeValue(i));
             } else {
-                attributesBuilder.put(id, reader.getAttributeValue(i));
+                seriesAttributes.put(id, reader.getAttributeValue(i));
             }
         }
     }
@@ -191,8 +200,17 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     private Status parseObs() {
-        obsParser.period(reader.getAttributeValue(null, timeDimensionId));
-        obsParser.value(reader.getAttributeValue(null, primaryMeasureId));
+        for (int i = 0; i < reader.getAttributeCount(); i++) {
+            String name = reader.getAttributeLocalName(i);
+            String value = reader.getAttributeValue(i);
+            if (timeDimensionId.equals(name)) {
+                obsParser.period(value);
+            } else if (primaryMeasureId.equals(name)) {
+                obsParser.value(value);
+            } else {
+                obsAttributes.put(name, value);
+            }
+        }
         return SUSPEND;
     }
 

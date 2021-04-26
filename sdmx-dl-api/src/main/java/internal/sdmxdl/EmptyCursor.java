@@ -81,6 +81,12 @@ public final class EmptyCursor implements DataCursor {
     }
 
     @Override
+    public Map<String, String> getObsAttributes() throws IOException {
+        checkState();
+        throw new IllegalStateException();
+    }
+
+    @Override
     public void close() {
         closed = true;
     }

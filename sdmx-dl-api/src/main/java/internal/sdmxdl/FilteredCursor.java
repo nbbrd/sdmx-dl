@@ -92,6 +92,12 @@ public final class FilteredCursor implements DataCursor {
     }
 
     @Override
+    public @NonNull Map<String, String> getObsAttributes() throws IOException, IllegalStateException {
+        checkObsState();
+        return delegate.getObsAttributes();
+    }
+
+    @Override
     public void close() throws IOException {
         this.closed = true;
         delegate.close();

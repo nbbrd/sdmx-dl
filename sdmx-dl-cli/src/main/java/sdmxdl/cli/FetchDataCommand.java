@@ -26,6 +26,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.*;
+import sdmxdl.csv.SdmxCsvFieldWriter;
 import sdmxdl.csv.SdmxPicocsvFormatter;
 import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
@@ -34,9 +35,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 
-import static sdmxdl.csv.SdmxCsvField.*;
+import static sdmxdl.csv.SdmxCsvFields.*;
 
 /**
  * @author Philippe Charles
@@ -78,6 +78,7 @@ public final class FetchDataCommand implements Callable<Void> {
 
     private void writeHead(Csv.Writer w) throws IOException {
         w.writeField("Series");
+        w.writeField("ObsAttributes");
         w.writeField("ObsPeriod");
         w.writeField("ObsValue");
         w.writeEndOfLine();
@@ -94,20 +95,23 @@ public final class FetchDataCommand implements Callable<Void> {
         return SdmxPicocsvFormatter
                 .builder()
                 .dsd(dsd)
-                .fields(Arrays.asList(SERIESKEY, TIME_DIMENSION, OBS_VALUE))
                 .ignoreHeader(true)
-                .periodFormat(getPeriodFormat(format))
-                .valueFormat(getValueFormat(format))
+                .fields(Arrays.asList(SERIESKEY, ATTRIBUTES, TIME_DIMENSION, OBS_VALUE))
+                .customFactory(ATTRIBUTES, dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, MAP_FORMATTER))
+                .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format, dataSet)))
+                .customFactory(OBS_VALUE, dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
                 .build();
     }
 
-    private static Function<DataSet, Formatter<Number>> getValueFormat(ObsFormatOptions format) {
-        return dataSet -> Formatter.onNumberFormat(format.newNumberFormat());
+    private static Formatter<Number> getValueFormat(ObsFormatOptions format) {
+        return Formatter.onNumberFormat(format.newNumberFormat());
     }
 
-    private static Function<DataSet, Formatter<LocalDateTime>> getPeriodFormat(ExtObsFormatOptions format) {
-        return dataSet -> Formatter.onDateTimeFormatter(format.newDateTimeFormatter(!format.isRelaxTime() || Frequency.getHighest(dataSet.getData()).hasTime()));
+    private static Formatter<LocalDateTime> getPeriodFormat(ExtObsFormatOptions format, DataSet dataSet) {
+        return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(!format.isRelaxTime() || Frequency.getHighest(dataSet.getData()).hasTime()));
     }
+
+    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
         try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), getFilter())) {
@@ -121,29 +125,39 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataFilter getFilter() {
-        return DataFilter.DATA_ONLY;
+        return DataFilter.FULL;
     }
 
     private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
         SortedSet<Series> sortedSeries = new TreeSet<>(WebFlowOptions.SERIES_BY_KEY);
+        Series.Builder builder = Series.builder();
         while (cursor.nextSeries()) {
-            sortedSeries.add(Series
-                    .builder()
+            sortedSeries.add(builder
+                    .clearMeta()
+                    .clearObs()
                     .key(cursor.getSeriesKey())
                     .freq(cursor.getSeriesFrequency())
                     .meta(cursor.getSeriesAttributes())
                     .obs(collectObs(cursor, obsComparator))
-                    .build());
+                    .build()
+            );
         }
         return sortedSeries;
     }
 
     private static Collection<Obs> collectObs(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
         SortedSet<Obs> sortedObs = new TreeSet<>(obsComparator);
+        Obs.Builder builder = Obs.builder();
         while (cursor.nextObs()) {
             LocalDateTime period = cursor.getObsPeriod();
             if (period != null) {
-                sortedObs.add(Obs.of(period, cursor.getObsValue()));
+                sortedObs.add(builder
+                        .clearMeta()
+                        .period(period)
+                        .value(cursor.getObsValue())
+                        .meta(cursor.getObsAttributes())
+                        .build()
+                );
             }
         }
         return sortedObs;

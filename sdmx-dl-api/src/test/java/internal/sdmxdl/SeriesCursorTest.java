@@ -79,6 +79,7 @@ public class SeriesCursorTest {
         return Arrays.asList(items).iterator();
     }
 
-    private final Series s1 = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
-    private final Series s2 = Series.builder().key(Key.of("FR")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final Obs obs1 = Obs.builder().period(LocalDateTime.now()).value(Math.PI).build();
+    private final Series s1 = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(obs1).meta("hello", "world").build();
+    private final Series s2 = Series.builder().key(Key.of("FR")).freq(Frequency.MONTHLY).obs(obs1).meta("hello", "world").build();
 }

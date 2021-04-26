@@ -47,12 +47,16 @@ public class RepoSamples {
             .label("struct1")
             .build();
 
+    public final Obs OBS1 = Obs.builder().period(LocalDate.of(2010, 1, 1).atStartOfDay()).value(Math.PI).build();
+
+    public final Obs OBS2 = Obs.builder().period(LocalDate.of(2010, 2, 1).atStartOfDay()).value(Math.E).build();
+
     public final Series SERIES = Series
             .builder()
             .key(Key.of("M", "BE", "INDUSTRY"))
             .freq(Frequency.MONTHLY)
-            .obs(Obs.of(LocalDate.of(2010, 1, 1).atStartOfDay(), Math.PI))
-            .obs(Obs.of(LocalDate.of(2010, 2, 1).atStartOfDay(), Math.E))
+            .obs(OBS1)
+            .obs(OBS2)
             .meta("TITLE", "hello world")
             .build();
 

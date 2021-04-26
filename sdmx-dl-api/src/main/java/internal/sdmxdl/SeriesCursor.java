@@ -99,6 +99,12 @@ public final class SeriesCursor implements DataCursor {
     }
 
     @Override
+    public Map<String, String> getObsAttributes() throws IOException {
+        checkObsState();
+        return obs.getMeta();
+    }
+
+    @Override
     public void close() {
         closed = true;
     }

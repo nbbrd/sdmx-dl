@@ -332,6 +332,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
         private final Serializer<Collection<Obs>> obs = new CustomCollectionSerializer<>(Obs.class);
         private final Serializer<Map<String, String>> meta = new CustomMapSerializer<>(String.class, String.class);
+        private final Series.Builder builder = Series.builder();
 
         @Override
         public void write(Kryo kryo, Output output, Series t) {
@@ -343,8 +344,9 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
         @Override
         public Series read(Kryo kryo, Input input, Class<? extends Series> type) {
-            return Series
-                    .builder()
+            return builder
+                    .clearMeta()
+                    .clearObs()
                     .key(kryo.readObject(input, Key.class))
                     .freq(kryo.readObject(input, Frequency.class))
                     .obs(kryo.readObject(input, ArrayList.class, obs))
@@ -355,18 +357,24 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
     private static final class ObsSerializer extends ImmutableSerializer<Obs> {
 
+        private final Serializer<Map<String, String>> meta = new CustomMapSerializer<>(String.class, String.class);
+        private final Obs.Builder builder = Obs.builder();
+
         @Override
         public void write(Kryo kryo, Output output, Obs t) {
             kryo.writeObjectOrNull(output, t.getPeriod(), LocalDateTime.class);
             kryo.writeObjectOrNull(output, t.getValue(), Double.class);
+            kryo.writeObject(output, t.getMeta(), meta);
         }
 
         @Override
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
-            return Obs.of(
-                    kryo.readObjectOrNull(input, LocalDateTime.class),
-                    kryo.readObjectOrNull(input, Double.class)
-            );
+            return builder
+                    .clearMeta()
+                    .period(kryo.readObjectOrNull(input, LocalDateTime.class))
+                    .value(kryo.readObjectOrNull(input, Double.class))
+                    .meta(kryo.readObject(input, HashMap.class, meta))
+                    .build();
         }
     }
 
