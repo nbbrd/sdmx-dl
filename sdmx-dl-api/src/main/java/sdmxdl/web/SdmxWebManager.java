@@ -17,6 +17,7 @@
 package sdmxdl.web;
 
 import internal.util.SdmxWebDriverLoader;
+import internal.util.SdmxWebMonitoringLoader;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
@@ -26,6 +27,7 @@ import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.SdmxWebMonitoring;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -44,8 +46,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
-@lombok.With
+@lombok.Builder(toBuilder = true)
 public class SdmxWebManager implements SdmxManager {
 
     @NonNull
@@ -54,6 +55,7 @@ public class SdmxWebManager implements SdmxManager {
                 .builder()
                 .drivers(SdmxWebDriverLoader.load())
                 .dialects(SdmxDialectLoader.load())
+                .monitorings(SdmxWebMonitoringLoader.load())
                 .build();
     }
 
@@ -66,25 +68,36 @@ public class SdmxWebManager implements SdmxManager {
     List<SdmxDialect> dialects;
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    @lombok.Singular
+    List<SdmxWebMonitoring> monitorings;
 
     @lombok.NonNull
-    ProxySelector proxySelector;
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
-    SSLSocketFactory sslSocketFactory;
+    @lombok.Builder.Default
+    ProxySelector proxySelector = ProxySelector.getDefault();
 
     @lombok.NonNull
-    HostnameVerifier hostnameVerifier;
+    @lombok.Builder.Default
+    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 
     @lombok.NonNull
-    SdmxCache cache;
+    @lombok.Builder.Default
+    HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
     @lombok.NonNull
-    SdmxWebListener eventListener;
+    @lombok.Builder.Default
+    SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
-    SdmxWebAuthenticator authenticator;
+    @lombok.Builder.Default
+    SdmxWebListener eventListener = SdmxWebListener.getDefault();
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    SdmxWebAuthenticator authenticator = SdmxWebAuthenticator.noOp();
 
     @lombok.NonNull
     @lombok.Singular
@@ -101,18 +114,6 @@ public class SdmxWebManager implements SdmxManager {
     @lombok.NonNull
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     SdmxWebContext context = initContext();
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .languages(LanguagePriorityList.ANY)
-                .proxySelector(ProxySelector.getDefault())
-                .sslSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory())
-                .hostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier())
-                .cache(SdmxCache.noOp())
-                .eventListener(SdmxWebListener.getDefault())
-                .authenticator(SdmxWebAuthenticator.noOp());
-    }
 
     @Override
     public SdmxWebConnection getConnection(String name) throws IOException {
@@ -131,7 +132,46 @@ public class SdmxWebManager implements SdmxManager {
         SdmxWebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
+        checkSourceProperties(source, driver);
+
         return driver.connect(source, getContext());
+    }
+
+    @NonNull
+    public SdmxWebMonitorReport getMonitorReport(@NonNull String name) throws IOException {
+        Objects.requireNonNull(name);
+
+        SdmxWebSource source = lookupSource(name)
+                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+
+        return getMonitorReport(source);
+    }
+
+    @NonNull
+    public SdmxWebMonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
+        Objects.requireNonNull(source);
+
+        SdmxWebMonitor monitor = source.getMonitor();
+
+        if (monitor == null) {
+            throw new IOException("Missing monitor for '" + source + "'");
+        }
+
+        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getProvider())
+                .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
+
+        return monitoring.getReport(source, getContext());
+    }
+
+    private void checkSourceProperties(SdmxWebSource source, SdmxWebDriver driver) {
+        if (eventListener.isEnabled()) {
+            Collection<String> expected = driver.getSupportedProperties();
+            Collection<String> found = source.getProperties().keySet();
+            String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
+            if (!diff.isEmpty()) {
+                eventListener.onWebSourceEvent(source, "Unexpected properties [" + diff + "]");
+            }
+        }
     }
 
     private Optional<SdmxWebSource> lookupSource(String sourceName) {
@@ -142,6 +182,13 @@ public class SdmxWebManager implements SdmxManager {
         return drivers
                 .stream()
                 .filter(webDriver -> driverName.equals(webDriver.getName()))
+                .findFirst();
+    }
+
+    private Optional<SdmxWebMonitoring> lookupMonitoring(String monitoringName) {
+        return monitorings
+                .stream()
+                .filter(monitoring -> monitoringName.equals(monitoring.getProviderName()))
                 .findFirst();
     }
 

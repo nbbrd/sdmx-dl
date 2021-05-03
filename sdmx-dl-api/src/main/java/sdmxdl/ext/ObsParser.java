@@ -1,5 +1,6 @@
 package sdmxdl.ext;
 
+import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Frequency;
@@ -8,6 +9,7 @@ import sdmxdl.Key;
 import java.time.LocalDateTime;
 import java.util.function.UnaryOperator;
 
+@NotThreadSafe
 public interface ObsParser {
 
     @NonNull

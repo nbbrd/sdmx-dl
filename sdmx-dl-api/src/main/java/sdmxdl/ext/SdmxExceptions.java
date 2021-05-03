@@ -16,10 +16,11 @@
  */
 package sdmxdl.ext;
 
-import java.io.IOException;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
+
+import java.io.IOException;
 
 /**
  *

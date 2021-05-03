@@ -16,6 +16,7 @@
  */
 package sdmxdl.file;
 
+import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
+@NotThreadSafe
 public interface SdmxFileConnection extends SdmxConnection {
 
     @NonNull

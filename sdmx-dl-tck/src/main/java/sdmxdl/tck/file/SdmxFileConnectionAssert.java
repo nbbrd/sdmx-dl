@@ -10,7 +10,7 @@ import sdmxdl.tck.SdmxConnectionAssert;
 public class SdmxFileConnectionAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         SdmxConnectionAssert.Sample connection;
     }

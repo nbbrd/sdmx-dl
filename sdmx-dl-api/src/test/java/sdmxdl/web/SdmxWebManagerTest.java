@@ -55,11 +55,11 @@ public class SdmxWebManagerTest {
             assertThat(o.getDefaultSources()).isEmpty();
         });
 
-        assertThat(SdmxWebManager.builder().driver(repoDriver).build()).satisfies(o -> {
-            assertThat(o.getDrivers()).containsExactly(repoDriver);
+        assertThat(SdmxWebManager.builder().driver(sampleDriver).build()).satisfies(o -> {
+            assertThat(o.getDrivers()).containsExactly(sampleDriver);
             assertThat(o.getDialects()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
-            assertThat(o.getDefaultSources()).containsAll(repoDriver.getDefaultSources());
+            assertThat(o.getDefaultSources()).containsAll(sampleDriver.getDefaultSources());
         });
     }
 
@@ -157,7 +157,7 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testGetConnection() throws IOException {
-        SdmxWebManager manager = SdmxWebManager.builder().driver(repoDriver).dialect(repoDialect).build();
+        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build();
 
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null));
 
@@ -165,13 +165,13 @@ public class SdmxWebManagerTest {
                 .isThrownBy(() -> manager.getConnection("ko"))
                 .as("Invalid source name");
 
-        assertThatCode(() -> manager.getConnection(repoSource.getName()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.getName()).close()).doesNotThrowAnyException();
 
         SdmxWebDriver driver1 = MockedWebDriver
                 .builder()
                 .name("d1")
                 .rank(SdmxWebDriver.WRAPPED_RANK)
-                .repo(asURL("http://abc"), repo)
+                .repo(asURL("http://abc"), sample)
                 .source(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf("http://abc").build())
                 .build();
 
@@ -179,11 +179,11 @@ public class SdmxWebManagerTest {
                 .builder()
                 .name("d2")
                 .rank(SdmxWebDriver.NATIVE_RANK)
-                .repo(asURL("http://xyz"), repo)
+                .repo(asURL("http://xyz"), sample)
                 .source(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf("http://xyz").build())
                 .build();
 
-        try (SdmxWebConnection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(repoDialect).build().getConnection("source")) {
+        try (SdmxWebConnection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
             assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
     }
@@ -191,32 +191,69 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testGetConnectionOfSource() {
-        SdmxWebManager manager = SdmxWebManager.builder().driver(repoDriver).dialect(repoDialect).build();
+        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build();
 
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(repoSource.toBuilder().endpointOf("http://ko").build()))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build()))
                 .as("Invalid source endpoint");
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(repoSource.toBuilder().driver("ko").build()))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build()))
                 .as("Invalid source driver");
 
-        assertThatCode(() -> manager.getConnection(repoSource).close()).doesNotThrowAnyException();
-        assertThatCode(() -> manager.getConnection(repoSource.toBuilder().name("other").build()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().name("other").build()).close()).doesNotThrowAnyException();
     }
 
-    private final SdmxRepository repo = SdmxRepository.builder().name("repo").build();
-    private final SdmxWebSource repoSource = SdmxWebSource.builder().name("repoSource").driver("repoDriver").dialect("azerty").endpoint(asURL(repo)).build();
-    private final SdmxWebDriver repoDriver = MockedWebDriver
+    @Test
+    public void testInvalidSourceProperties() throws IOException {
+        List<String> events = new ArrayList<>();
+
+        SdmxWebManager manager = SdmxWebManager
+                .builder()
+                .driver(sampleDriver)
+                .dialect(sampleDialect)
+                .eventListener(SdmxWebListener.of((source, event) -> events.add(source.getName() + ":" + event)))
+                .build();
+
+        SdmxWebSource noProp = sampleSource.toBuilder().name("noProp").clearProperties().build();
+        try (SdmxWebConnection conn = manager.getConnection(noProp)) {
+        }
+        assertThat(events).isEmpty();
+
+        SdmxWebSource validProp = sampleSource.toBuilder().name("validProp").build();
+        try (SdmxWebConnection conn = manager.getConnection(validProp)) {
+        }
+        assertThat(events).isEmpty();
+
+        SdmxWebSource invalidProp = sampleSource.toBuilder().name("invalidProp").property("boom", "123").build();
+        try (SdmxWebConnection conn = manager.getConnection(invalidProp)) {
+        }
+        assertThat(events).hasSize(1).element(0, STRING)
+                .contains(invalidProp.getName())
+                .contains("boom");
+    }
+
+    private final SdmxRepository sample = SdmxRepository.builder().name("repo").build();
+    private final SdmxWebSource sampleSource = SdmxWebSource
+            .builder()
+            .name("repoSource")
+            .driver("repoDriver")
+            .dialect("azerty")
+            .endpoint(asURL(sample))
+            .property("someproperty", "somevalue")
+            .build();
+    private final SdmxWebDriver sampleDriver = MockedWebDriver
             .builder()
             .name("repoDriver")
             .rank(0)
-            .repo(asURL(repo), repo)
-            .source(repoSource)
+            .repo(asURL(sample), sample)
+            .supportedProperty("someproperty")
+            .source(sampleSource)
             .build();
-    private final SdmxDialect repoDialect = new MockedDialect("azerty");
+    private final SdmxDialect sampleDialect = new MockedDialect("azerty");
 
     private static URL asURL(SdmxRepository o) {
         try {
@@ -235,7 +272,7 @@ public class SdmxWebManagerTest {
     }
 
     @lombok.RequiredArgsConstructor
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     private static final class MockedWebDriver implements SdmxWebDriver {
 
         @lombok.Getter
@@ -250,6 +287,9 @@ public class SdmxWebManagerTest {
         @lombok.Singular
         private final List<SdmxWebSource> sources;
 
+        @lombok.Singular
+        private final List<String> supportedProperties;
+
         @Override
         public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
             return connect(source.getEndpoint());
@@ -262,7 +302,7 @@ public class SdmxWebManagerTest {
 
         @Override
         public Collection<String> getSupportedProperties() {
-            return Collections.emptyList();
+            return supportedProperties;
         }
 
         private SdmxWebConnection connect(URL endpoint) throws IOException {
@@ -284,7 +324,7 @@ public class SdmxWebManagerTest {
         private final SdmxConnection delegate;
 
         @Override
-        public Duration ping() throws IOException {
+        public Duration ping() {
             return Duration.ZERO;
         }
     }

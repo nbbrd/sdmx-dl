@@ -17,14 +17,13 @@
 package sdmxdl;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public class Series {
 
     @lombok.NonNull
@@ -40,4 +39,7 @@ public class Series {
     @lombok.NonNull
     @lombok.Singular("obs")
     Collection<Obs> obs;
+
+    public static final class Builder {
+    }
 }

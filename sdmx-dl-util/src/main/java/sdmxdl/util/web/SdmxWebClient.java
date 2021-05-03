@@ -46,7 +46,7 @@ public interface SdmxWebClient {
     @NonNull
     DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException;
 
-    boolean isSeriesKeysOnlySupported() throws IOException;
+    boolean isDetailSupported() throws IOException;
 
     @Nullable
     DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;

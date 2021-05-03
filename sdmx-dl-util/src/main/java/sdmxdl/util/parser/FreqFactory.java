@@ -29,8 +29,7 @@ import java.util.function.UnaryOperator;
 /**
  * @author Philippe Charles
  */
-@lombok.With
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<String>, Frequency> {
 
     @lombok.NonNull

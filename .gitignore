@@ -1,11 +1,2 @@
-/sdmx-dl-api/target/
-/sdmx-dl-connectors/target/
-/sdmx-dl-util/target/
-/sdmx-dl-tck/target/
-/sdmx-dl-ri/target/
-/sdmx-dl-xml/target/
-/sdmx-dl-kryo/target/
-/sdmx-dl-sys/target/
-/sdmx-dl-testing/target/
-/sdmx-dl-cli/target/
-/target/
+target/
+/binaries/

@@ -20,6 +20,7 @@ package sdmxdl;
  * @author Philippe Charles
  */
 @lombok.Value(staticConstructor = "of")
+@lombok.EqualsAndHashCode(callSuper = false)
 public class Dataflow extends Resource<DataflowRef> {
 
     @lombok.NonNull

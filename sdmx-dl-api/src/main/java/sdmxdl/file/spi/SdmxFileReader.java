@@ -16,6 +16,7 @@
  */
 package sdmxdl.file.spi;
 
+import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -28,10 +29,10 @@ import java.io.IOException;
 /**
  * @author Philippe Charles
  */
-//@ThreadSafe
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE
 )
+@ThreadSafe
 public interface SdmxFileReader {
 
     @Nullable

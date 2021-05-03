@@ -16,52 +16,81 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.Attribute;
+import sdmxdl.Component;
+import sdmxdl.DataStructure;
 import sdmxdl.Dimension;
 
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "concepts")
-public final class ListConceptsCommand extends BaseCommand {
+public final class ListConceptsCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebFlowOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
+    private Excel excel;
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
-            w.writeField("Concept");
-            w.writeField("Label");
-            w.writeField("Type");
-            w.writeField("Position");
-            w.writeEndOfLine();
-            for (Dimension o : getSortedDimensions()) {
-                w.writeField(o.getId());
-                w.writeField(o.getLabel());
-                w.writeField("dimension");
-                w.writeField(Integer.toString(o.getPosition()));
-                w.writeEndOfLine();
-            }
-        }
+        excel.apply(csv);
+        getTable().write(csv, getRows());
         return null;
     }
 
-    private SortedSet<Dimension> getSortedDimensions() throws IOException {
-        TreeSet<Dimension> result = new TreeSet<>(Comparator.comparingInt(Dimension::getPosition));
-        result.addAll(web.getStructure().getDimensions());
-        return result;
+    private CsvTable<Component> getTable() {
+        return CsvTable
+                .builderOf(Component.class)
+                .columnOf("Concept", Component::getId, Formatter.onString())
+                .columnOf("Label", Component::getLabel, Formatter.onString())
+                .columnOf("Type", Component::getClass, ListConceptsCommand::getTypeName)
+                .columnOf("Coded", Component::isCoded, Formatter.onBoolean())
+                .columnOf("Position", ListConceptsCommand::getPositionOrNull, Formatter.onInteger())
+                .build();
     }
+
+    private Stream<Component> getRows() throws IOException {
+        DataStructure dsd = web.loadStructure(web.loadManager());
+        return Stream.concat(getDimensions(dsd), getAttributes(dsd));
+    }
+
+    private Stream<Dimension> getDimensions(DataStructure dsd) {
+        return sort.applySort(dsd.getDimensions(), BY_POSITION);
+    }
+
+    private Stream<Attribute> getAttributes(DataStructure dsd) {
+        return sort.applySort(dsd.getAttributes(), BY_ID);
+    }
+
+    private static String getTypeName(Class<? extends Component> o) {
+        return o.getSimpleName().toLowerCase(Locale.ROOT);
+    }
+
+    private static Integer getPositionOrNull(Component o) {
+        return o instanceof Dimension ? ((Dimension) o).getPosition() : null;
+    }
+
+    private static final Comparator<Dimension> BY_POSITION = Comparator.comparingInt(Dimension::getPosition);
+    private static final Comparator<Attribute> BY_ID = Comparator.comparing(Attribute::getId);
 }

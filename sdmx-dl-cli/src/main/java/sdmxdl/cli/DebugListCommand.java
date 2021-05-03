@@ -18,12 +18,17 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.*;
 import picocli.CommandLine;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
+import sdmxdl.DataFilter;
 import sdmxdl.Dataflow;
+import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebSource;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -32,34 +37,38 @@ import sdmxdl.web.SdmxWebSource;
         name = "list",
         description = "List resources of a remote SDMX server."
 )
-public final class DebugListCommand extends BaseCommand {
+public final class DebugListCommand implements Callable<Void> {
 
     @Spec
     private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
-        spec.commandLine().usage(System.out);
+    public Void call() {
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void sources(@Mixin WebOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(SdmxWebSource.class, web.getManager().getSources().values(), this::getStdOutEncoding);
+    @Command
+    public void sources(@Mixin WebOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(SdmxWebSource.class, web.loadManager().getSources().values());
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void flows(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Dataflow.class, web.getSortedFlows(), this::getStdOutEncoding);
+    @Command
+    public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Dataflow.class, web.loadFlows(web.loadManager()));
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void keys(@Mixin WebFlowOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Series.class, web.getSortedSeriesKeys(), this::getStdOutEncoding);
+    @Command
+    public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY));
     }
 
-    @Command(sortOptions = false, mixinStandardHelpOptions = true)
-    public void features(@Mixin WebSourceOptions web, @Mixin DebugOutputOptions out) throws Exception {
-        out.dumpAll(Feature.class, web.getSortedFeatures(), this::getStdOutEncoding);
+    @Command
+    public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
+        nonNull(out).dumpAll(Feature.class, web.loadFeatures(web.loadManager()));
+    }
+
+    private DebugOutputOptions nonNull(DebugOutputOptions options) {
+        return options != null ? options : new DebugOutputOptions();
     }
 }

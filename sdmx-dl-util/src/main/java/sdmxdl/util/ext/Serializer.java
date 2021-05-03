@@ -19,12 +19,12 @@ public interface Serializer {
     static Serializer noOp() {
         return new Serializer() {
             @Override
-            public ExpiringRepository load(@NonNull InputStream stream) throws IOException {
+            public ExpiringRepository load(@NonNull InputStream stream) {
                 return null;
             }
 
             @Override
-            public void store(@NonNull OutputStream stream, ExpiringRepository entry) throws IOException {
+            public void store(@NonNull OutputStream stream, ExpiringRepository entry) {
             }
         };
     }

@@ -33,8 +33,8 @@ import java.util.Collection;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
-public final class WebResponse {
+@lombok.Builder(toBuilder = true)
+public class WebResponse {
 
     @lombok.NonNull
     WebRequest request;
@@ -89,7 +89,7 @@ public final class WebResponse {
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getFlow()))
                     .structure(conn.getStructure(request.getFlow()))
-                    .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.ALL));
+                    .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.FULL));
         } catch (IOException ex) {
             result.error(toError(ex));
         }

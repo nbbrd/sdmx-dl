@@ -23,30 +23,36 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import picocli.CommandLine;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Data
+@lombok.Getter
+@lombok.Setter
 public class DebugOutputOptions extends YamlOutputOptions {
 
-    public void dump(Class<?> rootType, Object item, Supplier<Optional<Charset>> stdOutEncoding) throws IOException {
-        dump(toYaml(rootType), item, stdOutEncoding);
+    @CommandLine.Option(
+            names = "--dummy-debug-option",
+            hidden = true,
+            defaultValue = "false"
+    )
+    private boolean dummyDebugOption;
+
+    public void dump(Class<?> rootType, Object item) throws IOException {
+        dump(toYaml(rootType), item);
     }
 
-    public void dumpAll(Class<?> rootType, Collection<?> items, Supplier<Optional<Charset>> stdOutEncoding) throws IOException {
-        dumpAll(toYaml(rootType), items, stdOutEncoding);
+    public void dumpAll(Class<?> rootType, Collection<?> items) throws IOException {
+        dumpAll(toYaml(rootType), items);
     }
 
     private static Yaml toYaml(Class<?> rootType) {
@@ -59,10 +65,10 @@ public class DebugOutputOptions extends YamlOutputOptions {
         Representer result = new Representer() {
             {
                 this.representers.put(LocalDateTime.class, data -> representScalar(Tag.STR, ((LocalDateTime) data).toString()));
-                this.representers.put(Key.class, data -> representScalar(Tag.STR, ((Key) data).toString()));
-                this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, ((DataflowRef) data).toString()));
-                this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, ((DataStructureRef) data).toString()));
-                this.representers.put(URL.class, data -> representScalar(Tag.STR, ((URL) data).toString()));
+                this.representers.put(Key.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(URL.class, data -> representScalar(Tag.STR, data.toString()));
             }
         };
         result.addClassTag(rootType, Tag.MAP);

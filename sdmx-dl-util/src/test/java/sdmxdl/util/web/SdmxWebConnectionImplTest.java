@@ -16,13 +16,11 @@
  */
 package sdmxdl.util.web;
 
-import _test.sdmxdl.util.client.XRepoWebClient;
+import _test.sdmxdl.util.XRepoWebClient;
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.tck.SdmxConnectionAssert;
-
-import java.io.IOException;
 
 /**
  * @author Philippe Charles
@@ -30,7 +28,7 @@ import java.io.IOException;
 public class SdmxWebConnectionImplTest {
 
     @Test
-    public void testCompliance() throws IOException {
+    public void testCompliance() {
         SdmxRepository repo = RepoSamples.REPO;
         SdmxConnectionAssert.assertCompliance(
                 () -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""),

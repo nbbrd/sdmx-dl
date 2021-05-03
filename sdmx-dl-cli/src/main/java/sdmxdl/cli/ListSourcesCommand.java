@@ -16,49 +16,77 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
+import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
+import internal.sdmxdl.cli.ext.CsvUtil;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "sources")
-public final class ListSourcesCommand extends BaseCommand {
+public final class ListSourcesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private Excel excel;
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
-            w.writeField("Name");
-            w.writeField("Description");
-            w.writeField("Aliases");
-            w.writeEndOfLine();
-            for (SdmxWebSource source : getSortedSources()) {
-                if (!source.isAlias()) {
-                    w.writeField(source.getName());
-                    w.writeField(source.getDescription());
-                    w.writeField(source.getAliases().stream().sorted().collect(Collectors.joining(", ")));
-                    w.writeEndOfLine();
-                }
-            }
-        }
+        excel.apply(csv);
+        getTable().write(csv, getRows());
         return null;
     }
 
-    private Collection<SdmxWebSource> getSortedSources() throws IOException {
-        return web.getManager().getSources().values();
+    private CsvTable<SdmxWebSource> getTable() {
+        return CsvTable
+                .builderOf(SdmxWebSource.class)
+                .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
+                .columnOf("Description", SdmxWebSource::getDescription, Formatter.onString())
+                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
+                .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
+                .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
+                .columnOf("Properties", SdmxWebSource::getProperties, MAP_FORMATTER)
+                .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
+                .columnOf("Monitor", SdmxWebSource::getMonitor, MAP_FORMATTER.compose(ListSourcesCommand::asMap))
+                .build();
     }
+
+    private Stream<SdmxWebSource> getRows() throws IOException {
+        return web.loadManager()
+                .getSources()
+                .values()
+                .stream()
+                .filter(source -> !source.isAlias());
+    }
+
+    private static Map<String, String> asMap(SdmxWebMonitor monitor) {
+        if (monitor != null) {
+            Map<String, String> result = new HashMap<>();
+            result.put("provider", monitor.getProvider());
+            result.put("id", monitor.getId());
+            return result;
+        }
+        return Collections.emptyMap();
+    }
+
+    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 }

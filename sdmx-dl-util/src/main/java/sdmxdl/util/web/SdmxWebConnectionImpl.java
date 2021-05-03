@@ -1,41 +1,34 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.util.web;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import nbbrd.io.function.IORunnable;
+import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.web.SdmxWebConnection;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import nbbrd.io.function.IORunnable;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
@@ -77,20 +70,19 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     @Override
     public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         try (DataCursor cursor = getDataCursor(flowRef, key, filter)) {
-            return cursor.toStream(filter.getDetail()).collect(Collectors.toList());
+            return cursor.toStream().collect(Collectors.toList());
         }
     }
 
     @Override
     public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         DataCursor cursor = getDataCursor(flowRef, key, filter);
-        return cursor.toStream(filter.getDetail()).onClose(IORunnable.unchecked(cursor::close));
+        return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override
     public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         checkState();
-        checkQuery(filter);
 
         DataStructureRef structRef = client.peekStructureRef(flowRef);
         if (structRef == null) {
@@ -100,12 +92,15 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
-        return client.getData(new DataRequest(flowRef, key, filter), structure);
+
+        return isDetailSupported()
+                ? client.getData(new DataRequest(flowRef, key, filter), structure)
+                : client.getData(new DataRequest(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
-        return client.isSeriesKeysOnlySupported();
+    public boolean isDetailSupported() throws IOException {
+        return client.isDetailSupported();
     }
 
     @Override
@@ -121,19 +116,13 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closed = true;
     }
 
     private void checkState() throws IOException {
         if (closed) {
             throw SdmxExceptions.connectionClosed(client.getName());
-        }
-    }
-
-    private void checkQuery(DataFilter filter) throws IOException {
-        if (filter.isSeriesKeyOnly() && !isSeriesKeysOnlySupported()) {
-            throw new IllegalStateException("serieskeysonly not supported");
         }
     }
 }

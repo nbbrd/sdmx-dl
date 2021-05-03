@@ -31,8 +31,8 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
-public final class WebReport {
+@lombok.Builder(toBuilder = true)
+public class WebReport {
 
     @lombok.NonNull
     WebResponse response;
@@ -187,6 +187,6 @@ public final class WebReport {
                         .orElse(null)
                         : null;
             }
-        };
+        }
     }
 }

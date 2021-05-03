@@ -16,30 +16,29 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import picocli.CommandLine;
 import sdmxdl.DataStructure;
 
+import java.util.concurrent.Callable;
+
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(
-        name = "struct"
-)
+@CommandLine.Command(name = "struct")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DebugStructCommand extends BaseCommand {
+public final class DebugStructCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebFlowOptions web;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        output.dump(DataStructure.class, web.getStructure(), this::getStdOutEncoding);
+        output.dump(DataStructure.class, web.loadStructure(web.loadManager()));
         return null;
     }
 }

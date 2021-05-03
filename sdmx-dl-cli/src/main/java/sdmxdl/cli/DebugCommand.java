@@ -16,9 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import nbbrd.console.picocli.PrintContext;
 import picocli.CommandLine;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -34,14 +35,14 @@ import picocli.CommandLine;
                 DebugStructCommand.class
         }
 )
-public final class DebugCommand extends BaseCommand {
+public final class DebugCommand implements Callable<Void> {
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
-        spec.commandLine().usage(System.out);
+    public Void call() {
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 }

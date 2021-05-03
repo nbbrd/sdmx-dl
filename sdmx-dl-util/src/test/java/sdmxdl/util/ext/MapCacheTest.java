@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +41,7 @@ public class MapCacheTest {
 
     @Test
     public void testGet() {
-        ConcurrentHashMap map = new ConcurrentHashMap();
+        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
 
         assertThat(MapCache.get(map, clock(1000), "KEY1"))
                 .as("Empty map should return null")

@@ -5,13 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>be.nbb.rd</groupId>
+        <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.1</version>
+        <version>3.0.0-beta.2</version>
     </parent>
 
     <artifactId>sdmx-dl-sys</artifactId>
     <packaging>jar</packaging>
+
+    <name>sdmx-dl-sys</name>
+    <description>Download data from remote SDMX servers - System</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
         <!-- compile only -->
@@ -28,23 +32,23 @@
 
         <!-- compile and runtime -->
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
-            <artifactId>java-net-proxy</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.github.tuupertunut</groupId>
+            <artifactId>powershell-lib-java</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
-            <groupId>io.github.hakky54.sslcontext-kickstart</groupId>
-            <artifactId>sslcontext-kickstart</artifactId>
-            <version>5.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.picocsv</groupId>
             <artifactId>picocsv</artifactId>
-            <version>1.2.0</version>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-io-util</groupId>
+            <artifactId>java-io-base</artifactId>
         </dependency>
 
         <!-- test only -->
@@ -54,13 +58,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

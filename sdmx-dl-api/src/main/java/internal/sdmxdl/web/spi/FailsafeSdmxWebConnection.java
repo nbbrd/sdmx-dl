@@ -213,11 +213,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public boolean isSeriesKeysOnlySupported() throws IOException {
+    public boolean isDetailSupported() throws IOException {
         try {
-            return delegate.isSeriesKeysOnlySupported();
+            return delegate.isDetailSupported();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting seriesKeysOnly support", ex);
+            throw unexpectedError("Unexpected exception while getting detail support", ex);
         }
     }
 

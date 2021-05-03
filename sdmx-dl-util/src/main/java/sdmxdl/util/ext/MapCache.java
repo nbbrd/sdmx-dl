@@ -36,11 +36,11 @@ public final class MapCache implements SdmxCache {
 
     @NonNull
     public static MapCache of() {
-        return of(new ConcurrentHashMap(), Clock.systemDefaultZone());
+        return of(new ConcurrentHashMap<>(), Clock.systemDefaultZone());
     }
 
     @lombok.NonNull
-    private final ConcurrentMap map;
+    private final ConcurrentMap<String, ExpiringRepository> map;
 
     @lombok.NonNull
     private final Clock clock;
@@ -56,20 +56,19 @@ public final class MapCache implements SdmxCache {
     }
 
     @Nullable
-    static SdmxRepository get(@NonNull ConcurrentMap map, @NonNull Clock clock, @NonNull String key) {
-        Object value = map.get(key);
-        if (!(value instanceof ExpiringRepository)) {
+    static SdmxRepository get(@NonNull ConcurrentMap<String, ExpiringRepository> map, @NonNull Clock clock, @NonNull String key) {
+        ExpiringRepository value = map.get(key);
+        if (value == null) {
             return null;
         }
-        ExpiringRepository entry = (ExpiringRepository) value;
-        if (entry.isExpired(clock)) {
+        if (value.isExpired(clock)) {
             map.remove(key);
             return null;
         }
-        return entry.getValue();
+        return value.getValue();
     }
 
-    static void put(@NonNull ConcurrentMap map, @NonNull Clock clock, @NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
+    static void put(@NonNull ConcurrentMap<String, ExpiringRepository> map, @NonNull Clock clock, @NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
         Objects.requireNonNull(value);
         map.put(key, ExpiringRepository.of(clock, ttl, value));
     }

@@ -16,13 +16,8 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.VerboseOptions;
 import picocli.CommandLine;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.kryo.KryoSerialization;
-import sdmxdl.sys.SdmxSystemUtil;
-import sdmxdl.util.ext.FileCache;
-import sdmxdl.util.ext.Serializer;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -30,108 +25,54 @@ import sdmxdl.xml.XmlWebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Data
-@SuppressWarnings("FieldMayBeFinal")
+@lombok.Getter
+@lombok.Setter
 public class WebOptions {
 
-    @CommandLine.Option(
-            names = {"-v", "--verbose"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.verbose"
-    )
-    private boolean verbose;
+    @CommandLine.Mixin
+    private VerboseOptions verboseOptions;
 
     @CommandLine.Option(
             names = {"-s", "--sources"},
             paramLabel = "<file>",
-            descriptionKey = "sdmxdl.cli.sources"
+            descriptionKey = "cli.sdmx.sourcesFile"
     )
     private File sourcesFile;
 
     @CommandLine.Option(
-            names = {"-l", "--languages"},
-            paramLabel = "<langs>",
-            converter = LangsConverter.class,
-            defaultValue = "*",
-            descriptionKey = "sdmxdl.cli.languages"
-    )
-    private LanguagePriorityList langs;
-
-    @CommandLine.Option(
-            names = {"--no-cache"},
+            names = {"--no-log"},
             defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noCache"
+            hidden = true
     )
-    private boolean noCache;
+    private boolean noLog;
 
-    @CommandLine.Option(
-            names = {"--no-sys-proxy"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysProxy"
-    )
-    private boolean noSysProxy;
-
-    @CommandLine.Option(
-            names = {"--no-sys-ssl"},
-            defaultValue = "false",
-            descriptionKey = "sdmxdl.cli.noSysSsl"
-    )
-    private boolean noSysSsl;
-
-    public SdmxWebManager getManager() throws IOException {
-        SdmxWebManager.Builder result = SdmxWebManager.ofServiceLoader()
+    public SdmxWebManager loadManager() throws IOException {
+        return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .languages(langs)
-                .cache(getCache())
                 .eventListener(getEventListener())
-                .customSources(getCustomSources());
-
-        if (!isNoSysProxy()) {
-            SdmxSystemUtil.configureProxy(result, this::reportIOException);
-        }
-
-        if (!isNoSysSsl()) {
-            SdmxSystemUtil.configureSsl(result, this::reportIOException);
-        }
-
-        return result.build();
-    }
-
-    private SdmxCache getCache() {
-        return noCache
-                ? SdmxCache.noOp()
-                : FileCache
-                .builder()
-                .serializer(Serializer.gzip(new KryoSerialization()))
-                .onIOException(this::reportIOException)
+                .customSources(parseCustomSources())
                 .build();
     }
 
     private SdmxWebListener getEventListener() {
-        return verbose
-                ? new VerboseWebListener(SdmxWebListener.getDefault())
-                : SdmxWebListener.getDefault();
+        SdmxWebListener original = isNoLog() ? SdmxWebListener.noOp() : SdmxWebListener.getDefault();
+        return new VerboseWebListener(original, verboseOptions);
     }
 
-    private List<SdmxWebSource> getCustomSources() throws IOException {
-        return sourcesFile != null
-                ? XmlWebSource.getParser().parseFile(sourcesFile)
-                : Collections.emptyList();
-    }
-
-    protected void reportIOException(String message, IOException ex) {
-        if (verbose) {
-            System.out.println("IO: " + message + " - " + ex.getMessage());
+    private List<SdmxWebSource> parseCustomSources() throws IOException {
+        if (sourcesFile != null) {
+            if (verboseOptions.isVerbose()) {
+                verboseOptions.reportToErrorStream("CONFIG", "Using source file '" + sourcesFile + "'");
+            }
+            return XmlWebSource.getParser().parseFile(sourcesFile);
         }
+        return Collections.emptyList();
     }
 
     @lombok.AllArgsConstructor
@@ -140,32 +81,22 @@ public class WebOptions {
         @lombok.NonNull
         private final SdmxWebListener main;
 
+        @lombok.NonNull
+        private final VerboseOptions verboseOptions;
+
         @Override
         public boolean isEnabled() {
             return true;
         }
 
         @Override
-        public void onSourceEvent(SdmxWebSource source, String message) {
+        public void onWebSourceEvent(SdmxWebSource source, String message) {
             if (main.isEnabled()) {
-                main.onSourceEvent(source, message);
+                main.onWebSourceEvent(source, message);
             }
-            System.out.println(source.getName() + ": " + message);
-        }
-    }
-
-    public static boolean isAllSources(List<String> sourceNames) {
-        return sourceNames.size() == 1 && isAllSources(sourceNames.get(0));
-    }
-
-    private static boolean isAllSources(String name) {
-        return "all".equals(name);
-    }
-
-    public static void warmupProxySelector(ProxySelector proxySelector) {
-        try {
-            proxySelector.select(new URI("http://localhost"));
-        } catch (URISyntaxException ex) {
+            if (verboseOptions.isVerbose()) {
+                verboseOptions.reportToErrorStream("WEB", source.getName() + ": " + message);
+            }
         }
     }
 }

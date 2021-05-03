@@ -28,7 +28,8 @@ import java.util.Set;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataStructure extends Resource<DataStructureRef> {
 
     /**
@@ -45,8 +46,17 @@ public class DataStructure extends Resource<DataStructureRef> {
     @lombok.Singular
     Set<Dimension> dimensions;
 
+    /**
+     * Non-null list of statistical concept providing qualitative information
+     * about a specific statistical object
+     */
+    @lombok.NonNull
+    @lombok.Singular
+    Set<Attribute> attributes;
+
     String timeDimensionId;
 
+    @lombok.NonNull
     String primaryMeasureId;
 
     /**
@@ -54,4 +64,7 @@ public class DataStructure extends Resource<DataStructureRef> {
      */
     @lombok.NonNull
     String label;
+
+    public static final class Builder {
+    }
 }

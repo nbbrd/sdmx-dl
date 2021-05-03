@@ -16,6 +16,7 @@
  */
 package sdmxdl;
 
+import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.Closeable;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-//@NotThreadSafe
+@NotThreadSafe
 public interface SdmxConnection extends Closeable {
 
     @NonNull
@@ -47,5 +48,5 @@ public interface SdmxConnection extends Closeable {
     @NonNull
     DataCursor getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
 
-    boolean isSeriesKeysOnlySupported() throws IOException;
+    boolean isDetailSupported() throws IOException;
 }

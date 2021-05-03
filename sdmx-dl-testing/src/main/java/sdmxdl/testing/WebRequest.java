@@ -24,8 +24,8 @@ import sdmxdl.Key;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
-public final class WebRequest {
+@lombok.Builder(toBuilder = true)
+public class WebRequest {
 
     @lombok.NonNull
     String source;

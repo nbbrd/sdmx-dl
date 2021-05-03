@@ -16,12 +16,13 @@
  */
 package sdmxdl.repo;
 
+import internal.sdmxdl.FilteredCursor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +31,8 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataSet extends Resource<DataflowRef> {
 
     @lombok.NonNull
@@ -51,33 +53,42 @@ public class DataSet extends Resource<DataflowRef> {
     public Collection<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return isNoFilters(key, filter) ? data : getDataStream(key, filter).collect(Collectors.toList());
+        return FilteredCursor.isNoFilter(key, filter) ? data : DataCursor.of(data.iterator()).filter(key, filter).toStream().collect(Collectors.toList());
     }
 
+    @NonNull
+    public Stream<Series> getDataStream() {
+        return data.stream();
+    }
 
     @NonNull
     public Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return data.stream().filter(key::containsKey);
+        return FilteredCursor.isNoFilter(key, filter) ? data.stream() : DataCursor.of(data.iterator()).filter(key, filter).toStream();
+    }
+
+    @NonNull
+    public DataCursor getDataCursor() {
+        return DataCursor.of(data.iterator());
     }
 
     @NonNull
     public DataCursor getDataCursor(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return DataCursor.of(data, key);
-    }
-
-    private boolean isNoFilters(Key key, DataFilter filter) {
-        return Key.ALL.equals(key) && DataFilter.ALL.equals(filter);
+        return DataCursor.of(data.iterator()).filter(key, filter);
     }
 
     public static class Builder {
 
         @NonNull
-        public Builder copyOf(@NonNull DataCursor cursor, @NonNull DataFilter filter) throws IOException {
-            cursor.toStream(filter.getDetail()).forEach(this::series);
+        public Builder copyOf(@NonNull DataCursor cursor) throws IOException {
+            try {
+                cursor.toStream().forEach(this::series);
+            } catch (UncheckedIOException ex) {
+                throw ex.getCause();
+            }
             return this;
         }
     }

@@ -16,160 +16,143 @@
  */
 package sdmxdl.util.web;
 
-import _test.sdmxdl.util.FakeClock;
-import _test.sdmxdl.util.client.XCallStackWebClient;
-import _test.sdmxdl.util.client.XRepoWebClient;
+import _test.sdmxdl.util.CachingAssert;
+import _test.sdmxdl.util.XCountingWebClient;
+import _test.sdmxdl.util.XRepoWebClient;
+import nbbrd.io.function.IOConsumer;
+import nbbrd.io.function.IOFunction;
 import org.junit.Test;
-import sdmxdl.DataFilter;
-import sdmxdl.Key;
+import sdmxdl.*;
 import sdmxdl.samples.RepoSamples;
-import sdmxdl.util.TypedId;
-import sdmxdl.util.ext.MapCache;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.List;
+import java.util.function.Consumer;
 
+import static _test.sdmxdl.util.CachingAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static sdmxdl.samples.RepoSamples.*;
+import static sdmxdl.tck.DataFilterAssert.filters;
+import static sdmxdl.tck.KeyAssert.keys;
 
 /**
  * @author Philippe Charles
  */
 public class CachedWebClientTest {
 
+    private final String base = "abc/";
+    private final Duration ttl = Duration.ofMillis(100);
+
+    private final String flowsId = idOf("flows://", base);
+    private final String flowId = idOf("flow://", base, GOOD_FLOW_REF);
+    private final String structId = idOf("struct://", base, GOOD_STRUCT_REF);
+    private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, GOOD_FLOW_REF);
+    private final String noDataId = idOf("noData://", base, GOOD_FLOW_REF);
+
+    private CachedWebClient getClient(CachingAssert.Context ctx) {
+        SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
+        SdmxWebClient counting = XCountingWebClient.of(original, ctx.getCount());
+        return new CachedWebClient(counting, ctx.newCache(), base, ttl);
+    }
+
+    @FunctionalInterface
+    private interface Method<T> extends IOFunction<CachedWebClient, T> {
+
+        default Consumer<CachedWebClient> andThen(IOConsumer<T> consumer) {
+            return IOConsumer.unchecked(o -> consumer.acceptWithIO(applyWithIO(o)));
+        }
+
+        default Consumer<CachedWebClient> asConsumer() {
+            return IOConsumer.unchecked(this::applyWithIO);
+        }
+    }
+
     @Test
     public void testGetFlows() throws IOException {
-        AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
-        FakeClock clock = new FakeClock();
+        Method<List<Dataflow>> method = CachedWebClient::getFlows;
 
-        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
+        checkCacheHit(this::getClient, method.asConsumer(), flowsId, ttl.toMillis());
 
-        target.getFlows();
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(flowsId);
-
-        target.getFlows();
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(flowsId);
-
-        clock.plus(100);
-        target.getFlows();
-        assertThat(count).hasValue(2);
-        assertThat(map).containsOnlyKeys(flowsId);
-
-        map.clear();
-        target.getFlows();
-        assertThat(count).hasValue(3);
-        assertThat(map).containsOnlyKeys(flowsId);
+        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
+                .containsExactly(FLOW);
     }
 
     @Test
     public void testGetFlow() throws IOException {
-        AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
-        FakeClock clock = new FakeClock();
+        Method<Dataflow> method = client -> client.getFlow(GOOD_FLOW_REF);
 
-        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
+        checkCacheHit(this::getClient, method.asConsumer(), flowId, ttl.toMillis());
 
-        assertThatNullPointerException().isThrownBy(() -> target.getFlow(null));
+        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
+                .isEqualTo(FLOW);
+    }
 
-        target.getFlow(RepoSamples.GOOD_FLOW_REF);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(flowId);
+    @Test
+    public void testPeekDataflowFromCache() throws IOException {
+        Context ctx = new Context();
+        CachedWebClient client = getClient(ctx);
 
-        target.getFlow(RepoSamples.GOOD_FLOW_REF);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(flowId);
-
-        clock.plus(100);
-        target.getFlow(RepoSamples.GOOD_FLOW_REF);
-        assertThat(count).hasValue(2);
-        assertThat(map).containsOnlyKeys(flowId);
-
-        map.clear();
-        target.getFlow(RepoSamples.GOOD_FLOW_REF);
-        assertThat(count).hasValue(3);
-        assertThat(map).containsOnlyKeys(flowId);
-
-        map.clear();
-        target.getFlows();
-        target.getFlow(RepoSamples.GOOD_FLOW_REF);
-        assertThat(count).hasValue(4);
-        assertThat(map).containsOnlyKeys(flowsId);
+        ctx.reset();
+        client.getFlows();
+        client.getFlow(GOOD_FLOW_REF);
+        assertThat(ctx.getCount()).hasValue(1);
+        assertThat(ctx.getMap()).containsOnlyKeys(flowsId);
     }
 
     @Test
     public void testGetStructure() throws IOException {
-        AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
-        FakeClock clock = new FakeClock();
+        Method<DataStructure> method = client -> client.getStructure(GOOD_STRUCT_REF);
 
-        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
+        checkCacheHit(this::getClient, method.asConsumer(), structId, ttl.toMillis());
 
-        assertThatNullPointerException().isThrownBy(() -> target.getStructure(null));
-
-        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(structId);
-
-        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(structId);
-
-        clock.plus(100);
-        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
-        assertThat(count).hasValue(2);
-        assertThat(map).containsOnlyKeys(structId);
-
-        map.clear();
-        target.getStructure(RepoSamples.GOOD_STRUCT_REF);
-        assertThat(count).hasValue(3);
-        assertThat(map).containsOnlyKeys(structId);
+        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
+                .isEqualTo(STRUCT);
     }
 
     @Test
-    public void testLoadData() throws IOException {
-        AtomicInteger count = new AtomicInteger();
-        ConcurrentHashMap map = new ConcurrentHashMap();
-        FakeClock clock = new FakeClock();
+    public void testGetData() throws IOException {
+        for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
+            for (DataFilter filter : filters(DataFilter.Detail.values())) {
+                Method<DataCursor> method = client -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT);
 
-        CachedWebClient target = new CachedWebClient(getClient(count), MapCache.of(map, clock), Duration.ofMillis(100), "");
+                if (filter.getDetail().isDataRequested()) {
+                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
+                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
+                } else {
+                    if (filter.getDetail().isMetaRequested()) {
+                        checkCacheHit(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
+                    } else {
+                        checkCacheHit(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
+                    }
+                }
 
-        assertThatNullPointerException().isThrownBy(() -> target.getData(null, null));
-
-        DataRequest request = new DataRequest(RepoSamples.GOOD_FLOW_REF, Key.ALL, filter);
-
-        target.getData(request, null);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(keysId);
-
-        target.getData(request, null);
-        assertThat(count).hasValue(1);
-        assertThat(map).containsOnlyKeys(keysId);
-
-        clock.plus(100);
-        target.getData(request, null);
-        assertThat(count).hasValue(2);
-        assertThat(map).containsOnlyKeys(keysId);
-
-        map.clear();
-        target.getData(request, null);
-        assertThat(count).hasValue(3);
-        assertThat(map).containsOnlyKeys(keysId);
+                try (DataCursor cursor = method.compose(this::getClient).applyWithIO(new Context())) {
+                    assertThat(cursor.toStream())
+                            .containsExactlyElementsOf(RepoSamples.DATA_SET.getData(key, filter));
+                }
+            }
+        }
     }
 
-    private final DataFilter filter = DataFilter.SERIES_KEYS_ONLY;
-    private final String flowsId = TypedId.of("flows://", Function.identity(), Function.identity()).getContent();
-    private final String flowId = TypedId.of("flow://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
-    private final String structId = TypedId.of("struct://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_STRUCT_REF).getContent();
-    private final String keysId = TypedId.of("keys://", Function.identity(), Function.identity()).with(RepoSamples.GOOD_FLOW_REF).getContent();
+    @Test
+    public void testBroaderRequest() throws IOException {
+        Context ctx = new Context();
+        CachedWebClient client = getClient(ctx);
 
-    private static SdmxWebClient getClient(AtomicInteger count) throws IOException {
-        SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
-        return XCallStackWebClient.of(original, count);
+        for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
+            IOConsumer<Key> method = key -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT).close();
+
+            ctx.reset();
+            method.acceptWithIO(Key.ALL);
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(1);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            method.acceptWithIO(Key.ALL);
+            assertThat(ctx.getCount()).hasValue(2);
+        }
     }
 }

@@ -16,28 +16,30 @@
  */
 package internal.sdmxdl;
 
+import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor
+@lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SeriesCursor implements DataCursor {
 
-    @lombok.NonNull
-    private final Iterator<Series> col;
+    public static @NonNull DataCursor of(@NonNull Iterator<Series> iterator) {
+        return iterator instanceof SeriesIterator
+                ? ((SeriesIterator) iterator).delegate
+                : new SeriesCursor(iterator);
+    }
 
     @lombok.NonNull
-    private final Key ref;
+    final Iterator<Series> delegate;
 
     private Series series = null;
     private Iterator<Obs> obsIterator = null;
@@ -47,10 +49,8 @@ public final class SeriesCursor implements DataCursor {
     @Override
     public boolean nextSeries() throws IOException {
         checkState();
-        do {
-            series = col.hasNext() ? col.next() : null;
-            obsIterator = series != null ? series.getObs().iterator() : null;
-        } while (series != null && !ref.containsKey(series));
+        series = delegate.hasNext() ? delegate.next() : null;
+        obsIterator = series != null ? series.getObs().iterator() : null;
         return series != null;
     }
 
@@ -99,26 +99,19 @@ public final class SeriesCursor implements DataCursor {
     }
 
     @Override
-    public void close() throws IOException {
+    public Map<String, String> getObsAttributes() throws IOException {
+        checkObsState();
+        return obs.getMeta();
+    }
+
+    @Override
+    public void close() {
         closed = true;
     }
 
     @Override
-    public Stream<Series> toStream(DataFilter.Detail detail) throws IOException {
-        Objects.requireNonNull(detail);
-        checkState();
-        switch (detail) {
-            case FULL:
-                return getRemainingItems();
-            default:
-                return DataCursor.super.toStream(detail);
-        }
-    }
-
-    private Stream<Series> getRemainingItems() {
-        return StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(col, 0), false)
-                .filter(ref::containsKey);
+    public Stream<Series> toStream() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(delegate, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
     private void checkState() throws IOException {

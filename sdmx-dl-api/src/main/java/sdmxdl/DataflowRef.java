@@ -17,6 +17,8 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import nbbrd.design.StaticFactoryMethod;
+import nbbrd.design.StringValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -34,8 +36,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Philippe Charles
  */
+@StringValue
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.EqualsAndHashCode(callSuper = false)
 public class DataflowRef extends ResourceRef<DataflowRef> {
 
     @lombok.NonNull
@@ -52,11 +56,13 @@ public class DataflowRef extends ResourceRef<DataflowRef> {
         return toString(this);
     }
 
+    @StaticFactoryMethod
     @NonNull
-    public static DataflowRef parse(@NonNull String input) throws IllegalArgumentException {
+    public static DataflowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
         return parse(input, DataflowRef::new);
     }
 
+    @StaticFactoryMethod
     @NonNull
     public static DataflowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return of(agency, id, version, DataflowRef::new);

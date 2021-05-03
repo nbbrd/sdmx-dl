@@ -16,9 +16,9 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.DebugOutputOptions;
-import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.WebSourcesOptions;
+import internal.sdmxdl.cli.ext.ProxyOptions;
 import picocli.CommandLine;
 import sdmxdl.testing.WebReport;
 import sdmxdl.testing.WebRequest;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,17 +44,10 @@ import java.util.stream.Collectors;
         hidden = true
 )
 @SuppressWarnings("FieldMayBeFinal")
-public final class TestCommand extends BaseCommand {
+public final class TestCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebOptions web;
-
-    @CommandLine.Parameters(
-            arity = "1..*",
-            paramLabel = "<source>",
-            descriptionKey = "sources"
-    )
-    private List<String> sources;
+    private WebSourcesOptions web;
 
     @CommandLine.Option(
             names = {"--requests"},
@@ -61,23 +55,22 @@ public final class TestCommand extends BaseCommand {
     )
     private File requests;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        SdmxWebManager manager = web.getManager();
-        WebOptions.warmupProxySelector(manager.getProxySelector());
+        SdmxWebManager manager = web.loadManager();
+        ProxyOptions.warmupProxySelector(manager.getProxySelector());
 
-        List<Summary> result = getRequests()
-                .parallelStream()
+        List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())
                 .map(request -> WebResponse.of(request, manager))
                 .map(WebReport::of)
                 .map(Summary::of)
                 .collect(Collectors.toList());
-        
-        output.dumpAll(Summary.class, result, this::getStdOutEncoding);
+
+        output.dumpAll(Summary.class, result);
 
         return null;
     }
@@ -89,26 +82,13 @@ public final class TestCommand extends BaseCommand {
     }
 
     private Predicate<WebRequest> getSourceFilter() {
-        return WebOptions.isAllSources(sources)
+        return web.isAllSources()
                 ? request -> true
-                : request -> sources.contains(request.getSource());
-    }
-
-    private static void print(Summary s) {
-        System.out.println("    Request: " + s.getRequest());
-        System.out.println("     Config: " + s.getConfig());
-        System.out.println("  FlowCount: " + s.getFlowCount());
-        System.out.println("       Flow: " + s.isFlow());
-        System.out.println("     Struct: " + s.isStruct());
-        System.out.println("SeriesCount: " + s.getSeriesCount());
-        System.out.println("   ObsCount: " + s.getObsCount());
-        System.out.println("      Error: " + s.getError().replace(System.lineSeparator(), " > "));
-        System.out.println("   Problems: " + s.getProblems().stream().collect(Collectors.joining(", ")));
-        System.out.println("");
+                : request -> web.getSources().contains(request.getSource());
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static class WebConfig {
 
         @lombok.NonNull
@@ -135,7 +115,7 @@ public final class TestCommand extends BaseCommand {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Builder(toBuilder = true)
     private static class Summary {
 
         @lombok.NonNull

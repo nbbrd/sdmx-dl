@@ -16,58 +16,55 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
-import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.Excel;
+import internal.sdmxdl.cli.SortOptions;
+import internal.sdmxdl.cli.WebConceptOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
-import nbbrd.picocsv.Csv;
+import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
  */
 @CommandLine.Command(name = "codes")
-public final class ListCodesCommand extends BaseCommand {
+public final class ListCodesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebFlowOptions web;
-
-    @CommandLine.Parameters(
-            index = "2",
-            paramLabel = "<concept>",
-            descriptionKey = "sdmxdl.cli.concept"
-    )
-    private String concept;
+    private WebConceptOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private CsvOutputOptions csv = new CsvOutputOptions();
+    private final CsvOutputOptions csv = new CsvOutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
+
+    @CommandLine.Mixin
+    private Excel excel;
 
     @Override
     public Void call() throws Exception {
-        try (Csv.Writer w = csv.newCsvWriter(this::getStdOutEncoding)) {
-            w.writeField("Code");
-            w.writeField("Label");
-            w.writeEndOfLine();
-            for (Map.Entry<String, String> entry : getSortedCodes().entrySet()) {
-                w.writeField(entry.getKey());
-                w.writeField(entry.getValue());
-                w.writeEndOfLine();
-            }
-        }
+        excel.apply(csv);
+        getTable().write(csv, getRows());
         return null;
     }
 
-    private SortedMap<String, String> getSortedCodes() throws IOException {
-        return new TreeMap<>(web.getStructure()
-                .getDimensions()
-                .stream()
-                .filter(dimension -> dimension.getId().equals(concept))
-                .findFirst()
-                .orElseThrow(() -> new IOException("Cannot find concept '" + concept + "'"))
-                .getCodes());
+    private CsvTable<Map.Entry<String, String>> getTable() {
+        CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
+        result.columnOf("Code", Map.Entry::getKey, Formatter.onString());
+        result.columnOf("Label", Map.Entry::getValue, Formatter.onString());
+        return result.build();
     }
+
+    private Stream<Map.Entry<String, String>> getRows() throws IOException {
+        return sort.applySort(web.loadComponent(web.loadManager()).getCodes().entrySet(), BY_KEY);
+    }
+
+    private static final Comparator<Map.Entry<String, String>> BY_KEY = Comparator.comparing(Map.Entry::getKey);
 }

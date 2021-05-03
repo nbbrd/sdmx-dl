@@ -32,45 +32,42 @@ public class DataSetTest {
     @Test
     public void testBuilderCopyOf() {
         assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.builder().copyOf(null, DataFilter.ALL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.builder().copyOf(DataCursor.empty(), null));
+                .isThrownBy(() -> DataSet.builder().copyOf(null));
     }
 
     @Test
     public void testGetData() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getData(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getData(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getData(Key.ALL, null));
 
-        assertThat(dataSet.getData(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getData(Key.ALL, DataFilter.FULL))
                 .containsExactly(series);
     }
 
     @Test
     public void testGetDataStream() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getDataStream(Key.ALL, null));
 
-        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.FULL))
                 .containsExactly(series);
     }
 
     @Test
     public void testGetDataCursor() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.ALL));
+                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.FULL));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> dataSet.getDataCursor(Key.ALL, null));
 
-        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.ALL))
+        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.FULL))
                 .isNotNull();
     }
 
@@ -79,7 +76,8 @@ public class DataSetTest {
     private final DataflowRef goodFlowRef = DataflowRef.of("NBB", "XYZ", "v2.0");
     private final DataflowRef badFlowRef = DataflowRef.parse("other");
     private final Dataflow flow = Dataflow.of(goodFlowRef, goodStructRef, "flow1");
-    private final DataStructure struct = DataStructure.builder().ref(goodStructRef).label("struct1").build();
-    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(Obs.of(LocalDateTime.now(), Math.PI)).meta("hello", "world").build();
+    private final DataStructure struct = DataStructure.builder().ref(goodStructRef).primaryMeasureId("").label("struct1").build();
+    private final Obs obs1 = Obs.builder().period(LocalDateTime.now()).value(Math.PI).build();
+    private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(obs1).meta("hello", "world").build();
     private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
 }

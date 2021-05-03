@@ -16,8 +16,9 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import picocli.CommandLine;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -27,21 +28,20 @@ import picocli.CommandLine;
         subcommands = {
                 ListSourcesCommand.class,
                 ListFlowsCommand.class,
-                ListKeysCommand.class,
                 ListConceptsCommand.class,
                 ListCodesCommand.class,
                 ListFeaturesCommand.class,
-                CommandLine.HelpCommand.class
+                ListDriversCommand.class
         }
 )
-public final class ListCommand extends BaseCommand {
+public final class ListCommand implements Callable<Void> {
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
-        spec.commandLine().usage(System.out);
+    public Void call() {
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 }

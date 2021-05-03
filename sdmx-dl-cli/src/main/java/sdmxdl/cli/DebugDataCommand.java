@@ -16,30 +16,30 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import picocli.CommandLine;
+import sdmxdl.DataFilter;
 import sdmxdl.Series;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(
-        name = "data"
-)
+@CommandLine.Command(name = "data")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DebugDataCommand extends BaseCommand {
+public final class DebugDataCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebKeyOptions web;
 
-    @CommandLine.ArgGroup
+    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(Series.class, web.getSeries(), this::getStdOutEncoding);
+        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataFilter.FULL));
         return null;
     }
 }

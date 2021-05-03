@@ -31,7 +31,7 @@ import java.io.IOException;
 public class SdmxManagerAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         String validName;
         String invalidName;

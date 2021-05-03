@@ -42,15 +42,17 @@ public final class TypedId<T> {
             @NonNull String content,
             @NonNull Function<SdmxRepository, T> loader,
             @NonNull Function<T, SdmxRepository> storer) {
-        Objects.requireNonNull(content);
-        Objects.requireNonNull(loader);
-        Objects.requireNonNull(storer);
         return new TypedId<>(content, loader, storer);
     }
 
+    @lombok.NonNull
     @lombok.Getter
     private final String content;
+
+    @lombok.NonNull
     private final Function<SdmxRepository, T> loader;
+
+    @lombok.NonNull
     private final Function<T, SdmxRepository> storer;
 
     @NonNull
@@ -66,12 +68,12 @@ public final class TypedId<T> {
     }
 
     @NonNull
-    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<T, Duration> ttl) throws IOException {
+    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
         return load(cache, factory, ttl, o -> true);
     }
 
     @NonNull
-    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<T, Duration> ttl, @NonNull Predicate<T> validator) throws IOException {
+    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();

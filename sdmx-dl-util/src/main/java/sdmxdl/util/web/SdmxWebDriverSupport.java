@@ -26,11 +26,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
+import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
+
 /**
  * @author Philippe Charles
  */
-@lombok.Builder(builderClassName = "Builder")
-//@ThreadSafe
+@lombok.Builder(toBuilder = true)
 public final class SdmxWebDriverSupport implements SdmxWebDriver {
 
     @lombok.Getter
@@ -38,7 +39,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     private final String name;
 
     @lombok.Getter
-    private final int rank;
+    @lombok.Builder.Default
+    private final int rank = UNKNOWN;
 
     @lombok.NonNull
     private final SdmxWebClient.Supplier client;
@@ -49,20 +51,11 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     @lombok.Singular
     private final Collection<String> supportedProperties;
 
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .rank(UNKNOWN);
-    }
-
     @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
-
-        if (!source.getDriver().equals(name)) {
-            throw new IllegalArgumentException(source.toString());
-        }
+        checkSource(source, name);
 
         return SdmxWebConnectionImpl.of(getClient(source, context), name);
     }
@@ -81,7 +74,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         return CachedWebClient.of(
                 client.get(source, context),
                 context.getCache(),
-                SdmxWebProperty.getCacheTtl(source.getProperties()),
+                CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 context.getLanguages());
     }
@@ -89,8 +82,14 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     public static final class Builder {
 
         @NonNull
-        public Builder sourceOf(@NonNull String name, @NonNull String description, @NonNull String endpoint) {
-            return source(SdmxWebSource.builder().name(name).description(description).driver(this.name).endpointOf(endpoint).build());
+        public Builder supportedPropertyOf(@NonNull CharSequence property) {
+            return supportedProperty(property.toString());
+        }
+    }
+
+    public static void checkSource(@NonNull SdmxWebSource source, @NonNull String name) throws IllegalArgumentException {
+        if (!source.getDriver().equals(name)) {
+            throw new IllegalArgumentException(source.toString());
         }
     }
 }

@@ -31,11 +31,12 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder")
+@lombok.Builder(toBuilder = true)
 public class SdmxRepository {
 
     @lombok.NonNull
-    String name;
+    @lombok.Builder.Default
+    String name = "";
 
     @lombok.NonNull
     @lombok.Singular
@@ -49,14 +50,8 @@ public class SdmxRepository {
     @lombok.Singular
     List<DataSet> dataSets;
 
-    boolean seriesKeysOnlySupported;
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .name("")
-                .seriesKeysOnlySupported(true);
-    }
+    @lombok.Builder.Default
+    boolean detailSupported = true;
 
     @NonNull
     public SdmxConnection asConnection() {
@@ -88,6 +83,9 @@ public class SdmxRepository {
                 .stream()
                 .filter(ref::containsRef)
                 .findFirst();
+    }
+
+    public static final class Builder {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
@@ -152,12 +150,12 @@ public class SdmxRepository {
         }
 
         @Override
-        public boolean isSeriesKeysOnlySupported() {
-            return repo.isSeriesKeysOnlySupported();
+        public boolean isDetailSupported() {
+            return repo.isDetailSupported();
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             closed = true;
         }
 

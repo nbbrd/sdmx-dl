@@ -220,20 +220,20 @@ public class FailsafeSdmxWebConnectionTest {
     }
 
     @Test
-    public void testIsSeriesKeysOnlySupported() throws IOException {
+    public void testIsDetailSupported() throws IOException {
         failsafe.reset();
-        Assertions.assertThat(validDriver.isSeriesKeysOnlySupported()).isEqualTo(true);
+        Assertions.assertThat(validDriver.isDetailSupported()).isEqualTo(true);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(failingDriver::isSeriesKeysOnlySupported)
+                .isThrownBy(failingDriver::isDetailSupported)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
     }
 
     @Test
-    public void testClose() throws IOException {
+    public void testClose() {
         failsafe.reset();
         Assertions.assertThatCode(validDriver::close).doesNotThrowAnyException();
         failsafe.assertEmpty();

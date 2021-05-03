@@ -141,8 +141,8 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
-    private static final class SourceNode {
+    @lombok.Builder(toBuilder = true)
+    private static class SourceNode {
 
         @lombok.NonNull
         String name;
@@ -155,8 +155,8 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
-    private static final class FlowNode {
+    @lombok.Builder(toBuilder = true)
+    private static class FlowNode {
 
         @lombok.NonNull
         DataflowRef ref;
@@ -169,8 +169,8 @@ public class XmlSourceQuery {
     }
 
     @lombok.Value
-    @lombok.Builder(builderClassName = "Builder")
-    private static final class DataNode {
+    @lombok.Builder(toBuilder = true)
+    private static class DataNode {
 
         @lombok.NonNull
         Key key;

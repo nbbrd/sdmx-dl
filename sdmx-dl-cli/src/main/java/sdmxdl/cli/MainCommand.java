@@ -16,17 +16,16 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.BaseCommand;
-import internal.sdmxdl.cli.CommonHeadings;
+import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
+import internal.sdmxdl.cli.ext.PrintAndLogExceptionHandler;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
 import nbbrd.console.picocli.ManifestHelper;
 import picocli.CommandLine;
-import picocli.CommandLine.ExecutionException;
 import picocli.jansi.graalvm.AnsiConsole;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Properties;
+import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
@@ -35,45 +34,51 @@ import java.util.logging.Logger;
         name = MainCommand.NAME,
         resourceBundle = "sdmxdl.cli.Messages",
         versionProvider = MainCommand.ManifestVersionProvider.class,
+        scope = CommandLine.ScopeType.INHERIT,
+        sortOptions = false,
+        mixinStandardHelpOptions = true,
+        descriptionHeading = "%n",
+        parameterListHeading = "%nParameters:%n",
+        optionListHeading = "%nOptions:%n",
+        commandListHeading = "%nCommands:%n",
+        headerHeading = "%n",
         subcommands = {
-                DataCommand.class,
-                MetaCommand.class,
+                FetchCommand.class,
                 ListCommand.class,
-                PingCommand.class,
-                TestCommand.class,
-                DebugCommand.class,
+                CheckCommand.class,
                 SetupCommand.class,
-                CommandLine.HelpCommand.class
+                TestCommand.class,
+                DebugCommand.class
         }
 )
-public final class MainCommand extends BaseCommand {
+public final class MainCommand implements Callable<Void> {
 
     public static final String NAME = "sdmx-dl";
 
     public static void main(String[] args) {
         ConfigHelper.of(MainCommand.NAME).loadAll(System.getProperties());
         LoggerHelper.disableDefaultConsoleLogger();
+        KeychainStoreIgnoredExceptionFix.register();
 
-        int exitCode = 0;
+        System.exit(execMain(System.getProperties(), args));
+    }
+
+    private static int execMain(Properties properties, String[] args) {
         try (AnsiConsole ansi = AnsiConsole.windowsInstall()) {
-            CommandLine cli = new CommandLine(new MainCommand());
-            cli.setCaseInsensitiveEnumValuesAllowed(true);
-            cli.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(System.getProperties()));
-            CommonHeadings.register(cli);
-            exitCode = cli.execute(args);
-        } catch (ExecutionException ex) {
-            Logger.getLogger(MainCommand.class.getName()).log(Level.SEVERE, "While executing command", ex);
-            System.err.println(ex.getCause().getMessage());
+            CommandLine cmd = new CommandLine(new MainCommand());
+            cmd.setCaseInsensitiveEnumValuesAllowed(true);
+            cmd.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(properties));
+            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class));
+            return cmd.execute(args);
         }
-        System.exit(exitCode);
     }
 
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
-        spec.commandLine().usage(System.out);
+    public Void call() {
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 

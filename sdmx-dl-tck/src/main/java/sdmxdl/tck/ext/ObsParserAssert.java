@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
 public class ObsParserAssert {
 
     @lombok.Value
-    @lombok.Builder
+    @lombok.Builder(toBuilder = true)
     public static class Sample {
         Key.Builder validKey;
         UnaryOperator<String> validAttributes;

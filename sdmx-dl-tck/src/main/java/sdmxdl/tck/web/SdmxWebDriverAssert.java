@@ -37,7 +37,6 @@ public class SdmxWebDriverAssert {
 
     private void checkSource(SdmxWebSource o, SdmxWebDriver d) {
         assertThat(o.getName()).isNotBlank();
-        assertThat(o.getDescription()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getDriver()).isEqualTo(d.getName());
         assertThat(o.getProperties().keySet()).isSubsetOf(d.getSupportedProperties());

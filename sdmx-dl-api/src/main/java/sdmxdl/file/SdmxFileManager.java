@@ -16,6 +16,7 @@
  */
 package sdmxdl.file;
 
+import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -35,8 +36,7 @@ import java.util.Optional;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
-@lombok.With
+@lombok.Builder(toBuilder = true)
 public class SdmxFileManager implements SdmxManager {
 
     @NonNull
@@ -48,10 +48,16 @@ public class SdmxFileManager implements SdmxManager {
     }
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    @lombok.Builder.Default
+    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
-    SdmxCache cache;
+    @lombok.Builder.Default
+    SdmxCache cache = SdmxCache.noOp();
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    SdmxFileListener eventListener = SdmxFileListener.getDefault();
 
     @lombok.NonNull
     @lombok.Singular
@@ -61,18 +67,15 @@ public class SdmxFileManager implements SdmxManager {
     @lombok.Singular
     List<SdmxFileReader> readers;
 
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .languages(LanguagePriorityList.ANY)
-                .cache(SdmxCache.noOp());
-    }
+    @lombok.NonNull
+    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
+    SdmxFileContext context = initContext();
 
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
         SdmxFileSource source = getSource(name)
-                .orElseThrow(() -> new IOException(name));
+                .orElseThrow(() -> new IOException("Cannot find source for name '" + name + "'"));
         return getConnection(source);
     }
 
@@ -80,7 +83,7 @@ public class SdmxFileManager implements SdmxManager {
     public SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
         Objects.requireNonNull(source);
         SdmxFileReader reader = getReader(source)
-                .orElseThrow(() -> new IOException(source.toString()));
+                .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
         return reader.read(source, getContext());
     }
 
@@ -90,10 +93,11 @@ public class SdmxFileManager implements SdmxManager {
                 .findFirst();
     }
 
-    private SdmxFileContext getContext() {
+    private SdmxFileContext initContext() {
         return SdmxFileContext
                 .builder()
                 .languages(languages)
+                .eventListener(eventListener)
                 .cache(cache)
                 .dialects(dialects)
                 .build();

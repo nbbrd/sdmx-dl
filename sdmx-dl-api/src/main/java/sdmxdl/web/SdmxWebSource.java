@@ -29,13 +29,13 @@ import java.util.Set;
  * @author Philippe Charles
  */
 @lombok.Value
-@lombok.Builder(builderClassName = "Builder", toBuilder = true)
+@lombok.Builder(toBuilder = true)
 public class SdmxWebSource {
 
     @lombok.NonNull
     String name;
 
-    @lombok.NonNull
+    @Nullable
     String description;
 
     @lombok.NonNull
@@ -53,6 +53,12 @@ public class SdmxWebSource {
     @lombok.Singular
     Set<String> aliases;
 
+    @Nullable
+    URL website;
+
+    @Nullable
+    SdmxWebMonitor monitor;
+
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
         Objects.requireNonNull(name);
@@ -64,12 +70,6 @@ public class SdmxWebSource {
 
     public boolean isAlias() {
         return aliases.contains(name);
-    }
-
-    // Fix lombok.Builder.Default bug in NetBeans
-    public static Builder builder() {
-        return new Builder()
-                .description("");
     }
 
     public static class Builder {
@@ -85,9 +85,24 @@ public class SdmxWebSource {
         }
 
         @NonNull
-        public Builder propertyOf(@NonNull String key, @NonNull Object value) {
+        public Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             Objects.requireNonNull(key);
-            return property(key, value.toString());
+            return property(key.toString(), value.toString());
+        }
+
+        @NonNull
+        public Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
+            Objects.requireNonNull(website);
+            try {
+                return website(new URL(website));
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }
+
+        @NonNull
+        public Builder monitorOf(@NonNull String provider, @NonNull String id) {
+            return monitor(SdmxWebMonitor.builder().provider(provider).id(id).build());
         }
     }
 }

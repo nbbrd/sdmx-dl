@@ -16,10 +16,12 @@
  */
 package internal.sdmxdl.web.spi;
 
+import lombok.AccessLevel;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +29,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import lombok.AccessLevel;
 
 /**
  *

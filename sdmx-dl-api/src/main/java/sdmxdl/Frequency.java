@@ -16,12 +16,15 @@
  */
 package sdmxdl;
 
+import java.util.Collection;
+import java.util.Comparator;
+
 /**
  * Defines standard frequencies of time series.
  *
  * @author Philippe Charles
  */
-public enum Frequency {
+public enum Frequency implements Comparable<Frequency> {
 
     ANNUAL,
     HALF_YEARLY,
@@ -29,8 +32,8 @@ public enum Frequency {
     MONTHLY,
     WEEKLY,
     DAILY,
-    HOURLY,
     DAILY_BUSINESS,
+    HOURLY,
     MINUTELY,
     UNDEFINED;
 
@@ -42,5 +45,12 @@ public enum Frequency {
             default:
                 return false;
         }
+    }
+
+    public static Frequency getHighest(Collection<Series> data) {
+        return data.stream()
+                .map(Series::getFreq)
+                .min(Comparator.reverseOrder())
+                .orElse(Frequency.UNDEFINED);
     }
 }
