@@ -45,6 +45,7 @@ public abstract class RiRestClient implements SdmxWebClient {
     protected final LanguagePriorityList langs;
     protected final HttpRest.Client executor;
     protected final ObsFactory obsFactory;
+    protected final RiRestQueries queries;
 
     protected IOSupplier<HttpRest.Response> opening(URL query, String mediaType) {
         return () -> open(query, mediaType);
@@ -91,25 +92,33 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    abstract protected URL getFlowsQuery() throws IOException;
+    protected URL getFlowsQuery() throws IOException {
+        return queries.getFlowsQuery(endpoint).build();
+    }
 
     @NonNull
     abstract protected List<Dataflow> getFlows(@NonNull URL url) throws IOException;
 
     @NonNull
-    abstract protected URL getFlowQuery(@NonNull DataflowRef ref) throws IOException;
+    protected URL getFlowQuery(@NonNull DataflowRef ref) throws IOException {
+        return queries.getFlowQuery(endpoint, ref).build();
+    }
 
     @NonNull
     abstract protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException;
 
     @NonNull
-    abstract protected URL getStructureQuery(@NonNull DataStructureRef ref) throws IOException;
+    protected URL getStructureQuery(@NonNull DataStructureRef ref) throws IOException {
+        return queries.getStructureQuery(endpoint, ref).build();
+    }
 
     @NonNull
     abstract protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException;
 
     @NonNull
-    abstract protected URL getDataQuery(@NonNull DataRequest request) throws IOException;
+    protected URL getDataQuery(@NonNull DataRequest request) throws IOException {
+        return queries.getDataQuery(endpoint, request).build();
+    }
 
     @NonNull
     abstract protected DataCursor getData(@NonNull DataStructure dsd, @NonNull URL url) throws IOException;

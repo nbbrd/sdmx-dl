@@ -17,13 +17,11 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
-import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.DataRequest;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
@@ -39,17 +37,12 @@ import static sdmxdl.ext.SdmxMediaType.XML;
 public class DotStatRestClient extends RiRestClient {
 
     public DotStatRestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
-        super(name, endpoint, langs, executor, obsFactory);
+        super(name, endpoint, langs, executor, obsFactory, new DotStatRestQueries());
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    protected URL getFlowsQuery() throws IOException {
-        return getFlowsQuery(endpoint).build();
     }
 
     @Override
@@ -60,11 +53,6 @@ public class DotStatRestClient extends RiRestClient {
                 .stream()
                 .map(DotStatRestClient::getFlowFromStructure)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    protected URL getFlowQuery(DataflowRef ref) throws IOException {
-        return getFlowQuery(endpoint, ref).build();
     }
 
     @Override
@@ -79,11 +67,6 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @Override
-    protected URL getStructureQuery(DataStructureRef ref) throws IOException {
-        return getStructureQuery(endpoint, ref).build();
-    }
-
-    @Override
     protected DataStructure getStructure(URL url, DataStructureRef ref) throws IOException {
         return SdmxXmlStreams
                 .struct20(langs)
@@ -91,11 +74,6 @@ public class DotStatRestClient extends RiRestClient {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
-    }
-
-    @Override
-    protected URL getDataQuery(DataRequest request) throws IOException {
-        return getDataQuery(endpoint, request).build();
     }
 
     @SdmxFix(id = 1, category = SdmxFix.Category.CONTENT, cause = "Time dimension is always TIME in data")
@@ -118,40 +96,6 @@ public class DotStatRestClient extends RiRestClient {
     }
 
     @NonNull
-    public static RestQueryBuilder getFlowsQuery(@NonNull URL endpoint) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path("ALL");
-    }
-
-    @NonNull
-    public static RestQueryBuilder getFlowQuery(@NonNull URL endpoint, @NonNull DataflowRef ref) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path(ref.getId());
-    }
-
-    @NonNull
-    public static RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATASTRUCTURE_RESOURCE)
-                .path(ref.getId());
-    }
-
-    @NonNull
-    public static RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATA_RESOURCE)
-                .path(request.getFlowRef().getId())
-                .path(request.getKey().toString())
-                .param("format", "compact_v2");
-    }
-
-    @NonNull
     public static Dataflow getFlowFromStructure(@NonNull DataStructure o) {
         return Dataflow.of(getFlowRefFromStructureRef(o.getRef()), o.getRef(), o.getLabel());
     }
@@ -165,7 +109,4 @@ public class DotStatRestClient extends RiRestClient {
     public static DataStructureRef getStructureRefFromFlowRef(@NonNull DataflowRef o) {
         return DataStructureRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
-
-    public static final String DATASTRUCTURE_RESOURCE = "GetDataStructure";
-    public static final String DATA_RESOURCE = "GetData";
 }

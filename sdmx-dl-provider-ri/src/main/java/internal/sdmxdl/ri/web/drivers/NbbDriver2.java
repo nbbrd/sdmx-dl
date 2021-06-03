@@ -17,6 +17,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
 import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
@@ -88,7 +89,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
         protected URL getDataQuery(DataRequest request) throws IOException {
             return RestQueryBuilder
                     .of(endpoint)
-                    .path(DATA_RESOURCE)
+                    .path(DotStatRestQueries.DATA_RESOURCE)
                     .path(request.getFlowRef().getId())
                     .path(request.getKey() + "/all")
                     .param("format", "compact_v2")

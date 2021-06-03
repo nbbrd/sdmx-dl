@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ri.web.drivers;
+package internal.sdmxdl.ri.web;
 
 import org.junit.Test;
 import sdmxdl.DataFilter;
@@ -26,23 +26,24 @@ import sdmxdl.util.web.DataRequest;
 import java.io.IOException;
 import java.net.URL;
 
-import static internal.sdmxdl.ri.web.Sdmx21RestClient.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  * @author Philippe Charles
  */
-public class Sdmx21RestClientTest {
+public class Sdmx21RestQueriesTest {
+
+    private final Sdmx21RestQueries x = new Sdmx21RestQueries(false);
 
     @Test
     @SuppressWarnings("null")
     public void testGetFlowsQuery() throws IOException {
         URL endpoint = new URL("http://localhost");
 
-        assertThatNullPointerException().isThrownBy(() -> getFlowsQuery(null));
+        assertThatNullPointerException().isThrownBy(() -> x.getFlowsQuery(null));
 
-        assertThat(getFlowsQuery(endpoint).build())
+        assertThat(x.getFlowsQuery(endpoint).build())
                 .hasToString("http://localhost/dataflow/all/all/latest");
     }
 
@@ -51,13 +52,13 @@ public class Sdmx21RestClientTest {
     public void testGetFlowQuery() throws IOException {
         URL endpoint = new URL("http://localhost");
 
-        assertThatNullPointerException().isThrownBy(() -> getFlowQuery(null, specificFlow));
-        assertThatNullPointerException().isThrownBy(() -> getFlowQuery(endpoint, null));
+        assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(null, specificFlow));
+        assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(endpoint, null));
 
-        assertThat(getFlowQuery(endpoint, specificFlow).build())
+        assertThat(x.getFlowQuery(endpoint, specificFlow).build())
                 .hasToString("http://localhost/dataflow/ECB/EXR/1.0");
 
-        assertThat(getFlowQuery(endpoint, genericFlow).build())
+        assertThat(x.getFlowQuery(endpoint, genericFlow).build())
                 .hasToString("http://localhost/dataflow/all/EXR/latest");
     }
 
@@ -66,13 +67,13 @@ public class Sdmx21RestClientTest {
     public void testGetStructureQuery() throws IOException {
         URL endpoint = new URL("http://localhost");
 
-        assertThatNullPointerException().isThrownBy(() -> getStructureQuery(null, specificStruct));
-        assertThatNullPointerException().isThrownBy(() -> getStructureQuery(endpoint, null));
+        assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(null, specificStruct));
+        assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(endpoint, null));
 
-        assertThat(getStructureQuery(endpoint, specificStruct).build())
+        assertThat(x.getStructureQuery(endpoint, specificStruct).build())
                 .hasToString("http://localhost/datastructure/ECB/EXR/1.0?references=children");
 
-        assertThat(getStructureQuery(endpoint, genericStruct).build())
+        assertThat(x.getStructureQuery(endpoint, genericStruct).build())
                 .hasToString("http://localhost/datastructure/all/EXR/latest?references=children");
     }
 
@@ -84,13 +85,13 @@ public class Sdmx21RestClientTest {
         DataRequest specificRequest = new DataRequest(specificFlow, Key.ALL, DataFilter.SERIES_KEYS_ONLY);
         DataRequest genericRequest = new DataRequest(genericFlow, Key.ALL, DataFilter.SERIES_KEYS_ONLY);
 
-        assertThatNullPointerException().isThrownBy(() -> getDataQuery(null, specificRequest));
-        assertThatNullPointerException().isThrownBy(() -> getDataQuery(endpoint, null));
+        assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, specificRequest));
+        assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(endpoint, null));
 
-        assertThat(getDataQuery(endpoint, specificRequest).build())
+        assertThat(x.getDataQuery(endpoint, specificRequest).build())
                 .hasToString("http://localhost/data/ECB%2CEXR%2C1.0/all/all?detail=serieskeysonly");
 
-        assertThat(getDataQuery(endpoint, genericRequest).build())
+        assertThat(x.getDataQuery(endpoint, genericRequest).build())
                 .hasToString("http://localhost/data/all%2CEXR%2Clatest/all/all?detail=serieskeysonly");
     }
 
