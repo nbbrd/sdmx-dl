@@ -117,7 +117,7 @@ public abstract class RiRestClient implements SdmxWebClient {
 
     @NonNull
     protected URL getDataQuery(@NonNull DataRequest request) throws IOException {
-        return queries.getDataQuery(endpoint, request).build();
+        return queries.getDataQuery(endpoint, request.getFlowRef(), request.getKey(), request.getFilter()).build();
     }
 
     @NonNull

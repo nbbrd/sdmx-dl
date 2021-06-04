@@ -1,9 +1,10 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
+import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
-import sdmxdl.util.web.DataRequest;
+import sdmxdl.Key;
 
 import java.net.URL;
 
@@ -34,12 +35,12 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public RestQueryBuilder getDataQuery(URL endpoint, DataRequest request) {
+    public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
         return RestQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
-                .path(request.getFlowRef().getId())
-                .path(request.getKey().toString())
+                .path(flowRef.getId())
+                .path(key.toString())
                 .param("format", "compact_v2");
     }
 

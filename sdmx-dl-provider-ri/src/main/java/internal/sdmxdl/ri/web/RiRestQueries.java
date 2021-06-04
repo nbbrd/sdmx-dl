@@ -2,9 +2,10 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
-import sdmxdl.util.web.DataRequest;
+import sdmxdl.Key;
 
 import java.net.URL;
 
@@ -16,5 +17,5 @@ public interface RiRestQueries {
 
     @NonNull RestQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref);
 
-    @NonNull RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRequest request);
+    @NonNull RestQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter);
 }

@@ -1,63 +1,48 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.ResourceRef;
-import sdmxdl.util.web.DataRequest;
+import sdmxdl.*;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-@lombok.AllArgsConstructor
+@lombok.Builder
 public class Sdmx21RestQueries implements RiRestQueries {
 
     private boolean trailingSlashRequired;
 
-    @NonNull
-    public static RestQueryBuilder onMeta(@NonNull URL endpoint, @NonNull String resourceType, @NonNull ResourceRef<?> ref) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(resourceType)
-                .path(ref.getAgency())
-                .path(ref.getId())
-                .path(ref.getVersion());
-    }
-
-    @NonNull
-    public static RestQueryBuilder onData(@NonNull URL endpoint, @NonNull DataflowRef flowRef, @NonNull Key key) {
-        return RestQueryBuilder
-                .of(endpoint)
-                .path(DATA_RESOURCE)
-                .path(flowRef.toString())
-                .path(key.toString())
-                .path(DEFAULT_PROVIDER_REF);
-    }
+    @lombok.Singular
+    private Map<SdmxResourceType, List<String>> customResources;
 
     @Override
     public RestQueryBuilder getFlowsQuery(URL endpoint) {
-        return onMeta(endpoint, DATAFLOW_RESOURCE, FLOWS)
+        List<String> resource = getResource(SdmxResourceType.DATAFLOW);
+        return onMeta(endpoint, resource, FLOWS)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
     public RestQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
-        return onMeta(endpoint, DATAFLOW_RESOURCE, ref)
+        List<String> resource = getResource(SdmxResourceType.DATAFLOW);
+        return onMeta(endpoint, resource, ref)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
     public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
-        return onMeta(endpoint, DATASTRUCTURE_RESOURCE, ref)
+        List<String> resource = getResource(SdmxResourceType.DATASTRUCTURE);
+        return onMeta(endpoint, resource, ref)
                 .param(REFERENCES_PARAM, "children")
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public RestQueryBuilder getDataQuery(URL endpoint, DataRequest request) {
-        RestQueryBuilder result = onData(endpoint, request.getFlowRef(), request.getKey());
-        switch (request.getFilter().getDetail()) {
+    public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+        List<String> resource = getResource(SdmxResourceType.DATA);
+        RestQueryBuilder result = onData(endpoint, resource, flowRef, key, DEFAULT_PROVIDER_REF);
+        switch (filter.getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
                 break;
@@ -71,14 +56,50 @@ public class Sdmx21RestQueries implements RiRestQueries {
         return result.trailingSlash(trailingSlashRequired);
     }
 
-    public static final String DATAFLOW_RESOURCE = "dataflow";
-    public static final String DATASTRUCTURE_RESOURCE = "datastructure";
-    public static final String DATA_RESOURCE = "data";
+    private List<String> getResource(SdmxResourceType type) {
+        List<String> result = customResources.get(type);
+        return result != null ? result : getDefaultResource(type);
+    }
 
-    public static final String DEFAULT_PROVIDER_REF = "all";
+    private static List<String> getDefaultResource(SdmxResourceType type) {
+        switch (type) {
+            case DATA:
+                return DEFAULT_DATA_RESOURCE;
+            case DATAFLOW:
+                return DEFAULT_DATAFLOW_RESOURCE;
+            case DATASTRUCTURE:
+                return DEFAULT_DATASTRUCTURE_RESOURCE;
+            default:
+                throw new RuntimeException("Unreachable");
+        }
+    }
 
-    public static final String REFERENCES_PARAM = "references";
-    public static final String DETAIL_PARAM = "detail";
+    private static RestQueryBuilder onMeta(URL endpoint, List<String> resource, ResourceRef<?> ref) {
+        return RestQueryBuilder
+                .of(endpoint)
+                .path(resource)
+                .path(ref.getAgency())
+                .path(ref.getId())
+                .path(ref.getVersion());
+    }
 
-    public static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
+    private static RestQueryBuilder onData(URL endpoint, List<String> resource, DataflowRef flowRef, Key key, String providerRef) {
+        return RestQueryBuilder
+                .of(endpoint)
+                .path(resource)
+                .path(flowRef.toString())
+                .path(key.toString())
+                .path(providerRef);
+    }
+
+    private static final List<String> DEFAULT_DATAFLOW_RESOURCE = Collections.singletonList("dataflow");
+    private static final List<String> DEFAULT_DATASTRUCTURE_RESOURCE = Collections.singletonList("datastructure");
+    private static final List<String> DEFAULT_DATA_RESOURCE = Collections.singletonList("data");
+
+    private static final String DEFAULT_PROVIDER_REF = "all";
+
+    private static final String REFERENCES_PARAM = "references";
+    private static final String DETAIL_PARAM = "detail";
+
+    private static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
 }

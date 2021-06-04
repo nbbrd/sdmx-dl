@@ -18,7 +18,11 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.RestClients;
 import internal.sdmxdl.ri.web.Sdmx21RestClient;
+import internal.sdmxdl.ri.web.Sdmx21RestQueries;
+import internal.sdmxdl.ri.web.SdmxResourceType;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.util.Property;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -27,6 +31,9 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
@@ -48,6 +55,9 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
+            .supportedPropertyOf(DATA_PATH_PROPERTY)
+            .supportedPropertyOf(DATAFLOW_PATH_PROPERTY)
+            .supportedPropertyOf(DATASTRUCTURE_PATH_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .name("BIS")
@@ -150,8 +160,31 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 c.getLanguages(),
                 RestClients.getRestClient(s, c),
                 DETAIL_SUPPORTED_PROPERTY.get(s.getProperties()),
-                TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()),
+                getQueries(s.getProperties()),
                 ObsFactories.getObsFactory(c, s, "SDMX21")
         );
+    }
+
+    private static Sdmx21RestQueries getQueries(Map<String, String> properties) {
+        return Sdmx21RestQueries
+                .builder()
+                .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(properties))
+                .customResource(SdmxResourceType.DATA, DATA_PATH_PROPERTY.get(properties))
+                .customResource(SdmxResourceType.DATAFLOW, DATAFLOW_PATH_PROPERTY.get(properties))
+                .customResource(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_PATH_PROPERTY.get(properties))
+                .build();
+    }
+
+    private static final Property<List<String>> DATA_PATH_PROPERTY =
+            new Property<>("dataPath", null, Parser.onStringList(Sdmx21Driver2::split));
+
+    private static final Property<List<String>> DATAFLOW_PATH_PROPERTY =
+            new Property<>("dataflowPath", null, Parser.onStringList(Sdmx21Driver2::split));
+
+    private static final Property<List<String>> DATASTRUCTURE_PATH_PROPERTY =
+            new Property<>("datastructurePath", null, Parser.onStringList(Sdmx21Driver2::split));
+
+    private static Stream<String> split(CharSequence input) {
+        return Stream.of(input.toString().split("/", -1));
     }
 }

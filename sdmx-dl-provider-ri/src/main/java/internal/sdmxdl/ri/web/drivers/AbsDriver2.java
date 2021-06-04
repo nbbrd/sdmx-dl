@@ -89,7 +89,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
 
         @Override
         protected URL getDataQuery(DataRequest request) throws IOException {
-            return queries.getDataQuery(endpoint, request).path(AGENCY).build();
+            return queries.getDataQuery(endpoint, request.getFlowRef(), request.getKey(), request.getFilter()).path(AGENCY).build();
         }
     }
 }

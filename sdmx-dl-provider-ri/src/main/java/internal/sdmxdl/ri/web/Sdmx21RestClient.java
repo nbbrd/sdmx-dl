@@ -37,8 +37,8 @@ public class Sdmx21RestClient extends RiRestClient {
     protected final ObsFactory dataFactory;
 
     public Sdmx21RestClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor,
-                            boolean detailSupported, boolean trailingSlashRequired, ObsFactory dataFactory) {
-        super(name, endpoint, langs, executor, dataFactory, new Sdmx21RestQueries(trailingSlashRequired));
+                            boolean detailSupported, Sdmx21RestQueries queries, ObsFactory dataFactory) {
+        super(name, endpoint, langs, executor, dataFactory, queries);
         this.detailSupported = detailSupported;
         this.dataFactory = dataFactory;
     }
