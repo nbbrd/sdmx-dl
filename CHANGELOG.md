@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add custom resource path in SDMX21 driver
 - Add source from Bundesbank [#104](https://github.com/nbbrd/sdmx-dl/issues/104)
+- Add support of multiple media types in HTTP requests
 
 ### Fixed
 - Fix parsing of blank labels

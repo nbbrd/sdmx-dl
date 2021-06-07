@@ -45,7 +45,7 @@ public class HttpRest {
     public interface Client {
 
         @NonNull
-        Response requestGET(@NonNull URL query, @NonNull String mediaType, @NonNull String langs) throws IOException;
+        Response requestGET(@NonNull URL query, @NonNull List<String> mediaTypes, @NonNull String langs) throws IOException;
     }
 
     @lombok.Value
@@ -131,7 +131,7 @@ public class HttpRest {
 
     public interface EventListener {
 
-        void onOpen(@NonNull URL url, @NonNull String mediaType, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
+        void onOpen(@NonNull URL url, @NonNull List<String> mediaTypes, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
 
         void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl);
 
@@ -200,9 +200,9 @@ public class HttpRest {
     private enum EventListeners implements EventListener {
         NONE {
             @Override
-            public void onOpen(URL url, String mediaType, String langs, Proxy proxy, AuthScheme scheme) {
+            public void onOpen(URL url, List<String> mediaTypes, String langs, Proxy proxy, AuthScheme scheme) {
                 Objects.requireNonNull(url);
-                Objects.requireNonNull(mediaType);
+                Objects.requireNonNull(mediaTypes);
                 Objects.requireNonNull(proxy);
                 Objects.requireNonNull(scheme);
             }

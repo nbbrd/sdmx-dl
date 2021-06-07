@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
-import internal.sdmxdl.ri.web.Sdmx21RestClient;
-import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.sdmxdl.ri.web.SdmxResourceType;
+import internal.sdmxdl.ri.web.*;
 import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
 import nbbrd.io.text.Parser;
@@ -82,11 +79,10 @@ public final class BbkDriver implements SdmxWebDriver {
         );
     }
 
-    // FIXME: add support of multiple mediaTypes in HTTP requests
-    private static final class BbkClient extends Sdmx21RestClient {
+    private static final class BbkClient extends RiRestClient {
 
         private BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
-            super(name, endpoint, langs, executor, true, BbkQueries.INSTANCE, BbkObsFactory.INSTANCE);
+            super(name, endpoint, langs, BbkObsFactory.INSTANCE, executor, BbkQueries.INSTANCE, new Sdmx21RestParsers(), true);
         }
 
         @Override
@@ -100,13 +96,6 @@ public final class BbkDriver implements SdmxWebDriver {
         @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
         private Key alternateAllOf(DataStructure dsd) {
             return Key.of(new String[dsd.getDimensions().size()]);
-        }
-
-        @Override
-        protected DataCursor getData(DataStructure dsd, URL url) throws IOException {
-            return SdmxXmlStreams
-                    .genericData21(dsd, dataFactory)
-                    .parseStream(calling(url, GENERIC_DATA_21));
         }
     }
 

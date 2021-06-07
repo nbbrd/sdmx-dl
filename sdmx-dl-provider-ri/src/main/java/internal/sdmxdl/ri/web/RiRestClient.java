@@ -18,10 +18,11 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
 import nbbrd.io.Resource;
-import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.util.MediaType;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 
@@ -33,54 +34,52 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public abstract class RiRestClient implements SdmxWebClient {
+public class RiRestClient implements SdmxWebClient {
 
+    @lombok.Getter
     protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
-    protected final HttpRest.Client executor;
     protected final ObsFactory obsFactory;
+    protected final HttpRest.Client executor;
     protected final RiRestQueries queries;
-
-    protected IOSupplier<HttpRest.Response> opening(URL query, String mediaType) {
-        return () -> open(query, mediaType);
-    }
-
-    protected HttpRest.Response open(URL query, String mediaType) throws IOException {
-        return executor.requestGET(query, mediaType, langs.toString());
-    }
-
-    protected IOSupplier<InputStream> calling(URL query, String mediaType) {
-        return opening(query, mediaType).andThen(DisconnectingInputStream::of);
-    }
+    protected final RiRestParsers parsers;
+    protected final boolean detailSupported;
 
     @Override
     public List<Dataflow> getFlows() throws IOException {
-        URL url = getFlowsQuery();
-        return getFlows(url);
+        return getFlows(getFlowsQuery());
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        URL url = getFlowQuery(ref);
-        return getFlow(url, ref);
+        return getFlow(getFlowQuery(ref), ref);
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        URL url = getStructureQuery(ref);
-        return getStructure(url, ref);
+        return getStructure(getStructureQuery(ref), ref);
     }
 
     @Override
     public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        URL url = getDataQuery(request);
-        return getData(dsd, url);
+        return getData(getDataQuery(request), dsd);
+    }
+
+    @Override
+    public boolean isDetailSupported() {
+        return detailSupported;
+    }
+
+    @Override
+    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+        return queries.peekStructureRef(flowRef);
     }
 
     @Override
@@ -97,7 +96,13 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    abstract protected List<Dataflow> getFlows(@NonNull URL url) throws IOException;
+    protected List<Dataflow> getFlows(@NonNull URL url) throws IOException {
+        try (HttpRest.Response response = open(url, parsers.getFlowsTypes())) {
+            return parsers
+                    .getFlowsParser(getResponseType(response), langs)
+                    .parseStream(response::getBody);
+        }
+    }
 
     @NonNull
     protected URL getFlowQuery(@NonNull DataflowRef ref) throws IOException {
@@ -105,7 +110,14 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    abstract protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException;
+    protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException {
+        try (HttpRest.Response response = open(url, parsers.getFlowTypes())) {
+            return parsers
+                    .getFlowParser(getResponseType(response), langs, ref)
+                    .parseStream(response::getBody)
+                    .orElseThrow(() -> SdmxExceptions.missingFlow(name, ref));
+        }
+    }
 
     @NonNull
     protected URL getStructureQuery(@NonNull DataStructureRef ref) throws IOException {
@@ -113,7 +125,14 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    abstract protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException;
+    protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException {
+        try (HttpRest.Response response = open(url, parsers.getStructureTypes())) {
+            return parsers
+                    .getStructureParser(getResponseType(response), langs, ref)
+                    .parseStream(response::getBody)
+                    .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
+        }
+    }
 
     @NonNull
     protected URL getDataQuery(@NonNull DataRequest request) throws IOException {
@@ -121,13 +140,25 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    abstract protected DataCursor getData(@NonNull DataStructure dsd, @NonNull URL url) throws IOException;
+    protected DataCursor getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
+        HttpRest.Response response = open(url, parsers.getDataTypes());
+        return parsers
+                .getDataParser(getResponseType(response), dsd, obsFactory)
+                .parseStream(() -> DisconnectingInputStream.of(response));
+    }
 
+    protected HttpRest.@NonNull Response open(@NonNull URL query, @NonNull List<MediaType> mediaType) throws IOException {
+        return executor.requestGET(query, mediaType.stream().map(MediaType::toString).collect(Collectors.toList()), langs.toString());
+    }
+
+    protected @NonNull MediaType getResponseType(HttpRest.@NonNull Response response) throws IOException {
+        return MediaType.parse(response.getContentType());
+    }
 
     @lombok.RequiredArgsConstructor
-    private static final class DisconnectingInputStream extends InputStream {
+    protected static final class DisconnectingInputStream extends InputStream {
 
-        static DisconnectingInputStream of(HttpRest.Response response) throws IOException {
+        public static DisconnectingInputStream of(HttpRest.Response response) throws IOException {
             return new DisconnectingInputStream(response.getBody(), response);
         }
 

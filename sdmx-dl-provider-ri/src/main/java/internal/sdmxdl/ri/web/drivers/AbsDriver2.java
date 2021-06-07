@@ -16,8 +16,10 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestParsers;
+import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.rest.HttpRest;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
@@ -63,7 +65,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static final class AbsClient2 extends DotStatRestClient {
+    private static final class AbsClient2 extends RiRestClient {
 
         AbsClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
             this(
@@ -76,7 +78,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
         }
 
         AbsClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
-            super(name, endpoint, langs, executor, obsFactory);
+            super(name, endpoint, langs, obsFactory, executor, new DotStatRestQueries(), new DotStatRestParsers(), false);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "Agency is required in query")

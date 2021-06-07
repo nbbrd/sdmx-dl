@@ -75,7 +75,7 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, String mediaType, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
+        public void onOpen(URL query, List<String> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
             if (listener.isEnabled()) {
                 if (HttpRest.AuthScheme.NONE.equals(scheme)) {
                     listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));

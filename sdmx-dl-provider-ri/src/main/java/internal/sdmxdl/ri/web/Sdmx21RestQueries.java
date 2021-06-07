@@ -44,6 +44,11 @@ public class Sdmx21RestQueries implements RiRestQueries {
         return result.trailingSlash(trailingSlashRequired);
     }
 
+    @Override
+    public DataStructureRef peekStructureRef(DataflowRef ref) {
+        return null;
+    }
+
     protected void applyFilter(DataFilter filter, RestQueryBuilder result) {
         switch (filter.getDetail()) {
             case SERIES_KEYS_ONLY:

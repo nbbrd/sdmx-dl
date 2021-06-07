@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
-import internal.sdmxdl.ri.web.Sdmx21RestClient;
-import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.sdmxdl.ri.web.SdmxResourceType;
+import internal.sdmxdl.ri.web.*;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.Property;
@@ -154,14 +151,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new Sdmx21RestClient(
+        return new RiRestClient(
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
+                ObsFactories.getObsFactory(c, s, "SDMX21"),
                 RestClients.getRestClient(s, c),
-                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties()),
                 getQueries(s.getProperties()),
-                ObsFactories.getObsFactory(c, s, "SDMX21")
+                new Sdmx21RestParsers(),
+                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
         );
     }
 

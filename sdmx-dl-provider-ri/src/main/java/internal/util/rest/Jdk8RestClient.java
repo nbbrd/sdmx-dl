@@ -40,21 +40,21 @@ public final class Jdk8RestClient implements HttpRest.Client {
     private final HttpRest.Context context;
 
     @Override
-    public HttpRest.Response requestGET(URL query, String mediaType, String langs) throws IOException {
+    public HttpRest.Response requestGET(URL query, List<String> mediaTypes, String langs) throws IOException {
         Objects.requireNonNull(query);
-        Objects.requireNonNull(mediaType);
+        Objects.requireNonNull(mediaTypes);
         Objects.requireNonNull(langs);
-        return open(query, mediaType, langs, 0, getPreemptiveAuthScheme());
+        return open(query, mediaTypes, langs, 0, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response open(URL query, String mediaType, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private HttpRest.Response open(URL query, List<String> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (!requestScheme.isSecureRequest(query)) {
             throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
         }
 
         Proxy proxy = getProxy(query);
 
-        context.getListener().onOpen(query, mediaType, langs, proxy, requestScheme.authScheme);
+        context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
 
         URLConnection conn = query.openConnection(proxy);
         conn.setReadTimeout(context.getReadTimeout());
@@ -71,7 +71,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
 
         HttpURLConnection http = (HttpURLConnection) conn;
         http.setRequestMethod("GET");
-        http.setRequestProperty(ACCEPT_HEADER, mediaType);
+        http.setRequestProperty(ACCEPT_HEADER, getAcceptHeader(mediaTypes));
         http.setRequestProperty(ACCEPT_LANGUAGE_HEADER, langs);
         http.addRequestProperty(ACCEPT_ENCODING_HEADER, getEncodingHeader());
         http.setInstanceFollowRedirects(false);
@@ -79,11 +79,11 @@ public final class Jdk8RestClient implements HttpRest.Client {
 
         switch (ResponseType.parse(http.getResponseCode())) {
             case REDIRECTION:
-                return redirect(http, mediaType, langs, redirects);
+                return redirect(http, mediaTypes, langs, redirects);
             case SUCCESSFUL:
                 return getBody(http);
             case CLIENT_ERROR:
-                return recoverClientError(http, mediaType, langs, redirects, requestScheme);
+                return recoverClientError(http, mediaTypes, langs, redirects, requestScheme);
             default:
                 throw getError(http);
         }
@@ -106,7 +106,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private HttpRest.Response redirect(HttpURLConnection http, String mediaType, String langs, int redirects) throws IOException {
+    private HttpRest.Response redirect(HttpURLConnection http, List<String> mediaTypes, String langs, int redirects) throws IOException {
         URL oldUrl;
         URL newUrl;
         try {
@@ -130,16 +130,16 @@ public final class Jdk8RestClient implements HttpRest.Client {
         }
 
         context.getListener().onRedirection(http.getURL(), newUrl);
-        return open(newUrl, mediaType, langs, redirects + 1, getPreemptiveAuthScheme());
+        return open(newUrl, mediaTypes, langs, redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response recoverClientError(HttpURLConnection http, String mediaType, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private HttpRest.Response recoverClientError(HttpURLConnection http, List<String> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         switch (http.getResponseCode()) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
                 AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(http).orElse(AuthSchemeHelper.BASIC);
                 if (!requestScheme.equals(responseScheme)) {
                     context.getListener().onUnauthorized(http.getURL(), requestScheme.authScheme, responseScheme.authScheme);
-                    return open(http.getURL(), mediaType, langs, redirects + 1, responseScheme);
+                    return open(http.getURL(), mediaTypes, langs, redirects + 1, responseScheme);
                 }
                 context.getAuthenticator().invalidate(http.getURL());
         }
@@ -292,6 +292,9 @@ public final class Jdk8RestClient implements HttpRest.Client {
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
+    static String getAcceptHeader(List<String> mediaTypes) {
+        return mediaTypes.stream().collect(Collectors.joining(", "));
+    }
 
     private static URI toURI(URL url) throws IOException {
         try {

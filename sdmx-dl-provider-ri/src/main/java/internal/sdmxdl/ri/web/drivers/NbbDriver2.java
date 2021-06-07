@@ -16,15 +16,17 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestParsers;
 import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
 import nbbrd.io.Resource;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.util.MediaType;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
@@ -38,6 +40,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.List;
 
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
@@ -68,7 +71,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    static final class NbbClient2 extends DotStatRestClient {
+    static final class NbbClient2 extends RiRestClient {
 
         NbbClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
             this(
@@ -81,7 +84,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
         }
 
         NbbClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
-            super(name, endpoint, langs, executor, obsFactory);
+            super(name, endpoint, langs, obsFactory, executor, new DotStatRestQueries(), new DotStatRestParsers(), false);
         }
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
@@ -97,7 +100,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        protected HttpRest.Response open(URL query, String mediaType) throws IOException {
+        protected HttpRest.Response open(URL query, List<MediaType> mediaType) throws IOException {
             HttpRest.Response result = super.open(query, mediaType);
             try {
                 checkInternalErrorRedirect(result);

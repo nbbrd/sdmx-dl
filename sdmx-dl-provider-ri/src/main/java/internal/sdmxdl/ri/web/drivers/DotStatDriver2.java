@@ -16,8 +16,10 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestParsers;
+import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
@@ -76,12 +78,15 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .build();
 
     private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new DotStatRestClient(
+        return new RiRestClient(
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
+                ObsFactories.getObsFactory(c, s, "SDMX20"),
                 RestClients.getRestClient(s, c),
-                ObsFactories.getObsFactory(c, s, "SDMX20")
+                new DotStatRestQueries(),
+                new DotStatRestParsers(),
+                false
         );
     }
 
