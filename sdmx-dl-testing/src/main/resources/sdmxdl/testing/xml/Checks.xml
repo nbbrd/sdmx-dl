@@ -5,6 +5,11 @@
             <data key="BANKRUPT_2.AUS.0.A" minSeries="1" minObs="3"/>
         </flow>
     </source>
+    <source name="BBK" minFlows="49">
+        <flow ref="BBEX3" dims="6">
+            <data key="M.ISK.EUR+USD.CA.AC.A01" minSeries="2" minObs="694"/>
+        </flow>
+    </source>
     <source name="BIS" minFlows="19">
         <flow ref="BISWEB_EERDATAFLOW" dims="4">
             <data key="M.N.B.AE" minSeries="1" minObs="326"/>

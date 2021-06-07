@@ -60,31 +60,31 @@ public abstract class RiRestClient implements SdmxWebClient {
     }
 
     @Override
-    final public List<Dataflow> getFlows() throws IOException {
+    public List<Dataflow> getFlows() throws IOException {
         URL url = getFlowsQuery();
         return getFlows(url);
     }
 
     @Override
-    final public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public Dataflow getFlow(DataflowRef ref) throws IOException {
         URL url = getFlowQuery(ref);
         return getFlow(url, ref);
     }
 
     @Override
-    final public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public DataStructure getStructure(DataStructureRef ref) throws IOException {
         URL url = getStructureQuery(ref);
         return getStructure(url, ref);
     }
 
     @Override
-    final public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
         URL url = getDataQuery(request);
         return getData(dsd, url);
     }
 
     @Override
-    final public Duration ping() throws IOException {
+    public Duration ping() throws IOException {
         Clock clock = Clock.systemDefaultZone();
         Instant start = clock.instant();
         getFlows();

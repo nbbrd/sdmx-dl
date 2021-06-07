@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2018 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,25 +14,18 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.util.web;
+package internal.sdmxdl.ri.web.drivers;
 
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import org.junit.Test;
+import sdmxdl.tck.web.SdmxWebDriverAssert;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Value
-@lombok.Builder(toBuilder = true)
-public class DataRequest {
+public class BbkDriverTest {
 
-    @lombok.NonNull
-    DataflowRef flowRef;
-
-    @lombok.NonNull
-    Key key;
-
-    @lombok.NonNull
-    DataFilter filter;
+    @Test
+    public void testCompliance() {
+        SdmxWebDriverAssert.assertCompliance(new BbkDriver());
+    }
 }

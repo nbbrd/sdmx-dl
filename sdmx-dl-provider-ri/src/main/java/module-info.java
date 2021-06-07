@@ -15,7 +15,8 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.ri.web.drivers.FileDriver,
             internal.sdmxdl.ri.web.drivers.NbbDriver2,
-            internal.sdmxdl.ri.web.drivers.Sdmx21Driver2;
+            internal.sdmxdl.ri.web.drivers.Sdmx21Driver2,
+            internal.sdmxdl.ri.web.drivers.BbkDriver;
 
     provides sdmxdl.file.spi.SdmxFileReader with
             internal.sdmxdl.ri.file.readers.XmlFileReader;

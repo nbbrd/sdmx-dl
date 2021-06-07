@@ -1,6 +1,7 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
+import lombok.AccessLevel;
 import sdmxdl.*;
 
 import java.net.URL;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @lombok.Builder
+@lombok.AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Sdmx21RestQueries implements RiRestQueries {
 
     private boolean trailingSlashRequired;
@@ -18,30 +20,31 @@ public class Sdmx21RestQueries implements RiRestQueries {
 
     @Override
     public RestQueryBuilder getFlowsQuery(URL endpoint) {
-        List<String> resource = getResource(SdmxResourceType.DATAFLOW);
-        return onMeta(endpoint, resource, FLOWS)
+        return onMeta(endpoint, SdmxResourceType.DATAFLOW, FLOWS)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
     public RestQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
-        List<String> resource = getResource(SdmxResourceType.DATAFLOW);
-        return onMeta(endpoint, resource, ref)
+        return onMeta(endpoint, SdmxResourceType.DATAFLOW, ref)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
     public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
-        List<String> resource = getResource(SdmxResourceType.DATASTRUCTURE);
-        return onMeta(endpoint, resource, ref)
+        return onMeta(endpoint, SdmxResourceType.DATASTRUCTURE, ref)
                 .param(REFERENCES_PARAM, "children")
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
     public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-        List<String> resource = getResource(SdmxResourceType.DATA);
-        RestQueryBuilder result = onData(endpoint, resource, flowRef, key, DEFAULT_PROVIDER_REF);
+        RestQueryBuilder result = onData(endpoint, SdmxResourceType.DATA, flowRef, key, DEFAULT_PROVIDER_REF);
+        applyFilter(filter, result);
+        return result.trailingSlash(trailingSlashRequired);
+    }
+
+    protected void applyFilter(DataFilter filter, RestQueryBuilder result) {
         switch (filter.getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
@@ -53,10 +56,9 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 result.param(DETAIL_PARAM, "nodata");
                 break;
         }
-        return result.trailingSlash(trailingSlashRequired);
     }
 
-    private List<String> getResource(SdmxResourceType type) {
+    protected List<String> getResource(SdmxResourceType type) {
         List<String> result = customResources.get(type);
         return result != null ? result : getDefaultResource(type);
     }
@@ -74,19 +76,19 @@ public class Sdmx21RestQueries implements RiRestQueries {
         }
     }
 
-    private static RestQueryBuilder onMeta(URL endpoint, List<String> resource, ResourceRef<?> ref) {
+    protected RestQueryBuilder onMeta(URL endpoint, SdmxResourceType resource, ResourceRef<?> ref) {
         return RestQueryBuilder
                 .of(endpoint)
-                .path(resource)
+                .path(getResource(resource))
                 .path(ref.getAgency())
                 .path(ref.getId())
                 .path(ref.getVersion());
     }
 
-    private static RestQueryBuilder onData(URL endpoint, List<String> resource, DataflowRef flowRef, Key key, String providerRef) {
+    protected RestQueryBuilder onData(URL endpoint, SdmxResourceType resource, DataflowRef flowRef, Key key, String providerRef) {
         return RestQueryBuilder
                 .of(endpoint)
-                .path(resource)
+                .path(getResource(resource))
                 .path(flowRef.toString())
                 .path(key.toString())
                 .path(providerRef);
@@ -98,8 +100,8 @@ public class Sdmx21RestQueries implements RiRestQueries {
 
     private static final String DEFAULT_PROVIDER_REF = "all";
 
-    private static final String REFERENCES_PARAM = "references";
-    private static final String DETAIL_PARAM = "detail";
+    protected static final String REFERENCES_PARAM = "references";
+    protected static final String DETAIL_PARAM = "detail";
 
     private static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
 }
