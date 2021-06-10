@@ -17,7 +17,16 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.Test;
+import sdmxdl.DataFilter;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Philippe Charles
@@ -27,5 +36,24 @@ public class BbkDriverTest {
     @Test
     public void testCompliance() {
         SdmxWebDriverAssert.assertCompliance(new BbkDriver());
+    }
+
+    @Test
+    public void testQueries() throws MalformedURLException {
+        URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
+
+        BbkDriver.BbkQueries queries = BbkDriver.BbkQueries.INSTANCE;
+
+        assertThat(queries.getFlowsQuery(endpoint).build())
+                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK");
+
+        assertThat(queries.getFlowQuery(endpoint, DataflowRef.parse("BBEX3")).build())
+                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK/BBEX3");
+
+        assertThat(queries.getStructureQuery(endpoint, DataStructureRef.parse("BBK_ERX")).build())
+                .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/datastructure/BBK/BBK_ERX?references=children");
+
+        assertThat(queries.getDataQuery(endpoint, DataflowRef.parse("BBEX3"), Key.parse("M.ISK.EUR+USD.CA.AC.A01"), DataFilter.FULL).build())
+                .hasToString("https://api.statistiken.bundesbank.de/rest/data/BBEX3/M.ISK.EUR%2BUSD.CA.AC.A01");
     }
 }

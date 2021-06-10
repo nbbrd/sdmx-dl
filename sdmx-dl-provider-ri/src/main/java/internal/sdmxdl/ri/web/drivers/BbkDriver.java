@@ -19,6 +19,7 @@ package internal.sdmxdl.ri.web.drivers;
 import internal.sdmxdl.ri.web.*;
 import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -99,9 +100,10 @@ public final class BbkDriver implements SdmxWebDriver {
         }
     }
 
-    private static final class BbkQueries extends Sdmx21RestQueries {
+    @VisibleForTesting
+    static final class BbkQueries extends Sdmx21RestQueries {
 
-        private static final BbkQueries INSTANCE = new BbkQueries();
+        static final BbkQueries INSTANCE = new BbkQueries();
 
         private BbkQueries() {
             super(false, getCustomResources());
