@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix parsing of blank labels
+- Update ILO source with new endpoint
 
 ## [3.0.0-beta.2] - 2021-05-03
 

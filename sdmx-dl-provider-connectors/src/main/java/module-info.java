@@ -14,7 +14,6 @@ module sdmxdl.web.connectors {
     provides sdmxdl.web.spi.SdmxWebDriver with
             internal.sdmxdl.connectors.drivers.AbsDriver,
             internal.sdmxdl.connectors.drivers.EurostatDriver,
-            internal.sdmxdl.connectors.drivers.IloDriver,
             internal.sdmxdl.connectors.drivers.ImfDriver,
             internal.sdmxdl.connectors.drivers.InseeDriver,
             internal.sdmxdl.connectors.drivers.NbbDriver,

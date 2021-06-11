@@ -25,9 +25,9 @@
             <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
         </flow>
     </source>
-    <source name="ILO" minFlows="421">
-        <flow ref="DF_CP_ALL_EAP_DWAF_NOC_RT" dims="5">
-            <data key="CP.AGO.A.13366.EAP_DWAF_RT" minSeries="1" minObs="1"/>
+    <source name="ILO" minFlows="614">
+        <flow ref="DF_YI_ALL_EMP_TEMP_SEX_AGE_NB" dims="6">
+            <data key="YI.DEU.A.EMP_TEMP_NB.SEX_T.AGE_5YRBANDS_TOTAL" minSeries="1" minObs="38"/>
         </flow>
     </source>
     <source name="IMF" minFlows="120">

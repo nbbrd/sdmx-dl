@@ -73,6 +73,16 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("ILO")
+                    .description("International Labour Office")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://www.ilo.org/sdmx/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://ilostat.ilo.org/data/")
+                    .monitorOf("UptimeRobot", "m783847083-609d3e4ebc1da9455baeb63e")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("IMF_SDMX_CENTRAL")
                     .description("International Monetary Fund SDMX Central")
                     .driver(CONNECTORS_SDMX_21)
