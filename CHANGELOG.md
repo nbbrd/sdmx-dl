@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix parsing of blank labels
 - Update ILO source with new endpoint
+- Fix key parsing when time dimension is not last in data structure
 
 ## [3.0.0-beta.2] - 2021-05-03
 

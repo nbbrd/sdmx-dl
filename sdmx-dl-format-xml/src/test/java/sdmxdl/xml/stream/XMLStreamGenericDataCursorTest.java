@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -45,7 +46,7 @@ public class XMLStreamGenericDataCursorTest {
     @Test
     public void testGenericData20() throws Exception {
         ByteSource xml = SdmxSource.NBB_DATA;
-        Key.Builder builder = Key.builder("SUBJECT", "LOCATION", "FREQUENCY");
+        Key.Builder builder = Key.builder(asList("SUBJECT", "LOCATION", "FREQUENCY"));
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
@@ -99,7 +100,7 @@ public class XMLStreamGenericDataCursorTest {
     @Test
     public void testGenericData21() throws Exception {
         ByteSource xml = SdmxSource.OTHER_GENERIC21;
-        Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
+        Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
@@ -145,7 +146,7 @@ public class XMLStreamGenericDataCursorTest {
     @Test
     public void testGenericData21Bis() throws Exception {
         ByteSource xml = SdmxSource.ECB_DATA;
-        Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
+        Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();

@@ -20,6 +20,7 @@ import org.assertj.core.api.Condition;
 import org.junit.Test;
 
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -386,16 +387,16 @@ public class KeyTest {
     @Test
     public void testBuilderOfDimensions() {
         assertThatNullPointerException()
-                .isThrownBy(() -> Key.builder((String[]) null));
+                .isThrownBy(() -> Key.builder((List<String>) null));
 
         Key.Builder b;
 
-        b = Key.builder();
+        b = Key.builder(emptyList());
         assertThat(b.clear().toString()).isEqualTo(Key.ALL_KEYWORD);
         assertThat(b.isDimension("hello")).isFalse();
         assertThat(b.build()).isEqualTo(Key.ALL);
 
-        b = Key.builder("SECTOR", "REGION");
+        b = Key.builder(asList("SECTOR", "REGION"));
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
@@ -438,7 +439,7 @@ public class KeyTest {
                 .label("")
                 .primaryMeasureId("")
                 .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
-                .dimension(Dimension.builder().position(2).id("REGION").label("Region").build())
+                .dimension(Dimension.builder().position(3).id("REGION").label("Region").build())
                 .build());
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
