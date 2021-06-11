@@ -16,8 +16,9 @@
  */
 package sdmxdl.util.web;
 
-import nbbrd.io.text.Parser;
-import sdmxdl.util.Property;
+import sdmxdl.util.BooleanProperty;
+import sdmxdl.util.IntProperty;
+import sdmxdl.util.LongProperty;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,47 +36,47 @@ public final class SdmxWebProperty {
      * URL connection. A timeout of zero is interpreted as an infinite timeout.
      * Default value is 2 minutes.
      */
-    public static final Property<Integer> CONNECT_TIMEOUT_PROPERTY =
-            new Property<>("connectTimeout", (int) TimeUnit.MINUTES.toMillis(2), Parser.onInteger());
+    public static final IntProperty CONNECT_TIMEOUT_PROPERTY =
+            new IntProperty("connectTProperty<Integer>imeout", (int) TimeUnit.MINUTES.toMillis(2));
 
     /**
      * Defines the timeout value (in milliseconds) to be used when reading an
      * input stream from an URL connection. A timeout of zero is interpreted as
      * an infinite timeout. Default value is 2 minutes.
      */
-    public static final Property<Integer> READ_TIMEOUT_PROPERTY =
-            new Property<>("readTimeout", (int) TimeUnit.MINUTES.toMillis(2), Parser.onInteger());
+    public static final IntProperty READ_TIMEOUT_PROPERTY =
+            new IntProperty("readTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
     /**
      * Defines the duration (in milliseconds) of response storage in the cache.
      * A duration of zero is interpreted as an infinite duration. Default value
      * is 5 minutes.
      */
-    public static final Property<Long> CACHE_TTL_PROPERTY =
-            new Property<>("cacheTtl", TimeUnit.MINUTES.toMillis(5), Parser.onLong());
+    public static final LongProperty CACHE_TTL_PROPERTY =
+            new LongProperty("cacheTtl", TimeUnit.MINUTES.toMillis(5));
 
     /**
      * Defines the max number of redirects to be followed by HTTP client. This
      * limit is intended to prevent infinite loop. Default value is 5.
      */
-    public static final Property<Integer> MAX_REDIRECTS_PROPERTY =
-            new Property<>("maxRedirects", 5, Parser.onInteger());
+    public static final IntProperty MAX_REDIRECTS_PROPERTY =
+            new IntProperty("maxRedirects", 5);
 
     /**
      * Defines if detail query is supported. Default value is false.
      */
-    public static final Property<Boolean> DETAIL_SUPPORTED_PROPERTY =
-            new Property<>("detailSupported", false, Parser.onBoolean());
+    public static final BooleanProperty DETAIL_SUPPORTED_PROPERTY =
+            new BooleanProperty("detailSupported", false);
 
     /**
      * Defines if trailing slash is required in queries. Default value is false.
      */
-    public static final Property<Boolean> TRAILING_SLASH_REQUIRED_PROPERTY =
-            new Property<>("trailingSlashRequired", false, Parser.onBoolean());
+    public static final BooleanProperty TRAILING_SLASH_REQUIRED_PROPERTY =
+            new BooleanProperty("trailingSlashRequired", false);
 
     /**
      * Defines if preemptive authentication should be used. Default value is false.
      */
-    public static final Property<Boolean> PREEMPTIVE_AUTHENTICATION_PROPERTY =
-            new Property<>("preemptiveAuthentication", false, Parser.onBoolean());
+    public static final BooleanProperty PREEMPTIVE_AUTHENTICATION_PROPERTY =
+            new BooleanProperty("preemptiveAuthentication", false);
 }

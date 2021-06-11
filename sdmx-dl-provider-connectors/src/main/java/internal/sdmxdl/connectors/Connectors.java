@@ -21,9 +21,8 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
-import nbbrd.io.text.Parser;
 import sdmxdl.*;
-import sdmxdl.util.Property;
+import sdmxdl.util.BooleanProperty;
 
 import java.util.Collections;
 import java.util.Map;
@@ -159,12 +158,12 @@ public class Connectors {
         return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
-    public static final Property<Boolean> SUPPORTS_COMPRESSION_PROPERTY =
-            new Property<>("supportsCompression", false, Parser.onBoolean());
+    public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
+            new BooleanProperty("supportsCompression", false);
 
-    public static final Property<Boolean> NEEDS_CREDENTIALS_PROPERTY =
-            new Property<>("needsCredentials", false, Parser.onBoolean());
+    public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
+            new BooleanProperty("needsCredentials", false);
 
-    public static final Property<Boolean> NEEDS_URL_ENCODING_PROPERTY =
-            new Property<>("needsURLEncoding", false, Parser.onBoolean());
+    public static final BooleanProperty NEEDS_URL_ENCODING_PROPERTY =
+            new BooleanProperty("needsURLEncoding", false);
 }
