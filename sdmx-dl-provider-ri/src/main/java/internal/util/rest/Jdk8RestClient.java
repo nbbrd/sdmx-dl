@@ -40,14 +40,14 @@ public final class Jdk8RestClient implements HttpRest.Client {
     private final HttpRest.Context context;
 
     @Override
-    public HttpRest.Response requestGET(URL query, List<String> mediaTypes, String langs) throws IOException {
+    public HttpRest.Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
         Objects.requireNonNull(query);
         Objects.requireNonNull(mediaTypes);
         Objects.requireNonNull(langs);
         return open(query, mediaTypes, langs, 0, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response open(URL query, List<String> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private HttpRest.Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (!requestScheme.isSecureRequest(query)) {
             throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
         }
@@ -106,7 +106,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private HttpRest.Response redirect(HttpURLConnection http, List<String> mediaTypes, String langs, int redirects) throws IOException {
+    private HttpRest.Response redirect(HttpURLConnection http, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
         URL oldUrl;
         URL newUrl;
         try {
@@ -133,7 +133,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         return open(newUrl, mediaTypes, langs, redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response recoverClientError(HttpURLConnection http, List<String> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private HttpRest.Response recoverClientError(HttpURLConnection http, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         switch (http.getResponseCode()) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
                 AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(http).orElse(AuthSchemeHelper.BASIC);
@@ -252,16 +252,24 @@ public final class Jdk8RestClient implements HttpRest.Client {
         private final List<HttpRest.StreamDecoder> decoders;
 
         @Override
-        public @NonNull String getContentType() {
-            return conn.getContentType();
+        public @NonNull MediaType getContentType() throws IOException {
+            String contentTypeOrNull = conn.getContentType();
+            if (contentTypeOrNull == null) {
+                throw new IOException("Content type not known");
+            }
+            try {
+                return MediaType.parse(contentTypeOrNull);
+            } catch (IllegalArgumentException ex) {
+                throw new IOException("Invalid content type '" + contentTypeOrNull + "'", ex);
+            }
         }
 
         @Override
         public @NonNull InputStream getBody() throws IOException {
-            String encoding = conn.getContentEncoding();
+            String encodingOrNull = conn.getContentEncoding();
             return decoders
                     .stream()
-                    .filter(decoder -> decoder.getName().equals(encoding))
+                    .filter(decoder -> decoder.getName().equals(encodingOrNull))
                     .findFirst()
                     .orElse(HttpRest.StreamDecoder.noOp())
                     .decode(conn.getInputStream());
@@ -292,8 +300,8 @@ public final class Jdk8RestClient implements HttpRest.Client {
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
-    static String getAcceptHeader(List<String> mediaTypes) {
-        return mediaTypes.stream().collect(Collectors.joining(", "));
+    static String getAcceptHeader(List<MediaType> mediaTypes) {
+        return mediaTypes.stream().map(MediaType::toString).collect(Collectors.joining(", "));
     }
 
     private static URI toURI(URL url) throws IOException {

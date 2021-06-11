@@ -92,12 +92,12 @@ public class Jdk8RestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG)) {
+        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
             assertSameSampleContent(response);
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21))
+                .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
                 .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
                 .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip,deflate"))
                 .withHeader(LOCATION_HEADER, absent())
@@ -122,7 +122,7 @@ public class Jdk8RestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(XML), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG))
                 .withMessage("500: boom")
                 .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
@@ -141,7 +141,7 @@ public class Jdk8RestClientTest {
         Jdk8RestClient x = new Jdk8RestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), singletonList(XML), ""))
+                .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), singletonList(XML_TYPE), ""))
                 .withMessage("Unsupported connection type");
     }
 
@@ -162,7 +162,7 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
-                try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG)) {
+                try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
                     assertSameSampleContent(response);
                 }
             }
@@ -188,7 +188,7 @@ public class Jdk8RestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
-                        .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                        .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                         .withMessage("Max redirection reached");
             }
         }
@@ -208,7 +208,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                     .withMessage("Missing redirection url");
         }
     }
@@ -230,7 +230,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }
@@ -246,7 +246,7 @@ public class Jdk8RestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                 .isInstanceOf(SSLException.class);
     }
 
@@ -269,7 +269,7 @@ public class Jdk8RestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(readTimeout * 2)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                 .withMessageContaining("Read timed out");
     }
 
@@ -289,7 +289,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG)) {
+            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
                 assertSameSampleContent(response);
             }
 
@@ -314,7 +314,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                     .withMessage("401: Unauthorized")
                     .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                         assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
@@ -343,7 +343,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                     .withMessage("401: Unauthorized")
                     .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                         assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
@@ -373,7 +373,7 @@ public class Jdk8RestClientTest {
             String location = wireHttpUrl(SAMPLE_URL);
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new URL(location), singletonList(GENERIC_DATA_21), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new URL(location), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
                     .withMessageContaining("Insecure protocol");
 
             wire.verify(preemptive ? 0 : 1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -396,7 +396,7 @@ public class Jdk8RestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21), ANY_LANG)) {
+            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
                 assertSameSampleContent(response);
             }
 
@@ -409,7 +409,7 @@ public class Jdk8RestClientTest {
         assertThat(Jdk8RestClient.getAcceptHeader(emptyList()))
                 .isEqualTo("");
 
-        assertThat(Jdk8RestClient.getAcceptHeader(asList("text/html", "application/xhtml+xml")))
+        assertThat(Jdk8RestClient.getAcceptHeader(asList(MediaType.parse("text/html"), MediaType.parse("application/xhtml+xml"))))
                 .isEqualTo("text/html, application/xhtml+xml");
     }
 
@@ -444,7 +444,7 @@ public class Jdk8RestClientTest {
     }
 
     private void assertSameSampleContent(HttpRest.Response response) throws IOException {
-        assertThat(response.getContentType()).isEqualTo(XML);
+        assertThat(response.getContentType()).isEqualTo(XML_TYPE);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }
@@ -462,6 +462,9 @@ public class Jdk8RestClientTest {
             }
         };
     }
+
+    private static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
+    private static final MediaType XML_TYPE = MediaType.parse(XML);
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
     private static final int[] HTTP_REDIRECTIONS = {301, 302, 303, 307, 308};

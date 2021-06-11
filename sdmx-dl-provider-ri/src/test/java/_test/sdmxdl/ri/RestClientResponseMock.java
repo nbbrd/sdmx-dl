@@ -1,6 +1,7 @@
 package _test.sdmxdl.ri;
 
 import internal.util.rest.HttpRest;
+import internal.util.rest.MediaType;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -13,7 +14,7 @@ public final class RestClientResponseMock implements HttpRest.Response {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final String contentType = "";
+    private final MediaType contentType = MediaType.ANY_TYPE;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -24,7 +25,7 @@ public final class RestClientResponseMock implements HttpRest.Response {
     private final IORunnable onClose = IORunnable.noOp();
 
     @Override
-    public @NonNull String getContentType() {
+    public @NonNull MediaType getContentType() {
         return contentType;
     }
 

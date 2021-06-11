@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.util;
+package internal.util.rest;
 
 import org.junit.Test;
 
@@ -88,5 +88,11 @@ public class MediaTypeTest {
 
         assertThat(XML_UTF_8).hasToString("text/xml; charset=utf-8");
         assertThat(JSON_UTF_8).hasToString("application/json; charset=utf-8");
+    }
+
+    @Test
+    public void testEquals() {
+        assertThat(ANY_TYPE).isEqualTo(ANY_TYPE);
+        assertThat(MediaType.parse("text/html; charset=utf-8")).isEqualTo(MediaType.parse("text/html;charset=utf-8"));
     }
 }

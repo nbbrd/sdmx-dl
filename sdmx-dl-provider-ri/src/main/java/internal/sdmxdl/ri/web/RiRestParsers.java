@@ -4,7 +4,7 @@ import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.util.MediaType;
+import internal.util.rest.MediaType;
 
 import java.util.List;
 import java.util.Optional;

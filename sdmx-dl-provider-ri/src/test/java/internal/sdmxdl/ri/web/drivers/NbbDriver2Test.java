@@ -17,7 +17,9 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import _test.sdmxdl.ri.RestClientResponseMock;
+import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.rest.HttpRest;
+import internal.util.rest.MediaType;
 import org.junit.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.DataflowRef;
@@ -32,7 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static internal.sdmxdl.ri.web.drivers.NbbDriver2.NbbClient2.checkInternalErrorRedirect;
+import static internal.sdmxdl.ri.web.drivers.NbbDriver2.NbbExecutor.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -57,12 +59,15 @@ public class NbbDriver2Test {
     }
 
     @Test
-    public void testNbbFix2() {
-        assertThatCode(() -> checkInternalErrorRedirect(RestClientResponseMock.builder().contentType("text/xml; charset=utf-8").build()))
+    public void testExecutor() {
+        MediaType xmlUTF8 = MediaType.parse("text/xml; charset=utf-8");
+        MediaType htmlUTF8 = MediaType.parse("text/html; charset=utf-8");
+
+        assertThatCode(() -> checkInternalErrorRedirect(RestClientResponseMock.builder().contentType(xmlUTF8).build()))
                 .doesNotThrowAnyException();
 
         assertThatIOException()
-                .isThrownBy(() -> checkInternalErrorRedirect(RestClientResponseMock.builder().contentType("text/html; charset=utf-8").build()))
+                .isThrownBy(() -> checkInternalErrorRedirect(RestClientResponseMock.builder().contentType(htmlUTF8).build()))
                 .withMessage("503: Service unavailable");
 
         AtomicInteger closed = new AtomicInteger(0);
@@ -70,7 +75,7 @@ public class NbbDriver2Test {
                 .isThrownBy(() -> {
                     RestClientResponseMock response = RestClientResponseMock
                             .builder()
-                            .contentType("text/html; charset=utf-8")
+                            .contentType(htmlUTF8)
                             .onClose(closed::incrementAndGet)
                             .build();
                     newClient(response).getFlows();
@@ -87,7 +92,7 @@ public class NbbDriver2Test {
                 .isThrownBy(() -> {
                     RestClientResponseMock response = RestClientResponseMock
                             .builder()
-                            .contentType("text/html; charset=utf-8")
+                            .contentType(htmlUTF8)
                             .onClose(() -> {
                                 throw new IOException("Error while closing");
                             })
@@ -98,8 +103,8 @@ public class NbbDriver2Test {
                 .satisfies(ex -> hasSuppressedMessage(ex, "Error while closing"));
     }
 
-    private NbbDriver2.NbbClient2 newClient(RestClientResponseMock response) throws MalformedURLException {
-        return new NbbDriver2.NbbClient2("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (query, mediaType, langs) -> response);
+    private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
+        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (query, mediaType, langs) -> response);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

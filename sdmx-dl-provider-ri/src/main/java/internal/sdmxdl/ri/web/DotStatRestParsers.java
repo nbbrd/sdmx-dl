@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.util.MediaType;
+import internal.util.rest.MediaType;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 

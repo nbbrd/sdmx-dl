@@ -18,6 +18,7 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
 import internal.util.rest.Jdk8RestClient;
+import internal.util.rest.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.web.SdmxWebAuthenticator;
@@ -75,7 +76,7 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, List<String> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
+        public void onOpen(URL query, List<MediaType> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
             if (listener.isEnabled()) {
                 if (HttpRest.AuthScheme.NONE.equals(scheme)) {
                     listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.util;
+package internal.util.rest;
 
 import nbbrd.design.StringValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -32,28 +32,29 @@ import static java.util.Collections.emptyMap;
  */
 @StringValue
 @lombok.AllArgsConstructor
+@lombok.EqualsAndHashCode
 public final class MediaType {
 
     public static @NonNull MediaType parse(@NonNull CharSequence text) throws IllegalArgumentException {
         String input = text.toString();
 
         if (isEmptyOrTrimable(input)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Content is empty or trimable");
         }
 
         int subtypeIndex = input.indexOf("/");
         if (subtypeIndex == -1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Missing subtype");
         }
         String type = input.substring(0, subtypeIndex).toLowerCase();
         if (isEmptyOrTrimable(type)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Type is empty or trimable");
         }
 
         int paramsIndex = input.indexOf(";", subtypeIndex);
         String subType = input.substring(subtypeIndex + 1, paramsIndex != -1 ? paramsIndex : input.length()).toLowerCase();
         if (isEmptyOrTrimable(subType)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Subtype is empty or trimable");
         }
 
         if (paramsIndex == -1) {
@@ -63,9 +64,9 @@ public final class MediaType {
         for (String item : input.substring(paramsIndex + 1).trim().split(";", -1)) {
             String[] tmp = item.split("=", -1);
             if (tmp.length != 2) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Invalid key-value pair");
             }
-            parameters.computeIfAbsent(tmp[0].toLowerCase(), o -> new ArrayList()).add(tmp[1]);
+            parameters.computeIfAbsent(tmp[0].toLowerCase(), o -> new ArrayList<>()).add(tmp[1]);
         }
         return new MediaType(type, subType, parameters);
     }
@@ -75,6 +76,7 @@ public final class MediaType {
     }
 
     public static final String WILDCARD = "*";
+    public static final MediaType ANY_TYPE = new MediaType(WILDCARD, WILDCARD, emptyMap());
 
     @lombok.NonNull
     private final String type;
