@@ -19,6 +19,9 @@ package internal.sdmxdl.ri.web.drivers;
 import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.util.rest.HttpRest;
 import org.junit.Test;
+import sdmxdl.DataFilter;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.util.parser.ObsFactories;
@@ -40,6 +43,17 @@ public class NbbDriver2Test {
     @Test
     public void testCompliance() {
         SdmxWebDriverAssert.assertCompliance(new NbbDriver2());
+    }
+
+    @Test
+    public void testQueries() throws MalformedURLException {
+        URL endpoint = new URL("https://stat.nbb.be/restsdmx/sdmx.ashx");
+
+        NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
+
+        assertThat(queries.getDataQuery(endpoint, DataflowRef.parse("EXR"), Key.parse("AUD.M"), DataFilter.FULL))
+                .describedAs("SdmxFix#1")
+                .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }
 
     @Test
@@ -85,7 +99,7 @@ public class NbbDriver2Test {
     }
 
     private NbbDriver2.NbbClient2 newClient(RestClientResponseMock response) throws MalformedURLException {
-        return new NbbDriver2.NbbClient2("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, (query, mediaType, langs) -> response, ObsFactories.SDMX20);
+        return new NbbDriver2.NbbClient2("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (query, mediaType, langs) -> response);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

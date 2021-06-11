@@ -19,8 +19,8 @@ package internal.sdmxdl.ri.web.drivers;
 import internal.sdmxdl.ri.web.*;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.Property;
-import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -48,7 +48,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .builder()
             .name(RI_SDMX_21)
             .rank(NATIVE_RANK)
-            .client(Sdmx21Driver2::of)
+            .client(Sdmx21Driver2::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
@@ -150,16 +150,12 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new RiRestClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
-                c.getLanguages(),
-                ObsFactories.getObsFactory(c, s, "SDMX21"),
-                RestClients.getRestClient(s, c),
+    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+        return RiRestClient.of(
+                s, c, "SDMX21",
                 getQueries(s.getProperties()),
-                new Sdmx21RestParsers(),
-                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
+                getParsers(s.getProperties()),
+                isDetailSupportedProperty(s.getProperties())
         );
     }
 
@@ -171,6 +167,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                 .customResource(SdmxResourceType.DATAFLOW, DATAFLOW_PATH_PROPERTY.get(properties))
                 .customResource(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_PATH_PROPERTY.get(properties))
                 .build();
+    }
+
+    @SuppressWarnings("unused")
+    private static Sdmx21RestParsers getParsers(Map<String, String> properties) {
+        return new Sdmx21RestParsers();
+    }
+
+    private static boolean isDetailSupportedProperty(Map<String, String> properties) {
+        return DETAIL_SUPPORTED_PROPERTY.get(properties);
     }
 
     private static final Property<List<String>> DATA_PATH_PROPERTY =

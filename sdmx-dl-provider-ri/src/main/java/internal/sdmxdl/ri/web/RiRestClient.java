@@ -23,8 +23,11 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.util.MediaType;
+import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebContext;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -42,6 +45,19 @@ import java.util.stream.Collectors;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements SdmxWebClient {
 
+    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c, @NonNull String defaultDialect,
+                                           @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
+        return new RiRestClient(
+                SdmxWebClient.getClientName(s),
+                s.getEndpoint(),
+                c.getLanguages(),
+                ObsFactories.getObsFactory(c, s, defaultDialect),
+                RestClients.getRestClient(s, c),
+                queries,
+                parsers,
+                detailSupported);
+    }
+
     @lombok.Getter
     protected final String name;
     protected final URL endpoint;
@@ -53,22 +69,22 @@ public class RiRestClient implements SdmxWebClient {
     protected final boolean detailSupported;
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Dataflow> getFlows() throws IOException {
         return getFlows(getFlowsQuery());
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         return getFlow(getFlowQuery(ref), ref);
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return getStructure(getStructureQuery(ref), ref);
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
         return getData(getDataQuery(request), dsd);
     }
 
@@ -78,12 +94,12 @@ public class RiRestClient implements SdmxWebClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
         return queries.peekStructureRef(flowRef);
     }
 
     @Override
-    public Duration ping() throws IOException {
+    public @NonNull Duration ping() throws IOException {
         Clock clock = Clock.systemDefaultZone();
         Instant start = clock.instant();
         getFlows();
@@ -147,8 +163,8 @@ public class RiRestClient implements SdmxWebClient {
                 .parseStream(() -> DisconnectingInputStream.of(response));
     }
 
-    protected HttpRest.@NonNull Response open(@NonNull URL query, @NonNull List<MediaType> mediaType) throws IOException {
-        return executor.requestGET(query, mediaType.stream().map(MediaType::toString).collect(Collectors.toList()), langs.toString());
+    protected HttpRest.@NonNull Response open(@NonNull URL query, @NonNull List<MediaType> mediaTypes) throws IOException {
+        return executor.requestGET(query, mediaTypes.stream().map(MediaType::toString).collect(Collectors.toList()), langs.toString());
     }
 
     protected @NonNull MediaType getResponseType(HttpRest.@NonNull Response response) throws IOException {

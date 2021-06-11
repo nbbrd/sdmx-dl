@@ -36,13 +36,11 @@ import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
-import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static sdmxdl.ext.SdmxMediaType.GENERIC_DATA_21;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
 /**
@@ -58,7 +56,7 @@ public final class BbkDriver implements SdmxWebDriver {
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
-            .client(BbkDriver::of)
+            .client(BbkDriver::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
@@ -71,7 +69,7 @@ public final class BbkDriver implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
+    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) {
         return new BbkClient(
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
@@ -80,14 +78,15 @@ public final class BbkDriver implements SdmxWebDriver {
         );
     }
 
-    private static final class BbkClient extends RiRestClient {
+    @VisibleForTesting
+    static final class BbkClient extends RiRestClient {
 
-        private BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
-            super(name, endpoint, langs, BbkObsFactory.INSTANCE, executor, BbkQueries.INSTANCE, new Sdmx21RestParsers(), true);
+        public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
+            super(name, endpoint, langs, BbkObsFactory.INSTANCE, executor, new BbkQueries(), new Sdmx21RestParsers(), true);
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
             if (request.getKey().equals(Key.ALL)) {
                 request = request.toBuilder().key(alternateAllOf(dsd)).build();
             }
@@ -103,9 +102,7 @@ public final class BbkDriver implements SdmxWebDriver {
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {
 
-        static final BbkQueries INSTANCE = new BbkQueries();
-
-        private BbkQueries() {
+        public BbkQueries() {
             super(false, getCustomResources());
         }
 
