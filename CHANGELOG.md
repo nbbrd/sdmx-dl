@@ -12,12 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support of multiple media types in HTTP requests
 
 ### Changed
-- Enforce https on ABS source
+- Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
 
 ### Fixed
 - Fix parsing of blank labels
-- Update ILO source with new endpoint
-- Fix key parsing when time dimension is not last in data structure
+- Update ILO source with new endpoint [#107](https://github.com/nbbrd/sdmx-dl/issues/107)
+- Fix key parsing when time dimension is not last in data structure [#110](https://github.com/nbbrd/sdmx-dl/issues/110)
 
 ## [3.0.0-beta.2] - 2021-05-03
 
