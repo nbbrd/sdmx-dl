@@ -17,7 +17,6 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
-import internal.util.rest.Jdk8RestClient;
 import internal.util.rest.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -42,19 +41,18 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
 public class RestClients {
 
     public HttpRest.Client getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return new Jdk8RestClient(
-                HttpRest.Context
-                        .builder()
-                        .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
-                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
-                        .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
-                        .proxySelector(context.getProxySelector())
-                        .sslSocketFactory(context.getSslSocketFactory())
-                        .hostnameVerifier(context.getHostnameVerifier())
-                        .listener(new DefaultEventListener(o, context.getEventListener()))
-                        .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                        .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
-                        .build()
+        return HttpRest.newClient(HttpRest.Context
+                .builder()
+                .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
+                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
+                .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
+                .proxySelector(context.getProxySelector())
+                .sslSocketFactory(context.getSslSocketFactory())
+                .hostnameVerifier(context.getHostnameVerifier())
+                .listener(new DefaultEventListener(o, context.getEventListener()))
+                .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
+                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
+                .build()
         );
     }
 

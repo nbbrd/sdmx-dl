@@ -48,6 +48,14 @@ public class HttpRest {
         Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException;
     }
 
+    public static @NonNull Client newClient(@NonNull Context context) {
+        return new DefaultClient(context, isIwrRestClient() ? IwrConnectionBuilder::new : Jdk8ConnectionBuilder::new);
+    }
+
+    private boolean isIwrRestClient() {
+        return "iwr".equals(System.getProperty("sdmxdl.ri.restclient"));
+    }
+
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Context {

@@ -16,38 +16,83 @@
  */
 package internal.util.rest;
 
+import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static internal.util.rest.HttpRest.*;
 
 /**
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class Jdk8RestClient implements HttpRest.Client {
+final class DefaultClient implements Client {
+
+    public interface ConnectionBuilder {
+
+        void setQuery(URL query);
+
+        void setProxy(Proxy proxy);
+
+        void setReadTimeout(int timeout);
+
+        void setConnectTimeout(int timeout);
+
+        void setSSLSocketFactory(SSLSocketFactory sslSocketFactory);
+
+        void setHostnameVerifier(HostnameVerifier hostnameVerifier);
+
+        void setHeader(String key, String value);
+
+        Connection open() throws IOException;
+    }
+
+    public interface Connection extends Closeable {
+
+        int getResponseCode() throws IOException;
+
+        String getHeaderField(String key) throws IOException;
+
+        String getResponseMessage() throws IOException;
+
+        Map<String, List<String>> getHeaders() throws IOException;
+
+        URL getQuery();
+
+        String getContentType() throws IOException;
+
+        String getContentEncoding();
+
+        InputStream getInputStream() throws IOException;
+    }
 
     @lombok.NonNull
     private final HttpRest.Context context;
 
+    @lombok.NonNull
+    private final Supplier<ConnectionBuilder> factory;
+
     @Override
-    public HttpRest.Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
+    public Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
         Objects.requireNonNull(query);
         Objects.requireNonNull(mediaTypes);
         Objects.requireNonNull(langs);
         return open(query, mediaTypes, langs, 0, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (!requestScheme.isSecureRequest(query)) {
             throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
         }
@@ -56,45 +101,38 @@ public final class Jdk8RestClient implements HttpRest.Client {
 
         context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
 
-        URLConnection conn = query.openConnection(proxy);
-        conn.setReadTimeout(context.getReadTimeout());
-        conn.setConnectTimeout(context.getConnectTimeout());
+        ConnectionBuilder builder = factory.get();
+        builder.setQuery(query);
+        builder.setProxy(proxy);
+        builder.setReadTimeout(context.getReadTimeout());
+        builder.setConnectTimeout(context.getConnectTimeout());
+        builder.setSSLSocketFactory(context.getSslSocketFactory());
+        builder.setHostnameVerifier(context.getHostnameVerifier());
 
-        if (!(conn instanceof HttpURLConnection)) {
-            throw new IOException("Unsupported connection type");
-        }
+        builder.setHeader(ACCEPT_HEADER, toAcceptHeader(mediaTypes));
+        builder.setHeader(ACCEPT_LANGUAGE_HEADER, langs);
+        builder.setHeader(ACCEPT_ENCODING_HEADER, getEncodingHeader());
+        requestScheme.configureRequest(query, context.getAuthenticator(), builder);
 
-        if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getSslSocketFactory());
-            ((HttpsURLConnection) conn).setHostnameVerifier(context.getHostnameVerifier());
-        }
+        Connection connection = builder.open();
 
-        HttpURLConnection http = (HttpURLConnection) conn;
-        http.setRequestMethod("GET");
-        http.setRequestProperty(ACCEPT_HEADER, getAcceptHeader(mediaTypes));
-        http.setRequestProperty(ACCEPT_LANGUAGE_HEADER, langs);
-        http.addRequestProperty(ACCEPT_ENCODING_HEADER, getEncodingHeader());
-        http.setInstanceFollowRedirects(false);
-        requestScheme.configureRequest(query, context.getAuthenticator(), http);
-
-        switch (ResponseType.parse(http.getResponseCode())) {
+        switch (ResponseType.parse(connection.getResponseCode())) {
             case REDIRECTION:
-                return redirect(http, mediaTypes, langs, redirects);
+                return redirect(connection, mediaTypes, langs, redirects);
             case SUCCESSFUL:
-                return getBody(http);
+                return getBody(connection);
             case CLIENT_ERROR:
-                return recoverClientError(http, mediaTypes, langs, redirects, requestScheme);
+                return recoverClientError(connection, mediaTypes, langs, redirects, requestScheme);
             default:
-                throw getError(http);
+                throw getError(connection);
         }
     }
 
     private String getEncodingHeader() {
-        return context
-                .getDecoders()
+        return context.getDecoders()
                 .stream()
                 .map(HttpRest.StreamDecoder::getName)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(", "));
     }
 
     private AuthSchemeHelper getPreemptiveAuthScheme() {
@@ -106,7 +144,7 @@ public final class Jdk8RestClient implements HttpRest.Client {
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private HttpRest.Response redirect(HttpURLConnection http, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
+    private Response redirect(Connection connection, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
         URL oldUrl;
         URL newUrl;
         try {
@@ -114,100 +152,106 @@ public final class Jdk8RestClient implements HttpRest.Client {
                 throw new IOException("Max redirection reached");
             }
 
-            String location = http.getHeaderField(LOCATION_HEADER);
+            String location = connection.getHeaderField(LOCATION_HEADER);
             if (location == null || location.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
 
-            oldUrl = http.getURL();
+            oldUrl = connection.getQuery();
             newUrl = new URL(oldUrl, URLDecoder.decode(location, StandardCharsets.UTF_8.name()));
         } finally {
-            http.disconnect();
+            connection.close();
         }
 
         if (isDowngradingProtocolOnRedirect(oldUrl, newUrl)) {
             throw new IOException("Downgrading protocol on redirect from '" + oldUrl + "' to '" + newUrl + "'");
         }
 
-        context.getListener().onRedirection(http.getURL(), newUrl);
+        context.getListener().onRedirection(connection.getQuery(), newUrl);
         return open(newUrl, mediaTypes, langs, redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private HttpRest.Response recoverClientError(HttpURLConnection http, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        switch (http.getResponseCode()) {
+    private Response recoverClientError(Connection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+        switch (connection.getResponseCode()) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
-                AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(http).orElse(AuthSchemeHelper.BASIC);
+                AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
                 if (!requestScheme.equals(responseScheme)) {
-                    context.getListener().onUnauthorized(http.getURL(), requestScheme.authScheme, responseScheme.authScheme);
-                    return open(http.getURL(), mediaTypes, langs, redirects + 1, responseScheme);
+                    context.getListener().onUnauthorized(connection.getQuery(), requestScheme.authScheme, responseScheme.authScheme);
+                    return open(connection.getQuery(), mediaTypes, langs, redirects + 1, responseScheme);
                 }
-                context.getAuthenticator().invalidate(http.getURL());
+                context.getAuthenticator().invalidate(connection.getQuery());
         }
 
-        throw getError(http);
+        throw getError(connection);
     }
 
-    private HttpRest.Response getBody(HttpURLConnection connection) {
-        return new Jdk8Response(connection, context.getDecoders());
+    private Response getBody(Connection connection) {
+        return new DefaultResponse(connection, context.getDecoders());
     }
 
-    private IOException getError(HttpURLConnection http) throws IOException {
+    private IOException getError(Connection connection) throws IOException {
         try {
-            return new HttpRest.ResponseError(http.getResponseCode(), http.getResponseMessage(), http.getHeaderFields());
+            return new ResponseError(connection.getResponseCode(), connection.getResponseMessage(), connection.getHeaders());
         } finally {
-            http.disconnect();
+            connection.close();
         }
     }
 
     @lombok.AllArgsConstructor
     private enum AuthSchemeHelper {
-        BASIC(HttpRest.AuthScheme.BASIC) {
+        BASIC(AuthScheme.BASIC) {
             @Override
             boolean isSecureRequest(URL url) {
                 return "https".equalsIgnoreCase(url.getProtocol());
             }
 
             @Override
-            void configureRequest(URL url, HttpRest.Authenticator authenticator, HttpURLConnection http) {
+            void configureRequest(URL url, HttpRest.Authenticator authenticator, ConnectionBuilder http) {
                 PasswordAuthentication auth = authenticator.getPasswordAuthentication(url);
                 if (auth != null) {
-                    http.addRequestProperty(AUTHORIZATION_HEADER, getBasicAuthHeader(auth));
+                    http.setHeader(AUTHORIZATION_HEADER, getBasicAuthHeader(auth));
                 }
             }
 
             @Override
-            boolean hasResponseHeader(HttpURLConnection http) {
+            boolean hasResponseHeader(Connection http) throws IOException {
                 String header = http.getHeaderField(AUTHENTICATE_HEADER);
                 return header != null && header.startsWith("Basic");
             }
         },
-        NONE(HttpRest.AuthScheme.NONE) {
+        NONE(AuthScheme.NONE) {
             @Override
             boolean isSecureRequest(URL query) {
                 return true;
             }
 
             @Override
-            void configureRequest(URL query, HttpRest.Authenticator authenticator, HttpURLConnection http) {
+            void configureRequest(URL query, HttpRest.Authenticator authenticator, ConnectionBuilder http) {
             }
 
             @Override
-            boolean hasResponseHeader(HttpURLConnection http) {
+            boolean hasResponseHeader(Connection http) {
                 return false;
             }
         };
 
-        private final HttpRest.AuthScheme authScheme;
+        private final AuthScheme authScheme;
 
         abstract boolean isSecureRequest(URL query);
 
-        abstract void configureRequest(URL query, HttpRest.Authenticator authenticator, HttpURLConnection http);
+        abstract void configureRequest(URL query, HttpRest.Authenticator authenticator, ConnectionBuilder http);
 
-        abstract boolean hasResponseHeader(HttpURLConnection http);
+        abstract boolean hasResponseHeader(Connection http) throws IOException;
 
-        static Optional<AuthSchemeHelper> parse(HttpURLConnection http) {
+        static Optional<AuthSchemeHelper> parse(Connection http) {
             return Stream.of(AuthSchemeHelper.values())
-                    .filter(authScheme -> authScheme.hasResponseHeader(http))
+                    .filter(authScheme -> {
+                        try {
+                            return authScheme.hasResponseHeader(http);
+                        } catch (IOException exception) {
+                            throw new UncheckedIOException(exception);
+                        }
+                    })
                     .findFirst();
         }
 
@@ -243,13 +287,13 @@ public final class Jdk8RestClient implements HttpRest.Client {
     }
 
     @lombok.RequiredArgsConstructor
-    private static final class Jdk8Response implements HttpRest.Response {
+    private static final class DefaultResponse implements Response {
 
         @lombok.NonNull
-        private final HttpURLConnection conn;
+        private final DefaultClient.Connection conn;
 
         @lombok.NonNull
-        private final List<HttpRest.StreamDecoder> decoders;
+        private final List<StreamDecoder> decoders;
 
         @Override
         public @NonNull MediaType getContentType() throws IOException {
@@ -271,15 +315,38 @@ public final class Jdk8RestClient implements HttpRest.Client {
                     .stream()
                     .filter(decoder -> decoder.getName().equals(encodingOrNull))
                     .findFirst()
-                    .orElse(HttpRest.StreamDecoder.noOp())
+                    .orElse(StreamDecoder.noOp())
                     .decode(conn.getInputStream());
         }
 
         @Override
-        public void close() {
-            conn.disconnect();
+        public void close() throws IOException {
+            conn.close();
         }
     }
+
+    @VisibleForTesting
+    static @NonNull String toAcceptHeader(@NonNull List<MediaType> mediaTypes) {
+        return mediaTypes.stream().map(MediaType::toString).collect(Collectors.joining(", "));
+    }
+
+    @VisibleForTesting
+    static final String ACCEPT_HEADER = "Accept";
+
+    @VisibleForTesting
+    static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
+
+    @VisibleForTesting
+    static final String ACCEPT_ENCODING_HEADER = "Accept-Encoding";
+
+    @VisibleForTesting
+    static final String LOCATION_HEADER = "Location";
+
+    @VisibleForTesting
+    static final String AUTHORIZATION_HEADER = "Authorization";
+
+    @VisibleForTesting
+    static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
     /**
      * https://en.wikipedia.org/wiki/Downgrade_attack
@@ -288,20 +355,10 @@ public final class Jdk8RestClient implements HttpRest.Client {
      * @param newUrl
      * @return
      */
+    @VisibleForTesting
     static boolean isDowngradingProtocolOnRedirect(URL oldUrl, URL newUrl) {
         return "https".equalsIgnoreCase(oldUrl.getProtocol())
                 && !"https".equalsIgnoreCase(newUrl.getProtocol());
-    }
-
-    static final String ACCEPT_HEADER = "Accept";
-    static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
-    static final String ACCEPT_ENCODING_HEADER = "Accept-Encoding";
-    static final String LOCATION_HEADER = "Location";
-    static final String AUTHORIZATION_HEADER = "Authorization";
-    static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
-
-    static String getAcceptHeader(List<MediaType> mediaTypes) {
-        return mediaTypes.stream().map(MediaType::toString).collect(Collectors.joining(", "));
     }
 
     private static URI toURI(URL url) throws IOException {

@@ -17,6 +17,7 @@
 package internal.util.rest;
 
 import nbbrd.design.StringValue;
+import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -75,7 +76,9 @@ public final class MediaType {
         return o.isEmpty() || !o.trim().equals(o);
     }
 
-    public static final String WILDCARD = "*";
+    @VisibleForTesting
+    static final String WILDCARD = "*";
+
     public static final MediaType ANY_TYPE = new MediaType(WILDCARD, WILDCARD, emptyMap());
 
     @lombok.NonNull

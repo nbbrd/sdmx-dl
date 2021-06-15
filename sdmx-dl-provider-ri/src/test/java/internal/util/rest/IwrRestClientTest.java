@@ -17,15 +17,17 @@
 package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.junit.Ignore;
 
 /**
  * @author Philippe Charles
  */
-public class Jdk8RestClientTest extends DefaultClientTest {
+@Ignore
+public class IwrRestClientTest extends DefaultClientTest {
 
     @Override
     protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, Jdk8ConnectionBuilder::new);
+        return new DefaultClient(context, IwrConnectionBuilder::new);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class Jdk8RestClientTest extends DefaultClientTest {
         return WireMockConfiguration
                 .options()
                 .dynamicPort()
-                .dynamicHttpsPort()
+//                .dynamicHttpsPort()
                 .gzipDisabled(false);
     }
 }

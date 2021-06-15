@@ -7,6 +7,7 @@ module sdmxdl.web.ri {
 
     requires sdmxdl.util;
     requires sdmxdl.util.xml;
+    requires com.github.tuupertunut.powershelllibjava;
 
     requires transitive sdmxdl.api;
 
