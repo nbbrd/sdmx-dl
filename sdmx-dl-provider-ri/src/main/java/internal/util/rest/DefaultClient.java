@@ -114,6 +114,10 @@ final class DefaultClient implements Client {
         builder.setHeader(ACCEPT_ENCODING_HEADER, getEncodingHeader());
         requestScheme.configureRequest(query, context.getAuthenticator(), builder);
 
+        if (context.getUserAgent() != null) {
+            builder.setHeader(USER_AGENT_HEADER, context.getUserAgent());
+        }
+
         Connection connection = builder.open();
 
         switch (ResponseType.parse(connection.getResponseCode())) {
@@ -349,6 +353,9 @@ final class DefaultClient implements Client {
 
     @VisibleForTesting
     static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
+
+    @VisibleForTesting
+    static final String USER_AGENT_HEADER = "User-Agent";
 
     /**
      * https://en.wikipedia.org/wiki/Downgrade_attack

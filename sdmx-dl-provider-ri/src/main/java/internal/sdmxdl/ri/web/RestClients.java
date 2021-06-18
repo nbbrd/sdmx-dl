@@ -40,18 +40,22 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
 @lombok.experimental.UtilityClass
 public class RestClients {
 
+    // TODO: add lib version to user-agent
+    private static final String DEFAULT_USER_AGENT = "sdmx-dl";
+
     public HttpRest.Client getRestClient(SdmxWebSource o, SdmxWebContext context) {
         return HttpRest.newClient(HttpRest.Context
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
+                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
                 .proxySelector(context.getProxySelector())
                 .sslSocketFactory(context.getSslSocketFactory())
                 .hostnameVerifier(context.getHostnameVerifier())
                 .listener(new DefaultEventListener(o, context.getEventListener()))
                 .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
+                .userAgent(System.getProperty("user.agent", DEFAULT_USER_AGENT))
                 .build()
         );
     }

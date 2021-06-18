@@ -101,6 +101,9 @@ public class HttpRest {
         @lombok.Builder.Default
         boolean preemptiveAuthentication = false;
 
+        @lombok.Builder.Default
+        String userAgent = null;
+
         public static Builder builder() {
             return new Builder()
                     .decoder(HttpRest.StreamDecoder.gzip())

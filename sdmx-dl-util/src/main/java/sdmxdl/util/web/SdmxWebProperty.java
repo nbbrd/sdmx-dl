@@ -37,7 +37,7 @@ public final class SdmxWebProperty {
      * Default value is 2 minutes.
      */
     public static final IntProperty CONNECT_TIMEOUT_PROPERTY =
-            new IntProperty("connectTProperty<Integer>imeout", (int) TimeUnit.MINUTES.toMillis(2));
+            new IntProperty("connectTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
     /**
      * Defines the timeout value (in milliseconds) to be used when reading an

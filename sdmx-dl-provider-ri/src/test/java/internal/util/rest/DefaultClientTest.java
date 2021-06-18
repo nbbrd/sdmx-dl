@@ -78,6 +78,7 @@ public abstract class DefaultClientTest {
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
                 .hostnameVerifier(wireHostnameVerifier())
+                .userAgent("hello world")
                 .build();
         HttpRest.Client x = getRestClient(context);
 
@@ -93,6 +94,7 @@ public abstract class DefaultClientTest {
                 .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
                 .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
                 .withHeader(LOCATION_HEADER, absent())
+                .withHeader(USER_AGENT_HEADER, equalTo("hello world"))
         );
     }
 
