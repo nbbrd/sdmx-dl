@@ -185,8 +185,10 @@ final class DefaultClient implements Client {
         throw getError(connection);
     }
 
-    private Response getBody(Connection connection) {
-        return new DefaultResponse(connection, context.getDecoders());
+    private Response getBody(Connection connection) throws IOException {
+        DefaultResponse result = new DefaultResponse(connection, context.getDecoders());
+        context.getListener().onSuccess(result.getContentType());
+        return result;
     }
 
     private IOException getError(Connection connection) throws IOException {

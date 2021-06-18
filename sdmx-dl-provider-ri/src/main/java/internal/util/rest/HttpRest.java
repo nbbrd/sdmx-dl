@@ -141,6 +141,8 @@ public class HttpRest {
 
         void onOpen(@NonNull URL url, @NonNull List<MediaType> mediaTypes, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
 
+        void onSuccess(@NonNull MediaType mediaType);
+
         void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl);
 
         void onUnauthorized(@NonNull URL url, @NonNull AuthScheme oldScheme, @NonNull AuthScheme newScheme);
@@ -213,6 +215,11 @@ public class HttpRest {
                 Objects.requireNonNull(mediaTypes);
                 Objects.requireNonNull(proxy);
                 Objects.requireNonNull(scheme);
+            }
+
+            @Override
+            public void onSuccess(@NonNull MediaType mediaType) {
+                Objects.requireNonNull(mediaType);
             }
 
             @Override

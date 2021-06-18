@@ -85,6 +85,13 @@ public class RestClients {
         }
 
         @Override
+        public void onSuccess(@NonNull MediaType mediaType) {
+            if (listener.isEnabled()) {
+                listener.onWebSourceEvent(source, String.format("Parsing '%s'", mediaType));
+            }
+        }
+
+        @Override
         public void onRedirection(URL oldUrl, URL newUrl) {
             if (listener.isEnabled()) {
                 listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
