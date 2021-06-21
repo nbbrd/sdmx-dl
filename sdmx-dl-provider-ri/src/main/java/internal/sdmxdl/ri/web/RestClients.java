@@ -111,6 +111,13 @@ public class RestClients {
                 listener.onWebSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
             }
         }
+
+        @Override
+        public void onEvent(@NonNull String message) {
+            if (listener.isEnabled()) {
+                listener.onWebSourceEvent(source, message);
+            }
+        }
     }
 
     @lombok.AllArgsConstructor

@@ -16,6 +16,8 @@
  */
 package internal.util.rest;
 
+import nbbrd.design.VisibleForTesting;
+import nbbrd.io.Resource;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -26,13 +28,17 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -49,11 +55,8 @@ public class HttpRest {
     }
 
     public static @NonNull Client newClient(@NonNull Context context) {
-        return new DefaultClient(context, isIwrRestClient() ? IwrConnectionBuilder::new : Jdk8ConnectionBuilder::new);
-    }
-
-    private boolean isIwrRestClient() {
-        return "iwr".equals(System.getProperty("sdmxdl.ri.restclient"));
+        Client result = new DefaultClient(context, isIwrBackend() ? IwrConnectionBuilder::new : Jdk8ConnectionBuilder::new);
+        return isDump() ? new DumpingClient(result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
     }
 
     @lombok.Value
@@ -150,6 +153,8 @@ public class HttpRest {
 
         void onUnauthorized(@NonNull URL url, @NonNull AuthScheme oldScheme, @NonNull AuthScheme newScheme);
 
+        void onEvent(@NonNull String message);
+
         @NonNull
         static EventListener noOp() {
             return EventListeners.NONE;
@@ -237,6 +242,11 @@ public class HttpRest {
                 Objects.requireNonNull(oldScheme);
                 Objects.requireNonNull(newScheme);
             }
+
+            @Override
+            public void onEvent(@NonNull String message) {
+                Objects.requireNonNull(message);
+            }
         }
     }
 
@@ -264,6 +274,69 @@ public class HttpRest {
         @Override
         public @NonNull String getName() {
             return name().toLowerCase();
+        }
+    }
+
+    // TODO: document these options?
+    private static final String SDMXDL_RI_WEB_BACKEND = "sdmxdl.ri.web.backend";
+    private static final String SDMXDL_RI_WEB_DUMP = "sdmxdl.ri.web.dump";
+
+    private boolean isIwrBackend() {
+        return "iwr".equals(System.getProperty(SDMXDL_RI_WEB_BACKEND));
+    }
+
+    private boolean isDump() {
+        return Boolean.getBoolean(SDMXDL_RI_WEB_DUMP);
+    }
+
+    @VisibleForTesting
+    @lombok.AllArgsConstructor
+    static final class DumpingClient implements Client {
+
+        @lombok.NonNull
+        private final Client delegate;
+
+        @lombok.NonNull
+        private final Consumer<? super Path> onDump;
+
+        @Override
+        public @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
+            return new DumpingResponse(delegate.requestGET(query, mediaTypes, langs), onDump);
+        }
+    }
+
+    @VisibleForTesting
+    @lombok.AllArgsConstructor
+    static final class DumpingResponse implements Response {
+
+        @lombok.NonNull
+        private final Response delegate;
+
+        @lombok.NonNull
+        private final Consumer<? super Path> onDump;
+
+        @Override
+        public @NonNull MediaType getContentType() throws IOException {
+            return delegate.getContentType();
+        }
+
+        @Override
+        public @NonNull InputStream getBody() throws IOException {
+            InputStream inputStream = delegate.getBody();
+            try {
+                Path dump = Files.createTempFile("body", ".tmp");
+                onDump.accept(dump);
+                OutputStream outputStream = Files.newOutputStream(dump);
+                return new TeeInputStream(inputStream, outputStream);
+            } catch (IOException ex) {
+                Resource.ensureClosed(ex, inputStream);
+                throw ex;
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            delegate.close();
         }
     }
 }
