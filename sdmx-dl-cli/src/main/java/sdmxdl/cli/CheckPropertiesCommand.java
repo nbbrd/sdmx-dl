@@ -23,6 +23,7 @@ import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.About;
 
 import java.util.Properties;
 import java.util.SortedMap;
@@ -76,7 +77,7 @@ public final class CheckPropertiesCommand implements Callable<Void> {
     private ConfigHelper getConfigHelper() {
         return ConfigHelper
                 .builder()
-                .appName(MainCommand.NAME)
+                .appName(About.NAME)
                 .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream("CONFIG", path.toString(), ex))
                 .build();
     }

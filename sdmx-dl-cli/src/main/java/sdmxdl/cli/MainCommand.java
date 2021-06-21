@@ -20,9 +20,9 @@ import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
 import internal.sdmxdl.cli.ext.PrintAndLogExceptionHandler;
 import nbbrd.console.picocli.ConfigHelper;
 import nbbrd.console.picocli.LoggerHelper;
-import nbbrd.console.picocli.ManifestHelper;
 import picocli.CommandLine;
 import picocli.jansi.graalvm.AnsiConsole;
+import sdmxdl.About;
 
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -31,7 +31,7 @@ import java.util.concurrent.Callable;
  * @author Philippe Charles
  */
 @CommandLine.Command(
-        name = MainCommand.NAME,
+        name = About.NAME,
         resourceBundle = "sdmxdl.cli.Messages",
         versionProvider = MainCommand.ManifestVersionProvider.class,
         scope = CommandLine.ScopeType.INHERIT,
@@ -53,10 +53,8 @@ import java.util.concurrent.Callable;
 )
 public final class MainCommand implements Callable<Void> {
 
-    public static final String NAME = "sdmx-dl";
-
     public static void main(String[] args) {
-        ConfigHelper.of(MainCommand.NAME).loadAll(System.getProperties());
+        ConfigHelper.of(About.NAME).loadAll(System.getProperties());
         LoggerHelper.disableDefaultConsoleLogger();
         KeychainStoreIgnoredExceptionFix.register();
 
@@ -85,10 +83,12 @@ public final class MainCommand implements Callable<Void> {
     public static final class ManifestVersionProvider implements CommandLine.IVersionProvider {
 
         @Override
-        public String[] getVersion() throws Exception {
-            return ManifestHelper.getByTitle("sdmx-dl-cli")
-                    .map(ManifestHelper::getVersion)
-                    .orElseGet(() -> new String[0]);
+        public String[] getVersion() {
+            return new String[]{
+                    "@|bold " + About.NAME + " " + About.VERSION + "|@",
+                    "JVM: ${java.version} (${java.vendor} ${java.vm.name} ${java.vm.version})",
+                    "OS: ${os.name} ${os.version} ${os.arch}"
+            };
         }
     }
 }
