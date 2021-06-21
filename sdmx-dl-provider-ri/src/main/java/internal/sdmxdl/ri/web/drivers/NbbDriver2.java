@@ -82,7 +82,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX20"),
-                RestClients.getRestClient(s, c)
+                HttpRest.newClient(RestClients.getRestContext(s, c))
         );
     }
 

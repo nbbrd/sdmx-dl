@@ -74,7 +74,7 @@ public final class BbkDriver implements SdmxWebDriver {
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
-                RestClients.getRestClient(s, c)
+                HttpRest.newClient(RestClients.getRestContext(s, c))
         );
     }
 

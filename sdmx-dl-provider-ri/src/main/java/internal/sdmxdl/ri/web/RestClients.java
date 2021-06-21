@@ -18,8 +18,10 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
 import internal.util.rest.MediaType;
+import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.About;
 import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -40,11 +42,16 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
 @lombok.experimental.UtilityClass
 public class RestClients {
 
-    // TODO: add lib version to user-agent
-    private static final String DEFAULT_USER_AGENT = "sdmx-dl";
+    public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
+            Arrays.asList(
+                    CONNECT_TIMEOUT_PROPERTY.getKey(),
+                    READ_TIMEOUT_PROPERTY.getKey(),
+                    MAX_REDIRECTS_PROPERTY.getKey(),
+                    PREEMPTIVE_AUTHENTICATION_PROPERTY.getKey()
+            ));
 
-    public HttpRest.Client getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return HttpRest.newClient(HttpRest.Context
+    public static HttpRest.@NonNull Context getRestContext(@NonNull SdmxWebSource o, @NonNull SdmxWebContext context) {
+        return HttpRest.Context
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
@@ -55,18 +62,14 @@ public class RestClients {
                 .hostnameVerifier(context.getHostnameVerifier())
                 .listener(new DefaultEventListener(o, context.getEventListener()))
                 .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                .userAgent(System.getProperty("user.agent", DEFAULT_USER_AGENT))
-                .build()
-        );
+                .userAgent(System.getProperty(HTTP_AGENT, DEFAULT_USER_AGENT))
+                .build();
     }
 
-    public final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY.getKey(),
-                    READ_TIMEOUT_PROPERTY.getKey(),
-                    MAX_REDIRECTS_PROPERTY.getKey(),
-                    PREEMPTIVE_AUTHENTICATION_PROPERTY.getKey()
-            ));
+    @VisibleForTesting
+    static final String HTTP_AGENT = "http.agent";
+
+    private static final String DEFAULT_USER_AGENT = About.NAME + "/" + About.VERSION;
 
     @lombok.AllArgsConstructor
     private static final class DefaultEventListener implements HttpRest.EventListener {

@@ -50,7 +50,7 @@ public class RiRestClient implements SdmxWebClient {
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, defaultDialect),
-                RestClients.getRestClient(s, c),
+                HttpRest.newClient(RestClients.getRestContext(s, c)),
                 queries,
                 parsers,
                 detailSupported);
