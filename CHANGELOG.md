@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add custom resource path in SDMX21 driver
 - Add source from Bundesbank [#104](https://github.com/nbbrd/sdmx-dl/issues/104)
 - Add support of multiple media types in HTTP requests
-- Add '#onSuccess(MediaType)' event in RI REST client
+- Add `#onSuccess(MediaType)` event in RI REST client
 - Add default user-agent to RI REST client [#117](https://github.com/nbbrd/sdmx-dl/issues/117)
+- Add source from Economic and Social Commission for Asia and the Pacific [#99](https://github.com/nbbrd/sdmx-dl/issues/99)
 
 ### Changed
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
