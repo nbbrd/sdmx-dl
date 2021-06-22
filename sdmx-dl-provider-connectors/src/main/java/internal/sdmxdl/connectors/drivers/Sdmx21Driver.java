@@ -152,6 +152,16 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("SPC")
+                    .description("Pacific Data Hub")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://stats.pacificdata.org/?locale=en")
+                    .monitorOf("UptimeRobot", "m788488402-48b2f77f10060fcc6bb4baaa")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .description("Data access system to UN databases")
                     .driver(CONNECTORS_SDMX_21)
