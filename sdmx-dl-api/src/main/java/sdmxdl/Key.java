@@ -112,17 +112,28 @@ public final class Key {
         if (this == ALL) {
             return null;
         }
+
         if (dsd.getDimensions().size() != size()) {
             return "Expected " + dsd.getDimensions().size() + " dimensions instead of " + size();
         }
-        Dimension[] dimensions = dsd.getDimensions().stream().sorted(Comparator.comparingInt(Dimension::getPosition)).toArray(Dimension[]::new);
+
+        Dimension[] dimensions = dsd
+                .getDimensions()
+                .stream()
+                .sorted(Comparator.comparingInt(Dimension::getPosition))
+                .toArray(Dimension[]::new);
+
         for (int i = 0; i < dimensions.length; i++) {
-            if (dimensions[i].isCoded()) {
-                if (!isWildcard(i) && !dimensions[i].getCodes().containsKey(get(i))) {
-                    return "Unknown code '" + get(i) + "' for dimension '" + dimensions[i].getId() + "'";
+            Dimension dimension = dimensions[i];
+            if (dimension.isCoded()) {
+                for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
+                    if (!isWildcardCode(code) && !dimension.getCodes().containsKey(code)) {
+                        return "Unknown code '" + code + "' for dimension '" + dimension.getId() + "'";
+                    }
                 }
             }
         }
+
         return null;
     }
 

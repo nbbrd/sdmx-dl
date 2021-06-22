@@ -417,6 +417,21 @@ public class KeyTest {
                 .is(validOn(dsd2))
                 .is(validOn(dsd2WithCodes));
 
+        assertThat(Key.of("IND", "BE+"))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .is(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", "BE+LU"))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .is(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", "BE+XX"))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .isNot(validOn(dsd2WithCodes));
+
         assertThat(Key.of("IND").validateOn(dsd2WithCodes))
                 .isEqualTo("Expected 2 dimensions instead of 1");
 
@@ -515,7 +530,7 @@ public class KeyTest {
             .label("")
             .primaryMeasureId("")
             .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").code("IND", "Industry").build())
-            .dimension(Dimension.builder().position(3).id("REGION").label("Region").code("BE", "Belgium").build())
+            .dimension(Dimension.builder().position(3).id("REGION").label("Region").code("BE", "Belgium").code("LU", "Luxembourg").build())
             .build();
 
     private static List<String> keyAsList(Key key) {
