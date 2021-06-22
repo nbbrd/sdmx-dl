@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix parsing of blank labels
 - Update ILO source with new endpoint [#107](https://github.com/nbbrd/sdmx-dl/issues/107)
 - Fix key parsing when time dimension is not last in data structure [#110](https://github.com/nbbrd/sdmx-dl/issues/110)
+- Fix key validity check on input [#118](https://github.com/nbbrd/sdmx-dl/issues/118)
 
 ## [3.0.0-beta.2] - 2021-05-03
 

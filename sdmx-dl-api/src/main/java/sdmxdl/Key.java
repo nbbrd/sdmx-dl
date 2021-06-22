@@ -107,6 +107,25 @@ public final class Key {
         return !equals(that) && contains(that);
     }
 
+    @Nullable
+    public String validateOn(@NonNull DataStructure dsd) {
+        if (this == ALL) {
+            return null;
+        }
+        if (dsd.getDimensions().size() != size()) {
+            return "Expected " + dsd.getDimensions().size() + " dimensions instead of " + size();
+        }
+        Dimension[] dimensions = dsd.getDimensions().stream().sorted(Comparator.comparingInt(Dimension::getPosition)).toArray(Dimension[]::new);
+        for (int i = 0; i < dimensions.length; i++) {
+            if (dimensions[i].isCoded()) {
+                if (!isWildcard(i) && !dimensions[i].getCodes().containsKey(get(i))) {
+                    return "Unknown code '" + get(i) + "' for dimension '" + dimensions[i].getId() + "'";
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return formatToString(items);

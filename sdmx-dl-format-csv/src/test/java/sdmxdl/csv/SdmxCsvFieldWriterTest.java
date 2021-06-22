@@ -52,7 +52,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onDataflow("xyz", DataflowRef.parse("abc")))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("all:abc(latest)");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("all:abc(latest)");
                 });
     }
 
@@ -63,7 +63,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onKeyDimensions(STRUCT))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("FREQ,REGION,SECTOR");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("M,BE,INDUSTRY");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("M,BE,INDUSTRY");
                 });
 
         assertThatNullPointerException().isThrownBy(() -> onKeyDimensions((List<String>) null));
@@ -71,7 +71,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onKeyDimensions(asList("FREQ", "REGION", "SECTOR")))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("FREQ,REGION,SECTOR");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("M,BE,INDUSTRY");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("M,BE,INDUSTRY");
                 });
     }
 
@@ -85,7 +85,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onTimeDimension(STRUCT, formatter))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("TIME");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("2010-01-01T00:00:00");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("2010-01-01T00:00:00");
                 });
 
         assertThatNullPointerException().isThrownBy(() -> onTimeDimension((String) null, formatter));
@@ -94,7 +94,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onTimeDimension("xyz", formatter))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("2010-01-01T00:00:00");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("2010-01-01T00:00:00");
                 });
     }
 
@@ -108,7 +108,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onObsValue("xyz", formatter))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo(String.valueOf(Math.PI));
+                    assertThat(body(x, S1, OBS1)).isEqualTo(String.valueOf(Math.PI));
                 });
     }
 
@@ -119,7 +119,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onAttributes(STRUCT))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("TITLE");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("hello world");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("hello world");
                 });
 
         assertThatNullPointerException().isThrownBy(() -> onAttributes((List<String>) null));
@@ -127,7 +127,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onAttributes(asList("TITLE")))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("TITLE");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("hello world");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("hello world");
                 });
     }
 
@@ -141,7 +141,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onCompactObsAttributes("xyz", formatter))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("0");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("0");
                 });
     }
 
@@ -152,7 +152,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onSeriesKey("xyz"))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("M.BE.INDUSTRY");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("M.BE.INDUSTRY");
                 });
     }
 
@@ -164,7 +164,7 @@ public class SdmxCsvFieldWriterTest {
         assertThat(onConstant("xyz", "abc"))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
-                    assertThat(body(x, SERIES, OBS1)).isEqualTo("abc");
+                    assertThat(body(x, S1, OBS1)).isEqualTo("abc");
                 });
     }
 }

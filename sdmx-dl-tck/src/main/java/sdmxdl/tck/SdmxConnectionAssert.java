@@ -37,8 +37,18 @@ public class SdmxConnectionAssert {
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Sample {
-        DataflowRef valid;
-        DataflowRef invalid;
+
+        @lombok.NonNull
+        DataflowRef validFlow;
+
+        @lombok.NonNull
+        DataflowRef invalidFlow;
+
+        @lombok.NonNull
+        Key validKey;
+
+        @lombok.NonNull
+        Key invalidKey;
     }
 
     public void assertCompliance(IOSupplier<SdmxConnection> supplier, Sample sample) {
@@ -47,17 +57,8 @@ public class SdmxConnectionAssert {
 
     public void assertCompliance(SoftAssertions s, IOSupplier<SdmxConnection> supplier, Sample sample) {
         try (SdmxConnection conn = supplier.getWithIO()) {
-            assertNonnull(s, conn, sample.valid);
-            Key key = Key.ALL;
-            for (DataFilter filter : filters(DataFilter.Detail.values())) {
-                DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.valid, key, filter), key, filter);
-                List<Series> data = cursorToSeries(sample.valid, key, filter, conn);
-                s.assertThat(conn.getData(sample.valid, key, filter)).containsExactlyElementsOf(data);
-                s.assertThat(conn.getDataStream(sample.valid, key, filter)).containsExactlyElementsOf(data);
-            }
-            s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(sample.valid::containsRef).isNotEmpty();
-            s.assertThat(conn.getFlow(sample.valid)).isNotNull();
-            s.assertThat(conn.getStructure(sample.valid)).isNotNull();
+            checkValidFlow(s, sample, conn);
+            checkInvalidFlow(s, sample, conn);
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }
@@ -69,12 +70,57 @@ public class SdmxConnectionAssert {
             s.fail("Subsequent calls to #close must not raise exception", ex);
         }
 
-        assertState(s, supplier, o -> o.getData(sample.valid, Key.ALL, DataFilter.FULL), "getData(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataStream(sample.valid, Key.ALL, DataFilter.FULL), "getDataStream(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataCursor(sample.valid, Key.ALL, DataFilter.FULL), "getDataCursor(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getStructure(sample.valid), "getStructure(DataflowRef)");
-        assertState(s, supplier, o -> o.getFlow(sample.valid), "getFlow(DataflowRef)");
+        assertState(s, supplier, o -> o.getData(sample.validFlow, Key.ALL, DataFilter.FULL), "getData(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, Key.ALL, DataFilter.FULL), "getDataStream(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getDataCursor(sample.validFlow, Key.ALL, DataFilter.FULL), "getDataCursor(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getStructure(sample.validFlow), "getStructure(DataflowRef)");
+        assertState(s, supplier, o -> o.getFlow(sample.validFlow), "getFlow(DataflowRef)");
         assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
+    }
+
+    private void checkValidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) throws Exception {
+        assertNonnull(s, conn, sample.validFlow);
+        for (DataFilter filter : filters(DataFilter.Detail.values())) {
+            checkValidKey(s, sample, conn, filter);
+            checkInvalidKey(s, sample, conn, filter);
+        }
+        s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(sample.validFlow::containsRef).isNotEmpty();
+        s.assertThat(conn.getFlow(sample.validFlow)).isNotNull();
+        s.assertThat(conn.getStructure(sample.validFlow)).isNotNull();
+    }
+
+    private void checkInvalidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) {
+        s.assertThatThrownBy(() -> conn.getData(sample.validFlow, sample.invalidKey, filter))
+                .isInstanceOf(IOException.class)
+                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+        s.assertThatThrownBy(() -> conn.getDataCursor(sample.validFlow, sample.invalidKey, filter))
+                .isInstanceOf(IOException.class)
+                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+        s.assertThatThrownBy(() -> conn.getDataStream(sample.validFlow, sample.invalidKey, filter))
+                .isInstanceOf(IOException.class)
+                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+    }
+
+    private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) throws Exception {
+        DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(sample.validFlow, sample.validKey, filter), sample.validKey, filter);
+        List<Series> data = cursorToSeries(sample.validFlow, sample.validKey, filter, conn);
+        s.assertThat(conn.getData(sample.validFlow, sample.validKey, filter)).containsExactlyElementsOf(data);
+        s.assertThat(conn.getDataStream(sample.validFlow, sample.validKey, filter)).containsExactlyElementsOf(data);
+    }
+
+    private void checkInvalidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) {
+        for (DataFilter filter : filters(DataFilter.Detail.values())) {
+            s.assertThatThrownBy(() -> conn.getDataStream(sample.invalidFlow, sample.validKey, filter))
+                    .isInstanceOf(IOException.class);
+            s.assertThatThrownBy(() -> conn.getFlow(sample.invalidFlow))
+                    .isInstanceOf(IOException.class);
+            s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, sample.validKey, filter))
+                    .isInstanceOf(IOException.class);
+            s.assertThatThrownBy(() -> conn.getDataCursor(sample.invalidFlow, sample.validKey, filter))
+                    .isInstanceOf(IOException.class);
+            s.assertThatThrownBy(() -> conn.getStructure(sample.invalidFlow))
+                    .isInstanceOf(IOException.class);
+        }
     }
 
     @SuppressWarnings("null")

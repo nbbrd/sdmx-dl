@@ -23,7 +23,7 @@ public class DataCursorApiTest {
     @Test
     public void testSeriesCursor() {
         DataCursorAssert.assertCompliance(
-                () -> DataCursor.of(Arrays.asList(RepoSamples.SERIES).iterator()),
+                () -> DataCursor.of(Arrays.asList(RepoSamples.S1).iterator()),
                 Key.ALL, DataFilter.FULL
         );
     }
@@ -32,7 +32,7 @@ public class DataCursorApiTest {
     public void testFilteredCursor() {
         for (DataFilter filter : filters(DataFilter.Detail.values())) {
             DataCursorAssert.assertCompliance(
-                    () -> DataCursor.of(Arrays.asList(RepoSamples.SERIES).iterator()).filter(Key.ALL, filter),
+                    () -> DataCursor.of(Arrays.asList(RepoSamples.S1).iterator()).filter(Key.ALL, filter),
                     Key.ALL, filter
             );
         }

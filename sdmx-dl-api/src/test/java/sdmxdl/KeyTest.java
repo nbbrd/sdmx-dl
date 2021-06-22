@@ -20,7 +20,6 @@ import org.assertj.core.api.Condition;
 import org.junit.Test;
 
 import java.util.AbstractList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -287,7 +286,6 @@ public class KeyTest {
                 .isNot(containing(""));
     }
 
-
     private static Condition<Key> containingKey(String key) {
         Series series = Series.builder().key(Key.parse(key)).freq(Frequency.MONTHLY).build();
         return new Condition<>(parent -> parent.containsKey(series), "Must contain key %s", key);
@@ -385,6 +383,52 @@ public class KeyTest {
     }
 
     @Test
+    public void testIsValidOn() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> Key.of("IND", "BE").validateOn(null));
+
+        assertThat(Key.of())
+                .is(validOn(dsd0))
+                .is(validOn(dsd2))
+                .is(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND"))
+                .isNot(validOn(dsd0))
+                .isNot(validOn(dsd2))
+                .isNot(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", "BE", "XX"))
+                .isNot(validOn(dsd0))
+                .isNot(validOn(dsd2))
+                .isNot(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", "BE"))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .is(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", "XX"))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .isNot(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND", ""))
+                .isNot(validOn(dsd0))
+                .is(validOn(dsd2))
+                .is(validOn(dsd2WithCodes));
+
+        assertThat(Key.of("IND").validateOn(dsd2WithCodes))
+                .isEqualTo("Expected 2 dimensions instead of 1");
+
+        assertThat(Key.of("IND", "XX").validateOn(dsd2WithCodes))
+                .isEqualTo("Unknown code 'XX' for dimension 'REGION'");
+    }
+
+    private static Condition<Key> validOn(DataStructure dsd) {
+        return new Condition<>(parent -> parent.validateOn(dsd) == null, "valid on dsd %s", dsd);
+    }
+
+    @Test
     public void testBuilderOfDimensions() {
         assertThatNullPointerException()
                 .isThrownBy(() -> Key.builder((List<String>) null));
@@ -423,24 +467,12 @@ public class KeyTest {
 
         Key.Builder b;
 
-        b = Key.builder(DataStructure
-                .builder()
-                .ref(DataStructureRef.parse("ref"))
-                .primaryMeasureId("")
-                .label("")
-                .build());
+        b = Key.builder(dsd0);
         assertThat(b.clear().toString()).isEqualTo(Key.ALL_KEYWORD);
         assertThat(b.isDimension("hello")).isFalse();
         assertThat(b.build()).isEqualTo(Key.ALL);
 
-        b = Key.builder(DataStructure
-                .builder()
-                .ref(DataStructureRef.parse("ref"))
-                .label("")
-                .primaryMeasureId("")
-                .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
-                .dimension(Dimension.builder().position(3).id("REGION").label("Region").build())
-                .build());
+        b = Key.builder(dsd2);
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("REGION", "BE").put("SECTOR", "IND").toString()).isEqualTo("IND.BE");
         assertThat(b.clear().put("SECTOR", "IND").toString()).isEqualTo("IND.");
@@ -459,6 +491,32 @@ public class KeyTest {
         assertThat(b.clear().put("SECTOR", "IND").isSeries()).isFalse();
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
     }
+
+    private final DataStructure dsd0 = DataStructure
+            .builder()
+            .ref(DataStructureRef.parse("ref"))
+            .primaryMeasureId("")
+            .label("")
+            .build();
+
+    private final DataStructure dsd2 = DataStructure
+            .builder()
+            .ref(DataStructureRef.parse("ref"))
+            .label("")
+            .primaryMeasureId("")
+            .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
+            .dimension(Dimension.builder().position(3).id("REGION").label("Region").build())
+            .build();
+
+
+    DataStructure dsd2WithCodes = DataStructure
+            .builder()
+            .ref(DataStructureRef.parse("ref"))
+            .label("")
+            .primaryMeasureId("")
+            .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").code("IND", "Industry").build())
+            .dimension(Dimension.builder().position(3).id("REGION").label("Region").code("BE", "Belgium").build())
+            .build();
 
     private static List<String> keyAsList(Key key) {
         return new AbstractList<String>() {

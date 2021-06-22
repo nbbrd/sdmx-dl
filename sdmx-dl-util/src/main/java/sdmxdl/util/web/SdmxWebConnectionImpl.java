@@ -92,6 +92,7 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         }
 
         DataStructure structure = client.getStructure(structRef);
+        checkKey(key, structure);
 
         return isDetailSupported()
                 ? client.getData(new DataRequest(flowRef, key, filter), structure)
@@ -123,6 +124,13 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
     private void checkState() throws IOException {
         if (closed) {
             throw SdmxExceptions.connectionClosed(client.getName());
+        }
+    }
+
+    private void checkKey(Key key, DataStructure structure) throws IOException {
+        String msg = key.validateOn(structure);
+        if (msg != null) {
+            throw SdmxExceptions.invalidKey(client.getName(), key, msg);
         }
     }
 }

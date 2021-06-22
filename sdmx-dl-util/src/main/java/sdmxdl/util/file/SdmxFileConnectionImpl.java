@@ -20,7 +20,6 @@ import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxExceptions;
 import sdmxdl.file.SdmxFileConnection;
-import sdmxdl.util.file.SdmxFileClient;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -113,7 +112,11 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         checkState();
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return client.loadData(client.decode(), dataflow.getRef(), key, filter);
+
+        SdmxFileInfo info = client.decode();
+        checkKey(key, info);
+
+        return client.loadData(info, dataflow.getRef(), key, filter);
     }
 
     @Override
@@ -122,7 +125,11 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         checkFlowRef(flowRef);
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return client.loadData(client.decode(), dataflow.getRef(), key, filter);
+
+        SdmxFileInfo info = client.decode();
+        checkKey(key, info);
+
+        return client.loadData(info, dataflow.getRef(), key, filter);
     }
 
     @Override
@@ -138,6 +145,13 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     private void checkState() throws IOException {
         if (closed) {
             throw SdmxExceptions.connectionClosed("fixme");
+        }
+    }
+
+    private void checkKey(Key key, SdmxFileInfo info) throws IOException {
+        String msg = key.validateOn(info.getStructure());
+        if (msg != null) {
+            throw SdmxExceptions.invalidKey("fixme", key, msg);
         }
     }
 
