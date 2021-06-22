@@ -20,6 +20,11 @@
             <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8"/>
         </flow>
     </source>
+    <source name="ESCAP" minFlows="3">
+        <flow ref="DF_ESCAP_SDG_Dataflow" dims="4">
+            <data key="..G01_01_01.A" minSeries="523" minObs="3841"/>
+        </flow>
+    </source>
     <source name="ESTAT" minFlows="6283">
         <flow ref="teibp051" dims="7">
             <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
