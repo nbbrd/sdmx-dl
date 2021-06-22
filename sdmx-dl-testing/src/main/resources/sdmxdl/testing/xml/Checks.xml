@@ -85,6 +85,11 @@
             <data key="1.1.1" minSeries="1" minObs="23"/>
         </flow>
     </source>
+    <source name="SGR" minFlows="87">
+        <flow ref="NAMAIN_IDC_N" dims="14">
+            <data key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" minSeries="1" minObs="26"/>
+        </flow>
+    </source>
     <source name="UIS" minFlows="9">
         <flow ref="SCN_DS" dims="2">
             <data key="20000.AGO" minSeries="1" minObs="1"/>

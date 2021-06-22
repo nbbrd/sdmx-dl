@@ -142,6 +142,16 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("SGR")
+                    .description("SDMX Global Registry")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://registry.sdmx.org/ws/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://registry.sdmx.org/overview.html")
+                    .monitorOf("UptimeRobot", "m788488202-23b752a1d418181c2d64d6d1")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .description("Data access system to UN databases")
                     .driver(CONNECTORS_SDMX_21)
