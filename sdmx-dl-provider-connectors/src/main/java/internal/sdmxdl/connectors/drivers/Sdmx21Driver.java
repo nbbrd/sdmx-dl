@@ -61,6 +61,15 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("CAMSTAT")
+                    .description("National Statistical Institute of Cambodia")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
+                    .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
+                    .monitorOf("UptimeRobot", "m788487928-37e8ae2f2d754f577b97a780")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("ECB")
                     .description("European Central Bank")
                     .driver(CONNECTORS_SDMX_21)

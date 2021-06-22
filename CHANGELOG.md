@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `#onSuccess(MediaType)` event in RI REST client
 - Add default user-agent to RI REST client [#117](https://github.com/nbbrd/sdmx-dl/issues/117)
 - Add source from Economic and Social Commission for Asia and the Pacific [#99](https://github.com/nbbrd/sdmx-dl/issues/99)
+- Add source from National Statistical Institute of Cambodia [#98](https://github.com/nbbrd/sdmx-dl/issues/98)
 
 ### Changed
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
