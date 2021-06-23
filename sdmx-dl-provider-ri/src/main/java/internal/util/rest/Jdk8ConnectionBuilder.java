@@ -1,5 +1,8 @@
 package internal.util.rest;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -12,6 +15,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 final class Jdk8ConnectionBuilder implements DefaultClient.ConnectionBuilder {
 
@@ -78,38 +82,28 @@ final class Jdk8ConnectionBuilder implements DefaultClient.ConnectionBuilder {
         private final HttpURLConnection http;
 
         @Override
-        public int getResponseCode() throws IOException {
+        public int getStatusCode() throws IOException {
             return http.getResponseCode();
         }
 
         @Override
-        public String getHeaderField(String key) {
-            return http.getHeaderField(key);
-        }
-
-        @Override
-        public String getResponseMessage() throws IOException {
+        public @Nullable String getStatusMessage() throws IOException {
             return http.getResponseMessage();
         }
 
         @Override
-        public Map<String, List<String>> getHeaders() {
+        public @NonNull Optional<String> getHeaderFirstValue(@NonNull String name) {
+            return Optional.ofNullable(http.getHeaderField(name));
+        }
+
+        @Override
+        public @NonNull Map<String, List<String>> getHeaders() {
             return http.getHeaderFields();
         }
 
         @Override
         public URL getQuery() {
             return http.getURL();
-        }
-
-        @Override
-        public String getContentType() {
-            return http.getContentType();
-        }
-
-        @Override
-        public String getContentEncoding() {
-            return http.getContentEncoding();
         }
 
         @Override

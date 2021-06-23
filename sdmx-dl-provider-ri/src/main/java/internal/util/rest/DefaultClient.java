@@ -18,6 +18,7 @@ package internal.util.rest;
 
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
@@ -61,21 +62,19 @@ final class DefaultClient implements Client {
 
     public interface Connection extends Closeable {
 
-        int getResponseCode() throws IOException;
+        int NOT_VALID_CODE = -1;
 
-        String getHeaderField(String key) throws IOException;
+        @NonNull URL getQuery();
 
-        String getResponseMessage() throws IOException;
+        int getStatusCode() throws IOException;
 
-        Map<String, List<String>> getHeaders() throws IOException;
+        @Nullable String getStatusMessage() throws IOException;
 
-        URL getQuery();
+        @NonNull Optional<String> getHeaderFirstValue(@NonNull String name) throws IOException;
 
-        String getContentType() throws IOException;
+        @NonNull Map<String, List<String>> getHeaders() throws IOException;
 
-        String getContentEncoding();
-
-        InputStream getInputStream() throws IOException;
+        @NonNull InputStream getInputStream() throws IOException;
     }
 
     @lombok.NonNull
@@ -93,6 +92,10 @@ final class DefaultClient implements Client {
     }
 
     private Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+        if (!"http".equals(query.getProtocol()) && !"https".equals(query.getProtocol())) {
+            throw new IOException("Unsupported protocol '" + query.getProtocol() + "'");
+        }
+
         if (!requestScheme.isSecureRequest(query)) {
             throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
         }
@@ -120,7 +123,7 @@ final class DefaultClient implements Client {
 
         Connection connection = builder.open();
 
-        switch (ResponseType.parse(connection.getResponseCode())) {
+        switch (ResponseType.parse(connection.getStatusCode())) {
             case REDIRECTION:
                 return redirect(connection, mediaTypes, langs, redirects);
             case SUCCESSFUL:
@@ -156,13 +159,13 @@ final class DefaultClient implements Client {
                 throw new IOException("Max redirection reached");
             }
 
-            String location = connection.getHeaderField(LOCATION_HEADER);
-            if (location == null || location.isEmpty()) {
+            Optional<String> location = connection.getHeaderFirstValue(LOCATION_HEADER).filter(o -> !o.isEmpty());
+            if (!location.isPresent()) {
                 throw new IOException("Missing redirection url");
             }
 
             oldUrl = connection.getQuery();
-            newUrl = new URL(oldUrl, URLDecoder.decode(location, StandardCharsets.UTF_8.name()));
+            newUrl = new URL(oldUrl, URLDecoder.decode(location.get(), StandardCharsets.UTF_8.name()));
         } finally {
             connection.close();
         }
@@ -176,7 +179,7 @@ final class DefaultClient implements Client {
     }
 
     private Response recoverClientError(Connection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        switch (connection.getResponseCode()) {
+        switch (connection.getStatusCode()) {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
                 AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
                 if (!requestScheme.equals(responseScheme)) {
@@ -197,7 +200,7 @@ final class DefaultClient implements Client {
 
     private IOException getError(Connection connection) throws IOException {
         try {
-            return new ResponseError(connection.getResponseCode(), connection.getResponseMessage(), connection.getHeaders());
+            return new ResponseError(connection.getStatusCode(), connection.getStatusMessage(), connection.getHeaders());
         } finally {
             connection.close();
         }
@@ -221,8 +224,9 @@ final class DefaultClient implements Client {
 
             @Override
             boolean hasResponseHeader(Connection http) throws IOException {
-                String header = http.getHeaderField(AUTHENTICATE_HEADER);
-                return header != null && header.startsWith("Basic");
+                return http.getHeaderFirstValue(AUTHENTICATE_HEADER)
+                        .map(value -> value.startsWith("Basic"))
+                        .isPresent();
             }
         },
         NONE(AuthScheme.NONE) {
@@ -303,20 +307,20 @@ final class DefaultClient implements Client {
 
         @Override
         public @NonNull MediaType getContentType() throws IOException {
-            String contentTypeOrNull = conn.getContentType();
-            if (contentTypeOrNull == null) {
+            Optional<String> contentType = conn.getHeaderFirstValue(CONTENT_TYPE_HEADER);
+            if (!contentType.isPresent()) {
                 throw new IOException("Content type not known");
             }
             try {
-                return MediaType.parse(contentTypeOrNull);
+                return MediaType.parse(contentType.get());
             } catch (IllegalArgumentException ex) {
-                throw new IOException("Invalid content type '" + contentTypeOrNull + "'", ex);
+                throw new IOException("Invalid content type '" + contentType.get() + "'", ex);
             }
         }
 
         @Override
         public @NonNull InputStream getBody() throws IOException {
-            String encodingOrNull = conn.getContentEncoding();
+            String encodingOrNull = conn.getHeaderFirstValue(CONTENT_ENCODING_HEADER).orElse(null);
             return decoders
                     .stream()
                     .filter(decoder -> decoder.getName().equals(encodingOrNull))
@@ -356,6 +360,12 @@ final class DefaultClient implements Client {
 
     @VisibleForTesting
     static final String USER_AGENT_HEADER = "User-Agent";
+
+    @VisibleForTesting
+    static final String CONTENT_TYPE_HEADER = "Content-Type";
+
+    @VisibleForTesting
+    static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
 
     /**
      * https://en.wikipedia.org/wiki/Downgrade_attack

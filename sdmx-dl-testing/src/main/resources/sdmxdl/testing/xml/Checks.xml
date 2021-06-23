@@ -24,6 +24,9 @@
         <flow ref="ICPF" dims="13">
             <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8"/>
         </flow>
+        <flow ref="EXR" dims="5">
+            <data key="M.CHF.EUR.SP00." minSeries="2" minObs="1"/>
+        </flow>
     </source>
     <source name="ESCAP" minFlows="3">
         <flow ref="DF_ESCAP_SDG_Dataflow" dims="4">

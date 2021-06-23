@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -55,7 +56,7 @@ public class HttpRest {
     }
 
     public static @NonNull Client newClient(@NonNull Context context) {
-        Client result = new DefaultClient(context, isIwrBackend() ? IwrConnectionBuilder::new : Jdk8ConnectionBuilder::new);
+        Client result = new DefaultClient(context, getBackend());
         return isDump() ? new DumpingClient(result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
     }
 
@@ -281,8 +282,15 @@ public class HttpRest {
     private static final String SDMXDL_RI_WEB_BACKEND = "sdmxdl.ri.web.backend";
     private static final String SDMXDL_RI_WEB_DUMP = "sdmxdl.ri.web.dump";
 
-    private boolean isIwrBackend() {
-        return "iwr".equals(System.getProperty(SDMXDL_RI_WEB_BACKEND));
+    private static Supplier<DefaultClient.ConnectionBuilder> getBackend() {
+        switch (System.getProperty(SDMXDL_RI_WEB_BACKEND, "")) {
+            case "iwr":
+                return IwrConnectionBuilder::new;
+            case "curl":
+                return () -> new CurlConnectionBuilder(false);
+            default:
+                return Jdk8ConnectionBuilder::new;
+        }
     }
 
     private boolean isDump() {

@@ -18,6 +18,7 @@ package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.AnythingPattern;
 import org.assertj.core.api.Assumptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -90,11 +91,13 @@ public abstract class DefaultClientTest {
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
-                .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
-                .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
-                .withHeader(LOCATION_HEADER, absent())
-                .withHeader(USER_AGENT_HEADER, equalTo("hello world"))
+                        .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
+                        .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
+                        .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
+                        .withHeader(LOCATION_HEADER, absent())
+                        .withHeader(USER_AGENT_HEADER, equalTo("hello world"))
+                        .withHeader("Host", new AnythingPattern())
+//                .withHeader("Connection", new AnythingPattern())
         );
     }
 
@@ -136,7 +139,7 @@ public abstract class DefaultClientTest {
 
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), singletonList(XML_TYPE), ""))
-                .withMessage("Unsupported connection type");
+                .withMessage("Unsupported protocol 'ftp'");
     }
 
     @Test
@@ -249,7 +252,7 @@ public abstract class DefaultClientTest {
         // ignore on macOS because timeout seems to be unreliable
         Assumptions.assumeThat(isOSX()).isFalse();
 
-        int readTimeout = 10;
+        int readTimeout = 1000;
 
         HttpRest.Context context = HttpRest.Context
                 .builder()
