@@ -75,6 +75,15 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("UptimeRobot", "m783847149-7753fbe93eefc48f2ac9983f")
                     .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("UKDS")
+                    .description("UK Data Service")
+                    .driver(RI_DOTSTAT)
+                    .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
+                    .monitorOf("UptimeRobot", "m788496292-8f7f10200ba0cf792589e612")
+                    .build())
             .build();
 
     private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {

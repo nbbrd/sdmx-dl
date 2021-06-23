@@ -100,6 +100,11 @@
             <data key="20000.AGO" minSeries="1" minObs="1"/>
         </flow>
     </source>
+    <source name="UKDS" minFlows="368">
+        <flow ref="BP3" dims="3">
+            <data key="BEL.ASSDOM.RES" minSeries="1" minObs="5"/>
+        </flow>
+    </source>
     <source name="UNDATA" minFlows="7">
         <flow ref="DF_UNDATA_COUNTRYDATA" dims="8">
             <data key="A.AG_PRD_FISH.T.T.NA.NA.KHM.NA" minSeries="1" minObs="20"/>

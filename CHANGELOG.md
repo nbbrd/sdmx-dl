@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add source from National Statistical Institute of Cambodia [#98](https://github.com/nbbrd/sdmx-dl/issues/98)
 - Add source from SDMX Global Registry [#97](https://github.com/nbbrd/sdmx-dl/issues/97)
 - Add source from Pacific Data Hub [#96](https://github.com/nbbrd/sdmx-dl/issues/96)
+- Add source from UK Data Service [#93](https://github.com/nbbrd/sdmx-dl/issues/93)
 
 ### Changed
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
