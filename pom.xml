@@ -36,6 +36,7 @@
 
     <properties>
         <java-io-util.version>0.0.12</java-io-util.version>
+        <slf4j.version>1.7.31</slf4j.version>
     </properties>
 
     <dependencyManagement>
