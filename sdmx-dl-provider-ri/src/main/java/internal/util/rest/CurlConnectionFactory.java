@@ -1,5 +1,6 @@
 package internal.util.rest;
 
+import nbbrd.design.BuilderPattern;
 import nbbrd.io.sys.EndOfProcessException;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,59 +18,33 @@ import java.nio.file.Path;
 import java.util.*;
 
 @lombok.RequiredArgsConstructor
-public class CurlConnectionBuilder implements DefaultClient.ConnectionBuilder {
+final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
+
+    private static final int OPERATION_TIMEOUT = 28;
 
     private final boolean insecure;
 
-    private URL query;
-    private final Map<String, String> headers = new HashMap<>();
-    private int readTimeout;
-    private int connectTimeout;
-
     @Override
-    public void setQuery(URL query) {
-        this.query = query;
-    }
-
-    @Override
-    public void setProxy(Proxy proxy) {
-    }
-
-    @Override
-    public void setReadTimeout(int timeout) {
-        this.readTimeout = timeout;
-    }
-
-    @Override
-    public void setConnectTimeout(int timeout) {
-        this.connectTimeout = timeout;
-    }
-
-    @Override
-    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-    }
-
-    @Override
-    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
-    }
-
-    @Override
-    public void setHeader(String key, String value) {
-        headers.put(key, value);
-    }
-
-    @Override
-    public DefaultClient.Connection open() throws IOException {
-
+    public DefaultClient.Connection open(URL query, Proxy proxy, int readTimeout, int connectTimeout,
+                                         SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier,
+                                         Map<String, List<String>> headers) throws IOException {
         Path body = Files.createTempFile("body", ".tmp");
 
-        List<String> command = getCommand(body);
+        String[] command = newCurlCommand()
+                .url(query)
+                .output(body)
+                .silent()
+                .dumpHeader("-")
+                .connectTimeout(connectTimeout / 1000)
+                .maxTime(readTimeout / 1000)
+                .headers(headers)
+                .build();
 
-        try (BufferedReader reader = ProcessReader.newReader(new ProcessBuilder(command).start())) {
+        try (BufferedReader reader = ProcessReader.newReader(command)) {
             return new CurlConnection(query, body, CurlMeta.parse(reader));
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
-                case 28:
+                case OPERATION_TIMEOUT:
                     throw new IOException("Read timed out");
                 default:
                     throw ex;
@@ -77,30 +52,12 @@ public class CurlConnectionBuilder implements DefaultClient.ConnectionBuilder {
         }
     }
 
-    private List<String> getCommand(Path body) {
-        List<String> command = new ArrayList<>();
-        command.add("curl");
-        command.add(query.toString());
-        command.add("-o");
-        command.add(body.toString());
-        command.add("-s");
-        command.add("-D");
-        command.add("-");
-        command.add("--connect-timeout");
-        command.add(Integer.toString(connectTimeout / 1000));
-        command.add("-m");
-        command.add(Integer.toString(readTimeout / 1000));
-
+    private CurlCommandBuilder newCurlCommand() {
+        CurlCommandBuilder result = new CurlCommandBuilder();
         if (insecure) {
-            command.add("-k");
+            result.insecure();
         }
-
-        headers.forEach((k, v) -> {
-            command.add("-H");
-            command.add(k + ": " + v);
-        });
-
-        return command;
+        return result;
     }
 
     @lombok.AllArgsConstructor
@@ -194,6 +151,64 @@ public class CurlConnectionBuilder implements DefaultClient.ConnectionBuilder {
                 }
             }
             result.headers(headers.build());
+        }
+    }
+
+    @BuilderPattern(String[].class)
+    private static final class CurlCommandBuilder {
+
+        private final List<String> items;
+
+        public CurlCommandBuilder() {
+            this.items = new ArrayList<>();
+            items.add("curl");
+        }
+
+        private CurlCommandBuilder push(String item) {
+            items.add(item);
+            return this;
+        }
+
+        public CurlCommandBuilder url(URL url) {
+            return push(url.toString());
+        }
+
+        public CurlCommandBuilder output(Path file) {
+            return push("-o").push(file.toString());
+        }
+
+        public CurlCommandBuilder silent() {
+            return push("-s");
+        }
+
+        public CurlCommandBuilder dumpHeader(String filename) {
+            return push("-D").push(filename);
+        }
+
+        public CurlCommandBuilder connectTimeout(int seconds) {
+            return push("--connect-timeout").push(Integer.toString(seconds));
+        }
+
+        public CurlCommandBuilder maxTime(int seconds) {
+            return push("-m").push(Integer.toString(seconds));
+        }
+
+        public CurlCommandBuilder insecure() {
+            return push("-k");
+        }
+
+        public CurlCommandBuilder header(String key, String value) {
+            return push("-H").push(key + ": " + value);
+        }
+
+        public CurlCommandBuilder headers(Map<String, List<String>> headers) {
+            HttpHeadersBuilder.keyValues(headers)
+                    .forEach(header -> header(header.getKey(), header.getValue()));
+            return this;
+        }
+
+        public String[] build() {
+            return items.toArray(new String[items.size()]);
         }
     }
 }

@@ -14,58 +14,28 @@ import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.tuupertunut.powershelllibjava.PowerShell.escapePowerShellString;
 
-final class IwrConnectionBuilder implements DefaultClient.ConnectionBuilder {
-
-    @lombok.Setter
-    private URL query;
-
-    @lombok.Setter
-    private Proxy proxy;
-
-    @lombok.Setter
-    private int readTimeout;
-
-    @lombok.Setter
-    private int connectTimeout;
-
-    private SSLSocketFactory sslSocketFactory;
-
-    private HostnameVerifier hostnameVerifier;
-
-    private Map<String, String> headers = new HashMap<>();
+final class IwrConnectionFactory implements DefaultClient.ConnectionFactory {
 
     @Override
-    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-        this.sslSocketFactory = sslSocketFactory;
-    }
-
-    @Override
-    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
-        this.hostnameVerifier = hostnameVerifier;
-    }
-
-    @Override
-    public void setHeader(String key, String value) {
-        headers.put(key, value);
-    }
-
-    @Override
-    public DefaultClient.Connection open() throws IOException {
+    public DefaultClient.Connection open(URL query, Proxy proxy, int readTimeout, int connectTimeout,
+                                         SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier,
+                                         Map<String, List<String>> headers) throws IOException {
         PowerShell ps = PowerShell.open();
-        exec(ps, getCommand());
+        exec(ps, getCommand(query, headers));
         return new IwrConnection(query, ps, IwrMeta.parse(ps));
     }
 
-    private String getCommand() {
-        String headerString = headers
-                .entrySet()
-                .stream()
+    private String getCommand(URL query, Map<String, List<String>> headers) {
+        String headerString = HttpHeadersBuilder.keyValues(headers)
                 .map(header -> "; $httpClient.DefaultRequestHeaders.add(" + escapePowerShellString(header.getKey()) + "," + escapePowerShellString(header.getValue()) + ")")
                 .collect(Collectors.joining());
 

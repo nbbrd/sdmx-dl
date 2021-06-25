@@ -21,11 +21,11 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 /**
  * @author Philippe Charles
  */
-public class Jdk8RestClientTest extends DefaultClientTest {
+public class Jdk8RestClientTest extends HttpRestClientTest {
 
     @Override
     protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, Jdk8ConnectionBuilder::new);
+        return new DefaultClient(context, new Jdk8ConnectionFactory());
     }
 
     @Override

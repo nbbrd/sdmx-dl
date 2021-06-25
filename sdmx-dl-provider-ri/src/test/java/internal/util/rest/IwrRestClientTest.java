@@ -23,11 +23,11 @@ import org.junit.Ignore;
  * @author Philippe Charles
  */
 @Ignore
-public class IwrRestClientTest extends DefaultClientTest {
+public class IwrRestClientTest extends HttpRestClientTest {
 
     @Override
     protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, IwrConnectionBuilder::new);
+        return new DefaultClient(context, new IwrConnectionFactory());
     }
 
     @Override

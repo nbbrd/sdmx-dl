@@ -16,8 +16,8 @@ public class HttpHeadersBuilderTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> new HttpHeadersBuilder().put(null, "v1"));
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> new HttpHeadersBuilder().put("k1", null));
+        assertThatCode(() -> new HttpHeadersBuilder().put("k1", null))
+                .doesNotThrowAnyException();
 
         assertThat(new HttpHeadersBuilder().put("k1", "v1").put("k2", "v2").build())
                 .containsEntry("k1", singletonList("v1"))
@@ -46,7 +46,15 @@ public class HttpHeadersBuilderTest {
         assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> new HttpHeadersBuilder().put("K1", "v2").build().put("k2", singletonList("v2")));
 
-//        assertThatExceptionOfType(RuntimeException.class)
-//                .isThrownBy(() -> new HttpHeadersBuilder().put("K1", "v2").build().get("k1").add("v2"));
+        assertThatExceptionOfType(RuntimeException.class)
+                .isThrownBy(() -> new HttpHeadersBuilder().put("K1", "v2").build().get("k1").add("v2"));
+
+        assertThat(new HttpHeadersBuilder().put("k1", "v1").put("k2", null).build())
+                .containsEntry("k1", singletonList("v1"))
+                .hasSize(1);
+
+        assertThat(new HttpHeadersBuilder().put("k1", "v1").put("k2", "").build())
+                .containsEntry("k1", singletonList("v1"))
+                .hasSize(1);
     }
 }

@@ -23,11 +23,11 @@ import org.junit.Ignore;
  * @author Philippe Charles
  */
 @Ignore
-public class CurlRestClientTest extends DefaultClientTest {
+public class CurlRestClientTest extends HttpRestClientTest {
 
     @Override
     protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, ()->new CurlConnectionBuilder(true));
+        return new DefaultClient(context, new CurlConnectionFactory(true));
     }
 
     @Override

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -282,14 +281,18 @@ public class HttpRest {
     private static final String SDMXDL_RI_WEB_BACKEND = "sdmxdl.ri.web.backend";
     private static final String SDMXDL_RI_WEB_DUMP = "sdmxdl.ri.web.dump";
 
-    private static Supplier<DefaultClient.ConnectionBuilder> getBackend() {
+    private static final IwrConnectionFactory IWR_CONNECTION_FACTORY = new IwrConnectionFactory();
+    private static final CurlConnectionFactory CURL_CONNECTION_FACTORY = new CurlConnectionFactory(false);
+    private static final Jdk8ConnectionFactory JDK_8_CONNECTION_FACTORY = new Jdk8ConnectionFactory();
+
+    private static DefaultClient.ConnectionFactory getBackend() {
         switch (System.getProperty(SDMXDL_RI_WEB_BACKEND, "")) {
             case "iwr":
-                return IwrConnectionBuilder::new;
+                return IWR_CONNECTION_FACTORY;
             case "curl":
-                return () -> new CurlConnectionBuilder(false);
+                return CURL_CONNECTION_FACTORY;
             default:
-                return Jdk8ConnectionBuilder::new;
+                return JDK_8_CONNECTION_FACTORY;
         }
     }
 

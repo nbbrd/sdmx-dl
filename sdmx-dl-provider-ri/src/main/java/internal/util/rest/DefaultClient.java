@@ -29,11 +29,11 @@ import java.io.UncheckedIOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static internal.util.rest.HttpRest.*;
+import static java.util.Collections.emptyMap;
 
 /**
  * @author Philippe Charles
@@ -41,23 +41,17 @@ import static internal.util.rest.HttpRest.*;
 @lombok.AllArgsConstructor
 final class DefaultClient implements Client {
 
-    public interface ConnectionBuilder {
+    public interface ConnectionFactory {
 
-        void setQuery(URL query);
-
-        void setProxy(Proxy proxy);
-
-        void setReadTimeout(int timeout);
-
-        void setConnectTimeout(int timeout);
-
-        void setSSLSocketFactory(SSLSocketFactory sslSocketFactory);
-
-        void setHostnameVerifier(HostnameVerifier hostnameVerifier);
-
-        void setHeader(String key, String value);
-
-        Connection open() throws IOException;
+        Connection open(
+                URL query,
+                Proxy proxy,
+                int readTimeout,
+                int connectTimeout,
+                SSLSocketFactory sslSocketFactory,
+                HostnameVerifier hostnameVerifier,
+                Map<String, List<String>> headers
+        ) throws IOException;
     }
 
     public interface Connection extends Closeable {
@@ -81,7 +75,7 @@ final class DefaultClient implements Client {
     private final HttpRest.Context context;
 
     @lombok.NonNull
-    private final Supplier<ConnectionBuilder> factory;
+    private final ConnectionFactory factory;
 
     @Override
     public Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
@@ -104,24 +98,21 @@ final class DefaultClient implements Client {
 
         context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
 
-        ConnectionBuilder builder = factory.get();
-        builder.setQuery(query);
-        builder.setProxy(proxy);
-        builder.setReadTimeout(context.getReadTimeout());
-        builder.setConnectTimeout(context.getConnectTimeout());
-        builder.setSSLSocketFactory(context.getSslSocketFactory());
-        builder.setHostnameVerifier(context.getHostnameVerifier());
-
-        builder.setHeader(ACCEPT_HEADER, toAcceptHeader(mediaTypes));
-        builder.setHeader(ACCEPT_LANGUAGE_HEADER, langs);
-        builder.setHeader(ACCEPT_ENCODING_HEADER, getEncodingHeader());
-        requestScheme.configureRequest(query, context.getAuthenticator(), builder);
-
-        if (context.getUserAgent() != null) {
-            builder.setHeader(USER_AGENT_HEADER, context.getUserAgent());
-        }
-
-        Connection connection = builder.open();
+        Connection connection = factory.open(
+                query,
+                proxy,
+                context.getReadTimeout(),
+                context.getConnectTimeout(),
+                context.getSslSocketFactory(),
+                context.getHostnameVerifier(),
+                new HttpHeadersBuilder()
+                        .put(ACCEPT_HEADER, toAcceptHeader(mediaTypes))
+                        .put(ACCEPT_LANGUAGE_HEADER, langs)
+                        .put(ACCEPT_ENCODING_HEADER, getEncodingHeader())
+                        .put(USER_AGENT_HEADER, context.getUserAgent())
+                        .put(requestScheme.getRequestHeaders(query, context.getAuthenticator()))
+                        .build()
+        );
 
         switch (ResponseType.parse(connection.getStatusCode())) {
             case REDIRECTION:
@@ -215,11 +206,9 @@ final class DefaultClient implements Client {
             }
 
             @Override
-            void configureRequest(URL url, HttpRest.Authenticator authenticator, ConnectionBuilder http) {
+            Map<String, List<String>> getRequestHeaders(URL url, HttpRest.Authenticator authenticator) {
                 PasswordAuthentication auth = authenticator.getPasswordAuthentication(url);
-                if (auth != null) {
-                    http.setHeader(AUTHORIZATION_HEADER, getBasicAuthHeader(auth));
-                }
+                return auth != null ? new HttpHeadersBuilder().put(AUTHORIZATION_HEADER, getBasicAuthHeader(auth)).build() : emptyMap();
             }
 
             @Override
@@ -236,7 +225,8 @@ final class DefaultClient implements Client {
             }
 
             @Override
-            void configureRequest(URL query, HttpRest.Authenticator authenticator, ConnectionBuilder http) {
+            Map<String, List<String>> getRequestHeaders(URL query, HttpRest.Authenticator authenticator) {
+                return emptyMap();
             }
 
             @Override
@@ -249,7 +239,7 @@ final class DefaultClient implements Client {
 
         abstract boolean isSecureRequest(URL query);
 
-        abstract void configureRequest(URL query, HttpRest.Authenticator authenticator, ConnectionBuilder http);
+        abstract Map<String, List<String>> getRequestHeaders(URL query, HttpRest.Authenticator authenticator);
 
         abstract boolean hasResponseHeader(Connection http) throws IOException;
 

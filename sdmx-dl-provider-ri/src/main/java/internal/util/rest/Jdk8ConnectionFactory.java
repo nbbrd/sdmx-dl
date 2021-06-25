@@ -12,48 +12,16 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-final class Jdk8ConnectionBuilder implements DefaultClient.ConnectionBuilder {
-
-    @lombok.Setter
-    private URL query;
-
-    @lombok.Setter
-    private Proxy proxy;
-
-    @lombok.Setter
-    private int readTimeout;
-
-    @lombok.Setter
-    private int connectTimeout;
-
-    private SSLSocketFactory sslSocketFactory;
-
-    private HostnameVerifier hostnameVerifier;
-
-    private Map<String, String> headers = new HashMap<>();
+final class Jdk8ConnectionFactory implements DefaultClient.ConnectionFactory {
 
     @Override
-    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
-        this.sslSocketFactory = sslSocketFactory;
-    }
-
-    @Override
-    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
-        this.hostnameVerifier = hostnameVerifier;
-    }
-
-    @Override
-    public void setHeader(String key, String value) {
-        headers.put(key, value);
-    }
-
-    @Override
-    public DefaultClient.Connection open() throws IOException {
+    public DefaultClient.Connection open(URL query, Proxy proxy, int readTimeout, int connectTimeout,
+                                         SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier,
+                                         Map<String, List<String>> headers) throws IOException {
         URLConnection conn = query.openConnection(proxy);
         conn.setReadTimeout(readTimeout);
         conn.setConnectTimeout(connectTimeout);
@@ -69,8 +37,9 @@ final class Jdk8ConnectionBuilder implements DefaultClient.ConnectionBuilder {
 
         HttpURLConnection http = (HttpURLConnection) conn;
         http.setRequestMethod("GET");
-        headers.forEach(http::setRequestProperty);
         http.setInstanceFollowRedirects(false);
+        HttpHeadersBuilder.keyValues(headers)
+                .forEach(header -> http.setRequestProperty(header.getKey(), header.getValue()));
 
         return new Jdk8Connection(http);
     }

@@ -7,9 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @lombok.AllArgsConstructor
-public final class TeeInputStream extends InputStream {
-
-    private static final int MAX_SKIP_BUFFER_SIZE = 2048;
+final class TeeInputStream extends InputStream {
 
     @lombok.NonNull
     private final InputStream input;
@@ -20,7 +18,7 @@ public final class TeeInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         int result = input.read();
-        if (result != -1) {
+        if (isNotEndOfStream(result)) {
             output.write(result);
         }
         return result;
@@ -29,7 +27,7 @@ public final class TeeInputStream extends InputStream {
     @Override
     public int read(byte[] b) throws IOException {
         int result = input.read(b);
-        if (result != -1) {
+        if (isNotEndOfStream(result)) {
             output.write(b, 0, result);
         }
         return result;
@@ -38,7 +36,7 @@ public final class TeeInputStream extends InputStream {
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int result = input.read(b, off, len);
-        if (result != -1) {
+        if (isNotEndOfStream(result)) {
             output.write(b, off, result);
         }
         return result;
@@ -56,7 +54,11 @@ public final class TeeInputStream extends InputStream {
 
     @Override
     public void close() throws IOException {
-        Resource.closeBoth(input, output);
+        try {
+            copy(input, output);
+        } finally {
+            Resource.closeBoth(input, output);
+        }
     }
 
     @Override
@@ -71,5 +73,17 @@ public final class TeeInputStream extends InputStream {
     @Override
     public boolean markSupported() {
         return false;
+    }
+
+    private static void copy(InputStream source, OutputStream target) throws IOException {
+        byte[] buf = new byte[8192];
+        int length;
+        while ((length = source.read(buf)) > 0) {
+            target.write(buf, 0, length);
+        }
+    }
+
+    private static boolean isNotEndOfStream(int result) {
+        return result != -1;
     }
 }
