@@ -22,17 +22,19 @@ import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
-import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.spi.SdmxWebContext;
 
+import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static sdmxdl.util.web.SdmxWebProperty.*;
 
@@ -61,7 +63,7 @@ public class RestClients {
                 .sslSocketFactory(context.getSslSocketFactory())
                 .hostnameVerifier(context.getHostnameVerifier())
                 .listener(new DefaultEventListener(o, context.getEventListener()))
-                .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
+                .authenticator(new DefaultAuthenticator(o, context.getAuthenticators(), context.getEventListener()))
                 .userAgent(System.getProperty(HTTP_AGENT, DEFAULT_USER_AGENT))
                 .build();
     }
@@ -127,23 +129,51 @@ public class RestClients {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final SdmxWebAuthenticator authenticator;
+        private final List<SdmxWebAuthenticator> authenticators;
+
+        @lombok.NonNull
+        private final SdmxWebListener listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
-            return isSameAuthScope(url) ? authenticator.getPasswordAuthentication(source) : null;
+            if (!isSameAuthScope(url)) {
+                return null;
+            }
+            return authenticators.stream()
+                    .map(this::getPasswordAuthentication)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
         }
 
         @Override
         public void invalidate(@NonNull URL url) {
-            if (isSameAuthScope(url)) {
-                authenticator.invalidate(source);
+            if (!isSameAuthScope(url)) {
+                return;
             }
+            authenticators.forEach(this::invalidate);
         }
 
         private boolean isSameAuthScope(URL url) {
             return url.getHost().equals(source.getEndpoint().getHost())
                     && url.getPort() == source.getEndpoint().getPort();
+        }
+
+        private PasswordAuthentication getPasswordAuthentication(SdmxWebAuthenticator authenticator) {
+            try {
+                return authenticator.getPasswordAuthentication(source);
+            } catch (IOException ex) {
+                listener.onWebSourceEvent(source, "Failed to get password authentication: " + ex.getMessage());
+                return null;
+            }
+        }
+
+        private void invalidate(SdmxWebAuthenticator authenticator) {
+            try {
+                authenticator.invalidate(source);
+            } catch (IOException ex) {
+                listener.onWebSourceEvent(source, "Failed to invalidate password authentication: " + ex.getMessage());
+            }
         }
     }
 }

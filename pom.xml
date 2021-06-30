@@ -93,7 +93,6 @@
         <module>sdmx-dl-provider-ri</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-kryo</module>
-        <module>sdmx-dl-sys</module>
         <module>sdmx-dl-testing</module>
     </modules>
 

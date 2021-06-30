@@ -8,6 +8,7 @@ module sdmxdl.web.ri {
     requires sdmxdl.util;
     requires sdmxdl.util.xml;
     requires com.github.tuupertunut.powershelllibjava;
+    requires nbbrd.picocsv;
 
     requires transitive sdmxdl.api;
 
@@ -21,4 +22,7 @@ module sdmxdl.web.ri {
 
     provides sdmxdl.file.spi.SdmxFileReader with
             internal.sdmxdl.ri.file.readers.XmlFileReader;
+
+    provides sdmxdl.web.spi.SdmxWebAuthenticator with
+            internal.sdmxdl.ri.web.authenticators.WinPasswordVaultAuthenticator;
 }

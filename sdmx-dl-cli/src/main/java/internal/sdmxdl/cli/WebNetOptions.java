@@ -16,25 +16,26 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.AuthOptions;
+import internal.util.SdmxWebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.kryo.KryoSerialization;
-import sdmxdl.sys.SdmxSystemUtil;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.Serializer;
-import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +75,8 @@ public class WebNetOptions extends WebOptions {
                 .sslSocketFactory(sslFactory.getSslSocketFactory())
                 .hostnameVerifier(sslFactory.getHostnameVerifier())
                 .cache(getCache())
-                .authenticator(getAuthenticator())
+                .clearAuthenticators()
+                .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
                 .build();
     }
@@ -109,11 +111,21 @@ public class WebNetOptions extends WebOptions {
                 .build();
     }
 
-    private SdmxWebAuthenticator getAuthenticator() {
-        PasswordAuthentication user = networkOptions.getAuthOptions().getUser();
-        SdmxWebAuthenticator result = !networkOptions.getAuthOptions().isNoSystemAuth()
-                ? SdmxSystemUtil.getAuthenticatorOrNull(user, (msg, ex) -> getVerboseOptions().reportToErrorStream("AUTH", msg, ex))
-                : null;
-        return result != null ? result : new CachedAuthenticator(new ConsoleAuthenticator(user), new ConcurrentHashMap<>());
+    private List<SdmxWebAuthenticator> getAuthenticators() {
+        AuthOptions authOptions = networkOptions.getAuthOptions();
+        if (authOptions.hasUsername() && authOptions.hasPassword()) {
+            return Collections.singletonList(new ConstantAuthenticator(authOptions.getUser()));
+        }
+        List<SdmxWebAuthenticator> result = new ArrayList<>();
+        if (!authOptions.isNoSystemAuth()) {
+            result.addAll(SdmxWebAuthenticatorLoader.load());
+        }
+        if (result.isEmpty()) {
+            ConsoleAuthenticator fallback = new ConsoleAuthenticator();
+            if (fallback.isAvailable()) {
+                result.add(fallback);
+            }
+        }
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-package internal.sdmxdl.sys;
+package internal.util.credentials;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;

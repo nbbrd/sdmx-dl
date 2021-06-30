@@ -16,6 +16,7 @@
  */
 package sdmxdl.web;
 
+import internal.util.SdmxWebAuthenticatorLoader;
 import internal.util.SdmxWebDriverLoader;
 import internal.util.SdmxWebMonitoringLoader;
 import lombok.AccessLevel;
@@ -25,6 +26,7 @@ import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.web.spi.SdmxWebMonitoring;
@@ -56,6 +58,7 @@ public class SdmxWebManager implements SdmxManager {
                 .drivers(SdmxWebDriverLoader.load())
                 .dialects(SdmxDialectLoader.load())
                 .monitorings(SdmxWebMonitoringLoader.load())
+                .authenticators(SdmxWebAuthenticatorLoader.load())
                 .build();
     }
 
@@ -96,8 +99,8 @@ public class SdmxWebManager implements SdmxManager {
     SdmxWebListener eventListener = SdmxWebListener.getDefault();
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxWebAuthenticator authenticator = SdmxWebAuthenticator.noOp();
+    @lombok.Singular
+    List<SdmxWebAuthenticator> authenticators;
 
     @lombok.NonNull
     @lombok.Singular
@@ -202,7 +205,7 @@ public class SdmxWebManager implements SdmxManager {
                 .hostnameVerifier(hostnameVerifier)
                 .dialects(dialects)
                 .eventListener(eventListener)
-                .authenticator(authenticator)
+                .authenticators(authenticators)
                 .build();
     }
 

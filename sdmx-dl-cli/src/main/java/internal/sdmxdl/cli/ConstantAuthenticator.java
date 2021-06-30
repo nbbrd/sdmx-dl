@@ -1,25 +1,28 @@
-package internal.sdmxdl.web;
+package internal.sdmxdl.cli;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.SdmxWebAuthenticator;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
 
 import java.net.PasswordAuthentication;
-import java.util.Objects;
 
-public enum NoOpWebAuthenticator implements SdmxWebAuthenticator {
+@lombok.AllArgsConstructor
+final class ConstantAuthenticator implements SdmxWebAuthenticator {
 
-    INSTANCE;
+    private final PasswordAuthentication user;
+
+    @Override
+    public boolean isAvailable() {
+        return true;
+    }
 
     @Override
     public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull SdmxWebSource source) {
-        Objects.requireNonNull(source);
-        return null;
+        return user;
     }
 
     @Override
     public void invalidate(@NonNull SdmxWebSource source) {
-        Objects.requireNonNull(source);
     }
 }

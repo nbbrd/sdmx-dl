@@ -19,7 +19,6 @@ package sdmxdl.web.spi;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 
 import javax.net.ssl.HostnameVerifier;
@@ -64,6 +63,6 @@ public class SdmxWebContext {
     SdmxWebListener eventListener = SdmxWebListener.getDefault();
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxWebAuthenticator authenticator = SdmxWebAuthenticator.noOp();
+    @lombok.Singular
+    List<SdmxWebAuthenticator> authenticators;
 }
