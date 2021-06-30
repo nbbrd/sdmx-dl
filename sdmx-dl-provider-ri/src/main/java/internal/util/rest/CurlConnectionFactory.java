@@ -152,6 +152,10 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
             }
             result.headers(headers.build());
         }
+
+        public static final class Builder {
+            // fix error when generating Javadoc
+        }
     }
 
     @BuilderPattern(String[].class)

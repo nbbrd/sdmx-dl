@@ -2,6 +2,7 @@ package internal.util.rest;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
+import nbbrd.design.LombokWorkaround;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -154,6 +155,10 @@ final class IwrConnectionFactory implements DefaultClient.ConnectionFactory {
 
         private static boolean isValidCode(Builder result) {
             return result.statusCode$value / 100 == 2;
+        }
+
+        public static final class Builder {
+            // fix error when generating Javadoc
         }
     }
 }
