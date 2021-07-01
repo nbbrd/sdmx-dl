@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
@@ -140,6 +141,19 @@ public abstract class HttpRestClientTest {
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), singletonList(XML_TYPE), ""))
                 .withMessage("Unsupported protocol 'ftp'");
+    }
+
+    @Test
+    public void testInvalidHost() {
+        HttpRest.Context context = HttpRest.Context
+                .builder()
+                .build();
+        HttpRest.Client x = getRestClient(context);
+
+        assertThatIOException()
+                .isThrownBy(() -> x.requestGET(new URL("http://localhoooooost"), singletonList(XML_TYPE), ""))
+                .isInstanceOf(UnknownHostException.class)
+                .withMessage("localhoooooost");
     }
 
     @Test

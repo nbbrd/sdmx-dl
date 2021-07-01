@@ -17,12 +17,10 @@
 package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import org.junit.Ignore;
 
 /**
  * @author Philippe Charles
  */
-@Ignore
 public class CurlRestClientTest extends HttpRestClientTest {
 
     @Override
@@ -37,5 +35,10 @@ public class CurlRestClientTest extends HttpRestClientTest {
                 .dynamicPort()
                 .dynamicHttpsPort()
                 .gzipDisabled(false);
+    }
+
+    @Override
+    public void testInvalidSSL() {
+//        super.testInvalidSSL();
     }
 }

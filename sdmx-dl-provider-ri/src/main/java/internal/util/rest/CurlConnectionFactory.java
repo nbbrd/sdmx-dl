@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -20,6 +21,7 @@ import java.util.*;
 @lombok.RequiredArgsConstructor
 final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
 
+    private static final int COULD_NOT_RESOLVE_HOST = 6;
     private static final int OPERATION_TIMEOUT = 28;
 
     private final boolean insecure;
@@ -44,6 +46,8 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
             return new CurlConnection(query, body, CurlMeta.parse(reader));
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
+                case COULD_NOT_RESOLVE_HOST:
+                    throw new UnknownHostException(query.getHost());
                 case OPERATION_TIMEOUT:
                     throw new IOException("Read timed out");
                 default:
