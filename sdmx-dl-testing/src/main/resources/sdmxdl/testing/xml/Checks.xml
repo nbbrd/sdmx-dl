@@ -28,7 +28,7 @@
             <data key="M.CHF.EUR.SP00." minSeries="2" minObs="1"/>
         </flow>
     </source>
-    <source name="ESCAP" minFlows="3">
+    <source name="ESCAP" minFlows="2">
         <flow ref="DF_ESCAP_SDG_Dataflow" dims="4">
             <data key="..G01_01_01.A" minSeries="523" minObs="3841"/>
         </flow>

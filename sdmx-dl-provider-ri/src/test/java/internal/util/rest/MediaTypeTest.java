@@ -51,6 +51,7 @@ public class MediaTypeTest {
     public void testParse() {
         assertThat(MediaType.parse("text/plain; charset=utf-8")).hasToString("text/plain; charset=utf-8");
         assertThat(MediaType.parse("TEXT/PLAIN; CHARSET=utf-8")).hasToString("text/plain; charset=utf-8");
+        assertThat(MediaType.parse("text/plain; charset=utf-8;  version=2.1")).hasToString("text/plain; charset=utf-8; version=2.1");
         assertThat(MediaType.parse("text/plain")).hasToString("text/plain");
 
         assertThatThrownBy(() -> MediaType.parse(null)).isInstanceOf(NullPointerException.class);

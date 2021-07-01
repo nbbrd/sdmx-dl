@@ -18,7 +18,7 @@ import static sdmxdl.util.SdmxFix.Category.CONTENT;
 
 public class DotStatRestParsers implements RiRestParsers {
 
-    private static final MediaType FLOW20 = MediaType.parse(SdmxMediaType.XML);
+    private static final MediaType FLOW20 = MediaType.parse(SdmxMediaType.GENERIC_XML);
     private static final MediaType STRUCT20 = MediaType.parse(SdmxMediaType.STRUCTURE_21);
     private static final MediaType COMPACT20 = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20);
 

@@ -80,9 +80,13 @@ public final class BbkDriver implements SdmxWebDriver {
 
     @VisibleForTesting
     static final class BbkClient extends RiRestClient {
+        
+        private static final BbkObsFactory OBS_FACTORY = new BbkObsFactory();
+        private static final BbkQueries QUERIES = new BbkQueries();
+        private static final Sdmx21RestParsers PARSERS = Sdmx21RestParsers.builder().build();
 
         public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
-            super(name, endpoint, langs, BbkObsFactory.INSTANCE, executor, new BbkQueries(), new Sdmx21RestParsers(), true);
+            super(name, endpoint, langs, OBS_FACTORY, executor, QUERIES, PARSERS, true);
         }
 
         @Override
@@ -126,7 +130,7 @@ public final class BbkDriver implements SdmxWebDriver {
         protected RestQueryBuilder onMeta(URL endpoint, SdmxResourceType resource, ResourceRef<?> ref) {
             RestQueryBuilder result = RestQueryBuilder
                     .of(endpoint)
-                    .path(getResource(resource))
+                    .path(getPath(resource))
                     .path(AGENCY_ID);
             if (isValid(ref)) {
                 result.path(ref.getId());
@@ -139,7 +143,7 @@ public final class BbkDriver implements SdmxWebDriver {
         protected RestQueryBuilder onData(URL endpoint, SdmxResourceType resource, DataflowRef flowRef, Key key, String providerRef) {
             return RestQueryBuilder
                     .of(endpoint)
-                    .path(getResource(resource))
+                    .path(getPath(resource))
                     .path(flowRef.getId())
                     .path(key.toString());
         }
@@ -156,8 +160,7 @@ public final class BbkDriver implements SdmxWebDriver {
     }
 
     // FIXME: use TIME_FORMAT attribute instead of FREQ dimension in SDMX21 ?
-    private enum BbkObsFactory implements ObsFactory {
-        INSTANCE;
+    private static final class BbkObsFactory implements ObsFactory {
 
         @Override
         public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {

@@ -22,6 +22,7 @@ import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
+import sdmxdl.util.BaseProperty;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
@@ -31,8 +32,6 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,13 +43,12 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
 @lombok.experimental.UtilityClass
 public class RestClients {
 
-    public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY.getKey(),
-                    READ_TIMEOUT_PROPERTY.getKey(),
-                    MAX_REDIRECTS_PROPERTY.getKey(),
-                    PREEMPTIVE_AUTHENTICATION_PROPERTY.getKey()
-            ));
+    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+            CONNECT_TIMEOUT_PROPERTY,
+            READ_TIMEOUT_PROPERTY,
+            MAX_REDIRECTS_PROPERTY,
+            PREEMPTIVE_AUTHENTICATION_PROPERTY
+    );
 
     public static HttpRest.@NonNull Context getRestContext(@NonNull SdmxWebSource o, @NonNull SdmxWebContext context) {
         return HttpRest.Context

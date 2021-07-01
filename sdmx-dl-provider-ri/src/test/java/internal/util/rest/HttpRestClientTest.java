@@ -43,7 +43,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.ext.SdmxMediaType.GENERIC_DATA_21;
-import static sdmxdl.ext.SdmxMediaType.XML;
+import static sdmxdl.ext.SdmxMediaType.GENERIC_XML;
 
 /**
  * @author Philippe Charles
@@ -466,7 +466,7 @@ public abstract class HttpRestClientTest {
     }
 
     private static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
-    private static final MediaType XML_TYPE = MediaType.parse(XML);
+    private static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
     private static final int[] HTTP_REDIRECTIONS = {301, 302, 303, 307, 308};

@@ -17,9 +17,11 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.*;
+import internal.util.rest.MediaType;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.util.BaseProperty;
 import sdmxdl.util.Property;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
@@ -51,10 +53,8 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .client(Sdmx21Driver2::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
-            .supportedPropertyOf(DATA_PATH_PROPERTY)
-            .supportedPropertyOf(DATAFLOW_PATH_PROPERTY)
-            .supportedPropertyOf(DATASTRUCTURE_PATH_PROPERTY)
+            .supportedProperties(QUERIES_PROPERTIES)
+            .supportedProperties(PARSERS_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("BIS")
@@ -211,31 +211,66 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return Sdmx21RestQueries
                 .builder()
                 .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(properties))
-                .customResource(SdmxResourceType.DATA, DATA_PATH_PROPERTY.get(properties))
-                .customResource(SdmxResourceType.DATAFLOW, DATAFLOW_PATH_PROPERTY.get(properties))
-                .customResource(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_PATH_PROPERTY.get(properties))
+                .customPath(SdmxResourceType.DATA, DATA_PATH_PROPERTY.get(properties))
+                .customPath(SdmxResourceType.DATAFLOW, DATAFLOW_PATH_PROPERTY.get(properties))
+                .customPath(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_PATH_PROPERTY.get(properties))
                 .build();
     }
 
     @SuppressWarnings("unused")
     private static Sdmx21RestParsers getParsers(Map<String, String> properties) {
-        return new Sdmx21RestParsers();
+        return Sdmx21RestParsers
+                .builder()
+                .customType(SdmxResourceType.DATA, DATA_TYPE_PROPERTY.get(properties))
+                .customType(SdmxResourceType.DATAFLOW, DATAFLOW_TYPE_PROPERTY.get(properties))
+                .customType(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_TYPE_PROPERTY.get(properties))
+                .build();
     }
 
     private static boolean isDetailSupportedProperty(Map<String, String> properties) {
         return DETAIL_SUPPORTED_PROPERTY.get(properties);
     }
 
+    private static final Parser<MediaType> TYPE_PARSER = input -> {
+        try {
+            return MediaType.parse(input);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    };
+
+    private static final Parser<List<String>> PATH_PARSER = Parser.onStringList(
+            input -> Stream.of(input.toString().split("/", -1))
+    );
+
     private static final Property<List<String>> DATA_PATH_PROPERTY =
-            new Property<>("dataPath", null, Parser.onStringList(Sdmx21Driver2::split));
+            new Property<>("dataPath", null, PATH_PARSER);
 
     private static final Property<List<String>> DATAFLOW_PATH_PROPERTY =
-            new Property<>("dataflowPath", null, Parser.onStringList(Sdmx21Driver2::split));
+            new Property<>("dataflowPath", null, PATH_PARSER);
 
     private static final Property<List<String>> DATASTRUCTURE_PATH_PROPERTY =
-            new Property<>("datastructurePath", null, Parser.onStringList(Sdmx21Driver2::split));
+            new Property<>("datastructurePath", null, PATH_PARSER);
 
-    private static Stream<String> split(CharSequence input) {
-        return Stream.of(input.toString().split("/", -1));
-    }
+    private static final Property<MediaType> DATA_TYPE_PROPERTY =
+            new Property<>("dataType", null, TYPE_PARSER);
+
+    private static final Property<MediaType> DATAFLOW_TYPE_PROPERTY =
+            new Property<>("dataflowType", null, TYPE_PARSER);
+
+    private static final Property<MediaType> DATASTRUCTURE_TYPE_PROPERTY =
+            new Property<>("datastructureType", null, TYPE_PARSER);
+
+    private static final List<String> PARSERS_PROPERTIES = BaseProperty.keysOf(
+            DATA_TYPE_PROPERTY,
+            DATAFLOW_TYPE_PROPERTY,
+            DATASTRUCTURE_TYPE_PROPERTY
+    );
+
+    private static final List<String> QUERIES_PROPERTIES = BaseProperty.keysOf(
+            TRAILING_SLASH_REQUIRED_PROPERTY,
+            DATA_PATH_PROPERTY,
+            DATAFLOW_PATH_PROPERTY,
+            DATASTRUCTURE_PATH_PROPERTY
+    );
 }

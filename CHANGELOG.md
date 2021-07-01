@@ -8,10 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add custom resource path in SDMX21 driver
-- Add source from Bundesbank [#104](https://github.com/nbbrd/sdmx-dl/issues/104)
 - Add support of multiple media types in HTTP requests
 - Add `#onSuccess(MediaType)` event in RI REST client
 - Add default user-agent to RI REST client [#117](https://github.com/nbbrd/sdmx-dl/issues/117)
+- Add source from Bundesbank [#104](https://github.com/nbbrd/sdmx-dl/issues/104)
 - Add source from Economic and Social Commission for Asia and the Pacific [#99](https://github.com/nbbrd/sdmx-dl/issues/99)
 - Add source from National Statistical Institute of Cambodia [#98](https://github.com/nbbrd/sdmx-dl/issues/98)
 - Add source from SDMX Global Registry [#97](https://github.com/nbbrd/sdmx-dl/issues/97)
@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update ILO source with new endpoint [#107](https://github.com/nbbrd/sdmx-dl/issues/107)
 - Fix key parsing when time dimension is not last in data structure [#110](https://github.com/nbbrd/sdmx-dl/issues/110)
 - Fix key validity check on input [#118](https://github.com/nbbrd/sdmx-dl/issues/118)
+- Fix parsing of media types in SDMX21 driver
 
 ## [3.0.0-beta.2] - 2021-05-03
 

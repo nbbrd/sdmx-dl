@@ -28,6 +28,7 @@ import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.util.BaseProperty;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
@@ -41,8 +42,6 @@ import java.net.URISyntaxException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -176,12 +175,11 @@ public final class ConnectorRestClient implements SdmxWebClient {
         }
     }
 
-    public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY.getKey(),
-                    READ_TIMEOUT_PROPERTY.getKey(),
-                    MAX_REDIRECTS_PROPERTY.getKey()
-            ));
+    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+            CONNECT_TIMEOUT_PROPERTY,
+            READ_TIMEOUT_PROPERTY,
+            MAX_REDIRECTS_PROPERTY
+    );
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(

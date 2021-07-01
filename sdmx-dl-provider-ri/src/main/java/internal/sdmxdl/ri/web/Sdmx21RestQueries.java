@@ -16,7 +16,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
     private boolean trailingSlashRequired;
 
     @lombok.Singular
-    private Map<SdmxResourceType, List<String>> customResources;
+    private Map<SdmxResourceType, List<String>> customPaths;
 
     @Override
     public RestQueryBuilder getFlowsQuery(URL endpoint) {
@@ -63,19 +63,19 @@ public class Sdmx21RestQueries implements RiRestQueries {
         }
     }
 
-    protected List<String> getResource(SdmxResourceType type) {
-        List<String> result = customResources.get(type);
-        return result != null ? result : getDefaultResource(type);
+    protected List<String> getPath(SdmxResourceType type) {
+        List<String> result = customPaths.get(type);
+        return result != null ? result : getDefaultPath(type);
     }
 
-    private static List<String> getDefaultResource(SdmxResourceType type) {
+    private static List<String> getDefaultPath(SdmxResourceType type) {
         switch (type) {
             case DATA:
-                return DEFAULT_DATA_RESOURCE;
+                return DEFAULT_DATA_PATH;
             case DATAFLOW:
-                return DEFAULT_DATAFLOW_RESOURCE;
+                return DEFAULT_DATAFLOW_PATH;
             case DATASTRUCTURE:
-                return DEFAULT_DATASTRUCTURE_RESOURCE;
+                return DEFAULT_DATASTRUCTURE_PATH;
             default:
                 throw new RuntimeException("Unreachable");
         }
@@ -84,7 +84,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
     protected RestQueryBuilder onMeta(URL endpoint, SdmxResourceType resource, ResourceRef<?> ref) {
         return RestQueryBuilder
                 .of(endpoint)
-                .path(getResource(resource))
+                .path(getPath(resource))
                 .path(ref.getAgency())
                 .path(ref.getId())
                 .path(ref.getVersion());
@@ -93,15 +93,15 @@ public class Sdmx21RestQueries implements RiRestQueries {
     protected RestQueryBuilder onData(URL endpoint, SdmxResourceType resource, DataflowRef flowRef, Key key, String providerRef) {
         return RestQueryBuilder
                 .of(endpoint)
-                .path(getResource(resource))
+                .path(getPath(resource))
                 .path(flowRef.toString())
                 .path(key.toString())
                 .path(providerRef);
     }
 
-    private static final List<String> DEFAULT_DATAFLOW_RESOURCE = Collections.singletonList("dataflow");
-    private static final List<String> DEFAULT_DATASTRUCTURE_RESOURCE = Collections.singletonList("datastructure");
-    private static final List<String> DEFAULT_DATA_RESOURCE = Collections.singletonList("data");
+    private static final List<String> DEFAULT_DATAFLOW_PATH = Collections.singletonList("dataflow");
+    private static final List<String> DEFAULT_DATASTRUCTURE_PATH = Collections.singletonList("datastructure");
+    private static final List<String> DEFAULT_DATA_PATH = Collections.singletonList("data");
 
     private static final String DEFAULT_PROVIDER_REF = "all";
 

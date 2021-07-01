@@ -66,13 +66,13 @@ public class Sdmx21RestQueriesTest {
         assertThat(builder().trailingSlashRequired(true).build().getFlowsQuery(base))
                 .hasToString("http://base/dataflow/all/all/latest/");
 
-        assertThat(builder().customResource(DATAFLOW, asList("x", "y")).build().getFlowsQuery(base))
+        assertThat(builder().customPath(DATAFLOW, asList("x", "y")).build().getFlowsQuery(base))
                 .hasToString("http://base/x/y/all/all/latest");
 
-        assertThat(builder().customResource(DATAFLOW, emptyList()).build().getFlowsQuery(base))
+        assertThat(builder().customPath(DATAFLOW, emptyList()).build().getFlowsQuery(base))
                 .hasToString("http://base/all/all/latest");
 
-        assertThat(builder().customResource(DATAFLOW, null).build().getFlowsQuery(base))
+        assertThat(builder().customPath(DATAFLOW, null).build().getFlowsQuery(base))
                 .hasToString("http://base/dataflow/all/all/latest");
     }
 
@@ -90,13 +90,13 @@ public class Sdmx21RestQueriesTest {
         assertThat(builder().trailingSlashRequired(true).build().getFlowQuery(base, specificFlow))
                 .hasToString("http://base/dataflow/ECB/EXR/1.0/");
 
-        assertThat(builder().customResource(DATAFLOW, asList("x", "y")).build().getFlowQuery(base, specificFlow))
+        assertThat(builder().customPath(DATAFLOW, asList("x", "y")).build().getFlowQuery(base, specificFlow))
                 .hasToString("http://base/x/y/ECB/EXR/1.0");
 
-        assertThat(builder().customResource(DATAFLOW, emptyList()).build().getFlowQuery(base, specificFlow))
+        assertThat(builder().customPath(DATAFLOW, emptyList()).build().getFlowQuery(base, specificFlow))
                 .hasToString("http://base/ECB/EXR/1.0");
 
-        assertThat(builder().customResource(DATAFLOW, null).build().getFlowQuery(base, specificFlow))
+        assertThat(builder().customPath(DATAFLOW, null).build().getFlowQuery(base, specificFlow))
                 .hasToString("http://base/dataflow/ECB/EXR/1.0");
     }
 
@@ -114,13 +114,13 @@ public class Sdmx21RestQueriesTest {
         assertThat(builder().trailingSlashRequired(true).build().getStructureQuery(base, specificStruct))
                 .hasToString("http://base/datastructure/ECB/EXR/1.0/?references=children");
 
-        assertThat(builder().customResource(DATASTRUCTURE, asList("x", "y")).build().getStructureQuery(base, specificStruct))
+        assertThat(builder().customPath(DATASTRUCTURE, asList("x", "y")).build().getStructureQuery(base, specificStruct))
                 .hasToString("http://base/x/y/ECB/EXR/1.0?references=children");
 
-        assertThat(builder().customResource(DATASTRUCTURE, emptyList()).build().getStructureQuery(base, specificStruct))
+        assertThat(builder().customPath(DATASTRUCTURE, emptyList()).build().getStructureQuery(base, specificStruct))
                 .hasToString("http://base/ECB/EXR/1.0?references=children");
 
-        assertThat(builder().customResource(DATASTRUCTURE, null).build().getStructureQuery(base, specificStruct))
+        assertThat(builder().customPath(DATASTRUCTURE, null).build().getStructureQuery(base, specificStruct))
                 .hasToString("http://base/datastructure/ECB/EXR/1.0?references=children");
     }
 
@@ -147,13 +147,13 @@ public class Sdmx21RestQueriesTest {
         assertThat(builder().trailingSlashRequired(true).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all/");
 
-        assertThat(builder().customResource(DATA, asList("x", "y")).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
+        assertThat(builder().customPath(DATA, asList("x", "y")).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
                 .hasToString("http://base/x/y/ECB%2CEXR%2C1.0/all/all");
 
-        assertThat(builder().customResource(DATA, emptyList()).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
+        assertThat(builder().customPath(DATA, emptyList()).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
                 .hasToString("http://base/ECB%2CEXR%2C1.0/all/all");
 
-        assertThat(builder().customResource(DATA, null).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
+        assertThat(builder().customPath(DATA, null).build().getDataQuery(base, specificFlow, Key.ALL, FULL))
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all");
     }
 

@@ -20,10 +20,7 @@ import nbbrd.design.StringValue;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static java.util.Collections.emptyMap;
@@ -43,7 +40,7 @@ public final class MediaType {
             throw new IllegalArgumentException("Content is empty or trimable");
         }
 
-        int subtypeIndex = input.indexOf("/");
+        int subtypeIndex = input.indexOf('/');
         if (subtypeIndex == -1) {
             throw new IllegalArgumentException("Missing subtype");
         }
@@ -52,7 +49,7 @@ public final class MediaType {
             throw new IllegalArgumentException("Type is empty or trimable");
         }
 
-        int paramsIndex = input.indexOf(";", subtypeIndex);
+        int paramsIndex = input.indexOf(';', subtypeIndex);
         String subType = input.substring(subtypeIndex + 1, paramsIndex != -1 ? paramsIndex : input.length()).toLowerCase();
         if (isEmptyOrTrimable(subType)) {
             throw new IllegalArgumentException("Subtype is empty or trimable");
@@ -62,14 +59,20 @@ public final class MediaType {
             return new MediaType(type, subType, emptyMap());
         }
         Map<String, Collection<String>> parameters = new HashMap<>();
-        for (String item : input.substring(paramsIndex + 1).trim().split(";", -1)) {
-            String[] tmp = item.split("=", -1);
-            if (tmp.length != 2) {
+        for (String parameter : input.substring(paramsIndex + 1).split(";", -1)) {
+            String[] keyValuePair = parameter.split("=", -1);
+            if (keyValuePair.length != 2) {
                 throw new IllegalArgumentException("Invalid key-value pair");
             }
-            parameters.computeIfAbsent(tmp[0].toLowerCase(), o -> new ArrayList<>()).add(tmp[1]);
+            parameters
+                    .computeIfAbsent(cleanParameter(keyValuePair[0]), o -> new ArrayList<>())
+                    .add(cleanParameter(keyValuePair[1]));
         }
         return new MediaType(type, subType, parameters);
+    }
+
+    private static String cleanParameter(String input) {
+        return input.toLowerCase(Locale.ROOT).trim();
     }
 
     private static boolean isEmptyOrTrimable(String o) {

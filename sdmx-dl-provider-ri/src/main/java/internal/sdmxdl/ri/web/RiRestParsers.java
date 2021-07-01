@@ -1,15 +1,16 @@
 package internal.sdmxdl.ri.web;
 
+import internal.util.rest.MediaType;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
-import internal.util.rest.MediaType;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 public interface RiRestParsers {
 
@@ -29,7 +30,12 @@ public interface RiRestParsers {
 
     @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory);
 
-    static @NonNull List<MediaType> typesOf(@NonNull String... mediaTypes) {
-        return Stream.of(mediaTypes).map(MediaType::parse).collect(Collectors.toList());
+    static <T extends Resource<R>, R extends ResourceRef<R>> @NonNull Function<List<T>, Optional<T>> getResourceSelector(@NonNull R ref) {
+        Objects.requireNonNull(ref);
+        return list -> list
+                .stream()
+                .filter(ref::containsRef)
+                .sorted(Comparator.comparing(ref::equalsRef).thenComparing(resource -> resource.getRef().toString()))
+                .findFirst();
     }
 }
