@@ -3,7 +3,9 @@ package internal.util.rest;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import wiremock.com.google.common.io.ByteStreams;
 import wiremock.org.apache.http.impl.io.EmptyInputStream;
 
@@ -19,6 +21,14 @@ import static org.assertj.core.api.Assertions.*;
 
 public class HttpRestTest {
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    // FIXME: replace with JIMFS
+    private Path getDumpFolder() {
+        return temporaryFolder.getRoot().toPath();
+    }
+
     @Test
     public void testDumpingClient() throws IOException {
         URL url = new URL("http://localhost");
@@ -28,7 +38,7 @@ public class HttpRestTest {
         byte[] bytes = "hello".getBytes(StandardCharsets.UTF_8);
         Deque<Path> stack = new LinkedList<>();
 
-        assertThat(new HttpRest.DumpingClient(MockedClient.of(), stack::add))
+        assertThat(new HttpRest.DumpingClient(getDumpFolder(), MockedClient.of(), stack::add))
                 .satisfies(o -> {
                     assertThatNullPointerException()
                             .isThrownBy(() -> o.requestGET(null, mediaTypes, langs));
@@ -40,7 +50,7 @@ public class HttpRestTest {
                             .isThrownBy(() -> o.requestGET(url, mediaTypes, null));
                 });
 
-        HttpRest.DumpingClient empty = new HttpRest.DumpingClient(MockedClient.of(), stack::add);
+        HttpRest.DumpingClient empty = new HttpRest.DumpingClient(getDumpFolder(), MockedClient.of(), stack::add);
         try (HttpRest.Response r = empty.requestGET(url, mediaTypes, langs)) {
             assertThat(r.getContentType()).isEqualTo(MediaType.ANY_TYPE);
             assertThat(r.getBody()).isEmpty();
@@ -51,7 +61,7 @@ public class HttpRestTest {
                 .builder()
                 .body(() -> new ByteArrayInputStream(bytes))
                 .build();
-        try (HttpRest.Response r = new HttpRest.DumpingClient(MockedClient.of(nonEmpty), stack::add).requestGET(url, mediaTypes, langs)) {
+        try (HttpRest.Response r = new HttpRest.DumpingClient(getDumpFolder(), MockedClient.of(nonEmpty), stack::add).requestGET(url, mediaTypes, langs)) {
             assertThat(r.getBody()).hasBinaryContent(bytes);
             assertThat(stack.removeLast()).exists().hasBinaryContent(bytes);
         }
@@ -62,7 +72,7 @@ public class HttpRestTest {
                     throw new IOException("boom");
                 })
                 .build();
-        try (HttpRest.Response r = new HttpRest.DumpingClient(MockedClient.of(failing1), stack::add).requestGET(url, mediaTypes, langs)) {
+        try (HttpRest.Response r = new HttpRest.DumpingClient(getDumpFolder(), MockedClient.of(failing1), stack::add).requestGET(url, mediaTypes, langs)) {
             assertThatIOException().isThrownBy(() -> ByteStreams.toByteArray(r.getBody()));
             assertThat(stack).isEmpty();
         }
@@ -76,7 +86,7 @@ public class HttpRestTest {
                     }
                 })
                 .build();
-        try (HttpRest.Response r = new HttpRest.DumpingClient(MockedClient.of(failing2), stack::add).requestGET(url, mediaTypes, langs)) {
+        try (HttpRest.Response r = new HttpRest.DumpingClient(getDumpFolder(), MockedClient.of(failing2), stack::add).requestGET(url, mediaTypes, langs)) {
             assertThatIOException().isThrownBy(() -> ByteStreams.toByteArray(r.getBody()));
             assertThat(stack.removeLast()).exists().isEmptyFile();
         }

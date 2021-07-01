@@ -55,7 +55,7 @@ final class TeeInputStream extends InputStream {
     @Override
     public void close() throws IOException {
         try {
-            copy(input, output);
+            copyRemaining(input, output);
         } finally {
             Resource.closeBoth(input, output);
         }
@@ -75,11 +75,15 @@ final class TeeInputStream extends InputStream {
         return false;
     }
 
-    private static void copy(InputStream source, OutputStream target) throws IOException {
+    private static void copyRemaining(InputStream source, OutputStream target) {
         byte[] buf = new byte[8192];
         int length;
-        while ((length = source.read(buf)) > 0) {
-            target.write(buf, 0, length);
+        try {
+            while ((length = source.read(buf)) > 0) {
+                target.write(buf, 0, length);
+            }
+        } catch (IOException ex) {
+            // do nothing
         }
     }
 

@@ -25,10 +25,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -56,7 +53,8 @@ public class HttpRest {
 
     public static @NonNull Client newClient(@NonNull Context context) {
         Client result = new DefaultClient(context, getBackend());
-        return isDump() ? new DumpingClient(result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
+        File dumpFile = getDumpFile();
+        return dumpFile != null ? new DumpingClient(dumpFile.toPath(), result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
     }
 
     @lombok.Value
@@ -279,7 +277,7 @@ public class HttpRest {
 
     // TODO: document these options?
     private static final String SDMXDL_RI_WEB_BACKEND = "sdmxdl.ri.web.backend";
-    private static final String SDMXDL_RI_WEB_DUMP = "sdmxdl.ri.web.dump";
+    private static final String SDMXDL_RI_WEB_DUMP_FOLDER = "sdmxdl.ri.web.dump.folder";
 
     private static final IwrConnectionFactory IWR_CONNECTION_FACTORY = new IwrConnectionFactory();
     private static final CurlConnectionFactory CURL_CONNECTION_FACTORY = new CurlConnectionFactory(false);
@@ -296,13 +294,17 @@ public class HttpRest {
         }
     }
 
-    private boolean isDump() {
-        return Boolean.getBoolean(SDMXDL_RI_WEB_DUMP);
+    private File getDumpFile() {
+        String result = System.getProperty(SDMXDL_RI_WEB_DUMP_FOLDER);
+        return result != null ? new File(result) : null;
     }
 
     @VisibleForTesting
     @lombok.AllArgsConstructor
     static final class DumpingClient implements Client {
+
+        @lombok.NonNull
+        private final Path folder;
 
         @lombok.NonNull
         private final Client delegate;
@@ -312,13 +314,16 @@ public class HttpRest {
 
         @Override
         public @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
-            return new DumpingResponse(delegate.requestGET(query, mediaTypes, langs), onDump);
+            return new DumpingResponse(folder, delegate.requestGET(query, mediaTypes, langs), onDump);
         }
     }
 
     @VisibleForTesting
     @lombok.AllArgsConstructor
     static final class DumpingResponse implements Response {
+
+        @lombok.NonNull
+        private final Path folder;
 
         @lombok.NonNull
         private final Response delegate;
@@ -344,7 +349,8 @@ public class HttpRest {
         }
 
         private OutputStream getDumpStream() throws IOException {
-            Path dump = Files.createTempFile("body", ".tmp");
+            Files.createDirectories(folder);
+            Path dump = Files.createTempFile(folder, "body", ".tmp");
             onDump.accept(dump);
             return Files.newOutputStream(dump);
         }
