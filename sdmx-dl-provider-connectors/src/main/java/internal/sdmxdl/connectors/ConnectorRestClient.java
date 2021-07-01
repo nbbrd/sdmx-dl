@@ -204,13 +204,13 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setSslSocketFactory(context.getSslSocketFactory());
         client.setHostnameVerifier(context.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRedirectionEventListener(source, context.getEventListener());
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
 
     @lombok.AllArgsConstructor
-    private static final class DefaultRedirectionEventListener implements RestSdmxEventListener {
+    private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
         @lombok.NonNull
         private final SdmxWebSource source;
@@ -223,10 +223,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
             if (listener.isEnabled()) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+                    listener.onWebSourceEvent(source, String.format("Redirecting to %s", redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
+                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

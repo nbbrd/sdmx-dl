@@ -84,17 +84,23 @@ public class RestClients {
 
         @Override
         public void onOpen(URL query, List<MediaType> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
+            Objects.requireNonNull(query);
+            Objects.requireNonNull(mediaTypes);
+            Objects.requireNonNull(langs);
+            Objects.requireNonNull(proxy);
+            Objects.requireNonNull(scheme);
             if (listener.isEnabled()) {
                 if (HttpRest.AuthScheme.NONE.equals(scheme)) {
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
+                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s'", query, proxy));
                 } else {
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
+                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s' and auth '%s'", query, proxy, scheme.name()));
                 }
             }
         }
 
         @Override
         public void onSuccess(@NonNull MediaType mediaType) {
+            Objects.requireNonNull(mediaType);
             if (listener.isEnabled()) {
                 listener.onWebSourceEvent(source, String.format("Parsing '%s'", mediaType));
             }
@@ -102,20 +108,26 @@ public class RestClients {
 
         @Override
         public void onRedirection(URL oldUrl, URL newUrl) {
+            Objects.requireNonNull(oldUrl);
+            Objects.requireNonNull(newUrl);
             if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
+                listener.onWebSourceEvent(source, String.format("Redirecting to %s", newUrl));
             }
         }
 
         @Override
         public void onUnauthorized(URL url, HttpRest.AuthScheme oldScheme, HttpRest.AuthScheme newScheme) {
+            Objects.requireNonNull(url);
+            Objects.requireNonNull(oldScheme);
+            Objects.requireNonNull(newScheme);
             if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
+                listener.onWebSourceEvent(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
             }
         }
 
         @Override
         public void onEvent(@NonNull String message) {
+            Objects.requireNonNull(message);
             if (listener.isEnabled()) {
                 listener.onWebSourceEvent(source, message);
             }

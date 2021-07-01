@@ -4,6 +4,7 @@ import picocli.CommandLine;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @lombok.AllArgsConstructor
 public final class PrintAndLogExceptionHandler implements CommandLine.IExecutionExceptionHandler {
@@ -13,12 +14,23 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
 
     @Override
     public int handleExecutionException(Exception ex, CommandLine cmd, CommandLine.ParseResult parseResult) {
-        Logger.getLogger(logAnchor.getName()).log(Level.SEVERE, "While executing command", ex);
-        String errorMessage = ex.getClass().getSimpleName() + ": " + ex.getMessage();
-        cmd.getErr().println(cmd.getColorScheme().errorText(errorMessage));
-//        cmd.getErr().println(cmd.getColorScheme().stackTraceText(ex));
+        reportToLogger(ex, parseResult);
+        reportToConsole(ex, cmd);
         return cmd.getExitCodeExceptionMapper() != null
                 ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                 : cmd.getCommandSpec().exitCodeOnExecutionException();
+    }
+
+    private void reportToLogger(Exception ex, CommandLine.ParseResult parseResult) {
+        Logger logger = Logger.getLogger(logAnchor.getName());
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.log(Level.SEVERE, "While executing command '" + parseResult.originalArgs().stream().collect(Collectors.joining(" ")) + "'", ex);
+        }
+    }
+
+    private void reportToConsole(Exception ex, CommandLine cmd) {
+        String errorMessage = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+        cmd.getErr().println(cmd.getColorScheme().errorText(errorMessage));
+//        cmd.getErr().println(cmd.getColorScheme().stackTraceText(ex));
     }
 }

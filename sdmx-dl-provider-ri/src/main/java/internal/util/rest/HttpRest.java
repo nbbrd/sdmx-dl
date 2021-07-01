@@ -335,14 +335,18 @@ public class HttpRest {
         public @NonNull InputStream getBody() throws IOException {
             InputStream inputStream = delegate.getBody();
             try {
-                Path dump = Files.createTempFile("body", ".tmp");
-                onDump.accept(dump);
-                OutputStream outputStream = Files.newOutputStream(dump);
+                OutputStream outputStream = getDumpStream();
                 return new TeeInputStream(inputStream, outputStream);
             } catch (IOException ex) {
                 Resource.ensureClosed(ex, inputStream);
                 throw ex;
             }
+        }
+
+        private OutputStream getDumpStream() throws IOException {
+            Path dump = Files.createTempFile("body", ".tmp");
+            onDump.accept(dump);
+            return Files.newOutputStream(dump);
         }
 
         @Override
