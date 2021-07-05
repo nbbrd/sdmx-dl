@@ -8,8 +8,7 @@ import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +51,7 @@ public class RestClientsTest {
     @Test
     public void testListener() throws MalformedURLException {
         MockedSdmxWebListener events = new MockedSdmxWebListener();
+        Proxy customProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress((InetAddress) null, 123));
 
         SdmxWebContext webContext = SdmxWebContext
                 .builder()
@@ -80,10 +80,16 @@ public class RestClientsTest {
         assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*'"));
 
         x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", NO_PROXY, NONE);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'DIRECT'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost"));
 
         x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", NO_PROXY, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'DIRECT' and auth 'BASIC'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with auth 'BASIC'"));
+
+        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", customProxy, NONE);
+        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
+
+        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", customProxy, BASIC);
+        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
 
         x.onRedirection(source.getEndpoint(), new URL("http://other"));
         assertThat(events.pop()).containsExactly(new Event(source, "Redirecting to http://other"));

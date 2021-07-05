@@ -7,6 +7,7 @@ import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebMonitorReport;
 import sdmxdl.web.SdmxWebSource;
@@ -17,9 +18,9 @@ import sdmxdl.web.spi.SdmxWebMonitoring;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -153,7 +154,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         Proxy proxy = context.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getEventListener().isEnabled()) {
-            context.getEventListener().onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", url, proxy));
+            context.getEventListener().onWebSourceEvent(source, SdmxWebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
@@ -172,7 +173,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         conn.setRequestProperty("Content-Length", Integer.toString(data.length));
         conn.setUseCaches(false);
 
-        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+        try (OutputStream wr = conn.getOutputStream()) {
             wr.write(data);
         }
 

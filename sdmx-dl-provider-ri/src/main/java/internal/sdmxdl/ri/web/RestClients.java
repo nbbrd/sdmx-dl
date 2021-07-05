@@ -23,6 +23,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.util.BaseProperty;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
@@ -88,11 +89,11 @@ public class RestClients {
             Objects.requireNonNull(proxy);
             Objects.requireNonNull(scheme);
             if (listener.isEnabled()) {
-                if (HttpRest.AuthScheme.NONE.equals(scheme)) {
-                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s'", query, proxy));
-                } else {
-                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s' and auth '%s'", query, proxy, scheme.name()));
+                String message = SdmxWebEvents.onQuery(query, proxy);
+                if (!HttpRest.AuthScheme.NONE.equals(scheme)) {
+                    message += " with auth '" + scheme.name() + "'";
                 }
+                listener.onWebSourceEvent(source, message);
             }
         }
 
@@ -109,7 +110,7 @@ public class RestClients {
             Objects.requireNonNull(oldUrl);
             Objects.requireNonNull(newUrl);
             if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Redirecting to %s", newUrl));
+                listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 

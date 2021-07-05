@@ -32,6 +32,7 @@ import sdmxdl.util.BaseProperty;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -221,10 +222,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
             if (listener.isEnabled()) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Redirecting to %s", redirectionEvent.getRedirection()));
+                    listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Querying %s with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
+                    listener.onWebSourceEvent(source, SdmxWebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }
