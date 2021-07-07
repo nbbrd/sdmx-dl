@@ -18,13 +18,13 @@ package internal.util.rest;
 
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Philippe Charles
@@ -95,5 +95,31 @@ public class MediaTypeTest {
     public void testEquals() {
         assertThat(ANY_TYPE).isEqualTo(ANY_TYPE);
         assertThat(MediaType.parse("text/html; charset=utf-8")).isEqualTo(MediaType.parse("text/html;charset=utf-8"));
+    }
+
+    @Test
+    public void testGetters() {
+        assertThat(ANY_TYPE.getType()).isEqualTo("*");
+        assertThat(ANY_TYPE.getSubtype()).isEqualTo("*");
+        assertThat(ANY_TYPE.getParameters()).isEmpty();
+
+        assertThat(XML_UTF_8.getType()).isEqualTo("text");
+        assertThat(XML_UTF_8.getSubtype()).isEqualTo("xml");
+        assertThat(XML_UTF_8.getParameters()).hasSize(1).containsEntry("charset", Collections.singletonList("utf-8"));
+    }
+
+    @Test
+    public void testGetCharset() {
+        assertThat(ANY_TYPE.getCharset()).isEmpty();
+        assertThat(XML_UTF_8.getCharset()).contains(StandardCharsets.UTF_8);
+        assertThat(MediaType.parse("text/xml; charset=abc").getCharset()).isEmpty();
+    }
+
+    @Test
+    public void testWithCharset() {
+        assertThatNullPointerException().isThrownBy(() -> ANY_TYPE.withCharset(null));
+        assertThat(ANY_TYPE.withCharset(StandardCharsets.UTF_8).getCharset()).contains(StandardCharsets.UTF_8);
+        assertThat(XML_UTF_8.withCharset(StandardCharsets.UTF_8).getCharset()).contains(StandardCharsets.UTF_8);
+        assertThat(XML_UTF_8.withCharset(StandardCharsets.US_ASCII).getCharset()).contains(StandardCharsets.US_ASCII);
     }
 }

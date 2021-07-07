@@ -2,17 +2,24 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.MediaType;
 import lombok.AccessLevel;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
+import nbbrd.io.function.IOSupplier;
+import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 
 import static internal.sdmxdl.ri.web.RiRestParsers.getResourceSelector;
 import static java.util.Collections.singletonList;
@@ -39,7 +46,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .orElse(mediaType);
 
         if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return SdmxXmlStreams.flow21(langs);
+            return withCharset(SdmxXmlStreams.flow21(langs), target.getCharset());
         }
 
         return new UnsupportedParser<>(target);
@@ -60,7 +67,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .orElse(mediaType);
 
         if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref));
+            return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), target.getCharset());
         }
 
         return new UnsupportedParser<>(target);
@@ -81,7 +88,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .orElse(mediaType);
 
         if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref));
+            return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), target.getCharset());
         }
 
         return new UnsupportedParser<>(target);
@@ -102,13 +109,13 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .orElse(mediaType);
 
         if (target.isCompatible(GENERIC21)) {
-            return SdmxXmlStreams.genericData21(dsd, dataFactory);
+            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), target.getCharset());
         }
         if (target.isCompatible(COMPACT21)) {
-            return SdmxXmlStreams.compactData21(dsd, dataFactory);
+            return withCharset(SdmxXmlStreams.compactData21(dsd, dataFactory), target.getCharset());
         }
         if (target.isCompatible(GENERIC_XML)) {
-            return SdmxXmlStreams.genericData21(dsd, dataFactory);
+            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), target.getCharset());
         }
 
         return new UnsupportedParser<>(target);
@@ -139,6 +146,57 @@ public class Sdmx21RestParsers implements RiRestParsers {
         @Override
         public @NonNull T parseStream(@NonNull InputStream resource) throws IOException {
             throw new IOException("Cannot parse media type '" + mediaType + "'");
+        }
+
+        @Override
+        public @NonNull <V> FileParser<V> andThen(@NonNull Function<? super T, ? extends V> after) {
+            return new UnsupportedParser<>(mediaType);
+        }
+    }
+
+    private static <T> FileParser<T> withCharset(Xml.Parser<T> parser, Optional<Charset> charset) {
+        return charset.isPresent() ? new CharsetParser<>(parser, charset.get()) : parser;
+    }
+
+    @MightBePromoted
+    @VisibleForTesting
+    @lombok.AllArgsConstructor
+    static final class CharsetParser<T> implements FileParser<T> {
+
+        @lombok.NonNull
+        private final Xml.Parser<T> delegate;
+
+        @lombok.NonNull
+        private final Charset charset;
+
+        @Override
+        public @NonNull T parseFile(@NonNull File source) throws IOException {
+            return delegate.parseFile(source, charset);
+        }
+
+        @Override
+        public @NonNull T parsePath(@NonNull Path source) throws IOException {
+            return delegate.parsePath(source, charset);
+        }
+
+        @Override
+        public @NonNull T parseResource(@NonNull Class<?> type, @NonNull String name) throws IOException {
+            return delegate.parseResource(type, name, charset);
+        }
+
+        @Override
+        public @NonNull T parseStream(IOSupplier<? extends InputStream> source) throws IOException {
+            return delegate.parseStream(source, charset);
+        }
+
+        @Override
+        public @NonNull T parseStream(@NonNull InputStream inputStream) throws IOException {
+            return delegate.parseStream(inputStream, charset);
+        }
+
+        @Override
+        public @NonNull <V> FileParser<V> andThen(@NonNull Function<? super T, ? extends V> after) {
+            return new CharsetParser<>(delegate.andThen(after), charset);
         }
     }
 }

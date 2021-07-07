@@ -18,12 +18,14 @@ package internal.util.rest;
 
 import nbbrd.design.StringValue;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.*;
 
 /**
  * @author Philippe Charles
@@ -31,6 +33,7 @@ import static java.util.Collections.emptyMap;
 @StringValue
 @lombok.AllArgsConstructor
 @lombok.EqualsAndHashCode
+@lombok.Getter
 public final class MediaType {
 
     public static @NonNull MediaType parse(@NonNull CharSequence text) throws IllegalArgumentException {
@@ -68,28 +71,32 @@ public final class MediaType {
                     .computeIfAbsent(cleanParameter(keyValuePair[0]), o -> new ArrayList<>())
                     .add(cleanParameter(keyValuePair[1]));
         }
-        return new MediaType(type, subType, parameters);
-    }
-
-    private static String cleanParameter(String input) {
-        return input.toLowerCase(Locale.ROOT).trim();
-    }
-
-    private static boolean isEmptyOrTrimable(String o) {
-        return o.isEmpty() || !o.trim().equals(o);
+        return new MediaType(type, subType, unmodifiableMap(parameters));
     }
 
     @VisibleForTesting
     static final String WILDCARD = "*";
 
+    @VisibleForTesting
+    static final String CHARSET_PARAMETER = "charset";
+
     public static final MediaType ANY_TYPE = new MediaType(WILDCARD, WILDCARD, emptyMap());
 
+    /**
+     * The top-level media type.
+     */
     @lombok.NonNull
     private final String type;
 
+    /**
+     * The media subtype.
+     */
     @lombok.NonNull
     private final String subtype;
 
+    /**
+     * The parameters of this media type.
+     */
     @lombok.NonNull
     private final Map<String, Collection<String>> parameters;
 
@@ -99,9 +106,35 @@ public final class MediaType {
                 && containsAll(this.parameters, other.parameters);
     }
 
-    @NonNull
-    public MediaType withoutParameters() {
+    /**
+     * Returns an optional charset from the parameters if it is available.
+     *
+     * @return a non-null optional charset
+     */
+    public @NonNull Optional<Charset> getCharset() {
+        Collection<String> charsets = parameters.get(CHARSET_PARAMETER);
+        return charsets != null ? findFirstCharset(charsets) : Optional.empty();
+    }
+
+    /**
+     * Returns a copy of this media type without its parameters.
+     *
+     * @return a non-null instance
+     */
+    public @NonNull MediaType withoutParameters() {
         return parameters.isEmpty() ? this : new MediaType(type, subtype, emptyMap());
+    }
+
+    /**
+     * Returns a copy of this media type with a specific charset parameter.
+     *
+     * @param charset a non-null charset
+     * @return a non-null instance
+     */
+    public @NonNull MediaType withCharset(@NonNull Charset charset) {
+        Map<String, Collection<String>> result = new HashMap<>(parameters);
+        result.put(CHARSET_PARAMETER, singletonList(charset.name()));
+        return new MediaType(type, subtype, unmodifiableMap(result));
     }
 
     @Override
@@ -119,5 +152,17 @@ public final class MediaType {
             }
         }
         return true;
+    }
+
+    private static Optional<Charset> findFirstCharset(Collection<String> charsets) {
+        return charsets.stream().map(Parser.onCharset()::parse).filter(Objects::nonNull).findFirst();
+    }
+
+    private static String cleanParameter(String input) {
+        return input.toLowerCase(Locale.ROOT).trim();
+    }
+
+    private static boolean isEmptyOrTrimable(String o) {
+        return o.isEmpty() || !o.trim().equals(o);
     }
 }

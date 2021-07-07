@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add custom resource path in SDMX21 driver
-- Add support of multiple media types in HTTP requests
+- Add custom resource path & media type in SDMX21 driver
+- Add support of multiple media types in HTTP request
+- Add support of media type charset in HTTP response
 - Add `#onSuccess(MediaType)` event in RI REST client
-- Add default user-agent to RI REST client [#117](https://github.com/nbbrd/sdmx-dl/issues/117)
+- Add `sdmx-dl` as default user-agent to RI REST client [#117](https://github.com/nbbrd/sdmx-dl/issues/117)
 - Add source from Bundesbank [#104](https://github.com/nbbrd/sdmx-dl/issues/104)
 - Add source from Economic and Social Commission for Asia and the Pacific [#99](https://github.com/nbbrd/sdmx-dl/issues/99)
 - Add source from National Statistical Institute of Cambodia [#98](https://github.com/nbbrd/sdmx-dl/issues/98)
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
 - Improve CLI version option [#79](https://github.com/nbbrd/sdmx-dl/issues/79)
+- Refactor SdmxWebAuthenticator as an SPI
 
 ### Fixed
 - Fix parsing of blank labels
