@@ -17,7 +17,6 @@
 package sdmxdl.ext;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;

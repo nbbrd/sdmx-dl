@@ -32,6 +32,7 @@ import static internal.sdmxdl.xml.Sdmxml.*;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 public final class SdmxmlDataTypeProbe {
 
     public static Xml.Parser<String> of() {

@@ -31,6 +31,7 @@ import java.util.Map;
  * @author Philippe Charles
  */
 //@NotThreadSafe
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 final class XMLStreamStructure21 {
 
     private static final String HEADER_TAG = "Header";

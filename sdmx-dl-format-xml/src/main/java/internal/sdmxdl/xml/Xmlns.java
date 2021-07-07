@@ -11,8 +11,7 @@ public class Xmlns {
         return new Xmlns(URI.create(uri));
     }
 
-    @lombok.NonNull
-    private final URI uri;
+    @lombok.NonNull URI uri;
 
     public boolean is(@NonNull String found) {
         return is(URI.create(found));

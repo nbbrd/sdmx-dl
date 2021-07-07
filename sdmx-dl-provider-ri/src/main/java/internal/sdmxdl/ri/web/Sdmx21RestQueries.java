@@ -13,10 +13,10 @@ import java.util.Map;
 @lombok.AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Sdmx21RestQueries implements RiRestQueries {
 
-    private boolean trailingSlashRequired;
+    private final boolean trailingSlashRequired;
 
     @lombok.Singular
-    private Map<SdmxResourceType, List<String>> customPaths;
+    private final Map<SdmxResourceType, List<String>> customPaths;
 
     @Override
     public RestQueryBuilder getFlowsQuery(URL endpoint) {

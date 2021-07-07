@@ -31,6 +31,7 @@ import java.util.Map;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 @lombok.experimental.UtilityClass
 public final class XmlWebSource {
 

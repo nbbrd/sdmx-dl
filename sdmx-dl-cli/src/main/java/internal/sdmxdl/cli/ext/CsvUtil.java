@@ -22,12 +22,12 @@ public class CsvUtil {
 
     public <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {
         Csv.Format format = Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build();
-        return list -> formatIterator(list.iterator(), format, itemFormatter);
+        return list -> list != null ? formatIterator(list.iterator(), format, itemFormatter) : null;
     }
 
     public <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
         Csv.Format csvFormat = Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build();
-        return map -> formatMap(map, csvFormat, keyFormatter, valueFormatter);
+        return map -> map != null ? formatMap(map, csvFormat, keyFormatter, valueFormatter) : null;
     }
 
     private <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {

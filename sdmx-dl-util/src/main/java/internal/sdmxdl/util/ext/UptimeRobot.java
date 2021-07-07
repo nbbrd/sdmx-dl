@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.function.ToIntFunction;
 
 @ServiceProvider(SdmxWebMonitoring.class)
 public final class UptimeRobot implements SdmxWebMonitoring {
@@ -108,6 +107,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
     private static final Parser<SdmxWebStatus> STATUS_PARSER =
             Parser.onEnum(Status.class, Status::getCode).andThen(Status::getReport);
 
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private static SdmxWebMonitorReport parseReport(XMLStreamReader reader) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -115,7 +115,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
                     if (reader.getLocalName().equals("monitor")) {
                         return SdmxWebMonitorReport
                                 .builder()
-                                .status(STATUS_PARSER.parse(reader.getAttributeValue(null, "status")))
+                                .status(STATUS_PARSER.parseValue(reader.getAttributeValue(null, "status")).orElseThrow(() -> new XMLStreamException("Cannot parse status")))
                                 .uptimeRatio(Parser.onDouble().parse(reader.getAttributeValue(null, "all_time_uptime_ratio")))
                                 .averageResponseTime(Parser.onDouble().parse(reader.getAttributeValue(null, "average_response_time")))
                                 .build();

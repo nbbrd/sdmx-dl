@@ -124,11 +124,10 @@ public class Connectors {
         return result;
     }
 
-    private <T extends SdmxMetaElement> T fromComponent(T result, Component o) {
+    private void fromComponent(SdmxMetaElement result, Component o) {
         result.setId(o.getId());
         result.setName(o.getLabel());
         result.setCodeList(fromCodes(o.getCodes()));
-        return result;
     }
 
     private Codelist fromCodes(Map<String, String> o) {

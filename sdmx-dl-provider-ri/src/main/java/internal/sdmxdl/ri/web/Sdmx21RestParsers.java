@@ -22,7 +22,7 @@ import static java.util.Collections.singletonList;
 public class Sdmx21RestParsers implements RiRestParsers {
 
     @lombok.Singular
-    private Map<SdmxResourceType, MediaType> customTypes;
+    private final Map<SdmxResourceType, MediaType> customTypes;
 
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {

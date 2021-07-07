@@ -66,7 +66,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
     public interface GenericSupplier {
 
         @NonNull
-        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties) throws URISyntaxException;
+        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
     }
 
     public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {

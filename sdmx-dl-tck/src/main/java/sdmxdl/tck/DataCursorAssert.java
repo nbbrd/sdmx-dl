@@ -91,7 +91,7 @@ public class DataCursorAssert {
         assertObsState(s, supplier, DataCursor::getObsValue, "#getObsValue");
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     private static void assertNonnull(SoftAssertions s, DataCursor c) {
         s.assertThatThrownBy(() -> c.getSeriesAttribute(null)).isInstanceOf(NullPointerException.class);
     }

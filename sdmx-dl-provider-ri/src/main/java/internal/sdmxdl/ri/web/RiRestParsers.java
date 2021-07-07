@@ -35,7 +35,6 @@ public interface RiRestParsers {
         return list -> list
                 .stream()
                 .filter(ref::containsRef)
-                .sorted(Comparator.comparing(ref::equalsRef).thenComparing(resource -> resource.getRef().toString()))
-                .findFirst();
+                .min(Comparator.comparing(ref::equalsRef).thenComparing(resource -> resource.getRef().toString()));
     }
 }

@@ -2,7 +2,6 @@ package internal.util.rest;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
-import nbbrd.design.LombokWorkaround;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

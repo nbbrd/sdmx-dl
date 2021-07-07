@@ -25,7 +25,6 @@ import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -63,8 +62,6 @@ public final class ListCodesCommand implements Callable<Void> {
     }
 
     private Stream<Map.Entry<String, String>> getRows() throws IOException {
-        return sort.applySort(web.loadComponent(web.loadManager()).getCodes().entrySet(), BY_KEY);
+        return sort.applySort(web.loadComponent(web.loadManager()).getCodes().entrySet(), Map.Entry.comparingByKey());
     }
-
-    private static final Comparator<Map.Entry<String, String>> BY_KEY = Comparator.comparing(Map.Entry::getKey);
 }

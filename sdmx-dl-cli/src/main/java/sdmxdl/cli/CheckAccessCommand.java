@@ -66,7 +66,7 @@ public final class CheckAccessCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(Access.class)
                 .columnOf("Source", Access::getSource, Formatter.onString())
-                .columnOf("Accessible", Access::isAccessible, o -> o ? "YES" : "NO")
+                .columnOf("Accessible", Access::isAccessible, o -> Boolean.TRUE.equals(o) ? "YES" : "NO")
                 .columnOf("DurationInMillis", Access::getDuration, CheckAccessCommand::formatDuration)
                 .columnOf("ErrorMessage", Access::getCause, Formatter.onString())
                 .build();

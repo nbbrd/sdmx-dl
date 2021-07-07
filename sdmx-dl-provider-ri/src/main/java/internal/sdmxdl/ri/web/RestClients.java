@@ -147,7 +147,7 @@ public class RestClients {
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
-            if (!isSameAuthScope(url)) {
+            if (isDifferentAuthScope(url)) {
                 return null;
             }
             return authenticators.stream()
@@ -159,15 +159,15 @@ public class RestClients {
 
         @Override
         public void invalidate(@NonNull URL url) {
-            if (!isSameAuthScope(url)) {
+            if (isDifferentAuthScope(url)) {
                 return;
             }
             authenticators.forEach(this::invalidate);
         }
 
-        private boolean isSameAuthScope(URL url) {
-            return url.getHost().equals(source.getEndpoint().getHost())
-                    && url.getPort() == source.getEndpoint().getPort();
+        private boolean isDifferentAuthScope(URL url) {
+            return !url.getHost().equals(source.getEndpoint().getHost())
+                    || url.getPort() != source.getEndpoint().getPort();
         }
 
         private PasswordAuthentication getPasswordAuthentication(SdmxWebAuthenticator authenticator) {

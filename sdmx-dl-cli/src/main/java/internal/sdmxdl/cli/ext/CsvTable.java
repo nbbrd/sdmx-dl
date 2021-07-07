@@ -37,7 +37,7 @@ public class CsvTable<T> {
     }
 
     public void write(CsvOutputOptions csv, Iterator<T> rows) throws IOException {
-        CsvUtil.write(csv, w -> writeNames(w), w -> {
+        CsvUtil.write(csv, this::writeNames, w -> {
             while (rows.hasNext()) {
                 writeValues(w, rows.next());
             }

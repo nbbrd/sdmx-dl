@@ -170,14 +170,13 @@ final class DefaultClient implements Client {
     }
 
     private Response recoverClientError(Connection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        switch (connection.getStatusCode()) {
-            case HttpURLConnection.HTTP_UNAUTHORIZED:
-                AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
-                if (!requestScheme.equals(responseScheme)) {
-                    context.getListener().onUnauthorized(connection.getQuery(), requestScheme.authScheme, responseScheme.authScheme);
-                    return open(connection.getQuery(), mediaTypes, langs, redirects + 1, responseScheme);
-                }
-                context.getAuthenticator().invalidate(connection.getQuery());
+        if (connection.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
+            if (!requestScheme.equals(responseScheme)) {
+                context.getListener().onUnauthorized(connection.getQuery(), requestScheme.authScheme, responseScheme.authScheme);
+                return open(connection.getQuery(), mediaTypes, langs, redirects + 1, responseScheme);
+            }
+            context.getAuthenticator().invalidate(connection.getQuery());
         }
 
         throw getError(connection);

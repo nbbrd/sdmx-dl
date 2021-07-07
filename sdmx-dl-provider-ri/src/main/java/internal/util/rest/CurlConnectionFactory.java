@@ -216,7 +216,7 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
         }
 
         public String[] build() {
-            return items.toArray(new String[items.size()]);
+            return items.toArray(new String[0]);
         }
     }
 }

@@ -2,10 +2,12 @@ package internal.util.credentials;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
+import nbbrd.io.Resource;
 import nbbrd.picocsv.Csv;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public final class WinPasswordVault implements Closeable {
 
@@ -86,7 +88,8 @@ public final class WinPasswordVault implements Closeable {
     }
 
     private static String[] loadCode() throws IOException {
-        try (InputStream stream = WinPasswordVault.class.getResourceAsStream("WinPasswordVault.ps1")) {
+        Optional<InputStream> script = Resource.getResourceAsStream(WinPasswordVault.class, "WinPasswordVault.ps1");
+        try (InputStream stream = script.orElseThrow(() -> new IOException("Cannot find WinPasswordVault script"))) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                 return reader.lines().toArray(String[]::new);
             }

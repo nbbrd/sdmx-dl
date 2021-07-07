@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 This is the second beta release of **sdmx-dl**.   
 sdmx-dl follows [semantic versioning](http://semver.org/).
 
-_Note that sdmx-dl is still in heavy development and might change alot between versions so you shouldn't use it in production._
+_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
 
 This release adds new sources, the support of attributes and modify the CLI commands.  
 These command modifications are quite extended and concern [command names, overall structure and output](https://github.com/nbbrd/sdmx-dl/wiki/cli-usage).
@@ -60,7 +60,7 @@ These command modifications are quite extended and concern [command names, overa
 This is the first beta release of **sdmx-dl**.   
 sdmx-dl follows [semantic versioning](http://semver.org/).
 
-_Note that sdmx-dl is still in heavy development and might change alot between versions so you shouldn't use it in production._
+_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
 
 ### Added
 - Initial release

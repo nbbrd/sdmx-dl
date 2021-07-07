@@ -1,7 +1,6 @@
 package sdmxdl.cli;
 
 import nbbrd.console.picocli.GenerateLauncher;
-import picocli.AutoComplete.GenerateCompletion;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;

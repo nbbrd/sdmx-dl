@@ -32,6 +32,7 @@ import static sdmxdl.util.parser.FreqFactory.TIME_FORMAT_CONCEPT;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 final class DataStructureDecoder {
 
     public static Xml.Parser<DataStructure> generic20() {
