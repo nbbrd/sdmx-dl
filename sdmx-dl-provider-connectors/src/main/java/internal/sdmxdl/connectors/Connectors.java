@@ -21,8 +21,8 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
+import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
-import sdmxdl.util.BooleanProperty;
 
 import java.util.Collections;
 import java.util.Map;
@@ -159,11 +159,11 @@ public class Connectors {
     }
 
     public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
-            new BooleanProperty("supportsCompression", false);
+            BooleanProperty.of("supportsCompression", false);
 
     public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
-            new BooleanProperty("needsCredentials", false);
+            BooleanProperty.of("needsCredentials", false);
 
     public static final BooleanProperty NEEDS_URL_ENCODING_PROPERTY =
-            new BooleanProperty("needsURLEncoding", false);
+            BooleanProperty.of("needsURLEncoding", false);
 }

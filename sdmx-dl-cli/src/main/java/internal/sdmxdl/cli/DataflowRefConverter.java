@@ -26,7 +26,7 @@ import sdmxdl.csv.SdmxCsvFields;
  */
 public final class DataflowRefConverter implements CommandLine.ITypeConverter<DataflowRef> {
 
-    private final Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(DataflowRef::parse);
+    private final Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(DataflowRef::parse));
 
     @Override
     public DataflowRef convert(String string) {

@@ -18,11 +18,12 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.*;
 import internal.util.rest.MediaType;
+import nbbrd.io.text.BaseProperty;
+import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
+import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.util.BaseProperty;
-import sdmxdl.util.Property;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -32,6 +33,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
@@ -231,35 +233,35 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return DETAIL_SUPPORTED_PROPERTY.get(properties);
     }
 
-    private static final Parser<MediaType> TYPE_PARSER = input -> {
-        try {
-            return MediaType.parse(input);
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
-    };
+    private static final Parser<MediaType> TYPE_PARSER = Parser.of(MediaType::parse);
+
+    private static final Formatter<MediaType> TYPE_FORMATTER = Formatter.of(MediaType::toString);
 
     private static final Parser<List<String>> PATH_PARSER = Parser.onStringList(
             input -> Stream.of(input.toString().split("/", -1))
     );
 
+    private static final Formatter<List<String>> PATH_FORMATTER = Formatter.onStringList(
+            input -> input.collect(Collectors.joining("/"))
+    );
+
     private static final Property<List<String>> DATA_PATH_PROPERTY =
-            new Property<>("dataPath", null, PATH_PARSER);
+            Property.of("dataPath", null, PATH_PARSER, PATH_FORMATTER);
 
     private static final Property<List<String>> DATAFLOW_PATH_PROPERTY =
-            new Property<>("dataflowPath", null, PATH_PARSER);
+            Property.of("dataflowPath", null, PATH_PARSER, PATH_FORMATTER);
 
     private static final Property<List<String>> DATASTRUCTURE_PATH_PROPERTY =
-            new Property<>("datastructurePath", null, PATH_PARSER);
+            Property.of("datastructurePath", null, PATH_PARSER, PATH_FORMATTER);
 
     private static final Property<MediaType> DATA_TYPE_PROPERTY =
-            new Property<>("dataType", null, TYPE_PARSER);
+            Property.of("dataType", null, TYPE_PARSER, TYPE_FORMATTER);
 
     private static final Property<MediaType> DATAFLOW_TYPE_PROPERTY =
-            new Property<>("dataflowType", null, TYPE_PARSER);
+            Property.of("dataflowType", null, TYPE_PARSER, TYPE_FORMATTER);
 
     private static final Property<MediaType> DATASTRUCTURE_TYPE_PROPERTY =
-            new Property<>("datastructureType", null, TYPE_PARSER);
+            Property.of("datastructureType", null, TYPE_PARSER, TYPE_FORMATTER);
 
     private static final List<String> PARSERS_PROPERTIES = BaseProperty.keysOf(
             DATA_TYPE_PROPERTY,

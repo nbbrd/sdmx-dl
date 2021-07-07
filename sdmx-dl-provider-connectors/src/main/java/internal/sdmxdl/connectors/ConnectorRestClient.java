@@ -25,10 +25,10 @@ import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
+import nbbrd.io.text.BaseProperty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.util.BaseProperty;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
@@ -66,7 +66,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
     public interface GenericSupplier {
 
         @NonNull
-        RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
+        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties) throws URISyntaxException;
     }
 
     public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {

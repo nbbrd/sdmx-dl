@@ -1,7 +1,9 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
+import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.SdmxConnection;
@@ -9,7 +11,6 @@ import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.util.Property;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebListener;
@@ -93,7 +94,7 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     private static final Property<URL> STRUCTURE_PROPERTY =
-            new Property<>("structureURL", null, Parser.onURL());
+            Property.of("structureURL", null, Parser.onURL(), Formatter.onURL());
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor

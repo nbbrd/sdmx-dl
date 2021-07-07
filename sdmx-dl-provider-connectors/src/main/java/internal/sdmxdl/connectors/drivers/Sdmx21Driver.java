@@ -195,7 +195,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
 
         private final boolean detailSupported;
 
-        private Sdmx21Client(URI endpoint, Map<?, ?> p) {
+        private Sdmx21Client(URI endpoint, Map<String, String> p) {
             super("", endpoint,
                     NEEDS_CREDENTIALS_PROPERTY.get(p),
                     NEEDS_URL_ENCODING_PROPERTY.get(p),

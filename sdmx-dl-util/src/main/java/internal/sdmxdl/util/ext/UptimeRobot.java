@@ -105,21 +105,8 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         SdmxWebStatus report;
     }
 
-    @MightBePromoted
-    private static <T extends Enum<T>> Parser<T> onEnum(Class<T> type, ToIntFunction<T> function) {
-        final T[] values = type.getEnumConstants();
-        return Parser.onInteger().andThen(code -> {
-            for (T value : values) {
-                if (function.applyAsInt(value) == code) {
-                    return value;
-                }
-            }
-            return null;
-        });
-    }
-
     private static final Parser<SdmxWebStatus> STATUS_PARSER =
-            onEnum(Status.class, Status::getCode).andThen(Status::getReport);
+            Parser.onEnum(Status.class, Status::getCode).andThen(Status::getReport);
 
     private static SdmxWebMonitorReport parseReport(XMLStreamReader reader) throws XMLStreamException {
         while (reader.hasNext()) {

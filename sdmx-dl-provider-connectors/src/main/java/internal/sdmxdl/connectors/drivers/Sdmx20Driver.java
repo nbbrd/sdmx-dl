@@ -47,7 +47,7 @@ public final class Sdmx20Driver implements SdmxWebDriver {
 
     private static final class Sdmx20Client extends RestSdmx20Client {
 
-        private Sdmx20Client(URI endpoint, Map<?, ?> info) {
+        private Sdmx20Client(URI endpoint, Map<String, String> info) {
             super("", endpoint, NEEDS_CREDENTIALS_PROPERTY.get(info), null, "compact_v2");
         }
     }
