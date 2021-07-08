@@ -119,6 +119,11 @@ public class Sdmx21RestParsersTest {
                     .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
 
             assertThat(builder().build())
+                    .extracting(x -> extractor.apply(x, mediaType.withoutParameters()))
+                    .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
+                    .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+
+            assertThat(builder().build())
                     .extracting(x -> extractor.apply(x, mediaType.withCharset(StandardCharsets.US_ASCII)))
                     .isInstanceOf(Sdmx21RestParsers.CharsetParser.class);
 

@@ -106,6 +106,11 @@ public final class MediaType {
                 && containsAll(this.parameters, other.parameters);
     }
 
+    public boolean isCompatibleWithoutParameters(@NonNull MediaType other) {
+        return (other.type.equals(WILDCARD) || other.type.equals(this.type))
+                && (other.subtype.equals(WILDCARD) || other.subtype.equals(this.subtype));
+    }
+
     /**
      * Returns an optional charset from the parameters if it is available.
      *

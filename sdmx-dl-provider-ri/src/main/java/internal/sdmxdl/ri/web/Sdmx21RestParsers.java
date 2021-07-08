@@ -45,7 +45,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .applyOn(customTypes)
                 .orElse(mediaType);
 
-        if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
+        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
             return withCharset(SdmxXmlStreams.flow21(langs), target.getCharset());
         }
 
@@ -66,7 +66,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .applyOn(customTypes)
                 .orElse(mediaType);
 
-        if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
+        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
             return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), target.getCharset());
         }
 
@@ -87,7 +87,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .applyOn(customTypes)
                 .orElse(mediaType);
 
-        if (target.isCompatible(STRUCT21) || target.isCompatible(GENERIC_XML)) {
+        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
             return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), target.getCharset());
         }
 
@@ -108,10 +108,10 @@ public class Sdmx21RestParsers implements RiRestParsers {
                 .applyOn(customTypes)
                 .orElse(mediaType);
 
-        if (target.isCompatible(GENERIC21)) {
+        if (target.isCompatibleWithoutParameters(GENERIC21)) {
             return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), target.getCharset());
         }
-        if (target.isCompatible(COMPACT21)) {
+        if (target.isCompatibleWithoutParameters(COMPACT21)) {
             return withCharset(SdmxXmlStreams.compactData21(dsd, dataFactory), target.getCharset());
         }
         if (target.isCompatible(GENERIC_XML)) {
