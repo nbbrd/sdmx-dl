@@ -16,7 +16,10 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.*;
+import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
+import internal.sdmxdl.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.ri.web.Sdmx21RestQueries;
 import internal.util.rest.HttpRest;
 import internal.util.rest.RestQueryBuilder;
 import nbbrd.design.VisibleForTesting;
@@ -39,7 +42,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Objects;
 
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
@@ -80,10 +83,10 @@ public final class BbkDriver implements SdmxWebDriver {
 
     @VisibleForTesting
     static final class BbkClient extends RiRestClient {
-        
+
         private static final BbkObsFactory OBS_FACTORY = new BbkObsFactory();
         private static final BbkQueries QUERIES = new BbkQueries();
-        private static final Sdmx21RestParsers PARSERS = Sdmx21RestParsers.builder().build();
+        private static final Sdmx21RestParsers PARSERS = new Sdmx21RestParsers();
 
         public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
             super(name, endpoint, langs, OBS_FACTORY, executor, QUERIES, PARSERS, true);
@@ -107,15 +110,7 @@ public final class BbkDriver implements SdmxWebDriver {
     static final class BbkQueries extends Sdmx21RestQueries {
 
         public BbkQueries() {
-            super(false, getCustomResources());
-        }
-
-        @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
-        private static Map<SdmxResourceType, List<String>> getCustomResources() {
-            HashMap<SdmxResourceType, List<String>> result = new HashMap<>();
-            result.put(SdmxResourceType.DATAFLOW, Arrays.asList("metadata", "dataflow"));
-            result.put(SdmxResourceType.DATASTRUCTURE, Arrays.asList("metadata", "datastructure"));
-            return result;
+            super(false);
         }
 
         @SdmxFix(id = 2, category = QUERY, cause = "Resource ref does not support 'all' in agencyID")
@@ -126,11 +121,13 @@ public final class BbkDriver implements SdmxWebDriver {
             return !ref.getId().equals("all");
         }
 
+        @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
         @Override
-        protected RestQueryBuilder onMeta(URL endpoint, SdmxResourceType resource, ResourceRef<?> ref) {
+        protected RestQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
             RestQueryBuilder result = RestQueryBuilder
                     .of(endpoint)
-                    .path(getPath(resource))
+                    .path("metadata")
+                    .path(resourcePath)
                     .path(AGENCY_ID);
             if (isValid(ref)) {
                 result.path(ref.getId());
@@ -140,10 +137,10 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected RestQueryBuilder onData(URL endpoint, SdmxResourceType resource, DataflowRef flowRef, Key key, String providerRef) {
+        protected RestQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
             return RestQueryBuilder
                     .of(endpoint)
-                    .path(getPath(resource))
+                    .path(resourcePath)
                     .path(flowRef.getId())
                     .path(key.toString());
         }

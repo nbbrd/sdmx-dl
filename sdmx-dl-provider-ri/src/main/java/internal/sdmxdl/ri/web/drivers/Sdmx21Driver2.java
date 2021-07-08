@@ -16,12 +16,11 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.*;
-import internal.util.rest.MediaType;
+import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
+import internal.sdmxdl.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.ri.web.Sdmx21RestQueries;
 import nbbrd.io.text.BaseProperty;
-import nbbrd.io.text.Formatter;
-import nbbrd.io.text.Parser;
-import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.web.SdmxWebClient;
@@ -33,8 +32,6 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
@@ -213,66 +210,22 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
         return Sdmx21RestQueries
                 .builder()
                 .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(properties))
-                .customPath(SdmxResourceType.DATA, DATA_PATH_PROPERTY.get(properties))
-                .customPath(SdmxResourceType.DATAFLOW, DATAFLOW_PATH_PROPERTY.get(properties))
-                .customPath(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_PATH_PROPERTY.get(properties))
                 .build();
     }
 
     @SuppressWarnings("unused")
     private static Sdmx21RestParsers getParsers(Map<String, String> properties) {
-        return Sdmx21RestParsers
-                .builder()
-                .customType(SdmxResourceType.DATA, DATA_TYPE_PROPERTY.get(properties))
-                .customType(SdmxResourceType.DATAFLOW, DATAFLOW_TYPE_PROPERTY.get(properties))
-                .customType(SdmxResourceType.DATASTRUCTURE, DATASTRUCTURE_TYPE_PROPERTY.get(properties))
-                .build();
+        return new Sdmx21RestParsers();
     }
 
     private static boolean isDetailSupportedProperty(Map<String, String> properties) {
         return DETAIL_SUPPORTED_PROPERTY.get(properties);
     }
 
-    private static final Parser<MediaType> TYPE_PARSER = Parser.of(MediaType::parse);
-
-    private static final Formatter<MediaType> TYPE_FORMATTER = Formatter.of(MediaType::toString);
-
-    private static final Parser<List<String>> PATH_PARSER = Parser.onStringList(
-            input -> Stream.of(input.toString().split("/", -1))
-    );
-
-    private static final Formatter<List<String>> PATH_FORMATTER = Formatter.onStringList(
-            input -> input.collect(Collectors.joining("/"))
-    );
-
-    private static final Property<List<String>> DATA_PATH_PROPERTY =
-            Property.of("dataPath", null, PATH_PARSER, PATH_FORMATTER);
-
-    private static final Property<List<String>> DATAFLOW_PATH_PROPERTY =
-            Property.of("dataflowPath", null, PATH_PARSER, PATH_FORMATTER);
-
-    private static final Property<List<String>> DATASTRUCTURE_PATH_PROPERTY =
-            Property.of("datastructurePath", null, PATH_PARSER, PATH_FORMATTER);
-
-    private static final Property<MediaType> DATA_TYPE_PROPERTY =
-            Property.of("dataType", null, TYPE_PARSER, TYPE_FORMATTER);
-
-    private static final Property<MediaType> DATAFLOW_TYPE_PROPERTY =
-            Property.of("dataflowType", null, TYPE_PARSER, TYPE_FORMATTER);
-
-    private static final Property<MediaType> DATASTRUCTURE_TYPE_PROPERTY =
-            Property.of("datastructureType", null, TYPE_PARSER, TYPE_FORMATTER);
-
     private static final List<String> PARSERS_PROPERTIES = BaseProperty.keysOf(
-            DATA_TYPE_PROPERTY,
-            DATAFLOW_TYPE_PROPERTY,
-            DATASTRUCTURE_TYPE_PROPERTY
     );
 
     private static final List<String> QUERIES_PROPERTIES = BaseProperty.keysOf(
-            TRAILING_SLASH_REQUIRED_PROPERTY,
-            DATA_PATH_PROPERTY,
-            DATAFLOW_PATH_PROPERTY,
-            DATASTRUCTURE_PATH_PROPERTY
+            TRAILING_SLASH_REQUIRED_PROPERTY
     );
 }

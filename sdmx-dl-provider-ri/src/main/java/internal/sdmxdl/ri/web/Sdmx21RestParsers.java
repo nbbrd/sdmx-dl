@@ -1,7 +1,6 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.MediaType;
-import lombok.AccessLevel;
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -18,107 +17,80 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static internal.sdmxdl.ri.web.RiRestParsers.getResourceSelector;
 import static java.util.Collections.singletonList;
 
-@lombok.Builder
-@lombok.AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Sdmx21RestParsers implements RiRestParsers {
-
-    @lombok.Singular
-    private final Map<SdmxResourceType, MediaType> customTypes;
 
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {
-        return SdmxResourceType.DATAFLOW
-                .applyOn(customTypes)
-                .map(Collections::singletonList)
-                .orElse(DEFAULT_DATAFLOW_TYPES);
+        return DEFAULT_DATAFLOW_TYPES;
     }
 
     @Override
     public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs) {
-        MediaType target = SdmxResourceType.DATAFLOW
-                .applyOn(customTypes)
-                .orElse(mediaType);
 
-        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return withCharset(SdmxXmlStreams.flow21(langs), target.getCharset());
+        if (mediaType.isCompatibleWithoutParameters(STRUCT21) || mediaType.isCompatible(GENERIC_XML)) {
+            return withCharset(SdmxXmlStreams.flow21(langs), mediaType.getCharset());
         }
 
-        return new UnsupportedParser<>(target);
+        return new UnsupportedParser<>(mediaType);
     }
 
     @Override
     public @NonNull List<MediaType> getFlowTypes() {
-        return SdmxResourceType.DATAFLOW
-                .applyOn(customTypes)
-                .map(Collections::singletonList)
-                .orElse(DEFAULT_DATAFLOW_TYPES);
+        return DEFAULT_DATAFLOW_TYPES;
     }
 
     @Override
     public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataflowRef ref) {
-        MediaType target = SdmxResourceType.DATAFLOW
-                .applyOn(customTypes)
-                .orElse(mediaType);
 
-        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), target.getCharset());
+        if (mediaType.isCompatibleWithoutParameters(STRUCT21) || mediaType.isCompatible(GENERIC_XML)) {
+            return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
-        return new UnsupportedParser<>(target);
+        return new UnsupportedParser<>(mediaType);
     }
 
     @Override
     public @NonNull List<MediaType> getStructureTypes() {
-        return SdmxResourceType.DATASTRUCTURE
-                .applyOn(customTypes)
-                .map(Collections::singletonList)
-                .orElse(DEFAULT_DATASTRUCTURE_TYPES);
+        return DEFAULT_DATASTRUCTURE_TYPES;
     }
 
     @Override
     public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataStructureRef ref) {
-        MediaType target = SdmxResourceType.DATASTRUCTURE
-                .applyOn(customTypes)
-                .orElse(mediaType);
 
-        if (target.isCompatibleWithoutParameters(STRUCT21) || target.isCompatible(GENERIC_XML)) {
-            return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), target.getCharset());
+        if (mediaType.isCompatibleWithoutParameters(STRUCT21) || mediaType.isCompatible(GENERIC_XML)) {
+            return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
-        return new UnsupportedParser<>(target);
+        return new UnsupportedParser<>(mediaType);
     }
 
     @Override
     public @NonNull List<MediaType> getDataTypes() {
-        return SdmxResourceType.DATA
-                .applyOn(customTypes)
-                .map(Collections::singletonList)
-                .orElse(DEFAULT_DATA_TYPES);
+        return DEFAULT_DATA_TYPES;
     }
 
     @Override
     public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory) {
-        MediaType target = SdmxResourceType.DATA
-                .applyOn(customTypes)
-                .orElse(mediaType);
 
-        if (target.isCompatibleWithoutParameters(GENERIC21)) {
-            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), target.getCharset());
+        if (mediaType.isCompatibleWithoutParameters(GENERIC21)) {
+            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());
         }
-        if (target.isCompatibleWithoutParameters(COMPACT21)) {
-            return withCharset(SdmxXmlStreams.compactData21(dsd, dataFactory), target.getCharset());
+        if (mediaType.isCompatibleWithoutParameters(COMPACT21)) {
+            return withCharset(SdmxXmlStreams.compactData21(dsd, dataFactory), mediaType.getCharset());
         }
-        if (target.isCompatible(GENERIC_XML)) {
-            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), target.getCharset());
+        if (mediaType.isCompatible(GENERIC_XML)) {
+            return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());
         }
 
-        return new UnsupportedParser<>(target);
+        return new UnsupportedParser<>(mediaType);
     }
 
     private static final MediaType GENERIC_XML = MediaType.parse(SdmxMediaType.GENERIC_XML);
