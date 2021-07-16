@@ -1,6 +1,7 @@
 package internal.util.rest;
 
 import nbbrd.design.BuilderPattern;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.EndOfProcessException;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -11,6 +12,7 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -23,6 +25,7 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
 
     private static final int COULD_NOT_RESOLVE_HOST = 6;
     private static final int OPERATION_TIMEOUT = 28;
+    private static final int FAILURE_RECEIVING = 56;
 
     private final boolean insecure;
 
@@ -34,6 +37,7 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
 
         String[] command = newCurlCommand()
                 .url(query)
+                .proxy(proxy)
                 .output(body)
                 .silent()
                 .dumpHeader("-")
@@ -50,6 +54,12 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
                     throw new UnknownHostException(query.getHost());
                 case OPERATION_TIMEOUT:
                     throw new IOException("Read timed out");
+                case FAILURE_RECEIVING:
+                    String msg = "Failure in receiving network data.";
+                    if (!proxy.equals(Proxy.NO_PROXY)) {
+                        msg = "Unable to tunnel through proxy. " + msg;
+                    }
+                    throw new IOException(msg);
                 default:
                     throw ex;
             }
@@ -162,8 +172,9 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
         }
     }
 
+    @VisibleForTesting
     @BuilderPattern(String[].class)
-    private static final class CurlCommandBuilder {
+    static final class CurlCommandBuilder {
 
         private final List<String> items;
 
@@ -179,6 +190,14 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
 
         public CurlCommandBuilder url(URL url) {
             return push(url.toString());
+        }
+
+        public CurlCommandBuilder proxy(Proxy proxy) {
+            if (!proxy.equals(Proxy.NO_PROXY)) {
+                InetSocketAddress address = (InetSocketAddress) proxy.address();
+                push("-x").push(address.getHostString() + ":" + address.getPort());
+            }
+            return this;
         }
 
         public CurlCommandBuilder output(Path file) {
