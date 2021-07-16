@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add source from SDMX Global Registry [#97](https://github.com/nbbrd/sdmx-dl/issues/97)
 - Add source from Pacific Data Hub [#96](https://github.com/nbbrd/sdmx-dl/issues/96)
 - Add source from UK Data Service [#93](https://github.com/nbbrd/sdmx-dl/issues/93)
+- Add distribution to Scoop (Windows) [#83](https://github.com/nbbrd/sdmx-dl/issues/83)
+- Add distribution to Homebrew (macOS & Linux) [#84](https://github.com/nbbrd/sdmx-dl/issues/84)
 
 ### Changed
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
