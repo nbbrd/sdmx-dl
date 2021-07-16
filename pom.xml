@@ -11,6 +11,7 @@
     <name>sdmx-dl</name>
     <description>Download data from remote SDMX servers</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
+    <inceptionYear>2020</inceptionYear>
 
     <licenses>
         <license>
