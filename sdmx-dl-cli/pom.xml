@@ -254,7 +254,7 @@
         <profile>
             <id>native</id>
             <properties>
-                <graalvm.version>21.1.0</graalvm.version>
+                <graalvm.version>21.2.0</graalvm.version>
             </properties>
             <dependencies>
                 <dependency>
