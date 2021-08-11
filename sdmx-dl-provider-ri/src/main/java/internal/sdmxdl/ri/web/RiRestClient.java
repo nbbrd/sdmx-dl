@@ -21,13 +21,14 @@ import nbbrd.io.Resource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,7 +130,12 @@ public class RiRestClient implements SdmxWebClient {
             return parsers
                     .getFlowParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> SdmxExceptions.missingFlow(name, ref));
+                    .orElseThrow(() -> SdmxException.missingFlow(name, ref));
+        } catch (HttpRest.ResponseError error) {
+            if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+                throw SdmxException.missingFlow(getName(), ref);
+            }
+            throw error;
         }
     }
 
@@ -144,7 +150,12 @@ public class RiRestClient implements SdmxWebClient {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> SdmxExceptions.missingStructure(name, ref));
+                    .orElseThrow(() -> SdmxException.missingStructure(name, ref));
+        } catch (HttpRest.ResponseError error) {
+            if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+                throw SdmxException.missingStructure(getName(), ref);
+            }
+            throw error;
         }
     }
 

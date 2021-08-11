@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enforce https on ABS source [#108](https://github.com/nbbrd/sdmx-dl/issues/108)
 - Improve CLI version option [#79](https://github.com/nbbrd/sdmx-dl/issues/79)
 - Refactor SdmxWebAuthenticator as an SPI
+- Improve feedback on missing data flow [#123](https://github.com/nbbrd/sdmx-dl/issues/123)
 
 ### Fixed
 - Fix parsing of blank labels

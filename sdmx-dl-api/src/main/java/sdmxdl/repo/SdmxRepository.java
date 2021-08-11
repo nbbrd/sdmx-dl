@@ -18,7 +18,7 @@ package sdmxdl.repo;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.ext.SdmxException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -110,7 +110,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getFlow(flowRef)
-                    .orElseThrow(() -> SdmxExceptions.missingFlow(repo.getName(), flowRef));
+                    .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), flowRef));
         }
 
         @Override
@@ -119,7 +119,7 @@ public class SdmxRepository {
             DataStructureRef structRef = getFlow(flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
-                    .orElseThrow(() -> SdmxExceptions.missingStructure(repo.getName(), structRef));
+                    .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), structRef));
         }
 
         @Override
@@ -128,7 +128,7 @@ public class SdmxRepository {
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(key, filter))
-                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
         }
 
         @Override
@@ -137,7 +137,7 @@ public class SdmxRepository {
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(key, filter))
-                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
         }
 
         @Override
@@ -146,7 +146,7 @@ public class SdmxRepository {
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataCursor(key, filter))
-                    .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), flowRef));
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
         }
 
         @Override
@@ -161,7 +161,7 @@ public class SdmxRepository {
 
         private void checkState() throws IOException {
             if (closed) {
-                throw SdmxExceptions.connectionClosed(repo.getName());
+                throw SdmxException.connectionClosed(repo.getName());
             }
         }
     }

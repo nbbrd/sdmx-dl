@@ -18,7 +18,7 @@ package sdmxdl.util.web;
 
 import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
@@ -123,14 +123,14 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw SdmxExceptions.connectionClosed(client.getName());
+            throw SdmxException.connectionClosed(client.getName());
         }
     }
 
     private void checkKey(Key key, DataStructure structure) throws IOException {
         String msg = key.validateOn(structure);
         if (msg != null) {
-            throw SdmxExceptions.invalidKey(client.getName(), key, msg);
+            throw SdmxException.invalidKey(client.getName(), key, msg);
         }
     }
 }

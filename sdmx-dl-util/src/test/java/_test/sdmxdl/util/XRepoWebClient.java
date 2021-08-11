@@ -17,7 +17,7 @@
 package _test.sdmxdl.util;
 
 import sdmxdl.*;
-import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
@@ -49,13 +49,13 @@ public final class XRepoWebClient implements SdmxWebClient {
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
         return repo.getFlow(ref)
-                .orElseThrow(() -> SdmxExceptions.missingFlow(repo.getName(), ref));
+                .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
         return repo.getStructure(ref)
-                .orElseThrow(() -> SdmxExceptions.missingStructure(repo.getName(), ref));
+                .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), ref));
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class XRepoWebClient implements SdmxWebClient {
         Objects.requireNonNull(dsd);
         return repo.getDataSet(request.getFlowRef())
                 .map(dataSet -> dataSet.getDataCursor(request.getKey(), request.getFilter()))
-                .orElseThrow(() -> SdmxExceptions.missingData(repo.getName(), request.getFlowRef()));
+                .orElseThrow(() -> SdmxException.missingData(repo.getName(), request.getFlowRef(), request.getKey(), request.getFilter()));
     }
 
     @Override

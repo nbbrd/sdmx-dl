@@ -18,7 +18,7 @@ package sdmxdl.util.file;
 
 import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxExceptions;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.file.SdmxFileConnection;
 
 import java.io.IOException;
@@ -142,23 +142,27 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         closed = true;
     }
 
+    private String getName() {
+        return "fixme";
+    }
+
     private void checkState() throws IOException {
         if (closed) {
-            throw SdmxExceptions.connectionClosed("fixme");
+            throw SdmxException.connectionClosed(getName());
         }
     }
 
     private void checkKey(Key key, SdmxFileInfo info) throws IOException {
         String msg = key.validateOn(info.getStructure());
         if (msg != null) {
-            throw SdmxExceptions.invalidKey("fixme", key, msg);
+            throw SdmxException.invalidKey(getName(), key, msg);
         }
     }
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {
         Objects.requireNonNull(flowRef);
         if (!this.dataflow.getRef().contains(flowRef)) {
-            throw new IOException("Invalid flowref '" + flowRef + "'");
+            throw SdmxException.missingFlow(getName(), flowRef);
         }
     }
 }
