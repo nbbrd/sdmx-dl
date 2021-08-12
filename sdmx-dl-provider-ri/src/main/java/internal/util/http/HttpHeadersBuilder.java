@@ -1,4 +1,4 @@
-package internal.util.rest;
+package internal.util.http;
 
 import nbbrd.design.BuilderPattern;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @BuilderPattern(Map.class)
-final class HttpHeadersBuilder {
+public final class HttpHeadersBuilder {
 
     private final List<Map.Entry<String, String>> data = new ArrayList<>();
     private BiPredicate<String, String> filter = HttpHeadersBuilder::valueNotNullNorEmpty;
@@ -67,9 +67,9 @@ final class HttpHeadersBuilder {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
-    public static @NonNull Optional<String> firstValue(@NonNull Map<String, List<String>> headers, @NonNull String name) {
+    public static @Nullable String lastValueOrNull(@NonNull Map<String, List<String>> headers, @NonNull String name) {
         List<String> header = headers.get(name);
-        return header != null && !header.isEmpty() ? Optional.of(header.get(0)) : Optional.empty();
+        return header != null && !header.isEmpty() ? header.get(header.size() - 1) : null;
     }
 
     public static @NonNull Stream<Map.Entry<String, String>> keyValues(@NonNull Map<String, List<String>> headers) {

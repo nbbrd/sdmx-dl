@@ -16,8 +16,7 @@
  */
 package internal.util.rest;
 
-import nbbrd.design.VisibleForTesting;
-import nbbrd.io.Resource;
+import internal.util.http.HttpURLConnectionFactoryLoader;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -25,17 +24,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -47,14 +46,21 @@ public class HttpRest {
 
     public interface Client {
 
-        @NonNull
-        Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException;
+        @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException;
     }
 
     public static @NonNull Client newClient(@NonNull Context context) {
-        Client result = new DefaultClient(context, getBackend());
+        Client result = new DefaultClient(context, HttpURLConnectionFactoryLoader.get());
         File dumpFile = getDumpFile();
         return dumpFile != null ? new DumpingClient(dumpFile.toPath(), result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
+    }
+
+    // TODO: document these options?
+    private static final String SDMXDL_RI_WEB_DUMP_FOLDER = "sdmxdl.ri.web.dump.folder";
+
+    private File getDumpFile() {
+        String result = System.getProperty(SDMXDL_RI_WEB_DUMP_FOLDER);
+        return result != null ? new File(result) : null;
     }
 
     @lombok.Value
@@ -272,92 +278,6 @@ public class HttpRest {
         @Override
         public @NonNull String getName() {
             return name().toLowerCase();
-        }
-    }
-
-    // TODO: document these options?
-    private static final String SDMXDL_RI_WEB_BACKEND = "sdmxdl.ri.web.backend";
-    private static final String SDMXDL_RI_WEB_DUMP_FOLDER = "sdmxdl.ri.web.dump.folder";
-
-    private static final IwrConnectionFactory IWR_CONNECTION_FACTORY = new IwrConnectionFactory();
-    private static final CurlConnectionFactory CURL_CONNECTION_FACTORY = new CurlConnectionFactory(false);
-    private static final Jdk8ConnectionFactory JDK_8_CONNECTION_FACTORY = new Jdk8ConnectionFactory();
-
-    private static DefaultClient.ConnectionFactory getBackend() {
-        switch (System.getProperty(SDMXDL_RI_WEB_BACKEND, "")) {
-            case "iwr":
-                return IWR_CONNECTION_FACTORY;
-            case "curl":
-                return CURL_CONNECTION_FACTORY;
-            default:
-                return JDK_8_CONNECTION_FACTORY;
-        }
-    }
-
-    private File getDumpFile() {
-        String result = System.getProperty(SDMXDL_RI_WEB_DUMP_FOLDER);
-        return result != null ? new File(result) : null;
-    }
-
-    @VisibleForTesting
-    @lombok.AllArgsConstructor
-    static final class DumpingClient implements Client {
-
-        @lombok.NonNull
-        private final Path folder;
-
-        @lombok.NonNull
-        private final Client delegate;
-
-        @lombok.NonNull
-        private final Consumer<? super Path> onDump;
-
-        @Override
-        public @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
-            return new DumpingResponse(folder, delegate.requestGET(query, mediaTypes, langs), onDump);
-        }
-    }
-
-    @VisibleForTesting
-    @lombok.AllArgsConstructor
-    static final class DumpingResponse implements Response {
-
-        @lombok.NonNull
-        private final Path folder;
-
-        @lombok.NonNull
-        private final Response delegate;
-
-        @lombok.NonNull
-        private final Consumer<? super Path> onDump;
-
-        @Override
-        public @NonNull MediaType getContentType() throws IOException {
-            return delegate.getContentType();
-        }
-
-        @Override
-        public @NonNull InputStream getBody() throws IOException {
-            InputStream inputStream = delegate.getBody();
-            try {
-                OutputStream outputStream = getDumpStream();
-                return new TeeInputStream(inputStream, outputStream);
-            } catch (IOException ex) {
-                Resource.ensureClosed(ex, inputStream);
-                throw ex;
-            }
-        }
-
-        private OutputStream getDumpStream() throws IOException {
-            Files.createDirectories(folder);
-            Path dump = Files.createTempFile(folder, "body", ".tmp");
-            onDump.accept(dump);
-            return Files.newOutputStream(dump);
-        }
-
-        @Override
-        public void close() throws IOException {
-            delegate.close();
         }
     }
 }

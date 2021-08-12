@@ -14,20 +14,19 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import org.junit.Ignore;
+import internal.util.rest.DefaultClientTest;
 
 /**
  * @author Philippe Charles
  */
-@Ignore
-public class IwrRestClientTest extends HttpRestClientTest {
+public class JdkRestClientTest extends DefaultClientTest {
 
     @Override
-    protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, new IwrConnectionFactory());
+    protected HttpURLConnectionFactory getURLConnectionFactory() {
+        return new DefaultHttpURLConnectionFactory();
     }
 
     @Override
@@ -35,7 +34,7 @@ public class IwrRestClientTest extends HttpRestClientTest {
         return WireMockConfiguration
                 .options()
                 .dynamicPort()
-//                .dynamicHttpsPort()
+                .dynamicHttpsPort()
                 .gzipDisabled(false);
     }
 }

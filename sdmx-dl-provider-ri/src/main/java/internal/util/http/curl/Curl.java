@@ -1,129 +1,34 @@
-package internal.util.rest;
+package internal.util.http.curl;
 
+import internal.util.http.HttpHeadersBuilder;
 import nbbrd.design.BuilderPattern;
-import nbbrd.design.VisibleForTesting;
-import nbbrd.io.sys.EndOfProcessException;
-import nbbrd.io.sys.ProcessReader;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-@lombok.RequiredArgsConstructor
-final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
+import static internal.util.http.HttpConstants.hasProxy;
 
-    private static final int COULD_NOT_RESOLVE_HOST = 6;
-    private static final int OPERATION_TIMEOUT = 28;
-    private static final int FAILURE_RECEIVING = 56;
+@lombok.experimental.UtilityClass
+class Curl {
 
-    private final boolean insecure;
+    public static final int CURL_COULD_NOT_RESOLVE_HOST = 6;
+    public static final int CURL_OPERATION_TIMEOUT = 28;
+    public static final int CURL_FAILURE_RECEIVING = 56;
 
-    @Override
-    public DefaultClient.Connection open(URL query, Proxy proxy, int readTimeout, int connectTimeout,
-                                         SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier,
-                                         Map<String, List<String>> headers) throws IOException {
-        Path body = Files.createTempFile("body", ".tmp");
-
-        String[] command = newCurlCommand()
-                .url(query)
-                .proxy(proxy)
-                .output(body)
-                .silent()
-                .dumpHeader("-")
-                .connectTimeout(connectTimeout / 1000)
-                .maxTime(readTimeout / 1000)
-                .headers(headers)
-                .build();
-
-        try (BufferedReader reader = ProcessReader.newReader(command)) {
-            return new CurlConnection(query, body, CurlMeta.parse(reader));
-        } catch (EndOfProcessException ex) {
-            switch (ex.getExitValue()) {
-                case COULD_NOT_RESOLVE_HOST:
-                    throw new UnknownHostException(query.getHost());
-                case OPERATION_TIMEOUT:
-                    throw new IOException("Read timed out");
-                case FAILURE_RECEIVING:
-                    String msg = "Failure in receiving network data.";
-                    if (!proxy.equals(Proxy.NO_PROXY)) {
-                        msg = "Unable to tunnel through proxy. " + msg;
-                    }
-                    throw new IOException(msg);
-                default:
-                    throw ex;
-            }
-        }
-    }
-
-    private CurlCommandBuilder newCurlCommand() {
-        CurlCommandBuilder result = new CurlCommandBuilder();
-        if (insecure) {
-            result.insecure();
-        }
-        return result;
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class CurlConnection implements DefaultClient.Connection {
-
-        @lombok.Getter
-        @lombok.NonNull
-        private final URL query;
-
-        @lombok.NonNull
-        private final Path body;
-
-        @lombok.NonNull
-        private final CurlMeta meta;
-
-        @Override
-        public int getStatusCode() {
-            return meta.getCode();
-        }
-
-        @Override
-        public @Nullable String getStatusMessage() {
-            return meta.getMessage();
-        }
-
-        @Override
-        public @NonNull Optional<String> getHeaderFirstValue(@NonNull String name) {
-            return HttpHeadersBuilder.firstValue(getHeaders(), name);
-        }
-
-        @Override
-        public @NonNull Map<String, List<String>> getHeaders() {
-            return meta.getHeaders();
-        }
-
-        @Override
-        public InputStream getInputStream() throws IOException {
-            return Files.newInputStream(body);
-        }
-
-        @Override
-        public void close() throws IOException {
-            Files.delete(body);
-        }
-    }
-
-    @lombok.Getter
+    @lombok.Value
     @lombok.Builder
-    static final class CurlMeta {
+    public static final class CurlMeta {
 
         @lombok.Builder.Default
-        int code = DefaultClient.Connection.NOT_VALID_CODE;
+        int code = -1;
 
         @lombok.Builder.Default
         String message = null;
@@ -172,9 +77,8 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
         }
     }
 
-    @VisibleForTesting
     @BuilderPattern(String[].class)
-    static final class CurlCommandBuilder {
+    public static final class CurlCommandBuilder {
 
         private final List<String> items;
 
@@ -193,7 +97,7 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
         }
 
         public CurlCommandBuilder proxy(Proxy proxy) {
-            if (!proxy.equals(Proxy.NO_PROXY)) {
+            if (hasProxy(proxy)) {
                 InetSocketAddress address = (InetSocketAddress) proxy.address();
                 push("-x").push(address.getHostString() + ":" + address.getPort());
             }
@@ -218,6 +122,10 @@ final class CurlConnectionFactory implements DefaultClient.ConnectionFactory {
 
         public CurlCommandBuilder maxTime(int seconds) {
             return push("-m").push(Integer.toString(seconds));
+        }
+
+        public CurlCommandBuilder insecure(boolean insecure) {
+            return insecure ? insecure() : this;
         }
 
         public CurlCommandBuilder insecure() {

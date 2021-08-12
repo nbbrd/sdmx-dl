@@ -1,4 +1,4 @@
-package internal.util.rest;
+package internal.util.http.curl;
 
 import org.junit.Test;
 
@@ -7,18 +7,16 @@ import java.net.Proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CurlConnectionFactoryTest {
+public class CurlTest {
 
     @Test
     public void testCurlCommandBuilder() {
-        assertThat(new CurlConnectionFactory
-                .CurlCommandBuilder()
+        assertThat(new Curl.CurlCommandBuilder()
                 .proxy(Proxy.NO_PROXY)
                 .build())
                 .containsExactly("curl");
 
-        assertThat(new CurlConnectionFactory
-                .CurlCommandBuilder()
+        assertThat(new Curl.CurlCommandBuilder()
                 .proxy(new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("http://localhost", 123)))
                 .build())
                 .containsExactly("curl", "-x", "http://localhost:123");

@@ -1,5 +1,6 @@
-package internal.util.rest;
+package internal.util.http;
 
+import internal.util.http.HttpHeadersBuilder;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;

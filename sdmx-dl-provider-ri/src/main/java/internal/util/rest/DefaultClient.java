@@ -16,13 +16,12 @@
  */
 package internal.util.rest;
 
+import internal.util.http.HttpHeadersBuilder;
+import internal.util.http.HttpURLConnectionFactory;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.Closeable;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -32,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static internal.util.http.HttpConstants.*;
 import static internal.util.rest.HttpRest.*;
 import static java.util.Collections.emptyMap;
 
@@ -41,41 +41,11 @@ import static java.util.Collections.emptyMap;
 @lombok.AllArgsConstructor
 final class DefaultClient implements Client {
 
-    public interface ConnectionFactory {
-
-        Connection open(
-                URL query,
-                Proxy proxy,
-                int readTimeout,
-                int connectTimeout,
-                SSLSocketFactory sslSocketFactory,
-                HostnameVerifier hostnameVerifier,
-                Map<String, List<String>> headers
-        ) throws IOException;
-    }
-
-    public interface Connection extends Closeable {
-
-        int NOT_VALID_CODE = -1;
-
-        @NonNull URL getQuery();
-
-        int getStatusCode() throws IOException;
-
-        @Nullable String getStatusMessage() throws IOException;
-
-        @NonNull Optional<String> getHeaderFirstValue(@NonNull String name) throws IOException;
-
-        @NonNull Map<String, List<String>> getHeaders() throws IOException;
-
-        @NonNull InputStream getInputStream() throws IOException;
-    }
-
     @lombok.NonNull
     private final HttpRest.Context context;
 
     @lombok.NonNull
-    private final ConnectionFactory factory;
+    private final HttpURLConnectionFactory factory;
 
     @Override
     public Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
@@ -86,7 +56,7 @@ final class DefaultClient implements Client {
     }
 
     private Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        if (!"http".equals(query.getProtocol()) && !"https".equals(query.getProtocol())) {
+        if (!isHttpProtocol(query) && !isHttpsProtocol(query)) {
             throw new IOException("Unsupported protocol '" + query.getProtocol() + "'");
         }
 
@@ -98,23 +68,9 @@ final class DefaultClient implements Client {
 
         context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
 
-        Connection connection = factory.open(
-                query,
-                proxy,
-                context.getReadTimeout(),
-                context.getConnectTimeout(),
-                context.getSslSocketFactory(),
-                context.getHostnameVerifier(),
-                new HttpHeadersBuilder()
-                        .put(ACCEPT_HEADER, toAcceptHeader(mediaTypes))
-                        .put(ACCEPT_LANGUAGE_HEADER, langs)
-                        .put(ACCEPT_ENCODING_HEADER, getEncodingHeader())
-                        .put(USER_AGENT_HEADER, context.getUserAgent())
-                        .put(requestScheme.getRequestHeaders(query, context.getAuthenticator()))
-                        .build()
-        );
+        HttpURLConnection connection = openConnection(query, mediaTypes, langs, requestScheme, proxy);
 
-        switch (ResponseType.parse(connection.getStatusCode())) {
+        switch (ResponseType.parse(connection.getResponseCode())) {
             case REDIRECTION:
                 return redirect(connection, mediaTypes, langs, redirects);
             case SUCCESSFUL:
@@ -124,6 +80,34 @@ final class DefaultClient implements Client {
             default:
                 throw getError(connection);
         }
+    }
+
+    private HttpURLConnection openConnection(URL query, List<MediaType> mediaTypes, String langs, AuthSchemeHelper requestScheme, Proxy proxy) throws IOException {
+        HttpURLConnection result = factory.openConnection(query, proxy);
+        result.setReadTimeout(context.getReadTimeout());
+        result.setConnectTimeout(context.getConnectTimeout());
+
+        if (result instanceof HttpsURLConnection) {
+            ((HttpsURLConnection) result).setSSLSocketFactory(context.getSslSocketFactory());
+            ((HttpsURLConnection) result).setHostnameVerifier(context.getHostnameVerifier());
+        }
+
+        Map<String, List<String>> headers = new HttpHeadersBuilder()
+                .put(HTTP_ACCEPT_HEADER, toAcceptHeader(mediaTypes))
+                .put(HTTP_ACCEPT_LANGUAGE_HEADER, langs)
+                .put(HTTP_ACCEPT_ENCODING_HEADER, getEncodingHeader())
+                .put(HTTP_USER_AGENT_HEADER, context.getUserAgent())
+                .put(requestScheme.getRequestHeaders(query, context.getAuthenticator()))
+                .build();
+
+        result.setRequestMethod("GET");
+        result.setInstanceFollowRedirects(false);
+        HttpHeadersBuilder.keyValues(headers)
+                .forEach(header -> result.setRequestProperty(header.getKey(), header.getValue()));
+
+        result.connect();
+
+        return result;
     }
 
     private String getEncodingHeader() {
@@ -142,7 +126,7 @@ final class DefaultClient implements Client {
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private Response redirect(Connection connection, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
+    private Response redirect(HttpURLConnection connection, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
         URL oldUrl;
         URL newUrl;
         try {
@@ -150,49 +134,57 @@ final class DefaultClient implements Client {
                 throw new IOException("Max redirection reached");
             }
 
-            Optional<String> location = connection.getHeaderFirstValue(LOCATION_HEADER).filter(o -> !o.isEmpty());
-            if (!location.isPresent()) {
+            String location = connection.getHeaderField(HTTP_LOCATION_HEADER);
+            if (location == null || location.isEmpty()) {
                 throw new IOException("Missing redirection url");
             }
 
-            oldUrl = connection.getQuery();
-            newUrl = new URL(oldUrl, URLDecoder.decode(location.get(), StandardCharsets.UTF_8.name()));
+            oldUrl = connection.getURL();
+            newUrl = new URL(oldUrl, URLDecoder.decode(location, StandardCharsets.UTF_8.name()));
         } finally {
-            connection.close();
+            doClose(connection);
         }
 
         if (isDowngradingProtocolOnRedirect(oldUrl, newUrl)) {
             throw new IOException("Downgrading protocol on redirect from '" + oldUrl + "' to '" + newUrl + "'");
         }
 
-        context.getListener().onRedirection(connection.getQuery(), newUrl);
+        context.getListener().onRedirection(connection.getURL(), newUrl);
         return open(newUrl, mediaTypes, langs, redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private Response recoverClientError(Connection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        if (connection.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+    private Response recoverClientError(HttpURLConnection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
             AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
             if (!requestScheme.equals(responseScheme)) {
-                context.getListener().onUnauthorized(connection.getQuery(), requestScheme.authScheme, responseScheme.authScheme);
-                return open(connection.getQuery(), mediaTypes, langs, redirects + 1, responseScheme);
+                context.getListener().onUnauthorized(connection.getURL(), requestScheme.authScheme, responseScheme.authScheme);
+                return open(connection.getURL(), mediaTypes, langs, redirects + 1, responseScheme);
             }
-            context.getAuthenticator().invalidate(connection.getQuery());
+            context.getAuthenticator().invalidate(connection.getURL());
         }
 
         throw getError(connection);
     }
 
-    private Response getBody(Connection connection) throws IOException {
+    private Response getBody(HttpURLConnection connection) throws IOException {
         DefaultResponse result = new DefaultResponse(connection, context.getDecoders());
         context.getListener().onSuccess(result.getContentType());
         return result;
     }
 
-    private IOException getError(Connection connection) throws IOException {
+    private IOException getError(HttpURLConnection connection) throws IOException {
         try {
-            return new ResponseError(connection.getStatusCode(), connection.getStatusMessage(), connection.getHeaders());
+            return new ResponseError(connection.getResponseCode(), connection.getResponseMessage(), connection.getHeaderFields());
         } finally {
-            connection.close();
+            doClose(connection);
+        }
+    }
+
+    private static void doClose(HttpURLConnection connection) throws IOException {
+        try {
+            connection.disconnect();
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 
@@ -201,20 +193,19 @@ final class DefaultClient implements Client {
         BASIC(AuthScheme.BASIC) {
             @Override
             boolean isSecureRequest(URL url) {
-                return "https".equalsIgnoreCase(url.getProtocol());
+                return isHttpsProtocol(url);
             }
 
             @Override
             Map<String, List<String>> getRequestHeaders(URL url, HttpRest.Authenticator authenticator) {
                 PasswordAuthentication auth = authenticator.getPasswordAuthentication(url);
-                return auth != null ? new HttpHeadersBuilder().put(AUTHORIZATION_HEADER, getBasicAuthHeader(auth)).build() : emptyMap();
+                return auth != null ? new HttpHeadersBuilder().put(HTTP_AUTHORIZATION_HEADER, getBasicAuthHeader(auth)).build() : emptyMap();
             }
 
             @Override
-            boolean hasResponseHeader(Connection http) throws IOException {
-                return http.getHeaderFirstValue(AUTHENTICATE_HEADER)
-                        .map(value -> value.startsWith("Basic"))
-                        .isPresent();
+            boolean hasResponseHeader(HttpURLConnection http) throws IOException {
+                String value = http.getHeaderField(HTTP_AUTHENTICATE_HEADER);
+                return value != null && value.startsWith("Basic");
             }
         },
         NONE(AuthScheme.NONE) {
@@ -229,7 +220,7 @@ final class DefaultClient implements Client {
             }
 
             @Override
-            boolean hasResponseHeader(Connection http) {
+            boolean hasResponseHeader(HttpURLConnection http) {
                 return false;
             }
         };
@@ -240,9 +231,9 @@ final class DefaultClient implements Client {
 
         abstract Map<String, List<String>> getRequestHeaders(URL query, HttpRest.Authenticator authenticator);
 
-        abstract boolean hasResponseHeader(Connection http) throws IOException;
+        abstract boolean hasResponseHeader(HttpURLConnection http) throws IOException;
 
-        static Optional<AuthSchemeHelper> parse(Connection http) {
+        static Optional<AuthSchemeHelper> parse(HttpURLConnection http) {
             return Stream.of(AuthSchemeHelper.values())
                     .filter(authScheme -> {
                         try {
@@ -264,52 +255,31 @@ final class DefaultClient implements Client {
         }
     }
 
-    private enum ResponseType {
-        INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, UNKNOWN;
-
-        static ResponseType parse(int code) {
-            switch (code / 100) {
-                case 1:
-                    return INFORMATIONAL;
-                case 2:
-                    return SUCCESSFUL;
-                case 3:
-                    return REDIRECTION;
-                case 4:
-                    return CLIENT_ERROR;
-                case 5:
-                    return SERVER_ERROR;
-                default:
-                    return UNKNOWN;
-            }
-        }
-    }
-
     @lombok.RequiredArgsConstructor
     private static final class DefaultResponse implements Response {
 
         @lombok.NonNull
-        private final DefaultClient.Connection conn;
+        private final HttpURLConnection conn;
 
         @lombok.NonNull
         private final List<StreamDecoder> decoders;
 
         @Override
         public @NonNull MediaType getContentType() throws IOException {
-            Optional<String> contentType = conn.getHeaderFirstValue(CONTENT_TYPE_HEADER);
-            if (!contentType.isPresent()) {
+            String contentType = conn.getHeaderField(HTTP_CONTENT_TYPE_HEADER);
+            if (contentType == null) {
                 throw new IOException("Content type not known");
             }
             try {
-                return MediaType.parse(contentType.get());
+                return MediaType.parse(contentType);
             } catch (IllegalArgumentException ex) {
-                throw new IOException("Invalid content type '" + contentType.get() + "'", ex);
+                throw new IOException("Invalid content type '" + contentType + "'", ex);
             }
         }
 
         @Override
         public @NonNull InputStream getBody() throws IOException {
-            String encodingOrNull = conn.getHeaderFirstValue(CONTENT_ENCODING_HEADER).orElse(null);
+            String encodingOrNull = conn.getHeaderField(HTTP_CONTENT_ENCODING_HEADER);
             return decoders
                     .stream()
                     .filter(decoder -> decoder.getName().equals(encodingOrNull))
@@ -320,53 +290,13 @@ final class DefaultClient implements Client {
 
         @Override
         public void close() throws IOException {
-            conn.close();
+            doClose(conn);
         }
     }
 
     @VisibleForTesting
     static @NonNull String toAcceptHeader(@NonNull List<MediaType> mediaTypes) {
         return mediaTypes.stream().map(MediaType::toString).collect(Collectors.joining(", "));
-    }
-
-    @VisibleForTesting
-    static final String ACCEPT_HEADER = "Accept";
-
-    @VisibleForTesting
-    static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
-
-    @VisibleForTesting
-    static final String ACCEPT_ENCODING_HEADER = "Accept-Encoding";
-
-    @VisibleForTesting
-    static final String LOCATION_HEADER = "Location";
-
-    @VisibleForTesting
-    static final String AUTHORIZATION_HEADER = "Authorization";
-
-    @VisibleForTesting
-    static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
-
-    @VisibleForTesting
-    static final String USER_AGENT_HEADER = "User-Agent";
-
-    @VisibleForTesting
-    static final String CONTENT_TYPE_HEADER = "Content-Type";
-
-    @VisibleForTesting
-    static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
-
-    /**
-     * https://en.wikipedia.org/wiki/Downgrade_attack
-     *
-     * @param oldUrl
-     * @param newUrl
-     * @return
-     */
-    @VisibleForTesting
-    static boolean isDowngradingProtocolOnRedirect(URL oldUrl, URL newUrl) {
-        return "https".equalsIgnoreCase(oldUrl.getProtocol())
-                && !"https".equalsIgnoreCase(newUrl.getProtocol());
     }
 
     private static URI toURI(URL url) throws IOException {

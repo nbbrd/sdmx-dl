@@ -25,4 +25,9 @@ module sdmxdl.web.ri {
 
     provides sdmxdl.web.spi.SdmxWebAuthenticator with
             internal.sdmxdl.ri.web.authenticators.WinPasswordVaultAuthenticator;
+
+    provides internal.util.http.HttpURLConnectionFactory with
+            internal.util.http.curl.CurlHttpURLConnectionFactory;
+
+    uses internal.util.http.HttpURLConnectionFactory;
 }

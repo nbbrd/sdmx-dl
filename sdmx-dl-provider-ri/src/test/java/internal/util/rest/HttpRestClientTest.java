@@ -37,7 +37,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static internal.util.rest.DefaultClient.*;
+import static internal.util.http.HttpConstants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -92,11 +92,11 @@ public abstract class HttpRestClientTest {
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                        .withHeader(ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
-                        .withHeader(ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
-                        .withHeader(ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
-                        .withHeader(LOCATION_HEADER, absent())
-                        .withHeader(USER_AGENT_HEADER, equalTo("hello world"))
+                        .withHeader(HTTP_ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
+                        .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
+                        .withHeader(HTTP_ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
+                        .withHeader(HTTP_LOCATION_HEADER, absent())
+                        .withHeader(HTTP_USER_AGENT_HEADER, equalTo("hello world"))
                         .withHeader("Host", new AnythingPattern())
 //                .withHeader("Connection", new AnythingPattern())
         );
@@ -170,7 +170,7 @@ public abstract class HttpRestClientTest {
         for (int redirection : HTTP_REDIRECTIONS) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
-                wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
+                wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
@@ -195,7 +195,7 @@ public abstract class HttpRestClientTest {
         for (int redirection : HTTP_REDIRECTIONS) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
-                wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
+                wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
@@ -237,7 +237,7 @@ public abstract class HttpRestClientTest {
 
         for (int redirection : HTTP_REDIRECTIONS) {
             wire.resetAll();
-            wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(LOCATION_HEADER, location)));
+            wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
@@ -297,7 +297,7 @@ public abstract class HttpRestClientTest {
             HttpRest.Client x = getRestClient(context);
 
             wire.resetAll();
-            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
@@ -321,7 +321,7 @@ public abstract class HttpRestClientTest {
             HttpRest.Client x = getRestClient(context);
 
             wire.resetAll();
-            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
@@ -349,9 +349,9 @@ public abstract class HttpRestClientTest {
             HttpRest.Client x = getRestClient(context);
 
             wire.resetAll();
-            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
-            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
@@ -378,7 +378,7 @@ public abstract class HttpRestClientTest {
             HttpRest.Client x = getRestClient(context);
 
             wire.resetAll();
-            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
+            wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             String location = wireHttpUrl(SAMPLE_URL);

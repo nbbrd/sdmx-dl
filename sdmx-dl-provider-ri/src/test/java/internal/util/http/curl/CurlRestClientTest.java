@@ -14,18 +14,25 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http.curl;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import internal.util.http.HttpURLConnectionFactory;
+import internal.util.rest.DefaultClientTest;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
 
 /**
  * @author Philippe Charles
  */
-public class Jdk8RestClientTest extends HttpRestClientTest {
+public class CurlRestClientTest extends DefaultClientTest {
 
     @Override
-    protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, new Jdk8ConnectionFactory());
+    protected HttpURLConnectionFactory getURLConnectionFactory() {
+        return new InsecureCurlHttpURLConnectionFactory();
     }
 
     @Override
@@ -35,5 +42,18 @@ public class Jdk8RestClientTest extends HttpRestClientTest {
                 .dynamicPort()
                 .dynamicHttpsPort()
                 .gzipDisabled(false);
+    }
+
+    @Override
+    public void testInvalidSSL() {
+//        super.testInvalidSSL();
+    }
+
+    private static final class InsecureCurlHttpURLConnectionFactory implements HttpURLConnectionFactory {
+
+        @Override
+        public @NonNull HttpURLConnection openConnection(@NonNull URL url, @NonNull Proxy proxy) {
+            return new CurlHttpURLConnection(url, proxy, true);
+        }
     }
 }
