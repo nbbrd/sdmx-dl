@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0-beta.3] - 2021-09-13
+
+This is the third beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
+
+This release adds new sources and improves feedback on request parameters such as Key and Flow.  
+The CLI binary is now available in some popular package managers.  
+Finally, sdmx-dl advertises itself on web queries with the user-agent `sdmx-dl/3.0.0-beta.3`. 
+
 ### Added
 - Add support of multiple media-types in HTTP request header (RI)
 - Add support of media-type charset in HTTP response header (RI)
@@ -69,6 +80,7 @@ _Note that sdmx-dl is still in heavy development and might change a lot between 
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...HEAD
+[3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
