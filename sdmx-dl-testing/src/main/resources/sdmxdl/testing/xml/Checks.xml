@@ -5,14 +5,32 @@
             <data key="BANKRUPT_2.AUS.0.A" minSeries="1" minObs="3"/>
         </flow>
     </source>
+    <source name="BBK" minFlows="49">
+        <flow ref="BBEX3" dims="6">
+            <data key="M.ISK.EUR+USD.CA.AC.A01" minSeries="2" minObs="694"/>
+        </flow>
+    </source>
     <source name="BIS" minFlows="19">
         <flow ref="BISWEB_EERDATAFLOW" dims="4">
             <data key="M.N.B.AE" minSeries="1" minObs="326"/>
         </flow>
     </source>
+    <source name="CAMSTAT" minFlows="62">
+        <flow ref="DF_ADMISSIONS" dims="10">
+            <data key=".ASIKHM..U......A" minSeries="9" minObs="180"/>
+        </flow>
+    </source>
     <source name="ECB" minFlows="156">
         <flow ref="ICPF" dims="13">
             <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8"/>
+        </flow>
+        <flow ref="EXR" dims="5">
+            <data key="M.CHF.EUR.SP00." minSeries="2" minObs="1"/>
+        </flow>
+    </source>
+    <source name="ESCAP" minFlows="2">
+        <flow ref="DF_ESCAP_SDG_Dataflow" dims="4">
+            <data key="..G01_01_01.A" minSeries="523" minObs="3841"/>
         </flow>
     </source>
     <source name="ESTAT" minFlows="6283">
@@ -20,9 +38,9 @@
             <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
         </flow>
     </source>
-    <source name="ILO" minFlows="421">
-        <flow ref="DF_CP_ALL_EAP_DWAF_NOC_RT" dims="5">
-            <data key="CP.AGO.A.13366.EAP_DWAF_RT" minSeries="1" minObs="1"/>
+    <source name="ILO" minFlows="614">
+        <flow ref="DF_YI_ALL_EMP_TEMP_SEX_AGE_NB" dims="6">
+            <data key="YI.DEU.A.EMP_TEMP_NB.SEX_T.AGE_5YRBANDS_TOTAL" minSeries="1" minObs="38"/>
         </flow>
     </source>
     <source name="IMF" minFlows="120">
@@ -70,9 +88,24 @@
             <data key="1.1.1" minSeries="1" minObs="23"/>
         </flow>
     </source>
+    <source name="SGR" minFlows="87">
+        <flow ref="NAMAIN_IDC_N" dims="14">
+            <data key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" minSeries="1" minObs="26"/>
+        </flow>
+    </source>
+    <source name="SPC" minFlows="55">
+        <flow ref="DF_BOP" dims="4">
+            <data key="A..AMTUSD." minSeries="572" minObs="7216"/>
+        </flow>
+    </source>
     <source name="UIS" minFlows="9">
         <flow ref="SCN_DS" dims="2">
             <data key="20000.AGO" minSeries="1" minObs="1"/>
+        </flow>
+    </source>
+    <source name="UKDS" minFlows="368">
+        <flow ref="BP3" dims="3">
+            <data key="BEL.ASSDOM.RES" minSeries="1" minObs="5"/>
         </flow>
     </source>
     <source name="UNDATA" minFlows="7">

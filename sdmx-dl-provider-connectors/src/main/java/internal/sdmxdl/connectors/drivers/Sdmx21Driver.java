@@ -61,6 +61,15 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("CAMSTAT")
+                    .description("National Statistical Institute of Cambodia")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
+                    .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
+                    .monitorOf("UptimeRobot", "m788487928-37e8ae2f2d754f577b97a780")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("ECB")
                     .description("European Central Bank")
                     .driver(CONNECTORS_SDMX_21)
@@ -70,6 +79,25 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .monitorOf("UptimeRobot", "m783846981-b55d7e635c5cdc16e16bac2a")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ESCAP")
+                    .description("Economic and Social Commission for Asia and the Pacific")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://api-dataexplorer.unescap.org/rest/")
+                    .websiteOf("https://dataexplorer.unescap.org/")
+                    .monitorOf("UptimeRobot", "m788486016-99b7fd6f51508b689c67d460")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ILO")
+                    .description("International Labour Office")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://www.ilo.org/sdmx/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://ilostat.ilo.org/data/")
+                    .monitorOf("UptimeRobot", "m783847083-609d3e4ebc1da9455baeb63e")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -114,6 +142,26 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("SGR")
+                    .description("SDMX Global Registry")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://registry.sdmx.org/ws/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://registry.sdmx.org/overview.html")
+                    .monitorOf("UptimeRobot", "m788488202-23b752a1d418181c2d64d6d1")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("SPC")
+                    .description("Pacific Data Hub")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://stats.pacificdata.org/?locale=en")
+                    .monitorOf("UptimeRobot", "m788488402-48b2f77f10060fcc6bb4baaa")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .description("Data access system to UN databases")
                     .driver(CONNECTORS_SDMX_21)
@@ -147,7 +195,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
 
         private final boolean detailSupported;
 
-        private Sdmx21Client(URI endpoint, Map<?, ?> p) {
+        private Sdmx21Client(URI endpoint, Map<String, String> p) {
             super("", endpoint,
                     NEEDS_CREDENTIALS_PROPERTY.get(p),
                     NEEDS_URL_ENCODING_PROPERTY.get(p),

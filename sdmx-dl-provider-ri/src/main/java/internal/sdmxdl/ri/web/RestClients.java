@@ -17,20 +17,24 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
-import internal.util.rest.Jdk8RestClient;
+import internal.util.rest.MediaType;
+import nbbrd.design.VisibleForTesting;
+import nbbrd.io.text.BaseProperty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.SdmxWebAuthenticator;
+import sdmxdl.About;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.spi.SdmxWebContext;
 
+import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static sdmxdl.util.web.SdmxWebProperty.*;
 
@@ -40,30 +44,33 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
 @lombok.experimental.UtilityClass
 public class RestClients {
 
-    public HttpRest.Client getRestClient(SdmxWebSource o, SdmxWebContext context) {
-        return new Jdk8RestClient(
-                HttpRest.Context
-                        .builder()
-                        .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
-                        .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
-                        .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
-                        .proxySelector(context.getProxySelector())
-                        .sslSocketFactory(context.getSslSocketFactory())
-                        .hostnameVerifier(context.getHostnameVerifier())
-                        .listener(new DefaultEventListener(o, context.getEventListener()))
-                        .authenticator(new DefaultAuthenticator(o, context.getAuthenticator()))
-                        .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
-                        .build()
-        );
+    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+            CONNECT_TIMEOUT_PROPERTY,
+            READ_TIMEOUT_PROPERTY,
+            MAX_REDIRECTS_PROPERTY,
+            PREEMPTIVE_AUTHENTICATION_PROPERTY
+    );
+
+    public static HttpRest.@NonNull Context getRestContext(@NonNull SdmxWebSource o, @NonNull SdmxWebContext context) {
+        return HttpRest.Context
+                .builder()
+                .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
+                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
+                .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
+                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
+                .proxySelector(context.getProxySelector())
+                .sslSocketFactory(context.getSslSocketFactory())
+                .hostnameVerifier(context.getHostnameVerifier())
+                .listener(new DefaultEventListener(o, context.getEventListener()))
+                .authenticator(new DefaultAuthenticator(o, context.getAuthenticators(), context.getEventListener()))
+                .userAgent(System.getProperty(HTTP_AGENT, DEFAULT_USER_AGENT))
+                .build();
     }
 
-    public final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY.getKey(),
-                    READ_TIMEOUT_PROPERTY.getKey(),
-                    MAX_REDIRECTS_PROPERTY.getKey(),
-                    PREEMPTIVE_AUTHENTICATION_PROPERTY.getKey()
-            ));
+    @VisibleForTesting
+    static final String HTTP_AGENT = "http.agent";
+
+    private static final String DEFAULT_USER_AGENT = About.NAME + "/" + About.VERSION;
 
     @lombok.AllArgsConstructor
     private static final class DefaultEventListener implements HttpRest.EventListener {
@@ -75,27 +82,53 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, String mediaType, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
+        public void onOpen(URL query, List<MediaType> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
+            Objects.requireNonNull(query);
+            Objects.requireNonNull(mediaTypes);
+            Objects.requireNonNull(langs);
+            Objects.requireNonNull(proxy);
+            Objects.requireNonNull(scheme);
             if (listener.isEnabled()) {
-                if (HttpRest.AuthScheme.NONE.equals(scheme)) {
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", query, proxy));
-                } else {
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s' and auth '%s'", query, proxy, scheme));
+                String message = SdmxWebEvents.onQuery(query, proxy);
+                if (!HttpRest.AuthScheme.NONE.equals(scheme)) {
+                    message += " with auth '" + scheme.name() + "'";
                 }
+                listener.onWebSourceEvent(source, message);
+            }
+        }
+
+        @Override
+        public void onSuccess(@NonNull MediaType mediaType) {
+            Objects.requireNonNull(mediaType);
+            if (listener.isEnabled()) {
+                listener.onWebSourceEvent(source, String.format("Parsing '%s'", mediaType));
             }
         }
 
         @Override
         public void onRedirection(URL oldUrl, URL newUrl) {
+            Objects.requireNonNull(oldUrl);
+            Objects.requireNonNull(newUrl);
             if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", newUrl));
+                listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 
         @Override
         public void onUnauthorized(URL url, HttpRest.AuthScheme oldScheme, HttpRest.AuthScheme newScheme) {
+            Objects.requireNonNull(url);
+            Objects.requireNonNull(oldScheme);
+            Objects.requireNonNull(newScheme);
             if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Authenticating '%s' with '%s'", url, newScheme));
+                listener.onWebSourceEvent(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
+            }
+        }
+
+        @Override
+        public void onEvent(@NonNull String message) {
+            Objects.requireNonNull(message);
+            if (listener.isEnabled()) {
+                listener.onWebSourceEvent(source, message);
             }
         }
     }
@@ -107,23 +140,51 @@ public class RestClients {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final SdmxWebAuthenticator authenticator;
+        private final List<SdmxWebAuthenticator> authenticators;
+
+        @lombok.NonNull
+        private final SdmxWebListener listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
-            return isSameAuthScope(url) ? authenticator.getPasswordAuthentication(source) : null;
+            if (isDifferentAuthScope(url)) {
+                return null;
+            }
+            return authenticators.stream()
+                    .map(this::getPasswordAuthentication)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
         }
 
         @Override
         public void invalidate(@NonNull URL url) {
-            if (isSameAuthScope(url)) {
-                authenticator.invalidate(source);
+            if (isDifferentAuthScope(url)) {
+                return;
+            }
+            authenticators.forEach(this::invalidate);
+        }
+
+        private boolean isDifferentAuthScope(URL url) {
+            return !url.getHost().equals(source.getEndpoint().getHost())
+                    || url.getPort() != source.getEndpoint().getPort();
+        }
+
+        private PasswordAuthentication getPasswordAuthentication(SdmxWebAuthenticator authenticator) {
+            try {
+                return authenticator.getPasswordAuthentication(source);
+            } catch (IOException ex) {
+                listener.onWebSourceEvent(source, "Failed to get password authentication: " + ex.getMessage());
+                return null;
             }
         }
 
-        private boolean isSameAuthScope(URL url) {
-            return url.getHost().equals(source.getEndpoint().getHost())
-                    && url.getPort() == source.getEndpoint().getPort();
+        private void invalidate(SdmxWebAuthenticator authenticator) {
+            try {
+                authenticator.invalidate(source);
+            } catch (IOException ex) {
+                listener.onWebSourceEvent(source, "Failed to invalidate password authentication: " + ex.getMessage());
+            }
         }
     }
 }

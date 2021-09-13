@@ -16,11 +16,13 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestParsers;
+import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -44,7 +46,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .builder()
             .name(RI_DOTSTAT)
             .rank(NATIVE_RANK)
-            .client(DotStatDriver2::of)
+            .client(DotStatDriver2::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
@@ -73,16 +75,19 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("UptimeRobot", "m783847149-7753fbe93eefc48f2ac9983f")
                     .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("UKDS")
+                    .description("UK Data Service")
+                    .driver(RI_DOTSTAT)
+                    .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
+                    .monitorOf("UptimeRobot", "m788496292-8f7f10200ba0cf792589e612")
+                    .build())
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new DotStatRestClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
-                c.getLanguages(),
-                RestClients.getRestClient(s, c),
-                ObsFactories.getObsFactory(c, s, "SDMX20")
-        );
+    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+        return RiRestClient.of(s, c, "SDMX20", new DotStatRestQueries(), new DotStatRestParsers(), false);
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

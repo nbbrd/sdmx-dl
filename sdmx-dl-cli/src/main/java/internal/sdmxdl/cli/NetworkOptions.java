@@ -4,7 +4,6 @@ import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.ProxyOptions;
 import internal.sdmxdl.cli.ext.SslOptions;
-import org.checkerframework.checker.units.qual.C;
 import picocli.CommandLine;
 
 @lombok.Getter

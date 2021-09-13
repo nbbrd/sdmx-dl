@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -38,7 +39,10 @@ public class RestQueryBuilderTest {
         URL endpoint = new URL("http://localhost");
 
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(endpoint).path(null));
+                .isThrownBy(() -> RestQueryBuilder.of(endpoint).path((String) null));
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> RestQueryBuilder.of(endpoint).path((List<String>) null));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> RestQueryBuilder.of(endpoint).param(null, ""));

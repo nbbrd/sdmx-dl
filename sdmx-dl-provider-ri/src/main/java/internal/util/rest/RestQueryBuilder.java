@@ -18,6 +18,7 @@ package internal.util.rest;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,7 +56,7 @@ public final class RestQueryBuilder {
     }
 
     /**
-     * Appends the specified path the current URL.
+     * Appends the specified path to the current URL.
      *
      * @param path a non-null path
      * @return this builder
@@ -65,6 +66,20 @@ public final class RestQueryBuilder {
     public RestQueryBuilder path(@NonNull String path) {
         Objects.requireNonNull(path);
         paths.add(path);
+        return this;
+    }
+
+    /**
+     * Appends the specified path to the current URL.
+     *
+     * @param path a non-null path
+     * @return this builder
+     * @throws NullPointerException if path is null
+     */
+    @NonNull
+    public RestQueryBuilder path(@NonNull List<String> path) {
+        Objects.requireNonNull(path);
+        paths.addAll(path);
         return this;
     }
 
@@ -84,20 +99,13 @@ public final class RestQueryBuilder {
         return this;
     }
 
-    /**
-     * Creates a new URL using the specified path and parameters.
-     *
-     * @return a URL
-     * @throws java.io.UnsupportedEncodingException
-     * @throws java.net.MalformedURLException
-     */
-    @NonNull
-    public URL build() throws UnsupportedEncodingException, MalformedURLException {
+    @Override
+    public String toString() {
         StringBuilder result = new StringBuilder();
         result.append(endPoint);
 
         for (String path : paths) {
-            result.append('/').append(URLEncoder.encode(path, encoding.name()));
+            result.append('/').append(encode(path, encoding));
         }
 
         if (trailingSlash) {
@@ -108,12 +116,31 @@ public final class RestQueryBuilder {
         for (Map.Entry<String, String> o : params.entrySet()) {
             result.append(first ? '?' : '&');
             result
-                    .append(URLEncoder.encode(o.getKey(), encoding.name()))
+                    .append(encode(o.getKey(), encoding))
                     .append('=')
-                    .append(URLEncoder.encode(o.getValue(), encoding.name()));
+                    .append(encode(o.getValue(), encoding));
             first = false;
         }
 
-        return new URL(result.toString());
+        return result.toString();
+    }
+
+    /**
+     * Creates a new URL using the specified path and parameters.
+     *
+     * @return a URL
+     * @throws java.net.MalformedURLException
+     */
+    @NonNull
+    public URL build() throws MalformedURLException {
+        return new URL(toString());
+    }
+
+    private static String encode(String s, Charset charset) {
+        try {
+            return URLEncoder.encode(s, charset.name());
+        } catch (UnsupportedEncodingException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 }

@@ -21,9 +21,8 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
-import nbbrd.io.text.Parser;
+import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
-import sdmxdl.util.Property;
 
 import java.util.Collections;
 import java.util.Map;
@@ -125,11 +124,10 @@ public class Connectors {
         return result;
     }
 
-    private <T extends SdmxMetaElement> T fromComponent(T result, Component o) {
+    private void fromComponent(SdmxMetaElement result, Component o) {
         result.setId(o.getId());
         result.setName(o.getLabel());
         result.setCodeList(fromCodes(o.getCodes()));
-        return result;
     }
 
     private Codelist fromCodes(Map<String, String> o) {
@@ -159,12 +157,12 @@ public class Connectors {
         return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
-    public static final Property<Boolean> SUPPORTS_COMPRESSION_PROPERTY =
-            new Property<>("supportsCompression", false, Parser.onBoolean());
+    public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
+            BooleanProperty.of("supportsCompression", false);
 
-    public static final Property<Boolean> NEEDS_CREDENTIALS_PROPERTY =
-            new Property<>("needsCredentials", false, Parser.onBoolean());
+    public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
+            BooleanProperty.of("needsCredentials", false);
 
-    public static final Property<Boolean> NEEDS_URL_ENCODING_PROPERTY =
-            new Property<>("needsURLEncoding", false, Parser.onBoolean());
+    public static final BooleanProperty NEEDS_URL_ENCODING_PROPERTY =
+            BooleanProperty.of("needsURLEncoding", false);
 }

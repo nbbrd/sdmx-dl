@@ -7,6 +7,7 @@ import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebMonitorReport;
 import sdmxdl.web.SdmxWebSource;
@@ -17,13 +18,12 @@ import sdmxdl.web.spi.SdmxWebMonitoring;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.function.ToIntFunction;
 
 @ServiceProvider(SdmxWebMonitoring.class)
 public final class UptimeRobot implements SdmxWebMonitoring {
@@ -104,22 +104,10 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         SdmxWebStatus report;
     }
 
-    @MightBePromoted
-    private static <T extends Enum<T>> Parser<T> onEnum(Class<T> type, ToIntFunction<T> function) {
-        final T[] values = type.getEnumConstants();
-        return Parser.onInteger().andThen(code -> {
-            for (T value : values) {
-                if (function.applyAsInt(value) == code) {
-                    return value;
-                }
-            }
-            return null;
-        });
-    }
-
     private static final Parser<SdmxWebStatus> STATUS_PARSER =
-            onEnum(Status.class, Status::getCode).andThen(Status::getReport);
+            Parser.onEnum(Status.class, Status::getCode).andThen(Status::getReport);
 
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private static SdmxWebMonitorReport parseReport(XMLStreamReader reader) throws XMLStreamException {
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -127,7 +115,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
                     if (reader.getLocalName().equals("monitor")) {
                         return SdmxWebMonitorReport
                                 .builder()
-                                .status(STATUS_PARSER.parse(reader.getAttributeValue(null, "status")))
+                                .status(STATUS_PARSER.parseValue(reader.getAttributeValue(null, "status")).orElseThrow(() -> new XMLStreamException("Cannot parse status")))
                                 .uptimeRatio(Parser.onDouble().parse(reader.getAttributeValue(null, "all_time_uptime_ratio")))
                                 .averageResponseTime(Parser.onDouble().parse(reader.getAttributeValue(null, "average_response_time")))
                                 .build();
@@ -153,7 +141,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         Proxy proxy = context.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getEventListener().isEnabled()) {
-            context.getEventListener().onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", url, proxy));
+            context.getEventListener().onWebSourceEvent(source, SdmxWebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
@@ -172,7 +160,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         conn.setRequestProperty("Content-Length", Integer.toString(data.length));
         conn.setUseCaches(false);
 
-        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+        try (OutputStream wr = conn.getOutputStream()) {
             wr.write(data);
         }
 

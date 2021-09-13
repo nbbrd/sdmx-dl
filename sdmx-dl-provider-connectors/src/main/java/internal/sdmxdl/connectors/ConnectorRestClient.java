@@ -25,12 +25,14 @@ import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
+import nbbrd.io.text.BaseProperty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -41,8 +43,6 @@ import java.net.URISyntaxException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -66,7 +66,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
     public interface GenericSupplier {
 
         @NonNull
-        RestSdmxClient get(@NonNull URI uri, @NonNull Map<?, ?> properties) throws URISyntaxException;
+        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
     }
 
     public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
@@ -176,12 +176,11 @@ public final class ConnectorRestClient implements SdmxWebClient {
         }
     }
 
-    public static final List<String> CONNECTION_PROPERTIES = Collections.unmodifiableList(
-            Arrays.asList(
-                    CONNECT_TIMEOUT_PROPERTY.getKey(),
-                    READ_TIMEOUT_PROPERTY.getKey(),
-                    MAX_REDIRECTS_PROPERTY.getKey()
-            ));
+    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+            CONNECT_TIMEOUT_PROPERTY,
+            READ_TIMEOUT_PROPERTY,
+            MAX_REDIRECTS_PROPERTY
+    );
 
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(
@@ -204,13 +203,13 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setSslSocketFactory(context.getSslSocketFactory());
         client.setHostnameVerifier(context.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRedirectionEventListener(source, context.getEventListener());
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
 
     @lombok.AllArgsConstructor
-    private static final class DefaultRedirectionEventListener implements RestSdmxEventListener {
+    private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
         @lombok.NonNull
         private final SdmxWebSource source;
@@ -223,10 +222,10 @@ public final class ConnectorRestClient implements SdmxWebClient {
             if (listener.isEnabled()) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Redirecting to '%s'", redirectionEvent.getRedirection()));
+                    listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.onWebSourceEvent(source, String.format("Querying '%s' with proxy '%s'", openEvent.getUrl(), openEvent.getProxy()));
+                    listener.onWebSourceEvent(source, SdmxWebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

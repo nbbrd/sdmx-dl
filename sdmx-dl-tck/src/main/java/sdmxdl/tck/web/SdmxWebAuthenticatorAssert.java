@@ -2,7 +2,7 @@ package sdmxdl.tck.web;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.web.SdmxWebAuthenticator;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
 
 @SuppressWarnings("ConstantConditions")

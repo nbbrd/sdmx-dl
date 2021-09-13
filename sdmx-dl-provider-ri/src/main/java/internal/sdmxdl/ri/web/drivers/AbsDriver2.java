@@ -16,17 +16,19 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.DotStatRestClient;
+import internal.sdmxdl.ri.web.DotStatRestParsers;
+import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
-import internal.util.rest.HttpRest;
+import internal.sdmxdl.ri.web.RiRestClient;
+import internal.util.rest.RestQueryBuilder;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -50,46 +52,37 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .builder()
             .name(RI_ABS)
             .rank(NATIVE_RANK)
-            .client(AbsClient2::new)
+            .client(AbsDriver2::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("ABS")
                     .description("Australian Bureau of Statistics")
                     .driver(RI_ABS)
-                    .endpointOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
-                    .websiteOf("http://stat.data.abs.gov.au")
+                    .endpointOf("https://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+                    .websiteOf("https://stat.data.abs.gov.au")
                     .monitorOf("UptimeRobot", "m783847060-975767bc3a033ea3f3ac8ca2")
                     .build())
             .build();
 
-    private static final class AbsClient2 extends DotStatRestClient {
+    private static @NonNull RiRestClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+        return RiRestClient.of(s, c, "SDMX20", new AbsQueries(), new DotStatRestParsers(), false);
+    }
 
-        AbsClient2(SdmxWebSource s, SdmxWebContext c) throws IOException {
-            this(
-                    SdmxWebClient.getClientName(s),
-                    s.getEndpoint(),
-                    c.getLanguages(),
-                    RestClients.getRestClient(s, c),
-                    ObsFactories.getObsFactory(c, s, "SDMX20")
-            );
-        }
-
-        AbsClient2(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor, ObsFactory obsFactory) {
-            super(name, endpoint, langs, executor, obsFactory);
-        }
+    @VisibleForTesting
+    static final class AbsQueries extends DotStatRestQueries {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Agency is required in query")
         private static final String AGENCY = "ABS";
 
         @Override
-        protected URL getStructureQuery(DataStructureRef ref) throws IOException {
-            return getStructureQuery(endpoint, ref).path(AGENCY).build();
+        public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+            return super.getStructureQuery(endpoint, ref).path(AGENCY);
         }
 
         @Override
-        protected URL getDataQuery(DataRequest request) throws IOException {
-            return getDataQuery(endpoint, request).path(AGENCY).build();
+        public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+            return super.getDataQuery(endpoint, flowRef, key, filter).path(AGENCY);
         }
     }
 }

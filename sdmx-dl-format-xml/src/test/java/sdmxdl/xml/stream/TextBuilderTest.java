@@ -1,30 +1,29 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package sdmxdl.xml.stream;
 
 import org.junit.Test;
-import sdmxdl.LanguagePriorityList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.LanguagePriorityList.parse;
 
 /**
- *
  * @author Philippe Charles
  */
 public class TextBuilderTest {
@@ -43,7 +42,18 @@ public class TextBuilderTest {
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put(null, "hello"));
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put("en", "hello").build(null));
 
-        assertThat(new TextBuilder(LanguagePriorityList.parse("fr")).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("bonjour");
-        assertThat(new TextBuilder(LanguagePriorityList.parse("en")).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("hello");
+        assertThat(new TextBuilder(parse("fr")).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("bonjour");
+        assertThat(new TextBuilder(parse("en")).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("hello");
+    }
+
+    @Test
+    public void testBlankText() {
+        assertThat(new TextBuilder(ANY).put("en", "").put("de", "Gewinn- und Verlustrechnung").build())
+                .describedAs("No language priority should return first non blank")
+                .isEqualTo("Gewinn- und Verlustrechnung");
+
+        assertThat(new TextBuilder(parse("en")).put("en", "").put("de", "Gewinn- und Verlustrechnung").build())
+                .describedAs("Specified language priority should return any text even if blank")
+                .isEqualTo("");
     }
 }

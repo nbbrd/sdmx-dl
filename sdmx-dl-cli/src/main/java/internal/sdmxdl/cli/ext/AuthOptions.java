@@ -24,6 +24,14 @@ public class AuthOptions {
     )
     private PasswordAuthentication user = UserConverter.getNoUser();
 
+    public boolean hasUsername() {
+        return user.getUserName() != null && !user.getUserName().isEmpty();
+    }
+
+    public boolean hasPassword() {
+        return user.getPassword().length > 0;
+    }
+
     private static final class UserConverter implements CommandLine.ITypeConverter<PasswordAuthentication> {
 
         @Override

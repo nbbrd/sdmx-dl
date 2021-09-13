@@ -66,7 +66,7 @@ public class SdmxMediaType {
     public static final String CSV_DATA
             = "application/vnd.ecb.data+csv;version=1.0.0";
 
-    public static final String XML = "application/xml";
-    public static final String JSON = "application/json";
+    public static final String GENERIC_XML = "application/xml";
+    public static final String GENERIC_JSON = "application/json";
     public static final String CSV = "text/csv";
 }

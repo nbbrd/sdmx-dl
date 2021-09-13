@@ -33,6 +33,7 @@ public class VerboseOptions {
                 .concat(colorScheme.commandText(anchor))
                 .concat(colorScheme.text("] "))
                 .concat(colorScheme.optionText(message))
+                .concat(" ")
                 .concat(colorScheme.stackTraceText(ex.getMessage()))
         );
     }

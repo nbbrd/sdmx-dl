@@ -25,10 +25,8 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Parameter that defines the dimension values of the data to be returned.
@@ -109,6 +107,36 @@ public final class Key {
         return !equals(that) && contains(that);
     }
 
+    @Nullable
+    public String validateOn(@NonNull DataStructure dsd) {
+        if (this == ALL) {
+            return null;
+        }
+
+        if (dsd.getDimensions().size() != size()) {
+            return "Expected " + dsd.getDimensions().size() + " dimensions instead of " + size();
+        }
+
+        Dimension[] dimensions = dsd
+                .getDimensions()
+                .stream()
+                .sorted(Comparator.comparingInt(Dimension::getPosition))
+                .toArray(Dimension[]::new);
+
+        for (int i = 0; i < dimensions.length; i++) {
+            Dimension dimension = dimensions[i];
+            if (dimension.isCoded()) {
+                for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
+                    if (!isWildcardCode(code) && !dimension.getCodes().containsKey(code)) {
+                        return "Unknown code '" + code + "' for dimension '" + dimension.getId() + "'";
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return formatToString(items);
@@ -169,16 +197,20 @@ public final class Key {
 
     @NonNull
     public static Builder builder(@NonNull DataStructure dfs) {
-        Map<String, Integer> index = new HashMap<>();
-        dfs.getDimensions().forEach(o -> index.put(o.getId(), o.getPosition() - 1));
-        return new Builder(index);
+        return builder(dfs
+                .getDimensions()
+                .stream()
+                .sorted(Comparator.comparingInt(Dimension::getPosition))
+                .map(Dimension::getId)
+                .collect(Collectors.toList())
+        );
     }
 
     @NonNull
-    public static Builder builder(@NonNull String... dimensions) {
+    public static Builder builder(@NonNull List<String> dimensionNames) {
         Map<String, Integer> index = new HashMap<>();
-        for (int i = 0; i < dimensions.length; i++) {
-            index.put(dimensions[i], i);
+        for (int i = 0; i < dimensionNames.size(); i++) {
+            index.put(dimensionNames.get(i), i);
         }
         return new Builder(index);
     }

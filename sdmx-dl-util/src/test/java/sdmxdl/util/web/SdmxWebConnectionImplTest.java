@@ -32,7 +32,13 @@ public class SdmxWebConnectionImplTest {
         SdmxRepository repo = RepoSamples.REPO;
         SdmxConnectionAssert.assertCompliance(
                 () -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""),
-                SdmxConnectionAssert.Sample.builder().valid(RepoSamples.GOOD_FLOW_REF).build()
+                SdmxConnectionAssert.Sample
+                        .builder()
+                        .validFlow(RepoSamples.GOOD_FLOW_REF)
+                        .invalidFlow(RepoSamples.BAD_FLOW_REF)
+                        .validKey(RepoSamples.K1)
+                        .invalidKey(RepoSamples.INVALID_KEY)
+                        .build()
         );
     }
 }

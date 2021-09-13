@@ -51,16 +51,19 @@ public class RepoSamples {
 
     public final Obs OBS2 = Obs.builder().period(LocalDate.of(2010, 2, 1).atStartOfDay()).value(Math.E).build();
 
-    public final Series SERIES = Series
+    public final Key K1 = Key.of("M", "BE", "INDUSTRY");
+    public final Key INVALID_KEY = Key.of("M", "BE");
+
+    public final Series S1 = Series
             .builder()
-            .key(Key.of("M", "BE", "INDUSTRY"))
+            .key(K1)
             .freq(Frequency.MONTHLY)
             .obs(OBS1)
             .obs(OBS2)
             .meta("TITLE", "hello world")
             .build();
 
-    public final DataSet DATA_SET = DataSet.builder().ref(GOOD_FLOW_REF).series(SERIES).build();
+    public final DataSet DATA_SET = DataSet.builder().ref(GOOD_FLOW_REF).series(S1).build();
 
     public final SdmxRepository REPO = SdmxRepository
             .builder()

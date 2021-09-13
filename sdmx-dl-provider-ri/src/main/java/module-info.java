@@ -7,6 +7,8 @@ module sdmxdl.web.ri {
 
     requires sdmxdl.util;
     requires sdmxdl.util.xml;
+    requires com.github.tuupertunut.powershelllibjava;
+    requires nbbrd.picocsv;
 
     requires transitive sdmxdl.api;
 
@@ -15,8 +17,17 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.ri.web.drivers.FileDriver,
             internal.sdmxdl.ri.web.drivers.NbbDriver2,
-            internal.sdmxdl.ri.web.drivers.Sdmx21Driver2;
+            internal.sdmxdl.ri.web.drivers.Sdmx21Driver2,
+            internal.sdmxdl.ri.web.drivers.BbkDriver;
 
     provides sdmxdl.file.spi.SdmxFileReader with
             internal.sdmxdl.ri.file.readers.XmlFileReader;
+
+    provides sdmxdl.web.spi.SdmxWebAuthenticator with
+            internal.sdmxdl.ri.web.authenticators.WinPasswordVaultAuthenticator;
+
+    provides internal.util.http.HttpURLConnectionFactory with
+            internal.util.http.curl.CurlHttpURLConnectionFactory;
+
+    uses internal.util.http.HttpURLConnectionFactory;
 }

@@ -29,7 +29,7 @@ public class SdmxCsvFieldsTest {
 
     @Test
     public void testCombinedParser() {
-        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(DataflowRef::parse);
+        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(DataflowRef::parse));
 
         assertThat(parser.parse("ECB:EXR(1.0)"))
                 .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));

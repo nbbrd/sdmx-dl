@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -45,7 +46,7 @@ public class XMLStreamCompactDataCursorTest {
     @Test
     public void testCompactData20() throws Exception {
         ByteSource xml = SdmxSource.OTHER_COMPACT20;
-        Key.Builder builder = Key.builder("FREQ", "COLLECTION", "VIS_CTY", "JD_TYPE", "JD_CATEGORY");
+        Key.Builder builder = Key.builder(asList("FREQ", "COLLECTION", "VIS_CTY", "JD_TYPE", "JD_CATEGORY"));
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
@@ -95,7 +96,7 @@ public class XMLStreamCompactDataCursorTest {
     @Test
     public void testCompactData21() throws Exception {
         ByteSource xml = SdmxSource.OTHER_COMPACT21;
-        Key.Builder builder = Key.builder("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM");
+        Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();

@@ -28,7 +28,7 @@ public class SdmxFileConnectionAssert {
     private static void checkGetDataflowRef(SoftAssertions s, IOSupplier<SdmxFileConnection> supplier, Sample sample) {
         try (SdmxFileConnection conn = supplier.getWithIO()) {
             s.assertThat(conn.getDataflowRef())
-                    .isEqualTo(sample.connection.getValid());
+                    .isEqualTo(sample.connection.getValidFlow());
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }
@@ -37,7 +37,7 @@ public class SdmxFileConnectionAssert {
     private static void checkGetFlow(SoftAssertions s, IOSupplier<SdmxFileConnection> supplier, Sample sample) {
         try (SdmxFileConnection conn = supplier.getWithIO()) {
             s.assertThat(conn.getFlow().getRef())
-                    .isEqualTo(sample.connection.getValid());
+                    .isEqualTo(sample.connection.getValidFlow());
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }

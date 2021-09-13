@@ -1,35 +1,53 @@
 package internal.sdmxdl.cli;
 
-import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebAuthenticator;
 
 import java.io.Console;
+import java.io.IOError;
+import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.concurrent.ConcurrentHashMap;
 
-@lombok.AllArgsConstructor
 final class ConsoleAuthenticator implements SdmxWebAuthenticator {
 
-    @lombok.NonNull
-    private final PasswordAuthentication user;
+    private final Console console = System.console();
+
+    private final ConcurrentHashMap<SdmxWebSource, PasswordAuthentication> cache = new ConcurrentHashMap<>();
 
     @Override
-    public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) {
-        Console console = System.console();
-        if (console == null) return null;
-        String username = hasUsername() ? user.getUserName() : console.readLine("Enter username: ");
-        char[] password = hasPassword() ? user.getPassword() : console.readPassword("Enter password: ");
-        return new PasswordAuthentication(username, password);
+    public boolean isAvailable() {
+        return isConsoleAvailable();
+    }
+
+    @Override
+    public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) throws IOException {
+        if (!isConsoleAvailable()) {
+            throw new IOException("Console is not available");
+        }
+        try {
+            return cache.computeIfAbsent(source, this::readPasswordAuthentication);
+        } catch (IOError ex) {
+            if (ex.getCause() instanceof IOException) {
+                throw (IOException) ex.getCause();
+            }
+            throw new IOException(ex);
+        }
+    }
+
+    private boolean isConsoleAvailable() {
+        return console != null;
     }
 
     @Override
     public void invalidate(SdmxWebSource source) {
+        cache.remove(source);
     }
 
-    private boolean hasUsername() {
-        return user.getUserName() != null && !user.getUserName().isEmpty();
-    }
-
-    private boolean hasPassword() {
-        return user.getPassword().length > 0;
+    private PasswordAuthentication readPasswordAuthentication(SdmxWebSource source) throws IOError {
+        console.format("Enter your credentials for %s\n", source.getName());
+        String username = console.readLine("Enter username: ");
+        char[] password = console.readPassword("Enter password: ");
+        return new PasswordAuthentication(username, password);
     }
 }

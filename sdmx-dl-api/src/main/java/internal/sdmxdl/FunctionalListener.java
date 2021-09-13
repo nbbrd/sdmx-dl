@@ -39,6 +39,7 @@ public final class FunctionalListener implements SdmxWebListener, SdmxFileListen
         onFile.accept(source, message);
     }
 
+    @SuppressWarnings("EmptyMethod")
     private static void doNothing(Object source, Object message) {
     }
 }

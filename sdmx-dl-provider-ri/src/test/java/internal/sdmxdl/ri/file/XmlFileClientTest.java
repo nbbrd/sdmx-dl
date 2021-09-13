@@ -23,6 +23,7 @@ import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.samples.RepoSamples;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.SdmxConnectionAssert;
 import sdmxdl.util.file.SdmxFileClient;
@@ -78,7 +79,13 @@ public class XmlFileClientTest {
 
         SdmxConnectionAssert.assertCompliance(
                 () -> new SdmxFileConnectionImpl(r, DATAFLOW),
-                SdmxConnectionAssert.Sample.builder().valid(source.asDataflowRef()).build()
+                SdmxConnectionAssert.Sample
+                        .builder()
+                        .validFlow(source.asDataflowRef())
+                        .invalidFlow(RepoSamples.BAD_FLOW_REF)
+                        .validKey(key)
+                        .invalidKey(Key.of("zzz"))
+                        .build()
         );
     }
 

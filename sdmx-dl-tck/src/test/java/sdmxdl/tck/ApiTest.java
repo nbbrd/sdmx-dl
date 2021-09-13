@@ -9,9 +9,7 @@ import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.tck.ext.MockedDialect;
 import sdmxdl.tck.web.MockedWebDriver;
-import sdmxdl.tck.web.SdmxWebAuthenticatorAssert;
 import sdmxdl.tck.web.SdmxWebListenerAssert;
-import sdmxdl.web.SdmxWebAuthenticator;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -72,17 +70,6 @@ public class ApiTest {
         DataCursorAssert.assertCompliance(
                 () -> RepoSamples.DATA_SET.getDataCursor(Key.ALL, DataFilter.FULL),
                 Key.ALL, DataFilter.FULL
-        );
-    }
-
-    @Test
-    public void testNoOpAuthenticator() {
-        SdmxWebAuthenticatorAssert.assertCompliance(
-                SdmxWebAuthenticator.noOp(),
-                SdmxWebAuthenticatorAssert.Sample
-                        .builder()
-                        .source(SdmxWebSource.builder().name("localhost").driver("").endpointOf("http://localhost").build())
-                        .build()
         );
     }
 

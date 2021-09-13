@@ -16,6 +16,7 @@
  */
 package internal.util.rest;
 
+import internal.util.http.HttpURLConnectionFactoryLoader;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -24,6 +25,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.PasswordAuthentication;
@@ -44,8 +46,21 @@ public class HttpRest {
 
     public interface Client {
 
-        @NonNull
-        Response requestGET(@NonNull URL query, @NonNull String mediaType, @NonNull String langs) throws IOException;
+        @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException;
+    }
+
+    public static @NonNull Client newClient(@NonNull Context context) {
+        Client result = new DefaultClient(context, HttpURLConnectionFactoryLoader.get());
+        File dumpFile = getDumpFile();
+        return dumpFile != null ? new DumpingClient(dumpFile.toPath(), result, file -> context.getListener().onEvent("Dumping '" + file + "'")) : result;
+    }
+
+    // TODO: document these options?
+    private static final String SDMXDL_RI_WEB_DUMP_FOLDER = "sdmxdl.ri.web.dump.folder";
+
+    private File getDumpFile() {
+        String result = System.getProperty(SDMXDL_RI_WEB_DUMP_FOLDER);
+        return result != null ? new File(result) : null;
     }
 
     @lombok.Value
@@ -93,6 +108,9 @@ public class HttpRest {
         @lombok.Builder.Default
         boolean preemptiveAuthentication = false;
 
+        @lombok.Builder.Default
+        String userAgent = null;
+
         public static Builder builder() {
             return new Builder()
                     .decoder(HttpRest.StreamDecoder.gzip())
@@ -106,7 +124,7 @@ public class HttpRest {
     public interface Response extends Closeable {
 
         @NonNull
-        String getContentType() throws IOException;
+        MediaType getContentType() throws IOException;
 
         @NonNull
         InputStream getBody() throws IOException;
@@ -131,11 +149,15 @@ public class HttpRest {
 
     public interface EventListener {
 
-        void onOpen(@NonNull URL url, @NonNull String mediaType, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
+        void onOpen(@NonNull URL url, @NonNull List<MediaType> mediaTypes, @NonNull String langs, @NonNull Proxy proxy, @NonNull AuthScheme scheme);
+
+        void onSuccess(@NonNull MediaType mediaType);
 
         void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl);
 
         void onUnauthorized(@NonNull URL url, @NonNull AuthScheme oldScheme, @NonNull AuthScheme newScheme);
+
+        void onEvent(@NonNull String message);
 
         @NonNull
         static EventListener noOp() {
@@ -200,11 +222,16 @@ public class HttpRest {
     private enum EventListeners implements EventListener {
         NONE {
             @Override
-            public void onOpen(URL url, String mediaType, String langs, Proxy proxy, AuthScheme scheme) {
+            public void onOpen(URL url, List<MediaType> mediaTypes, String langs, Proxy proxy, AuthScheme scheme) {
                 Objects.requireNonNull(url);
-                Objects.requireNonNull(mediaType);
+                Objects.requireNonNull(mediaTypes);
                 Objects.requireNonNull(proxy);
                 Objects.requireNonNull(scheme);
+            }
+
+            @Override
+            public void onSuccess(@NonNull MediaType mediaType) {
+                Objects.requireNonNull(mediaType);
             }
 
             @Override
@@ -218,6 +245,11 @@ public class HttpRest {
                 Objects.requireNonNull(url);
                 Objects.requireNonNull(oldScheme);
                 Objects.requireNonNull(newScheme);
+            }
+
+            @Override
+            public void onEvent(@NonNull String message) {
+                Objects.requireNonNull(message);
             }
         }
     }

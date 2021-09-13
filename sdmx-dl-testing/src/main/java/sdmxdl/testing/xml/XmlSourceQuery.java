@@ -33,6 +33,7 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 @lombok.experimental.UtilityClass
 public class XmlSourceQuery {
 

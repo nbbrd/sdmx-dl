@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 @lombok.extern.java.Log
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
 final class FailsafeSdmxWebConnection implements SdmxWebConnection {

@@ -129,7 +129,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
 
-        result.register(ArrayList.class, new CollectionSerializer());
+        result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class);
 
         return result;
@@ -145,15 +145,15 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         }
     }
 
-    private static final class CustomMapSerializer<K, V> extends MapSerializer<Map<K, V>> {
+    private static final class StringMapSerializer extends MapSerializer<Map<String, String>> {
 
-        CustomMapSerializer(Class<K> keyType, Class<V> valueType) {
+        StringMapSerializer() {
             setImmutable(true);
             setAcceptsNull(false);
             setKeysCanBeNull(false);
             setValuesCanBeNull(false);
-            setKeyClass(keyType);
-            setValueClass(valueType);
+            setKeyClass(String.class);
+            setValueClass(String.class);
         }
     }
 
@@ -191,6 +191,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             output.writeBoolean(t.isDetailSupported());
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public SdmxRepository read(Kryo kryo, Input input, Class<? extends SdmxRepository> type) {
             return SdmxRepository
@@ -219,6 +220,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             output.writeString(t.getLabel());
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public DataStructure read(Kryo kryo, Input input, Class<? extends DataStructure> type) {
             return DataStructure
@@ -289,6 +291,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             kryo.writeObject(output, t.getData(), data);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public DataSet read(Kryo kryo, Input input, Class<? extends DataSet> type) {
             return DataSet
@@ -331,7 +334,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
     private static final class SeriesSerializer extends ImmutableSerializer<Series> {
 
         private final Serializer<Collection<Obs>> obs = new CustomCollectionSerializer<>(Obs.class);
-        private final Serializer<Map<String, String>> meta = new CustomMapSerializer<>(String.class, String.class);
+        private final Serializer<Map<String, String>> meta = new StringMapSerializer();
         private final Series.Builder builder = Series.builder();
 
         @Override
@@ -342,6 +345,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             kryo.writeObject(output, t.getMeta(), meta);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Series read(Kryo kryo, Input input, Class<? extends Series> type) {
             return builder
@@ -357,7 +361,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
     private static final class ObsSerializer extends ImmutableSerializer<Obs> {
 
-        private final Serializer<Map<String, String>> meta = new CustomMapSerializer<>(String.class, String.class);
+        private final Serializer<Map<String, String>> meta = new StringMapSerializer();
         private final Obs.Builder builder = Obs.builder();
 
         @Override
@@ -367,6 +371,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             kryo.writeObject(output, t.getMeta(), meta);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
             return builder
@@ -380,7 +385,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
     private static final class DimensionSerializer extends ImmutableSerializer<Dimension> {
 
-        private final Serializer<Map<String, String>> codes = new CustomMapSerializer<>(String.class, String.class);
+        private final Serializer<Map<String, String>> codes = new StringMapSerializer();
 
         @Override
         public void write(Kryo kryo, Output output, Dimension t) {
@@ -390,6 +395,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             output.writeInt(t.getPosition(), true);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Dimension read(Kryo kryo, Input input, Class<? extends Dimension> type) {
             return Dimension
@@ -404,7 +410,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
     private static final class AttributeSerializer extends ImmutableSerializer<Attribute> {
 
-        private final Serializer<Map<String, String>> codes = new CustomMapSerializer<>(String.class, String.class);
+        private final Serializer<Map<String, String>> codes = new StringMapSerializer();
 
         @Override
         public void write(Kryo kryo, Output output, Attribute t) {
@@ -413,6 +419,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             output.writeString(t.getLabel());
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Attribute read(Kryo kryo, Input input, Class<? extends Attribute> type) {
             return Attribute

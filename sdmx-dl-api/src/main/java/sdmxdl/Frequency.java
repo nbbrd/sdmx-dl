@@ -50,7 +50,7 @@ public enum Frequency implements Comparable<Frequency> {
     public static Frequency getHighest(Collection<Series> data) {
         return data.stream()
                 .map(Series::getFreq)
-                .min(Comparator.reverseOrder())
+                .max(Comparator.naturalOrder())
                 .orElse(Frequency.UNDEFINED);
     }
 }

@@ -26,6 +26,7 @@ import sdmxdl.tck.ext.ObsParserAssert;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -39,7 +40,7 @@ public class DefaultObsParserTest {
                 new DefaultObsParser((key, attributes) -> Frequency.ANNUAL, PeriodParsers::onStandardFreq, Parser.onDouble()),
                 ObsParserAssert.Sample
                         .builder()
-                        .validKey(Key.builder("a", "b"))
+                        .validKey(Key.builder(asList("a", "b")))
                         .validAttributes(UnaryOperator.identity())
                         .validPeriod("2001")
                         .invalidPeriod("abc")
@@ -54,7 +55,7 @@ public class DefaultObsParserTest {
         AtomicReference<Frequency> freq = new AtomicReference<>();
         ObsParser p = new DefaultObsParser((key, attributes) -> freq.get(), PeriodParsers::onStandardFreq, Parser.onDouble());
 
-        Key.Builder key = Key.builder("a", "b");
+        Key.Builder key = Key.builder(asList("a", "b"));
 
         freq.set(Frequency.ANNUAL);
         p.frequency(key, UnaryOperator.identity());

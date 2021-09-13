@@ -34,6 +34,7 @@ import static sdmxdl.xml.stream.XMLStreamUtil.*;
  * @author Philippe Charles
  */
 //@NotThreadSafe
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 final class XMLStreamFlow21 {
 
     private static final String HEADER_TAG = "Header";

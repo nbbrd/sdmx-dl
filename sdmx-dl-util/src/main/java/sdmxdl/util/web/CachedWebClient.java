@@ -164,12 +164,12 @@ final class CachedWebClient implements SdmxWebClient {
 
     private DataSet loadSeriesKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(request.getFlowRef());
-        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
+        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> isNarrowerRequest(request.getKey(), o));
     }
 
     private DataSet loadNoDataWithCache(DataRequest request, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfNoData().with(request.getFlowRef());
-        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> !isBroaderRequest(request.getKey(), o));
+        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> isNarrowerRequest(request.getKey(), o));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
@@ -192,8 +192,8 @@ final class CachedWebClient implements SdmxWebClient {
         return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 
-    private boolean isBroaderRequest(Key key, DataSet dataSet) {
-        return key.supersedes(dataSet.getKey());
+    private boolean isNarrowerRequest(Key key, DataSet dataSet) {
+        return !key.supersedes(dataSet.getKey());
     }
 
     private DataSet copyData(DataRequest request, DataStructure structure) throws IOException {

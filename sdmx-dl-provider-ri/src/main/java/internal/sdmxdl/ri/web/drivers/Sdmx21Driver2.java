@@ -17,9 +17,12 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.RestClients;
-import internal.sdmxdl.ri.web.Sdmx21RestClient;
+import internal.sdmxdl.ri.web.RiRestClient;
+import internal.sdmxdl.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.ri.web.Sdmx21RestQueries;
+import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.parser.ObsFactories;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.web.SdmxWebClient;
 import sdmxdl.util.web.SdmxWebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -27,6 +30,8 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
@@ -44,10 +49,11 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .builder()
             .name(RI_SDMX_21)
             .rank(NATIVE_RANK)
-            .client(Sdmx21Driver2::of)
+            .client(Sdmx21Driver2::newClient)
             .supportedProperties(RestClients.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
+            .supportedProperties(QUERIES_PROPERTIES)
+            .supportedProperties(PARSERS_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("BIS")
@@ -60,6 +66,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("CAMSTAT")
+                    .description("National Statistical Institute of Cambodia")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
+                    .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
+                    .monitorOf("UptimeRobot", "m788487928-37e8ae2f2d754f577b97a780")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("ECB")
                     .description("European Central Bank")
                     .driver(RI_SDMX_21)
@@ -68,6 +83,25 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .monitorOf("UptimeRobot", "m783846981-b55d7e635c5cdc16e16bac2a")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ESCAP")
+                    .description("Economic and Social Commission for Asia and the Pacific")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://api-dataexplorer.unescap.org/rest/")
+                    .websiteOf("https://dataexplorer.unescap.org/")
+                    .monitorOf("UptimeRobot", "m788486016-99b7fd6f51508b689c67d460")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("ILO")
+                    .description("International Labour Office")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://www.ilo.org/sdmx/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://ilostat.ilo.org/data/")
+                    .monitorOf("UptimeRobot", "m783847083-609d3e4ebc1da9455baeb63e")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -112,6 +146,26 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("SGR")
+                    .description("SDMX Global Registry")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://registry.sdmx.org/ws/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://registry.sdmx.org/overview.html")
+                    .monitorOf("UptimeRobot", "m788488202-23b752a1d418181c2d64d6d1")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .name("SPC")
+                    .description("Pacific Data Hub")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://stats.pacificdata.org/?locale=en")
+                    .monitorOf("UptimeRobot", "m788488402-48b2f77f10060fcc6bb4baaa")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .description("Data access system to UN databases")
                     .driver(RI_SDMX_21)
@@ -143,15 +197,35 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static SdmxWebClient of(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        return new Sdmx21RestClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
-                c.getLanguages(),
-                RestClients.getRestClient(s, c),
-                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties()),
-                TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()),
-                ObsFactories.getObsFactory(c, s, "SDMX21")
+    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+        return RiRestClient.of(
+                s, c, "SDMX21",
+                getQueries(s.getProperties()),
+                getParsers(s.getProperties()),
+                isDetailSupportedProperty(s.getProperties())
         );
     }
+
+    private static Sdmx21RestQueries getQueries(Map<String, String> properties) {
+        return Sdmx21RestQueries
+                .builder()
+                .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(properties))
+                .build();
+    }
+
+    @SuppressWarnings("unused")
+    private static Sdmx21RestParsers getParsers(Map<String, String> properties) {
+        return new Sdmx21RestParsers();
+    }
+
+    private static boolean isDetailSupportedProperty(Map<String, String> properties) {
+        return DETAIL_SUPPORTED_PROPERTY.get(properties);
+    }
+
+    private static final List<String> PARSERS_PROPERTIES = BaseProperty.keysOf(
+    );
+
+    private static final List<String> QUERIES_PROPERTIES = BaseProperty.keysOf(
+            TRAILING_SLASH_REQUIRED_PROPERTY
+    );
 }
