@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add a link to documentation in CLI [#137](https://github.com/nbbrd/sdmx-dl/issues/137)
+
 ### Changed
-- Renamed command check.properties as check.config [#136](https://github.com/nbbrd/sdmx-dl/issues/136)
+- Rename command check.properties as check.config [#136](https://github.com/nbbrd/sdmx-dl/issues/136)
 
 ## [3.0.0-beta.3] - 2021-09-13
 
