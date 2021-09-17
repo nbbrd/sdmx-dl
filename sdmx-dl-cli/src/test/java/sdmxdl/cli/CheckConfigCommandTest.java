@@ -13,7 +13,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class CheckPropertiesCommandTest {
+public class CheckConfigCommandTest {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
@@ -30,7 +30,7 @@ public class CheckPropertiesCommandTest {
 
     @Test
     public void testContent() throws IOException {
-        CommandLine cmd = new CommandLine(new CheckPropertiesCommand());
+        CommandLine cmd = new CommandLine(new CheckConfigCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File out = temp.newFile("out.csv");
@@ -40,6 +40,6 @@ public class CheckPropertiesCommandTest {
         assertThat(watcher.getErr()).isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Scope,PropertyKey,PropertyValue,Type", atIndex(0));
+                .contains("Scope,PropertyKey,PropertyValue,Category", atIndex(0));
     }
 }

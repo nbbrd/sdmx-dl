@@ -34,9 +34,9 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "properties")
+@CommandLine.Command(name = "config")
 @SuppressWarnings("FieldMayBeFinal")
-public final class CheckPropertiesCommand implements Callable<Void> {
+public final class CheckConfigCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private VerboseOptions verboseOptions;
@@ -63,7 +63,7 @@ public final class CheckPropertiesCommand implements Callable<Void> {
                 .columnOf("Scope", ScopedProperty::getScope, Formatter.onEnum())
                 .columnOf("PropertyKey", ScopedProperty::getKey, Formatter.onString())
                 .columnOf("PropertyValue", ScopedProperty::getValue, Formatter.onString())
-                .columnOf("Type", ScopedProperty::getType, Formatter.onEnum())
+                .columnOf("Category", ScopedProperty::getCategory, Formatter.onEnum())
                 .build();
     }
 
@@ -94,7 +94,7 @@ public final class CheckPropertiesCommand implements Callable<Void> {
 
     private static Stream<ScopedProperty> getEntries(ConfigHelper.Scope scope, Properties properties, CommandLine cmd) {
         return properties.stringPropertyNames().stream()
-                .map(key -> new ScopedProperty(scope, key, properties.getProperty(key), Type.get(key, getRoot(cmd))));
+                .map(key -> new ScopedProperty(scope, key, properties.getProperty(key), Category.get(key, getRoot(cmd))));
     }
 
     private static CommandLine getRoot(CommandLine cmd) {
@@ -102,11 +102,11 @@ public final class CheckPropertiesCommand implements Callable<Void> {
         return parent != null ? getRoot(parent) : cmd;
     }
 
-    private enum Type {
+    private enum Category {
 
         WIDE_OPTION, NARROW_OPTION, OTHER;
 
-        static Type get(String key, CommandLine cmd) {
+        static Category get(String key, CommandLine cmd) {
             for (CommandLine.Model.OptionSpec option : cmd.getCommandSpec().options()) {
                 String descriptionKey = option.descriptionKey();
                 if (descriptionKey != null) {
@@ -119,7 +119,7 @@ public final class CheckPropertiesCommand implements Callable<Void> {
                 if (key.equals(longestName)) return WIDE_OPTION;
             }
             for (CommandLine sub : cmd.getSubcommands().values()) {
-                Type result = get(key, sub);
+                Category result = get(key, sub);
                 if (result != OTHER) {
                     return result;
                 }
@@ -142,6 +142,6 @@ public final class CheckPropertiesCommand implements Callable<Void> {
         ConfigHelper.Scope scope;
         String key;
         String value;
-        Type type;
+        Category category;
     }
 }
