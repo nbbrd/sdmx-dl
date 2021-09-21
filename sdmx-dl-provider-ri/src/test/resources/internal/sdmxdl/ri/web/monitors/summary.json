@@ -1,0 +1,41 @@
+[
+  {
+    "name": "ABS",
+    "url": "https://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetDataStructure/ALL",
+    "icon": "https://favicons.githubusercontent.com/stat.data.abs.gov.au",
+    "slug": "abs",
+    "status": "up",
+    "uptime": "100.00%",
+    "uptimeDay": "100.00%",
+    "uptimeWeek": "100.00%",
+    "uptimeMonth": "100.00%",
+    "uptimeYear": "100.00%",
+    "time": 4674,
+    "timeDay": 4674,
+    "timeWeek": 4674,
+    "timeMonth": 4674,
+    "timeYear": 4674,
+    "dailyMinutesDown": {}
+  },
+  {
+    "name": "ILO",
+    "url": "https://www.ilo.org/sdmx/rest/dataflow/all/all/latest",
+    "icon": "https://favicons.githubusercontent.com/www.ilo.org",
+    "slug": "ilo",
+    "status": "down",
+    "uptime": "20.97%",
+    "uptimeDay": "20.97%",
+    "uptimeWeek": "20.97%",
+    "uptimeMonth": "20.97%",
+    "uptimeYear": "20.97%",
+    "time": 14989,
+    "timeDay": 14989,
+    "timeWeek": 14989,
+    "timeMonth": 14989,
+    "timeYear": 14989,
+    "dailyMinutesDown": {
+      "2021-09-21": 412,
+      "2021-09-20": 491
+    }
+  }
+]
