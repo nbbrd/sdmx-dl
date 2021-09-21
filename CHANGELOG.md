@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add a link to documentation in CLI [#137](https://github.com/nbbrd/sdmx-dl/issues/137)
+- Add support of average response time in monitors [#144](https://github.com/nbbrd/sdmx-dl/issues/144)
 
 ### Changed
 - Rename command check.properties as check.config [#136](https://github.com/nbbrd/sdmx-dl/issues/136)
+- Migrate web monitors to Upptime [#142](https://github.com/nbbrd/sdmx-dl/issues/142)
 
 ## [3.0.0-beta.3] - 2021-09-13
 

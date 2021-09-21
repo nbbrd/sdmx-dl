@@ -76,14 +76,7 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         String name;
         String status;
         String uptime;
-
-        public static SiteSummary of(String name, String status, String uptime) {
-            SiteSummary result = new SiteSummary();
-            result.setName(name);
-            result.setStatus(status);
-            result.setUptime(uptime);
-            return result;
-        }
+        long time;
 
         public static List<SiteSummary> parseAll(Reader reader) {
             return Arrays.asList(new Gson().fromJson(reader, SiteSummary[].class));
@@ -106,7 +99,8 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         return SdmxWebMonitorReport
                 .builder()
                 .status(parseStatus(summary.getStatus()))
-                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).orElse(0).doubleValue())
+                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).map(Number::doubleValue).orElse(null))
+                .averageResponseTime(summary.getTime())
                 .build();
     }
 

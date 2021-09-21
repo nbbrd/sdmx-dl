@@ -117,7 +117,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
                                 .builder()
                                 .status(STATUS_PARSER.parseValue(reader.getAttributeValue(null, "status")).orElseThrow(() -> new XMLStreamException("Cannot parse status")))
                                 .uptimeRatio(Parser.onDouble().parse(reader.getAttributeValue(null, "all_time_uptime_ratio")))
-                                .averageResponseTime(Parser.onDouble().parse(reader.getAttributeValue(null, "average_response_time")))
+                                .averageResponseTime(Parser.onLong().parse(reader.getAttributeValue(null, "average_response_time")))
                                 .build();
                     }
                     break;

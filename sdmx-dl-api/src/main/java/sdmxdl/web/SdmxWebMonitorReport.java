@@ -13,7 +13,7 @@ public class SdmxWebMonitorReport {
     Double uptimeRatio;
 
     @Nullable
-    Double averageResponseTime;
+    Long averageResponseTime;
 
     public static final SdmxWebMonitorReport EMPTY = new SdmxWebMonitorReport(SdmxWebStatus.UNKNOWN, null, null);
 }
