@@ -1,10 +1,9 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import com.jsoniter.JsonIterator;
+import com.google.gson.Gson;
 import internal.sdmxdl.ri.web.RestClients;
 import internal.util.rest.HttpRest;
 import internal.util.rest.MediaType;
-import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -17,9 +16,10 @@ import sdmxdl.web.SdmxWebStatus;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,22 +63,10 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
 
     private static List<SiteSummary> getSummary(HttpRest.Client client, UpptimeId id) throws IOException {
         try (HttpRest.Response response = client.requestGET(id.toSummaryURL(), Collections.singletonList(MediaType.ANY_TYPE), LanguagePriorityList.ANY.toString())) {
-            try (InputStream body = response.getBody()) {
-                return SiteSummary.parseAll(toBytes(body));
+            try (InputStreamReader reader = new InputStreamReader(response.getBody(), response.getContentType().getCharset().orElse(StandardCharsets.UTF_8))) {
+                return SiteSummary.parseAll(reader);
             }
         }
-    }
-
-    @MightBePromoted
-    @VisibleForTesting
-    static byte[] toBytes(InputStream stream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buf = new byte[8192];
-        int length;
-        while ((length = stream.read(buf)) > 0) {
-            result.write(buf, 0, length);
-        }
-        return result.toByteArray();
     }
 
     @VisibleForTesting
@@ -97,8 +85,8 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
             return result;
         }
 
-        public static List<SiteSummary> parseAll(byte[] bytes) {
-            return Arrays.asList(JsonIterator.deserialize(bytes, SiteSummary[].class));
+        public static List<SiteSummary> parseAll(Reader reader) {
+            return Arrays.asList(new Gson().fromJson(reader, SiteSummary[].class));
         }
     }
 

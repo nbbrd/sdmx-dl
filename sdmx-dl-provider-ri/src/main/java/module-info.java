@@ -9,7 +9,7 @@ module sdmxdl.web.ri {
     requires sdmxdl.util.xml;
     requires com.github.tuupertunut.powershelllibjava;
     requires nbbrd.picocsv;
-    requires jsoniter;
+    requires com.google.gson;
 
     requires transitive sdmxdl.api;
 
@@ -35,5 +35,5 @@ module sdmxdl.web.ri {
     provides sdmxdl.web.spi.SdmxWebMonitoring with
             internal.sdmxdl.ri.web.monitors.UpptimeMonitoring;
 
-    opens internal.sdmxdl.ri.web.monitors to jsoniter;
+    opens internal.sdmxdl.ri.web.monitors to com.google.gson;
 }
