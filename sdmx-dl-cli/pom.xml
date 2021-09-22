@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-cli</name>
-    <description>Download data from remote SDMX servers - CLI</description>
+    <description>Download SDMX data - CLI</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>

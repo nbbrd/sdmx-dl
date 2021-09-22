@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-provider-util</name>
-    <description>Download data from remote SDMX servers - Util</description>
+    <description>Download SDMX data - Util</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

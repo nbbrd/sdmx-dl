@@ -16,6 +16,7 @@
  */
 package sdmxdl.util.ext;
 
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -23,8 +24,6 @@ import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -57,7 +56,7 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Serializer serializer = Serializer.noOp();
+    private final Serializer<SdmxRepository> serializer = Serializer.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -90,8 +89,8 @@ public final class FileCache implements SdmxCache {
     private SdmxRepository read(String key) {
         Path file = getFile(key);
         if (Files.exists(file) && Files.isRegularFile(file)) {
-            try (InputStream stream = Files.newInputStream(file)) {
-                return serializer.load(stream);
+            try {
+                return serializer.parsePath(file);
             } catch (IOException ex) {
                 onIOException.accept("While reading '" + file + "'", ex);
             }
@@ -102,8 +101,8 @@ public final class FileCache implements SdmxCache {
     private void write(String key, SdmxRepository entry) {
         Path file = getFile(key);
         ensureParentExists(file);
-        try (OutputStream stream = Files.newOutputStream(file)) {
-            serializer.store(stream, entry);
+        try {
+            serializer.formatPath(entry, file);
         } catch (IOException ex) {
             onIOException.accept("While writing '" + file + "'", ex);
         }
@@ -126,6 +125,7 @@ public final class FileCache implements SdmxCache {
         }
     }
 
+    @VisibleForTesting
     Path getFile(String key) {
         return root.resolve(fileNamePrefix + fileNameGenerator.apply(key) + fileNameSuffix);
     }

@@ -113,13 +113,13 @@ public class FileCacheTest {
         }
     }
 
-    private static final class FakeSerializer implements Serializer {
+    private static final class FakeSerializer implements Serializer<SdmxRepository> {
 
         @lombok.Getter
         private final Map<String, SdmxRepository> content = new HashMap<>();
 
         @Override
-        public @NonNull SdmxRepository load(@NonNull InputStream stream) throws IOException {
+        public @NonNull SdmxRepository parseStream(@NonNull InputStream stream) throws IOException {
             try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 String name = new BufferedReader(reader).lines().collect(Collectors.joining(""));
                 return content.get(name);
@@ -127,7 +127,7 @@ public class FileCacheTest {
         }
 
         @Override
-        public void store(@NonNull OutputStream stream, @NonNull SdmxRepository entry) throws IOException {
+        public void formatStream(@NonNull SdmxRepository entry, @NonNull OutputStream stream) throws IOException {
             try (Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
                 writer.write(entry.getName());
                 content.put(entry.getName(), entry);

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-kryo</name>
-    <description>Download data from remote SDMX servers - Kryo</description>
+    <description>Download SDMX data - Kryo</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

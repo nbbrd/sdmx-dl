@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-tck</name>
-    <description>Download data from remote SDMX servers - TCK</description>
+    <description>Download SDMX data - TCK</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

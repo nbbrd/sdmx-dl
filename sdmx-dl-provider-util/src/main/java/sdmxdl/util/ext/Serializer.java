@@ -3,7 +3,6 @@ package sdmxdl.util.ext;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.repo.SdmxRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,57 +11,52 @@ import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public interface Serializer {
+public interface Serializer<T> extends FileParser<T>, FileFormatter<T> {
 
-    @NonNull
-    SdmxRepository load(@NonNull InputStream stream) throws IOException;
-
-    void store(@NonNull OutputStream stream, @NonNull SdmxRepository entry) throws IOException;
-
-    static @NonNull Serializer of(@NonNull FileParser<SdmxRepository> parser, @NonNull FileFormatter<SdmxRepository> formatter) {
+    static <T> @NonNull Serializer<T> of(@NonNull FileParser<T> parser, @NonNull FileFormatter<T> formatter) {
         Objects.requireNonNull(parser);
         Objects.requireNonNull(formatter);
-        return new Serializer() {
+        return new Serializer<T>() {
             @Override
-            public @NonNull SdmxRepository load(@NonNull InputStream stream) throws IOException {
+            public @NonNull T parseStream(@NonNull InputStream stream) throws IOException {
                 return parser.parseStream(stream);
             }
 
             @Override
-            public void store(@NonNull OutputStream stream, @NonNull SdmxRepository entry) throws IOException {
+            public void formatStream(@NonNull T entry, @NonNull OutputStream stream) throws IOException {
                 formatter.formatStream(entry, stream);
             }
         };
     }
 
     @NonNull
-    static Serializer noOp() {
-        return new Serializer() {
+    static <T> Serializer<T> noOp() {
+        return new Serializer<T>() {
             @Override
-            public SdmxRepository load(@NonNull InputStream stream) {
-                return SdmxRepository.builder().build();
+            public T parseStream(@NonNull InputStream stream) throws IOException {
+                throw new IOException("Cannot parse stream");
             }
 
             @Override
-            public void store(@NonNull OutputStream stream, SdmxRepository entry) {
+            public void formatStream(T entry, @NonNull OutputStream stream) {
             }
         };
     }
 
     @NonNull
-    static Serializer gzip(@NonNull Serializer delegate) {
-        return new Serializer() {
+    static <T> Serializer<T> gzip(@NonNull Serializer<T> delegate) {
+        return new Serializer<T>() {
             @Override
-            public SdmxRepository load(@NonNull InputStream stream) throws IOException {
+            public T parseStream(@NonNull InputStream stream) throws IOException {
                 try (InputStream gzip = new GZIPInputStream(stream)) {
-                    return delegate.load(gzip);
+                    return delegate.parseStream(gzip);
                 }
             }
 
             @Override
-            public void store(@NonNull OutputStream stream, SdmxRepository entry) throws IOException {
+            public void formatStream(T entry, @NonNull OutputStream stream) throws IOException {
                 try (OutputStream gzip = new GZIPOutputStream(stream)) {
-                    delegate.store(gzip, entry);
+                    delegate.formatStream(entry, gzip);
                 }
             }
         };

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-testing</name>
-    <description>Download data from remote SDMX servers - Testing</description>
+    <description>Download SDMX data - Testing</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

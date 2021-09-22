@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-provider-connectors</name>
-    <description>Download data from remote SDMX servers - Connectors</description>
+    <description>Download SDMX data - Connectors</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
