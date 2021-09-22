@@ -21,6 +21,9 @@ import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +55,18 @@ public class SdmxRepository {
 
     @lombok.Builder.Default
     boolean detailSupported = true;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    Instant creationTime = Instant.EPOCH;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    Instant expirationTime = Instant.MAX;
+
+    public boolean isExpired(@NonNull Clock clock) {
+        return !clock.instant().isBefore(expirationTime);
+    }
 
     @NonNull
     public SdmxConnection asConnection() {
@@ -86,6 +101,10 @@ public class SdmxRepository {
     }
 
     public static final class Builder {
+
+        public Builder ttl(Instant creationTime, Duration ttl) {
+            return creationTime(creationTime).expirationTime(creationTime.plus(ttl));
+        }
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">

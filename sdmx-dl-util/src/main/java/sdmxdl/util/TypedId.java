@@ -63,7 +63,7 @@ public final class TypedId<T> {
 
     @Nullable
     public T peek(@NonNull SdmxCache cache) {
-        SdmxRepository repo = cache.get(content);
+        SdmxRepository repo = cache.getRepository(content);
         return repo != null ? loader.apply(repo) : null;
     }
 
@@ -77,7 +77,7 @@ public final class TypedId<T> {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();
-            cache.put(content, storer.apply(result), ttl.apply(result));
+            cache.putRepository(content, storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
         }
         return result;
     }

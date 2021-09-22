@@ -20,18 +20,15 @@ public class SdmxCacheAssert {
     }
 
     private static void checkPut(SoftAssertions s, SdmxCache cache) {
-        s.assertThatThrownBy(() -> cache.put(null, RepoSamples.REPO, Duration.ofMillis(10)))
+        s.assertThatThrownBy(() -> cache.putRepository(null, RepoSamples.REPO.toBuilder().ttl(cache.getClock().instant(), Duration.ofMillis(10)).build()))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> cache.put("key", null, Duration.ofMillis(10)))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> cache.put("key", RepoSamples.REPO, null))
+        s.assertThatThrownBy(() -> cache.putRepository("key", null))
                 .isInstanceOf(NullPointerException.class);
     }
 
     private static void checkGet(SoftAssertions s, SdmxCache cache) {
-        s.assertThatThrownBy(() -> cache.get(null))
+        s.assertThatThrownBy(() -> cache.getRepository(null))
                 .isInstanceOf(NullPointerException.class);
     }
 }

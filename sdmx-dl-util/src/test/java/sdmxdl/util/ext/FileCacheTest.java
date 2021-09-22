@@ -16,12 +16,12 @@
  */
 package sdmxdl.util.ext;
 
-import sdmxdl.tck.ext.FakeClock;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.tck.ext.FakeClock;
 import sdmxdl.tck.ext.SdmxCacheAssert;
 
 import java.io.*;
@@ -62,53 +62,64 @@ public class FileCacheTest {
 
             assertThat(cache.getRoot())
                     .doesNotExist();
-            assertThat(cache.get("KEY1"))
+            assertThat(cache.getRepository("KEY1"))
                     .as("Empty directory should return null")
                     .isNull();
 
-            cache.put("KEY1", r1, Duration.ofMillis(10));
+            SdmxRepository r1 = SdmxRepository
+                    .builder()
+                    .name("r1")
+                    .ttl(clock.instant(), Duration.ofMillis(10))
+                    .build();
+            cache.putRepository("KEY1", r1);
             assertThat(cache.getFile("KEY1"))
                     .exists()
                     .hasContent("r1");
 
-            assertThat(cache.get("KEY2"))
+            assertThat(cache.getRepository("KEY2"))
                     .as("Non-existing key should return null")
                     .isNull();
 
             clock.plus(9);
-            assertThat(cache.get("KEY1"))
+            assertThat(cache.getRepository("KEY1"))
                     .as("Non-expired key should return value")
                     .isEqualTo(r1);
 
             clock.plus(1);
-            assertThat(cache.get("KEY1"))
+            assertThat(cache.getRepository("KEY1"))
                     .as("Expired key should return null")
                     .isNull();
             assertThat(cache.getFile("KEY1"))
                     .as("Expired key should be deleted")
                     .doesNotExist();
 
-            cache.put("KEY1", r1, Duration.ofMillis(10));
-            cache.put("KEY1", r2, Duration.ofMillis(10));
+            SdmxRepository r1b = r1
+                    .toBuilder()
+                    .ttl(clock.instant(), Duration.ofMillis(10))
+                    .build();
+            SdmxRepository r2 = SdmxRepository
+                    .builder()
+                    .name("r2")
+                    .ttl(clock.instant(), Duration.ofMillis(10))
+                    .build();
+            cache.putRepository("KEY1", r1b);
+            cache.putRepository("KEY1", r2);
             assertThat(cache.getFile("KEY1"))
                     .exists()
                     .hasContent("r2");
-            assertThat(cache.get("KEY1"))
+            assertThat(cache.getRepository("KEY1"))
                     .as("Updated key should return updated value")
                     .isEqualTo(r2);
         }
     }
 
-    private final SdmxRepository r1 = SdmxRepository.builder().name("r1").build();
-    private final SdmxRepository r2 = SdmxRepository.builder().name("r2").build();
-
     private static final class FakeSerializer implements Serializer {
 
         @lombok.Getter
-        private final Map<String, ExpiringRepository> content = new HashMap<>();
+        private final Map<String, SdmxRepository> content = new HashMap<>();
 
         @Override
-        public @NonNull ExpiringRepository load(@NonNull InputStream stream) throws IOException {
+        public @NonNull SdmxRepository load(@NonNull InputStream stream) throws IOException {
             try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 String name = new BufferedReader(reader).lines().collect(Collectors.joining(""));
                 return content.get(name);
@@ -116,10 +127,10 @@ public class FileCacheTest {
         }
 
         @Override
-        public void store(@NonNull OutputStream stream, @NonNull ExpiringRepository entry) throws IOException {
+        public void store(@NonNull OutputStream stream, @NonNull SdmxRepository entry) throws IOException {
             try (Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
-                writer.write(entry.getValue().getName());
-                content.put(entry.getValue().getName(), entry);
+                writer.write(entry.getName());
+                content.put(entry.getName(), entry);
             }
         }
     }

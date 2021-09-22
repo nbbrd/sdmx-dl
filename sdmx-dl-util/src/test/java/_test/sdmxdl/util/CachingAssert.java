@@ -1,9 +1,12 @@
 package _test.sdmxdl.util;
 
+import sdmxdl.repo.SdmxRepository;
 import sdmxdl.tck.ext.FakeClock;
-import sdmxdl.util.ext.ExpiringRepository;
 import sdmxdl.util.ext.MapCache;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,6 +24,10 @@ public class CachingAssert {
         return Stream.of(items).map(Object::toString).collect(Collectors.joining());
     }
 
+    public static Clock clock(long value) {
+       return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
+   }
+
     @lombok.Value
     public static class Context {
 
@@ -28,7 +35,7 @@ public class CachingAssert {
         AtomicInteger count = new AtomicInteger(0);
 
         @lombok.NonNull
-        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
+        ConcurrentMap<String, SdmxRepository> map = new ConcurrentHashMap<>();
 
         @lombok.NonNull
         FakeClock clock = new FakeClock().set(0);
@@ -117,7 +124,7 @@ public class CachingAssert {
 
         int count;
 
-        ExpiringRepository value;
+        SdmxRepository value;
 
         static State of(Context context, String key) {
             return new State(context.getCount().get(), context.getMap().get(key));

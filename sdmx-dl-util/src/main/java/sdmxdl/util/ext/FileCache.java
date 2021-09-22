@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
-import java.time.Duration;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
 
@@ -68,8 +68,8 @@ public final class FileCache implements SdmxCache {
     private final Clock clock = Clock.systemDefaultZone();
 
     @Override
-    public @Nullable SdmxRepository get(@NonNull String key) {
-        ExpiringRepository result = read(key);
+    public @Nullable SdmxRepository getRepository(@NonNull String key) {
+        SdmxRepository result = read(key);
         if (result == null) {
             return null;
         }
@@ -77,15 +77,17 @@ public final class FileCache implements SdmxCache {
             delete(key);
             return null;
         }
-        return result.getValue();
+        return result;
     }
 
     @Override
-    public void put(@NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
-        write(key, ExpiringRepository.of(clock, ttl, value));
+    public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
+        write(key, value);
     }
 
-    private ExpiringRepository read(String key) {
+    private SdmxRepository read(String key) {
         Path file = getFile(key);
         if (Files.exists(file) && Files.isRegularFile(file)) {
             try (InputStream stream = Files.newInputStream(file)) {
@@ -97,7 +99,7 @@ public final class FileCache implements SdmxCache {
         return null;
     }
 
-    private void write(String key, ExpiringRepository entry) {
+    private void write(String key, SdmxRepository entry) {
         Path file = getFile(key);
         ensureParentExists(file);
         try (OutputStream stream = Files.newOutputStream(file)) {

@@ -16,10 +16,11 @@
  */
 package internal.sdmxdl;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 
-import java.time.Duration;
+import java.time.Clock;
 import java.util.Objects;
 
 /**
@@ -30,15 +31,19 @@ public enum NoOpCache implements SdmxCache {
     INSTANCE;
 
     @Override
-    public SdmxRepository get(String key) {
+    public @NonNull Clock getClock() {
+        return Clock.systemDefaultZone();
+    }
+
+    @Override
+    public SdmxRepository getRepository(String key) {
         Objects.requireNonNull(key);
         return null;
     }
 
     @Override
-    public void put(String key, SdmxRepository value, Duration ttl) {
+    public void putRepository(String key, SdmxRepository value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        Objects.requireNonNull(ttl);
     }
 }

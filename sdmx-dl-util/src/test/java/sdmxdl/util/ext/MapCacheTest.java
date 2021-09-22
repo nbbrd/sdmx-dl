@@ -16,14 +16,12 @@
  */
 package sdmxdl.util.ext;
 
+import _test.sdmxdl.util.CachingAssert;
 import org.junit.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.tck.ext.SdmxCacheAssert;
 
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -41,38 +39,42 @@ public class MapCacheTest {
 
     @Test
     public void testGet() {
-        ConcurrentMap<String, ExpiringRepository> map = new ConcurrentHashMap<>();
+        ConcurrentMap<String, SdmxRepository> map = new ConcurrentHashMap<>();
 
-        assertThat(MapCache.get(map, clock(1000), "KEY1"))
+        assertThat(MapCache.get(map, CachingAssert.clock(1000), "KEY1"))
                 .as("Empty map should return null")
                 .isNull();
 
-        MapCache.put(map, clock(1000), "KEY1", r1, Duration.ofMillis(10));
-        assertThat(MapCache.get(map, clock(1009), "KEY1"))
+        SdmxRepository r1000 = SdmxRepository
+                .builder()
+                .name("r1")
+                .ttl(CachingAssert.clock(1000).instant(), Duration.ofMillis(10))
+                .build();
+        MapCache.put(map, "KEY1", r1000);
+        assertThat(MapCache.get(map, CachingAssert.clock(1009), "KEY1"))
                 .as("Non-expired key should return value")
-                .isEqualTo(r1);
+                .isEqualTo(r1000);
 
-        assertThat(MapCache.get(map, clock(1010), "KEY1"))
+        assertThat(MapCache.get(map, CachingAssert.clock(1010), "KEY1"))
                 .as("Expired key should return null")
                 .isNull();
         assertThat(map)
                 .as("Expired key should be evicted")
                 .doesNotContainKey("KEY1");
 
-        assertThat(MapCache.get(map, clock(1009), "KEY2"))
+        assertThat(MapCache.get(map, CachingAssert.clock(1009), "KEY2"))
                 .as("Non-existing key should return null")
                 .isNull();
 
-        MapCache.put(map, clock(1009), "KEY1", r2, Duration.ofMillis(10));
-        assertThat(MapCache.get(map, clock(1010), "KEY1"))
+        SdmxRepository r1009 = SdmxRepository
+                .builder()
+                .name("r2")
+                .ttl(CachingAssert.clock(1009).instant(), Duration.ofMillis(10))
+                .build();
+        MapCache.put(map, "KEY1", r1009);
+        assertThat(MapCache.get(map, CachingAssert.clock(1010), "KEY1"))
                 .as("Updated key should return updated value")
-                .isEqualTo(r2);
+                .isEqualTo(r1009);
     }
 
-    private final SdmxRepository r1 = SdmxRepository.builder().name("r1").build();
-    private final SdmxRepository r2 = SdmxRepository.builder().name("r2").build();
-
-    private static Clock clock(long value) {
-        return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
-    }
 }

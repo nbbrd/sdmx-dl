@@ -24,14 +24,17 @@ import com.esotericsoftware.kryo.kryo5.serializers.CollectionSerializer;
 import com.esotericsoftware.kryo.kryo5.serializers.ImmutableSerializer;
 import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
+import nbbrd.io.FileFormatter;
+import nbbrd.io.FileParser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.util.ext.ExpiringRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +44,8 @@ import java.util.Map;
 /**
  * @author Philippe Charles
  */
-public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
+@lombok.experimental.UtilityClass
+public final class KryoSerialization {
 
     static {
         disableUnsafeIfNotConfigured();
@@ -55,57 +59,73 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         }
     }
 
-    private final Pool<Kryo> kryoPool = new Pool<Kryo>(true, false, 8) {
+    private static final Pool<Kryo> KRYO_POOL = new Pool<Kryo>(true, false, 8) {
         @Override
         protected Kryo create() {
             return newKryo();
         }
     };
 
-    private final Pool<Input> inputPool = new Pool<Input>(true, false, 16) {
+    private static final Pool<Input> INPUT_POOL = new Pool<Input>(true, false, 16) {
         @Override
         protected Input create() {
             return new Input(4096);
         }
     };
 
-    private final Pool<Output> outputPool = new Pool<Output>(true, false, 16) {
+    private static final Pool<Output> OUTPUT_POOL = new Pool<Output>(true, false, 16) {
         @Override
         protected Output create() {
             return new Output(4096, 4096);
         }
     };
 
-    @Override
-    public ExpiringRepository load(InputStream stream) throws IOException {
-        Kryo kryo = kryoPool.obtain();
-        Input input = inputPool.obtain();
-        try {
-            input.setInputStream(stream);
-            return kryo.readObject(input, ExpiringRepository.class);
-        } catch (RuntimeException ex) {
-            throw new IOException(ex);
-        } finally {
-            input.setInputStream(null);
-            inputPool.free(input);
-            kryoPool.free(kryo);
-        }
+    public static @NonNull FileParser<SdmxRepository> getRepositoryParser() {
+        return KryoSerializer.REPOSITORY;
     }
 
-    @Override
-    public void store(OutputStream stream, ExpiringRepository entry) throws IOException {
-        Kryo kryo = kryoPool.obtain();
-        Output output = outputPool.obtain();
-        try {
-            output.setOutputStream(stream);
-            kryo.writeObject(output, entry);
-            output.flush();
-        } catch (RuntimeException ex) {
-            throw new IOException(ex);
-        } finally {
-            output.setOutputStream(null);
-            outputPool.free(output);
-            kryoPool.free(kryo);
+    public static @NonNull FileFormatter<SdmxRepository> getRepositoryFormatter() {
+        return KryoSerializer.REPOSITORY;
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class KryoSerializer<T> implements FileParser<T>, FileFormatter<T> {
+
+        public static final KryoSerializer<SdmxRepository> REPOSITORY = new KryoSerializer<>(SdmxRepository.class);
+
+        private final Class<T> type;
+
+        @Override
+        public T parseStream(InputStream resource) throws IOException {
+            Kryo kryo = KRYO_POOL.obtain();
+            Input input = INPUT_POOL.obtain();
+            try {
+                input.setInputStream(resource);
+                return kryo.readObject(input, type);
+            } catch (RuntimeException ex) {
+                throw new IOException(ex);
+            } finally {
+                input.setInputStream(null);
+                INPUT_POOL.free(input);
+                KRYO_POOL.free(kryo);
+            }
+        }
+
+        @Override
+        public void formatStream(T value, OutputStream resource) throws IOException {
+            Kryo kryo = KRYO_POOL.obtain();
+            Output output = OUTPUT_POOL.obtain();
+            try {
+                output.setOutputStream(resource);
+                kryo.writeObject(output, value);
+                output.flush();
+            } catch (RuntimeException ex) {
+                throw new IOException(ex);
+            } finally {
+                output.setOutputStream(null);
+                OUTPUT_POOL.free(output);
+                KRYO_POOL.free(kryo);
+            }
         }
     }
 
@@ -113,8 +133,6 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         Kryo result = new Kryo();
         result.setReferences(false);
         result.setRegistrationRequired(true);
-
-        result.register(ExpiringRepository.class, new FileEntrySerializer());
 
         result.register(SdmxRepository.class, new SdmxRepositorySerializer());
         result.register(DataStructure.class, new DataStructureSerializer());
@@ -131,6 +149,7 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class);
+        result.register(Instant.class);
 
         return result;
     }
@@ -157,25 +176,6 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
         }
     }
 
-    private static final class FileEntrySerializer extends ImmutableSerializer<ExpiringRepository> {
-
-        @Override
-        public void write(Kryo kryo, Output output, ExpiringRepository t) {
-            output.writeLong(t.getCreationTimeInMillis(), true);
-            output.writeLong(t.getTtlInMillis(), true);
-            kryo.writeObject(output, t.getValue());
-        }
-
-        @Override
-        public ExpiringRepository read(Kryo kryo, Input input, Class<? extends ExpiringRepository> type) {
-            return ExpiringRepository.of(
-                    input.readLong(true),
-                    input.readLong(true),
-                    kryo.readObject(input, SdmxRepository.class)
-            );
-        }
-    }
-
     private static final class SdmxRepositorySerializer extends ImmutableSerializer<SdmxRepository> {
 
         private final Serializer<Collection<DataStructure>> structures = new CustomCollectionSerializer<>(DataStructure.class);
@@ -189,6 +189,8 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
             output.writeBoolean(t.isDetailSupported());
+            kryo.writeObjectOrNull(output, t.getCreationTime(), Instant.class);
+            kryo.writeObjectOrNull(output, t.getExpirationTime(), Instant.class);
         }
 
         @SuppressWarnings("unchecked")
@@ -201,6 +203,8 @@ public final class KryoSerialization implements sdmxdl.util.ext.Serializer {
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
                     .detailSupported(input.readBoolean())
+                    .creationTime(kryo.readObjectOrNull(input, Instant.class))
+                    .expirationTime(kryo.readObjectOrNull(input, Instant.class))
                     .build();
         }
     }

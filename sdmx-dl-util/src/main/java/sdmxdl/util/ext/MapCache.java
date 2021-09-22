@@ -22,7 +22,6 @@ import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 
 import java.time.Clock;
-import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,24 +39,24 @@ public final class MapCache implements SdmxCache {
     }
 
     @lombok.NonNull
-    private final ConcurrentMap<String, ExpiringRepository> map;
+    private final ConcurrentMap<String, SdmxRepository> map;
 
     @lombok.NonNull
     private final Clock clock;
 
     @Override
-    public SdmxRepository get(String key) {
+    public SdmxRepository getRepository(String key) {
         return get(map, clock, key);
     }
 
     @Override
-    public void put(String key, SdmxRepository value, Duration ttl) {
-        put(map, clock, key, value, ttl);
+    public void putRepository(String key, SdmxRepository value) {
+        put(map, key, value);
     }
 
     @Nullable
-    static SdmxRepository get(@NonNull ConcurrentMap<String, ExpiringRepository> map, @NonNull Clock clock, @NonNull String key) {
-        ExpiringRepository value = map.get(key);
+    static SdmxRepository get(@NonNull ConcurrentMap<String, SdmxRepository> map, @NonNull Clock clock, @NonNull String key) {
+        SdmxRepository value = map.get(key);
         if (value == null) {
             return null;
         }
@@ -65,11 +64,11 @@ public final class MapCache implements SdmxCache {
             map.remove(key);
             return null;
         }
-        return value.getValue();
+        return value;
     }
 
-    static void put(@NonNull ConcurrentMap<String, ExpiringRepository> map, @NonNull Clock clock, @NonNull String key, @NonNull SdmxRepository value, @NonNull Duration ttl) {
+    static void put(@NonNull ConcurrentMap<String, SdmxRepository> map, @NonNull String key, @NonNull SdmxRepository value) {
         Objects.requireNonNull(value);
-        map.put(key, ExpiringRepository.of(clock, ttl, value));
+        map.put(key, value);
     }
 }

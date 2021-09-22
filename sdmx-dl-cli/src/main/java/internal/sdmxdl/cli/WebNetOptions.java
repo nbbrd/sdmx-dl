@@ -106,7 +106,7 @@ public class WebNetOptions extends WebOptions {
                 ? SdmxCache.noOp()
                 : FileCache
                 .builder()
-                .serializer(Serializer.gzip(new KryoSerialization()))
+                .serializer(Serializer.gzip(Serializer.of(KryoSerialization.getRepositoryParser(), KryoSerialization.getRepositoryFormatter())))
                 .onIOException((msg, ex) -> getVerboseOptions().reportToErrorStream("CACHE", msg, ex))
                 .build();
     }

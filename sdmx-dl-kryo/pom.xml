@@ -19,6 +19,16 @@
 
     <dependencies>
         <!-- compile only -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- compile and runtime -->
         <dependency>
@@ -27,9 +37,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-util</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.github.nbbrd.java-io-util</groupId>
+            <artifactId>java-io-base</artifactId>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>

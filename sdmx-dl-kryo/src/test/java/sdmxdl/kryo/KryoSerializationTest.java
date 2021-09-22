@@ -1,15 +1,17 @@
 package sdmxdl.kryo;
 
+import nbbrd.io.FileFormatter;
+import nbbrd.io.FileParser;
 import org.junit.Test;
+import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.RepoSamples;
-import sdmxdl.util.ext.ExpiringRepository;
-import sdmxdl.util.ext.Serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Clock;
-import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,20 +20,24 @@ public class KryoSerializationTest {
 
     @Test
     public void test() throws IOException {
-        KryoSerialization x = new KryoSerialization();
+        Instant now = Clock.systemDefaultZone().instant();
 
-        ExpiringRepository data = ExpiringRepository.of(Clock.systemDefaultZone(), Duration.ofMillis(100), RepoSamples.REPO);
+        SdmxRepository data = RepoSamples.REPO
+                .toBuilder()
+                .creationTime(now)
+                .expirationTime(now.plus(100, ChronoUnit.MILLIS))
+                .build();
 
-        assertThat(storeLoad(x, data))
+        assertThat(storeLoad(KryoSerialization.getRepositoryParser(), KryoSerialization.getRepositoryFormatter(), data))
                 .isEqualTo(data)
                 .isNotSameAs(data);
     }
 
-    private static ExpiringRepository storeLoad(Serializer x, ExpiringRepository data) throws IOException {
+    private static <T> T storeLoad(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            x.store(output, data);
+            formatter.formatStream(data, output);
             try (ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray())) {
-                return x.load(input);
+                return parser.parseStream(input);
             }
         }
     }
