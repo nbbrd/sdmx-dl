@@ -9,10 +9,10 @@
         <version>3.0.0-beta.4-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-util</artifactId>
+    <artifactId>sdmx-dl-provider-util</artifactId>
     <packaging>jar</packaging>
 
-    <name>sdmx-dl-util</name>
+    <name>sdmx-dl-provider-util</name>
     <description>Download data from remote SDMX servers - Util</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 

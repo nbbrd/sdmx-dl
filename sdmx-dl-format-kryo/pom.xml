@@ -10,10 +10,10 @@
         <version>3.0.0-beta.4-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sdmx-dl-kryo</artifactId>
+    <artifactId>sdmx-dl-format-kryo</artifactId>
     <packaging>jar</packaging>
 
-    <name>sdmx-dl-kryo</name>
+    <name>sdmx-dl-format-kryo</name>
     <description>Download data from remote SDMX servers - Kryo</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 

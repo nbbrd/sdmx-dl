@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-util</artifactId>
+            <artifactId>sdmx-dl-provider-util</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
