@@ -86,7 +86,7 @@ public final class CheckStatusCommand implements Callable<Void> {
     @lombok.Value
     private static class Status {
 
-        static Status of(SdmxWebManager manager, String sourceName) {
+        static @NonNull Status of(@NonNull SdmxWebManager manager, @NonNull String sourceName) {
             SdmxWebSource source = manager.getSources().get(sourceName);
             if (source == null) {
                 return failure(sourceName, "Cannot find source");
@@ -95,26 +95,23 @@ public final class CheckStatusCommand implements Callable<Void> {
                 return failure(sourceName, "No monitor defined");
             }
             try {
-                return success(sourceName, manager.getMonitorReport(source));
+                return success(manager.getMonitorReport(source));
             } catch (IOException ex) {
                 return failure(sourceName, ex);
             }
         }
 
-        static @NonNull Status success(@NonNull String source, @NonNull SdmxWebMonitorReport report) {
-            return new Status(source, report, null);
+        static @NonNull Status success(@NonNull SdmxWebMonitorReport report) {
+            return new Status(report, null);
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull IOException cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause.getMessage());
+            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause.getMessage());
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull String cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause);
+            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause);
         }
-
-        @lombok.NonNull
-        String source;
 
         @lombok.NonNull
         @lombok.experimental.Delegate

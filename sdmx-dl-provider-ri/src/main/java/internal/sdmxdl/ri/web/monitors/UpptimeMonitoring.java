@@ -1,30 +1,22 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import com.google.gson.Gson;
 import internal.sdmxdl.ri.web.RestClients;
 import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.web.SdmxWebMonitor;
-import sdmxdl.web.SdmxWebMonitorReport;
-import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.SdmxWebStatus;
+import sdmxdl.ext.SdmxCache;
+import sdmxdl.web.*;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @ServiceProvider
 public class UpptimeMonitoring implements SdmxWebMonitoring {
@@ -40,14 +32,19 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
 
         UpptimeId id = UpptimeId.parse(source.getMonitor().getId());
 
-        HttpRest.Context restContext = RestClients.getRestContext(source, context);
+        SdmxCache cache = context.getCache();
+        String key = id.toSummaryURL().toString();
 
-        HttpRest.Client client = HttpRest.newClient(restContext);
+        SdmxWebMonitorReports reports = cache.getWebMonitorReports(key);
 
-        return getSummary(client, id)
+        if (reports == null) {
+            reports = createReports(HttpRest.newClient(RestClients.getRestContext(source, context)), id, cache.getClock());
+            cache.putWebMonitorReports(key, reports);
+        }
+
+        return reports.getReports()
                 .stream()
-                .filter(item -> item.getName().equals(id.getSite()))
-                .map(UpptimeMonitoring::getReport)
+                .filter(item -> item.getSource().equals(id.getSite()))
                 .findFirst()
                 .orElseThrow(IOException::new);
     }
@@ -61,26 +58,29 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         }
     }
 
-    private static List<SiteSummary> getSummary(HttpRest.Client client, UpptimeId id) throws IOException {
-        try (HttpRest.Response response = client.requestGET(id.toSummaryURL(), Collections.singletonList(MediaType.ANY_TYPE), LanguagePriorityList.ANY.toString())) {
-            try (InputStreamReader reader = new InputStreamReader(response.getBody(), response.getContentType().getCharset().orElse(StandardCharsets.UTF_8))) {
-                return SiteSummary.parseAll(reader);
-            }
-        }
+    private SdmxWebMonitorReports createReports(HttpRest.Client client, UpptimeId id, Clock clock) throws IOException {
+        return SdmxWebMonitorReports
+                .builder()
+                .provider(getProviderName())
+                .reports(
+                        UpptimeSummary.request(client, id)
+                                .stream()
+                                .map(UpptimeMonitoring::getReport)
+                                .collect(Collectors.toList())
+                )
+                .ttl(clock.instant(), Duration.ofMinutes(5))
+                .build();
     }
 
     @VisibleForTesting
-    @lombok.Data
-    static class SiteSummary {
-
-        String name;
-        String status;
-        String uptime;
-        long time;
-
-        public static List<SiteSummary> parseAll(Reader reader) {
-            return Arrays.asList(new Gson().fromJson(reader, SiteSummary[].class));
-        }
+    static SdmxWebMonitorReport getReport(UpptimeSummary summary) {
+        return SdmxWebMonitorReport
+                .builder()
+                .source(summary.getName())
+                .status(parseStatus(summary.getStatus()))
+                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).map(Number::doubleValue).orElse(null))
+                .averageResponseTime(summary.getTime())
+                .build();
     }
 
     private static SdmxWebStatus parseStatus(String status) {
@@ -92,16 +92,6 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
             default:
                 return SdmxWebStatus.UNKNOWN;
         }
-    }
-
-    @VisibleForTesting
-    static SdmxWebMonitorReport getReport(SiteSummary summary) {
-        return SdmxWebMonitorReport
-                .builder()
-                .status(parseStatus(summary.getStatus()))
-                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).map(Number::doubleValue).orElse(null))
-                .averageResponseTime(summary.getTime())
-                .build();
     }
 
     private static final @NonNull Parser<Number> NUMBER_PARSER = Parser.onNumberFormat(NumberFormat.getPercentInstance(Locale.ROOT));

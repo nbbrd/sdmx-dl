@@ -17,8 +17,10 @@
 package internal.sdmxdl;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.web.SdmxWebMonitorReports;
 
 import java.time.Clock;
 import java.util.Objects;
@@ -36,13 +38,25 @@ public enum NoOpCache implements SdmxCache {
     }
 
     @Override
-    public SdmxRepository getRepository(String key) {
+    public SdmxRepository getRepository(@NonNull String key) {
         Objects.requireNonNull(key);
         return null;
     }
 
     @Override
-    public void putRepository(String key, SdmxRepository value) {
+    public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
+    }
+
+    @Override
+    public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+        Objects.requireNonNull(key);
+        return null;
+    }
+
+    @Override
+    public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
     }

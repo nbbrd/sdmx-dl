@@ -24,12 +24,15 @@ import com.esotericsoftware.kryo.kryo5.serializers.CollectionSerializer;
 import com.esotericsoftware.kryo.kryo5.serializers.ImmutableSerializer;
 import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
+import lombok.AccessLevel;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.web.SdmxWebMonitorReport;
+import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.web.SdmxWebStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +47,47 @@ import java.util.Map;
 /**
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public final class KryoSerialization {
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
+
+    public static final KryoFileFormat<SdmxRepository> REPOSITORY = new KryoFileFormat<>(SdmxRepository.class);
+    public static final KryoFileFormat<SdmxWebMonitorReports> MONITOR = new KryoFileFormat<>(SdmxWebMonitorReports.class);
+
+    @lombok.NonNull
+    private final Class<T> type;
+
+    @Override
+    public T parseStream(InputStream resource) throws IOException {
+        Kryo kryo = KRYO_POOL.obtain();
+        Input input = INPUT_POOL.obtain();
+        try {
+            input.setInputStream(resource);
+            return kryo.readObject(input, type);
+        } catch (RuntimeException ex) {
+            throw new IOException(ex);
+        } finally {
+            input.setInputStream(null);
+            INPUT_POOL.free(input);
+            KRYO_POOL.free(kryo);
+        }
+    }
+
+    @Override
+    public void formatStream(T value, OutputStream resource) throws IOException {
+        Kryo kryo = KRYO_POOL.obtain();
+        Output output = OUTPUT_POOL.obtain();
+        try {
+            output.setOutputStream(resource);
+            kryo.writeObject(output, value);
+            output.flush();
+        } catch (RuntimeException ex) {
+            throw new IOException(ex);
+        } finally {
+            output.setOutputStream(null);
+            OUTPUT_POOL.free(output);
+            KRYO_POOL.free(kryo);
+        }
+    }
 
     static {
         disableUnsafeIfNotConfigured();
@@ -80,55 +122,6 @@ public final class KryoSerialization {
         }
     };
 
-    public static @NonNull FileParser<SdmxRepository> getRepositoryParser() {
-        return KryoSerializer.REPOSITORY;
-    }
-
-    public static @NonNull FileFormatter<SdmxRepository> getRepositoryFormatter() {
-        return KryoSerializer.REPOSITORY;
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class KryoSerializer<T> implements FileParser<T>, FileFormatter<T> {
-
-        public static final KryoSerializer<SdmxRepository> REPOSITORY = new KryoSerializer<>(SdmxRepository.class);
-
-        private final Class<T> type;
-
-        @Override
-        public T parseStream(InputStream resource) throws IOException {
-            Kryo kryo = KRYO_POOL.obtain();
-            Input input = INPUT_POOL.obtain();
-            try {
-                input.setInputStream(resource);
-                return kryo.readObject(input, type);
-            } catch (RuntimeException ex) {
-                throw new IOException(ex);
-            } finally {
-                input.setInputStream(null);
-                INPUT_POOL.free(input);
-                KRYO_POOL.free(kryo);
-            }
-        }
-
-        @Override
-        public void formatStream(T value, OutputStream resource) throws IOException {
-            Kryo kryo = KRYO_POOL.obtain();
-            Output output = OUTPUT_POOL.obtain();
-            try {
-                output.setOutputStream(resource);
-                kryo.writeObject(output, value);
-                output.flush();
-            } catch (RuntimeException ex) {
-                throw new IOException(ex);
-            } finally {
-                output.setOutputStream(null);
-                OUTPUT_POOL.free(output);
-                KRYO_POOL.free(kryo);
-            }
-        }
-    }
-
     private static Kryo newKryo() {
         Kryo result = new Kryo();
         result.setReferences(false);
@@ -146,6 +139,9 @@ public final class KryoSerialization {
         result.register(Obs.class, new ObsSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
+        result.register(SdmxWebMonitorReports.class, new SdmxWebMonitorReportsSerializer());
+        result.register(SdmxWebMonitorReport.class, new SdmxWebMonitorReportSerializer());
+        result.register(SdmxWebStatus.class);
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class);
@@ -431,6 +427,52 @@ public final class KryoSerialization {
                     .id(input.readString())
                     .codes(kryo.readObject(input, HashMap.class, codes))
                     .label(input.readString())
+                    .build();
+        }
+    }
+
+    private static final class SdmxWebMonitorReportsSerializer extends ImmutableSerializer<SdmxWebMonitorReports> {
+
+        private final Serializer<Collection<SdmxWebMonitorReport>> reports = new CustomCollectionSerializer<>(SdmxWebMonitorReport.class);
+
+        @Override
+        public void write(Kryo kryo, Output output, SdmxWebMonitorReports t) {
+            output.writeString(t.getProvider());
+            kryo.writeObject(output, t.getReports(), reports);
+            kryo.writeObject(output, t.getCreationTime());
+            kryo.writeObject(output, t.getExpirationTime());
+        }
+
+        @Override
+        public SdmxWebMonitorReports read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReports> type) {
+            return SdmxWebMonitorReports
+                    .builder()
+                    .provider(input.readString())
+                    .reports(kryo.readObject(input, ArrayList.class, reports))
+                    .creationTime(kryo.readObject(input, Instant.class))
+                    .expirationTime(kryo.readObject(input, Instant.class))
+                    .build();
+        }
+    }
+
+    private static final class SdmxWebMonitorReportSerializer extends ImmutableSerializer<SdmxWebMonitorReport> {
+
+        @Override
+        public void write(Kryo kryo, Output output, SdmxWebMonitorReport t) {
+            output.writeString(t.getSource());
+            kryo.writeObject(output, t.getStatus());
+            kryo.writeObjectOrNull(output, t.getUptimeRatio(), Double.class);
+            kryo.writeObjectOrNull(output, t.getAverageResponseTime(), Long.class);
+        }
+
+        @Override
+        public SdmxWebMonitorReport read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReport> type) {
+            return SdmxWebMonitorReport
+                    .builder()
+                    .source(input.readString())
+                    .status(kryo.readObject(input, SdmxWebStatus.class))
+                    .uptimeRatio(kryo.readObjectOrNull(input, Double.class))
+                    .averageResponseTime(kryo.readObjectOrNull(input, Long.class))
                     .build();
         }
     }

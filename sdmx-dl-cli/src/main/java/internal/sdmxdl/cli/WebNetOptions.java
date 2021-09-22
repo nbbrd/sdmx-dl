@@ -22,10 +22,12 @@ import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxCache;
-import sdmxdl.kryo.KryoSerialization;
+import sdmxdl.kryo.KryoFileFormat;
+import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.ext.FileCache;
-import sdmxdl.util.ext.Serializer;
+import sdmxdl.util.ext.FileFormat;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
 
@@ -106,9 +108,20 @@ public class WebNetOptions extends WebOptions {
                 ? SdmxCache.noOp()
                 : FileCache
                 .builder()
-                .serializer(Serializer.gzip(Serializer.of(KryoSerialization.getRepositoryParser(), KryoSerialization.getRepositoryFormatter())))
+                .repositoryFormat(getRepositoryFormat())
+                .monitorFormat(getMonitorFormat())
                 .onIOException((msg, ex) -> getVerboseOptions().reportToErrorStream("CACHE", msg, ex))
                 .build();
+    }
+
+    private FileFormat<SdmxRepository> getRepositoryFormat() {
+        FileFormat<SdmxRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
+        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
+    }
+
+    private FileFormat<SdmxWebMonitorReports> getMonitorFormat() {
+        FileFormat<SdmxWebMonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
+        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
     private List<SdmxWebAuthenticator> getAuthenticators() {

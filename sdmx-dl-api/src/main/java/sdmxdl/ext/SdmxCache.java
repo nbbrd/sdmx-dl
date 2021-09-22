@@ -22,6 +22,7 @@ import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.web.SdmxWebMonitorReports;
 
 import java.time.Clock;
 
@@ -36,6 +37,10 @@ public interface SdmxCache {
     @Nullable SdmxRepository getRepository(@NonNull String key);
 
     void putRepository(@NonNull String key, @NonNull SdmxRepository value);
+
+    @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key);
+
+    void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value);
 
     @StaticFactoryMethod
     static @NonNull SdmxCache noOp() {

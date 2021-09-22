@@ -26,7 +26,7 @@ public class TypedIdTest {
 
         FakeClock clock = new FakeClock();
 
-        SdmxCache cache = MapCache.of(new ConcurrentHashMap<>(), clock);
+        SdmxCache cache = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), clock);
 
         IOSupplier<Integer> factory = new AtomicInteger()::getAndIncrement;
 

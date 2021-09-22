@@ -12,4 +12,12 @@ public class CacheOptions {
             descriptionKey = "cli.noCache"
     )
     private boolean noCache;
+
+    @CommandLine.Option(
+            names = {"--no-cache-compression"},
+            defaultValue = "false",
+            descriptionKey = "cli.noCacheCompression",
+            hidden = true
+    )
+    private boolean noCacheCompression;
 }

@@ -3,6 +3,7 @@ package _test.sdmxdl.util;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.tck.ext.FakeClock;
 import sdmxdl.util.ext.MapCache;
+import sdmxdl.web.SdmxWebMonitorReports;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -25,8 +26,8 @@ public class CachingAssert {
     }
 
     public static Clock clock(long value) {
-       return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
-   }
+        return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
+    }
 
     @lombok.Value
     public static class Context {
@@ -38,6 +39,9 @@ public class CachingAssert {
         ConcurrentMap<String, SdmxRepository> map = new ConcurrentHashMap<>();
 
         @lombok.NonNull
+        ConcurrentMap<String, SdmxWebMonitorReports> monitors = new ConcurrentHashMap<>();
+
+        @lombok.NonNull
         FakeClock clock = new FakeClock().set(0);
 
         public void reset() {
@@ -47,7 +51,7 @@ public class CachingAssert {
         }
 
         public MapCache newCache() {
-            return MapCache.of(map, clock);
+            return MapCache.of(map, monitors, clock);
         }
     }
 

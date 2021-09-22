@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.web.SdmxWebMonitorReports;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -48,7 +50,7 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final String fileNameSuffix = ".dat";
+    private final String fileNameSuffix = "_";
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -56,7 +58,11 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Serializer<SdmxRepository> serializer = Serializer.noOp();
+    private final FileFormat<SdmxRepository> repositoryFormat = FileFormat.noOp();
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final FileFormat<SdmxWebMonitorReports> monitorFormat = FileFormat.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -68,29 +74,55 @@ public final class FileCache implements SdmxCache {
 
     @Override
     public @Nullable SdmxRepository getRepository(@NonNull String key) {
-        SdmxRepository result = read(key);
-        if (result == null) {
-            return null;
-        }
-        if (result.isExpired(clock)) {
-            delete(key);
-            return null;
-        }
-        return result;
+        Objects.requireNonNull(key);
+        return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
     }
 
     @Override
     public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        write(key, value);
+        write(repositoryFormat, key, FileType.REPOSITORY, value);
     }
 
-    private SdmxRepository read(String key) {
-        Path file = getFile(key);
+    @Override
+    public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+        Objects.requireNonNull(key);
+        return read(monitorFormat, this::isValid, key, FileType.MONITOR);
+    }
+
+    @Override
+    public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
+        write(monitorFormat, key, FileType.MONITOR, value);
+    }
+
+    private boolean isValid(SdmxRepository value) {
+        return !value.isExpired(clock);
+    }
+
+    private boolean isValid(SdmxWebMonitorReports value) {
+        return !value.isExpired(clock);
+    }
+
+    private <T> T read(FileFormat<T> fileFormat, Predicate<T> validator, String key, FileType fileType) {
+        T result = read(fileFormat, fileType, key);
+        if (result == null) {
+            return null;
+        }
+        if (!validator.test(result)) {
+            delete(key, fileType, fileFormat);
+            return null;
+        }
+        return result;
+    }
+
+    private <T> T read(FileFormat<T> fileFormat, FileType fileType, String key) {
+        Path file = getFile(key, fileType, fileFormat);
         if (Files.exists(file) && Files.isRegularFile(file)) {
             try {
-                return serializer.parsePath(file);
+                return fileFormat.getParser().parsePath(file);
             } catch (IOException ex) {
                 onIOException.accept("While reading '" + file + "'", ex);
             }
@@ -98,11 +130,11 @@ public final class FileCache implements SdmxCache {
         return null;
     }
 
-    private void write(String key, SdmxRepository entry) {
-        Path file = getFile(key);
+    private <T> void write(FileFormat<T> fileFormat, String key, FileType fileType, T entry) {
+        Path file = getFile(key, fileType, fileFormat);
         ensureParentExists(file);
         try {
-            serializer.formatPath(entry, file);
+            fileFormat.getFormatter().formatPath(entry, file);
         } catch (IOException ex) {
             onIOException.accept("While writing '" + file + "'", ex);
         }
@@ -116,8 +148,8 @@ public final class FileCache implements SdmxCache {
         }
     }
 
-    private void delete(String key) {
-        Path file = getFile(key);
+    private void delete(String key, FileType fileType, FileFormat<?> fileFormat) {
+        Path file = getFile(key, fileType, fileFormat);
         try {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
@@ -126,11 +158,16 @@ public final class FileCache implements SdmxCache {
     }
 
     @VisibleForTesting
-    Path getFile(String key) {
-        return root.resolve(fileNamePrefix + fileNameGenerator.apply(key) + fileNameSuffix);
+    Path getFile(String key, FileType fileType, FileFormat<?> fileFormat) {
+        return root.resolve(fileNamePrefix + fileType.name().charAt(0) + fileNameGenerator.apply(key) + fileNameSuffix + fileFormat.getFileExtension());
     }
 
     private static final UnaryOperator<String> DEFAULT_GENERATOR = key -> String.valueOf(Math.abs(key.hashCode()));
     private static final BiConsumer<String, IOException> DO_NOT_REPORT = (msg, ex) -> {
     };
+
+    @VisibleForTesting
+    enum FileType {
+        REPOSITORY, MONITOR
+    }
 }

@@ -1,6 +1,3 @@
-import sdmxdl.web.spi.SdmxWebMonitoring;
-import sdmxdl.ext.spi.SdmxDialect;
-
 module sdmxdl.util {
 
     requires static nbbrd.design;
@@ -18,16 +15,16 @@ module sdmxdl.util {
     exports sdmxdl.util.parser;
     exports sdmxdl.util.web;
 
-    provides SdmxDialect with
+    provides sdmxdl.ext.spi.SdmxDialect with
             internal.sdmxdl.util.ext.EcbDialect,
             internal.sdmxdl.util.ext.InseeDialect,
             internal.sdmxdl.util.ext.Sdmx20Dialect,
             internal.sdmxdl.util.ext.Sdmx21Dialect;
 
-    uses SdmxDialect;
+    uses sdmxdl.ext.spi.SdmxDialect;
 
-    provides SdmxWebMonitoring with
+    provides sdmxdl.web.spi.SdmxWebMonitoring with
             internal.sdmxdl.util.ext.UptimeRobot;
 
-    uses SdmxWebMonitoring;
+    uses sdmxdl.web.spi.SdmxWebMonitoring;
 }

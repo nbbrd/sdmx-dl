@@ -7,13 +7,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class SdmxWebMonitorReport {
 
     @lombok.NonNull
-    SdmxWebStatus status;
+    String source;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    SdmxWebStatus status = SdmxWebStatus.UNKNOWN;
 
     @Nullable
-    Double uptimeRatio;
+    @lombok.Builder.Default
+    Double uptimeRatio = null;
 
     @Nullable
-    Long averageResponseTime;
-
-    public static final SdmxWebMonitorReport EMPTY = new SdmxWebMonitorReport(SdmxWebStatus.UNKNOWN, null, null);
+    @lombok.Builder.Default
+    Long averageResponseTime = null;
 }
