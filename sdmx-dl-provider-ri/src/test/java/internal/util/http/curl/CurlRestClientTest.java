@@ -19,8 +19,12 @@ package internal.util.http.curl;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import internal.util.http.HttpURLConnectionFactory;
 import internal.util.rest.DefaultClientTest;
+import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -47,6 +51,14 @@ public class CurlRestClientTest extends DefaultClientTest {
     @Override
     public void testInvalidSSL() {
 //        super.testInvalidSSL();
+    }
+
+    @Test
+    public void testVersion() throws IOException {
+        String[] versionCommand = new Curl.CurlCommandBuilder().version().build();
+        try (BufferedReader reader = ProcessReader.newReader(versionCommand)) {
+            Curl.CurlVersion.parse(reader).getLines().forEach(System.out::println);
+        }
     }
 
     private static final class InsecureCurlHttpURLConnectionFactory implements HttpURLConnectionFactory {

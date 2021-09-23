@@ -101,6 +101,8 @@ final class CurlHttpURLConnection extends HttpURLConnection {
             return CurlMeta.parse(reader);
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
+                case CURL_UNSUPPORTED_PROTOCOL:
+                    throw new IOException("Unsupported protocol '" + getURL().getProtocol() + "'");
                 case CURL_COULD_NOT_RESOLVE_HOST:
                     throw new UnknownHostException(getURL().getHost());
                 case CURL_OPERATION_TIMEOUT:

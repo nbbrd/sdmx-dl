@@ -5,6 +5,7 @@ import nbbrd.design.BuilderPattern;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
@@ -19,13 +20,14 @@ import static internal.util.http.HttpConstants.hasProxy;
 @lombok.experimental.UtilityClass
 class Curl {
 
+    public static final int CURL_UNSUPPORTED_PROTOCOL = 1;
     public static final int CURL_COULD_NOT_RESOLVE_HOST = 6;
     public static final int CURL_OPERATION_TIMEOUT = 28;
     public static final int CURL_FAILURE_RECEIVING = 56;
 
     @lombok.Value
     @lombok.Builder
-    public static final class CurlMeta {
+    public static class CurlMeta {
 
         @lombok.Builder.Default
         int code = -1;
@@ -70,6 +72,28 @@ class Curl {
                 }
             }
             result.headers(headers.build());
+        }
+
+        public static final class Builder {
+            // fix error when generating Javadoc
+        }
+    }
+
+    @lombok.Value
+    @lombok.Builder
+    public static class CurlVersion {
+
+        @lombok.Singular
+        List<String> lines;
+
+        public static CurlVersion parse(BufferedReader reader) throws IOException {
+            CurlVersion.Builder result = new CurlVersion.Builder();
+            try {
+                reader.lines().forEach(result::line);
+            } catch (UncheckedIOException ex) {
+                throw ex.getCause();
+            }
+            return result.build();
         }
 
         public static final class Builder {
@@ -140,6 +164,10 @@ class Curl {
             HttpHeadersBuilder.keyValues(headers)
                     .forEach(header -> header(header.getKey(), header.getValue()));
             return this;
+        }
+
+        public CurlCommandBuilder version() {
+            return push("-V");
         }
 
         public String[] build() {
