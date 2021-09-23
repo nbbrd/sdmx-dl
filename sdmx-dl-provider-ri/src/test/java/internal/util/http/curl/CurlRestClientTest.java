@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
@@ -52,6 +54,16 @@ public class CurlRestClientTest extends DefaultClientTest {
     @Override
     public void testInvalidSSL() {
 //        super.testInvalidSSL();
+    }
+
+    @Override
+    protected List<Integer> getHttpRedirectionCodes() {
+        List<Integer> result = super.getHttpRedirectionCodes();
+        // ignore redirection 308 on macOS because curl 7.79.0 returns CURL_UNSUPPORTED_PROTOCOL error
+        if (isOSX()) {
+            return result.stream().filter(code -> code != 308).collect(Collectors.toList());
+        }
+        return result;
     }
 
     @Ignore

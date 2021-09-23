@@ -35,6 +35,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static internal.util.http.HttpConstants.*;
@@ -167,15 +169,19 @@ public abstract class HttpRestClientTest {
 
         String absoluteSecondURL = wire.url(SECOND_URL);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
-                try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
-                    assertSameSampleContent(response);
-                }
+                assertThatCode(() -> {
+                    try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+                        assertSameSampleContent(response);
+                    }
+                })
+                        .describedAs("Redirect: code %s from '%s' to '%s'", redirection, wire.url(SAMPLE_URL), location)
+                        .doesNotThrowAnyException();
             }
         }
     }
@@ -192,7 +198,7 @@ public abstract class HttpRestClientTest {
 
         String absoluteSecondURL = wire.url(SECOND_URL);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
@@ -200,6 +206,7 @@ public abstract class HttpRestClientTest {
 
                 assertThatIOException()
                         .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                        .describedAs("Max redirect: code %s from '%s' to '%s'", redirection, wire.url(SAMPLE_URL), location)
                         .withMessage("Max redirection reached");
             }
         }
@@ -214,12 +221,13 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .describedAs("Invalid redirect: code %s from '%s'", redirection, wire.url(SAMPLE_URL))
                     .withMessage("Missing redirection url");
         }
     }
@@ -235,14 +243,14 @@ public abstract class HttpRestClientTest {
 
         String location = wireHttpUrl(SECOND_URL);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
-                    .describedAs("Redirection code %s from '%s' to '%s'", redirection, wire.url(SAMPLE_URL), location)
+                    .describedAs("Downgrading protocol on redirect: code %s from '%s' to '%s'", redirection, wire.url(SAMPLE_URL), location)
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }
@@ -466,17 +474,20 @@ public abstract class HttpRestClientTest {
         };
     }
 
+    protected List<Integer> getHttpRedirectionCodes() {
+        return Arrays.asList(301, 302, 303, 307, 308);
+    }
+
     private static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
     private static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
-    private static final int[] HTTP_REDIRECTIONS = {301, 302, 303, 307, 308};
     private static final String SAMPLE_URL = "/first.xml";
     private static final String SECOND_URL = "/second.xml";
     private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
     public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
 
-    private static boolean isOSX() {
+    protected static boolean isOSX() {
         String osName = System.getProperty("os.name");
         return osName != null && osName.toLowerCase().startsWith("mac os x");
     }
