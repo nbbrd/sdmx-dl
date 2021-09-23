@@ -242,6 +242,7 @@ public abstract class HttpRestClientTest {
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .describedAs("Redirection code %s from '%s' to '%s'", redirection, wire.url(SAMPLE_URL), location)
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }

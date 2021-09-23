@@ -21,6 +21,7 @@ import internal.util.http.HttpURLConnectionFactory;
 import internal.util.rest.DefaultClientTest;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -53,6 +54,7 @@ public class CurlRestClientTest extends DefaultClientTest {
 //        super.testInvalidSSL();
     }
 
+    @Ignore
     @Test
     public void testVersion() throws IOException {
         String[] versionCommand = new Curl.CurlCommandBuilder().version().build();
