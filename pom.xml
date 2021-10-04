@@ -36,7 +36,7 @@
     </scm>
 
     <properties>
-        <java-io-util.version>0.0.14</java-io-util.version>
+        <java-io-util.version>0.0.15</java-io-util.version>
         <slf4j.version>1.7.32</slf4j.version>
     </properties>
 
