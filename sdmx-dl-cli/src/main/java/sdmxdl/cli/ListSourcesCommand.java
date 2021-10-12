@@ -16,11 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
-import nbbrd.console.picocli.csv.CsvOutputOptions;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebMonitor;
@@ -42,15 +41,11 @@ public final class ListSourcesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebOptions web;
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private final CsvOutputOptions csv = new CsvOutputOptions();
-
     @CommandLine.Mixin
-    private Excel excel;
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
     @Override
     public Void call() throws Exception {
-        excel.apply(csv);
         getTable().write(csv, getRows());
         return null;
     }
