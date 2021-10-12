@@ -94,7 +94,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
         Map<Key, Series.Builder> data = new HashMap<>();
         Key.Builder keyBuilder = Key.builder(dsd);
         Obs.Builder obs = Obs.builder();
-        while (reader.readLine()) {
+        while (skipComments(reader)) {
             if (!reader.readField()) {
                 throw new IOException("Missing dataflow field");
             }
@@ -136,7 +136,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
 
     private List<String> readHeader(Csv.Reader reader) throws IOException {
         List<String> result = new ArrayList<>();
-        if (!reader.readLine()) {
+        if (!skipComments(reader)) {
             throw new IOException("Missing header");
         }
         while (reader.readField()) {
@@ -152,5 +152,15 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
     @MightBePromoted
     private static BufferedReader newBufferedReader(InputStream inputStream, CharsetDecoder decoder) {
         return new BufferedReader(new InputStreamReader(inputStream, decoder));
+    }
+
+    @MightBePromoted
+    private static boolean skipComments(Csv.Reader reader) throws IOException {
+        while (reader.readLine()) {
+            if (!reader.isComment()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
