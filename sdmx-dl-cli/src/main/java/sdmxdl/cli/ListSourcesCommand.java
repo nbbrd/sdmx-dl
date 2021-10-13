@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
+import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+
 /**
  * @author Philippe Charles
  */
@@ -59,9 +61,9 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
-                .columnOf("Properties", SdmxWebSource::getProperties, MAP_FORMATTER)
+                .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, MAP_FORMATTER.compose(ListSourcesCommand::asMap))
+                .columnOf("Monitor", SdmxWebSource::getMonitor, DEFAULT_MAP_FORMATTER.compose(ListSourcesCommand::asMap))
                 .build();
     }
 
@@ -82,6 +84,4 @@ public final class ListSourcesCommand implements Callable<Void> {
         }
         return Collections.emptyMap();
     }
-
-    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 }

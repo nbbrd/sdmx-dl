@@ -20,21 +20,23 @@ import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.ProxyOptions;
 import picocli.CommandLine;
-import sdmxdl.testing.WebReport;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
 import sdmxdl.testing.WebRequest;
 import sdmxdl.testing.WebResponse;
+import sdmxdl.testing.WebRule;
 import sdmxdl.testing.xml.XmlSourceQuery;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
 
 /**
  * @author Philippe Charles
@@ -66,7 +68,6 @@ public final class TestCommand implements Callable<Void> {
         List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())
                 .map(request -> WebResponse.of(request, manager))
-                .map(WebReport::of)
                 .map(Summary::of)
                 .collect(Collectors.toList());
 
@@ -87,72 +88,95 @@ public final class TestCommand implements Callable<Void> {
                 : request -> web.getSources().contains(request.getSource());
     }
 
-    @lombok.Value
-    @lombok.Builder(toBuilder = true)
-    private static class WebConfig {
+    @lombok.AllArgsConstructor
+    private static class Target {
 
-        @lombok.NonNull
-        String driver;
+        String source;
+        DataflowRef flow;
+        Key key;
 
-        //        @Nullable
-        String dialect;
-
-        @lombok.NonNull
-        URL endpoint;
-
-        @lombok.Singular
-        Map<String, String> properties;
-
-        public static WebConfig of(SdmxWebSource source) {
-            return WebConfig
-                    .builder()
-                    .driver(source.getDriver())
-                    .dialect(source.getDialect())
-                    .endpoint(source.getEndpoint())
-                    .properties(source.getProperties())
-                    .build();
+        static Target of(WebRequest request) {
+            return new Target(
+                    request.getSource(),
+                    request.getFlow(),
+                    request.getKey()
+            );
         }
     }
 
-    @lombok.Value
-    @lombok.Builder(toBuilder = true)
-    private static class Summary {
+    @lombok.AllArgsConstructor
+    private static class Config {
 
-        @lombok.NonNull
-        WebRequest request;
+        String driver;
+        String dialect;
+        String protocol;
+        String properties;
 
-        @lombok.NonNull
-        WebConfig config;
+        static Config of(SdmxWebSource source) {
+            return new Config(
+                    source.getDriver(),
+                    source.getDialect(),
+                    source.getEndpoint().getProtocol(),
+                    DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
+            );
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static class Expected {
 
         int flowCount;
-
-        boolean flow;
-
-        boolean struct;
-
+        int dimCount;
         int seriesCount;
-
         int obsCount;
 
-        @lombok.NonNull
-        String error;
+        static Expected of(WebRequest request) {
+            return new Expected(
+                    request.getMinFlowCount(),
+                    request.getDimensionCount(),
+                    request.getMinSeriesCount(),
+                    request.getMinObsCount()
+            );
+        }
+    }
 
-        @lombok.NonNull
+    @lombok.AllArgsConstructor
+    private static class Actual {
+
+        int flowCount;
+        int dimCount;
+        int seriesCount;
+        int obsCount;
+
+        static Actual of(WebResponse response) {
+            return new Actual(
+                    response.hasFlows() ? response.getFlows().size() : -1,
+                    response.hasStructure() ? response.getStructure().getDimensions().size() : -1,
+                    response.hasData() ? response.getData().size() : -1,
+                    response.hasData() ? response.getData().stream().mapToInt(series -> series.getObs().size()).sum() : -1
+            );
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static class Summary {
+
+        Target target;
+        Config config;
+        Expected expect;
+        Actual actual;
+        String error;
         List<String> problems;
 
-        public static Summary of(WebReport r) {
-            return Summary
-                    .builder()
-                    .request(r.getResponse().getRequest())
-                    .config(WebConfig.of(r.getResponse().getSource()))
-                    .flowCount(r.getResponse().hasFlows() ? r.getResponse().getFlows().size() : -1)
-                    .flow(r.getResponse().hasFlow())
-                    .struct(r.getResponse().hasStructure())
-                    .seriesCount(r.getResponse().hasData() ? r.getResponse().getData().size() : -1)
-                    .obsCount(r.getResponse().hasData() ? r.getResponse().getData().stream().mapToInt(series -> series.getObs().size()).sum() : -1)
-                    .error(r.getResponse().hasError() ? r.getResponse().getError() : "")
-                    .problems(r.getProblems())
-                    .build();
+        static Summary of(WebResponse r) {
+            return new Summary(
+                    Target.of(r.getRequest()),
+                    Config.of(r.getSource()),
+                    Expected.of(r.getRequest()),
+                    Actual.of(r),
+                    r.hasError() ? r.getError() : "",
+                    WebRule.checkAll(r)
+            );
         }
     }
 }

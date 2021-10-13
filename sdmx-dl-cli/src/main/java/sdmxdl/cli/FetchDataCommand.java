@@ -19,8 +19,8 @@ package sdmxdl.cli;
 import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import internal.sdmxdl.cli.ext.CsvUtil;
-import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import internal.sdmxdl.cli.ext.IsoObsFormatOptions;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.console.picocli.text.ObsFormat;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
 import static sdmxdl.csv.SdmxCsvFields.*;
 
 /**
@@ -81,7 +82,7 @@ public final class FetchDataCommand implements Callable<Void> {
                 .dsd(dsd)
                 .ignoreHeader(true)
                 .fields(Arrays.asList(SERIESKEY, ATTRIBUTES, TIME_DIMENSION, OBS_VALUE))
-                .customFactory(ATTRIBUTES, dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, MAP_FORMATTER))
+                .customFactory(ATTRIBUTES, dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, DEFAULT_MAP_FORMATTER))
                 .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format, dataSet)))
                 .customFactory(OBS_VALUE, dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
                 .build();
@@ -94,8 +95,6 @@ public final class FetchDataCommand implements Callable<Void> {
     private static Formatter<LocalDateTime> getPeriodFormat(ObsFormat format, DataSet dataSet) {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
-
-    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
         try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), getFilter())) {
