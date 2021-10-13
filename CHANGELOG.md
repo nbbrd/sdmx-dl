@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor cache to handle web monitors
 - Simplify CSV command options [#88](https://github.com/nbbrd/sdmx-dl/issues/88)
 
+### Fixed
+- Fix missing content in subsequent calls to fetch-meta command [#154](https://github.com/nbbrd/sdmx-dl/issues/154)
+
 ## [3.0.0-beta.3] - 2021-09-13
 
 This is the third beta release of **sdmx-dl**.   

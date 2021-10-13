@@ -21,18 +21,21 @@ import _test.sdmxdl.util.XCountingWebClient;
 import _test.sdmxdl.util.XRepoWebClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
+import org.assertj.core.api.HamcrestCondition;
 import org.junit.Test;
 import sdmxdl.*;
 import sdmxdl.samples.RepoSamples;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static _test.sdmxdl.util.CachingAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static sdmxdl.samples.RepoSamples.*;
 import static sdmxdl.tck.DataFilterAssert.filters;
 import static sdmxdl.tck.KeyAssert.keys;
@@ -59,34 +62,20 @@ public class CachedWebClientTest {
 
     @FunctionalInterface
     private interface Method<T> extends IOFunction<CachedWebClient, T> {
-
-        default Consumer<CachedWebClient> andThen(IOConsumer<T> consumer) {
-            return IOConsumer.unchecked(o -> consumer.acceptWithIO(applyWithIO(o)));
-        }
-
-        default Consumer<CachedWebClient> asConsumer() {
-            return IOConsumer.unchecked(this::applyWithIO);
-        }
     }
 
     @Test
     public void testGetFlows() throws IOException {
-        Method<List<Dataflow>> method = CachedWebClient::getFlows;
+        Method<List<Dataflow>> x = CachedWebClient::getFlows;
 
-        checkCacheHit(this::getClient, method.asConsumer(), flowsId, ttl.toMillis());
-
-        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
-                .containsExactly(FLOW);
+        checkCacheHit(this::getClient, x, new HamcrestCondition<>(hasItem(FLOW)), flowsId, ttl);
     }
 
     @Test
     public void testGetFlow() throws IOException {
-        Method<Dataflow> method = client -> client.getFlow(GOOD_FLOW_REF);
+        Method<Dataflow> x = client -> client.getFlow(GOOD_FLOW_REF);
 
-        checkCacheHit(this::getClient, method.asConsumer(), flowId, ttl.toMillis());
-
-        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
-                .isEqualTo(FLOW);
+        checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(FLOW)), flowId, ttl);
     }
 
     @Test
@@ -103,41 +92,39 @@ public class CachedWebClientTest {
 
     @Test
     public void testGetStructure() throws IOException {
-        Method<DataStructure> method = client -> client.getStructure(GOOD_STRUCT_REF);
+        Method<DataStructure> x = client -> client.getStructure(GOOD_STRUCT_REF);
 
-        checkCacheHit(this::getClient, method.asConsumer(), structId, ttl.toMillis());
-
-        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
-                .isEqualTo(STRUCT);
+        checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(STRUCT)), structId, ttl);
     }
 
     @Test
     public void testGetData() throws IOException {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
-                Method<DataCursor> method = client -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT);
+                Method<Collection<Series>> x = client -> {
+                    try (DataCursor cursor = client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT)) {
+                        return cursor.toStream().collect(Collectors.toList());
+                    }
+                };
+
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getData(key, filter)));
 
                 if (filter.getDetail().isDataRequested()) {
-                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
-                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
+                    checkCacheMiss(this::getClient, x, validator, noDataId, ttl);
+                    checkCacheMiss(this::getClient, x, validator, seriesKeysOnlyId, ttl);
                 } else {
                     if (filter.getDetail().isMetaRequested()) {
-                        checkCacheHit(this::getClient, method.andThen(Closeable::close), noDataId, ttl.toMillis());
+                        checkCacheHit(this::getClient, x, validator, noDataId, ttl);
                     } else {
-                        checkCacheHit(this::getClient, method.andThen(Closeable::close), seriesKeysOnlyId, ttl.toMillis());
+                        checkCacheHit(this::getClient, x, validator, seriesKeysOnlyId, ttl);
                     }
-                }
-
-                try (DataCursor cursor = method.compose(this::getClient).applyWithIO(new Context())) {
-                    assertThat(cursor.toStream())
-                            .containsExactlyElementsOf(RepoSamples.DATA_SET.getData(key, filter));
                 }
             }
         }
     }
 
     @Test
-    public void testBroaderRequest() throws IOException {
+    public void testNarrowerRequest() throws IOException {
         Context ctx = new Context();
         CachedWebClient client = getClient(ctx);
 
@@ -152,6 +139,36 @@ public class CachedWebClientTest {
             ctx.reset();
             method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
             method.acceptWithIO(Key.ALL);
+            assertThat(ctx.getCount()).hasValue(2);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(1);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("M..INDUSTRY"));
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(1);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            method.acceptWithIO(Key.parse("M..INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(2);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("A.BE.INDUSTRY"));
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(2);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("A..INDUSTRY"));
+            method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+            assertThat(ctx.getCount()).hasValue(2);
+
+            ctx.reset();
+            method.acceptWithIO(Key.parse("A..INDUSTRY"));
+            method.acceptWithIO(Key.parse("M..INDUSTRY"));
             assertThat(ctx.getCount()).hasValue(2);
         }
     }

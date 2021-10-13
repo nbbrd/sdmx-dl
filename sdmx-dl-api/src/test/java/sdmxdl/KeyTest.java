@@ -343,6 +343,7 @@ public class KeyTest {
                 .is(superseding("4..M"))
                 .is(superseding("4.M"))
                 .is(superseding("4.AUS.M.X"))
+                .is(superseding("5.AUS.M"))
                 .isNot(superseding(""));
 
         assertThat(Key.parse("4.AUS.M"))
@@ -352,6 +353,7 @@ public class KeyTest {
                 .isNot(superseding("4..M"))
                 .isNot(superseding("4.M"))
                 .isNot(superseding("4.AUS.M.X"))
+                .isNot(superseding("5.AUS.M"))
                 .isNot(superseding(""));
 
         assertThat(Key.parse("4..M"))
@@ -361,6 +363,7 @@ public class KeyTest {
                 .isNot(superseding("4..M"))
                 .isNot(superseding("4.M"))
                 .isNot(superseding("4.AUS.M.X"))
+                .isNot(superseding("5.AUS.M"))
                 .isNot(superseding(""));
 
         assertThat(Key.parse("4.AUS+CHF.M"))
@@ -370,6 +373,7 @@ public class KeyTest {
                 .isNot(superseding("4..M"))
                 .isNot(superseding("4.M"))
                 .isNot(superseding("4.AUS.M.X"))
+                .isNot(superseding("5.AUS.M"))
                 .isNot(superseding(""));
 
         assertThat(Key.parse("4.M"))
@@ -379,6 +383,7 @@ public class KeyTest {
                 .isNot(superseding("4..M"))
                 .isNot(superseding("4.M"))
                 .isNot(superseding("4.AUS.M.X"))
+                .isNot(superseding("5.AUS.M"))
                 .isNot(superseding(""));
     }
 

@@ -193,7 +193,7 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     private boolean isNarrowerRequest(Key key, DataSet dataSet) {
-        return !key.supersedes(dataSet.getKey());
+        return !key.supersedes(dataSet.getKey()) && dataSet.getKey().contains(key);
     }
 
     private DataSet copyData(DataRequest request, DataStructure structure) throws IOException {

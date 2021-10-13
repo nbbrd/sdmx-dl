@@ -5,27 +5,29 @@ import _test.sdmxdl.util.XCountingFileClient;
 import _test.sdmxdl.util.XRepoFileClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
+import org.assertj.core.api.HamcrestCondition;
 import org.junit.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
-import sdmxdl.samples.RepoSamples;
+import sdmxdl.Series;
 
-import java.io.Closeable;
 import java.io.IOException;
-import java.util.function.Consumer;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static _test.sdmxdl.util.CachingAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.samples.RepoSamples.GOOD_FLOW_REF;
-import static sdmxdl.samples.RepoSamples.REPO;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static sdmxdl.samples.RepoSamples.*;
 import static sdmxdl.tck.DataFilterAssert.filters;
 import static sdmxdl.tck.KeyAssert.keys;
 
 public class CachedFileClientTest {
 
     private final String base = "abc";
-    private final long ttl = CachedFileClient.DEFAULT_CACHE_TTL.toMillis();
+    private final Duration ttl = CachedFileClient.DEFAULT_CACHE_TTL;
 
     private CachedFileClient getClient(CachingAssert.Context ctx) {
         SdmxFileClient original = new XRepoFileClient(REPO);
@@ -35,25 +37,14 @@ public class CachedFileClientTest {
 
     @FunctionalInterface
     private interface Method<T> extends IOFunction<CachedFileClient, T> {
-
-        default Consumer<CachedFileClient> andThen(IOConsumer<T> consumer) {
-            return IOConsumer.unchecked(o -> consumer.acceptWithIO(applyWithIO(o)));
-        }
-
-        default Consumer<CachedFileClient> asConsumer() {
-            return IOConsumer.unchecked(this::applyWithIO);
-        }
     }
 
     @Test
     public void testDecode() throws IOException {
         String decodeKey = "decode://" + base;
-        Method<SdmxFileInfo> method = CachedFileClient::decode;
+        Method<SdmxFileInfo> x = CachedFileClient::decode;
 
-        checkCacheHit(this::getClient, method.asConsumer(), decodeKey, ttl);
-
-        assertThat(method.compose(this::getClient).applyWithIO(new Context()))
-                .isEqualTo(XRepoFileClient.infoOf(REPO));
+        checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(XRepoFileClient.infoOf(REPO))), decodeKey, ttl);
     }
 
     @Test
@@ -62,17 +53,18 @@ public class CachedFileClientTest {
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
-                Method<DataCursor> method = client -> client.loadData(client.decode(), GOOD_FLOW_REF, key, filter);
+                Method<Collection<Series>> x = client -> {
+                    try (DataCursor cursor = client.loadData(client.decode(), GOOD_FLOW_REF, key, filter)) {
+                        return cursor.toStream().collect(Collectors.toList());
+                    }
+                };
+
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getData(key, filter)));
 
                 if (filter.getDetail().isDataRequested()) {
-                    checkCacheMiss(this::getClient, method.andThen(Closeable::close), loadDataKey, ttl);
+                    checkCacheMiss(this::getClient, x, validator, loadDataKey, ttl);
                 } else {
-                    checkCacheHit(this::getClient, method.andThen(Closeable::close), loadDataKey, ttl);
-                }
-
-                try (DataCursor cursor = method.compose(this::getClient).applyWithIO(new Context())) {
-                    assertThat(cursor.toStream())
-                            .containsExactlyElementsOf(RepoSamples.DATA_SET.getData(key, filter));
+                    checkCacheHit(this::getClient, x, validator, loadDataKey, ttl);
                 }
             }
         }
@@ -84,16 +76,16 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         SdmxFileInfo info = client.decode();
-        IOConsumer<Key> method = key -> client.loadData(info, GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
+        IOConsumer<Key> x = key -> client.loadData(info, GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
 
         ctx.reset();
-        method.acceptWithIO(Key.ALL);
-        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+        x.acceptWithIO(Key.ALL);
+        x.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
         assertThat(ctx.getCount()).hasValue(1);
 
         ctx.reset();
-        method.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
-        method.acceptWithIO(Key.ALL);
+        x.acceptWithIO(Key.parse("M.BE.INDUSTRY"));
+        x.acceptWithIO(Key.ALL);
         assertThat(ctx.getCount()).hasValue(1);
     }
 }
