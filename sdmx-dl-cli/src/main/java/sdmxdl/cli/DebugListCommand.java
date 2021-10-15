@@ -33,10 +33,7 @@ import java.util.concurrent.Callable;
 /**
  * @author Philippe Charles
  */
-@Command(
-        name = "list",
-        description = "List resources of a remote SDMX server."
-)
+@Command(name = "list", description = "Print raw resources")
 public final class DebugListCommand implements Callable<Void> {
 
     @Spec

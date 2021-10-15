@@ -17,29 +17,43 @@
 package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
-import internal.sdmxdl.cli.WebKeyOptions;
+import nbbrd.console.properties.ConsoleProperties;
 import picocli.CommandLine;
-import sdmxdl.DataFilter;
-import sdmxdl.Series;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "data", description = "Print raw data")
+@CommandLine.Command(name = "console", description = "Print console info")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DebugDataCommand implements Callable<Void> {
-
-    @CommandLine.Mixin
-    private WebKeyOptions web;
+public final class DebugConsoleCommand implements Callable<Void> {
 
     @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataFilter.FULL));
+        output.dump(ConsoleInfo.class, ConsoleInfo.of(ConsoleProperties.ofServiceLoader()));
         return null;
+    }
+
+    @lombok.AllArgsConstructor
+    private static class ConsoleInfo {
+
+        String stdInEncoding;
+        String stdOutEncoding;
+        int columns;
+        int rows;
+
+        static ConsoleInfo of(ConsoleProperties properties) {
+            return new ConsoleInfo(
+                    properties.getStdInEncoding().map(Charset::name).orElse(null),
+                    properties.getStdOutEncoding().map(Charset::name).orElse(null),
+                    properties.getColumns().orElse(-1),
+                    properties.getRows().orElse(-1)
+            );
+        }
     }
 }

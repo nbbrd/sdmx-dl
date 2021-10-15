@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "struct")
+@CommandLine.Command(name = "struct", description = "Print raw struct")
 @SuppressWarnings("FieldMayBeFinal")
 public final class DebugStructCommand implements Callable<Void> {
 

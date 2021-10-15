@@ -28,7 +28,8 @@ import java.util.concurrent.Callable;
         subcommands = {
                 FetchDataCommand.class,
                 FetchMetaCommand.class,
-                FetchKeysCommand.class
+                FetchKeysCommand.class,
+                FetchExtraCommand.class
         }
 )
 public final class FetchCommand implements Callable<Void> {
