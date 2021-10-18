@@ -47,7 +47,6 @@ import java.util.concurrent.Callable;
                 ListCommand.class,
                 CheckCommand.class,
                 SetupCommand.class,
-                TestCommand.class,
                 DebugCommand.class
         }
 )

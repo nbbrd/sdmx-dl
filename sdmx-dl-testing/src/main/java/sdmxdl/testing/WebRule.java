@@ -123,16 +123,16 @@ public enum WebRule implements Function<WebResponse, String> {
                     : null;
         }
     },
-    NO_TIME_FORMAT {
+    NO_TIME_UNIT {
         @Override
         public String apply(WebResponse r) {
-            return r.hasStructure()
-                    ? (r.getStructure()
-                    .getAttributes()
-                    .stream()
-                    .anyMatch(attribute -> attribute.getId().equals("TIME_FORMAT"))
-                    ? null : name())
-                    : null;
+            if (!r.hasStructure())
+                return null;
+            boolean timeFormat = r.getStructure().getAttributes().stream()
+                    .anyMatch(attribute -> attribute.getId().equals("TIME_FORMAT"));
+            boolean freq = r.getStructure().getDimensions().stream()
+                    .anyMatch(attribute -> attribute.getId().equals("FREQ"));
+            return timeFormat || freq ? null : name();
         }
     },
     NO_FLOW {
@@ -145,6 +145,13 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         public String apply(WebResponse webResponse) {
             return webResponse.hasStructure() ? null : name();
+        }
+    },
+    DIMENSION_NOT_CODED {
+        @Override
+        public String apply(WebResponse r) {
+            return r.hasStructure() && r.getStructure().getDimensions().stream().anyMatch(dimension -> !dimension.isCoded())
+                    ? name() : null;
         }
     };
 

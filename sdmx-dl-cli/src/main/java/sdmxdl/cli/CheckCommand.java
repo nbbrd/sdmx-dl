@@ -28,7 +28,8 @@ import java.util.concurrent.Callable;
         subcommands = {
                 CheckStatusCommand.class,
                 CheckAccessCommand.class,
-                CheckConfigCommand.class
+                CheckConfigCommand.class,
+                CheckRulesCommand.class
         }
 )
 public final class CheckCommand implements Callable<Void> {

@@ -42,11 +42,11 @@ import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
  * @author Philippe Charles
  */
 @CommandLine.Command(
-        name = "test",
+        name = "rules",
         hidden = true
 )
 @SuppressWarnings("FieldMayBeFinal")
-public final class TestCommand implements Callable<Void> {
+public final class CheckRulesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourcesOptions web;
