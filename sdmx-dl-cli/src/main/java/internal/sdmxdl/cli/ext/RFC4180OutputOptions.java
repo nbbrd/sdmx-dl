@@ -30,6 +30,11 @@ public class RFC4180OutputOptions extends TextOutputOptions implements CsvOutput
     }
 
     @Override
+    public char getComment() {
+        return Csv.Format.RFC4180.getComment();
+    }
+
+    @Override
     public Csv.Format toFormat() {
         return Csv.Format.RFC4180;
     }
