@@ -95,22 +95,10 @@
         <module>sdmx-dl-provider-ri</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-testing</module>
+        <module>sdmx-dl-cli</module>
     </modules>
 
     <profiles>
-        <!-- Non-deployable modules -->
-        <profile>
-            <id>non-deployable-modules</id>
-            <activation>
-                <property>
-                    <name>!nonDeployableModules</name>
-                </property>
-            </activation>
-            <modules>
-                <module>sdmx-dl-cli</module>
-            </modules>
-        </profile>
-
         <!-- Base build java8 -->
         <profile>
             <id>base-java8</id>
