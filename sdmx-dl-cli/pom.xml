@@ -241,12 +241,19 @@
                                                 </path>
                                             </artifact>
                                         </artifacts>
+                                        <java>
+                                            <mainClass>${project.x.mainClass}</mainClass>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                        </java>
                                         <scoop>
                                             <active>RELEASE</active>
                                         </scoop>
                                         <brew>
                                             <active>RELEASE</active>
                                         </brew>
+                                        <jbang>
+                                            <active>RELEASE</active>
+                                        </jbang>
                                     </sdmx-dl>
                                 </distributions>
                             </jreleaser>

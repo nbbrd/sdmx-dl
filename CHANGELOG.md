@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add a link to documentation in CLI [#137](https://github.com/nbbrd/sdmx-dl/issues/137)
 - Add support of average response time in monitors [#144](https://github.com/nbbrd/sdmx-dl/issues/144)
-- Add snapshot deployment of CLI
+- Add Maven deployment of CLI
+- Add distribution to JBang [#141](https://github.com/nbbrd/sdmx-dl/issues/141)
 
 ### Changed
 - Rename command check.properties as check.config [#136](https://github.com/nbbrd/sdmx-dl/issues/136)
