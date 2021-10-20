@@ -2,15 +2,17 @@ package internal.util.rest;
 
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
+import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wiremock.com.google.common.io.ByteStreams;
+import wiremock.org.apache.commons.io.input.ReaderInputStream;
 import wiremock.org.apache.http.impl.io.EmptyInputStream;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -20,74 +22,135 @@ import static org.assertj.core.api.Assertions.*;
 
 public class DumpingClientTest {
 
+    @SuppressWarnings("ConstantConditions")
     @Test
-    public void testDumpingClient(@TempDir Path temp) throws IOException {
-        URL url = new URL("http://localhost");
-        List<MediaType> mediaTypes = Collections.emptyList();
-        String langs = "";
+    public void testFactories(@TempDir Path temp) {
+        IOSupplier<InputStream> empty = () -> EmptyInputStream.INSTANCE;
 
-        byte[] bytes = "hello".getBytes(StandardCharsets.UTF_8);
         Deque<Path> stack = new LinkedList<>();
+        DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
-        assertThat(new DumpingClient(temp, MockedClient.of(), stack::add))
-                .satisfies(o -> {
-                    assertThatNullPointerException()
-                            .isThrownBy(() -> o.requestGET(null, mediaTypes, langs));
+        assertThatNullPointerException()
+                .isThrownBy(() -> x.requestGET(null, mediaTypes, langs));
 
-                    assertThatNullPointerException()
-                            .isThrownBy(() -> o.requestGET(url, null, langs));
+        assertThatNullPointerException()
+                .isThrownBy(() -> x.requestGET(url, null, langs));
 
-                    assertThatNullPointerException()
-                            .isThrownBy(() -> o.requestGET(url, mediaTypes, null));
-                });
+        assertThatNullPointerException()
+                .isThrownBy(() -> x.requestGET(url, mediaTypes, null));
 
-        DumpingClient empty = new DumpingClient(temp, MockedClient.of(), stack::add);
-        try (HttpRest.Response r = empty.requestGET(url, mediaTypes, langs)) {
-            assertThat(r.getContentType()).isEqualTo(MediaType.ANY_TYPE);
-            assertThat(r.getBody()).isEmpty();
-            assertThat(stack.removeLast()).exists().isEmptyFile();
-        }
+        assertThat(stack).isEmpty();
+    }
 
-        IOSupplier<MockedResponse> nonEmpty = () -> MockedResponse
-                .builder()
-                .body(() -> new ByteArrayInputStream(bytes))
-                .build();
-        try (HttpRest.Response r = new DumpingClient(temp, MockedClient.of(nonEmpty), stack::add).requestGET(url, mediaTypes, langs)) {
-            assertThat(r.getBody()).hasBinaryContent(bytes);
-            assertThat(stack.removeLast()).exists().hasBinaryContent(bytes);
-        }
+    @Test
+    public void testEmptyClient(@TempDir Path temp) throws IOException {
+        IOSupplier<InputStream> empty = () -> EmptyInputStream.INSTANCE;
 
-        IOSupplier<MockedResponse> failing1 = () -> MockedResponse
-                .builder()
-                .body(() -> {
-                    throw new IOException("boom");
-                })
-                .build();
-        try (HttpRest.Response r = new DumpingClient(temp, MockedClient.of(failing1), stack::add).requestGET(url, mediaTypes, langs)) {
-            assertThatIOException().isThrownBy(() -> ByteStreams.toByteArray(r.getBody()));
-            assertThat(stack).isEmpty();
-        }
+        Deque<Path> stack = new LinkedList<>();
+        DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
-        IOSupplier<MockedResponse> failing2 = () -> MockedResponse
-                .builder()
-                .body(() -> new InputStream() {
-                    @Override
-                    public int read() throws IOException {
-                        throw new IOException("boom");
-                    }
-                })
-                .build();
-        try (HttpRest.Response r = new DumpingClient(temp, MockedClient.of(failing2), stack::add).requestGET(url, mediaTypes, langs)) {
-            assertThatIOException().isThrownBy(() -> ByteStreams.toByteArray(r.getBody()));
-            assertThat(stack.removeLast()).exists().isEmptyFile();
+        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+            assertThat(r.getContentType())
+                    .isEqualTo(MediaType.ANY_TYPE);
+
+            try (InputStream stream = r.getBody()) {
+                assertThat(stream).isEmpty();
+            }
+
+            assertThat(stack)
+                    .hasSize(1)
+                    .element(0, PATH)
+                    .exists()
+                    .isEmptyFile();
         }
     }
+
+    @Test
+    public void testNonEmptyClient(@TempDir Path temp) throws IOException {
+        IOSupplier<InputStream> nonEmpty = () -> new ReaderInputStream(new StringReader("hello"), StandardCharsets.UTF_8);
+
+        Deque<Path> stack = new LinkedList<>();
+        DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(nonEmpty), stack::add);
+
+        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+            assertThat(r.getContentType())
+                    .isEqualTo(MediaType.ANY_TYPE);
+
+            try (InputStream stream = r.getBody()) {
+                assertThat(stream).hasContent("hello");
+            }
+
+            assertThat(stack)
+                    .hasSize(1)
+                    .element(0, PATH)
+                    .exists()
+                    .hasContent("hello");
+        }
+    }
+
+    @Test
+    public void testFailingOnGetBody(@TempDir Path temp) throws IOException {
+        IOSupplier<InputStream> failingOnGetBody = () -> {
+            throw new IOException("boom");
+        };
+
+        Deque<Path> stack = new LinkedList<>();
+        DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnGetBody), stack::add);
+
+        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+            assertThat(r.getContentType())
+                    .isEqualTo(MediaType.ANY_TYPE);
+
+            assertThatIOException().isThrownBy(() -> {
+                try (InputStream stream = r.getBody()) {
+                    ByteStreams.toByteArray(stream);
+                }
+            });
+
+            assertThat(stack)
+                    .isEmpty();
+        }
+    }
+
+    @Test
+    public void testFailingOnRead(@TempDir Path temp) throws IOException {
+        IOSupplier<InputStream> failingOnRead = () -> new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("boom");
+            }
+        };
+
+        Deque<Path> stack = new LinkedList<>();
+        DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnRead), stack::add);
+
+        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+            assertThat(r.getContentType())
+                    .isEqualTo(MediaType.ANY_TYPE);
+
+            assertThatIOException().isThrownBy(() -> {
+                try (InputStream stream = r.getBody()) {
+                    ByteStreams.toByteArray(stream);
+                }
+            });
+
+            assertThat(stack)
+                    .hasSize(1)
+                    .element(0, PATH)
+                    .exists()
+                    .isEmptyFile();
+        }
+    }
+
+    private final URL url = Parser.onURL().parseValue("http://localhost").orElseThrow(RuntimeException::new);
+    private final List<MediaType> mediaTypes = Collections.emptyList();
+    private final String langs = "";
 
     @lombok.AllArgsConstructor(staticName = "of")
     private static final class MockedClient implements HttpRest.Client {
 
-        public static MockedClient of() {
-            return of(() -> MockedResponse.builder().build());
+        public static MockedClient ofBody(IOSupplier<InputStream> body) {
+            return of(() -> MockedResponse.ofBody(body));
         }
 
         @lombok.NonNull
@@ -104,6 +167,10 @@ public class DumpingClientTest {
 
     @lombok.Builder
     private static final class MockedResponse implements HttpRest.Response {
+
+        public static MockedResponse ofBody(IOSupplier<InputStream> body) {
+            return builder().body(body).build();
+        }
 
         @lombok.Builder.Default
         private final IOSupplier<MediaType> mediaType = IOSupplier.of(MediaType.ANY_TYPE);
