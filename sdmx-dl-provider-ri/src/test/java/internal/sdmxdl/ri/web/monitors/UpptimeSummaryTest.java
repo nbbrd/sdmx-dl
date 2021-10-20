@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

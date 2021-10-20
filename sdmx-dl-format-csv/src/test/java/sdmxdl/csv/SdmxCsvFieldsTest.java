@@ -2,7 +2,7 @@ package sdmxdl.csv;
 
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataflowRef;
 
 import static org.assertj.core.api.Assertions.assertThat;

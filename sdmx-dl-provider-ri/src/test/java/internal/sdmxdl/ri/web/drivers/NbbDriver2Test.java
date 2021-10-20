@@ -20,7 +20,7 @@ import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.rest.HttpRest;
 import internal.util.rest.MediaType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;

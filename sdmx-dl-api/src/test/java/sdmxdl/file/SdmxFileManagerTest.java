@@ -16,9 +16,7 @@
  */
 package sdmxdl.file;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -28,9 +26,6 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
  * @author Philippe Charles
  */
 public class SdmxFileManagerTest {
-
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
 
 //    @Test
 //    public void testCompliance() throws IOException {

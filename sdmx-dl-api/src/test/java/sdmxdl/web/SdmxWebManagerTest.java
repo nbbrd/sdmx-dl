@@ -16,7 +16,7 @@
  */
 package sdmxdl.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.SdmxConnection;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.spi.SdmxDialect;

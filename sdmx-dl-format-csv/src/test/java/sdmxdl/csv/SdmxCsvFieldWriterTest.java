@@ -2,7 +2,7 @@ package sdmxdl.csv;
 
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
 import sdmxdl.Obs;

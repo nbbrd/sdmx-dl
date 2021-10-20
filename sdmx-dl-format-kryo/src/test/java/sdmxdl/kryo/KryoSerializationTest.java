@@ -2,7 +2,7 @@ package sdmxdl.kryo;
 
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.web.SdmxWebMonitorReport;

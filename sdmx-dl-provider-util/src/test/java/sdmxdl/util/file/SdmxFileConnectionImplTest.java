@@ -17,7 +17,7 @@
 package sdmxdl.util.file;
 
 import _test.sdmxdl.util.XRepoFileClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.Series;

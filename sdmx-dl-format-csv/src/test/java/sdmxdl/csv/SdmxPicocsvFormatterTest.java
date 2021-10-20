@@ -3,7 +3,7 @@ package sdmxdl.csv;
 import nbbrd.io.function.IOFunction;
 import nbbrd.picocsv.Csv;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 import java.util.function.Function;

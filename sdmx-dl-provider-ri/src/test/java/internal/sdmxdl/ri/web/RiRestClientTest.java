@@ -1,7 +1,7 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.rest.HttpRest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;

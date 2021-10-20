@@ -18,7 +18,7 @@ package sdmxdl.xml.stream;
 
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;

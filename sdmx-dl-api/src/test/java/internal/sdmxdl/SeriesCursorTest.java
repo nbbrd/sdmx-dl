@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
 import java.io.IOException;

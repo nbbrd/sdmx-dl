@@ -16,9 +16,7 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 
 import java.io.IOException;
@@ -56,7 +54,4 @@ public class FileDriverTest {
                 .withMessageContaining(syntax.toString())
                 .withCauseExactlyInstanceOf(URISyntaxException.class);
     }
-
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
 }

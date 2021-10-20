@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 

@@ -1,7 +1,7 @@
 package sdmxdl.tck;
 
 import internal.sdmxdl.tck.TckUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.ext.spi.SdmxDialect;

@@ -17,7 +17,7 @@
 package sdmxdl.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;

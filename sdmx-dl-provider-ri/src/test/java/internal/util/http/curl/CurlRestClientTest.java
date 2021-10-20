@@ -21,8 +21,8 @@ import internal.util.http.HttpURLConnectionFactory;
 import internal.util.rest.DefaultClientTest;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class CurlRestClientTest extends DefaultClientTest {
         return result;
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testVersion() throws IOException {
         String[] versionCommand = new Curl.CurlCommandBuilder().version().build();

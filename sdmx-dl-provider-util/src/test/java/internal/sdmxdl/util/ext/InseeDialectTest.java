@@ -17,7 +17,7 @@
 package internal.sdmxdl.util.ext;
 
 import _test.sdmxdl.util.DialectAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dimension;

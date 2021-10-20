@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web;
 
 import nbbrd.io.text.Parser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;

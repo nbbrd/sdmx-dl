@@ -1,6 +1,6 @@
 package sdmxdl.tck;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.tck.file.SdmxFileListenerAssert;
 import sdmxdl.tck.web.SdmxWebListenerAssert;

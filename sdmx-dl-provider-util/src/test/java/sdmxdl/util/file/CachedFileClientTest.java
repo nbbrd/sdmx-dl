@@ -6,7 +6,7 @@ import _test.sdmxdl.util.XRepoFileClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;

@@ -3,7 +3,7 @@ package internal.sdmxdl.ri.web;
 import internal.util.rest.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;

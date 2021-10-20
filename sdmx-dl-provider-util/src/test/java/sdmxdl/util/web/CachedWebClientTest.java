@@ -22,7 +22,7 @@ import _test.sdmxdl.util.XRepoWebClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.samples.RepoSamples;
 

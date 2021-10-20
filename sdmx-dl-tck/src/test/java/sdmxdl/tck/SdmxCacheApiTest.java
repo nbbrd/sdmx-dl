@@ -1,6 +1,6 @@
 package sdmxdl.tck;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.tck.ext.SdmxCacheAssert;
 

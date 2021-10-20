@@ -1,7 +1,7 @@
 package sdmxdl.cli;
 
 import _test.CommandWatcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,6 +1,6 @@
 package internal.util.http.curl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;

@@ -1,7 +1,7 @@
 package sdmxdl.util;
 
 import nbbrd.io.function.IOSupplier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.tck.ext.FakeClock;

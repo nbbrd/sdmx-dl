@@ -22,8 +22,8 @@ import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.DataCursorAssert;
@@ -43,7 +43,7 @@ public class PortableTimeSeriesCursorTest {
     static DataFlowStructure DSD;
     static List<PortableTimeSeries<Double>> DATA;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("en");
         DSD = ConnectorsResource.struct21(SdmxSource.ECB_DATA_STRUCTURE, l).get(0);

@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.ext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.tck.ext.SdmxCacheAssert;
 

@@ -1,6 +1,6 @@
 package sdmxdl.util.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.tck.ext.ObsFactoryAssert;
 
 public class ObsFactoriesTest {
