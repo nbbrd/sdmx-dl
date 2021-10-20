@@ -27,7 +27,7 @@ class Curl {
 
     @lombok.Value
     @lombok.Builder
-    public static class CurlMeta {
+    public static class CurlHead {
 
         @lombok.Builder.Default
         int code = -1;
@@ -38,31 +38,35 @@ class Curl {
         @lombok.Builder.Default
         Map<String, List<String>> headers = Collections.emptyMap();
 
-        public static CurlMeta parse(BufferedReader reader) throws IOException {
-            CurlMeta.Builder result = new Builder();
-            parseStatus(reader, result);
+        public static CurlHead parseResponse(BufferedReader reader) throws IOException {
+            CurlHead.Builder result = new Builder();
+            parseStatusLine(reader, result);
             parseHeaders(reader, result);
             return result.build();
         }
 
-        private static void parseStatus(BufferedReader reader, CurlMeta.Builder result) throws IOException {
-            String line = reader.readLine();
-            if (line == null) {
+        private static char SP = 32;
+
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#status_line
+        private static void parseStatusLine(BufferedReader reader, CurlHead.Builder result) throws IOException {
+            String statusLine = reader.readLine();
+            if (statusLine == null) {
                 return;
             }
-            int codeStart = line.indexOf(' ');
+            int codeStart = statusLine.indexOf(SP);
             if (codeStart == -1) {
                 return;
             }
-            int codeEnd = line.indexOf(' ', codeStart + 1);
+            int codeEnd = statusLine.indexOf(SP, codeStart + 1);
             if (codeEnd == -1) {
-                result.code(Integer.parseInt(line.substring(codeStart + 1)));
+                result.code(Integer.parseInt(statusLine.substring(codeStart + 1)));
             } else {
-                result.code(Integer.parseInt(line.substring(codeStart + 1, codeEnd))).message(line.substring(codeEnd + 1));
+                result.code(Integer.parseInt(statusLine.substring(codeStart + 1, codeEnd))).message(statusLine.substring(codeEnd + 1));
             }
         }
 
-        private static void parseHeaders(BufferedReader reader, CurlMeta.Builder result) throws IOException {
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#headers_2
+        private static void parseHeaders(BufferedReader reader, CurlHead.Builder result) throws IOException {
             HttpHeadersBuilder headers = new HttpHeadersBuilder();
             String line;
             while ((line = reader.readLine()) != null && !line.isEmpty()) {

@@ -49,10 +49,10 @@ final class CurlHttpURLConnection extends HttpURLConnection {
     public void connect() throws IOException {
         Path output = Files.createTempFile("body", ".tmp");
         String[] request = createCurlCommand(output);
-        CurlMeta response = executeCurlCommand(request);
-        this.responseCode = response.getCode();
-        this.responseMessage = response.getMessage();
-        this.headerFields = response.getHeaders();
+        CurlHead responseHead = executeCurlCommand(request);
+        this.responseCode = responseHead.getCode();
+        this.responseMessage = responseHead.getMessage();
+        this.headerFields = responseHead.getHeaders();
         this.body = output;
     }
 
@@ -96,9 +96,9 @@ final class CurlHttpURLConnection extends HttpURLConnection {
                 .build();
     }
 
-    private CurlMeta executeCurlCommand(String[] command) throws IOException {
+    private CurlHead executeCurlCommand(String[] command) throws IOException {
         try (BufferedReader reader = ProcessReader.newReader(command)) {
-            return CurlMeta.parse(reader);
+            return CurlHead.parseResponse(reader);
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
                 case CURL_UNSUPPORTED_PROTOCOL:

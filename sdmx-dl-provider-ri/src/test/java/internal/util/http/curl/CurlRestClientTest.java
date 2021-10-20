@@ -17,20 +17,29 @@
 package internal.util.http.curl;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import internal.util.http.HttpHeadersBuilder;
 import internal.util.http.HttpURLConnectionFactory;
 import internal.util.rest.DefaultClientTest;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Philippe Charles
@@ -73,6 +82,44 @@ public class CurlRestClientTest extends DefaultClientTest {
         try (BufferedReader reader = ProcessReader.newReader(versionCommand)) {
             Curl.CurlVersion.parse(reader).getLines().forEach(System.out::println);
         }
+    }
+
+    @Test
+    public void testCurlHead(@TempDir Path temp) throws IOException {
+        String customErrorMessage = "Custom error message";
+
+        wire.resetAll();
+        wire.stubFor(get(SAMPLE_URL)
+                .willReturn(aResponse()
+                        .withStatus(HttpsURLConnection.HTTP_INTERNAL_ERROR)
+                        .withStatusMessage(customErrorMessage)
+                        .withHeader("key", "value")
+                ));
+
+        Path dumpHeader = temp.resolve("dumpHeader.txt");
+
+        String[] command = new Curl.CurlCommandBuilder()
+                .url(wireURL(SAMPLE_URL))
+                .dumpHeader(dumpHeader.toString())
+                .insecure()
+                .build();
+
+        ProcessReader.readToString(command);
+
+        String content = org.assertj.core.util.Files.contentOf(dumpHeader.toFile(), StandardCharsets.UTF_8);
+
+        assertThat(content).startsWith("HTTP/1.1 500 Custom error message");
+
+        try (BufferedReader reader = new BufferedReader(new StringReader(content))) {
+            assertThat(Curl.CurlHead.parseResponse(reader))
+                    .satisfies(head -> {
+                        assertThat(head.getCode()).isEqualTo(500);
+                        assertThat(head.getMessage()).isEqualTo(customErrorMessage);
+                        assertThat(head.getHeaders()).containsAllEntriesOf(new HttpHeadersBuilder().put("key", "value").build());
+                    });
+        }
+
+        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
     }
 
     private static final class InsecureCurlHttpURLConnectionFactory implements HttpURLConnectionFactory {

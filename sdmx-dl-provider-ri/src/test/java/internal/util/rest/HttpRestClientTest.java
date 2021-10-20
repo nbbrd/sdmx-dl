@@ -57,7 +57,7 @@ public abstract class HttpRestClientTest {
     abstract protected WireMockConfiguration getWireMockConfiguration();
 
     @RegisterExtension
-    WireMockExtension wire = WireMockExtension.newInstance()
+    protected WireMockExtension wire = WireMockExtension.newInstance()
             .options(getWireMockConfiguration())
             .build();
 
@@ -115,20 +115,22 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
+        String customErrorMessage = "Custom error message";
+
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL)
                 .willReturn(aResponse()
                         .withStatus(HttpsURLConnection.HTTP_INTERNAL_ERROR)
-                        .withStatusMessage("boom")
+                        .withStatusMessage(customErrorMessage)
                         .withHeader("key", "value")
                 ));
 
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG))
-                .withMessage("500: boom")
+                .withMessage("500: " + customErrorMessage)
                 .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
-                    assertThat(o.getResponseMessage()).isEqualTo("boom");
+                    assertThat(o.getResponseMessage()).isEqualTo(customErrorMessage);
                     assertThat(o.getHeaderFields()).containsEntry("key", singletonList("value"));
                 });
 
@@ -446,7 +448,7 @@ public abstract class HttpRestClientTest {
         return (hostname, session) -> hostname.equals("localhost");
     }
 
-    private URL wireURL(String path) throws MalformedURLException {
+    protected URL wireURL(String path) throws MalformedURLException {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
@@ -488,7 +490,7 @@ public abstract class HttpRestClientTest {
     private static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
-    private static final String SAMPLE_URL = "/first.xml";
+    protected static final String SAMPLE_URL = "/first.xml";
     private static final String SECOND_URL = "/second.xml";
     private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
     public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
