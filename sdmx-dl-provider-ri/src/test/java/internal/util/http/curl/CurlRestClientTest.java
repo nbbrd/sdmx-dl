@@ -129,7 +129,7 @@ public class CurlRestClientTest extends DefaultClientTest {
 
         CurlHttpURLConnection conn = new CurlHttpURLConnection(url, proxy, false);
         conn.setConnectTimeout(2000);
-        conn.setReadTimeout(300);
+        conn.setReadTimeout(3000);
         conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
         conn.setRequestProperty("P3P", "CP=\"This is not a P3P policy! See g.co/p3phelp for more info.");
         assertThat(conn.createCurlCommand(Paths.get("output")))
@@ -138,7 +138,7 @@ public class CurlRestClientTest extends DefaultClientTest {
                         "-o", "output",
                         "-D", "-",
                         "--connect-timeout", "2",
-                        "-m", "1",
+                        "-m", "3",
                         "-H", "P3P: CP=\"This is not a P3P policy! See g.co/p3phelp for more info.",
                         "-H", "Content-Type: text/html; charset=ISO-8859-1"
                 );

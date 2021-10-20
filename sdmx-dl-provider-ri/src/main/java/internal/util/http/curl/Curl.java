@@ -185,7 +185,7 @@ class Curl {
 
         // some old versions don't accept decimal values!
         private String fixNumericalParameter(float seconds) {
-            return Integer.toString(Math.max(1, (int) seconds));
+            return Integer.toString((int) seconds);
         }
     }
 }
