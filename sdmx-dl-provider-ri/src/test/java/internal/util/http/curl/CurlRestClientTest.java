@@ -30,11 +30,10 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +98,7 @@ public class CurlRestClientTest extends DefaultClientTest {
         Path dumpHeader = temp.resolve("dumpHeader.txt");
 
         String[] command = new Curl.CurlCommandBuilder()
+                .http1_1()
                 .url(wireURL(SAMPLE_URL))
                 .dumpHeader(dumpHeader.toString())
                 .insecure()
@@ -120,6 +120,28 @@ public class CurlRestClientTest extends DefaultClientTest {
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+    }
+
+    @Test
+    public void testCreateCurlCommand() throws MalformedURLException {
+        URL url = new URL("http://localhost");
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("http://localhost", 123));
+
+        CurlHttpURLConnection conn = new CurlHttpURLConnection(url, proxy, false);
+        conn.setConnectTimeout(2000);
+        conn.setReadTimeout(300);
+        conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
+        conn.setRequestProperty("P3P", "CP=\"This is not a P3P policy! See g.co/p3phelp for more info.");
+        assertThat(conn.createCurlCommand(Paths.get("output")))
+                .containsExactly("curl", "http://localhost", "--http1.1", "-s",
+                        "-x", "http://localhost:123",
+                        "-o", "output",
+                        "-D", "-",
+                        "--connect-timeout", "2",
+                        "-m", "1",
+                        "-H", "P3P: CP=\"This is not a P3P policy! See g.co/p3phelp for more info.",
+                        "-H", "Content-Type: text/html; charset=ISO-8859-1"
+                );
     }
 
     private static final class InsecureCurlHttpURLConnectionFactory implements HttpURLConnectionFactory {

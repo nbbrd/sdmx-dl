@@ -82,16 +82,18 @@ final class CurlHttpURLConnection extends HttpURLConnection {
         return Files.newInputStream(body);
     }
 
-    private String[] createCurlCommand(Path output) {
+    @VisibleForTesting
+    String[] createCurlCommand(Path output) {
         return new CurlCommandBuilder()
-                .insecure(insecure)
                 .url(getURL())
+                .http1_1()
+                .silent()
+                .insecure(insecure)
                 .proxy(proxy)
                 .output(output)
-                .silent()
                 .dumpHeader("-")
-                .connectTimeout(getConnectTimeout() / 1000)
-                .maxTime(getReadTimeout() / 1000)
+                .connectTimeout(getConnectTimeout() / 1000f)
+                .maxTime(getReadTimeout() / 1000f)
                 .headers(getRequestProperties())
                 .build();
     }

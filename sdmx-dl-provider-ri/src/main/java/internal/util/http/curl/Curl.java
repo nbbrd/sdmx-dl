@@ -105,6 +105,7 @@ class Curl {
         }
     }
 
+    // https://curl.se/docs/manpage.html
     @BuilderPattern(String[].class)
     public static final class CurlCommandBuilder {
 
@@ -144,12 +145,12 @@ class Curl {
             return push("-D").push(filename);
         }
 
-        public CurlCommandBuilder connectTimeout(int seconds) {
-            return push("--connect-timeout").push(Integer.toString(seconds));
+        public CurlCommandBuilder connectTimeout(float seconds) {
+            return push("--connect-timeout").push(fixNumericalParameter(seconds));
         }
 
-        public CurlCommandBuilder maxTime(int seconds) {
-            return push("-m").push(Integer.toString(seconds));
+        public CurlCommandBuilder maxTime(float seconds) {
+            return push("-m").push(fixNumericalParameter(seconds));
         }
 
         public CurlCommandBuilder insecure(boolean insecure) {
@@ -174,8 +175,17 @@ class Curl {
             return push("-V");
         }
 
+        public CurlCommandBuilder http1_1() {
+            return push("--http1.1");
+        }
+
         public String[] build() {
             return items.toArray(new String[0]);
+        }
+
+        // some old versions don't accept decimal values!
+        private String fixNumericalParameter(float seconds) {
+            return Integer.toString(Math.max(1, (int) seconds));
         }
     }
 }
