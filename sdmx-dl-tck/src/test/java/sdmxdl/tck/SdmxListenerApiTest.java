@@ -1,6 +1,5 @@
 package sdmxdl.tck;
 
-import internal.sdmxdl.SdmxListeners;
 import nl.altindag.log.LogCaptor;
 import nl.altindag.log.model.LogEvent;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ public class SdmxListenerApiTest {
 
     @Test
     public void testDefaultWebListener() {
-        LogCaptor logCaptor = LogCaptor.forClass(SdmxListeners.class);
+        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.SdmxListeners");
         logCaptor.setLogLevelToInfo();
 
         SdmxWebListenerAssert.assertCompliance(SdmxWebListener.getDefault());
@@ -40,7 +39,7 @@ public class SdmxListenerApiTest {
 
     @Test
     public void testDefaultFileListener() {
-        LogCaptor logCaptor = LogCaptor.forClass(SdmxListeners.class);
+        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.SdmxListeners");
         logCaptor.setLogLevelToInfo();
 
         SdmxFileListenerAssert.assertCompliance(SdmxFileListener.getDefault());
