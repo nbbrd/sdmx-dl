@@ -76,7 +76,7 @@ public class ApiTest {
     @Test
     public void testNoOpWebListener() {
         SdmxWebListenerAssert.assertCompliance(
-                SdmxWebListener.getDefault()
+                SdmxWebListener.noOp()
         );
     }
 }
