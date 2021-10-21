@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [3.0.0-beta.4] - 2021-10-21
+
+This is the fourth beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+_Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in production._
+
+This release simplifies the CLI options and fixes web monitors by using a [new self-hosted provider](https://nbbrd.github.io/sdmx-upptime/).  
+The CLI binary is now also available in a [JBang catalog](https://github.com/nbbrd/jbang-catalog) and in a [snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/com/github/nbbrd/sdmx-dl/sdmx-dl-cli/).
+
+### Added
 - Add a link to documentation in CLI [#137](https://github.com/nbbrd/sdmx-dl/issues/137)
 - Add support of average response time in monitors [#144](https://github.com/nbbrd/sdmx-dl/issues/144)
 - Add Maven deployment of CLI
@@ -27,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 This is the third beta release of **sdmx-dl**.   
 sdmx-dl follows [semantic versioning](http://semver.org/).
 
-_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
+_Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in production._
 
 This release adds new sources and improves feedback on request parameters such as Key and Flow.  
 The CLI binary is now available in some popular package managers.  
@@ -65,7 +81,7 @@ Finally, sdmx-dl advertises itself on web queries with the user-agent `sdmx-dl/3
 This is the second beta release of **sdmx-dl**.   
 sdmx-dl follows [semantic versioning](http://semver.org/).
 
-_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
+_Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in production._
 
 This release adds new sources, the support of attributes and modify the CLI commands.  
 These command modifications are quite extended and concern [command names, overall structure and output](https://github.com/nbbrd/sdmx-dl/wiki/cli-usage).
@@ -91,12 +107,13 @@ These command modifications are quite extended and concern [command names, overa
 This is the first beta release of **sdmx-dl**.   
 sdmx-dl follows [semantic versioning](http://semver.org/).
 
-_Note that sdmx-dl is still in heavy development and might change a lot between versions so you shouldn't use it in production._
+_Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in production._
 
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...HEAD
+[3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
