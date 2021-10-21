@@ -18,15 +18,14 @@ package _test.sdmxdl.connectors.samples;
 
 import internal.sdmxdl.connectors.Connectors;
 import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
+import it.bancaditalia.oss.sdmx.api.Dataflow;
+import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataflowRef;
-import sdmxdl.Frequency;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
@@ -87,7 +86,7 @@ public class ConnectorsResource {
     }
 
     private DataflowRef firstOf(List<Dataflow> flows) {
-        return flows.stream().map(o -> Connectors.toFlow(o).getRef()).findFirst().get();
+        return flows.stream().map(o -> Connectors.toFlow(o).getRef()).findFirst().orElseThrow(RuntimeException::new);
     }
 
     private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -132,11 +131,15 @@ public class ConnectorsResource {
         for (int i = 0; i < key.size(); i++) {
             result.addDimension(dims.get(i).getId(), key.get(i));
         }
-        series.getObs().forEach(obs -> result.add(new DoubleObservation(periodToString(series.getFreq(), obs.getPeriod()), obs.getValue(), obs.getMeta())));
+        series.getObs().forEach(obs -> result.add(toObservation(series.getFreq(), obs)));
         return result;
     }
 
-    private String periodToString(Frequency f, LocalDateTime o) {
+    private static DoubleObservation toObservation(Frequency frequency, Obs obs) {
+        return new DoubleObservation(toTimeslot(frequency, obs.getPeriod()), toValue(obs.getValue()), obs.getMeta());
+    }
+
+    private static String toTimeslot(Frequency f, LocalDateTime o) {
         if (o == null) {
             return "NULL";
         }
@@ -148,6 +151,10 @@ public class ConnectorsResource {
             default:
                 throw new RuntimeException("Not implemented yet");
         }
+    }
+
+    private static double toValue(Double nullableValue) {
+        return nullableValue == null ? Double.NaN : nullableValue;
     }
 
     private Dataflow asDataflow(DataFlowStructure o) {

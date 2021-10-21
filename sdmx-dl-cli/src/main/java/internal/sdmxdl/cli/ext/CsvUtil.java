@@ -1,6 +1,6 @@
 package internal.sdmxdl.cli.ext;
 
-import nbbrd.console.picocli.csv.CsvOutputOptions;
+import nbbrd.console.picocli.csv.CsvOutput;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
@@ -13,24 +13,26 @@ import java.util.Map;
 @lombok.experimental.UtilityClass
 public class CsvUtil {
 
-    public void write(CsvOutputOptions csv, IOConsumer<Csv.Writer> head, IOConsumer<Csv.Writer> body) throws IOException {
+    public static void write(CsvOutput csv, IOConsumer<Csv.Writer> head, IOConsumer<Csv.Writer> body) throws IOException {
         try (Csv.Writer w = csv.newCsvWriter()) {
             if (!csv.isAppending()) head.acceptWithIO(w);
             body.acceptWithIO(w);
         }
     }
 
-    public <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {
+    public static <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {
         Csv.Format format = Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build();
         return list -> list != null ? formatIterator(list.iterator(), format, itemFormatter) : null;
     }
 
-    public <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
+    public static <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
         Csv.Format csvFormat = Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build();
         return map -> map != null ? formatMap(map, csvFormat, keyFormatter, valueFormatter) : null;
     }
 
-    private <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {
+    public static final Formatter<Map<String, String>> DEFAULT_MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
+
+    private static <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {
         try {
             StringWriter result = new StringWriter();
             try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
@@ -44,7 +46,7 @@ public class CsvUtil {
         }
     }
 
-    private <K, V> CharSequence formatMap(Map<K, V> map, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
+    private static <K, V> CharSequence formatMap(Map<K, V> map, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
         try {
             StringWriter result = new StringWriter();
             try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {

@@ -2,28 +2,25 @@ package sdmxdl.cli;
 
 import _test.CommandWatcher;
 import _test.FileSample;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
 public class ListSourcesCommandTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-
     @Test
-    public void testDefault() throws IOException {
+    public void testDefault(@TempDir Path temp) throws IOException {
         CommandLine cmd = new CommandLine(new ListSourcesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
-        File out = temp.newFile("testDefault.csv");
+        File out = temp.resolve("testDefault.csv").toFile();
 
         assertThat(cmd.execute("-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
         assertThat(watcher.getOut()).isEmpty();
@@ -31,13 +28,13 @@ public class ListSourcesCommandTest {
     }
 
     @Test
-    public void testContent() throws IOException {
+    public void testContent(@TempDir Path temp) throws IOException {
         CommandLine cmd = new CommandLine(new ListSourcesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
 
-        File out = temp.newFile("out.csv");
+        File out = temp.resolve("out.csv").toFile();
 
         assertThat(cmd.execute("--no-log", "-s", src.getPath(), "-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
         assertThat(watcher.getOut()).isEmpty();

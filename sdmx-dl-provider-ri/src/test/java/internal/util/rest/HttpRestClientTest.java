@@ -17,13 +17,13 @@
 package internal.util.rest;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.AnythingPattern;
 import org.assertj.core.api.Assumptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import sdmxdl.LanguagePriorityList;
 
 import javax.net.ssl.*;
@@ -35,6 +35,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static internal.util.http.HttpConstants.*;
@@ -54,8 +56,10 @@ public abstract class HttpRestClientTest {
 
     abstract protected WireMockConfiguration getWireMockConfiguration();
 
-    @Rule
-    public WireMockRule wire = new WireMockRule(getWireMockConfiguration());
+    @RegisterExtension
+    protected WireMockExtension wire = WireMockExtension.newInstance()
+            .options(getWireMockConfiguration())
+            .build();
 
     @Test
     public void testNPE() {
@@ -111,20 +115,22 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
+        String customErrorMessage = "Custom error message";
+
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL)
                 .willReturn(aResponse()
                         .withStatus(HttpsURLConnection.HTTP_INTERNAL_ERROR)
-                        .withStatusMessage("boom")
+                        .withStatusMessage(customErrorMessage)
                         .withHeader("key", "value")
                 ));
 
         assertThatIOException()
                 .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG))
-                .withMessage("500: boom")
+                .withMessage("500: " + customErrorMessage)
                 .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
-                    assertThat(o.getResponseMessage()).isEqualTo("boom");
+                    assertThat(o.getResponseMessage()).isEqualTo(customErrorMessage);
                     assertThat(o.getHeaderFields()).containsEntry("key", singletonList("value"));
                 });
 
@@ -165,23 +171,27 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
-        String absoluteSecondURL = wire.url(SECOND_URL);
+        String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
-                try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
-                    assertSameSampleContent(response);
-                }
+                assertThatCode(() -> {
+                    try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+                        assertSameSampleContent(response);
+                    }
+                })
+                        .describedAs("Redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
+                        .doesNotThrowAnyException();
             }
         }
     }
 
     @Test
-    public void testMaxRedirect() {
+    public void testMaxRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -190,9 +200,9 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
-        String absoluteSecondURL = wire.url(SECOND_URL);
+        String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             for (String location : asList(absoluteSecondURL, SECOND_URL)) {
                 wire.resetAll();
                 wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
@@ -200,13 +210,14 @@ public abstract class HttpRestClientTest {
 
                 assertThatIOException()
                         .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                        .describedAs("Max redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                         .withMessage("Max redirection reached");
             }
         }
     }
 
     @Test
-    public void testInvalidRedirect() {
+    public void testInvalidRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -214,18 +225,19 @@ public abstract class HttpRestClientTest {
                 .build();
         HttpRest.Client x = getRestClient(context);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .describedAs("Invalid redirect: code %s from '%s'", redirection, wireURL(SAMPLE_URL))
                     .withMessage("Missing redirection url");
         }
     }
 
     @Test
-    public void testDowngradingRedirect() {
+    public void testDowngradingRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
                 .sslSocketFactory(wireSSLSocketFactory())
@@ -235,13 +247,14 @@ public abstract class HttpRestClientTest {
 
         String location = wireHttpUrl(SECOND_URL);
 
-        for (int redirection : HTTP_REDIRECTIONS) {
+        for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
                     .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .describedAs("Downgrading protocol on redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                     .withMessageContaining("Downgrading protocol on redirect");
         }
     }
@@ -366,7 +379,7 @@ public abstract class HttpRestClientTest {
     }
 
     @Test
-    public void testInsecureAuth() {
+    public void testInsecureAuth() throws MalformedURLException {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
@@ -415,12 +428,6 @@ public abstract class HttpRestClientTest {
         }
     }
 
-    private String wireHttpUrl(String url) {
-        return wire.url(url)
-                .replace("https", "http")
-                .replace(Integer.toString(wire.httpsPort()), Integer.toString(wire.port()));
-    }
-
     private SSLSocketFactory wireSSLSocketFactory() {
         try {
             SSLContext result = SSLContext.getInstance("TLS");
@@ -441,8 +448,18 @@ public abstract class HttpRestClientTest {
         return (hostname, session) -> hostname.equals("localhost");
     }
 
-    private URL wireURL(String path) throws MalformedURLException {
-        return new URL(wire.url(path));
+    protected URL wireURL(String path) throws MalformedURLException {
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        return new URL(String.format("%s%s", wire.baseUrl(), path));
+    }
+
+    private String wireHttpUrl(String url) throws MalformedURLException {
+        return wireURL(url)
+                .toString()
+                .replace("https", "http")
+                .replace(Integer.toString(wire.getRuntimeInfo().getHttpsPort()), Integer.toString(wire.getRuntimeInfo().getHttpPort()));
     }
 
     private void assertSameSampleContent(HttpRest.Response response) throws IOException {
@@ -455,7 +472,7 @@ public abstract class HttpRestClientTest {
     private HttpRest.Authenticator authenticatorOf(String username, String password) {
         return new HttpRest.Authenticator() {
             @Override
-            public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
+            public @NonNull PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
                 return new PasswordAuthentication(username, password.toCharArray());
             }
 
@@ -465,17 +482,20 @@ public abstract class HttpRestClientTest {
         };
     }
 
+    protected List<Integer> getHttpRedirectionCodes() {
+        return Arrays.asList(301, 302, 303, 307, 308);
+    }
+
     private static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
     private static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
-    private static final int[] HTTP_REDIRECTIONS = {301, 302, 303, 307, 308};
-    private static final String SAMPLE_URL = "/first.xml";
+    protected static final String SAMPLE_URL = "/first.xml";
     private static final String SECOND_URL = "/second.xml";
     private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
     public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
 
-    private static boolean isOSX() {
+    protected static boolean isOSX() {
         String osName = System.getProperty("os.name");
         return osName != null && osName.toLowerCase().startsWith("mac os x");
     }

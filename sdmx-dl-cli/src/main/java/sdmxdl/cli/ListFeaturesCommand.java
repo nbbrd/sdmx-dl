@@ -16,12 +16,11 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
-import nbbrd.console.picocli.csv.CsvOutputOptions;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 
@@ -39,18 +38,14 @@ public final class ListFeaturesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebSourceOptions web;
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private final CsvOutputOptions csv = new CsvOutputOptions();
+    @CommandLine.Mixin
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
     @CommandLine.Mixin
     private SortOptions sort;
 
-    @CommandLine.Mixin
-    private Excel excel;
-
     @Override
     public Void call() throws Exception {
-        excel.apply(csv);
         getTable().write(csv, getRows());
         return null;
     }

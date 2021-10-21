@@ -1,6 +1,5 @@
 package _test;
 
-import org.junit.rules.TemporaryFolder;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.xml.XmlWebSource;
@@ -9,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -20,14 +20,14 @@ public class FileSample {
         return Files.readAllLines(file.toPath());
     }
 
-    public static File create(TemporaryFolder temp) throws IOException {
-        File data = temp.newFile("data.xml");
+    public static File create(Path temp) throws IOException {
+        File data = Files.createFile(temp.resolve("data.xml")).toFile();
         SdmxSource.ECB_DATA.copyTo(data);
 
-        File struct = temp.newFile("struct.xml");
+        File struct = Files.createFile(temp.resolve("struct.xml")).toFile();
         SdmxSource.ECB_DATA_STRUCTURE.copyTo(struct);
 
-        File source = temp.newFile("source.xml");
+        File source = Files.createFile(temp.resolve("source.xml")).toFile();
         XmlWebSource.getFormatter().formatFile(singletonList(sourceOf("sample", data, struct)), source);
 
         return source;

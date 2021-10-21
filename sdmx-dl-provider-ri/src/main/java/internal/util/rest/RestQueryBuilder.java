@@ -45,7 +45,7 @@ public final class RestQueryBuilder {
     /**
      * Appends a trailing slash to the final URL.
      *
-     * @param trailingSlash
+     * @param trailingSlash specify if a trailing slash is required
      * @return this builder
      * @see <a href="https://en.wikipedia.org/wiki/URI_normalization">https://en.wikipedia.org/wiki/URI_normalization</a>
      */
@@ -128,8 +128,9 @@ public final class RestQueryBuilder {
     /**
      * Creates a new URL using the specified path and parameters.
      *
-     * @return a URL
-     * @throws java.net.MalformedURLException
+     * @return a new URL
+     * @throws java.net.MalformedURLException if no protocol is specified, or an unknown protocol is found, or spec is null,
+     *                                        or the parsed URL fails to comply with the specific syntax of the associated protocol.
      */
     @NonNull
     public URL build() throws MalformedURLException {

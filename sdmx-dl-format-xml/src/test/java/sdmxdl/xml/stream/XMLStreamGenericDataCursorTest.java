@@ -17,7 +17,7 @@
 package sdmxdl.xml.stream;
 
 import nbbrd.io.text.Parser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Frequency;

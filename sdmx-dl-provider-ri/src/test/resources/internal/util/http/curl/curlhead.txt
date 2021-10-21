@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Wed, 20 Oct 2021 10:58:37 GMT
+Expires: -1
+Cache-Control: private, max-age=0
+Content-Type: text/html; charset=ISO-8859-1
+P3P: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+Server: gws
+X-XSS-Protection: 0
+X-Frame-Options: SAMEORIGIN
+Accept-Ranges: none
+Vary: Accept-Encoding
+Transfer-Encoding: chunked
+

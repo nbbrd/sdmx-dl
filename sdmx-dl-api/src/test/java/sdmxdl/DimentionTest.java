@@ -17,7 +17,7 @@
 package sdmxdl;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
  *
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 public class DimentionTest {
 
     final String someId = "dim1";

@@ -16,7 +16,7 @@
  */
 package sdmxdl.repo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 public class DataSetTest {
 
     @Test

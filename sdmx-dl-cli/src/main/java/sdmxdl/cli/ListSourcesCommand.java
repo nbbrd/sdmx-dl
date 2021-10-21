@@ -16,11 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
-import nbbrd.console.picocli.csv.CsvOutputOptions;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebMonitor;
@@ -33,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
+import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+
 /**
  * @author Philippe Charles
  */
@@ -42,15 +43,11 @@ public final class ListSourcesCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebOptions web;
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private final CsvOutputOptions csv = new CsvOutputOptions();
-
     @CommandLine.Mixin
-    private Excel excel;
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
     @Override
     public Void call() throws Exception {
-        excel.apply(csv);
         getTable().write(csv, getRows());
         return null;
     }
@@ -64,9 +61,9 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
-                .columnOf("Properties", SdmxWebSource::getProperties, MAP_FORMATTER)
+                .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, MAP_FORMATTER.compose(ListSourcesCommand::asMap))
+                .columnOf("Monitor", SdmxWebSource::getMonitor, DEFAULT_MAP_FORMATTER.compose(ListSourcesCommand::asMap))
                 .build();
     }
 
@@ -87,6 +84,4 @@ public final class ListSourcesCommand implements Callable<Void> {
         }
         return Collections.emptyMap();
     }
-
-    private static final Formatter<Map<String, String>> MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 }

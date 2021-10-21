@@ -1,6 +1,6 @@
 package internal.sdmxdl.cli.ext;
 
-import nbbrd.console.picocli.csv.CsvOutputOptions;
+import nbbrd.console.picocli.csv.CsvOutput;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 
@@ -28,15 +28,15 @@ public class CsvTable<T> {
         }
     }
 
-    public void write(CsvOutputOptions csv, Stream<T> rows) throws IOException {
+    public void write(CsvOutput csv, Stream<T> rows) throws IOException {
         write(csv, rows.iterator());
     }
 
-    public void write(CsvOutputOptions csv, Iterable<T> rows) throws IOException {
+    public void write(CsvOutput csv, Iterable<T> rows) throws IOException {
         write(csv, rows.iterator());
     }
 
-    public void write(CsvOutputOptions csv, Iterator<T> rows) throws IOException {
+    public void write(CsvOutput csv, Iterator<T> rows) throws IOException {
         CsvUtil.write(csv, this::writeNames, w -> {
             while (rows.hasNext()) {
                 writeValues(w, rows.next());

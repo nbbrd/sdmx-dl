@@ -23,6 +23,7 @@ import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author Philippe Charles
@@ -34,26 +35,34 @@ public final class SdmxException extends IOException {
     }
 
     public static @NonNull SdmxException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
+        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing flow '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingStructure(@NonNull String source, @NonNull DataStructureRef ref) {
+        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing structure '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataflowRef ref, @NonNull Key key, @NonNull DataFilter filter) {
+        Objects.requireNonNull(ref);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
         return new SdmxException(source, "Missing data '" + ref + "'");
     }
 
     public static @NonNull SdmxException invalidKey(@NonNull String source, @NonNull Key key, @NonNull String cause) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(cause);
         return new SdmxException(source, "Invalid key '" + key + "': " + cause);
     }
 
     @lombok.Getter
-    @lombok.NonNull
-    private String source;
+    @NonNull
+    private final String source;
 
     private SdmxException(String source, String message) {
         super(message);
+        this.source = Objects.requireNonNull(source);
     }
 }

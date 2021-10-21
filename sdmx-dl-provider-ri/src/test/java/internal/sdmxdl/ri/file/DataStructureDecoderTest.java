@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.file;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
 import sdmxdl.samples.SdmxSource;

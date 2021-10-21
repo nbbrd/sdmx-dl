@@ -24,13 +24,7 @@ public class HttpConstants {
 
     public static final String HTTP_CONTENT_ENCODING_HEADER = "Content-Encoding";
 
-    /**
-     * https://en.wikipedia.org/wiki/Downgrade_attack
-     *
-     * @param oldUrl
-     * @param newUrl
-     * @return
-     */
+    // https://en.wikipedia.org/wiki/Downgrade_attack
     public static boolean isDowngradingProtocolOnRedirect(URL oldUrl, URL newUrl) {
         return isHttpsProtocol(oldUrl) && !isHttpsProtocol(newUrl);
     }

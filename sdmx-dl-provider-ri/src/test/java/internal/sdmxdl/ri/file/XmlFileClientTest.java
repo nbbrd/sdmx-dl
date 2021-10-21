@@ -16,9 +16,8 @@
  */
 package internal.sdmxdl.ri.file;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
@@ -32,6 +31,7 @@ import sdmxdl.util.file.SdmxFileInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -42,8 +42,8 @@ import static sdmxdl.LanguagePriorityList.ANY;
 public class XmlFileClientTest {
 
     @Test
-    public void testCompactData21() throws IOException {
-        File compact21 = temp.newFile();
+    public void testCompactData21(@TempDir Path temp) throws IOException {
+        File compact21 = temp.resolve("compact21").toFile();
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
@@ -92,9 +92,6 @@ public class XmlFileClientTest {
     public static SdmxFileSource sourceOf(File compact21) {
         return SdmxFileSource.builder().data(compact21).build();
     }
-
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
 
     public static final SdmxDecoder DECODER = new XmlDecoder(SdmxFileListener.noOp());
     public static final Dataflow DATAFLOW = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");

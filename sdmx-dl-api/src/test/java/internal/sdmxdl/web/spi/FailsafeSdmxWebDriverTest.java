@@ -20,7 +20,7 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 

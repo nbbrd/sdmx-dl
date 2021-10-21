@@ -16,7 +16,7 @@
  */
 package sdmxdl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.DataStructureRef.of;
@@ -26,6 +26,7 @@ import static sdmxdl.ResourceRef.LATEST_VERSION;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ALL")
 public class DataStructureRefTest {
 
     @Test

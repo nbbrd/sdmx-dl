@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
  *
  * @author Philippe Charles
  * @see Locale.LanguageRange
- * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
- * @see https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation
+ * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language</a>
+ * @see <a href="https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation">https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation</a>
  */
 @StringValue
 @lombok.EqualsAndHashCode

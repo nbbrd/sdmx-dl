@@ -16,7 +16,7 @@
  */
 package sdmxdl.xml;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.samples.SdmxSource;
 

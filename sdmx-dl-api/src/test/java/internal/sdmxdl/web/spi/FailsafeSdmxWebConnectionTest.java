@@ -20,7 +20,7 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestConnection;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -175,7 +175,8 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER)).isEqualTo(TestConnection.DATA);
+        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .containsExactlyElementsOf(TestConnection.DATA);
         failsafe.assertEmpty();
 
         failsafe.reset();

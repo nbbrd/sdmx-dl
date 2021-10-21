@@ -27,6 +27,7 @@ public class ProxyOptions {
             try {
                 proxySelector.select(new URI("http://localhost"));
             } catch (URISyntaxException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }

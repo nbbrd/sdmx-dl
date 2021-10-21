@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.3</version>
+        <version>3.0.0-beta.4</version>
     </parent>
 
     <artifactId>sdmx-dl-testing</artifactId>
     <packaging>jar</packaging>
 
     <name>sdmx-dl-testing</name>
-    <description>Download data from remote SDMX servers - Testing</description>
+    <description>Download SDMX data - Testing</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
@@ -43,8 +43,8 @@
 
         <!-- test only -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

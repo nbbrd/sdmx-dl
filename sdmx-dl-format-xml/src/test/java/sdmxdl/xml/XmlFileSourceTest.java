@@ -17,7 +17,7 @@
 package sdmxdl.xml;
 
 import nbbrd.io.xml.Xml;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.file.SdmxFileSource;
 
 import java.io.File;

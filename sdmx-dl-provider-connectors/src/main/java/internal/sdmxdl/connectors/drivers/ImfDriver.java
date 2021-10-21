@@ -45,7 +45,7 @@ public final class ImfDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_IMF)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
-                    .monitorOf("UptimeRobot", "m783847087-0ea5fc62a2cf830952d3dd98")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:IMF")
                     .build())
             .build();
 }

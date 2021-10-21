@@ -16,13 +16,12 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Excel;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.ProxyOptions;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
-import nbbrd.console.picocli.csv.CsvOutputOptions;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -46,18 +45,14 @@ public final class CheckStatusCommand implements Callable<Void> {
     @CommandLine.Mixin
     private WebSourcesOptions web;
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "csv")
-    private final CsvOutputOptions csv = new CsvOutputOptions();
+    @CommandLine.Mixin
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
 
     @CommandLine.Mixin
     private SortOptions sort;
 
-    @CommandLine.Mixin
-    private Excel excel;
-
     @Override
     public Void call() throws Exception {
-        excel.apply(csv);
         getTable().write(csv, getRows());
         return null;
     }
@@ -86,7 +81,7 @@ public final class CheckStatusCommand implements Callable<Void> {
     @lombok.Value
     private static class Status {
 
-        static Status of(SdmxWebManager manager, String sourceName) {
+        static @NonNull Status of(@NonNull SdmxWebManager manager, @NonNull String sourceName) {
             SdmxWebSource source = manager.getSources().get(sourceName);
             if (source == null) {
                 return failure(sourceName, "Cannot find source");
@@ -95,26 +90,23 @@ public final class CheckStatusCommand implements Callable<Void> {
                 return failure(sourceName, "No monitor defined");
             }
             try {
-                return success(sourceName, manager.getMonitorReport(source));
+                return success(manager.getMonitorReport(source));
             } catch (IOException ex) {
                 return failure(sourceName, ex);
             }
         }
 
-        static @NonNull Status success(@NonNull String source, @NonNull SdmxWebMonitorReport report) {
-            return new Status(source, report, null);
+        static @NonNull Status success(@NonNull SdmxWebMonitorReport report) {
+            return new Status(report, null);
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull IOException cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause.getMessage());
+            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause.getMessage());
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull String cause) {
-            return new Status(source, SdmxWebMonitorReport.EMPTY, cause);
+            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause);
         }
-
-        @lombok.NonNull
-        String source;
 
         @lombok.NonNull
         @lombok.experimental.Delegate

@@ -46,7 +46,7 @@ public final class EurostatDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
-                    .monitorOf("UptimeRobot", "m783847077-390f706bd3acf8fb640e48df")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ESTAT")
                     .build())
             .build();
 }

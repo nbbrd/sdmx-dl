@@ -1,12 +1,13 @@
 package internal.sdmxdl.ri.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 
 import static internal.sdmxdl.ri.web.RiRestParsers.getResourceSelector;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.samples.RepoSamples.GOOD_STRUCT_REF;
@@ -27,7 +28,7 @@ public class RiRestParsersTest {
         assertThat(getResourceSelector(fullRef1).apply(emptyList()))
                 .isEmpty();
 
-        assertThat(getResourceSelector(fullRef1).apply(asList(resource2)))
+        assertThat(getResourceSelector(fullRef1).apply(singletonList(resource2)))
                 .isEmpty();
 
         assertThat(getResourceSelector(fullRef1).apply(asList(resource1, resource2)))
@@ -41,7 +42,7 @@ public class RiRestParsersTest {
         assertThat(getResourceSelector(partialRef).apply(emptyList()))
                 .isEmpty();
 
-        assertThat(getResourceSelector(partialRef).apply(asList(resource2)))
+        assertThat(getResourceSelector(partialRef).apply(singletonList(resource2)))
                 .contains(resource2);
 
         assertThat(getResourceSelector(partialRef).apply(asList(resource1, resource2)))

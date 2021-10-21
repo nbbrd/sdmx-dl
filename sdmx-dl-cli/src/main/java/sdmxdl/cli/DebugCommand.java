@@ -32,7 +32,8 @@ import java.util.concurrent.Callable;
                 PrintContext.class,
                 DebugDataCommand.class,
                 DebugListCommand.class,
-                DebugStructCommand.class
+                DebugStructCommand.class,
+                DebugConsoleCommand.class
         }
 )
 public final class DebugCommand implements Callable<Void> {

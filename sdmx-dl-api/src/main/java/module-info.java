@@ -1,4 +1,3 @@
-
 module sdmxdl.api {
 
     requires static nbbrd.design;

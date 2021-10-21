@@ -16,7 +16,7 @@
  */
 package sdmxdl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 public class DataCursorTest {
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testFactories() {
         assertThatNullPointerException().isThrownBy(() -> DataCursor.of(null));
     }

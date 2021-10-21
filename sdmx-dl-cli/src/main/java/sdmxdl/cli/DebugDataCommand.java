@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "data")
+@CommandLine.Command(name = "data", description = "Print raw data")
 @SuppressWarnings("FieldMayBeFinal")
 public final class DebugDataCommand implements Callable<Void> {
 

@@ -55,7 +55,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
-                    .monitorOf("UptimeRobot", "m783847142-c1c97c88fd0d958b6478d961")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:OECD")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -64,7 +64,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
-                    .monitorOf("UptimeRobot", "m783847065-e1d117d7c62688abdfec4734")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SE")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -73,7 +73,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
-                    .monitorOf("UptimeRobot", "m783847149-7753fbe93eefc48f2ac9983f")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:UIS")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -82,7 +82,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
-                    .monitorOf("UptimeRobot", "m788496292-8f7f10200ba0cf792589e612")
+                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:UKDS")
                     .build())
             .build();
 

@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli.ext;
 
 import nbbrd.io.text.Formatter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;

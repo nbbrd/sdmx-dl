@@ -49,10 +49,10 @@ final class CurlHttpURLConnection extends HttpURLConnection {
     public void connect() throws IOException {
         Path output = Files.createTempFile("body", ".tmp");
         String[] request = createCurlCommand(output);
-        CurlMeta response = executeCurlCommand(request);
-        this.responseCode = response.getCode();
-        this.responseMessage = response.getMessage();
-        this.headerFields = response.getHeaders();
+        CurlHead responseHead = executeCurlCommand(request);
+        this.responseCode = responseHead.getCode();
+        this.responseMessage = responseHead.getMessage();
+        this.headerFields = responseHead.getHeaders();
         this.body = output;
     }
 
@@ -82,25 +82,29 @@ final class CurlHttpURLConnection extends HttpURLConnection {
         return Files.newInputStream(body);
     }
 
-    private String[] createCurlCommand(Path output) {
+    @VisibleForTesting
+    String[] createCurlCommand(Path output) {
         return new CurlCommandBuilder()
-                .insecure(insecure)
                 .url(getURL())
+                .http1_1()
+                .silent()
+                .insecure(insecure)
                 .proxy(proxy)
                 .output(output)
-                .silent()
                 .dumpHeader("-")
-                .connectTimeout(getConnectTimeout() / 1000)
-                .maxTime(getReadTimeout() / 1000)
+                .connectTimeout(getConnectTimeout() / 1000f)
+                .maxTime(getReadTimeout() / 1000f)
                 .headers(getRequestProperties())
                 .build();
     }
 
-    private CurlMeta executeCurlCommand(String[] command) throws IOException {
+    private CurlHead executeCurlCommand(String[] command) throws IOException {
         try (BufferedReader reader = ProcessReader.newReader(command)) {
-            return CurlMeta.parse(reader);
+            return CurlHead.parseResponse(reader);
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
+                case CURL_UNSUPPORTED_PROTOCOL:
+                    throw new IOException("Unsupported protocol '" + getURL().getProtocol() + "'");
                 case CURL_COULD_NOT_RESOLVE_HOST:
                     throw new UnknownHostException(getURL().getHost());
                 case CURL_OPERATION_TIMEOUT:

@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
