@@ -11,9 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.ExitCode.SOFTWARE;
@@ -59,7 +59,7 @@ public class WebOptionsTest {
     private File newValidFile(Path temp) throws IOException {
         File result = Files.createFile(temp.resolve("validFile")).toFile();
         SdmxWebSource source = SdmxWebSource.builder().name("xyz").driver("dummy").endpointOf("http://localhost").build();
-        XmlWebSource.getFormatter().formatFile(Arrays.asList(source), result);
+        XmlWebSource.getFormatter().formatFile(singletonList(source), result);
         return result;
     }
 }

@@ -175,7 +175,8 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER)).isEqualTo(TestConnection.DATA);
+        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .containsExactlyElementsOf(TestConnection.DATA);
         failsafe.assertEmpty();
 
         failsafe.reset();

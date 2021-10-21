@@ -38,7 +38,7 @@ public class SdmxFileManagerTest {
 //    }
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
         assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null));

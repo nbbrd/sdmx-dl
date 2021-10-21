@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
  *
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 public class DimentionTest {
 
     final String someId = "dim1";

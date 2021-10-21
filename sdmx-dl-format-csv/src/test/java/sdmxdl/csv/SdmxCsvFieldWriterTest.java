@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.csv.SdmxCsvFieldWriter.*;
@@ -124,7 +125,7 @@ public class SdmxCsvFieldWriterTest {
 
         assertThatNullPointerException().isThrownBy(() -> onAttributes((List<String>) null));
 
-        assertThat(onAttributes(asList("TITLE")))
+        assertThat(onAttributes(singletonList("TITLE")))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("TITLE");
                     assertThat(body(x, S1, OBS1)).isEqualTo("hello world");
@@ -133,7 +134,7 @@ public class SdmxCsvFieldWriterTest {
 
     @Test
     public void testOnCompactObsAttributes() {
-        Formatter<Map<String, String>> formatter = o -> String.valueOf(o.size());
+        Formatter<Map<String, String>> formatter = o -> String.valueOf(o != null ? o.size() : -1);
 
         assertThatNullPointerException().isThrownBy(() -> onCompactObsAttributes(null, formatter));
         assertThatNullPointerException().isThrownBy(() -> onCompactObsAttributes("xyz", null));

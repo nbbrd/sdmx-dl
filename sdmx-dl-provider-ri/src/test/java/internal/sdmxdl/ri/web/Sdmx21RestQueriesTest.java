@@ -55,10 +55,8 @@ public class Sdmx21RestQueriesTest {
     @Test
     public void testGetFlowsQuery() {
         assertThat(builder().build())
-                .satisfies(x -> {
-                    assertThat(x.getFlowsQuery(base))
-                            .hasToString("http://base/dataflow/all/all/latest");
-                });
+                .satisfies(x -> assertThat(x.getFlowsQuery(base))
+                        .hasToString("http://base/dataflow/all/all/latest"));
 
         assertThat(builder().trailingSlashRequired(true).build().getFlowsQuery(base))
                 .hasToString("http://base/dataflow/all/all/latest/");

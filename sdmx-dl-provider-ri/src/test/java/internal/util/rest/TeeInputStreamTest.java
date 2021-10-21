@@ -1,6 +1,5 @@
 package internal.util.rest;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -21,8 +20,8 @@ public class TeeInputStreamTest {
         try (TeeInputStream x = new TeeInputStream(input, output)) {
             assertThat(x.available()).isEqualTo(bytes.length);
             assertThat(x.markSupported()).isFalse();
-            x.skip(2);
-            x.read();
+            assertThat(x.skip(2)).isEqualTo(2);
+            assertThat(x.read()).isEqualTo('l');
         }
         assertThat(output.toByteArray()).isEqualTo(bytes);
     }

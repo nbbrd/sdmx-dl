@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ConstantConditions")
 public class DataSetTest {
 
     @Test

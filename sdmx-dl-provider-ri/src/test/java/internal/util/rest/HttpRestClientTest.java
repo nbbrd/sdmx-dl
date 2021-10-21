@@ -472,7 +472,7 @@ public abstract class HttpRestClientTest {
     private HttpRest.Authenticator authenticatorOf(String username, String password) {
         return new HttpRest.Authenticator() {
             @Override
-            public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
+            public @NonNull PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
                 return new PasswordAuthentication(username, password.toCharArray());
             }
 

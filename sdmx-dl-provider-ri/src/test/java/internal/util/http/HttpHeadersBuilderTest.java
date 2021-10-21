@@ -7,6 +7,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressWarnings("ALL")
 public class HttpHeadersBuilderTest {
 
     @Test

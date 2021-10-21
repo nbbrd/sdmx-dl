@@ -59,9 +59,11 @@ public class CurlRestClientTest extends DefaultClientTest {
                 .gzipDisabled(false);
     }
 
+    @Disabled
+    @Test
     @Override
     public void testInvalidSSL() {
-//        super.testInvalidSSL();
+        super.testInvalidSSL();
     }
 
     @Override

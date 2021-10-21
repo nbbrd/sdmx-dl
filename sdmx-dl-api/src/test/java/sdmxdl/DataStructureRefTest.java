@@ -26,6 +26,7 @@ import static sdmxdl.ResourceRef.LATEST_VERSION;
 /**
  * @author Philippe Charles
  */
+@SuppressWarnings("ALL")
 public class DataStructureRefTest {
 
     @Test

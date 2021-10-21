@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 public class DataCursorTest {
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testFactories() {
         assertThatNullPointerException().isThrownBy(() -> DataCursor.of(null));
     }

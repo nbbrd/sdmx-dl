@@ -2,6 +2,7 @@ package sdmxdl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Properties;
 
 public final class About {
@@ -17,6 +18,7 @@ public final class About {
                 properties.load(stream);
             }
         } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return properties.getProperty("version", "unknown");
     }

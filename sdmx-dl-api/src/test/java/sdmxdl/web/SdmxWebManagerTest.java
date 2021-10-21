@@ -207,6 +207,7 @@ public class SdmxWebManagerTest {
         assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().name("other").build()).close()).doesNotThrowAnyException();
     }
 
+    @SuppressWarnings("EmptyTryBlock")
     @Test
     public void testInvalidSourceProperties() throws IOException {
         List<String> events = new ArrayList<>();
@@ -219,17 +220,17 @@ public class SdmxWebManagerTest {
                 .build();
 
         SdmxWebSource noProp = sampleSource.toBuilder().name("noProp").clearProperties().build();
-        try (SdmxWebConnection conn = manager.getConnection(noProp)) {
+        try (SdmxWebConnection ignored = manager.getConnection(noProp)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource validProp = sampleSource.toBuilder().name("validProp").build();
-        try (SdmxWebConnection conn = manager.getConnection(validProp)) {
+        try (SdmxWebConnection ignored = manager.getConnection(validProp)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource invalidProp = sampleSource.toBuilder().name("invalidProp").property("boom", "123").build();
-        try (SdmxWebConnection conn = manager.getConnection(invalidProp)) {
+        try (SdmxWebConnection ignored = manager.getConnection(invalidProp)) {
         }
         assertThat(events).hasSize(1).element(0, STRING)
                 .contains(invalidProp.getName())

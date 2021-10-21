@@ -16,6 +16,7 @@
  */
 package sdmxdl.util.parser;
 
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.Frequency;
@@ -38,11 +39,8 @@ public class FreqParsers {
         return FreqParsers::parseTimeFormatCode;
     }
 
-    /**
-     * @param code
-     * @return
-     * @see http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
-     */
+    // http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
+    @VisibleForTesting
     Frequency parseFreqCode(CharSequence code) {
         if (code == null) {
             return null;
@@ -91,11 +89,8 @@ public class FreqParsers {
         }
     }
 
-    /**
-     * @param code
-     * @return
-     * @see http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
-     */
+    // http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
+    @VisibleForTesting
     Frequency parseTimeFormatCode(CharSequence code) {
         if (code == null) {
             return null;

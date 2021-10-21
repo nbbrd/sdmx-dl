@@ -29,7 +29,7 @@ import static sdmxdl.ResourceRef.LATEST_VERSION;
 public class DataflowRefTest {
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testParse() {
         assertThat(DataflowRef.parse("")).isEqualTo(of(null, "", null));
         assertThat(DataflowRef.parse("hello")).isEqualTo(of(null, "hello", null));
@@ -43,7 +43,7 @@ public class DataflowRefTest {
     }
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testValueOf() {
         assertThat(of(null, "", null))
                 .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, Object::toString)
@@ -81,7 +81,7 @@ public class DataflowRefTest {
     }
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testContains() {
         DataflowRef x = of("ECB", "EXR", "1");
 
@@ -100,7 +100,7 @@ public class DataflowRefTest {
     }
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testContainsRef() {
         DataflowRef x = of("ECB", "EXR", "1");
 
@@ -119,7 +119,7 @@ public class DataflowRefTest {
     }
 
     @Test
-    @SuppressWarnings("null")
+    @SuppressWarnings({"null", "ConstantConditions"})
     public void testEqualsRef() {
         DataflowRef x = of("ECB", "EXR", "1");
 

@@ -3,6 +3,7 @@ package sdmxdl.csv;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public interface SdmxCsvFieldWriter {
     @FunctionalInterface
     interface SingleField {
 
-        @NonNull CharSequence apply(@NonNull Series series, @NonNull Obs obs);
+        @Nullable CharSequence apply(@NonNull Series series, @NonNull Obs obs);
     }
 
     static @NonNull SdmxCsvFieldWriter single(@NonNull String label, @NonNull SingleField value) {
