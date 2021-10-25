@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -84,15 +85,15 @@ public class HttpRest {
 
         @lombok.NonNull
         @lombok.Builder.Default
-        ProxySelector proxySelector = ProxySelector.getDefault();
+        Supplier<ProxySelector> proxySelector = ProxySelector::getDefault;
 
         @lombok.NonNull
         @lombok.Builder.Default
-        SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+        Supplier<SSLSocketFactory> sslSocketFactory = HttpsURLConnection::getDefaultSSLSocketFactory;
 
         @lombok.NonNull
         @lombok.Builder.Default
-        HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+        Supplier<HostnameVerifier> hostnameVerifier = HttpsURLConnection::getDefaultHostnameVerifier;
 
         @lombok.NonNull
         @lombok.Builder.Default

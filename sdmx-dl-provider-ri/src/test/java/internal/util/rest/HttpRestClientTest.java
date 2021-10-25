@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.matching.AnythingPattern;
 import org.assertj.core.api.Assumptions;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import sdmxdl.LanguagePriorityList;
@@ -82,8 +81,8 @@ public abstract class HttpRestClientTest {
     public void testHttpOK() throws IOException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .userAgent("hello world")
                 .build();
         HttpRest.Client x = getRestClient(context);
@@ -110,8 +109,8 @@ public abstract class HttpRestClientTest {
     public void testHttpError() {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
         HttpRest.Client x = getRestClient(context);
 
@@ -166,8 +165,8 @@ public abstract class HttpRestClientTest {
     public void testRedirect() throws IOException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
         HttpRest.Client x = getRestClient(context);
 
@@ -194,8 +193,8 @@ public abstract class HttpRestClientTest {
     public void testMaxRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .maxRedirects(0)
                 .build();
         HttpRest.Client x = getRestClient(context);
@@ -220,8 +219,8 @@ public abstract class HttpRestClientTest {
     public void testInvalidRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
         HttpRest.Client x = getRestClient(context);
 
@@ -240,8 +239,8 @@ public abstract class HttpRestClientTest {
     public void testDowngradingRedirect() throws MalformedURLException {
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
         HttpRest.Client x = getRestClient(context);
 
@@ -283,8 +282,8 @@ public abstract class HttpRestClientTest {
 
         HttpRest.Context context = HttpRest.Context
                 .builder()
-                .sslSocketFactory(wireSSLSocketFactory())
-                .hostnameVerifier(wireHostnameVerifier())
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
                 .readTimeout(readTimeout)
                 .build();
         HttpRest.Client x = getRestClient(context);
@@ -302,8 +301,8 @@ public abstract class HttpRestClientTest {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
-                    .sslSocketFactory(wireSSLSocketFactory())
-                    .hostnameVerifier(wireHostnameVerifier())
+                    .sslSocketFactory(this::wireSSLSocketFactory)
+                    .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
@@ -326,8 +325,8 @@ public abstract class HttpRestClientTest {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
-                    .sslSocketFactory(wireSSLSocketFactory())
-                    .hostnameVerifier(wireHostnameVerifier())
+                    .sslSocketFactory(this::wireSSLSocketFactory)
+                    .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(HttpRest.Authenticator.noOp())
                     .preemptiveAuthentication(preemptive)
                     .build();
@@ -354,8 +353,8 @@ public abstract class HttpRestClientTest {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
-                    .sslSocketFactory(wireSSLSocketFactory())
-                    .hostnameVerifier(wireHostnameVerifier())
+                    .sslSocketFactory(this::wireSSLSocketFactory)
+                    .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "xyz"))
                     .preemptiveAuthentication(preemptive)
                     .build();
@@ -383,8 +382,8 @@ public abstract class HttpRestClientTest {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
-                    .sslSocketFactory(wireSSLSocketFactory())
-                    .hostnameVerifier(wireHostnameVerifier())
+                    .sslSocketFactory(this::wireSSLSocketFactory)
+                    .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
@@ -409,8 +408,8 @@ public abstract class HttpRestClientTest {
         for (boolean preemptive : new boolean[]{false, true}) {
             HttpRest.Context context = HttpRest.Context
                     .builder()
-                    .sslSocketFactory(wireSSLSocketFactory())
-                    .hostnameVerifier(wireHostnameVerifier())
+                    .sslSocketFactory(this::wireSSLSocketFactory)
+                    .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
@@ -428,7 +427,7 @@ public abstract class HttpRestClientTest {
         }
     }
 
-    private SSLSocketFactory wireSSLSocketFactory() {
+    protected SSLSocketFactory wireSSLSocketFactory() {
         try {
             SSLContext result = SSLContext.getInstance("TLS");
             result.init(null, wireTrustManagers(), null);
@@ -444,7 +443,7 @@ public abstract class HttpRestClientTest {
         return result.getTrustManagers();
     }
 
-    private HostnameVerifier wireHostnameVerifier() {
+    protected HostnameVerifier wireHostnameVerifier() {
         return (hostname, session) -> hostname.equals("localhost");
     }
 
@@ -462,7 +461,7 @@ public abstract class HttpRestClientTest {
                 .replace(Integer.toString(wire.getRuntimeInfo().getHttpsPort()), Integer.toString(wire.getRuntimeInfo().getHttpPort()));
     }
 
-    private void assertSameSampleContent(HttpRest.Response response) throws IOException {
+    protected void assertSameSampleContent(HttpRest.Response response) throws IOException {
         assertThat(response.getContentType()).isEqualTo(XML_TYPE);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
@@ -486,13 +485,13 @@ public abstract class HttpRestClientTest {
         return Arrays.asList(301, 302, 303, 307, 308);
     }
 
-    private static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
-    private static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
+    protected static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
+    protected static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
-    private static final String ANY_LANG = LanguagePriorityList.ANY.toString();
+    protected static final String ANY_LANG = LanguagePriorityList.ANY.toString();
     protected static final String SAMPLE_URL = "/first.xml";
-    private static final String SECOND_URL = "/second.xml";
-    private static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
+    protected static final String SECOND_URL = "/second.xml";
+    protected static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
     public static final String BASIC_AUTH_RESPONSE = "Basic realm=\"staging\", charset=\"UTF-8\"";
 
     protected static boolean isOSX() {

@@ -43,7 +43,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     private final int rank = UNKNOWN;
 
     @lombok.NonNull
-    private final SdmxWebClient.Supplier client;
+    private final SdmxWebClientSupplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebSource> sources;

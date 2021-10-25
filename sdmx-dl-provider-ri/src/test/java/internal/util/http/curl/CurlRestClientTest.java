@@ -51,6 +51,11 @@ public class CurlRestClientTest extends DefaultClientTest {
     }
 
     @Override
+    protected boolean isHttpsURLConnectionSupported() {
+        return false;
+    }
+
+    @Override
     protected WireMockConfiguration getWireMockConfiguration() {
         return WireMockConfiguration
                 .options()

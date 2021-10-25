@@ -17,14 +17,11 @@
 package sdmxdl.web.spi;
 
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.web.SdmxWebListener;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-import java.net.ProxySelector;
 import java.util.List;
 
 /**
@@ -37,18 +34,6 @@ public class SdmxWebContext {
     @lombok.NonNull
     @lombok.Builder.Default
     LanguagePriorityList languages = LanguagePriorityList.ANY;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    ProxySelector proxySelector = ProxySelector.getDefault();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -65,4 +50,8 @@ public class SdmxWebContext {
     @lombok.NonNull
     @lombok.Singular
     List<SdmxWebAuthenticator> authenticators;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    NetworkFactory network = NetworkFactory.getDefault();
 }

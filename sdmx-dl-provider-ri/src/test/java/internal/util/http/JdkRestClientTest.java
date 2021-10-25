@@ -30,6 +30,11 @@ public class JdkRestClientTest extends DefaultClientTest {
     }
 
     @Override
+    protected boolean isHttpsURLConnectionSupported() {
+        return true;
+    }
+
+    @Override
     protected WireMockConfiguration getWireMockConfiguration() {
         return WireMockConfiguration
                 .options()

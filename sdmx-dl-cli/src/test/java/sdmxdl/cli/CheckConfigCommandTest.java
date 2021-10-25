@@ -32,9 +32,12 @@ public class CheckConfigCommandTest {
 
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(cmd.execute("-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .isEmpty();
 
         assertThat(FileSample.readAll(out))
                 .contains("Scope,PropertyKey,PropertyValue,Category", atIndex(0));

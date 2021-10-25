@@ -23,6 +23,7 @@ import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
@@ -31,11 +32,7 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -80,15 +77,7 @@ public class SdmxWebManager implements SdmxManager {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    ProxySelector proxySelector = ProxySelector.getDefault();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+    NetworkFactory network = NetworkFactory.getDefault();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -200,9 +189,7 @@ public class SdmxWebManager implements SdmxManager {
                 .builder()
                 .cache(cache)
                 .languages(languages)
-                .proxySelector(proxySelector)
-                .sslSocketFactory(sslSocketFactory)
-                .hostnameVerifier(hostnameVerifier)
+                .network(network)
                 .dialects(dialects)
                 .eventListener(eventListener)
                 .authenticators(authenticators)

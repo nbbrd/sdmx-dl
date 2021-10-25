@@ -20,10 +20,10 @@ public class SdmxFileContext {
     SdmxCache cache = SdmxCache.noOp();
 
     @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxFileListener eventListener = SdmxFileListener.getDefault();
-
-    @lombok.NonNull
     @lombok.Singular
     List<SdmxDialect> dialects;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    SdmxFileListener eventListener = SdmxFileListener.getDefault();
 }

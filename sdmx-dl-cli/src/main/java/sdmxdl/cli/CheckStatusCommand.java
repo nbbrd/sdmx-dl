@@ -70,7 +70,7 @@ public final class CheckStatusCommand implements Callable<Void> {
 
     private Stream<Status> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
-        ProxyOptions.warmupProxySelector(manager.getProxySelector());
+        ProxyOptions.warmupProxySelector(manager.getNetwork().getProxySelector());
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
         return sort.applySort(web.applyParallel(sources).map(sourceName -> Status.of(manager, sourceName)), BY_SOURCE);
     }

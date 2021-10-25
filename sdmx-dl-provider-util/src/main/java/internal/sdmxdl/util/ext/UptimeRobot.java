@@ -139,7 +139,7 @@ public final class UptimeRobot implements SdmxWebMonitoring {
     private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, SdmxWebContext context, SdmxWebSource source) throws IOException {
         byte[] data = query.getBytes(StandardCharsets.UTF_8);
 
-        Proxy proxy = context.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
+        Proxy proxy = context.getNetwork().getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getEventListener().isEnabled()) {
             context.getEventListener().onWebSourceEvent(source, SdmxWebEvents.onQuery(url, proxy));
@@ -148,8 +148,8 @@ public final class UptimeRobot implements SdmxWebMonitoring {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getSslSocketFactory());
-            ((HttpsURLConnection) conn).setHostnameVerifier(context.getHostnameVerifier());
+            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSslSocketFactory());
+            ((HttpsURLConnection) conn).setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         }
 
         conn.setDoOutput(true);

@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Refactor network API to avoid unnecessary resource loading
+
 ### Fixed
 
 ## [3.0.0-beta.4] - 2021-10-21

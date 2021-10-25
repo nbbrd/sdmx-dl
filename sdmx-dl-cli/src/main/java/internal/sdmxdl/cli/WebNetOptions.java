@@ -17,10 +17,13 @@
 package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.AuthOptions;
+import internal.sdmxdl.cli.ext.SslOptions;
 import internal.util.SdmxWebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.kryo.KryoFileFormat;
 import sdmxdl.repo.SdmxRepository;
@@ -31,9 +34,12 @@ import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.ProxySelector;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,19 +74,54 @@ public class WebNetOptions extends WebOptions {
 
     @Override
     public SdmxWebManager loadManager() throws IOException {
-        SSLFactory sslFactory = networkOptions.getSslOptions().getSSLFactory();
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
                 .languages(langs)
-                .proxySelector(networkOptions.getProxyOptions().getProxySelector())
-                .sslSocketFactory(sslFactory.getSslSocketFactory())
-                .hostnameVerifier(sslFactory.getHostnameVerifier())
+                .network(getNetworkFactory())
                 .cache(getCache())
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
                 .build();
+    }
+
+    private NetworkFactory getNetworkFactory() {
+        return new NetworkFactory() {
+
+            @lombok.Getter(lazy = true)
+            private final ProxySelector lazyProxySelector = initProxySelector();
+
+            @lombok.Getter(lazy = true)
+            private final SSLFactory lazySslFactory = initSSLFactory();
+
+            private ProxySelector initProxySelector() {
+                return networkOptions.getProxyOptions().getProxySelector();
+            }
+
+            private SSLFactory initSSLFactory() {
+                SslOptions sslOptions = networkOptions.getSslOptions();
+                if (getVerboseOptions().isVerbose()) {
+                    getVerboseOptions().reportToErrorStream("SSL", "Initializing SSL factory");
+                }
+                return sslOptions.getSSLFactory();
+            }
+
+            @Override
+            public @NonNull ProxySelector getProxySelector() {
+                return getLazyProxySelector();
+            }
+
+            @Override
+            public @NonNull SSLSocketFactory getSslSocketFactory() {
+                return getLazySslFactory().getSslSocketFactory();
+            }
+
+            @Override
+            public @NonNull HostnameVerifier getHostnameVerifier() {
+                return getLazySslFactory().getHostnameVerifier();
+            }
+        };
     }
 
     private List<SdmxWebSource> getForcedSslSources(SdmxWebManager manager) {

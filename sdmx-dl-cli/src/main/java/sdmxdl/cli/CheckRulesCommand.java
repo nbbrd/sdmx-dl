@@ -63,7 +63,7 @@ public final class CheckRulesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         SdmxWebManager manager = web.loadManager();
-        ProxyOptions.warmupProxySelector(manager.getProxySelector());
+        ProxyOptions.warmupProxySelector(manager.getNetwork().getProxySelector());
 
         List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())

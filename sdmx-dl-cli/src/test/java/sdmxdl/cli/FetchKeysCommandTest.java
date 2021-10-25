@@ -31,12 +31,14 @@ public class FetchKeysCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
-
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("sample", "data&struct", "all", "--no-log", "-s", src.getPath(), "-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(cmd.execute("sample", "data&struct", "all", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .isEmpty();
 
         assertThat(FileSample.readAll(out))
                 .contains("Series", atIndex(0))

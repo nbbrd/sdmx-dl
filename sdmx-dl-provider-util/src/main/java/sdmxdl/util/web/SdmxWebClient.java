@@ -54,16 +54,6 @@ public interface SdmxWebClient {
     @NonNull
     Duration ping() throws IOException;
 
-    @FunctionalInterface
-    interface Supplier {
-
-        @NonNull
-        SdmxWebClient get(
-                @NonNull SdmxWebSource source,
-                @NonNull SdmxWebContext context
-        ) throws IOException;
-    }
-
     @NonNull
     static String getClientName(@NonNull SdmxWebSource source) {
         return source.getDriver() + ":" + source.getName();

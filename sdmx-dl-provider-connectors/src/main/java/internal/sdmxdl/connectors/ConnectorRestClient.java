@@ -32,6 +32,7 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.DataRequest;
 import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.SdmxWebClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -69,7 +70,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxWebClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -82,7 +83,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         };
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxWebClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
@@ -199,9 +200,9 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
-        client.setProxySelector(context.getProxySelector());
-        client.setSslSocketFactory(context.getSslSocketFactory());
-        client.setHostnameVerifier(context.getHostnameVerifier());
+        client.setProxySelector(context.getNetwork().getProxySelector());
+        client.setSslSocketFactory(context.getNetwork().getSslSocketFactory());
+        client.setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
         RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);

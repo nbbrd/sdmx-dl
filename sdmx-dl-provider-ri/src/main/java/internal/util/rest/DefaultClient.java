@@ -66,8 +66,6 @@ final class DefaultClient implements Client {
 
         Proxy proxy = getProxy(query);
 
-        context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
-
         HttpURLConnection connection = openConnection(query, mediaTypes, langs, requestScheme, proxy);
 
         switch (ResponseType.parse(connection.getResponseCode())) {
@@ -88,8 +86,8 @@ final class DefaultClient implements Client {
         result.setConnectTimeout(context.getConnectTimeout());
 
         if (result instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) result).setSSLSocketFactory(context.getSslSocketFactory());
-            ((HttpsURLConnection) result).setHostnameVerifier(context.getHostnameVerifier());
+            ((HttpsURLConnection) result).setSSLSocketFactory(context.getSslSocketFactory().get());
+            ((HttpsURLConnection) result).setHostnameVerifier(context.getHostnameVerifier().get());
         }
 
         Map<String, List<String>> headers = new HttpHeadersBuilder()
@@ -104,6 +102,8 @@ final class DefaultClient implements Client {
         result.setInstanceFollowRedirects(false);
         HttpHeadersBuilder.keyValues(headers)
                 .forEach(header -> result.setRequestProperty(header.getKey(), header.getValue()));
+
+        context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
 
         result.connect();
 
@@ -122,7 +122,7 @@ final class DefaultClient implements Client {
     }
 
     private Proxy getProxy(URL url) throws IOException {
-        List<Proxy> proxies = context.getProxySelector().select(toURI(url));
+        List<Proxy> proxies = context.getProxySelector().get().select(toURI(url));
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 

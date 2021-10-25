@@ -16,7 +16,7 @@ import static org.assertj.core.data.Index.atIndex;
 public class ListSourcesCommandTest {
 
     @Test
-    public void testDefault(@TempDir Path temp) throws IOException {
+    public void testDefault(@TempDir Path temp) {
         CommandLine cmd = new CommandLine(new ListSourcesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
@@ -33,12 +33,15 @@ public class ListSourcesCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
-
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("--no-log", "-s", src.getPath(), "-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(cmd.execute("-v", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .contains("[CONFIG] Using source file '" + src.getPath() + "'")
+                .doesNotContain("[SSL] Initializing SSL factory");
 
         assertThat(FileSample.readAll(out))
                 .contains("Name,Description,Aliases,Driver,Dialect,Endpoint,Properties,Website,Monitor", atIndex(0))
