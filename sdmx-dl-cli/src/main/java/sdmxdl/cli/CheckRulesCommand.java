@@ -18,7 +18,6 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
-import internal.sdmxdl.cli.ext.ProxyOptions;
 import picocli.CommandLine;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
@@ -63,7 +62,6 @@ public final class CheckRulesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         SdmxWebManager manager = web.loadManager();
-        ProxyOptions.warmupProxySelector(manager.getNetwork().getProxySelector());
 
         List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())
