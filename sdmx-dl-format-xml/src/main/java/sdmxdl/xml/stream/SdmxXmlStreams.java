@@ -79,4 +79,11 @@ public class SdmxXmlStreams {
                 .handler(Stax.FlowHandler.of(new XMLStreamFlow21(langs)::parse))
                 .build();
     }
+
+    public Xml.@NonNull Parser<List<Codelist>> codelist21(@NonNull LanguagePriorityList langs) {
+        return Stax.StreamParser.<List<Codelist>>builder()
+                .factory(StaxUtil::getInputFactory)
+                .handler(Stax.FlowHandler.of(new XMLStreamCodelist21(langs)::parse))
+                .build();
+    }
 }

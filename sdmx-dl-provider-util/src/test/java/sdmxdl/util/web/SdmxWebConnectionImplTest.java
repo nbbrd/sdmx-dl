@@ -34,7 +34,7 @@ public class SdmxWebConnectionImplTest {
                 () -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""),
                 SdmxConnectionAssert.Sample
                         .builder()
-                        .validFlow(RepoSamples.GOOD_FLOW_REF)
+                        .validFlow(RepoSamples.FLOW_REF)
                         .invalidFlow(RepoSamples.BAD_FLOW_REF)
                         .validKey(RepoSamples.K1)
                         .invalidKey(RepoSamples.INVALID_KEY)

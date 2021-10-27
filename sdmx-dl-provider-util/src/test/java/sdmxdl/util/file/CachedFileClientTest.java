@@ -54,7 +54,7 @@ public class CachedFileClientTest {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.loadData(client.decode(), GOOD_FLOW_REF, key, filter)) {
+                    try (DataCursor cursor = client.loadData(client.decode(), FLOW_REF, key, filter)) {
                         return cursor.toStream().collect(Collectors.toList());
                     }
                 };
@@ -76,7 +76,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         SdmxFileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
+        IOConsumer<Key> x = key -> client.loadData(info, FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

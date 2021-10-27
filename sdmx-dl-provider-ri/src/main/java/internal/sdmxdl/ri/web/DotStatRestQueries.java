@@ -2,10 +2,7 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.*;
 
 import java.net.URL;
 
@@ -43,6 +40,11 @@ public class DotStatRestQueries implements RiRestQueries {
                 .path(flowRef.getId())
                 .path(key.toString())
                 .param("format", "compact_v2");
+    }
+
+    @Override
+    public @NonNull RestQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+        throw new UnsupportedOperationException("codelist");
     }
 
     @Override

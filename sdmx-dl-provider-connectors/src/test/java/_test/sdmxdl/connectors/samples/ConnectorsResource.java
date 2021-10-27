@@ -103,7 +103,7 @@ public class ConnectorsResource {
         // No connectors impl
         return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
-                .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
+                .map((Series series) -> toPortableTimeSeries(series, dsd.getDimensions()))
                 .collect(Collectors.toList());
     }
 
@@ -116,11 +116,7 @@ public class ConnectorsResource {
     }
 
     public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
-        // No connectors impl
-        return FacadeResource.data21(xml, Connectors.toStructure(dsd))
-                .stream()
-                .map((Series o) -> toPortableTimeSeries(o, dsd.getDimensions()))
-                .collect(Collectors.toList());
+        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
     }
 
     private PortableTimeSeries<Double> toPortableTimeSeries(Series series, List<Dimension> dims) {

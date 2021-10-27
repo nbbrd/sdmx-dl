@@ -16,6 +16,7 @@
  */
 package _test.sdmxdl.util;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.repo.SdmxRepository;
@@ -65,6 +66,17 @@ public final class XRepoWebClient implements SdmxWebClient {
         return repo.getDataSet(request.getFlowRef())
                 .map(dataSet -> dataSet.getDataCursor(request.getKey(), request.getFilter()))
                 .orElseThrow(() -> SdmxException.missingData(repo.getName(), request.getFlowRef(), request.getKey(), request.getFilter()));
+    }
+
+    @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        Objects.requireNonNull(ref);
+        return repo.getStructures().stream()
+                .flatMap(dsd -> dsd.getDimensions().stream())
+                .map(Component::getCodelist)
+                .filter(ref::containsRef)
+                .findFirst()
+                .orElseThrow(() -> SdmxException.missingCodelist(repo.getName(), ref));
     }
 
     @Override

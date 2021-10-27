@@ -36,7 +36,7 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetFlowParser() throws IOException {
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.GOOD_FLOW_REF);
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.FLOW_REF);
         testParser(DEFAULT_DATAFLOW_TYPES, extractor);
         testContent(extractor, MediaType.parse(SdmxMediaType.STRUCTURE_21), SdmxSource.ECB_DATAFLOWS);
     }
@@ -60,7 +60,7 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetStructureParser() throws IOException {
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getStructureParser(y, ANY, RepoSamples.GOOD_STRUCT_REF);
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getStructureParser(y, ANY, RepoSamples.STRUCT_REF);
         testParser(DEFAULT_DATASTRUCTURE_TYPES, extractor);
         testContent(extractor, MediaType.parse(SdmxMediaType.STRUCTURE_21), SdmxSource.ECB_DATA_STRUCTURE);
     }

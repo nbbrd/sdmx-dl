@@ -88,6 +88,11 @@ public class RiRestClient implements SdmxWebClient {
     }
 
     @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        return getCodelist(getCodelistQuery(ref), ref);
+    }
+
+    @Override
     public boolean isDetailSupported() {
         return detailSupported;
     }
@@ -170,6 +175,26 @@ public class RiRestClient implements SdmxWebClient {
         return parsers
                 .getDataParser(response.getContentType(), dsd, obsFactory)
                 .parseStream(() -> DisconnectingInputStream.of(response));
+    }
+
+    @NonNull
+    protected URL getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
+        return queries.getCodelistQuery(endpoint, ref).build();
+    }
+
+    @NonNull
+    protected Codelist getCodelist(@NonNull URL url, @NonNull CodelistRef ref) throws IOException {
+        try (HttpRest.Response response = executor.requestGET(url, parsers.getCodelistTypes(), langs.toString())) {
+            return parsers
+                    .getCodelistParser(response.getContentType(), langs, ref)
+                    .parseStream(() -> DisconnectingInputStream.of(response))
+                    .orElseThrow(() -> SdmxException.missingCodelist(name, ref));
+        } catch (HttpRest.ResponseError error) {
+            if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+                throw SdmxException.missingCodelist(getName(), ref);
+            }
+            throw error;
+        }
     }
 
     @lombok.RequiredArgsConstructor

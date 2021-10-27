@@ -30,6 +30,10 @@ public interface RiRestParsers {
 
     @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory);
 
+    @NonNull List<MediaType> getCodelistTypes();
+
+    @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref);
+
     static <T extends Resource<R>, R extends ResourceRef<R>> @NonNull Function<List<T>, Optional<T>> getResourceSelector(@NonNull R ref) {
         Objects.requireNonNull(ref);
         return list -> list

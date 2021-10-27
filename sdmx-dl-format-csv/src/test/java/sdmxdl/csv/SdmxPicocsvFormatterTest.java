@@ -24,9 +24,9 @@ public class SdmxPicocsvFormatterTest {
         assertThat(x)
                 .as("Default options")
                 .extracting(extractor, Assertions.STRING)
-                .contains("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,TITLE,SERIESKEY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,3.141592653589793,hello world,M.BE.INDUSTRY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,2.718281828459045,hello world,M.BE.INDUSTRY");
+                .contains("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,OBS_STATUS,TITLE,SERIESKEY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,3.141592653589793,,hello world,M.BE.INDUSTRY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,2.718281828459045,,hello world,M.BE.INDUSTRY");
 
         assertThat(x.toBuilder().fields(asList(SERIESKEY, TIME_DIMENSION, OBS_VALUE)).build())
                 .as("Custom fields")
@@ -38,29 +38,29 @@ public class SdmxPicocsvFormatterTest {
         assertThat(x.toBuilder().format(Csv.Format.builder().delimiter(';').build()).build())
                 .as("Custom format")
                 .extracting(extractor, Assertions.STRING)
-                .contains("DATAFLOW;FREQ;REGION;SECTOR;TIME;OBS_VALUE;TITLE;SERIESKEY")
-                .contains("NBB:XYZ(v2.0);M;BE;INDUSTRY;2010-01;3.141592653589793;hello world;M.BE.INDUSTRY")
-                .contains("NBB:XYZ(v2.0);M;BE;INDUSTRY;2010-02;2.718281828459045;hello world;M.BE.INDUSTRY");
+                .contains("DATAFLOW;FREQ;REGION;SECTOR;TIME;OBS_VALUE;OBS_STATUS;TITLE;SERIESKEY")
+                .contains("NBB:XYZ(v2.0);M;BE;INDUSTRY;2010-01;3.141592653589793;;hello world;M.BE.INDUSTRY")
+                .contains("NBB:XYZ(v2.0);M;BE;INDUSTRY;2010-02;2.718281828459045;;hello world;M.BE.INDUSTRY");
 
         assertThat(x.toBuilder().locale(Locale.FRENCH).build())
                 .as("Custom locale")
                 .extracting(extractor, Assertions.STRING)
-                .contains("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,TITLE,SERIESKEY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,\"3,141592653589793\",hello world,M.BE.INDUSTRY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,\"2,718281828459045\",hello world,M.BE.INDUSTRY");
+                .contains("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,OBS_STATUS,TITLE,SERIESKEY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,\"3,141592653589793\",,hello world,M.BE.INDUSTRY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,\"2,718281828459045\",,hello world,M.BE.INDUSTRY");
 
         assertThat(x.toBuilder().ignoreHeader(true).build())
                 .as("Ignore header")
                 .extracting(extractor, Assertions.STRING)
-                .doesNotContain("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,TITLE,SERIESKEY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,3.141592653589793,hello world,M.BE.INDUSTRY")
-                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,2.718281828459045,hello world,M.BE.INDUSTRY");
+                .doesNotContain("DATAFLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,OBS_STATUS,TITLE,SERIESKEY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,3.141592653589793,,hello world,M.BE.INDUSTRY")
+                .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,2.718281828459045,,hello world,M.BE.INDUSTRY");
 
         assertThat(x.toBuilder().customFactory(DATAFLOW, dataSet -> SdmxCsvFieldWriter.onConstant("FLOW", dataSet.getRef().getId())).build())
                 .as("Custom factory")
                 .extracting(extractor, Assertions.STRING)
-                .contains("FLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,TITLE,SERIESKEY")
-                .contains("XYZ,M,BE,INDUSTRY,2010-01,3.141592653589793,hello world,M.BE.INDUSTRY")
-                .contains("XYZ,M,BE,INDUSTRY,2010-02,2.718281828459045,hello world,M.BE.INDUSTRY");
+                .contains("FLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,OBS_STATUS,TITLE,SERIESKEY")
+                .contains("XYZ,M,BE,INDUSTRY,2010-01,3.141592653589793,,hello world,M.BE.INDUSTRY")
+                .contains("XYZ,M,BE,INDUSTRY,2010-02,2.718281828459045,,hello world,M.BE.INDUSTRY");
     }
 }

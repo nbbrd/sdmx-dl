@@ -139,6 +139,11 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        return delegate.getCodelist(ref);
+    }
+
+    @Override
     public boolean isDetailSupported() throws IOException {
         return delegate.isDetailSupported();
     }

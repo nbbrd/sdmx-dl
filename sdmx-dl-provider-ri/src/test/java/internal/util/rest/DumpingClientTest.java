@@ -166,7 +166,7 @@ public class DumpingClientTest {
     }
 
     @lombok.Builder
-    private static final class MockedResponse implements HttpRest.Response {
+    public static final class MockedResponse implements HttpRest.Response {
 
         public static MockedResponse ofBody(IOSupplier<InputStream> body) {
             return builder().body(body).build();

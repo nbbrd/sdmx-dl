@@ -23,7 +23,6 @@ import sdmxdl.*;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,23 +112,29 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseCodelists(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {
+    private void parseCodelists(XMLStreamReader reader, List<Codelist> codelists) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, CODELISTS_TAG, CODELIST_TAG)) {
             parseCodelist(reader, codelists);
         }
     }
 
-    private void parseCodelist(XMLStreamReader reader, Map<String, Map<String, String>> codelists) throws XMLStreamException {
+    private void parseCodelist(XMLStreamReader reader, List<Codelist> codelists) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
+        String version = reader.getAttributeValue(null, VERSION_ATTR);
+        String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
+
         XMLStreamUtil.check(id != null, reader, "Missing Codelist id");
 
-        Map<String, String> codelist = codelists.computeIfAbsent(id, o -> new HashMap<>());
+        CodelistRef ref = CodelistRef.of(agencyID, id, version);
+
+        Codelist.Builder codelist = Codelist.builder().ref(ref);
         while (XMLStreamUtil.nextTag(reader, CODELIST_TAG, CODE_TAG)) {
             parseCode(reader, codelist);
         }
+        codelists.add(codelist.build());
     }
 
-    private void parseCode(XMLStreamReader reader, Map<String, String> codelist) throws XMLStreamException {
+    private void parseCode(XMLStreamReader reader, Codelist.Builder codelist) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Code id");
 
@@ -137,7 +142,7 @@ final class XMLStreamStructure21 {
         while (XMLStreamUtil.nextTag(reader, CODE_TAG, NAME_TAG)) {
             parseNameTag(reader, label);
         }
-        codelist.put(id, label.build(id));
+        codelist.code(id, label.build(id));
     }
 
     private void parseConcepts(XMLStreamReader reader, Map<String, String> concepts) throws XMLStreamException {
@@ -244,15 +249,17 @@ final class XMLStreamStructure21 {
         }
     }
 
-    private void parseLocalRepresentation(XMLStreamReader reader, Component.Builder<?> concept, DsdContext context) throws XMLStreamException {
+    private void parseLocalRepresentation(XMLStreamReader reader, Component.Builder<?> component, DsdContext context) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, LOCAL_REPRESENTATION_TAG, REF_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
-            XMLStreamUtil.check(id != null, reader, "Missing Ref id");
+            String version = reader.getAttributeValue(null, VERSION_ATTR);
+            String agencyID = reader.getAttributeValue(null, AGENCY_ID_ATTR);
 
-            Map<String, String> codes = context.getCodelists().get(id);
-            if (codes != null) {
-                concept.codes(codes);
-            }
+            XMLStreamUtil.check(id != null, reader, "Missing Codelist id");
+
+            CodelistRef ref = CodelistRef.of(agencyID, id, version);
+
+            component.codelist(context.getCodelist(ref));
         }
     }
 

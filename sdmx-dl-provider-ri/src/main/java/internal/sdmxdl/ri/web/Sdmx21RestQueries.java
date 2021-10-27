@@ -2,6 +2,7 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.rest.RestQueryBuilder;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.net.URL;
@@ -36,6 +37,12 @@ public class Sdmx21RestQueries implements RiRestQueries {
         RestQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, flowRef, key, DEFAULT_PROVIDER_REF);
         applyFilter(filter, result);
         return result.trailingSlash(trailingSlashRequired);
+    }
+
+    @Override
+    public @NonNull RestQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+        return onMeta(endpoint, DEFAULT_CODELIST_PATH, ref)
+                .trailingSlash(trailingSlashRequired);
     }
 
     @Override
@@ -78,6 +85,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
     private static final String DEFAULT_DATAFLOW_PATH = "dataflow";
     private static final String DEFAULT_DATASTRUCTURE_PATH = "datastructure";
     private static final String DEFAULT_DATA_PATH = "data";
+    private static final String DEFAULT_CODELIST_PATH = "codelist";
 
     private static final String DEFAULT_PROVIDER_REF = "all";
 

@@ -20,7 +20,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -45,6 +44,8 @@ public interface SdmxWebClient {
 
     @NonNull
     DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException;
+
+    @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
     boolean isDetailSupported() throws IOException;
 

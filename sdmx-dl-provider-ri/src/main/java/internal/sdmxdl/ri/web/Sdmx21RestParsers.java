@@ -93,6 +93,21 @@ public class Sdmx21RestParsers implements RiRestParsers {
         return new UnsupportedParser<>(mediaType);
     }
 
+    @Override
+    public @NonNull List<MediaType> getCodelistTypes() {
+        return DEFAULT_DATASTRUCTURE_TYPES;
+    }
+
+    @Override
+    public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref) {
+
+        if (mediaType.isCompatibleWithoutParameters(STRUCT21) || mediaType.isCompatible(GENERIC_XML)) {
+            return withCharset(SdmxXmlStreams.codelist21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
+        }
+
+        return new UnsupportedParser<>(mediaType);
+    }
+
     private static final MediaType GENERIC_XML = MediaType.parse(SdmxMediaType.GENERIC_XML);
     private static final MediaType STRUCT21 = MediaType.parse(SdmxMediaType.STRUCTURE_21);
     private static final MediaType GENERIC21 = MediaType.parse(SdmxMediaType.GENERIC_DATA_21);

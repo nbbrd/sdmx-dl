@@ -29,7 +29,8 @@ import sdmxdl.repo.DataSet;
 @SealedType({
         DataSet.class,
         DataStructure.class,
-        Dataflow.class
+        Dataflow.class,
+        Codelist.class
 })
 public abstract class Resource<T extends ResourceRef<T>> {
 

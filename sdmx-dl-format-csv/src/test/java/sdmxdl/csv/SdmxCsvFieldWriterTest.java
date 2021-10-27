@@ -119,8 +119,8 @@ public class SdmxCsvFieldWriterTest {
 
         assertThat(onAttributes(STRUCT))
                 .satisfies(x -> {
-                    assertThat(head(x)).isEqualTo("TITLE");
-                    assertThat(body(x, S1, OBS1)).isEqualTo("hello world");
+                    assertThat(head(x)).isEqualTo("OBS_STATUS,TITLE");
+                    assertThat(body(x, S1, OBS1)).isEqualTo(",hello world");
                 });
 
         assertThatNullPointerException().isThrownBy(() -> onAttributes((List<String>) null));

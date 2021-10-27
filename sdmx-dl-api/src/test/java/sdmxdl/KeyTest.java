@@ -394,53 +394,44 @@ public class KeyTest {
 
         assertThat(Key.of())
                 .is(validOn(dsd0))
-                .is(validOn(dsd2))
-                .is(validOn(dsd2WithCodes));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND"))
                 .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2))
-                .isNot(validOn(dsd2WithCodes));
+                .isNot(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE", "XX"))
                 .isNot(validOn(dsd0))
-                .isNot(validOn(dsd2))
-                .isNot(validOn(dsd2WithCodes));
+                .isNot(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE"))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .is(validOn(dsd2WithCodes));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND", "XX"))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .isNot(validOn(dsd2WithCodes));
+                .isNot(validOn(dsd2));
 
         assertThat(Key.of("IND", ""))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .is(validOn(dsd2WithCodes));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE+"))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .is(validOn(dsd2WithCodes));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE+LU"))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .is(validOn(dsd2WithCodes));
+                .is(validOn(dsd2));
 
         assertThat(Key.of("IND", "BE+XX"))
                 .isNot(validOn(dsd0))
-                .is(validOn(dsd2))
-                .isNot(validOn(dsd2WithCodes));
+                .isNot(validOn(dsd2));
 
-        assertThat(Key.of("IND").validateOn(dsd2WithCodes))
+        assertThat(Key.of("IND").validateOn(dsd2))
                 .isEqualTo("Expected 2 dimensions instead of 1");
 
-        assertThat(Key.of("IND", "XX").validateOn(dsd2WithCodes))
+        assertThat(Key.of("IND", "XX").validateOn(dsd2))
                 .isEqualTo("Unknown code 'XX' for dimension 'REGION'");
     }
 
@@ -519,23 +510,16 @@ public class KeyTest {
             .label("")
             .build();
 
-    private final DataStructure dsd2 = DataStructure
-            .builder()
-            .ref(DataStructureRef.parse("ref"))
-            .label("")
-            .primaryMeasureId("")
-            .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").build())
-            .dimension(Dimension.builder().position(3).id("REGION").label("Region").build())
-            .build();
+    private final Codelist clSector = Codelist.builder().ref(CodelistRef.parse("CL_SECTOR")).code("IND", "Industry").build();
+    private final Codelist clRegion = Codelist.builder().ref(CodelistRef.parse("CL_REGION")).code("BE", "Belgium").code("LU", "Luxembourg").build();
 
+    private final Dimension sector = Dimension.builder().position(1).id("SECTOR").label("Sector").codelist(clSector).build();
+    private final Dimension region = Dimension.builder().position(3).id("REGION").label("Region").codelist(clRegion).build();
 
-    DataStructure dsd2WithCodes = DataStructure
-            .builder()
-            .ref(DataStructureRef.parse("ref"))
-            .label("")
-            .primaryMeasureId("")
-            .dimension(Dimension.builder().position(1).id("SECTOR").label("Sector").code("IND", "Industry").build())
-            .dimension(Dimension.builder().position(3).id("REGION").label("Region").code("BE", "Belgium").code("LU", "Luxembourg").build())
+    private final DataStructure dsd2 = dsd0
+            .toBuilder()
+            .dimension(sector)
+            .dimension(region)
             .build();
 
     private static List<String> keyAsList(Key key) {

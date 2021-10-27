@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add support of codelist in API [#158](https://github.com/nbbrd/sdmx-dl/issues/158)
+
 ### Changed
 
 - Refactor network API to avoid unnecessary resource loading

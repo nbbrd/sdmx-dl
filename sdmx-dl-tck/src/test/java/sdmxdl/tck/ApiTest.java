@@ -25,7 +25,7 @@ public class ApiTest {
                 SdmxRepositoryManager.builder().repository(RepoSamples.REPO).build(),
                 SdmxManagerAssert.Sample
                         .builder()
-                        .validName("test")
+                        .validName("repoName")
                         .invalidName("ko")
                         .build()
         );

@@ -2,7 +2,9 @@ package sdmxdl;
 
 import nbbrd.design.SealedType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -18,26 +20,25 @@ public abstract class Component {
     public abstract String getId();
 
     /**
-     * Non-null map of code description by code id that represents a codelist
-     * (predefined sets of terms from which some statistical coded concepts take
-     * their values).
-     */
-    @NonNull
-    public abstract Map<String, String> getCodes();
-
-    /**
      * Localized label for this concept.
      */
     @NonNull
     public abstract String getLabel();
+
+    public abstract @Nullable Codelist getCodelist();
 
     /**
      * Check if this component has a codelist.
      *
      * @return true if codelist, false otherwise
      */
-    public boolean isCoded() {
-        return !getCodes().isEmpty();
+    public final boolean isCoded() {
+        return getCodelist() != null;
+    }
+
+    public final @NonNull Map<String, String> getCodes() {
+        Codelist codelist = getCodelist();
+        return codelist != null ? codelist.getCodes() : Collections.emptyMap();
     }
 
     public static abstract class Builder<B extends Builder<B>> {
@@ -45,11 +46,7 @@ public abstract class Component {
         @NonNull
         public abstract B id(@NonNull String id);
 
-        @NonNull
-        public abstract B code(@NonNull String key, @NonNull String value);
-
-        @NonNull
-        public abstract B codes(@NonNull Map<? extends String, ? extends String> codes);
+        public abstract @NonNull B codelist(@NonNull Codelist codelist);
 
         @NonNull
         public abstract B label(@NonNull String label);

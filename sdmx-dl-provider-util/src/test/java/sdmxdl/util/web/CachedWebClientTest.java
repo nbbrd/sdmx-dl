@@ -49,10 +49,10 @@ public class CachedWebClientTest {
     private final Duration ttl = Duration.ofMillis(100);
 
     private final String flowsId = idOf("flows://", base);
-    private final String flowId = idOf("flow://", base, GOOD_FLOW_REF);
-    private final String structId = idOf("struct://", base, GOOD_STRUCT_REF);
-    private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, GOOD_FLOW_REF);
-    private final String noDataId = idOf("noData://", base, GOOD_FLOW_REF);
+    private final String flowId = idOf("flow://", base, FLOW_REF);
+    private final String structId = idOf("struct://", base, STRUCT_REF);
+    private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, FLOW_REF);
+    private final String noDataId = idOf("noData://", base, FLOW_REF);
 
     private CachedWebClient getClient(CachingAssert.Context ctx) {
         SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
@@ -73,7 +73,7 @@ public class CachedWebClientTest {
 
     @Test
     public void testGetFlow() throws IOException {
-        Method<Dataflow> x = client -> client.getFlow(GOOD_FLOW_REF);
+        Method<Dataflow> x = client -> client.getFlow(FLOW_REF);
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(FLOW)), flowId, ttl);
     }
@@ -85,14 +85,14 @@ public class CachedWebClientTest {
 
         ctx.reset();
         client.getFlows();
-        client.getFlow(GOOD_FLOW_REF);
+        client.getFlow(FLOW_REF);
         assertThat(ctx.getCount()).hasValue(1);
         assertThat(ctx.getMap()).containsOnlyKeys(flowsId);
     }
 
     @Test
     public void testGetStructure() throws IOException {
-        Method<DataStructure> x = client -> client.getStructure(GOOD_STRUCT_REF);
+        Method<DataStructure> x = client -> client.getStructure(STRUCT_REF);
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(STRUCT)), structId, ttl);
     }
@@ -102,7 +102,7 @@ public class CachedWebClientTest {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT)) {
+                    try (DataCursor cursor = client.getData(new DataRequest(FLOW_REF, key, filter), STRUCT)) {
                         return cursor.toStream().collect(Collectors.toList());
                     }
                 };
@@ -129,7 +129,7 @@ public class CachedWebClientTest {
         CachedWebClient client = getClient(ctx);
 
         for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(new DataRequest(GOOD_FLOW_REF, key, filter), STRUCT).close();
+            IOConsumer<Key> method = key -> client.getData(new DataRequest(FLOW_REF, key, filter), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);

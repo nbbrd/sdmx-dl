@@ -17,6 +17,7 @@
 package sdmxdl;
 
 import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 
@@ -34,11 +35,10 @@ public class Dimension extends Component {
     String id;
 
     @lombok.NonNull
-    @lombok.Singular
-    Map<String, String> codes;
+    String label;
 
     @lombok.NonNull
-    String label;
+    Codelist codelist;
 
     @NonNegative
     int position;

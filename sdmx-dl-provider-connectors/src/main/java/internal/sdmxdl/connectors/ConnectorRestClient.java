@@ -155,6 +155,19 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        try {
+            return Codelist
+                    .builder()
+                    .ref(ref)
+                    .codes(connector.getCodes(ref.getId(), ref.getAgency(), ref.getVersion()))
+                    .build();
+        } catch (SdmxException ex) {
+            throw wrap(ex, "Failed to get codelist '%s' from '%s'", ref, name);
+        }
+    }
+
+    @Override
     public boolean isDetailSupported() {
         return connector instanceof HasDetailSupported
                 && ((HasDetailSupported) connector).isDetailSupported();
