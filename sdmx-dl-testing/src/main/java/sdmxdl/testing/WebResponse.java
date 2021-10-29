@@ -28,12 +28,14 @@ import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.logging.Level;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.extern.java.Log
 public class WebResponse {
 
     @lombok.NonNull
@@ -91,6 +93,7 @@ public class WebResponse {
                     .structure(conn.getStructure(request.getFlow()))
                     .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.FULL));
         } catch (IOException ex) {
+            log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));
         }
 
@@ -99,10 +102,10 @@ public class WebResponse {
 
     private static String toError(IOException ex) {
         StringBuilder sb = new StringBuilder();
-        sb.append(ex.getMessage());
+        sb.append(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         Throwable cause = ex.getCause();
         while (cause != null) {
-            sb.append(System.lineSeparator()).append(cause.getMessage());
+            sb.append(System.lineSeparator()).append(cause.getClass().getSimpleName() + ": " + cause.getMessage());
             cause = cause.getCause();
         }
         return sb.toString();

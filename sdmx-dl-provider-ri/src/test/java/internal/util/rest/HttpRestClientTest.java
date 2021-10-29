@@ -43,8 +43,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.ext.SdmxMediaType.GENERIC_DATA_21;
-import static sdmxdl.ext.SdmxMediaType.GENERIC_XML;
+import static sdmxdl.ext.SdmxMediaType.*;
 
 /**
  * @author Philippe Charles
@@ -102,6 +101,29 @@ public abstract class HttpRestClientTest {
                         .withHeader(HTTP_USER_AGENT_HEADER, equalTo("hello world"))
                         .withHeader("Host", new AnythingPattern())
 //                .withHeader("Connection", new AnythingPattern())
+        );
+    }
+
+    @Test
+    public void testMultiMediaTypes() throws IOException {
+        HttpRest.Context context = HttpRest.Context
+                .builder()
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
+                .build();
+        HttpRest.Client x = getRestClient(context);
+
+        wire.resetAll();
+        wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
+
+        List<MediaType> mediaTypes = asList(GENERIC_DATA_21_TYPE, STRUCTURE_SPECIFIC_DATA_21_TYPE);
+
+        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), mediaTypes, ANY_LANG)) {
+            assertSameSampleContent(response);
+        }
+
+        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
+                .withHeader(HTTP_ACCEPT_HEADER, equalTo(DefaultClient.toAcceptHeader(mediaTypes)))
         );
     }
 
@@ -486,6 +508,7 @@ public abstract class HttpRestClientTest {
     }
 
     protected static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
+    protected static final MediaType STRUCTURE_SPECIFIC_DATA_21_TYPE = MediaType.parse(STRUCTURE_SPECIFIC_DATA_21);
     protected static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     protected static final String ANY_LANG = LanguagePriorityList.ANY.toString();

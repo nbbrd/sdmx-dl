@@ -58,7 +58,7 @@ final class CurlHttpURLConnection extends HttpURLConnection {
 
     @Override
     public void disconnect() {
-        if (body != null) {
+        if (body != null && Files.exists(body)) {
             try {
                 Files.delete(body);
             } catch (IOException ex) {
