@@ -82,15 +82,15 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 .path(providerRef);
     }
 
-    private static final String DEFAULT_DATAFLOW_PATH = "dataflow";
-    private static final String DEFAULT_DATASTRUCTURE_PATH = "datastructure";
-    private static final String DEFAULT_DATA_PATH = "data";
-    private static final String DEFAULT_CODELIST_PATH = "codelist";
+    protected static final String DEFAULT_DATAFLOW_PATH = "dataflow";
+    protected static final String DEFAULT_DATASTRUCTURE_PATH = "datastructure";
+    protected static final String DEFAULT_DATA_PATH = "data";
+    protected static final String DEFAULT_CODELIST_PATH = "codelist";
 
-    private static final String DEFAULT_PROVIDER_REF = "all";
+    protected static final String DEFAULT_PROVIDER_REF = "all";
 
     protected static final String REFERENCES_PARAM = "references";
     protected static final String DETAIL_PARAM = "detail";
 
-    private static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
+    protected static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
 }

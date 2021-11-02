@@ -21,6 +21,7 @@ import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.ext.MessageFooter;
 import sdmxdl.ext.ObsFactory;
 
 import java.util.List;
@@ -84,6 +85,13 @@ public class SdmxXmlStreams {
         return Stax.StreamParser.<List<Codelist>>builder()
                 .factory(StaxUtil::getInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamCodelist21(langs)::parse))
+                .build();
+    }
+
+    public Xml.@NonNull Parser<MessageFooter> messageFooter21(@NonNull LanguagePriorityList langs) {
+        return Stax.StreamParser.<MessageFooter>builder()
+                .factory(StaxUtil::getInputFactory)
+                .handler(Stax.FlowHandler.of(new XMLStreamMessageFooter21(langs)::parse))
                 .build();
     }
 }

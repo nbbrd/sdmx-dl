@@ -10,6 +10,7 @@ module sdmxdl.web.ri {
     requires com.github.tuupertunut.powershelllibjava;
     requires nbbrd.picocsv;
     requires com.google.gson;
+    requires java.logging;
 
     requires transitive sdmxdl.api;
 
@@ -17,6 +18,7 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.web.drivers.AbsDriver2,
             internal.sdmxdl.ri.web.drivers.BbkDriver,
             internal.sdmxdl.ri.web.drivers.DotStatDriver2,
+            internal.sdmxdl.ri.web.drivers.EurostatDriver2,
             internal.sdmxdl.ri.web.drivers.FileDriver,
             internal.sdmxdl.ri.web.drivers.InseeDriver2,
             internal.sdmxdl.ri.web.drivers.NbbDriver2,

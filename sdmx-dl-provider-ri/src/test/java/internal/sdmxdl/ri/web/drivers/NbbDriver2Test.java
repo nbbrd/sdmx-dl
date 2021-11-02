@@ -34,7 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static internal.sdmxdl.ri.web.drivers.NbbDriver2.NbbExecutor.checkInternalErrorRedirect;
+import static internal.sdmxdl.ri.web.drivers.NbbDriver2.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -59,7 +59,7 @@ public class NbbDriver2Test {
     }
 
     @Test
-    public void testExecutor() {
+    public void testCheckInternalErrorRedirect() {
         MediaType xmlUTF8 = MediaType.parse("text/xml; charset=utf-8");
         MediaType htmlUTF8 = MediaType.parse("text/html; charset=utf-8");
 

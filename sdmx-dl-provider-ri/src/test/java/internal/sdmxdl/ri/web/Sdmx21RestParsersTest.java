@@ -101,16 +101,16 @@ public class Sdmx21RestParsersTest {
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isNotInstanceOf(FileOverTextParser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withoutParameters()))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isNotInstanceOf(FileOverTextParser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withCharset(StandardCharsets.US_ASCII)))
-                    .isInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isInstanceOf(FileOverTextParser.class);
         }
     }
 

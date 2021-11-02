@@ -187,7 +187,7 @@ public class RiRestClient implements SdmxWebClient {
         try (HttpRest.Response response = executor.requestGET(url, parsers.getCodelistTypes(), langs.toString())) {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)
-                    .parseStream(() -> DisconnectingInputStream.of(response))
+                    .parseStream(response::getBody)
                     .orElseThrow(() -> SdmxException.missingCodelist(name, ref));
         } catch (HttpRest.ResponseError error) {
             if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {

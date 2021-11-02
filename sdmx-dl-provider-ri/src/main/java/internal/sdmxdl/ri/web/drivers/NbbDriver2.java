@@ -21,10 +21,10 @@ import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RestClients;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.rest.HttpRest;
+import internal.util.rest.InterceptingClient;
 import internal.util.rest.MediaType;
 import internal.util.rest.RestQueryBuilder;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.Resource;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataFilter;
@@ -40,14 +40,12 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
+import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 import static java.util.Collections.emptyMap;
-import static sdmxdl.util.SdmxFix.Category.CONTENT;
+import static sdmxdl.util.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
 /**
@@ -88,37 +86,23 @@ public final class NbbDriver2 implements SdmxWebDriver {
 
     @VisibleForTesting
     static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull ObsFactory obsFactory, HttpRest.@NonNull Client executor) {
-        return new RiRestClient(name, endpoint, langs, obsFactory, new NbbExecutor(executor), new NbbQueries(), new DotStatRestParsers(), false);
+        return new RiRestClient(name, endpoint, langs, obsFactory,
+                new InterceptingClient(executor, (client, q, m, l, r) -> checkInternalErrorRedirect(r)),
+                new NbbQueries(),
+                new DotStatRestParsers(),
+                false);
     }
 
-    @VisibleForTesting
-    @lombok.AllArgsConstructor
-    static final class NbbExecutor implements HttpRest.Client {
-
-        @lombok.NonNull
-        private final HttpRest.Client delegate;
-
-        @Override
-        public HttpRest.@NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
-            HttpRest.Response result = delegate.requestGET(query, mediaTypes, langs);
-            try {
-                checkInternalErrorRedirect(result);
-            } catch (Throwable ex) {
-                Resource.ensureClosed(ex, result);
-                throw ex;
-            }
-            return result;
+    @SdmxFix(id = 2, category = PROTOCOL, cause = "Some internal errors redirect to an HTML page")
+    static HttpRest.Response checkInternalErrorRedirect(HttpRest.Response result) throws IOException {
+        if (result.getContentType().isCompatible(HTML_TYPE)) {
+            throw SERVICE_UNAVAILABLE;
         }
-
-        @SdmxFix(id = 2, category = CONTENT, cause = "Some internal errors redirect to an html page")
-        static void checkInternalErrorRedirect(HttpRest.Response result) throws IOException {
-            if (result.getContentType().isCompatible(HTML_TYPE)) {
-                throw new HttpRest.ResponseError(HttpsURLConnection.HTTP_UNAVAILABLE, "Service unavailable", Collections.emptyMap());
-            }
-        }
-
-        private static final MediaType HTML_TYPE = new MediaType("text", "html", emptyMap());
+        return result;
     }
+
+    private static final MediaType HTML_TYPE = new MediaType("text", "html", emptyMap());
+    private static final HttpRest.ResponseError SERVICE_UNAVAILABLE = new HttpRest.ResponseError(HTTP_UNAVAILABLE, "Service unavailable", emptyMap());
 
     @VisibleForTesting
     static final class NbbQueries extends DotStatRestQueries {

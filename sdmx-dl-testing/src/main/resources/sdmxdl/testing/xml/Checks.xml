@@ -37,6 +37,10 @@
         <flow ref="teibp051" dims="7">
             <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
         </flow>
+        <!--async file delivery process-->
+        <flow ref="nama_10_gdp" dims="4">
+            <data key="..B1GQ." minSeries="1" minObs="12"/>
+        </flow>
     </source>
     <source name="ILO" minFlows="554">
         <flow ref="DF_SDG_0852_SEX_AGE_RT" dims="5">

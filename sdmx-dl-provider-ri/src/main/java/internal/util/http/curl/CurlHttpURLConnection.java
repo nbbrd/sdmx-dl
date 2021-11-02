@@ -15,13 +15,16 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import static internal.util.http.HttpConstants.hasProxy;
 import static internal.util.http.curl.Curl.*;
 
+@lombok.extern.java.Log
 final class CurlHttpURLConnection extends HttpURLConnection {
 
     @lombok.NonNull
@@ -99,6 +102,9 @@ final class CurlHttpURLConnection extends HttpURLConnection {
     }
 
     private CurlHead executeCurlCommand(String[] command) throws IOException {
+        if (log.isLoggable(Level.FINE)) {
+            log.fine(Arrays.toString(command));
+        }
         try (BufferedReader reader = ProcessReader.newReader(command)) {
             return CurlHead.parseResponse(reader);
         } catch (EndOfProcessException ex) {
