@@ -38,7 +38,7 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         SdmxWebMonitorReports reports = cache.getWebMonitorReports(key);
 
         if (reports == null) {
-            reports = createReports(RiHttpUtils.newClient(RiHttpUtils.newContext(source, context)), id, cache.getClock());
+            reports = createReports(RiHttpUtils.newClient(source, context), id, cache.getClock());
             cache.putWebMonitorReports(key, reports);
         }
 

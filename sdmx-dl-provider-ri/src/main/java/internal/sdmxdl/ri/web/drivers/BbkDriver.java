@@ -20,7 +20,6 @@ import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.util.http.HttpClient;
 import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
@@ -33,9 +32,8 @@ import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.PeriodParsers;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -55,11 +53,11 @@ public final class BbkDriver implements SdmxWebDriver {
     private static final String RI_BBK = "ri:bbk";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
-            .client(BbkDriver::newClient)
+            .client(BbkClient::new)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
@@ -72,32 +70,27 @@ public final class BbkDriver implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) {
-        return new BbkClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
-                c.getLanguages(),
-                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c))
-        );
-    }
-
     @VisibleForTesting
     static final class BbkClient extends RiRestClient {
 
-        private static final BbkObsFactory OBS_FACTORY = new BbkObsFactory();
-        private static final BbkQueries QUERIES = new BbkQueries();
-        private static final Sdmx21RestParsers PARSERS = new Sdmx21RestParsers();
-
-        public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpClient executor) {
-            super(name, endpoint, langs, OBS_FACTORY, executor, QUERIES, PARSERS, true);
+        BbkClient(SdmxWebSource s, SdmxWebContext c) {
+            super(
+                    s.getId(),
+                    s.getEndpoint(),
+                    c.getLanguages(),
+                    new BbkObsFactory(),
+                    RiHttpUtils.newClient(s, c),
+                    new BbkQueries(),
+                    new Sdmx21RestParsers(),
+                    true);
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
-            if (request.getKey().equals(Key.ALL)) {
-                request = request.toBuilder().key(alternateAllOf(dsd)).build();
+        public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+            if (ref.getKey().equals(Key.ALL)) {
+                ref = ref.toBuilder().key(alternateAllOf(dsd)).build();
             }
-            return super.getData(request, dsd);
+            return super.getData(ref, dsd);
         }
 
         @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
@@ -109,7 +102,7 @@ public final class BbkDriver implements SdmxWebDriver {
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {
 
-        public BbkQueries() {
+        BbkQueries() {
             super(false);
         }
 

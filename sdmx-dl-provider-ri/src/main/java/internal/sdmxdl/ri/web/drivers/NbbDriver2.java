@@ -25,15 +25,12 @@ import internal.util.http.ext.InterceptingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -55,7 +52,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
     private static final String RI_NBB = "ri:nbb";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_NBB)
             .rank(NATIVE_RANK)
@@ -72,13 +69,13 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static @NonNull RiRestClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return newClient(
-                SdmxWebClient.getClientName(s),
+                s.getId(),
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX20"),
-                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c))
+                RiHttpUtils.newClient(s, c)
         );
     }
 
@@ -107,12 +104,12 @@ public final class NbbDriver2 implements SdmxWebDriver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)
-                    .path(flowRef.getId())
-                    .path(key + "/all")
+                    .path(ref.getFlowRef().getId())
+                    .path(ref.getKey() + "/all")
                     .param("format", "compact_v2");
         }
     }

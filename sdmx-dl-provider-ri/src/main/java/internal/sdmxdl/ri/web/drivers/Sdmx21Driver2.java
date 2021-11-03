@@ -20,18 +20,14 @@ import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import nbbrd.io.text.BaseProperty;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
@@ -45,15 +41,14 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
     private static final String RI_SDMX_21 = "ri:sdmx21";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_SDMX_21)
             .rank(NATIVE_RANK)
             .client(Sdmx21Driver2::newClient)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .supportedProperties(QUERIES_PROPERTIES)
-            .supportedProperties(PARSERS_PROPERTIES)
+            .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .name("BIS")
@@ -197,35 +192,15 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+    private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return RiRestClient.of(
                 s, c, "SDMX21",
-                getQueries(s.getProperties()),
-                getParsers(s.getProperties()),
-                isDetailSupportedProperty(s.getProperties())
+                Sdmx21RestQueries
+                        .builder()
+                        .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()))
+                        .build(),
+                new Sdmx21RestParsers(),
+                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
         );
     }
-
-    private static Sdmx21RestQueries getQueries(Map<String, String> properties) {
-        return Sdmx21RestQueries
-                .builder()
-                .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(properties))
-                .build();
-    }
-
-    @SuppressWarnings("unused")
-    private static Sdmx21RestParsers getParsers(Map<String, String> properties) {
-        return new Sdmx21RestParsers();
-    }
-
-    private static boolean isDetailSupportedProperty(Map<String, String> properties) {
-        return DETAIL_SUPPORTED_PROPERTY.get(properties);
-    }
-
-    private static final List<String> PARSERS_PROPERTIES = BaseProperty.keysOf(
-    );
-
-    private static final List<String> QUERIES_PROPERTIES = BaseProperty.keysOf(
-            TRAILING_SLASH_REQUIRED_PROPERTY
-    );
 }

@@ -20,8 +20,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -32,7 +32,7 @@ import java.util.Objects;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-public final class XRepoWebClient implements SdmxWebClient {
+public final class XRepoRestClient implements SdmxRestClient {
 
     @lombok.NonNull
     private final SdmxRepository repo;
@@ -60,12 +60,12 @@ public final class XRepoWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        Objects.requireNonNull(request);
+    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+        Objects.requireNonNull(ref);
         Objects.requireNonNull(dsd);
-        return repo.getDataSet(request.getFlowRef())
-                .map(dataSet -> dataSet.getDataCursor(request.getKey(), request.getFilter()))
-                .orElseThrow(() -> SdmxException.missingData(repo.getName(), request.getFlowRef(), request.getKey(), request.getFilter()));
+        return repo.getDataSet(ref.getFlowRef())
+                .map(dataSet -> dataSet.getDataCursor(ref.getKey(), ref.getFilter()))
+                .orElseThrow(() -> SdmxException.missingData(repo.getName(), ref.getFlowRef(), ref.getKey(), ref.getFilter()));
     }
 
     @Override

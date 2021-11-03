@@ -32,7 +32,7 @@ import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class SdmxWebDriverSupport implements SdmxWebDriver {
+public final class SdmxRestDriverSupport implements SdmxWebDriver {
 
     @lombok.Getter
     @lombok.NonNull
@@ -43,7 +43,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
     private final int rank = UNKNOWN;
 
     @lombok.NonNull
-    private final SdmxWebClientSupplier client;
+    private final SdmxRestClientSupplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebSource> sources;
@@ -57,7 +57,7 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         Objects.requireNonNull(context);
         checkSource(source, name);
 
-        return SdmxWebConnectionImpl.of(getClient(source, context), name);
+        return SdmxRestConnection.of(getClient(source, context), name);
     }
 
     @Override
@@ -70,8 +70,8 @@ public final class SdmxWebDriverSupport implements SdmxWebDriver {
         return supportedProperties;
     }
 
-    private SdmxWebClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
-        return CachedWebClient.of(
+    private SdmxRestClient getClient(SdmxWebSource source, SdmxWebContext context) throws IOException {
+        return CachedRestClient.of(
                 client.get(source, context),
                 context.getCache(),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),

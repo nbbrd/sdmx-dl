@@ -23,13 +23,10 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataFilter;
 import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -48,7 +45,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
     private static final String RI_ABS = "ri:abs";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_ABS)
             .rank(NATIVE_RANK)
@@ -65,7 +62,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static @NonNull RiRestClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return RiRestClient.of(s, c, "SDMX20", new AbsQueries(), new DotStatRestParsers(), false);
     }
 
@@ -81,8 +78,8 @@ public final class AbsDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-            return super.getDataQuery(endpoint, flowRef, key, filter).path(AGENCY);
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+            return super.getDataQuery(endpoint, ref).path(AGENCY);
         }
     }
 }

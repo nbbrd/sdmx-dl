@@ -32,10 +32,10 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class SdmxWebConnectionImpl implements SdmxWebConnection {
+final class SdmxRestConnection implements SdmxWebConnection {
 
     @lombok.NonNull
-    private final SdmxWebClient client;
+    private final SdmxRestClient client;
 
     @lombok.NonNull
     private final String driver;
@@ -95,8 +95,8 @@ final class SdmxWebConnectionImpl implements SdmxWebConnection {
         checkKey(key, structure);
 
         return isDetailSupported()
-                ? client.getData(new DataRequest(flowRef, key, filter), structure)
-                : client.getData(new DataRequest(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
+                ? client.getData(new DataRef(flowRef, key, filter), structure)
+                : client.getData(new DataRef(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
     }
 
     @Override

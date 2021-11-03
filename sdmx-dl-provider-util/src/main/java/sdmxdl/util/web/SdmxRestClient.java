@@ -19,7 +19,6 @@ package sdmxdl.util.web;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -28,35 +27,23 @@ import java.util.List;
 /**
  * @author Philippe Charles
  */
-public interface SdmxWebClient {
+public interface SdmxRestClient {
 
-    @NonNull
-    String getName() throws IOException;
+    @NonNull String getName() throws IOException;
 
-    @NonNull
-    List<Dataflow> getFlows() throws IOException;
+    @NonNull List<Dataflow> getFlows() throws IOException;
 
-    @NonNull
-    Dataflow getFlow(@NonNull DataflowRef ref) throws IOException;
+    @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException;
 
-    @NonNull
-    DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException;
+    @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException;
 
-    @NonNull
-    DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException;
+    @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException;
 
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
     boolean isDetailSupported() throws IOException;
 
-    @Nullable
-    DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;
+    @Nullable DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;
 
-    @NonNull
-    Duration ping() throws IOException;
-
-    @NonNull
-    static String getClientName(@NonNull SdmxWebSource source) {
-        return source.getDriver() + ":" + source.getName();
-    }
+    @NonNull Duration ping() throws IOException;
 }

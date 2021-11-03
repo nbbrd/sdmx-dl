@@ -72,6 +72,10 @@ public class SdmxWebSource {
         return aliases.contains(name);
     }
 
+    public @NonNull String getId() {
+        return getDriver() + ":" + getName();
+    }
+
     public static class Builder {
 
         @NonNull

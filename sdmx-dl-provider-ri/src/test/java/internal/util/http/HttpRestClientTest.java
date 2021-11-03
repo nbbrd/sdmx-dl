@@ -38,12 +38,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static internal.sdmxdl.ri.web.RiHttpUtils.*;
 import static internal.util.http.HttpConstants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.ext.SdmxMediaType.*;
 
 /**
  * @author Philippe Charles
@@ -147,7 +147,7 @@ public abstract class HttpRestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG)))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_XML_TYPE), ANY_LANG)))
                 .withMessage("500: " + customErrorMessage)
                 .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
                     assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
@@ -166,7 +166,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("ftp://localhost"), singletonList(XML_TYPE), "")))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("ftp://localhost"), singletonList(GENERIC_XML_TYPE), "")))
                 .withMessage("Unsupported protocol 'ftp'");
     }
 
@@ -178,7 +178,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://localhoooooost"), singletonList(XML_TYPE), "")))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://localhoooooost"), singletonList(GENERIC_XML_TYPE), "")))
                 .isInstanceOf(UnknownHostException.class)
                 .withMessage("localhoooooost");
     }
@@ -484,7 +484,7 @@ public abstract class HttpRestClientTest {
     }
 
     protected void assertSameSampleContent(HttpResponse response) throws IOException {
-        assertThat(response.getContentType()).isEqualTo(XML_TYPE);
+        assertThat(response.getContentType()).isEqualTo(GENERIC_XML_TYPE);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }
@@ -506,10 +506,6 @@ public abstract class HttpRestClientTest {
     protected List<Integer> getHttpRedirectionCodes() {
         return Arrays.asList(301, 302, 303, 307, 308);
     }
-
-    protected static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(GENERIC_DATA_21);
-    protected static final MediaType STRUCTURE_SPECIFIC_DATA_21_TYPE = MediaType.parse(STRUCTURE_SPECIFIC_DATA_21);
-    protected static final MediaType XML_TYPE = MediaType.parse(GENERIC_XML);
 
     protected static final String ANY_LANG = LanguagePriorityList.ANY.toString();
     protected static final String SAMPLE_URL = "/first.xml";

@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.web;
 
-import _test.sdmxdl.util.XRepoWebClient;
+import _test.sdmxdl.util.XRepoRestClient;
 import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.RepoSamples;
@@ -25,13 +25,13 @@ import sdmxdl.tck.SdmxConnectionAssert;
 /**
  * @author Philippe Charles
  */
-public class SdmxWebConnectionImplTest {
+public class SdmxRestConnectionTest {
 
     @Test
     public void testCompliance() {
         SdmxRepository repo = RepoSamples.REPO;
         SdmxConnectionAssert.assertCompliance(
-                () -> SdmxWebConnectionImpl.of(XRepoWebClient.of(repo), ""),
+                () -> SdmxRestConnection.of(XRepoRestClient.of(repo), ""),
                 SdmxConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

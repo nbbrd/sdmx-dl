@@ -22,6 +22,7 @@ import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
+import sdmxdl.util.web.DataRef;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +49,7 @@ public class AbsDriver2Test {
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetDataStructure/ABS_REGIONAL_ASGS/ABS");
 
-        assertThat(queries.getDataQuery(endpoint, DataflowRef.parse("ABS_REGIONAL_ASGS"), Key.parse("BANKRUPT_2.AUS.0.A"), DataFilter.FULL))
+        assertThat(queries.getDataQuery(endpoint, DataRef.builder().flowRef(DataflowRef.parse("ABS_REGIONAL_ASGS")).key(Key.parse("BANKRUPT_2.AUS.0.A")).filter(DataFilter.FULL).build()))
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetData/ABS_REGIONAL_ASGS/BANKRUPT_2.AUS.0.A/ABS?format=compact_v2");
     }

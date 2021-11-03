@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -56,6 +57,12 @@ public class RiHttpUtils {
             PREEMPTIVE_AUTHENTICATION_PROPERTY
     );
 
+    public static final MediaType GENERIC_XML_TYPE = MediaType.parse(SdmxMediaType.GENERIC_XML);
+    public static final MediaType STRUCTURE_21_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_21);
+    public static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(SdmxMediaType.GENERIC_DATA_21);
+    public static final MediaType STRUCTURE_SPECIFIC_DATA_21_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+    public static final MediaType STRUCTURE_SPECIFIC_DATA_20_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20);
+
     // TODO: document these options?
     @VisibleForTesting
     static final Property<File> SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY =
@@ -72,6 +79,10 @@ public class RiHttpUtils {
                 .mediaTypes(mediaTypes)
                 .langs(langs.toString())
                 .build();
+    }
+
+    public static @NonNull HttpClient newClient(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) {
+        return newClient(newContext(source, context));
     }
 
     public static @NonNull HttpClient newClient(@NonNull HttpContext context) {

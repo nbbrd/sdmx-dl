@@ -18,8 +18,8 @@ package _test.sdmxdl.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -30,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class XCountingWebClient implements SdmxWebClient {
+public final class XCountingRestClient implements SdmxRestClient {
 
     @lombok.NonNull
-    private final SdmxWebClient delegate;
+    private final SdmxRestClient delegate;
 
     @lombok.NonNull
     private final AtomicInteger count;
@@ -62,9 +62,9 @@ public final class XCountingWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
         count.incrementAndGet();
-        return delegate.getData(request, dsd);
+        return delegate.getData(ref, dsd);
     }
 
     @Override

@@ -21,10 +21,9 @@ import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -42,7 +41,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
     private static final String RI_DOTSTAT = "ri:dotstat";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_DOTSTAT)
             .rank(NATIVE_RANK)
@@ -86,7 +85,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+    private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return RiRestClient.of(s, c, "SDMX20", new DotStatRestQueries(), new DotStatRestParsers(), false);
     }
 

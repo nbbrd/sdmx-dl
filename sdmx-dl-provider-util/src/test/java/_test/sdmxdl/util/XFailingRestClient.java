@@ -18,8 +18,8 @@ package _test.sdmxdl.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author Philippe Charles
  */
-public enum XFailingWebClient implements SdmxWebClient {
+public enum XFailingRestClient implements SdmxRestClient {
 
     EXPECTED {
         @Override
@@ -53,7 +53,7 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+        public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
             throw new CustomIOException();
         }
 
@@ -99,7 +99,7 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) {
+        public DataCursor getData(DataRef ref, DataStructure dsd) {
             throw new CustomRuntimeException();
         }
 
@@ -147,8 +147,8 @@ public enum XFailingWebClient implements SdmxWebClient {
         }
 
         @Override
-        public DataCursor getData(DataRequest request, DataStructure dsd) {
-            Objects.requireNonNull(request);
+        public DataCursor getData(DataRef ref, DataStructure dsd) {
+            Objects.requireNonNull(ref);
             Objects.requireNonNull(dsd);
             return null;
         }

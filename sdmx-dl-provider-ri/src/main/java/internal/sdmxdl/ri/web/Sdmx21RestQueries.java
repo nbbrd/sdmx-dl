@@ -4,6 +4,7 @@ import internal.util.http.URLQueryBuilder;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.util.web.DataRef;
 
 import java.net.URL;
 
@@ -33,9 +34,9 @@ public class Sdmx21RestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-        URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, flowRef, key, DEFAULT_PROVIDER_REF);
-        applyFilter(filter, result);
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+        URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getKey(), DEFAULT_PROVIDER_REF);
+        applyFilter(ref.getFilter(), result);
         return result.trailingSlash(trailingSlashRequired);
     }
 

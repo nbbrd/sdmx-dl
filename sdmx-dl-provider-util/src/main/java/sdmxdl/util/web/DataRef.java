@@ -25,7 +25,7 @@ import sdmxdl.Key;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class DataRequest {
+public class DataRef {
 
     @lombok.NonNull
     DataflowRef flowRef;

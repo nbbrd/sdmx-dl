@@ -32,12 +32,12 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-final class CachedWebClient implements SdmxWebClient {
+final class CachedRestClient implements SdmxRestClient {
 
-    static @NonNull SdmxWebClient of(
-            @NonNull SdmxWebClient client, @NonNull SdmxCache cache, long ttlInMillis,
+    static @NonNull SdmxRestClient of(
+            @NonNull SdmxRestClient client, @NonNull SdmxCache cache, long ttlInMillis,
             @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
-        return new CachedWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
+        return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
     private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
@@ -45,7 +45,7 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     @lombok.NonNull
-    private final SdmxWebClient delegate;
+    private final SdmxRestClient delegate;
 
     @lombok.NonNull
     private final SdmxCache cache;
@@ -128,14 +128,14 @@ final class CachedWebClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
-        if (request.getFilter().getDetail().isDataRequested()) {
-            return delegate.getData(request, dsd);
+    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+        if (ref.getFilter().getDetail().isDataRequested()) {
+            return delegate.getData(ref, dsd);
         }
-        DataSet result = request.getFilter().getDetail().isMetaRequested()
-                ? loadNoDataWithCache(request, dsd)
-                : loadSeriesKeysOnlyWithCache(request, dsd);
-        return result.getDataCursor(request.getKey(), request.getFilter());
+        DataSet result = ref.getFilter().getDetail().isMetaRequested()
+                ? loadNoDataWithCache(ref, dsd)
+                : loadSeriesKeysOnlyWithCache(ref, dsd);
+        return result.getDataCursor(ref.getKey(), ref.getFilter());
     }
 
     @Override
@@ -167,14 +167,14 @@ final class CachedWebClient implements SdmxWebClient {
         return id.load(cache, () -> delegate.getStructure(ref), this::getTtl);
     }
 
-    private DataSet loadSeriesKeysOnlyWithCache(DataRequest request, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(request.getFlowRef());
-        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> isNarrowerRequest(request.getKey(), o));
+    private DataSet loadSeriesKeysOnlyWithCache(DataRef ref, DataStructure dsd) throws IOException {
+        TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(ref.getFlowRef());
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o));
     }
 
-    private DataSet loadNoDataWithCache(DataRequest request, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = getIdOfNoData().with(request.getFlowRef());
-        return id.load(cache, () -> copyData(request, dsd), this::getTtl, o -> isNarrowerRequest(request.getKey(), o));
+    private DataSet loadNoDataWithCache(DataRef ref, DataStructure dsd) throws IOException {
+        TypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
@@ -201,12 +201,12 @@ final class CachedWebClient implements SdmxWebClient {
         return !key.supersedes(dataSet.getKey()) && dataSet.getKey().contains(key);
     }
 
-    private DataSet copyData(DataRequest request, DataStructure structure) throws IOException {
-        try (DataCursor cursor = delegate.getData(request, structure)) {
+    private DataSet copyData(DataRef ref, DataStructure structure) throws IOException {
+        try (DataCursor cursor = delegate.getData(ref, structure)) {
             return DataSet
                     .builder()
-                    .ref(request.getFlowRef())
-                    .key(request.getKey())
+                    .ref(ref.getFlowRef())
+                    .key(ref.getKey())
                     .copyOf(cursor)
                     .build();
         }

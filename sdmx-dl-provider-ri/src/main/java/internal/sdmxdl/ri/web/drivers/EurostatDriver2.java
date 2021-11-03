@@ -32,8 +32,8 @@ import sdmxdl.DataflowRef;
 import sdmxdl.ext.MessageFooter;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -69,7 +69,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
     private static final String RI_EUROSTAT = "ri:estat";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_EUROSTAT)
             .rank(NATIVE_RANK)
@@ -89,19 +89,27 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static SdmxWebClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
-        int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
-        long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
+    private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return new RiRestClient(
-                SdmxWebClient.getClientName(s),
+                s.getId(),
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX21"),
-                new InterceptingClient(RiHttpUtils.newClient(fixCompression(RiHttpUtils.newContext(s, c))), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)),
+                getHttpClient(s, c),
                 new EurostatRestQueries(),
                 new Sdmx21RestParsers(),
                 false
         );
+    }
+
+    private static InterceptingClient getHttpClient(SdmxWebSource s, SdmxWebContext c) {
+        int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
+        long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
+        return new InterceptingClient(RiHttpUtils.newClient(getContext(s, c)), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries));
+    }
+
+    private static HttpContext getContext(SdmxWebSource s, SdmxWebContext c) {
+        return fixCompression(RiHttpUtils.newContext(s, c));
     }
 
     @SdmxFix(id = 1, category = QUERY, cause = "Agency id must be ESTAT instead of 'all'")
@@ -192,7 +200,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
 
         @Override
         public @NonNull MediaType getContentType() {
-            return Sdmx21RestParsers.GENERIC21;
+            return RiHttpUtils.GENERIC_DATA_21_TYPE;
         }
 
         @Override

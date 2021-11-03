@@ -2,12 +2,10 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponseException;
-import internal.util.http.MediaType;
 import internal.util.http.ext.DumpingClientTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
@@ -16,6 +14,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static internal.sdmxdl.ri.web.RiHttpUtils.GENERIC_XML_TYPE;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,7 +105,7 @@ public class RiRestClientTest {
         return (httpRequest) -> DumpingClientTest.MockedResponse
                 .builder()
                 .body(byteSource::openStream)
-                .mediaType(() -> MediaType.parse(SdmxMediaType.GENERIC_XML))
+                .mediaType(() -> GENERIC_XML_TYPE)
                 .build();
     }
 }

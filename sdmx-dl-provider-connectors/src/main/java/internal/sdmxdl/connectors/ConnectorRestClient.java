@@ -30,9 +30,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebClientSupplier;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -54,7 +54,7 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements SdmxWebClient {
+public final class ConnectorRestClient implements SdmxRestClient {
 
     @FunctionalInterface
     public interface SpecificSupplier {
@@ -70,7 +70,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
     }
 
-    public static @NonNull SdmxWebClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -83,7 +83,7 @@ public final class ConnectorRestClient implements SdmxWebClient {
         };
     }
 
-    public static @NonNull SdmxWebClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
@@ -142,15 +142,15 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
         try {
-            List<PortableTimeSeries<Double>> data = getData(connector, request, dsd);
+            List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
             return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return DataCursor.empty();
             }
-            throw wrap(ex, "Failed to get data '%s' from '%s'", request, name);
+            throw wrap(ex, "Failed to get data '%s' from '%s'", ref, name);
         }
     }
 
@@ -196,12 +196,12 @@ public final class ConnectorRestClient implements SdmxWebClient {
             MAX_REDIRECTS_PROPERTY
     );
 
-    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
+    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(
-                Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()),
-                Connectors.fromStructure(dsd), request.getKey().toString(),
+                Connectors.fromFlowQuery(ref.getFlowRef(), dsd.getRef()),
+                Connectors.fromStructure(dsd), ref.getKey().toString(),
                 null, null,
-                request.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
+                ref.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
                 null, false);
     }
 

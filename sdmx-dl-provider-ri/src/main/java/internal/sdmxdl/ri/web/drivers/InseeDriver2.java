@@ -27,17 +27,16 @@ import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
 
+import static internal.sdmxdl.ri.web.RiHttpUtils.STRUCTURE_SPECIFIC_DATA_21_TYPE;
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
 import static sdmxdl.util.SdmxFix.Category.MEDIA_TYPE;
 
@@ -50,7 +49,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
     private static final String RI_INSEE = "ri:insee";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
@@ -87,17 +86,17 @@ public final class InseeDriver2 implements SdmxWebDriver {
     }
 
     @SdmxFix(id = 5, category = MEDIA_TYPE, cause = "Default media type is compact instead of generic")
-    private static final MediaType DATA_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
+    private static final MediaType DATA_TYPE = STRUCTURE_SPECIFIC_DATA_21_TYPE;
 
     private final static class InseeClient extends RiRestClient {
 
-        private InseeClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+        InseeClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
             super(
-                    SdmxWebClient.getClientName(s),
+                    s.getId(),
                     s.getEndpoint(),
                     c.getLanguages(),
                     ObsFactories.getObsFactory(c, s, DIALECT),
-                    RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
+                    RiHttpUtils.newClient(s, c),
                     new Sdmx21RestQueries(false),
                     new InseeRestParsers(),
                     true

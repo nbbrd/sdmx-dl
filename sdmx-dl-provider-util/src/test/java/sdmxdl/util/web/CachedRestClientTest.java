@@ -17,8 +17,8 @@
 package sdmxdl.util.web;
 
 import _test.sdmxdl.util.CachingAssert;
-import _test.sdmxdl.util.XCountingWebClient;
-import _test.sdmxdl.util.XRepoWebClient;
+import _test.sdmxdl.util.XCountingRestClient;
+import _test.sdmxdl.util.XRepoRestClient;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
@@ -43,7 +43,7 @@ import static sdmxdl.tck.KeyAssert.keys;
 /**
  * @author Philippe Charles
  */
-public class CachedWebClientTest {
+public class CachedRestClientTest {
 
     private final String base = "abc/";
     private final Duration ttl = Duration.ofMillis(100);
@@ -54,19 +54,19 @@ public class CachedWebClientTest {
     private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, FLOW_REF);
     private final String noDataId = idOf("noData://", base, FLOW_REF);
 
-    private CachedWebClient getClient(CachingAssert.Context ctx) {
-        SdmxWebClient original = XRepoWebClient.of(RepoSamples.REPO);
-        SdmxWebClient counting = XCountingWebClient.of(original, ctx.getCount());
-        return new CachedWebClient(counting, ctx.newCache(), base, ttl);
+    private CachedRestClient getClient(CachingAssert.Context ctx) {
+        SdmxRestClient original = XRepoRestClient.of(RepoSamples.REPO);
+        SdmxRestClient counting = XCountingRestClient.of(original, ctx.getCount());
+        return new CachedRestClient(counting, ctx.newCache(), base, ttl);
     }
 
     @FunctionalInterface
-    private interface Method<T> extends IOFunction<CachedWebClient, T> {
+    private interface Method<T> extends IOFunction<CachedRestClient, T> {
     }
 
     @Test
     public void testGetFlows() throws IOException {
-        Method<List<Dataflow>> x = CachedWebClient::getFlows;
+        Method<List<Dataflow>> x = CachedRestClient::getFlows;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(hasItem(FLOW)), flowsId, ttl);
     }
@@ -81,7 +81,7 @@ public class CachedWebClientTest {
     @Test
     public void testPeekDataflowFromCache() throws IOException {
         Context ctx = new Context();
-        CachedWebClient client = getClient(ctx);
+        CachedRestClient client = getClient(ctx);
 
         ctx.reset();
         client.getFlows();
@@ -102,7 +102,7 @@ public class CachedWebClientTest {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.getData(new DataRequest(FLOW_REF, key, filter), STRUCT)) {
+                    try (DataCursor cursor = client.getData(new DataRef(FLOW_REF, key, filter), STRUCT)) {
                         return cursor.toStream().collect(Collectors.toList());
                     }
                 };
@@ -126,10 +126,10 @@ public class CachedWebClientTest {
     @Test
     public void testNarrowerRequest() throws IOException {
         Context ctx = new Context();
-        CachedWebClient client = getClient(ctx);
+        CachedRestClient client = getClient(ctx);
 
         for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(new DataRequest(FLOW_REF, key, filter), STRUCT).close();
+            IOConsumer<Key> method = key -> client.getData(new DataRef(FLOW_REF, key, filter), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);

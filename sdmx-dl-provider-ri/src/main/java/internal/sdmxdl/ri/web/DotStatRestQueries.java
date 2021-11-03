@@ -3,6 +3,7 @@ package internal.sdmxdl.ri.web;
 import internal.util.http.URLQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.util.web.DataRef;
 
 import java.net.URL;
 
@@ -33,12 +34,12 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
-                .path(flowRef.getId())
-                .path(key.toString())
+                .path(ref.getFlowRef().getId())
+                .path(ref.getKey().toString())
                 .param("format", "compact_v2");
     }
 

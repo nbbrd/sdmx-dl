@@ -20,7 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -39,7 +39,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
     private static final String CONNECTORS_SDMX_21 = "connectors:sdmx21";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(CONNECTORS_SDMX_21)
             .rank(WRAPPED_RANK)

@@ -26,8 +26,8 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.DataRef;
+import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
@@ -47,16 +47,16 @@ import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public class RiRestClient implements SdmxWebClient {
+public class RiRestClient implements SdmxRestClient {
 
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c, @NonNull String defaultDialect,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
-                SdmxWebClient.getClientName(s),
+                s.getId(),
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, defaultDialect),
-                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
+                RiHttpUtils.newClient(s, c),
                 queries,
                 parsers,
                 detailSupported);
@@ -88,8 +88,8 @@ public class RiRestClient implements SdmxWebClient {
     }
 
     @Override
-    public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(request), dsd);
+    public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        return getData(getDataQuery(ref), dsd);
     }
 
     @Override
@@ -173,8 +173,8 @@ public class RiRestClient implements SdmxWebClient {
     }
 
     @NonNull
-    protected URL getDataQuery(@NonNull DataRequest request) throws IOException {
-        return queries.getDataQuery(endpoint, request.getFlowRef(), request.getKey(), request.getFilter()).build();
+    protected URL getDataQuery(@NonNull DataRef ref) throws IOException {
+        return queries.getDataQuery(endpoint, ref).build();
     }
 
     @NonNull
