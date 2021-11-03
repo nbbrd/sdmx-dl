@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
 import nbbrd.design.StringValue;
 import nbbrd.design.VisibleForTesting;

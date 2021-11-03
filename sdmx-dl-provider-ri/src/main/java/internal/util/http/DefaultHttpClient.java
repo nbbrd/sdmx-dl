@@ -14,10 +14,8 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
-import internal.util.http.HttpHeadersBuilder;
-import internal.util.http.HttpURLConnectionFactory;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -32,56 +30,53 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static internal.util.http.HttpConstants.*;
-import static internal.util.rest.HttpRest.*;
 import static java.util.Collections.emptyMap;
 
 /**
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-final class DefaultClient implements Client {
+public final class DefaultHttpClient implements HttpClient {
 
     @lombok.NonNull
-    private final HttpRest.Context context;
+    private final HttpContext context;
 
     @lombok.NonNull
     private final HttpURLConnectionFactory factory;
 
     @Override
-    public Response requestGET(URL query, List<MediaType> mediaTypes, String langs) throws IOException {
-        Objects.requireNonNull(query);
-        Objects.requireNonNull(mediaTypes);
-        Objects.requireNonNull(langs);
-        return open(query, mediaTypes, langs, 0, getPreemptiveAuthScheme());
+    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
+        Objects.requireNonNull(request);
+        return open(request, 0, getPreemptiveAuthScheme());
     }
 
-    private Response open(URL query, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
-        if (!isHttpProtocol(query) && !isHttpsProtocol(query)) {
-            throw new IOException("Unsupported protocol '" + query.getProtocol() + "'");
+    private HttpResponse open(HttpRequest request, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+        if (!isHttpProtocol(request.getQuery()) && !isHttpsProtocol(request.getQuery())) {
+            throw new IOException("Unsupported protocol '" + request.getQuery().getProtocol() + "'");
         }
 
-        if (!requestScheme.isSecureRequest(query)) {
-            throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + query + "'");
+        if (!requestScheme.isSecureRequest(request.getQuery())) {
+            throw new IOException("Insecure protocol for " + requestScheme + " auth on '" + request.getQuery() + "'");
         }
 
-        Proxy proxy = getProxy(query);
+        Proxy proxy = getProxy(request.getQuery());
 
-        HttpURLConnection connection = openConnection(query, mediaTypes, langs, requestScheme, proxy);
+        HttpURLConnection connection = openConnection(request, requestScheme, proxy);
 
         switch (ResponseType.parse(connection.getResponseCode())) {
             case REDIRECTION:
-                return redirect(connection, mediaTypes, langs, redirects);
+                return redirect(connection, request, redirects);
             case SUCCESSFUL:
                 return getBody(connection);
             case CLIENT_ERROR:
-                return recoverClientError(connection, mediaTypes, langs, redirects, requestScheme);
+                return recoverClientError(connection, request, redirects, requestScheme);
             default:
                 throw getError(connection);
         }
     }
 
-    private HttpURLConnection openConnection(URL query, List<MediaType> mediaTypes, String langs, AuthSchemeHelper requestScheme, Proxy proxy) throws IOException {
-        HttpURLConnection result = factory.openConnection(query, proxy);
+    private HttpURLConnection openConnection(HttpRequest request, AuthSchemeHelper requestScheme, Proxy proxy) throws IOException {
+        HttpURLConnection result = factory.openConnection(request.getQuery(), proxy);
         result.setReadTimeout(context.getReadTimeout());
         result.setConnectTimeout(context.getConnectTimeout());
 
@@ -91,11 +86,11 @@ final class DefaultClient implements Client {
         }
 
         Map<String, List<String>> headers = new HttpHeadersBuilder()
-                .put(HTTP_ACCEPT_HEADER, toAcceptHeader(mediaTypes))
-                .put(HTTP_ACCEPT_LANGUAGE_HEADER, langs)
+                .put(HTTP_ACCEPT_HEADER, toAcceptHeader(request.getMediaTypes()))
+                .put(HTTP_ACCEPT_LANGUAGE_HEADER, request.getLangs())
                 .put(HTTP_ACCEPT_ENCODING_HEADER, getEncodingHeader())
                 .put(HTTP_USER_AGENT_HEADER, context.getUserAgent())
-                .put(requestScheme.getRequestHeaders(query, context.getAuthenticator()))
+                .put(requestScheme.getRequestHeaders(request.getQuery(), context.getAuthenticator()))
                 .build();
 
         result.setRequestMethod("GET");
@@ -103,7 +98,7 @@ final class DefaultClient implements Client {
         HttpHeadersBuilder.keyValues(headers)
                 .forEach(header -> result.setRequestProperty(header.getKey(), header.getValue()));
 
-        context.getListener().onOpen(query, mediaTypes, langs, proxy, requestScheme.authScheme);
+        context.getListener().onOpen(request, proxy, requestScheme.authScheme);
 
         result.connect();
 
@@ -113,7 +108,7 @@ final class DefaultClient implements Client {
     private String getEncodingHeader() {
         return context.getDecoders()
                 .stream()
-                .map(HttpRest.StreamDecoder::getName)
+                .map(StreamDecoder::getName)
                 .collect(Collectors.joining(", "));
     }
 
@@ -126,8 +121,8 @@ final class DefaultClient implements Client {
         return proxies.isEmpty() ? Proxy.NO_PROXY : proxies.get(0);
     }
 
-    private Response redirect(HttpURLConnection connection, List<MediaType> mediaTypes, String langs, int redirects) throws IOException {
-        URL oldUrl;
+    private HttpResponse redirect(HttpURLConnection connection, HttpRequest request, int redirects) throws IOException {
+        final URL oldUrl = request.getQuery();
         URL newUrl;
         try {
             if (redirects == context.getMaxRedirects()) {
@@ -139,7 +134,6 @@ final class DefaultClient implements Client {
                 throw new IOException("Missing redirection url");
             }
 
-            oldUrl = connection.getURL();
             newUrl = new URL(oldUrl, URLDecoder.decode(location, StandardCharsets.UTF_8.name()));
         } finally {
             doClose(connection);
@@ -149,16 +143,16 @@ final class DefaultClient implements Client {
             throw new IOException("Downgrading protocol on redirect from '" + oldUrl + "' to '" + newUrl + "'");
         }
 
-        context.getListener().onRedirection(connection.getURL(), newUrl);
-        return open(newUrl, mediaTypes, langs, redirects + 1, getPreemptiveAuthScheme());
+        context.getListener().onRedirection(oldUrl, newUrl);
+        return open(request.toBuilder().query(newUrl).build(), redirects + 1, getPreemptiveAuthScheme());
     }
 
-    private Response recoverClientError(HttpURLConnection connection, List<MediaType> mediaTypes, String langs, int redirects, AuthSchemeHelper requestScheme) throws IOException {
+    private HttpResponse recoverClientError(HttpURLConnection connection, HttpRequest request, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
             AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
             if (!requestScheme.equals(responseScheme)) {
                 context.getListener().onUnauthorized(connection.getURL(), requestScheme.authScheme, responseScheme.authScheme);
-                return open(connection.getURL(), mediaTypes, langs, redirects + 1, responseScheme);
+                return open(request, redirects + 1, responseScheme);
             }
             context.getAuthenticator().invalidate(connection.getURL());
         }
@@ -166,7 +160,7 @@ final class DefaultClient implements Client {
         throw getError(connection);
     }
 
-    private Response getBody(HttpURLConnection connection) throws IOException {
+    private HttpResponse getBody(HttpURLConnection connection) throws IOException {
         DefaultResponse result = new DefaultResponse(connection, context.getDecoders());
         context.getListener().onSuccess(result.getContentType());
         return result;
@@ -174,7 +168,7 @@ final class DefaultClient implements Client {
 
     private IOException getError(HttpURLConnection connection) throws IOException {
         try {
-            return new ResponseError(connection.getResponseCode(), connection.getResponseMessage(), connection.getHeaderFields());
+            return new HttpResponseException(connection.getResponseCode(), connection.getResponseMessage(), connection.getHeaderFields());
         } finally {
             doClose(connection);
         }
@@ -190,14 +184,14 @@ final class DefaultClient implements Client {
 
     @lombok.AllArgsConstructor
     private enum AuthSchemeHelper {
-        BASIC(AuthScheme.BASIC) {
+        BASIC(HttpAuthScheme.BASIC) {
             @Override
             boolean isSecureRequest(URL url) {
                 return isHttpsProtocol(url);
             }
 
             @Override
-            Map<String, List<String>> getRequestHeaders(URL url, HttpRest.Authenticator authenticator) {
+            Map<String, List<String>> getRequestHeaders(URL url, HttpAuthenticator authenticator) {
                 PasswordAuthentication auth = authenticator.getPasswordAuthentication(url);
                 return auth != null ? new HttpHeadersBuilder().put(HTTP_AUTHORIZATION_HEADER, getBasicAuthHeader(auth)).build() : emptyMap();
             }
@@ -208,14 +202,14 @@ final class DefaultClient implements Client {
                 return value != null && value.startsWith("Basic");
             }
         },
-        NONE(AuthScheme.NONE) {
+        NONE(HttpAuthScheme.NONE) {
             @Override
             boolean isSecureRequest(URL query) {
                 return true;
             }
 
             @Override
-            Map<String, List<String>> getRequestHeaders(URL query, HttpRest.Authenticator authenticator) {
+            Map<String, List<String>> getRequestHeaders(URL query, HttpAuthenticator authenticator) {
                 return emptyMap();
             }
 
@@ -225,11 +219,11 @@ final class DefaultClient implements Client {
             }
         };
 
-        private final AuthScheme authScheme;
+        private final HttpAuthScheme authScheme;
 
         abstract boolean isSecureRequest(URL query);
 
-        abstract Map<String, List<String>> getRequestHeaders(URL query, HttpRest.Authenticator authenticator);
+        abstract Map<String, List<String>> getRequestHeaders(URL query, HttpAuthenticator authenticator);
 
         abstract boolean hasResponseHeader(HttpURLConnection http) throws IOException;
 
@@ -256,7 +250,7 @@ final class DefaultClient implements Client {
     }
 
     @lombok.RequiredArgsConstructor
-    private static final class DefaultResponse implements Response {
+    private static final class DefaultResponse implements HttpResponse {
 
         @lombok.NonNull
         private final HttpURLConnection conn;

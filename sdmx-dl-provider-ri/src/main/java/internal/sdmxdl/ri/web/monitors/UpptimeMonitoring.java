@@ -1,7 +1,7 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import internal.sdmxdl.ri.web.RestClients;
-import internal.util.rest.HttpRest;
+import internal.sdmxdl.ri.web.RiHttpUtils;
+import internal.util.http.HttpClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -38,7 +38,7 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         SdmxWebMonitorReports reports = cache.getWebMonitorReports(key);
 
         if (reports == null) {
-            reports = createReports(HttpRest.newClient(RestClients.getRestContext(source, context)), id, cache.getClock());
+            reports = createReports(RiHttpUtils.newClient(RiHttpUtils.newContext(source, context)), id, cache.getClock());
             cache.putWebMonitorReports(key, reports);
         }
 
@@ -58,7 +58,7 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
         }
     }
 
-    private SdmxWebMonitorReports createReports(HttpRest.Client client, UpptimeId id, Clock clock) throws IOException {
+    private SdmxWebMonitorReports createReports(HttpClient client, UpptimeId id, Clock clock) throws IOException {
         return SdmxWebMonitorReports
                 .builder()
                 .provider(getProviderName())

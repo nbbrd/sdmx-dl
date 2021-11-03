@@ -1,7 +1,8 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.HttpEventListener;
+import internal.util.http.HttpRequest;
+import internal.util.http.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebListener;
@@ -12,15 +13,19 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static internal.util.rest.HttpRest.AuthScheme.BASIC;
-import static internal.util.rest.HttpRest.AuthScheme.NONE;
+import static internal.util.http.HttpAuthScheme.BASIC;
+import static internal.util.http.HttpAuthScheme.NONE;
 import static java.net.Proxy.NO_PROXY;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-public class RestClientsTest {
+public class RiHttpUtilsTest {
+
+    @Test
+    public void testFactory() {
+        assertThatNullPointerException()
+                .isThrownBy(() -> RiHttpUtils.newClient(null));
+    }
 
     SdmxWebSource source = SdmxWebSource
             .builder()
@@ -35,16 +40,16 @@ public class RestClientsTest {
                 .builder()
                 .build();
 
-        assertThat(RestClients.getRestContext(source, webContext).getUserAgent())
+        assertThat(RiHttpUtils.newContext(source, webContext).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        String previous = System.setProperty(RestClients.HTTP_AGENT, "hello world");
+        String previous = System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), "hello world");
         try {
-            assertThat(RestClients.getRestContext(source, webContext).getUserAgent())
+            assertThat(RiHttpUtils.newContext(source, webContext).getUserAgent())
                     .startsWith("hello world");
         } finally {
             if (previous != null)
-                System.setProperty(RestClients.HTTP_AGENT, previous);
+                System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), previous);
         }
     }
 
@@ -58,15 +63,20 @@ public class RestClientsTest {
                 .eventListener(events)
                 .build();
 
-        HttpRest.EventListener x = RestClients.getRestContext(source, webContext).getListener();
+        HttpEventListener x = RiHttpUtils.newContext(source, webContext).getListener();
+
+        HttpRequest request = HttpRequest
+                .builder()
+                .query(source.getEndpoint())
+                .mediaType(MediaType.ANY_TYPE)
+                .langs("fr")
+                .build();
 
         assertThatNullPointerException().isThrownBy(() -> x.onEvent(null));
         assertThatNullPointerException().isThrownBy(() -> x.onSuccess(null));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(null, emptyList(), "", NO_PROXY, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(source.getEndpoint(), null, "", NO_PROXY, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(source.getEndpoint(), emptyList(), null, NO_PROXY, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(source.getEndpoint(), emptyList(), "", null, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onOpen(source.getEndpoint(), emptyList(), "", NO_PROXY, null));
+        assertThatNullPointerException().isThrownBy(() -> x.onOpen(null, NO_PROXY, BASIC));
+        assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, null, BASIC));
+        assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, NO_PROXY, null));
         assertThatNullPointerException().isThrownBy(() -> x.onRedirection(null, source.getEndpoint()));
         assertThatNullPointerException().isThrownBy(() -> x.onRedirection(source.getEndpoint(), null));
         assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(null, NONE, BASIC));
@@ -79,16 +89,16 @@ public class RestClientsTest {
         x.onSuccess(MediaType.ANY_TYPE);
         assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*'"));
 
-        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", NO_PROXY, NONE);
+        x.onOpen(request, NO_PROXY, NONE);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost"));
 
-        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", NO_PROXY, BASIC);
+        x.onOpen(request, NO_PROXY, BASIC);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with auth 'BASIC'"));
 
-        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", customProxy, NONE);
+        x.onOpen(request, customProxy, NONE);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
 
-        x.onOpen(source.getEndpoint(), singletonList(MediaType.ANY_TYPE), "fr", customProxy, BASIC);
+        x.onOpen(request, customProxy, BASIC);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
 
         x.onRedirection(source.getEndpoint(), new URL("http://other"));

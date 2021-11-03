@@ -16,19 +16,24 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.*;
+import internal.util.http.ext.DumpingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.BaseProperty;
+import nbbrd.io.text.Formatter;
+import nbbrd.io.text.Parser;
+import nbbrd.io.text.Property;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.spi.SdmxWebContext;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
@@ -42,7 +47,7 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class RestClients {
+public class RiHttpUtils {
 
     public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
             CONNECT_TIMEOUT_PROPERTY,
@@ -51,29 +56,52 @@ public class RestClients {
             PREEMPTIVE_AUTHENTICATION_PROPERTY
     );
 
-    public static HttpRest.@NonNull Context getRestContext(@NonNull SdmxWebSource o, @NonNull SdmxWebContext context) {
-        return HttpRest.Context
+    // TODO: document these options?
+    @VisibleForTesting
+    static final Property<File> SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY =
+            Property.of("sdmxdl.ri.web.dump.folder", null, Parser.onFile(), Formatter.onFile());
+
+    @VisibleForTesting
+    static final Property<String> HTTP_AGENT =
+            Property.of("http.agent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
+
+    public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull LanguagePriorityList langs) {
+        return HttpRequest
                 .builder()
-                .readTimeout(READ_TIMEOUT_PROPERTY.get(o.getProperties()))
-                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(o.getProperties()))
-                .maxRedirects(MAX_REDIRECTS_PROPERTY.get(o.getProperties()))
-                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(o.getProperties()))
-                .proxySelector(context.getNetwork()::getProxySelector)
-                .sslSocketFactory(context.getNetwork()::getSslSocketFactory)
-                .hostnameVerifier(context.getNetwork()::getHostnameVerifier)
-                .listener(new DefaultEventListener(o, context.getEventListener()))
-                .authenticator(new DefaultAuthenticator(o, context.getAuthenticators(), context.getEventListener()))
-                .userAgent(System.getProperty(HTTP_AGENT, DEFAULT_USER_AGENT))
+                .query(query)
+                .mediaTypes(mediaTypes)
+                .langs(langs.toString())
                 .build();
     }
 
-    @VisibleForTesting
-    static final String HTTP_AGENT = "http.agent";
+    public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
+        HttpClient result = new DefaultHttpClient(context, HttpURLConnectionFactoryLoader.get());
+        File dumpFile = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
+        return dumpFile != null ? newDumpingClient(context, result, dumpFile) : result;
+    }
 
-    private static final String DEFAULT_USER_AGENT = About.NAME + "/" + About.VERSION;
+    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFile) {
+        return new DumpingClient(dumpFile.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
+    }
+
+    public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) {
+        return HttpContext
+                .builder()
+                .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
+                .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
+                .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
+                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(source.getProperties()))
+                .proxySelector(context.getNetwork()::getProxySelector)
+                .sslSocketFactory(context.getNetwork()::getSslSocketFactory)
+                .hostnameVerifier(context.getNetwork()::getHostnameVerifier)
+                .listener(new RiHttpEventListener(source, context.getEventListener()))
+                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getEventListener()))
+                .userAgent(HTTP_AGENT.get(System.getProperties()))
+                .build();
+    }
 
     @lombok.AllArgsConstructor
-    private static final class DefaultEventListener implements HttpRest.EventListener {
+    private static final class RiHttpEventListener implements HttpEventListener {
 
         @lombok.NonNull
         private final SdmxWebSource source;
@@ -82,15 +110,13 @@ public class RestClients {
         private final SdmxWebListener listener;
 
         @Override
-        public void onOpen(URL query, List<MediaType> mediaTypes, String langs, Proxy proxy, HttpRest.AuthScheme scheme) {
-            Objects.requireNonNull(query);
-            Objects.requireNonNull(mediaTypes);
-            Objects.requireNonNull(langs);
+        public void onOpen(HttpRequest request, Proxy proxy, HttpAuthScheme scheme) {
+            Objects.requireNonNull(request);
             Objects.requireNonNull(proxy);
             Objects.requireNonNull(scheme);
             if (listener.isEnabled()) {
-                String message = SdmxWebEvents.onQuery(query, proxy);
-                if (!HttpRest.AuthScheme.NONE.equals(scheme)) {
+                String message = SdmxWebEvents.onQuery(request.getQuery(), proxy);
+                if (!HttpAuthScheme.NONE.equals(scheme)) {
                     message += " with auth '" + scheme.name() + "'";
                 }
                 listener.onWebSourceEvent(source, message);
@@ -115,7 +141,7 @@ public class RestClients {
         }
 
         @Override
-        public void onUnauthorized(URL url, HttpRest.AuthScheme oldScheme, HttpRest.AuthScheme newScheme) {
+        public void onUnauthorized(URL url, HttpAuthScheme oldScheme, HttpAuthScheme newScheme) {
             Objects.requireNonNull(url);
             Objects.requireNonNull(oldScheme);
             Objects.requireNonNull(newScheme);
@@ -134,7 +160,7 @@ public class RestClients {
     }
 
     @lombok.AllArgsConstructor
-    private static final class DefaultAuthenticator implements HttpRest.Authenticator {
+    private static final class RiHttpAuthenticator implements HttpAuthenticator {
 
         @lombok.NonNull
         private final SdmxWebSource source;

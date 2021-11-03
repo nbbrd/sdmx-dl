@@ -16,14 +16,12 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.util.rest.HttpRest;
-import internal.util.rest.InterceptingClient;
-import internal.util.rest.MediaType;
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.*;
+import internal.util.http.ext.InterceptingClient;
 import nbbrd.io.Resource;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
@@ -45,11 +43,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
+import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 import static internal.sdmxdl.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -76,7 +74,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
             .name(RI_EUROSTAT)
             .rank(NATIVE_RANK)
             .client(EurostatDriver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
             .source(SdmxWebSource
@@ -99,7 +97,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX21"),
-                new InterceptingClient(HttpRest.newClient(fixCompression(RestClients.getRestContext(s, c))), (client, q, m, l, r) -> checkCodesInMessageFooter(client, r, asyncSleepTime, asyncMaxRetries)),
+                new InterceptingClient(RiHttpUtils.newClient(fixCompression(RiHttpUtils.newContext(s, c))), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)),
                 new EurostatRestQueries(),
                 new Sdmx21RestParsers(),
                 false
@@ -112,32 +110,32 @@ public final class EurostatDriver2 implements SdmxWebDriver {
     }
 
     @SdmxFix(id = 2, category = PROTOCOL, cause = "SSL exception if backend is schannel and compression requested")
-    private static HttpRest.Context fixCompression(HttpRest.Context context) {
+    private static HttpContext fixCompression(HttpContext context) {
         return context.toBuilder().clearDecoders().build();
     }
 
     @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
-    private static HttpRest.Response checkCodesInMessageFooter(HttpRest.Client client, HttpRest.Response result, long asyncSleepTime, int asyncMaxRetries) throws IOException {
+    private static HttpResponse checkCodesInMessageFooter(HttpClient client, HttpResponse result, long asyncSleepTime, int asyncMaxRetries) throws IOException {
         if (result.getContentType().isCompatible(SDMX_GENERIC_XML)) {
             MessageFooter messageFooter = parseMessageFooter(result);
             Optional<URL> asyncURL = getAsyncURL(messageFooter);
             if (asyncURL.isPresent()) {
                 return requestAsync(client, asyncURL.get(), asyncSleepTime, asyncMaxRetries);
             }
-            throw getResponseError(messageFooter);
+            throw getResponseException(messageFooter);
         }
         return result;
     }
 
     private static final MediaType SDMX_GENERIC_XML = MediaType.parse("application/vnd.sdmx.generic+xml; version=2.1");
 
-    private static MessageFooter parseMessageFooter(HttpRest.Response result) throws IOException {
+    private static MessageFooter parseMessageFooter(HttpResponse result) throws IOException {
         return withCharset(SdmxXmlStreams.messageFooter21(ANY), result.getContentType().getCharset())
                 .parseStream(result::getBody);
     }
 
-    private static HttpRest.ResponseError getResponseError(MessageFooter messageFooter) {
-        return new HttpRest.ResponseError(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()), Collections.emptyMap());
+    private static HttpResponseException getResponseException(MessageFooter messageFooter) {
+        return new HttpResponseException(messageFooter.getCode(), String.join(System.lineSeparator(), messageFooter.getTexts()));
     }
 
     private static Optional<URL> getAsyncURL(MessageFooter messageFooter) {
@@ -146,12 +144,13 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                 : Optional.empty();
     }
 
-    private static HttpRest.Response requestAsync(HttpRest.Client client, URL url, long sleepTimeInMillis, int retries) throws IOException {
+    private static HttpResponse requestAsync(HttpClient client, URL url, long sleepTimeInMillis, int retries) throws IOException {
+        HttpRequest request = newRequest(url, singletonList(MediaType.ANY_TYPE), ANY);
         for (int i = 1; i <= retries; i++) {
             sleep(sleepTimeInMillis);
             try {
-                return new AsyncResponse(client.requestGET(url, singletonList(MediaType.ANY_TYPE), ANY.toString()));
-            } catch (HttpRest.ResponseError ex) {
+                return new AsyncResponse(client.requestGET(request));
+            } catch (HttpResponseException ex) {
                 if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                     throw ex;
                 }
@@ -175,21 +174,21 @@ public final class EurostatDriver2 implements SdmxWebDriver {
         }
 
         @Override
-        public RestQueryBuilder getFlowsQuery(URL endpoint) {
+        public URLQueryBuilder getFlowsQuery(URL endpoint) {
             return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, fixAgencyId(FLOWS));
         }
 
         @Override
-        public RestQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
+        public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
             return super.getFlowQuery(endpoint, fixAgencyId(ref));
         }
     }
 
     @lombok.AllArgsConstructor
-    private static final class AsyncResponse implements HttpRest.Response {
+    private static final class AsyncResponse implements HttpResponse {
 
         @lombok.NonNull
-        private final HttpRest.Response zipResponse;
+        private final HttpResponse zipResponse;
 
         @Override
         public @NonNull MediaType getContentType() {

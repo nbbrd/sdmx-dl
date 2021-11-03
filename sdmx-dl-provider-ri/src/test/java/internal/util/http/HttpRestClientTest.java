@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -50,7 +50,7 @@ import static sdmxdl.ext.SdmxMediaType.*;
  */
 public abstract class HttpRestClientTest {
 
-    abstract protected HttpRest.Client getRestClient(HttpRest.Context context);
+    abstract protected HttpClient getRestClient(HttpContext context);
 
     abstract protected WireMockConfiguration getWireMockConfiguration();
 
@@ -61,35 +61,35 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testNPE() {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(null, emptyList(), ""));
+                .isThrownBy(() -> x.requestGET(new HttpRequest(null, emptyList(), "")));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(new URL("http://here"), null, ""));
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://here"), null, "")));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(new URL("http://here"), emptyList(), null));
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://here"), emptyList(), null)));
     }
 
     @Test
     public void testHttpOK() throws IOException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .userAgent("hello world")
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
             assertSameSampleContent(response);
         }
 
@@ -106,35 +106,35 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testMultiMediaTypes() throws IOException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         List<MediaType> mediaTypes = asList(GENERIC_DATA_21_TYPE, STRUCTURE_SPECIFIC_DATA_21_TYPE);
 
-        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), mediaTypes, ANY_LANG)) {
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), mediaTypes, ANY_LANG))) {
             assertSameSampleContent(response);
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                .withHeader(HTTP_ACCEPT_HEADER, equalTo(DefaultClient.toAcceptHeader(mediaTypes)))
+                .withHeader(HTTP_ACCEPT_HEADER, equalTo(DefaultHttpClient.toAcceptHeader(mediaTypes)))
         );
     }
 
     @Test
     public void testHttpError() {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         String customErrorMessage = "Custom error message";
 
@@ -147,12 +147,12 @@ public abstract class HttpRestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XML_TYPE), ANY_LANG)))
                 .withMessage("500: " + customErrorMessage)
-                .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
-                    assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
-                    assertThat(o.getResponseMessage()).isEqualTo(customErrorMessage);
-                    assertThat(o.getHeaderFields()).containsEntry("key", singletonList("value"));
+                .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
+                    assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
+                    assertThat(ex.getResponseMessage()).isEqualTo(customErrorMessage);
+                    assertThat(ex.getHeaderFields()).containsEntry("key", singletonList("value"));
                 });
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -160,37 +160,37 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testInvalidProtocol() {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new URL("ftp://localhost"), singletonList(XML_TYPE), ""))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("ftp://localhost"), singletonList(XML_TYPE), "")))
                 .withMessage("Unsupported protocol 'ftp'");
     }
 
     @Test
     public void testInvalidHost() {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new URL("http://localhoooooost"), singletonList(XML_TYPE), ""))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://localhoooooost"), singletonList(XML_TYPE), "")))
                 .isInstanceOf(UnknownHostException.class)
                 .withMessage("localhoooooost");
     }
 
     @Test
     public void testRedirect() throws IOException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
@@ -201,7 +201,7 @@ public abstract class HttpRestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatCode(() -> {
-                    try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+                    try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
                         assertSameSampleContent(response);
                     }
                 })
@@ -213,13 +213,13 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testMaxRedirect() throws MalformedURLException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .maxRedirects(0)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
@@ -230,7 +230,7 @@ public abstract class HttpRestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
-                        .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                        .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                         .describedAs("Max redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                         .withMessage("Max redirection reached");
             }
@@ -239,19 +239,19 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testInvalidRedirect() throws MalformedURLException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                     .describedAs("Invalid redirect: code %s from '%s'", redirection, wireURL(SAMPLE_URL))
                     .withMessage("Missing redirection url");
         }
@@ -259,12 +259,12 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testDowngradingRedirect() throws MalformedURLException {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         String location = wireHttpUrl(SECOND_URL);
 
@@ -274,7 +274,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                     .describedAs("Downgrading protocol on redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                     .withMessageContaining("Downgrading protocol on redirect");
         }
@@ -282,16 +282,16 @@ public abstract class HttpRestClientTest {
 
     @Test
     public void testInvalidSSL() {
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                 .isInstanceOf(SSLException.class);
     }
 
@@ -302,39 +302,39 @@ public abstract class HttpRestClientTest {
 
         int readTimeout = 1000;
 
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .readTimeout(readTimeout)
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(readTimeout * 2)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                 .withMessageContaining("Read timed out");
     }
 
     @Test
     public void testValidAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            HttpRest.Context context = HttpRest.Context
+            HttpContext context = HttpContext
                     .builder()
                     .sslSocketFactory(this::wireSSLSocketFactory)
                     .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpRest.Client x = getRestClient(context);
+            HttpClient x = getRestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
                 assertSameSampleContent(response);
             }
 
@@ -345,25 +345,25 @@ public abstract class HttpRestClientTest {
     @Test
     public void testNoAuth() {
         for (boolean preemptive : new boolean[]{false, true}) {
-            HttpRest.Context context = HttpRest.Context
+            HttpContext context = HttpContext
                     .builder()
                     .sslSocketFactory(this::wireSSLSocketFactory)
                     .hostnameVerifier(this::wireHostnameVerifier)
-                    .authenticator(HttpRest.Authenticator.noOp())
+                    .authenticator(HttpAuthenticator.noOp())
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpRest.Client x = getRestClient(context);
+            HttpClient x = getRestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                     .withMessage("401: Unauthorized")
-                    .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
-                        assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
-                        assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
+                    .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
+                        assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
+                        assertThat(ex.getResponseMessage()).isEqualTo("Unauthorized");
                     });
 
             wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -373,14 +373,14 @@ public abstract class HttpRestClientTest {
     @Test
     public void testInvalidAuth() {
         for (boolean preemptive : new boolean[]{false, true}) {
-            HttpRest.Context context = HttpRest.Context
+            HttpContext context = HttpContext
                     .builder()
                     .sslSocketFactory(this::wireSSLSocketFactory)
                     .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "xyz"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpRest.Client x = getRestClient(context);
+            HttpClient x = getRestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -388,11 +388,11 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                     .withMessage("401: Unauthorized")
-                    .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
-                        assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
-                        assertThat(o.getResponseMessage()).isEqualTo("Unauthorized");
+                    .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
+                        assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
+                        assertThat(ex.getResponseMessage()).isEqualTo("Unauthorized");
                     });
 
             wire.verify(preemptive ? 1 : 2, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -402,14 +402,14 @@ public abstract class HttpRestClientTest {
     @Test
     public void testInsecureAuth() throws MalformedURLException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            HttpRest.Context context = HttpRest.Context
+            HttpContext context = HttpContext
                     .builder()
                     .sslSocketFactory(this::wireSSLSocketFactory)
                     .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpRest.Client x = getRestClient(context);
+            HttpClient x = getRestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -418,7 +418,7 @@ public abstract class HttpRestClientTest {
             String location = wireHttpUrl(SAMPLE_URL);
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new URL(location), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(new URL(location), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
                     .withMessageContaining("Insecure protocol");
 
             wire.verify(preemptive ? 0 : 1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -428,20 +428,20 @@ public abstract class HttpRestClientTest {
     @Test
     public void testMissingAuth() throws IOException {
         for (boolean preemptive : new boolean[]{false, true}) {
-            HttpRest.Context context = HttpRest.Context
+            HttpContext context = HttpContext
                     .builder()
                     .sslSocketFactory(this::wireSSLSocketFactory)
                     .hostnameVerifier(this::wireHostnameVerifier)
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpRest.Client x = getRestClient(context);
+            HttpClient x = getRestClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
                 assertSameSampleContent(response);
             }
 
@@ -483,15 +483,15 @@ public abstract class HttpRestClientTest {
                 .replace(Integer.toString(wire.getRuntimeInfo().getHttpsPort()), Integer.toString(wire.getRuntimeInfo().getHttpPort()));
     }
 
-    protected void assertSameSampleContent(HttpRest.Response response) throws IOException {
+    protected void assertSameSampleContent(HttpResponse response) throws IOException {
         assertThat(response.getContentType()).isEqualTo(XML_TYPE);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }
     }
 
-    private HttpRest.Authenticator authenticatorOf(String username, String password) {
-        return new HttpRest.Authenticator() {
+    private HttpAuthenticator authenticatorOf(String username, String password) {
+        return new HttpAuthenticator() {
             @Override
             public @NonNull PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
                 return new PasswordAuthentication(username, password.toCharArray());

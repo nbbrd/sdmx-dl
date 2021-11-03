@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestParsers;
 import internal.sdmxdl.ri.web.DotStatRestQueries;
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -47,7 +47,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .name(RI_DOTSTAT)
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("OECD")

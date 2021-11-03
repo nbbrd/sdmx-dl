@@ -14,8 +14,9 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
+import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

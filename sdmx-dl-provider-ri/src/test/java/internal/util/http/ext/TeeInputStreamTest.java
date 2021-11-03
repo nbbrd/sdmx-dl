@@ -1,4 +1,4 @@
-package internal.util.rest;
+package internal.util.http.ext;
 
 import org.junit.jupiter.api.Test;
 

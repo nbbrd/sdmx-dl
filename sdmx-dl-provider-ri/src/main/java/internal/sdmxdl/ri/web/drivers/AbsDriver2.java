@@ -18,9 +18,9 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestParsers;
 import internal.sdmxdl.ri.web.DotStatRestQueries;
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -53,7 +53,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .name(RI_ABS)
             .rank(NATIVE_RANK)
             .client(AbsDriver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("ABS")
@@ -76,12 +76,12 @@ public final class AbsDriver2 implements SdmxWebDriver {
         private static final String AGENCY = "ABS";
 
         @Override
-        public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+        public URLQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
             return super.getStructureQuery(endpoint, ref).path(AGENCY);
         }
 
         @Override
-        public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
             return super.getDataQuery(endpoint, flowRef, key, filter).path(AGENCY);
         }
     }

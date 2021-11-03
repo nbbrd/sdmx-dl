@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.URLQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
@@ -9,32 +9,32 @@ import java.net.URL;
 public class DotStatRestQueries implements RiRestQueries {
 
     @Override
-    public RestQueryBuilder getFlowsQuery(URL endpoint) {
-        return RestQueryBuilder
+    public URLQueryBuilder getFlowsQuery(URL endpoint) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path("ALL");
     }
 
     @Override
-    public RestQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
-        return RestQueryBuilder
+    public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path(ref.getId());
     }
 
     @Override
-    public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
-        return RestQueryBuilder
+    public URLQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(DATASTRUCTURE_RESOURCE)
                 .path(ref.getId());
     }
 
     @Override
-    public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-        return RestQueryBuilder
+    public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)
                 .path(flowRef.getId())
@@ -43,7 +43,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public @NonNull RestQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+    public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
         throw new UnsupportedOperationException("codelist");
     }
 

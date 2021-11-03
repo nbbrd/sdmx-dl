@@ -1,5 +1,9 @@
-package internal.util.rest;
+package internal.util.http.ext;
 
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.MediaType;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.text.Parser;
@@ -13,10 +17,11 @@ import wiremock.org.apache.http.impl.io.EmptyInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -31,13 +36,7 @@ public class DumpingClientTest {
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(null, mediaTypes, langs));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(url, null, langs));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(url, mediaTypes, null));
+                .isThrownBy(() -> x.requestGET(null));
 
         assertThat(stack).isEmpty();
     }
@@ -49,7 +48,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
-        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+        try (HttpResponse r = x.requestGET(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -72,7 +71,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(nonEmpty), stack::add);
 
-        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+        try (HttpResponse r = x.requestGET(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -97,7 +96,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnGetBody), stack::add);
 
-        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+        try (HttpResponse r = x.requestGET(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -124,7 +123,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnRead), stack::add);
 
-        try (HttpRest.Response r = x.requestGET(url, mediaTypes, langs)) {
+        try (HttpResponse r = x.requestGET(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -142,12 +141,13 @@ public class DumpingClientTest {
         }
     }
 
-    private final URL url = Parser.onURL().parseValue("http://localhost").orElseThrow(RuntimeException::new);
-    private final List<MediaType> mediaTypes = Collections.emptyList();
-    private final String langs = "";
+    private final HttpRequest request = HttpRequest
+            .builder()
+            .query(Parser.onURL().parseValue("http://localhost").orElseThrow(RuntimeException::new))
+            .build();
 
     @lombok.AllArgsConstructor(staticName = "of")
-    private static final class MockedClient implements HttpRest.Client {
+    private static final class MockedClient implements HttpClient {
 
         public static MockedClient ofBody(IOSupplier<InputStream> body) {
             return of(() -> MockedResponse.ofBody(body));
@@ -157,16 +157,16 @@ public class DumpingClientTest {
         private final IOSupplier<MockedResponse> response;
 
         @Override
-        public HttpRest.@NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
-            Objects.requireNonNull(query);
-            Objects.requireNonNull(mediaTypes);
-            Objects.requireNonNull(langs);
+        public @NonNull HttpResponse requestGET(HttpRequest httpRequest) throws IOException {
+            Objects.requireNonNull(httpRequest.getQuery());
+            Objects.requireNonNull(httpRequest.getMediaTypes());
+            Objects.requireNonNull(httpRequest.getLangs());
             return response.getWithIO();
         }
     }
 
     @lombok.Builder
-    public static final class MockedResponse implements HttpRest.Response {
+    public static final class MockedResponse implements HttpResponse {
 
         public static MockedResponse ofBody(IOSupplier<InputStream> body) {
             return builder().body(body).build();

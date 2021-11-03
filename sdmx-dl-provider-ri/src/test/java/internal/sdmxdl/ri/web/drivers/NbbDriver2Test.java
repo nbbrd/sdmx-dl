@@ -18,8 +18,8 @@ package internal.sdmxdl.ri.web.drivers;
 
 import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.sdmxdl.ri.web.RiRestClient;
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.HttpResponseException;
+import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
 import sdmxdl.DataflowRef;
@@ -81,7 +81,7 @@ public class NbbDriver2Test {
                     newClient(response).getFlows();
                 })
                 .withMessage("503: Service unavailable")
-                .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
+                .isInstanceOfSatisfying(HttpResponseException.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAVAILABLE);
                     assertThat(o.getResponseMessage()).isEqualTo("Service unavailable");
                     assertThat(o.getHeaderFields()).isEmpty();
@@ -104,7 +104,7 @@ public class NbbDriver2Test {
     }
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
-        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (query, mediaType, langs) -> response);
+        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (httpRequest) -> response);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

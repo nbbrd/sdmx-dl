@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,50 +28,50 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 /**
  * @author Philippe Charles
  */
-public class RestQueryBuilderTest {
+public class URLQueryBuilderTest {
 
     @Test
     @SuppressWarnings("null")
     public void test() throws IOException {
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(null));
+                .isThrownBy(() -> URLQueryBuilder.of(null));
 
         URL endpoint = new URL("http://localhost");
 
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(endpoint).path((String) null));
+                .isThrownBy(() -> URLQueryBuilder.of(endpoint).path((String) null));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(endpoint).path((List<String>) null));
+                .isThrownBy(() -> URLQueryBuilder.of(endpoint).path((List<String>) null));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(endpoint).param(null, ""));
+                .isThrownBy(() -> URLQueryBuilder.of(endpoint).param(null, ""));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> RestQueryBuilder.of(endpoint).param("", null));
+                .isThrownBy(() -> URLQueryBuilder.of(endpoint).param("", null));
 
-        assertThat(RestQueryBuilder.of(endpoint).build())
+        assertThat(URLQueryBuilder.of(endpoint).build())
                 .hasToString("http://localhost");
 
-        assertThat(RestQueryBuilder.of(endpoint).param("p1", "v1").param("p&=2", "v&=2").build())
+        assertThat(URLQueryBuilder.of(endpoint).param("p1", "v1").param("p&=2", "v&=2").build())
                 .hasToString("http://localhost?p1=v1&p%26%3D2=v%26%3D2");
 
-        assertThat(RestQueryBuilder.of(endpoint).path("hello").path("worl/d").build())
+        assertThat(URLQueryBuilder.of(endpoint).path("hello").path("worl/d").build())
                 .hasToString("http://localhost/hello/worl%2Fd");
 
-        assertThat(RestQueryBuilder.of(endpoint).path("hello").path("worl/d").param("p1", "v1").param("p&=2", "v&=2").build())
+        assertThat(URLQueryBuilder.of(endpoint).path("hello").path("worl/d").param("p1", "v1").param("p&=2", "v&=2").build())
                 .hasToString("http://localhost/hello/worl%2Fd?p1=v1&p%26%3D2=v%26%3D2");
 
-        assertThat(RestQueryBuilder.of(endpoint).trailingSlash(true).build())
+        assertThat(URLQueryBuilder.of(endpoint).trailingSlash(true).build())
                 .hasToString("http://localhost/");
 
-        assertThat(RestQueryBuilder.of(endpoint).trailingSlash(true).param("p1", "v1").param("p&=2", "v&=2").build())
+        assertThat(URLQueryBuilder.of(endpoint).trailingSlash(true).param("p1", "v1").param("p&=2", "v&=2").build())
                 .hasToString("http://localhost/?p1=v1&p%26%3D2=v%26%3D2");
 
-        assertThat(RestQueryBuilder.of(endpoint).trailingSlash(true).path("hello").path("worl/d").build())
+        assertThat(URLQueryBuilder.of(endpoint).trailingSlash(true).path("hello").path("worl/d").build())
                 .hasToString("http://localhost/hello/worl%2Fd/");
 
-        assertThat(RestQueryBuilder.of(endpoint).trailingSlash(true).path("hello").path("worl/d").param("p1", "v1").param("p&=2", "v&=2").build())
+        assertThat(URLQueryBuilder.of(endpoint).trailingSlash(true).path("hello").path("worl/d").param("p1", "v1").param("p&=2", "v&=2").build())
                 .hasToString("http://localhost/hello/worl%2Fd/?p1=v1&p%26%3D2=v%26%3D2");
     }
 }

@@ -1,8 +1,9 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.DumpingClientTest;
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpResponseException;
+import internal.util.http.MediaType;
+import internal.util.http.ext.DumpingClientTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
@@ -14,7 +15,6 @@ import sdmxdl.util.parser.ObsFactories;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
@@ -30,7 +30,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getFlow(BAD_FLOW_REF))
                 .withMessageContaining(BAD_FLOW_REF.toString());
 
-        assertThatExceptionOfType(HttpRest.ResponseError.class)
+        assertThatExceptionOfType(HttpResponseException.class)
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getFlow(BAD_FLOW_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
@@ -47,7 +47,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getStructure(BAD_STRUCT_REF))
                 .withMessageContaining(BAD_STRUCT_REF.toString());
 
-        assertThatExceptionOfType(HttpRest.ResponseError.class)
+        assertThatExceptionOfType(HttpResponseException.class)
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getStructure(BAD_STRUCT_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
@@ -65,7 +65,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_NOT_FOUND)).getCodelist(BAD_CODELIST_REF))
                 .withMessageContaining(BAD_CODELIST_REF.toString());
 
-        assertThatExceptionOfType(HttpRest.ResponseError.class)
+        assertThatExceptionOfType(HttpResponseException.class)
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getCodelist(BAD_CODELIST_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
@@ -83,7 +83,7 @@ public class RiRestClientTest {
                 );
     }
 
-    private static RiRestClient of(HttpRest.Client executor) throws MalformedURLException {
+    private static RiRestClient of(HttpClient executor) throws MalformedURLException {
         return new RiRestClient(
                 "abc",
                 new URL("http://localhost"),
@@ -96,14 +96,14 @@ public class RiRestClientTest {
         );
     }
 
-    private static HttpRest.Client onResponseError(int responseCode) {
-        return (query, mediaTypes, langs) -> {
-            throw new HttpRest.ResponseError(responseCode, "", Collections.emptyMap());
+    private static HttpClient onResponseError(int responseCode) {
+        return (httpRequest) -> {
+            throw new HttpResponseException(responseCode, "");
         };
     }
 
-    private static HttpRest.Client onResponseStream(ByteSource byteSource) {
-        return (url, mediaTypes, langs) -> DumpingClientTest.MockedResponse
+    private static HttpClient onResponseStream(ByteSource byteSource) {
+        return (httpRequest) -> DumpingClientTest.MockedResponse
                 .builder()
                 .body(byteSource::openStream)
                 .mediaType(() -> MediaType.parse(SdmxMediaType.GENERIC_XML))

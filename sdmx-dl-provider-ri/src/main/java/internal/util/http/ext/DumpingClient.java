@@ -1,44 +1,44 @@
-package internal.util.rest;
+package internal.util.http.ext;
 
-import internal.util.rest.HttpRest.Client;
-import internal.util.rest.HttpRest.Response;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.MediaType;
 import nbbrd.io.Resource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Consumer;
 
 @lombok.AllArgsConstructor
-final class DumpingClient implements Client {
+public final class DumpingClient implements HttpClient {
 
     @lombok.NonNull
     private final Path folder;
 
     @lombok.NonNull
-    private final Client delegate;
+    private final HttpClient delegate;
 
     @lombok.NonNull
     private final Consumer<? super Path> onDump;
 
     @Override
-    public @NonNull Response requestGET(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull String langs) throws IOException {
-        return new DumpingResponse(folder, delegate.requestGET(query, mediaTypes, langs), onDump);
+    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
+        return new DumpingResponse(folder, delegate.requestGET(request), onDump);
     }
 
     @lombok.AllArgsConstructor
-    private static final class DumpingResponse implements Response {
+    private static final class DumpingResponse implements HttpResponse {
 
         @lombok.NonNull
         private final Path folder;
 
         @lombok.NonNull
-        private final Response delegate;
+        private final HttpResponse delegate;
 
         @lombok.NonNull
         private final Consumer<? super Path> onDump;

@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.MediaType;
+import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;

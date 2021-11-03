@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.rest;
+package internal.util.http;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -31,7 +31,7 @@ import java.util.*;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class RestQueryBuilder {
+public final class URLQueryBuilder {
 
     @lombok.NonNull
     private final URL endPoint;
@@ -50,7 +50,7 @@ public final class RestQueryBuilder {
      * @see <a href="https://en.wikipedia.org/wiki/URI_normalization">https://en.wikipedia.org/wiki/URI_normalization</a>
      */
     @NonNull
-    public RestQueryBuilder trailingSlash(boolean trailingSlash) {
+    public URLQueryBuilder trailingSlash(boolean trailingSlash) {
         this.trailingSlash = trailingSlash;
         return this;
     }
@@ -63,7 +63,7 @@ public final class RestQueryBuilder {
      * @throws NullPointerException if path is null
      */
     @NonNull
-    public RestQueryBuilder path(@NonNull String path) {
+    public URLQueryBuilder path(@NonNull String path) {
         Objects.requireNonNull(path);
         paths.add(path);
         return this;
@@ -77,7 +77,7 @@ public final class RestQueryBuilder {
      * @throws NullPointerException if path is null
      */
     @NonNull
-    public RestQueryBuilder path(@NonNull List<String> path) {
+    public URLQueryBuilder path(@NonNull List<String> path) {
         Objects.requireNonNull(path);
         paths.addAll(path);
         return this;
@@ -92,7 +92,7 @@ public final class RestQueryBuilder {
      * @throws NullPointerException if key or value is null
      */
     @NonNull
-    public RestQueryBuilder param(@NonNull String key, @NonNull String value) {
+    public URLQueryBuilder param(@NonNull String key, @NonNull String value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         params.put(key, value);

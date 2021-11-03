@@ -18,12 +18,10 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestParsers;
 import internal.sdmxdl.ri.web.DotStatRestQueries;
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
-import internal.util.rest.HttpRest;
-import internal.util.rest.InterceptingClient;
-import internal.util.rest.MediaType;
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.*;
+import internal.util.http.ext.InterceptingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -62,7 +60,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
             .name(RI_NBB)
             .rank(NATIVE_RANK)
             .client(NbbDriver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("NBB")
@@ -80,21 +78,21 @@ public final class NbbDriver2 implements SdmxWebDriver {
                 s.getEndpoint(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX20"),
-                HttpRest.newClient(RestClients.getRestContext(s, c))
+                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c))
         );
     }
 
     @VisibleForTesting
-    static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull ObsFactory obsFactory, HttpRest.@NonNull Client executor) {
+    static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull ObsFactory obsFactory, @NonNull HttpClient executor) {
         return new RiRestClient(name, endpoint, langs, obsFactory,
-                new InterceptingClient(executor, (client, q, m, l, r) -> checkInternalErrorRedirect(r)),
+                new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),
                 new DotStatRestParsers(),
                 false);
     }
 
     @SdmxFix(id = 2, category = PROTOCOL, cause = "Some internal errors redirect to an HTML page")
-    static HttpRest.Response checkInternalErrorRedirect(HttpRest.Response result) throws IOException {
+    static HttpResponse checkInternalErrorRedirect(HttpResponse result) throws IOException {
         if (result.getContentType().isCompatible(HTML_TYPE)) {
             throw SERVICE_UNAVAILABLE;
         }
@@ -102,15 +100,15 @@ public final class NbbDriver2 implements SdmxWebDriver {
     }
 
     private static final MediaType HTML_TYPE = new MediaType("text", "html", emptyMap());
-    private static final HttpRest.ResponseError SERVICE_UNAVAILABLE = new HttpRest.ResponseError(HTTP_UNAVAILABLE, "Service unavailable", emptyMap());
+    private static final HttpResponseException SERVICE_UNAVAILABLE = new HttpResponseException(HTTP_UNAVAILABLE, "Service unavailable");
 
     @VisibleForTesting
     static final class NbbQueries extends DotStatRestQueries {
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-            return RestQueryBuilder
+        public URLQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
+            return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)
                     .path(flowRef.getId())

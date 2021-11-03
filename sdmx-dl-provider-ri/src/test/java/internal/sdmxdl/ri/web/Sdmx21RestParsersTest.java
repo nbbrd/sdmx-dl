@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.MediaType;
+import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static internal.sdmxdl.ri.web.Sdmx21RestParsers.*;
-import static internal.util.rest.MediaType.ANY_TYPE;
+import static internal.util.http.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static sdmxdl.LanguagePriorityList.ANY;

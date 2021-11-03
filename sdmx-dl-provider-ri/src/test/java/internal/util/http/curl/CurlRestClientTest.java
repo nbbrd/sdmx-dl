@@ -18,7 +18,7 @@ package internal.util.http.curl;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import internal.util.http.HttpURLConnectionFactory;
-import internal.util.rest.DefaultClientTest;
+import internal.util.http.DefaultHttpClientTest;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Disabled;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * @author Philippe Charles
  */
-public class CurlRestClientTest extends DefaultClientTest {
+public class CurlRestClientTest extends DefaultHttpClientTest {
 
     @Override
     protected HttpURLConnectionFactory getURLConnectionFactory() {

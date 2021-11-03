@@ -1,6 +1,5 @@
-package internal.util.rest;
+package internal.util.http;
 
-import internal.util.http.HttpURLConnectionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -14,23 +13,23 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public abstract class DefaultClientTest extends HttpRestClientTest {
+public abstract class DefaultHttpClientTest extends HttpRestClientTest {
 
     abstract protected HttpURLConnectionFactory getURLConnectionFactory();
 
     abstract protected boolean isHttpsURLConnectionSupported();
 
     @Override
-    protected HttpRest.Client getRestClient(HttpRest.Context context) {
-        return new DefaultClient(context, getURLConnectionFactory());
+    protected HttpClient getRestClient(HttpContext context) {
+        return new DefaultHttpClient(context, getURLConnectionFactory());
     }
 
     @Test
     public void testToAcceptHeader() {
-        assertThat(DefaultClient.toAcceptHeader(emptyList()))
+        assertThat(DefaultHttpClient.toAcceptHeader(emptyList()))
                 .isEqualTo("");
 
-        assertThat(DefaultClient.toAcceptHeader(asList(MediaType.parse("text/html"), MediaType.parse("application/xhtml+xml"))))
+        assertThat(DefaultHttpClient.toAcceptHeader(asList(MediaType.parse("text/html"), MediaType.parse("application/xhtml+xml"))))
                 .isEqualTo("text/html, application/xhtml+xml");
     }
 
@@ -40,13 +39,13 @@ public abstract class DefaultClientTest extends HttpRestClientTest {
         AtomicInteger sslSocketFactoryCount = new AtomicInteger();
         AtomicInteger hostnameVerifierCount = new AtomicInteger();
 
-        HttpRest.Context context = HttpRest.Context
+        HttpContext context = HttpContext
                 .builder()
                 .proxySelector(counting(ProxySelector::getDefault, proxySelectorCount))
                 .sslSocketFactory(counting(this::wireSSLSocketFactory, sslSocketFactoryCount))
                 .hostnameVerifier(counting(this::wireHostnameVerifier, hostnameVerifierCount))
                 .build();
-        HttpRest.Client x = getRestClient(context);
+        HttpClient x = getRestClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -55,7 +54,7 @@ public abstract class DefaultClientTest extends HttpRestClientTest {
         assertThat(sslSocketFactoryCount).hasValue(0);
         assertThat(hostnameVerifierCount).hasValue(0);
 
-        try (HttpRest.Response response = x.requestGET(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)) {
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
             assertSameSampleContent(response);
         }
 

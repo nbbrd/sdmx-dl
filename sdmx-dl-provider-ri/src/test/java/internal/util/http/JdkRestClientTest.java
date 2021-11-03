@@ -17,12 +17,11 @@
 package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import internal.util.rest.DefaultClientTest;
 
 /**
  * @author Philippe Charles
  */
-public class JdkRestClientTest extends DefaultClientTest {
+public class JdkRestClientTest extends DefaultHttpClientTest {
 
     @Override
     protected HttpURLConnectionFactory getURLConnectionFactory() {

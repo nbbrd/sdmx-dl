@@ -16,12 +16,11 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.service.ServiceProvider;
@@ -56,7 +55,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
             .client(InseeClient::new)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("INSEE")
@@ -98,7 +97,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
                     s.getEndpoint(),
                     c.getLanguages(),
                     ObsFactories.getObsFactory(c, s, DIALECT),
-                    HttpRest.newClient(RestClients.getRestContext(s, c)),
+                    RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
                     new Sdmx21RestQueries(false),
                     new InseeRestParsers(),
                     true

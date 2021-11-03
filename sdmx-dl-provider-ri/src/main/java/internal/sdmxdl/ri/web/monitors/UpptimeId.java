@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.URLQueryBuilder;
 import nbbrd.design.StringValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -26,7 +26,7 @@ public class UpptimeId {
     }
 
     public @NonNull URL toSummaryURL() throws MalformedURLException {
-        return RestQueryBuilder
+        return URLQueryBuilder
                 .of(new URL("https://raw.githubusercontent.com"))
                 .path(owner)
                 .path(repo)

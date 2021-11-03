@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
@@ -50,7 +50,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
             .name(RI_SDMX_21)
             .rank(NATIVE_RANK)
             .client(Sdmx21Driver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedProperties(QUERIES_PROPERTIES)
             .supportedProperties(PARSERS_PROPERTIES)

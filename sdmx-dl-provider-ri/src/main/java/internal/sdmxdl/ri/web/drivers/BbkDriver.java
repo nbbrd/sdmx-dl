@@ -16,12 +16,12 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.util.rest.HttpRest;
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.HttpClient;
+import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -60,7 +60,7 @@ public final class BbkDriver implements SdmxWebDriver {
             .name(RI_BBK)
             .rank(NATIVE_RANK)
             .client(BbkDriver::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("BBK")
@@ -77,7 +77,7 @@ public final class BbkDriver implements SdmxWebDriver {
                 SdmxWebClient.getClientName(s),
                 s.getEndpoint(),
                 c.getLanguages(),
-                HttpRest.newClient(RestClients.getRestContext(s, c))
+                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c))
         );
     }
 
@@ -88,7 +88,7 @@ public final class BbkDriver implements SdmxWebDriver {
         private static final BbkQueries QUERIES = new BbkQueries();
         private static final Sdmx21RestParsers PARSERS = new Sdmx21RestParsers();
 
-        public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
+        public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpClient executor) {
             super(name, endpoint, langs, OBS_FACTORY, executor, QUERIES, PARSERS, true);
         }
 
@@ -123,8 +123,8 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
         @Override
-        protected RestQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
-            RestQueryBuilder result = RestQueryBuilder
+        protected URLQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
+            URLQueryBuilder result = URLQueryBuilder
                     .of(endpoint)
                     .path("metadata")
                     .path(resourcePath)
@@ -137,8 +137,8 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected RestQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
-            return RestQueryBuilder
+        protected URLQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
+            return URLQueryBuilder
                     .of(endpoint)
                     .path(resourcePath)
                     .path(flowRef.getId())
@@ -147,7 +147,7 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 5, category = QUERY, cause = "Data detail parameter for series-keys-only has a typo")
         @Override
-        protected void applyFilter(DataFilter filter, RestQueryBuilder result) {
+        protected void applyFilter(DataFilter filter, URLQueryBuilder result) {
             if (filter.getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY)) {
                 result.param(DETAIL_PARAM, "serieskeyonly");
             } else {
