@@ -61,4 +61,8 @@ public class HttpContext {
                 .decoder(StreamDecoder.gzip())
                 .decoder(StreamDecoder.deflate());
     }
+
+    public static final class Builder {
+        // Fix javadoc compilation
+    }
 }
