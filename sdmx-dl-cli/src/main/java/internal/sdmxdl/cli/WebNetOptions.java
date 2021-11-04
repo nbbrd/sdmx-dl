@@ -23,6 +23,7 @@ import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.SdmxWebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.NetworkFactory;
@@ -31,6 +32,7 @@ import sdmxdl.kryo.KryoFileFormat;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.FileFormat;
+import sdmxdl.util.ext.MapCache;
 import sdmxdl.util.ext.VerboseCache;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebMonitorReports;
@@ -44,9 +46,11 @@ import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -83,7 +87,7 @@ public class WebNetOptions extends WebOptions {
                 .toBuilder()
                 .languages(langs)
                 .network(getNetworkFactory())
-                .cache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
+                .cache(new DryCache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions())))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -206,4 +210,56 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static final String CACHE_ANCHOR = "CCH";
+
+    private static final class DryCache implements SdmxCache {
+
+        private final SdmxCache delegate;
+        private final MapCache dry;
+
+        public DryCache(SdmxCache delegate) {
+            this.delegate = delegate;
+            this.dry = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), delegate.getClock());
+        }
+
+        @Override
+        public @NonNull Clock getClock() {
+            return delegate.getClock();
+        }
+
+        @Override
+        public @Nullable SdmxRepository getRepository(@NonNull String key) {
+            SdmxRepository result = dry.getRepository(key);
+            if (result == null) {
+                result = delegate.getRepository(key);
+                if (result != null) {
+                    dry.putRepository(key, result);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+            dry.putRepository(key, value);
+            delegate.putRepository(key, value);
+        }
+
+        @Override
+        public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+            SdmxWebMonitorReports result = dry.getWebMonitorReports(key);
+            if (result == null) {
+                result = delegate.getWebMonitorReports(key);
+                if (result != null) {
+                    dry.putWebMonitorReports(key, result);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
+            dry.putWebMonitorReports(key, value);
+            delegate.putWebMonitorReports(key, value);
+        }
+    }
 }

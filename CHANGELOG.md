@@ -12,14 +12,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add support of codelist in API [#158](https://github.com/nbbrd/sdmx-dl/issues/158)
 - Add native driver for INSEE [#157](https://github.com/nbbrd/sdmx-dl/issues/157)
 - Add native driver for Eurostat [#155](https://github.com/nbbrd/sdmx-dl/issues/155)
-- Improve error reporting in CLI
+- Add second layer of cache in CLI
 
 ### Changed
 
 - Refactor network API to avoid unnecessary resource loading
 - Invert default activation of automatic proxy detection
+- Replace multiple parameters with DataRef in API 
 
 ### Fixed
+- Improve error reporting in CLI
 
 ## [3.0.0-beta.4] - 2021-10-21
 
