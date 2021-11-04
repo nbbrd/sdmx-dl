@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add support of codelist in API [#158](https://github.com/nbbrd/sdmx-dl/issues/158)
 - Add native driver for INSEE [#157](https://github.com/nbbrd/sdmx-dl/issues/157)
 - Add native driver for Eurostat [#155](https://github.com/nbbrd/sdmx-dl/issues/155)
+- Improve error reporting in CLI
 
 ### Changed
 

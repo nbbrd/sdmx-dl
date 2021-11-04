@@ -17,7 +17,9 @@
 package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.AuthOptions;
+import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.SslOptions;
+import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.SdmxWebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -29,6 +31,7 @@ import sdmxdl.kryo.KryoFileFormat;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.FileFormat;
+import sdmxdl.util.ext.VerboseCache;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebSource;
@@ -44,6 +47,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -79,7 +83,7 @@ public class WebNetOptions extends WebOptions {
                 .toBuilder()
                 .languages(langs)
                 .network(getNetworkFactory())
-                .cache(getCache())
+                .cache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -144,25 +148,43 @@ public class WebNetOptions extends WebOptions {
         }
     }
 
-    private SdmxCache getCache() {
-        return networkOptions.getCacheOptions().isNoCache()
-                ? SdmxCache.noOp()
-                : FileCache
+    private static SdmxCache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+        if (cacheOptions.isNoCache()) {
+            return SdmxCache.noOp();
+        }
+        FileCache fileCache = getFileCache(cacheOptions, verboseOptions);
+        if (verboseOptions.isVerbose()) {
+            verboseOptions.reportToErrorStream(CACHE_ANCHOR, "Using cache folder '" + fileCache.getRoot() + "'");
+        }
+        return getVerboseCache(fileCache, verboseOptions);
+    }
+
+    private static FileCache getFileCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+        return FileCache
                 .builder()
-                .repositoryFormat(getRepositoryFormat())
-                .monitorFormat(getMonitorFormat())
-                .onIOException((msg, ex) -> getVerboseOptions().reportToErrorStream("CACHE", msg, ex))
+                .repositoryFormat(getRepositoryFormat(cacheOptions))
+                .monitorFormat(getMonitorFormat(cacheOptions))
+                .onIOException(verboseOptions.isVerbose() ? (msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex) : (msg, ex) -> {
+                })
                 .build();
     }
 
-    private FileFormat<SdmxRepository> getRepositoryFormat() {
+    private static FileFormat<SdmxRepository> getRepositoryFormat(CacheOptions cacheOptions) {
         FileFormat<SdmxRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
-        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
+        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
-    private FileFormat<SdmxWebMonitorReports> getMonitorFormat() {
+    private static FileFormat<SdmxWebMonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
         FileFormat<SdmxWebMonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
-        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
+        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
+    }
+
+    private static SdmxCache getVerboseCache(SdmxCache delegate, VerboseOptions options) {
+        if (options.isVerbose()) {
+            BiConsumer<String, Boolean> listener = (key, hit) -> options.reportToErrorStream(CACHE_ANCHOR, (hit ? "Hit " : "Miss ") + key);
+            return new VerboseCache(delegate, listener, listener);
+        }
+        return delegate;
     }
 
     private List<SdmxWebAuthenticator> getAuthenticators() {
@@ -182,4 +204,6 @@ public class WebNetOptions extends WebOptions {
         }
         return result;
     }
+
+    private static final String CACHE_ANCHOR = "CCH";
 }

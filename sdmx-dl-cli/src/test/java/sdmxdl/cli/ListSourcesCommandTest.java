@@ -40,7 +40,7 @@ public class ListSourcesCommandTest {
         assertThat(watcher.getOut())
                 .isEmpty();
         assertThat(watcher.getErr())
-                .contains("[CONFIG] Using source file '" + src.getPath() + "'")
+                .contains("[CFG] Using source file '" + src.getPath() + "'")
                 .doesNotContain("[SSL] Initializing SSL factory");
 
         assertThat(FileSample.readAll(out))

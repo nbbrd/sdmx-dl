@@ -25,6 +25,7 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
@@ -112,7 +113,7 @@ public class SdmxWebManager implements SdmxManager {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
         return getConnection(source);
     }
@@ -134,7 +135,7 @@ public class SdmxWebManager implements SdmxManager {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
         return getMonitorReport(source);
     }
@@ -166,21 +167,21 @@ public class SdmxWebManager implements SdmxManager {
         }
     }
 
-    private Optional<SdmxWebSource> lookupSource(String sourceName) {
-        return Optional.ofNullable(getSources().get(sourceName));
+    private Optional<SdmxWebSource> lookupSource(String name) {
+        return Optional.ofNullable(getSources().get(name));
     }
 
-    private Optional<SdmxWebDriver> lookupDriver(String driverName) {
+    private Optional<SdmxWebDriver> lookupDriver(String name) {
         return drivers
                 .stream()
-                .filter(webDriver -> driverName.equals(webDriver.getName()))
+                .filter(driver -> name.equals(driver.getName()))
                 .findFirst();
     }
 
-    private Optional<SdmxWebMonitoring> lookupMonitoring(String monitoringName) {
+    private Optional<SdmxWebMonitoring> lookupMonitoring(String name) {
         return monitorings
                 .stream()
-                .filter(monitoring -> monitoringName.equals(monitoring.getProviderName()))
+                .filter(monitoring -> name.equals(monitoring.getProviderName()))
                 .findFirst();
     }
 

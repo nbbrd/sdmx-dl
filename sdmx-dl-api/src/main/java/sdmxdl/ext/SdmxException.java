@@ -31,6 +31,11 @@ public final class SdmxException extends IOException {
         return new SdmxException(source, "Connection closed");
     }
 
+    public static @NonNull SdmxException missingSource(@NonNull String source, @NonNull Class<?> type) {
+        Objects.requireNonNull(source);
+        return new SdmxException(source, "Missing " + type.getSimpleName() + " '" + source + "'");
+    }
+
     public static @NonNull SdmxException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
         Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing flow '" + ref + "'");

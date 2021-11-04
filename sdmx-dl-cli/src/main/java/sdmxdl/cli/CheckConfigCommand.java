@@ -73,7 +73,7 @@ public final class CheckConfigCommand implements Callable<Void> {
         return ConfigHelper
                 .builder()
                 .appName(About.NAME)
-                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream("CONFIG", path.toString(), ex))
+                .onLoadingError((path, ex) -> verboseOptions.reportToErrorStream("CFG", path.toString(), ex))
                 .build();
     }
 

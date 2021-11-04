@@ -19,10 +19,12 @@ package sdmxdl.repo;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxConnection;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.SdmxException;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Philippe Charles
@@ -31,7 +33,6 @@ import java.util.Objects;
 @lombok.Builder(toBuilder = true)
 public class SdmxRepositoryManager implements SdmxManager {
 
-    @lombok.NonNull
     @lombok.Singular
     List<SdmxRepository> repositories;
 
@@ -39,15 +40,19 @@ public class SdmxRepositoryManager implements SdmxManager {
     public SdmxConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
 
-        return repositories.stream()
-                .filter(o -> o.getName().equals(name))
-                .findFirst()
-                .orElseThrow(() -> new IOException("Cannot find '" + name + "'"))
+        return lookupSource(name)
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxRepository.class))
                 .asConnection();
     }
 
     @Override
     public LanguagePriorityList getLanguages() {
         return LanguagePriorityList.ANY;
+    }
+
+    private Optional<SdmxRepository> lookupSource(String name) {
+        return repositories.stream()
+                .filter(repository -> repository.getName().equals(name))
+                .findFirst();
     }
 }
