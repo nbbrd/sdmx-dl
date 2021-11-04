@@ -68,35 +68,40 @@ final class SdmxRestConnection implements SdmxWebConnection {
     }
 
     @Override
-    public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        try (DataCursor cursor = getDataCursor(flowRef, key, filter)) {
+    public List<Series> getData(DataRef dataRef) throws IOException {
+        try (DataCursor cursor = getDataCursor(dataRef)) {
             return cursor.toStream().collect(Collectors.toList());
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        DataCursor cursor = getDataCursor(flowRef, key, filter);
+    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
+        DataCursor cursor = getDataCursor(dataRef);
         return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override
-    public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
         checkState();
 
-        DataStructureRef structRef = client.peekStructureRef(flowRef);
+        DataflowRef flowRef = dataRef.getFlowRef();
+        DataStructureRef structRef = client.peekStructureRef(dataRef.getFlowRef());
+
         if (structRef == null) {
-            Dataflow flow = client.getFlow(flowRef);
+            Dataflow flow = client.getFlow(dataRef.getFlowRef());
             structRef = flow.getStructureRef();
             flowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
         }
+
+        Key key = dataRef.getKey();
+        DataFilter filter = dataRef.getFilter();
 
         DataStructure structure = client.getStructure(structRef);
         checkKey(key, structure);
 
         return isDetailSupported()
-                ? client.getData(new DataRef(flowRef, key, filter), structure)
-                : client.getData(new DataRef(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
+                ? client.getData(DataRef.of(flowRef, key, filter), structure)
+                : client.getData(DataRef.of(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
     }
 
     @Override

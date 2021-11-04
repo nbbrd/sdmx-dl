@@ -32,7 +32,6 @@ import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.PeriodParsers;
-import sdmxdl.util.web.DataRef;
 import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -87,10 +86,13 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @Override
         public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-            if (ref.getKey().equals(Key.ALL)) {
-                ref = ref.toBuilder().key(alternateAllOf(dsd)).build();
-            }
-            return super.getData(ref, dsd);
+            return super.getData(fixDataRef(ref, dsd), dsd);
+        }
+
+        private DataRef fixDataRef(DataRef ref, DataStructure dsd) {
+            return ref.getKey().equals(Key.ALL)
+                    ? DataRef.of(ref.getFlowRef(), alternateAllOf(dsd), ref.getFilter())
+                    : ref;
         }
 
         @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")

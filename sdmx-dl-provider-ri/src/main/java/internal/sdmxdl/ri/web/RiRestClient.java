@@ -26,7 +26,7 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRef;
+import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;

@@ -96,8 +96,8 @@ public final class CheckRulesCommand implements Callable<Void> {
         static Target of(WebRequest request) {
             return new Target(
                     request.getSource(),
-                    request.getFlow(),
-                    request.getKey()
+                    request.getDataRef().getFlowRef(),
+                    request.getDataRef().getKey()
             );
         }
     }

@@ -4,7 +4,7 @@ import internal.util.http.URLQueryBuilder;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.web.DataRef;
+import sdmxdl.DataRef;
 
 import java.net.URL;
 

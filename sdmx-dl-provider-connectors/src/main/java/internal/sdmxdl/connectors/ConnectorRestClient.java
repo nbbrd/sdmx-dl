@@ -30,7 +30,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRef;
+import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;

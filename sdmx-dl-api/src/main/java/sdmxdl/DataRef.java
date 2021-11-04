@@ -14,17 +14,12 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.util.web;
-
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+package sdmxdl;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Value
-@lombok.Builder(toBuilder = true)
+@lombok.Value(staticConstructor = "of")
 public class DataRef {
 
     @lombok.NonNull

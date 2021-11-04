@@ -21,6 +21,7 @@ import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestConnection;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import sdmxdl.DataRef;
 
 import java.io.IOException;
 
@@ -139,26 +140,22 @@ public class FailsafeSdmxWebConnectionTest {
     public void testGetData() throws IOException {
         failsafe.reset();
         Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getData(null, TestConnection.KEY, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getData(TestConnection.FLOW_REF, null, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getData(TestConnection.FLOW_REF, TestConnection.KEY, null));
+                .isThrownBy(() -> validDriver.getData(null));
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getData(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER)).isEqualTo(TestConnection.DATA);
+        Assertions.assertThat(validDriver.getData(dataRef)).isEqualTo(TestConnection.DATA);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getData(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> failingDriver.getData(dataRef))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getData(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> nullDriver.getData(dataRef))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -167,27 +164,23 @@ public class FailsafeSdmxWebConnectionTest {
     public void testGetDataStream() throws IOException {
         failsafe.reset();
         Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataStream(null, TestConnection.KEY, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataStream(TestConnection.FLOW_REF, null, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, null));
+                .isThrownBy(() -> validDriver.getDataStream(null));
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+        Assertions.assertThat(validDriver.getDataStream(dataRef))
                 .containsExactlyElementsOf(TestConnection.DATA);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> failingDriver.getDataStream(dataRef))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getDataStream(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> nullDriver.getDataStream(dataRef))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -196,26 +189,22 @@ public class FailsafeSdmxWebConnectionTest {
     public void testGetDataCursor() throws IOException {
         failsafe.reset();
         Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataCursor(null, TestConnection.KEY, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataCursor(TestConnection.FLOW_REF, null, TestConnection.FILTER));
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataCursor(TestConnection.FLOW_REF, TestConnection.KEY, null));
+                .isThrownBy(() -> validDriver.getDataCursor(null));
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDataCursor(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER)).isNotNull();
+        Assertions.assertThat(validDriver.getDataCursor(dataRef)).isNotNull();
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getDataCursor(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> failingDriver.getDataCursor(dataRef))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getDataCursor(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER))
+                .isThrownBy(() -> nullDriver.getDataCursor(dataRef))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -251,4 +240,6 @@ public class FailsafeSdmxWebConnectionTest {
     private final FailsafeSdmxWebConnection validDriver = new FailsafeSdmxWebConnection(TestConnection.VALID, failsafe, failsafe);
     private final FailsafeSdmxWebConnection failingDriver = new FailsafeSdmxWebConnection(TestConnection.FAILING, failsafe, failsafe);
     private final FailsafeSdmxWebConnection nullDriver = new FailsafeSdmxWebConnection(TestConnection.NULL, failsafe, failsafe);
+
+    private final DataRef dataRef = DataRef.of(TestConnection.FLOW_REF, TestConnection.KEY, TestConnection.FILTER);
 }

@@ -38,7 +38,7 @@ public enum WebRule implements Function<WebResponse, String> {
     FLOW_INVALID_REF {
         @Override
         public String apply(WebResponse r) {
-            return r.hasFlow() && !r.getRequest().getFlow().containsRef(r.getFlow())
+            return r.hasFlow() && !r.getRequest().getDataRef().getFlowRef().containsRef(r.getFlow())
                     ? name()
                     : null;
         }

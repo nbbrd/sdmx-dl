@@ -25,7 +25,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.DataRef;
+import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;

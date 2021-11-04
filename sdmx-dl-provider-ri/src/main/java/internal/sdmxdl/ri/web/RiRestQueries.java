@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
-import sdmxdl.util.web.DataRef;
+import sdmxdl.DataRef;
 
 import java.net.URL;
 

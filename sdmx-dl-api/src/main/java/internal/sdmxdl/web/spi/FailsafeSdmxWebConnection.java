@@ -151,15 +151,13 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public Collection<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
+    public Collection<Series> getData(DataRef dataRef) throws IOException {
+        Objects.requireNonNull(dataRef);
 
         Collection<Series> result;
 
         try {
-            result = delegate.getData(flowRef, key, filter);
+            result = delegate.getData(dataRef);
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data", ex);
         }
@@ -172,15 +170,13 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
+    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
+        Objects.requireNonNull(dataRef);
 
         Stream<Series> result;
 
         try {
-            result = delegate.getDataStream(flowRef, key, filter);
+            result = delegate.getDataStream(dataRef);
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data stream", ex);
         }
@@ -193,15 +189,13 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
+    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
+        Objects.requireNonNull(dataRef);
 
         DataCursor result;
 
         try {
-            result = delegate.getDataCursor(flowRef, key, filter);
+            result = delegate.getDataCursor(dataRef);
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data cursor", ex);
         }

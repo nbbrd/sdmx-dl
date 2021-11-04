@@ -89,8 +89,8 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        try (DataCursor cursor = getDataCursor(flowRef, key, filter)) {
+    public List<Series> getData(DataRef dataRef) throws IOException {
+        try (DataCursor cursor = getDataCursor(dataRef)) {
             return cursor.toStream().collect(Collectors.toList());
         }
     }
@@ -102,8 +102,8 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        DataCursor cursor = getDataCursor(flowRef, key, filter);
+    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
+        DataCursor cursor = getDataCursor(dataRef);
         return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
     }
 
@@ -120,16 +120,14 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
         checkState();
-        checkFlowRef(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
+        checkFlowRef(dataRef.getFlowRef());
 
         SdmxFileInfo info = client.decode();
-        checkKey(key, info);
+        checkKey(dataRef.getKey(), info);
 
-        return client.loadData(info, dataflow.getRef(), key, filter);
+        return client.loadData(info, dataflow.getRef(), dataRef.getKey(), dataRef.getFilter());
     }
 
     @Override

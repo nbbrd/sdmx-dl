@@ -50,16 +50,16 @@ public interface SdmxFileConnection extends SdmxConnection {
 
     @NonNull
     default Collection<Series> getData(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
-        return getData(getDataflowRef(), key, filter);
+        return getData(DataRef.of(getDataflowRef(), key, filter));
     }
 
     @NonNull
     default Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
-        return getDataStream(getDataflowRef(), key, filter);
+        return getDataStream(DataRef.of(getDataflowRef(), key, filter));
     }
 
     @NonNull
     default DataCursor getDataCursor(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
-        return getDataCursor(getDataflowRef(), key, filter);
+        return getDataCursor(DataRef.of(getDataflowRef(), key, filter));
     }
 }

@@ -21,12 +21,12 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
+import sdmxdl.DataRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRef;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class NbbDriver2Test {
 
         NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.builder().flowRef(DataflowRef.parse("EXR")).key(Key.parse("AUD.M")).filter(FULL).build()))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), Key.parse("AUD.M"), FULL)))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }

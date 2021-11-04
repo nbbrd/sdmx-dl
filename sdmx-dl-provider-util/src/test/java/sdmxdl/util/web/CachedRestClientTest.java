@@ -102,7 +102,7 @@ public class CachedRestClientTest {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.getData(new DataRef(FLOW_REF, key, filter), STRUCT)) {
+                    try (DataCursor cursor = client.getData(DataRef.of(FLOW_REF, key, filter), STRUCT)) {
                         return cursor.toStream().collect(Collectors.toList());
                     }
                 };
@@ -129,7 +129,7 @@ public class CachedRestClientTest {
         CachedRestClient client = getClient(ctx);
 
         for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(new DataRef(FLOW_REF, key, filter), STRUCT).close();
+            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, key, filter), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);
