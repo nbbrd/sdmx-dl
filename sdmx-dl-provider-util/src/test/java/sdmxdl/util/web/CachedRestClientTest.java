@@ -25,8 +25,10 @@ import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.samples.RepoSamples;
+import sdmxdl.util.TypedId;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -45,14 +47,14 @@ import static sdmxdl.tck.KeyAssert.keys;
  */
 public class CachedRestClientTest {
 
-    private final String base = "abc/";
+    private final URI base = URI.create("cache:rest");
     private final Duration ttl = Duration.ofMillis(100);
 
-    private final String flowsId = idOf("flows://", base);
-    private final String flowId = idOf("flow://", base, FLOW_REF);
-    private final String structId = idOf("struct://", base, STRUCT_REF);
-    private final String seriesKeysOnlyId = idOf("seriesKeysOnly://", base, FLOW_REF);
-    private final String noDataId = idOf("noData://", base, FLOW_REF);
+    private final String flowsId = TypedId.resolveURI(base, "flows").toString();
+    private final String flowId = TypedId.resolveURI(base, "flow", FLOW_REF.toString()).toString();
+    private final String structId = TypedId.resolveURI(base, "struct", STRUCT_REF.toString()).toString();
+    private final String seriesKeysOnlyId = TypedId.resolveURI(base, "seriesKeysOnly", FLOW_REF.toString()).toString();
+    private final String noDataId = TypedId.resolveURI(base, "noData", FLOW_REF.toString()).toString();
 
     private CachedRestClient getClient(CachingAssert.Context ctx) {
         SdmxRestClient original = XRepoRestClient.of(RepoSamples.REPO);

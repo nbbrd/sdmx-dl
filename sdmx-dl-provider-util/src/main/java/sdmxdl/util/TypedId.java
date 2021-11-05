@@ -24,10 +24,17 @@ import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @param <T>
@@ -39,7 +46,7 @@ public final class TypedId<T> {
 
     @NonNull
     public static <T> TypedId<T> of(
-            @NonNull String content,
+            @NonNull URI content,
             @NonNull Function<SdmxRepository, T> loader,
             @NonNull Function<T, SdmxRepository> storer) {
         return new TypedId<>(content, loader, storer);
@@ -47,7 +54,7 @@ public final class TypedId<T> {
 
     @lombok.NonNull
     @lombok.Getter
-    private final String content;
+    private final URI content;
 
     @lombok.NonNull
     private final Function<SdmxRepository, T> loader;
@@ -58,12 +65,12 @@ public final class TypedId<T> {
     @NonNull
     public TypedId<T> with(@NonNull Object o) {
         Objects.requireNonNull(o);
-        return new TypedId<>(content + o, loader, storer);
+        return new TypedId<>(resolveURI(content, o.toString()), loader, storer);
     }
 
     @Nullable
     public T peek(@NonNull SdmxCache cache) {
-        SdmxRepository repo = cache.getRepository(content);
+        SdmxRepository repo = cache.getRepository(content.toString());
         return repo != null ? loader.apply(repo) : null;
     }
 
@@ -77,8 +84,20 @@ public final class TypedId<T> {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();
-            cache.putRepository(content, storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
+            cache.putRepository(content.toString(), storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
         }
         return result;
+    }
+
+    public static URI resolveURI(URI base, String... items) {
+        return URI.create(Stream.of(items)
+                .map(item -> {
+                    try {
+                        return URLEncoder.encode(item, StandardCharsets.UTF_8.name());
+                    } catch (UnsupportedEncodingException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                })
+                .collect(Collectors.joining("/", base + "/", "")));
     }
 }

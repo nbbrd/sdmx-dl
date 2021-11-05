@@ -25,6 +25,7 @@ import sdmxdl.util.TypedId;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 
@@ -40,8 +41,8 @@ final class CachedRestClient implements SdmxRestClient {
         return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
-    private static String getBase(SdmxWebSource source, LanguagePriorityList languages) {
-        return source.getEndpoint().getHost() + languages.toString() + "/";
+    private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+        return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
     }
 
     @lombok.NonNull
@@ -51,7 +52,7 @@ final class CachedRestClient implements SdmxRestClient {
     private final SdmxCache cache;
 
     @lombok.NonNull
-    private final String base;
+    private final URI base;
 
     @lombok.NonNull
     private final Duration ttl;
@@ -71,39 +72,39 @@ final class CachedRestClient implements SdmxRestClient {
     @lombok.Getter(lazy = true)
     private final TypedId<DataSet> idOfNoData = initIdOfNoData(base);
 
-    private static TypedId<List<Dataflow>> initIdOfFlows(String base) {
-        return TypedId.of("flows://" + base,
+    private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
+        return TypedId.of(base,
                 SdmxRepository::getFlows,
                 flows -> SdmxRepository.builder().flows(flows).build()
-        );
+        ).with("flows");
     }
 
-    private static TypedId<Dataflow> initIdOfFlow(String base) {
-        return TypedId.of("flow://" + base,
+    private static TypedId<Dataflow> initIdOfFlow(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getFlows().stream().findFirst().orElse(null),
                 flow -> SdmxRepository.builder().flow(flow).build()
-        );
+        ).with("flow");
     }
 
-    private static TypedId<DataStructure> initIdOfStruct(String base) {
-        return TypedId.of("struct://" + base,
+    private static TypedId<DataStructure> initIdOfStruct(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getStructures().stream().findFirst().orElse(null),
                 struct -> SdmxRepository.builder().structure(struct).build()
-        );
+        ).with("struct");
     }
 
-    private static TypedId<DataSet> initIdOfSeriesKeysOnly(String base) {
-        return TypedId.of("seriesKeysOnly://" + base,
+    private static TypedId<DataSet> initIdOfSeriesKeysOnly(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
-        );
+        ).with("seriesKeysOnly");
     }
 
-    private static TypedId<DataSet> initIdOfNoData(String base) {
-        return TypedId.of("noData://" + base,
+    private static TypedId<DataSet> initIdOfNoData(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> SdmxRepository.builder().dataSet(dataSet).build()
-        );
+        ).with("noData");
     }
 
     @Override

@@ -25,6 +25,7 @@ import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 
 /**
@@ -39,8 +40,8 @@ public final class CachedFileClient implements SdmxFileClient {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
 
-    private static String getBase(SdmxFileSource source, LanguagePriorityList languages) {
-        return source.getData().toString() + source.getStructure() + languages;
+    private static URI getBase(SdmxFileSource source, LanguagePriorityList languages) {
+        return TypedId.resolveURI(URI.create("cache:file"), source.getData().toString() + source.getStructure(), languages.toString());
     }
 
     // TODO: replace ttl with file last modification time
@@ -53,7 +54,7 @@ public final class CachedFileClient implements SdmxFileClient {
     private final SdmxCache cache;
 
     @lombok.NonNull
-    private final String base;
+    private final URI base;
 
     @lombok.Getter(lazy = true)
     private final TypedId<SdmxFileInfo> idOfDecode = initIdOfDecode(base);
@@ -61,18 +62,18 @@ public final class CachedFileClient implements SdmxFileClient {
     @lombok.Getter(lazy = true)
     private final TypedId<DataSet> idOfLoadData = initIdOfLoadData(base);
 
-    private static TypedId<SdmxFileInfo> initIdOfDecode(String base) {
-        return TypedId.of("decode://" + base,
+    private static TypedId<SdmxFileInfo> initIdOfDecode(URI base) {
+        return TypedId.of(base,
                 repo -> SdmxFileInfo.of(repo.getName(), repo.getStructures().stream().findFirst().orElse(null)),
                 info -> SdmxRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
-        );
+        ).with("decode");
     }
 
-    private static TypedId<DataSet> initIdOfLoadData(String base) {
-        return TypedId.of("loadData://" + base,
+    private static TypedId<DataSet> initIdOfLoadData(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 data -> SdmxRepository.builder().dataSet(data).build()
-        );
+        ).with("loadData");
     }
 
     @Override

@@ -13,6 +13,7 @@ import sdmxdl.Key;
 import sdmxdl.Series;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ import static sdmxdl.tck.KeyAssert.keys;
 
 public class CachedFileClientTest {
 
-    private final String base = "abc";
+    private final URI base = URI.create("cache:file");
     private final Duration ttl = CachedFileClient.DEFAULT_CACHE_TTL;
 
     private CachedFileClient getClient(CachingAssert.Context ctx) {
@@ -41,7 +42,7 @@ public class CachedFileClientTest {
 
     @Test
     public void testDecode() throws IOException {
-        String decodeKey = "decode://" + base;
+        String decodeKey = base + "/decode";
         Method<SdmxFileInfo> x = CachedFileClient::decode;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(XRepoFileClient.infoOf(REPO))), decodeKey, ttl);
@@ -49,7 +50,7 @@ public class CachedFileClientTest {
 
     @Test
     public void testLoadData() throws IOException {
-        String loadDataKey = "loadData://" + base;
+        String loadDataKey = base + "/loadData";
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
