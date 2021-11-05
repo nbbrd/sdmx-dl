@@ -92,6 +92,7 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
         }
     }
 
+    // TODO: move somewhere else
     public static void checkSource(@NonNull SdmxWebSource source, @NonNull String name) throws IllegalArgumentException {
         if (!source.getDriver().equals(name)) {
             throw new IllegalArgumentException(source.toString());

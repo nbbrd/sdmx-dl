@@ -87,6 +87,7 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull DataStructure dsd, @NonNull Formatter<LocalDateTime> formatter) {
+        // FIXME: dsd#getTimeDimensionId() might be null !
         return onTimeDimension(dsd.getTimeDimensionId(), formatter);
     }
 
