@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add native driver for INSEE [#157](https://github.com/nbbrd/sdmx-dl/issues/157)
 - Add native driver for Eurostat [#155](https://github.com/nbbrd/sdmx-dl/issues/155)
 - Add second layer of cache in CLI
+- Add availability check on driver SPI [#162](https://github.com/nbbrd/sdmx-dl/issues/162)
 
 ### Changed
 

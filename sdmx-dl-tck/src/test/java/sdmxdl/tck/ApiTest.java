@@ -45,6 +45,7 @@ public class ApiTest {
                 .builder()
                 .name("repoDriver")
                 .rank(0)
+                .available(true)
                 .repo(endpoint, RepoSamples.REPO)
                 .source(source)
                 .build();

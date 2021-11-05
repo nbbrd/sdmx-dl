@@ -23,6 +23,9 @@ public class MockedWebDriver implements SdmxWebDriver {
     @lombok.Getter
     private final int rank;
 
+    @lombok.Getter
+    private final boolean available;
+
     @lombok.Singular
     private final Map<URL, SdmxRepository> repos;
 

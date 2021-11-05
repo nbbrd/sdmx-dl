@@ -52,6 +52,11 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
     private final Collection<String> supportedProperties;
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);

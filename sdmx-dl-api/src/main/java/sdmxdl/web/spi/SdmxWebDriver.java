@@ -20,6 +20,7 @@ import internal.sdmxdl.web.spi.FailsafeSdmxWebDriver;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceFilter;
 import nbbrd.service.ServiceSorter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.web.SdmxWebConnection;
@@ -45,6 +46,9 @@ public interface SdmxWebDriver {
 
     @ServiceSorter(reverse = true)
     int getRank();
+
+    @ServiceFilter
+    boolean isAvailable();
 
     @NonNull
     SdmxWebConnection connect(
