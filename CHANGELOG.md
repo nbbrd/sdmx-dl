@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Refactor network API to avoid unnecessary resource loading
 - Invert default activation of automatic proxy detection
 - Replace multiple parameters with DataRef in API 
+- Improve network options
 
 ### Fixed
 - Improve error reporting in CLI

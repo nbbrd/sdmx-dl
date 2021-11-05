@@ -164,13 +164,17 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static FileCache getFileCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
-        return FileCache
+        FileCache.Builder result = FileCache
                 .builder()
                 .repositoryFormat(getRepositoryFormat(cacheOptions))
-                .monitorFormat(getMonitorFormat(cacheOptions))
-                .onIOException(verboseOptions.isVerbose() ? (msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex) : (msg, ex) -> {
-                })
-                .build();
+                .monitorFormat(getMonitorFormat(cacheOptions));
+        if (cacheOptions.getCache() != null) {
+            result.root(cacheOptions.getCache().toPath());
+        }
+        if (verboseOptions.isVerbose()) {
+            result.onIOException((msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex));
+        }
+        return result.build();
     }
 
     private static FileFormat<SdmxRepository> getRepositoryFormat(CacheOptions cacheOptions) {

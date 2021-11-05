@@ -10,9 +10,9 @@ import java.net.ProxySelector;
 public class ProxyOptions {
 
     @CommandLine.Option(
-            names = {"--auto-proxy-detection"},
+            names = {"--auto-proxy"},
             defaultValue = "false",
-            descriptionKey = "cli.autoProxyDetection"
+            descriptionKey = "cli.autoProxy"
     )
     boolean autoProxyDetection;
 
