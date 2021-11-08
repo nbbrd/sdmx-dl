@@ -14,7 +14,7 @@ public class SetupCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isNotEmpty().contains("generate-completion", "generate-launcher");
+        assertThat(watcher.getOut()).isNotEmpty().contains("completion", "launcher").doesNotContain("generate-");
         assertThat(watcher.getErr()).isEmpty();
     }
 }
