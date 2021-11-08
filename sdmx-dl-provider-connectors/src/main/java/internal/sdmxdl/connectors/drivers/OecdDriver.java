@@ -43,7 +43,7 @@ public final class OecdDriver implements SdmxWebDriver {
                     .name("OECD")
                     .description("The Organisation for Economic Co-operation and Development")
                     .driver(CONNECTORS_OECD)
-                    .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
+                    .uriOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:OECD")
                     .build())

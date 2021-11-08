@@ -85,7 +85,7 @@ public final class XmlWebSource {
                             item.dialect(reader.getElementText());
                             break;
                         case ENDPOINT_TAG:
-                            item.endpointOf(reader.getElementText());
+                            item.uriOf(reader.getElementText());
                             break;
                         case PROPERTY_TAG:
                             item.property(reader.getAttributeValue(null, KEY_ATTR), reader.getAttributeValue(null, VALUE_ATTR));
@@ -122,7 +122,7 @@ public final class XmlWebSource {
             writeTextElement(writer, DESCRIPTION_TAG, source.getDescription());
             writeTextElement(writer, DRIVER_TAG, source.getDriver());
             writeTextElement(writer, DIALECT_TAG, source.getDialect());
-            writeTextElement(writer, ENDPOINT_TAG, source.getEndpoint().toString());
+            writeTextElement(writer, ENDPOINT_TAG, source.getUri().toString());
             for (Map.Entry<String, String> property : source.getProperties().entrySet()) {
                 writer.writeStartElement(PROPERTY_TAG);
                 writer.writeAttribute(KEY_ATTR, property.getKey());

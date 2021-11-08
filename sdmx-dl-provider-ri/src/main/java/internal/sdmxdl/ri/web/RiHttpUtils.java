@@ -203,8 +203,8 @@ public class RiHttpUtils {
         }
 
         private boolean isDifferentAuthScope(URL url) {
-            return !url.getHost().equals(source.getEndpoint().getHost())
-                    || url.getPort() != source.getEndpoint().getPort();
+            return !url.getHost().equals(source.getUri().getHost())
+                    || url.getPort() != source.getUri().getPort();
         }
 
         private PasswordAuthentication getPasswordAuthentication(SdmxWebAuthenticator authenticator) {

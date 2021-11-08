@@ -63,7 +63,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .name("NBB")
                     .description("National Bank of Belgium")
                     .driver(RI_NBB)
-                    .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
+                    .uriOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:NBB")
                     .build())
@@ -72,7 +72,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
     private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return newClient(
                 s.getId(),
-                s.getEndpoint(),
+                s.getUri().toURL(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX20"),
                 RiHttpUtils.newClient(s, c)

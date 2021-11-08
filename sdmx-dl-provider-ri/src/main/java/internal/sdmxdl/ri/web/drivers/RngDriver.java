@@ -1,6 +1,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import nbbrd.io.text.BooleanProperty;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -12,10 +13,9 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.net.URI;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Objects;
@@ -56,7 +56,9 @@ public final class RngDriver implements SdmxWebDriver {
         Objects.requireNonNull(context);
         SdmxRestDriverSupport.checkSource(source, getName());
 
-        return new RngWebConnection(source.getId(), 3, 24, new Random(), System.currentTimeMillis());
+        RngConfig config = RngConfig.parse(source.getUri());
+
+        return new RngWebConnection(source.getId(), config);
     }
 
     @Override
@@ -67,7 +69,7 @@ public final class RngDriver implements SdmxWebDriver {
                         .name("RNG")
                         .description("Random number generator")
                         .driver(RI_RNG)
-                        .endpointOf("http://localhost")
+                        .uriOf("rng:3:4:0:2010-01-01")
                         .build()
         );
     }
@@ -77,6 +79,33 @@ public final class RngDriver implements SdmxWebDriver {
         return emptyList();
     }
 
+    @lombok.Value
+    private static class RngConfig {
+
+        int seriesCount;
+        int yearCount;
+        int seed;
+        LocalDateTime start;
+
+        static RngConfig parse(URI uri) throws IllegalArgumentException {
+            String[] tmp = uri.toString().split(":", -1);
+
+            if (tmp.length != 5) {
+                throw new IllegalArgumentException("Invalid uri");
+            }
+
+            return new RngConfig(
+                    INTEGER_PARSER.parseValue(tmp[1]).orElse(3),
+                    INTEGER_PARSER.parseValue(tmp[2]).orElse(4),
+                    INTEGER_PARSER.parseValue(tmp[3]).orElse(0),
+                    LOCAL_DATE_PARSER.parseValue(tmp[4]).map(LocalDate::atStartOfDay).orElse(LocalDate.of(2010, Month.JANUARY, 1).atStartOfDay())
+            );
+        }
+
+        private static final Parser<Integer> INTEGER_PARSER = Parser.onInteger();
+        private static final Parser<LocalDate> LOCAL_DATE_PARSER = Parser.onDateTimeFormatter(DateTimeFormatter.ISO_DATE, LocalDate::from);
+    }
+
     @lombok.AllArgsConstructor
     private static class RngWebConnection implements SdmxWebConnection {
 
@@ -84,10 +113,7 @@ public final class RngDriver implements SdmxWebDriver {
         private static final String INDEX = "INDEX";
 
         private final String name;
-        private final int seriesCount;
-        private final int obsCount;
-        private final Random rng;
-        private final long startTimeMillis;
+        private final RngConfig config;
 
         @Override
         public @NonNull Duration ping() {
@@ -139,7 +165,7 @@ public final class RngDriver implements SdmxWebDriver {
                                     .builder()
                                     .ref(CodelistRef.parse("CL_INDEX"))
                                     .codes(IntStream
-                                            .range(0, seriesCount)
+                                            .range(0, config.getSeriesCount())
                                             .mapToObj(String::valueOf)
                                             .collect(Collectors.toMap(series -> series, series -> "S" + series)))
                                     .build())
@@ -157,23 +183,28 @@ public final class RngDriver implements SdmxWebDriver {
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) {
-            LocalDateTime start = LocalDate.of(2010, Month.JANUARY, 1).atStartOfDay();
-            return Freq.stream().flatMap(freq -> newSeriesStream(freq, start, dataRef));
+            return Freq.stream().flatMap(freq -> newSeriesStream(freq, dataRef));
         }
 
-        private Stream<Series> newSeriesStream(Freq freq, LocalDateTime start, DataRef dataRef) {
+        private Stream<Series> newSeriesStream(Freq freq, DataRef dataRef) {
             return IntStream
-                    .range(0, seriesCount)
+                    .range(0, config.getSeriesCount())
                     .mapToObj(series -> Key.of(freq.name(), String.valueOf(series)))
                     .filter(dataRef.getKey()::contains)
-                    .map(key -> newSeries(key, freq, start, dataRef.getFilter().getDetail()));
+                    .map(key -> newSeries(key, freq, dataRef.getFilter().getDetail()));
         }
 
-        private Series newSeries(Key key, Freq freq, LocalDateTime start, DataFilter.Detail detail) {
+        private Series newSeries(Key key, Freq freq, DataFilter.Detail detail) {
             Series.Builder result = Series.builder().key(key).freq(freq.getFrequency());
             if (detail.isDataRequested()) {
                 int series = Integer.parseInt(key.get(1));
-                result.obs(IntStream.range(0, obsCount).mapToObj(j -> Obs.builder().period(start.plus(j, freq.getUnit())).value(getValue(series)).build()).collect(Collectors.toList()));
+                int obsCount = (int) freq.getUnit().between(config.getStart(), config.getStart().plusYears(config.getYearCount()));
+                long startTimeMillis = config.getStart().toInstant(ZoneOffset.UTC).toEpochMilli();
+                Random random = new Random(config.getSeed());
+                IntStream
+                        .range(0, obsCount)
+                        .mapToObj(j -> Obs.builder().period(config.getStart().plus(j, freq.getUnit())).value(getValue(series, startTimeMillis, random)).build())
+                        .forEach(result::obs);
             }
             return result.build();
         }
@@ -192,8 +223,8 @@ public final class RngDriver implements SdmxWebDriver {
         public void close() {
         }
 
-        private double getValue(int series) {
-            return Math.round(Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(rng.nextDouble()) + Math.tan(rng.nextDouble())))) - 50);
+        private double getValue(int series, long startTimeMillis, Random random) {
+            return Math.round(Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(random.nextDouble()) + Math.tan(random.nextDouble())))) - 50);
         }
 
         @lombok.AllArgsConstructor

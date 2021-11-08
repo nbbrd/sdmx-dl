@@ -26,6 +26,7 @@ import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,7 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURL())
+                .columnOf("URI", SdmxWebSource::getUri, Formatter.of(URI::toString))
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
                 .columnOf("Monitor", SdmxWebSource::getMonitor, DEFAULT_MAP_FORMATTER.compose(ListSourcesCommand::asMap))

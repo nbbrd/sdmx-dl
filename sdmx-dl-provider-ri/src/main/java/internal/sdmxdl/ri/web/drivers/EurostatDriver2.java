@@ -83,7 +83,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                     .alias("EUROSTAT")
                     .description("Eurostat")
                     .driver(RI_EUROSTAT)
-                    .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+                    .uriOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:ESTAT")
                     .build())
@@ -92,7 +92,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
     private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return new RiRestClient(
                 s.getId(),
-                s.getEndpoint(),
+                s.getUri().toURL(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, "SDMX21"),
                 getHttpClient(s, c),

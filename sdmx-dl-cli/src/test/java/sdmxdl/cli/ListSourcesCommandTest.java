@@ -44,7 +44,7 @@ public class ListSourcesCommandTest {
                 .doesNotContain("[SSL] Initializing SSL factory");
 
         assertThat(FileSample.readAll(out))
-                .contains("Name,Description,Aliases,Driver,Dialect,Endpoint,Properties,Website,Monitor", atIndex(0))
+                .contains("Name,Description,Aliases,Driver,Dialect,URI,Properties,Website,Monitor", atIndex(0))
                 .hasSizeGreaterThan(2);
     }
 }

@@ -30,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
@@ -74,7 +73,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
-                client.setEndpoint(source.getEndpoint().toURI());
+                client.setEndpoint(source.getUri());
                 configure(client, source, context);
                 return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
@@ -85,13 +84,9 @@ public final class ConnectorRestClient implements SdmxRestClient {
 
     public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
-            try {
-                RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
-                configure(client, source, context);
-                return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
+            RestSdmxClient client = supplier.get(source.getUri(), source.getProperties());
+            configure(client, source, context);
+            return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
         };
     }
 

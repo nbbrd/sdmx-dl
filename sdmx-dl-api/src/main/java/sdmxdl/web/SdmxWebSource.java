@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public class SdmxWebSource {
     String dialect;
 
     @lombok.NonNull
-    URL endpoint;
+    URI uri;
 
     @lombok.Singular
     Map<String, String> properties;
@@ -79,13 +80,9 @@ public class SdmxWebSource {
     public static class Builder {
 
         @NonNull
-        public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
-            Objects.requireNonNull(endpoint);
-            try {
-                return endpoint(new URL(endpoint));
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
-            }
+        public Builder uriOf(@NonNull String uri) throws IllegalArgumentException {
+            Objects.requireNonNull(uri);
+            return uri(URI.create(uri));
         }
 
         @NonNull

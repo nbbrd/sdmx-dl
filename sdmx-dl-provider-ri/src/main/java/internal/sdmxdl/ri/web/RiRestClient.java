@@ -26,7 +26,6 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -53,7 +52,7 @@ public class RiRestClient implements SdmxRestClient {
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
                 s.getId(),
-                s.getEndpoint(),
+                s.getUri().toURL(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, defaultDialect),
                 RiHttpUtils.newClient(s, c),

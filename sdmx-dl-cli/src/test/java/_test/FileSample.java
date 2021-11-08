@@ -38,7 +38,7 @@ public class FileSample {
                 .builder()
                 .name(name)
                 .driver("ri:file")
-                .endpoint(data.toURI().toURL())
+                .uri(data.toURI())
                 .property("structureURL", struct.toURI().toURL().toString())
                 .build();
     }

@@ -42,10 +42,8 @@ import sdmxdl.web.spi.SdmxWebAuthenticator;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
 import java.net.ProxySelector;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,17 +137,13 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static SdmxWebSource toHttps(SdmxWebSource source) {
-        return source.toBuilder().endpoint(toHttps(source.getEndpoint())).build();
+        return source.toBuilder().uri(toHttps(source.getUri())).build();
     }
 
-    private static URL toHttps(URL url) {
-        try {
-            return url.getProtocol().equals("http")
-                    ? new URL("https" + url.toString().substring(4))
-                    : url;
-        } catch (MalformedURLException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    private static URI toHttps(URI url) {
+        return url.getScheme().equals("http")
+                ? URI.create("https" + url.toString().substring(4))
+                : url;
     }
 
     private static SdmxCache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {

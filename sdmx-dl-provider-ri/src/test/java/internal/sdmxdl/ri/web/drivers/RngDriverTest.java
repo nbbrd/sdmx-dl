@@ -30,7 +30,8 @@ public class RngDriverTest {
                 for (Dataflow dataflow : conn.getFlows()) {
                     System.out.println(dataflow);
                     System.out.println(conn.getStructure(dataflow.getRef()));
-                    conn.getDataStream(DataRef.of(dataflow.getRef(), ALL, FULL)).forEach(System.out::println);
+                    conn.getDataStream(DataRef.of(dataflow.getRef(), ALL, FULL))
+                            .forEach(series -> System.out.println(series.getKey() + " " + series.getObs().size()));
                 }
             }
         }

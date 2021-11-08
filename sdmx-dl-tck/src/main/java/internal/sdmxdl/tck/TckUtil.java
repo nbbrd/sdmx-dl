@@ -3,6 +3,7 @@ package internal.sdmxdl.tck;
 import org.assertj.core.api.SoftAssertions;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 @lombok.experimental.UtilityClass
@@ -23,11 +24,7 @@ public class TckUtil {
         s.assertAll();
     }
 
-    public URL asURL(String spec) {
-        try {
-            return new URL(spec);
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException(ex);
-        }
+    public URI asURI(String spec) {
+        return URI.create(spec);
     }
 }

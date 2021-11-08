@@ -49,7 +49,7 @@ public final class UisDriver implements SdmxWebDriver {
                     .name("UIS")
                     .description("Unesco Institute for Statistics")
                     .driver(CONNECTORS_UIS)
-                    .endpointOf(FALLBACK_ENDPOINT)
+                    .uriOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:UIS")
                     .build())

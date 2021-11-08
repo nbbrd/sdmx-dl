@@ -30,6 +30,8 @@ import sdmxdl.web.SdmxWebSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -111,12 +113,16 @@ public final class CheckRulesCommand implements Callable<Void> {
         String properties;
 
         static Config of(SdmxWebSource source) {
-            return new Config(
-                    source.getDriver(),
-                    source.getDialect(),
-                    source.getEndpoint().getProtocol(),
-                    DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
-            );
+            try {
+                return new Config(
+                        source.getDriver(),
+                        source.getDialect(),
+                        source.getUri().toURL().getProtocol(),
+                        DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
+                );
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 

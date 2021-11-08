@@ -20,8 +20,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,26 +79,26 @@ public final class FileDriver implements SdmxWebDriver {
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
         return SdmxFileSource
                 .builder()
-                .data(toFile(source.getEndpoint()))
+                .data(toFile(source.getUri()))
                 .structure(toFile(STRUCTURE_PROPERTY.get(source.getProperties())))
                 .dialect(source.getDialect())
                 .build();
     }
 
     @VisibleForTesting
-    static File toFile(URL url) throws IOException {
-        if (url != null) {
+    static File toFile(URI uri) throws IOException {
+        if (uri != null) {
             try {
-                return new File(url.toURI());
-            } catch (URISyntaxException | IllegalArgumentException ex) {
-                throw new IOException("Invalid file name: '" + url + "'", ex);
+                return new File(uri);
+            } catch (IllegalArgumentException ex) {
+                throw new IOException("Invalid file name: '" + uri + "'", ex);
             }
         }
         return null;
     }
 
-    private static final Property<URL> STRUCTURE_PROPERTY =
-            Property.of("structureURL", null, Parser.onURL(), Formatter.onURL());
+    private static final Property<URI> STRUCTURE_PROPERTY =
+            Property.of("structureURL", null, Parser.of(text -> URI.create(text.toString())), Formatter.of(Objects::toString));
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor

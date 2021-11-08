@@ -25,8 +25,7 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 
@@ -67,9 +66,9 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetSources() {
-        SdmxWebSource nbb = SdmxWebSource.builder().name("nbb").alias("bnb").driver("sdmx21").endpointOf("http://nbb").build();
-        SdmxWebSource ecb = SdmxWebSource.builder().name("ecb").driver("sdmx21").endpointOf("http://ecb").build();
-        SdmxWebSource abs = SdmxWebSource.builder().name("abs").driver("sdmx21").endpointOf("http://abs").build();
+        SdmxWebSource nbb = SdmxWebSource.builder().name("nbb").alias("bnb").driver("sdmx21").uriOf("http://nbb").build();
+        SdmxWebSource ecb = SdmxWebSource.builder().name("ecb").driver("sdmx21").uriOf("http://ecb").build();
+        SdmxWebSource abs = SdmxWebSource.builder().name("abs").driver("sdmx21").uriOf("http://abs").build();
 
         SdmxWebSource nbbAlias = nbb.alias("bnb");
         SdmxWebSource nbbDialect = nbb.toBuilder().dialect("custom").clearAliases().build();
@@ -142,12 +141,12 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetDefaultSources() {
-        SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").endpointOf("http://abc").build();
-        SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").endpointOf("http://abc").build();
+        SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").uriOf("http://abc").build();
+        SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").uriOf("http://abc").build();
         SdmxWebDriver driverX = MockedWebDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).source(source1a).source(source2).build();
 
-        SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").endpointOf("http://xyz").build();
-        SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").endpointOf("http://xyz").build();
+        SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").uriOf("http://xyz").build();
+        SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").uriOf("http://xyz").build();
         SdmxWebDriver driverY = MockedWebDriver.builder().name("dY").rank(NATIVE_RANK).available(true).source(source1b).source(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
@@ -175,8 +174,8 @@ public class SdmxWebManagerTest {
                 .name("d1")
                 .rank(WRAPPED_RANK)
                 .available(true)
-                .repo(asURL("http://abc"), sample)
-                .source(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf("http://abc").build())
+                .repo(asURI("http://abc"), sample)
+                .source(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").uriOf("http://abc").build())
                 .build();
 
         SdmxWebDriver driver2 = MockedWebDriver
@@ -184,8 +183,8 @@ public class SdmxWebManagerTest {
                 .name("d2")
                 .rank(NATIVE_RANK)
                 .available(true)
-                .repo(asURL("http://xyz"), sample)
-                .source(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf("http://xyz").build())
+                .repo(asURI("http://xyz"), sample)
+                .source(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").uriOf("http://xyz").build())
                 .build();
 
         try (SdmxWebConnection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
@@ -201,7 +200,7 @@ public class SdmxWebManagerTest {
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build()))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().uriOf("http://ko").build()))
                 .as("Invalid source endpoint");
 
         assertThatIOException()
@@ -248,7 +247,7 @@ public class SdmxWebManagerTest {
             .name("repoSource")
             .driver("repoDriver")
             .dialect("azerty")
-            .endpoint(asURL(sample))
+            .uri(asURI(sample))
             .property("someproperty", "somevalue")
             .build();
     private final SdmxWebDriver sampleDriver = MockedWebDriver
@@ -256,26 +255,18 @@ public class SdmxWebManagerTest {
             .name("repoDriver")
             .rank(0)
             .available(true)
-            .repo(asURL(sample), sample)
+            .repo(asURI(sample), sample)
             .supportedProperty("someproperty")
             .source(sampleSource)
             .build();
     private final SdmxDialect sampleDialect = new MockedDialect("azerty");
 
-    private static URL asURL(SdmxRepository o) {
-        try {
-            return new URL("http://" + o.getName());
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException(ex);
-        }
+    private static URI asURI(SdmxRepository o) {
+        return URI.create("http://" + o.getName());
     }
 
-    private static URL asURL(String o) {
-        try {
-            return new URL(o);
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException(ex);
-        }
+    private static URI asURI(String o) {
+        return URI.create(o);
     }
 
     @lombok.RequiredArgsConstructor
@@ -292,7 +283,7 @@ public class SdmxWebManagerTest {
         private final boolean available;
 
         @lombok.Singular
-        private final Map<URL, SdmxRepository> repos;
+        private final Map<URI, SdmxRepository> repos;
 
         @lombok.Singular
         private final List<SdmxWebSource> sources;
@@ -302,7 +293,7 @@ public class SdmxWebManagerTest {
 
         @Override
         public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
-            return connect(source.getEndpoint());
+            return connect(source.getUri());
         }
 
         @Override
@@ -315,12 +306,12 @@ public class SdmxWebManagerTest {
             return supportedProperties;
         }
 
-        private SdmxWebConnection connect(URL endpoint) throws IOException {
-            SdmxRepository result = repos.get(endpoint);
+        private SdmxWebConnection connect(URI uri) throws IOException {
+            SdmxRepository result = repos.get(uri);
             if (result != null) {
                 return new MockedWebConnection(name, result.asConnection());
             }
-            throw new IOException(endpoint.toString());
+            throw new IOException(uri.toString());
         }
     }
 
