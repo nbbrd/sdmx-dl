@@ -25,6 +25,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - Improve error reporting in CLI
+- Restore generate-completion command
 
 ## [3.0.0-beta.4] - 2021-10-21
 

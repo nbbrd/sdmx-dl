@@ -1,6 +1,7 @@
 package sdmxdl.cli;
 
 import nbbrd.console.picocli.GenerateLauncher;
+import picocli.AutoComplete;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
@@ -8,7 +9,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "setup",
         subcommands = {
-//                GenerateCompletion.class,
+                AutoComplete.GenerateCompletion.class,
                 GenerateLauncher.class
         }
 )
