@@ -79,19 +79,19 @@ public final class FileDriver implements SdmxWebDriver {
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
         return SdmxFileSource
                 .builder()
-                .data(toFile(source.getUri()))
+                .data(toFile(source.getEndpoint()))
                 .structure(toFile(STRUCTURE_PROPERTY.get(source.getProperties())))
                 .dialect(source.getDialect())
                 .build();
     }
 
     @VisibleForTesting
-    static File toFile(URI uri) throws IOException {
-        if (uri != null) {
+    static File toFile(URI endpoint) throws IOException {
+        if (endpoint != null) {
             try {
-                return new File(uri);
+                return new File(endpoint);
             } catch (IllegalArgumentException ex) {
-                throw new IOException("Invalid file name: '" + uri + "'", ex);
+                throw new IOException("Invalid file name: '" + endpoint + "'", ex);
             }
         }
         return null;

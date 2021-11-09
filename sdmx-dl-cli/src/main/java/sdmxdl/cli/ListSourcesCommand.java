@@ -61,7 +61,7 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("URI", SdmxWebSource::getUri, Formatter.of(URI::toString))
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.of(URI::toString))
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
                 .columnOf("Monitor", SdmxWebSource::getMonitor, DEFAULT_MAP_FORMATTER.compose(ListSourcesCommand::asMap))

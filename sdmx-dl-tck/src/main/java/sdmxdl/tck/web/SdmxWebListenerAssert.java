@@ -18,7 +18,7 @@ public class SdmxWebListenerAssert {
     }
 
     private void checkOnSourceEvent(SoftAssertions s, SdmxWebListener actual) {
-        SdmxWebSource source = SdmxWebSource.builder().name("localhost").driver("").uriOf("http://localhost").build();
+        SdmxWebSource source = SdmxWebSource.builder().name("localhost").driver("").endpointOf("http://localhost").build();
         s.assertThatCode(() -> actual.onWebSourceEvent(source, "hello"))
                 .doesNotThrowAnyException();
 

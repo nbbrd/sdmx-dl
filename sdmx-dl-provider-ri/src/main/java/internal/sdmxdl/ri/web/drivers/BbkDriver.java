@@ -63,7 +63,7 @@ public final class BbkDriver implements SdmxWebDriver {
                     .name("BBK")
                     .description("Bundesbank")
                     .driver(RI_BBK)
-                    .uriOf("https://api.statistiken.bundesbank.de/rest")
+                    .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:BBK")
                     .build())
@@ -75,7 +75,7 @@ public final class BbkDriver implements SdmxWebDriver {
         BbkClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
             super(
                     s.getId(),
-                    s.getUri().toURL(),
+                    s.getEndpoint().toURL(),
                     c.getLanguages(),
                     new BbkObsFactory(),
                     RiHttpUtils.newClient(s, c),

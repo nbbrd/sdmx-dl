@@ -117,7 +117,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                 return new Config(
                         source.getDriver(),
                         source.getDialect(),
-                        source.getUri().toURL().getProtocol(),
+                        source.getEndpoint().toURL().getProtocol(),
                         DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
                 );
             } catch (MalformedURLException ex) {

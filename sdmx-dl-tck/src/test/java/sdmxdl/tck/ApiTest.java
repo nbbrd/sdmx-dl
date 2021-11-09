@@ -16,7 +16,6 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.net.URI;
-import java.net.URL;
 
 public class ApiTest {
 
@@ -34,20 +33,20 @@ public class ApiTest {
 
     @Test
     public void testSdmxWebManager() {
-        URI uri = TckUtil.asURI("http://" + RepoSamples.REPO.getName());
+        URI endpoint = TckUtil.asURI("http://" + RepoSamples.REPO.getName());
         SdmxWebSource source = SdmxWebSource
                 .builder()
                 .name("repoSource")
                 .driver("repoDriver")
                 .dialect("azerty")
-                .uri(uri)
+                .endpoint(endpoint)
                 .build();
         SdmxWebDriver driver = MockedWebDriver
                 .builder()
                 .name("repoDriver")
                 .rank(0)
                 .available(true)
-                .repo(uri, RepoSamples.REPO)
+                .repo(endpoint, RepoSamples.REPO)
                 .source(source)
                 .build();
         SdmxDialect dialect = new MockedDialect("azerty");

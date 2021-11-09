@@ -46,7 +46,7 @@ public class SdmxWebSource {
     String dialect;
 
     @lombok.NonNull
-    URI uri;
+    URI endpoint;
 
     @lombok.Singular
     Map<String, String> properties;
@@ -80,9 +80,9 @@ public class SdmxWebSource {
     public static class Builder {
 
         @NonNull
-        public Builder uriOf(@NonNull String uri) throws IllegalArgumentException {
-            Objects.requireNonNull(uri);
-            return uri(URI.create(uri));
+        public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
+            Objects.requireNonNull(endpoint);
+            return endpoint(URI.create(endpoint));
         }
 
         @NonNull

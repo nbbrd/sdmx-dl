@@ -34,7 +34,7 @@ public class MockedWebDriver implements SdmxWebDriver {
 
     @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
-        return connect(source.getUri());
+        return connect(source.getEndpoint());
     }
 
     @Override
@@ -47,11 +47,11 @@ public class MockedWebDriver implements SdmxWebDriver {
         return Collections.emptyList();
     }
 
-    private SdmxWebConnection connect(URI uri) throws IOException {
-        SdmxRepository result = repos.get(uri);
+    private SdmxWebConnection connect(URI endpoint) throws IOException {
+        SdmxRepository result = repos.get(endpoint);
         if (result != null) {
             return new MockedWebConnection(name, result.asConnection());
         }
-        throw new IOException(uri.toString());
+        throw new IOException(endpoint.toString());
     }
 }

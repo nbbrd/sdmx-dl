@@ -56,7 +56,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
                     .name("ABS")
                     .description("Australian Bureau of Statistics")
                     .driver(RI_ABS)
-                    .uriOf("https://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+                    .endpointOf("https://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.data.abs.gov.au")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:ABS")
                     .build())

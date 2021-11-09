@@ -137,7 +137,7 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static SdmxWebSource toHttps(SdmxWebSource source) {
-        return source.toBuilder().uri(toHttps(source.getUri())).build();
+        return source.toBuilder().endpoint(toHttps(source.getEndpoint())).build();
     }
 
     private static URI toHttps(URI url) {

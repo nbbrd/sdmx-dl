@@ -52,7 +52,7 @@ public class RiRestClient implements SdmxRestClient {
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
                 s.getId(),
-                s.getUri().toURL(),
+                s.getEndpoint().toURL(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, defaultDialect),
                 RiHttpUtils.newClient(s, c),

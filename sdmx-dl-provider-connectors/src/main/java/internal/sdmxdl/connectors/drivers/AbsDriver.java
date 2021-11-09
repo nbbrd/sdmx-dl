@@ -43,7 +43,7 @@ public final class AbsDriver implements SdmxWebDriver {
                     .name("ABS")
                     .description("Australian Bureau of Statistics")
                     .driver(CONNECTORS_ABS)
-                    .uriOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
+                    .endpointOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
                     .websiteOf("http://stat.data.abs.gov.au")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:ABS")
                     .build())

@@ -38,7 +38,7 @@ public class XmlWebSourceTest {
                     .description("European Central Bank")
                     .driver("ri:sdmx21")
                     .dialect("SDMX21")
-                    .uriOf("https://sdw-wsrest.ecb.europa.eu/service")
+                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
                     .property("detailSupported", "true")
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
@@ -48,7 +48,7 @@ public class XmlWebSourceTest {
                     .builder()
                     .name("other")
                     .driver("dummy")
-                    .uriOf("http://localhost")
+                    .endpointOf("http://localhost")
                     .build()
     );
 

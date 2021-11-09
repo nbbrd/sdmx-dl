@@ -31,7 +31,7 @@ public class RiHttpUtilsTest {
             .builder()
             .name("abc")
             .driver("xyz")
-            .uriOf("http://localhost")
+            .endpointOf("http://localhost")
             .build();
 
     @Test
@@ -67,7 +67,7 @@ public class RiHttpUtilsTest {
 
         HttpRequest request = HttpRequest
                 .builder()
-                .query(source.getUri().toURL())
+                .query(source.getEndpoint().toURL())
                 .mediaType(MediaType.ANY_TYPE)
                 .langs("fr")
                 .build();
@@ -77,11 +77,11 @@ public class RiHttpUtilsTest {
         assertThatNullPointerException().isThrownBy(() -> x.onOpen(null, NO_PROXY, BASIC));
         assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, null, BASIC));
         assertThatNullPointerException().isThrownBy(() -> x.onOpen(request, NO_PROXY, null));
-        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(null, source.getUri().toURL()));
-        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(source.getUri().toURL(), null));
+        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(null, source.getEndpoint().toURL()));
+        assertThatNullPointerException().isThrownBy(() -> x.onRedirection(source.getEndpoint().toURL(), null));
         assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(null, NONE, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getUri().toURL(), null, BASIC));
-        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getUri().toURL(), NONE, null));
+        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getEndpoint().toURL(), null, BASIC));
+        assertThatNullPointerException().isThrownBy(() -> x.onUnauthorized(source.getEndpoint().toURL(), NONE, null));
 
         x.onEvent("hello");
         assertThat(events.pop()).containsExactly(new Event(source, "hello"));
@@ -101,10 +101,10 @@ public class RiHttpUtilsTest {
         x.onOpen(request, customProxy, BASIC);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
 
-        x.onRedirection(source.getUri().toURL(), new URL("http://other"));
+        x.onRedirection(source.getEndpoint().toURL(), new URL("http://other"));
         assertThat(events.pop()).containsExactly(new Event(source, "Redirecting to http://other"));
 
-        x.onUnauthorized(source.getUri().toURL(), NONE, BASIC);
+        x.onUnauthorized(source.getEndpoint().toURL(), NONE, BASIC);
         assertThat(events.pop()).containsExactly(new Event(source, "Authenticating http://localhost with 'BASIC'"));
     }
 

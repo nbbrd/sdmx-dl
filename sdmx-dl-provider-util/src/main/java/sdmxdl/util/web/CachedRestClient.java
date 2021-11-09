@@ -42,7 +42,7 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
-        return TypedId.resolveURI(URI.create("cache:rest"), source.getUri().getHost(), languages.toString());
+        return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
     }
 
     @lombok.NonNull

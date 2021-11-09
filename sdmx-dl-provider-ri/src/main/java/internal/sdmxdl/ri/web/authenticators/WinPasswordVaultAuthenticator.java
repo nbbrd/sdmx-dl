@@ -33,7 +33,7 @@ public final class WinPasswordVaultAuthenticator implements SdmxWebAuthenticator
     }
 
     private String getResource(SdmxWebSource source) {
-        return "sdmx-dl:" + source.getUri().getHost();
+        return "sdmx-dl:" + source.getEndpoint().getHost();
     }
 
     private PasswordAuthentication toPasswordAuthentication(WinPasswordVault.PasswordCredential credential) {

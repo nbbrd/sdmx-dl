@@ -42,7 +42,7 @@ public class Sdmx20DriverTest {
                 .dialects(SdmxDialectLoader.load())
                 .build();
 
-        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDMX20").uriOf("http://localhost").build();
+        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDMX20").endpointOf("http://localhost").build();
 
         assertThatCode(() -> new Sdmx20Driver().connect(x, context).close()).doesNotThrowAnyException();
     }

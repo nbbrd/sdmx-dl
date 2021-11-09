@@ -66,14 +66,14 @@ public final class ConnectorRestClient implements SdmxRestClient {
     public interface GenericSupplier {
 
         @NonNull
-        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
+        RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
     }
 
     public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
-                client.setEndpoint(source.getUri());
+                client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
                 return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
@@ -84,7 +84,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
 
     public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
-            RestSdmxClient client = supplier.get(source.getUri(), source.getProperties());
+            RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
             return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
         };

@@ -22,7 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Invert default activation of automatic proxy detection
 - Replace multiple parameters with DataRef in API 
 - Improve network options
-- Replace `SdmxWebSource#endpoint` with `SdmxWebSource#uri`
+- Change `SdmxWebSource#endpoint` type from URL to URI
 
 ### Fixed
 - Improve error reporting in CLI

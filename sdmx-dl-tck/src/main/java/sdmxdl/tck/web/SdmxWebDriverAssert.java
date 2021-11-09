@@ -16,7 +16,7 @@ public class SdmxWebDriverAssert {
                 .name("valid")
                 .driver(d.getName())
                 .dialect("azerty")
-                .uriOf("http://localhost")
+                .endpointOf("http://localhost")
                 .build();
 
         SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();

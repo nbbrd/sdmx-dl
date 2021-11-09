@@ -46,7 +46,7 @@ public final class SeDriver implements SdmxWebDriver {
                     .name("SE")
                     .description("Statistics Estonia")
                     .driver(CONNECTORS_ES)
-                    .uriOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
+                    .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:SE")
                     .build())

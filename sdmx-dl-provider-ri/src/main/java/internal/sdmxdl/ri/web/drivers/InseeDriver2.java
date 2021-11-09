@@ -60,7 +60,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
                     .name("INSEE")
                     .description("Institut national de la statistique et des études économiques")
                     .driver(RI_INSEE)
-                    .uriOf("https://bdm.insee.fr/series/sdmx")
+                    .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("Upptime", "nbbrd:sdmx-upptime:INSEE")
                     .build())
@@ -93,7 +93,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
         InseeClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
             super(
                     s.getId(),
-                    s.getUri().toURL(),
+                    s.getEndpoint().toURL(),
                     c.getLanguages(),
                     ObsFactories.getObsFactory(c, s, DIALECT),
                     RiHttpUtils.newClient(s, c),

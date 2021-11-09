@@ -56,7 +56,7 @@ public final class RngDriver implements SdmxWebDriver {
         Objects.requireNonNull(context);
         SdmxRestDriverSupport.checkSource(source, getName());
 
-        RngConfig config = RngConfig.parse(source.getUri());
+        RngConfig config = RngConfig.parse(source.getEndpoint());
 
         return new RngWebConnection(source.getId(), config);
     }
@@ -69,7 +69,7 @@ public final class RngDriver implements SdmxWebDriver {
                         .name("RNG")
                         .description("Random number generator")
                         .driver(RI_RNG)
-                        .uriOf("rng:3:4:0:2010-01-01")
+                        .endpointOf("rng:3:4:0:2010-01-01")
                         .build()
         );
     }
@@ -87,8 +87,8 @@ public final class RngDriver implements SdmxWebDriver {
         int seed;
         LocalDateTime start;
 
-        static RngConfig parse(URI uri) throws IllegalArgumentException {
-            String[] tmp = uri.toString().split(":", -1);
+        static RngConfig parse(URI endpoint) throws IllegalArgumentException {
+            String[] tmp = endpoint.toString().split(":", -1);
 
             if (tmp.length != 5) {
                 throw new IllegalArgumentException("Invalid uri");
