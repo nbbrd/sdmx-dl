@@ -57,7 +57,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://stats.bis.org/api/v1")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:BIS")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -66,7 +66,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .driver(RI_SDMX_21)
                     .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
                     .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:CAMSTAT")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -77,7 +77,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://sdw.ecb.europa.eu")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ECB")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -86,7 +86,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .driver(RI_SDMX_21)
                     .endpointOf("https://api-dataexplorer.unescap.org/rest/")
                     .websiteOf("https://dataexplorer.unescap.org/")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ESCAP")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -96,7 +96,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://www.ilo.org/sdmx/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://ilostat.ilo.org/data/")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ILO")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -106,7 +106,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.imf.org")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:IMF_SDMX_CENTRAL")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -117,7 +117,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
                     .websiteOf("https://sdmx.snieg.mx")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:INEGI")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -127,7 +127,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("http://sdmx.istat.it/SDMXWS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.istat.it/en/analysis-and-products")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ISTAT")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -137,7 +137,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://data.norges-bank.no/api")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:NB")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -147,7 +147,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://registry.sdmx.org/ws/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://registry.sdmx.org/overview.html")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SGR")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -157,7 +157,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://stats-nsi-stable.pacificdata.org/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.pacificdata.org/?locale=en")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SPC")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -167,7 +167,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("https://data.un.org/WS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.un.org/SdmxBrowser/start")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:UNDATA")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -178,7 +178,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
                     .websiteOf("https://data.worldbank.org")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:WB")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -188,7 +188,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
                     .websiteOf("https://wits.worldbank.org")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:WITS")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
                     .build())
             .build();
 

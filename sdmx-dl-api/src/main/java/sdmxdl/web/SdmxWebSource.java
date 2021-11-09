@@ -58,7 +58,7 @@ public class SdmxWebSource {
     URL website;
 
     @Nullable
-    SdmxWebMonitor monitor;
+    URI monitor;
 
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
@@ -102,8 +102,9 @@ public class SdmxWebSource {
         }
 
         @NonNull
-        public Builder monitorOf(@NonNull String provider, @NonNull String id) {
-            return monitor(SdmxWebMonitor.builder().provider(provider).id(id).build());
+        public Builder monitorOf(@NonNull String monitor) {
+            Objects.requireNonNull(monitor);
+            return monitor(URI.create(monitor));
         }
     }
 }

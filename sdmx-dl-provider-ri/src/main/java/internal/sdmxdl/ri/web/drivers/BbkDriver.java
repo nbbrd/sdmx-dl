@@ -65,7 +65,7 @@ public final class BbkDriver implements SdmxWebDriver {
                     .driver(RI_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:BBK")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
                     .build())
             .build();
 

@@ -15,7 +15,7 @@ public class UpptimeSummaryTest {
 
     @Test
     public void testParseAll() throws IOException {
-        try (Reader reader = new InputStreamReader(Objects.requireNonNull(UpptimeMonitoringTest.class.getResourceAsStream("summary.json")), StandardCharsets.UTF_8)) {
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(UpptimeTest.class.getResourceAsStream("summary.json")), StandardCharsets.UTF_8)) {
             assertThat(UpptimeSummary.parseAll(reader))
                     .contains(UpptimeSummary.of("ABS", "up", "100.00%", 4674), atIndex(0))
                     .contains(UpptimeSummary.of("ILO", "down", "20.97%", 14989), atIndex(1))

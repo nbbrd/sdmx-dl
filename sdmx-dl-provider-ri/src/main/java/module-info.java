@@ -37,7 +37,8 @@ module sdmxdl.web.ri {
     uses internal.util.http.HttpURLConnectionFactory;
 
     provides sdmxdl.web.spi.SdmxWebMonitoring with
-            internal.sdmxdl.ri.web.monitors.UpptimeMonitoring;
+            internal.sdmxdl.ri.web.monitors.Upptime,
+            internal.sdmxdl.ri.web.monitors.UptimeRobot;
 
     opens internal.sdmxdl.ri.web.monitors to com.google.gson;
 }

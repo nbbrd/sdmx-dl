@@ -17,7 +17,7 @@ import java.io.IOException;
 public interface SdmxWebMonitoring {
 
     @NonNull
-    String getProviderName();
+    String getUriScheme();
 
     @NonNull
     SdmxWebMonitorReport getReport(

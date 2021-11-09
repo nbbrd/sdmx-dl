@@ -34,6 +34,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -144,13 +145,13 @@ public class SdmxWebManager implements SdmxManager {
     public SdmxWebMonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
-        SdmxWebMonitor monitor = source.getMonitor();
+        URI monitor = source.getMonitor();
 
         if (monitor == null) {
             throw new IOException("Missing monitor for '" + source + "'");
         }
 
-        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getProvider())
+        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getScheme())
                 .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
 
         return monitoring.getReport(source, getContext());
@@ -178,10 +179,10 @@ public class SdmxWebManager implements SdmxManager {
                 .findFirst();
     }
 
-    private Optional<SdmxWebMonitoring> lookupMonitoring(String name) {
+    private Optional<SdmxWebMonitoring> lookupMonitoring(String uriScheme) {
         return monitorings
                 .stream()
-                .filter(monitoring -> name.equals(monitoring.getProviderName()))
+                .filter(monitoring -> uriScheme.equals(monitoring.getUriScheme()))
                 .findFirst();
     }
 

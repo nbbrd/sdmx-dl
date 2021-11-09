@@ -22,14 +22,10 @@ import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.web.SdmxWebMonitor;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -64,7 +60,7 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.of(URI::toString))
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, DEFAULT_MAP_FORMATTER.compose(ListSourcesCommand::asMap))
+                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.of(URI::toString))
                 .build();
     }
 
@@ -74,15 +70,5 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .values()
                 .stream()
                 .filter(source -> !source.isAlias());
-    }
-
-    private static Map<String, String> asMap(SdmxWebMonitor monitor) {
-        if (monitor != null) {
-            Map<String, String> result = new HashMap<>();
-            result.put("provider", monitor.getProvider());
-            result.put("id", monitor.getId());
-            return result;
-        }
-        return Collections.emptyMap();
     }
 }

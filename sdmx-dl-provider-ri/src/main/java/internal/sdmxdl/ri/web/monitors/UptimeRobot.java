@@ -1,4 +1,4 @@
-package internal.sdmxdl.util.ext;
+package internal.sdmxdl.ri.web.monitors;
 
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOFunction;
@@ -6,9 +6,8 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.web.SdmxWebEvents;
-import sdmxdl.web.SdmxWebMonitor;
+import sdmxdl.util.web.SdmxWebMonitors;
 import sdmxdl.web.SdmxWebMonitorReport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.SdmxWebStatus;
@@ -31,64 +30,18 @@ public final class UptimeRobot implements SdmxWebMonitoring {
     private final URL url = Parser.onURL().parseValue("https://api.uptimerobot.com/v2/getMonitors").orElseThrow(RuntimeException::new);
 
     @Override
-    public String getProviderName() {
-        return "UptimeRobot";
+    public String getUriScheme() {
+        return UptimeRobotId.URI_SCHEME;
     }
 
     @Override
     public SdmxWebMonitorReport getReport(SdmxWebSource source, SdmxWebContext context) throws IOException, IllegalArgumentException {
-        checkMonitor(source.getMonitor());
-        Query query = getQuery(source.getMonitor());
+        SdmxWebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+
+        UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
+
         Xml.Parser<SdmxWebMonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobot::parseReport);
-        return post(url, query.toBody(), parser::parseReader, context, source);
-    }
-
-    private void checkMonitor(SdmxWebMonitor monitor) {
-        if (monitor == null) {
-            throw new IllegalArgumentException("Expecting monitor not to be null");
-        }
-        if (!monitor.getProvider().equals(getProviderName())) {
-            throw new IllegalArgumentException(monitor.toString());
-        }
-    }
-
-    private static Query getQuery(SdmxWebMonitor monitor) {
-        return Query
-                .builder()
-                .apiKey(monitor.getId())
-                .allTimeUptimeRatio(true)
-                .responseTimesAverage(false)
-                .build();
-    }
-
-    @lombok.Value
-    @lombok.Builder
-    private static class Query {
-
-        @lombok.NonNull
-        String apiKey;
-
-        @lombok.Builder.Default
-        boolean logs = false;
-
-        @lombok.Builder.Default
-        boolean allTimeUptimeRatio = false;
-
-        @lombok.Builder.Default
-        boolean responseTimesAverage = false;
-
-        @NonNull
-        public String toBody() {
-            return "api_key=" + apiKey
-                    + "&format=" + "xml"
-                    + "&logs=" + format(logs)
-                    + "&all_time_uptime_ratio=" + format(allTimeUptimeRatio)
-                    + "&response_times_average=" + format(responseTimesAverage);
-        }
-
-        private String format(boolean value) {
-            return value ? "1" : "0";
-        }
+        return post(url, id.toBody(), parser::parseReader, context, source);
     }
 
     @lombok.AllArgsConstructor

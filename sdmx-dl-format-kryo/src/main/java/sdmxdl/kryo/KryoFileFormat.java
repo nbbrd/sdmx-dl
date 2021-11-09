@@ -465,7 +465,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public void write(Kryo kryo, Output output, SdmxWebMonitorReports t) {
-            output.writeString(t.getProvider());
+            output.writeString(t.getUriScheme());
             kryo.writeObject(output, t.getReports(), reports);
             kryo.writeObject(output, t.getCreationTime());
             kryo.writeObject(output, t.getExpirationTime());
@@ -475,7 +475,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public SdmxWebMonitorReports read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReports> type) {
             return SdmxWebMonitorReports
                     .builder()
-                    .provider(input.readString())
+                    .uriScheme(input.readString())
                     .reports(kryo.readObject(input, ArrayList.class, reports))
                     .creationTime(kryo.readObject(input, Instant.class))
                     .expirationTime(kryo.readObject(input, Instant.class))

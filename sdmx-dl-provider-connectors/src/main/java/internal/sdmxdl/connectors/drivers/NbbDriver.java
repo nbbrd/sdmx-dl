@@ -45,7 +45,7 @@ public final class NbbDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:NBB")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
                     .build())
             .build();
 }

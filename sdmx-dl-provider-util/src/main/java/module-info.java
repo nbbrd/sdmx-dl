@@ -22,9 +22,4 @@ module sdmxdl.util {
             internal.sdmxdl.util.ext.Sdmx21Dialect;
 
     uses sdmxdl.ext.spi.SdmxDialect;
-
-    provides sdmxdl.web.spi.SdmxWebMonitoring with
-            internal.sdmxdl.util.ext.UptimeRobot;
-
-    uses sdmxdl.web.spi.SdmxWebMonitoring;
 }

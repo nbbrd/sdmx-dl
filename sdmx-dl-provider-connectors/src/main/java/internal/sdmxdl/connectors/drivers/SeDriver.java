@@ -48,7 +48,7 @@ public final class SeDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_ES)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SE")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
                     .build())
             .build();
 

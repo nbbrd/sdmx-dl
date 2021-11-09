@@ -23,7 +23,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Invert default activation of auto-proxy option in CLI
 - Simplify name of auto-proxy option in CLI
 - Replace multiple parameters with `DataRef` in API 
-- Change `SdmxWebSource#endpoint` type from URL to URI
+- Change `SdmxWebSource#endpoint` type to URI
+- Change `SdmxWebSource#monitor` type to URI
 
 ### Fixed
 - Improve error reporting in CLI

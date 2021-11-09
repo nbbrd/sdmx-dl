@@ -62,7 +62,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
                     .driver(RI_INSEE)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:INSEE")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
                     .build())
             .build();
 

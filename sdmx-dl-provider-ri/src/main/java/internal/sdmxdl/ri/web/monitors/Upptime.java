@@ -7,7 +7,11 @@ import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.SdmxCache;
-import sdmxdl.web.*;
+import sdmxdl.util.web.SdmxWebMonitors;
+import sdmxdl.web.SdmxWebMonitorReport;
+import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.SdmxWebStatus;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
@@ -19,18 +23,18 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @ServiceProvider
-public class UpptimeMonitoring implements SdmxWebMonitoring {
+public class Upptime implements SdmxWebMonitoring {
 
     @Override
-    public @NonNull String getProviderName() {
-        return "Upptime";
+    public @NonNull String getUriScheme() {
+        return UpptimeId.URI_SCHEME;
     }
 
     @Override
     public @NonNull SdmxWebMonitorReport getReport(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
-        checkMonitor(source.getMonitor());
+        SdmxWebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
 
-        UpptimeId id = UpptimeId.parse(source.getMonitor().getId());
+        UpptimeId id = UpptimeId.parse(source.getMonitor());
 
         SdmxCache cache = context.getCache();
         String key = id.toSummaryURL().toString();
@@ -49,23 +53,14 @@ public class UpptimeMonitoring implements SdmxWebMonitoring {
                 .orElseThrow(IOException::new);
     }
 
-    private void checkMonitor(SdmxWebMonitor monitor) {
-        if (monitor == null) {
-            throw new IllegalArgumentException("Expecting monitor not to be null");
-        }
-        if (!monitor.getProvider().equals(getProviderName())) {
-            throw new IllegalArgumentException(monitor.toString());
-        }
-    }
-
     private SdmxWebMonitorReports createReports(HttpClient client, UpptimeId id, Clock clock) throws IOException {
         return SdmxWebMonitorReports
                 .builder()
-                .provider(getProviderName())
+                .uriScheme(getUriScheme())
                 .reports(
                         UpptimeSummary.request(client, id)
                                 .stream()
-                                .map(UpptimeMonitoring::getReport)
+                                .map(Upptime::getReport)
                                 .collect(Collectors.toList())
                 )
                 .ttl(clock.instant(), Duration.ofMinutes(5))

@@ -36,7 +36,7 @@ public class KryoSerializationTest {
 
         SdmxWebMonitorReports reports = SdmxWebMonitorReports
                 .builder()
-                .provider("abc")
+                .uriScheme("abc")
                 .report(SdmxWebMonitorReport.builder().source("xyz").status(SdmxWebStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
                 .ttl(now, Duration.ofMillis(100))
                 .build();
