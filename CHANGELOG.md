@@ -15,13 +15,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add second layer of cache in CLI
 - Add availability check on driver SPI [#162](https://github.com/nbbrd/sdmx-dl/issues/162)
 - Add optional RNG driver [#163](https://github.com/nbbrd/sdmx-dl/issues/163)
+- Add cache-folder-path option in CLI
 
 ### Changed
 
 - Refactor network API to avoid unnecessary resource loading
-- Invert default activation of automatic proxy detection
-- Replace multiple parameters with DataRef in API 
-- Improve network options
+- Invert default activation of auto-proxy option in CLI
+- Simplify name of auto-proxy option in CLI
+- Replace multiple parameters with `DataRef` in API 
 - Change `SdmxWebSource#endpoint` type from URL to URI
 
 ### Fixed
