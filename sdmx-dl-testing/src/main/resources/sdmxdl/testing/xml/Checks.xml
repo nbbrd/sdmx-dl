@@ -102,6 +102,11 @@
             <data key="A..AMTUSD." minSeries="503" minObs="6343"/>
         </flow>
     </source>
+    <source name="STATCAN" minFlows="5952">
+        <flow ref="DF_10100001" dims="2">
+            <data key="1.1" minSeries="1" minObs="13"/>
+        </flow>
+    </source>
     <source name="UIS" minFlows="9">
         <flow ref="SCN_DS" dims="2">
             <data key="20000.AGO" minSeries="1" minObs="1"/>

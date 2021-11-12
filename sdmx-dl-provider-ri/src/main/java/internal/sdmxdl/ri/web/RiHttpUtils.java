@@ -62,6 +62,8 @@ public class RiHttpUtils {
     public static final MediaType GENERIC_DATA_21_TYPE = MediaType.parse(SdmxMediaType.GENERIC_DATA_21);
     public static final MediaType STRUCTURE_SPECIFIC_DATA_21_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
     public static final MediaType STRUCTURE_SPECIFIC_DATA_20_TYPE = MediaType.parse(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20);
+    public static final MediaType JSON_TYPE = MediaType.parse("application/json");
+    public static final MediaType ZIP_TYPE = MediaType.parse("application/zip");
 
     // TODO: document these options?
     @VisibleForTesting
