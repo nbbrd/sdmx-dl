@@ -45,10 +45,11 @@ public class PeriodParsers {
         }
     }
 
+    private final Parser<LocalDateTime> YEAR = onDatePattern("yyyy");
     private final Parser<LocalDateTime> YEAR_MONTH = onDatePattern("yyyy-MM");
     private final Parser<LocalDateTime> YEAR_MONTH_DAY = onDatePattern("yyyy-MM-dd");
 
-    private final Parser<LocalDateTime> ANNUAL = onDatePattern("yyyy").orElse(onDatePattern("yyyy'-01'")).orElse(onDatePattern("yyyy'-A1'"));
+    private final Parser<LocalDateTime> ANNUAL = YEAR.orElse(onDatePattern("yyyy'-01'")).orElse(onDatePattern("yyyy'-A1'"));
     private final Parser<LocalDateTime> HALF_YEARLY = onYearFreqPos("S", 2).orElse(YEAR_MONTH);
     private final Parser<LocalDateTime> QUARTERLY = onYearFreqPos("Q", 4).orElse(YEAR_MONTH);
     private final Parser<LocalDateTime> MONTHLY = onYearFreqPos("M", 12).orElse(YEAR_MONTH);
@@ -58,7 +59,7 @@ public class PeriodParsers {
     private final Parser<LocalDateTime> HOURLY = YEAR_MONTH_DAY;
     private final Parser<LocalDateTime> DAILY_BUSINESS = YEAR_MONTH_DAY;
     private final Parser<LocalDateTime> MINUTELY = YEAR_MONTH_DAY;
-    private final Parser<LocalDateTime> UNDEFINED = YEAR_MONTH;
+    private final Parser<LocalDateTime> UNDEFINED = onDatePattern("yyyy[-MM[-dd]]");
 
     @NonNull
     public Parser<LocalDateTime> onDatePattern(@NonNull String pattern) {

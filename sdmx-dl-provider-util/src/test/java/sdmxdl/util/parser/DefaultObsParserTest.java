@@ -97,6 +97,19 @@ public class DefaultObsParserTest {
         assertThat(p.period("2001-M1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.period("2001M1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
         assertThat(p.period("2001-M0").parsePeriod()).isNull();
+        assertThat(p.period("2001").parsePeriod()).isNull();
+        assertThat(p.period("hello").parsePeriod()).isNull();
+        assertThat(p.period("").parsePeriod()).isNull();
+
+        freq.set(Frequency.UNDEFINED);
+        p.frequency(key, UnaryOperator.identity());
+        assertThat(p.period("2001").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
+        assertThat(p.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
+        assertThat(p.period("2001-02").parsePeriod()).isEqualTo("2001-02-01T00:00:00");
+        assertThat(p.period("2001-02-03").parsePeriod()).isEqualTo("2001-02-03T00:00:00");
+        assertThat(p.period("2001-M1").parsePeriod()).isNull();
+        assertThat(p.period("2001M1").parsePeriod()).isNull();
+        assertThat(p.period("2001-M0").parsePeriod()).isNull();
         assertThat(p.period("hello").parsePeriod()).isNull();
         assertThat(p.period("").parsePeriod()).isNull();
     }

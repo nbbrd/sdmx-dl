@@ -30,6 +30,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Improve error reporting in CLI
 - Restore setup-completion command
 - Fix setup commands names
+- Fix datetime parsing of undefined freq
 
 ## [3.0.0-beta.4] - 2021-10-21
 

@@ -40,7 +40,7 @@ public final class DefaultObsParser implements ObsParser {
     private final Parser<Double> valueParser;
 
     private Parser<LocalDateTime> periodParser = Parser.onNull();
-    private Frequency freq = Frequency.UNDEFINED;
+    private Frequency freq = null;
     private String period = null;
     private String value = null;
 
