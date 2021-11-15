@@ -20,12 +20,12 @@
             <data key=".ASIKHM..U......A" minSeries="9" minObs="180"/>
         </flow>
     </source>
-    <source name="ECB" minFlows="156">
-        <flow ref="ICPF" dims="13">
-            <data key="A.BE.N.V.LE.F62.S1251.A1.S.1.N.E.Z" minSeries="1" minObs="8"/>
-        </flow>
+    <source name="ECB" minFlows="178">
         <flow ref="EXR" dims="5">
-            <data key="M.CHF.EUR.SP00." minSeries="2" minObs="1"/>
+            <!-- Wildcard on last key dimension used to fail for some reason -->
+            <data key="M.CHF.EUR.SP00." minSeries="2" minObs="548"/>
+            <!-- Dialect on freq H means HALF_YEARLY instead of HOURLY (i.e. '2008-S1') -->
+            <data key="H.CHF.EUR.SP00.A" minSeries="1" minObs="45"/>
         </flow>
     </source>
     <source name="ESCAP" minFlows="2">
@@ -34,6 +34,7 @@
         </flow>
     </source>
     <source name="ESTAT" minFlows="6283">
+        <!-- normal deliveray process -->
         <flow ref="teibp051" dims="7">
             <data key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" minSeries="1" minObs="12"/>
         </flow>
@@ -42,7 +43,7 @@
             <data key="..B1GQ." minSeries="1" minObs="12"/>
         </flow>
     </source>
-    <source name="ILO" minFlows="554">
+    <source name="ILO" minFlows="522">
         <flow ref="DF_SDG_0852_SEX_AGE_RT" dims="5">
             <data key="ABW.A.SDG_0852_RT.SEX_T.AGE_YTHADULT_YGE15" minSeries="1" minObs="5"/>
         </flow>
@@ -62,9 +63,17 @@
             <data key="M.MX.SLRTCR03.ST.NSA.RG" minSeries="1" minObs="320"/>
         </flow>
     </source>
-    <source name="INSEE" minFlows="151">
+    <source name="INSEE" minFlows="214">
         <flow ref="IPI-2010" dims="9">
             <data key="M.IPI.MIG_CAG.SO.INDICE.FM.SO.BRUT.2010" minSeries="1" minObs="332"/>
+        </flow>
+        <flow ref="CHOMAGE-TRIM-NATIONAL" dims="9">
+            <!-- Dialect on freq T means QUARTERLY (i.e. '2016-Q1') -->
+            <data key="T.CTCHC.VALEUR_ABSOLUE.FM.1.00-24.INDIVIDUS.CVS.TRUE" minSeries="1" minObs="178"/>
+        </flow>
+        <flow ref="ENQ-CONJ-COM-GROS" dims="8">
+            <!-- Dialect on freq B means BI-MONTHLY (i.e. '2021-B5') -->
+            <data key="B.CLIMAT_AFFAIRES.COMMG.SO.INDICE.FM.SO.CVS" minSeries="1" minObs="254"/>
         </flow>
     </source>
     <source name="ISTAT" minFlows="388">
@@ -102,7 +111,7 @@
             <data key="A..AMTUSD." minSeries="503" minObs="6343"/>
         </flow>
     </source>
-    <source name="STATCAN" minFlows="5952">
+    <source name="STATCAN" minFlows="5924">
         <flow ref="DF_10100001" dims="2">
             <data key="1.1" minSeries="1" minObs="13"/>
         </flow>

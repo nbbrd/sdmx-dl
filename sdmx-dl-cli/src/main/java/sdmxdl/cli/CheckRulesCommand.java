@@ -32,12 +32,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Philippe Charles
@@ -152,12 +154,12 @@ public final class CheckRulesCommand implements Callable<Void> {
         int seriesCount;
         int obsCount;
 
-        static Actual of(WebResponse response) {
+        static Actual of(WebResponse r) {
             return new Actual(
-                    response.hasFlows() ? response.getFlows().size() : -1,
-                    response.hasStructure() ? response.getStructure().getDimensions().size() : -1,
-                    response.hasData() ? response.getData().size() : -1,
-                    response.hasData() ? response.getData().stream().mapToInt(series -> series.getObs().size()).sum() : -1
+                    ofNullable(r.getFlows()).map(Collection::size).orElse(-1),
+                    ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1),
+                    ofNullable(r.getData()).map(Collection::size).orElse(-1),
+                    ofNullable(r.getData()).map(WebRule::getObsCount).orElse(-1)
             );
         }
     }
@@ -178,7 +180,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                     Config.of(r.getSource()),
                     Expected.of(r.getRequest()),
                     Actual.of(r),
-                    r.hasError() ? r.getError() : "",
+                    ofNullable(r.getError()).orElse(""),
                     WebRule.checkAll(r)
             );
         }

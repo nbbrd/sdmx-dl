@@ -56,26 +56,6 @@ public class WebResponse {
     @Nullable
     Collection<Series> data;
 
-    public boolean hasError() {
-        return error != null;
-    }
-
-    public boolean hasFlows() {
-        return flows != null;
-    }
-
-    public boolean hasFlow() {
-        return flow != null;
-    }
-
-    public boolean hasStructure() {
-        return structure != null;
-    }
-
-    public boolean hasData() {
-        return data != null;
-    }
-
     @NonNull
     public static WebResponse of(@NonNull WebRequest request, @NonNull SdmxWebManager manager) {
         WebResponse.Builder result = WebResponse

@@ -83,6 +83,7 @@ public final class InseeDialect implements SdmxDialect {
                 case 'M':
                     return MONTHLY;
                 case 'B':
+                    // Two-monthly
                     // FIXME: define new freq?
                     return MONTHLY;
             }
@@ -108,6 +109,6 @@ public final class InseeDialect implements SdmxDialect {
     private static final Parser<LocalDateTime> ANNUAL_PARSER = PeriodParsers.onDatePattern("yyyy");
     private static final Parser<LocalDateTime> HALF_YEARLY_PARSER = PeriodParsers.onYearFreqPos("S", 2);
     private static final Parser<LocalDateTime> QUARTERLY_PARSER = PeriodParsers.onYearFreqPos("Q", 4);
-    private static final Parser<LocalDateTime> MONTHLY_PARSER = PeriodParsers.onDatePattern("yyyy-MM").orElse(PeriodParsers.onYearFreqPos("B", 12));
+    private static final Parser<LocalDateTime> MONTHLY_PARSER = PeriodParsers.onDatePattern("yyyy-MM").orElse(PeriodParsers.onYearFreqPos("B", 6));
     private static final Parser<LocalDateTime> DEFAULT_PARSER = Parser.onNull();
 }

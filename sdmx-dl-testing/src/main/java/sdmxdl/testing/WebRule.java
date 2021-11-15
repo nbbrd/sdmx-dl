@@ -1,8 +1,7 @@
 package sdmxdl.testing;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.Dimension;
-import sdmxdl.Series;
+import sdmxdl.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,148 +11,164 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 public enum WebRule implements Function<WebResponse, String> {
 
     FLOWS_MIN_COUNT {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasFlows() && r.getFlows().size() < r.getRequest().getMinFlowCount()
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getFlows())
+                    .map(flows -> flows.size() < r.getRequest().getMinFlowCount())
+                    .orElse(false);
         }
     },
     FLOWS_LABEL_NOT_BLANK {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasFlows()
-                    ? r.getFlows()
-                    .stream()
-                    .filter(flow -> isBlank(flow.getLabel()))
-                    .findAny()
-                    .map(flow -> name())
-                    .orElse(null)
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getFlows())
+                    .map(flows -> flows.stream().anyMatch(flow -> isBlank(flow.getLabel())))
+                    .orElse(false);
         }
     },
     FLOW_INVALID_REF {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasFlow() && !r.getRequest().getDataRef().getFlowRef().containsRef(r.getFlow())
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getFlow())
+                    .map(flow -> !r.getRequest().getDataRef().getFlowRef().containsRef(flow))
+                    .orElse(false);
         }
     },
     FLOW_LABEL_NOT_BLANK {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasFlow() && isBlank(r.getFlow().getLabel())
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getFlow())
+                    .map(flow -> isBlank(flow.getLabel()))
+                    .orElse(false);
         }
     },
     STRUCT_LABEL_NOT_BLANK {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasStructure() && isBlank(r.getStructure().getLabel())
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getStructure())
+                    .map(dsd -> isBlank(dsd.getLabel()))
+                    .orElse(false);
         }
     },
     STRUCT_INVALID_REF {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasStructure() && r.hasFlow() && !r.getStructure().getRef().contains(r.getFlow().getStructureRef())
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            DataStructure dsd = r.getStructure();
+            Dataflow flow = r.getFlow();
+            return dsd != null && flow != null && !dsd.getRef().contains(flow.getStructureRef());
         }
     },
     STRUCT_DIMENSION_COUNT {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasStructure() && r.getStructure().getDimensions().size() != r.getRequest().getDimensionCount()
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getStructure())
+                    .map(dsd -> dsd.getDimensions().size() != r.getRequest().getDimensionCount())
+                    .orElse(false);
         }
     },
     STRUCT_INVALID_DIMENSION {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasStructure()
-                    ? r.getStructure()
-                    .getDimensions()
-                    .stream()
-                    .map(dimension -> checkDimension(name(), dimension))
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(null)
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getStructure())
+                    .map(dsd -> dsd
+                            .getDimensions()
+                            .stream()
+                            .map(dimension -> checkDimension(name(), dimension))
+                            .anyMatch(Objects::nonNull))
+                    .orElse(false);
         }
     },
     DATA_MIN_SERIES_COUNT {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasData() && r.getData().size() < r.getRequest().getMinSeriesCount()
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getData())
+                    .map(data -> data.size() < r.getRequest().getMinSeriesCount())
+                    .orElse(false);
         }
     },
     DATA_MIN_OBS_COUNT {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasData() && r.getData()
-                    .stream()
-                    .map(Series::getObs)
-                    .mapToInt(Collection::size)
-                    .sum() < r.getRequest().getMinObsCount()
-                    ? name()
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getData())
+                    .map(data -> getObsCount(data) < r.getRequest().getMinObsCount())
+                    .orElse(false);
         }
     },
     DATA_META_NOT_BLANK {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasData()
-                    ? r.getData()
-                    .stream()
-                    .map(Series::getMeta)
-                    .map(meta -> checkMap(name(), meta))
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(null)
-                    : null;
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getData())
+                    .map(data -> data.stream()
+                            .map(Series::getMeta)
+                            .map(meta -> checkMap(name(), meta))
+                            .anyMatch(Objects::nonNull))
+                    .orElse(false);
         }
     },
-    NO_TIME_UNIT {
+    STRUCT_NO_TIME_UNIT {
         @Override
-        public String apply(WebResponse r) {
-            if (!r.hasStructure())
-                return null;
-            boolean timeFormat = r.getStructure().getAttributes().stream()
-                    .anyMatch(attribute -> attribute.getId().equals("TIME_FORMAT"));
-            boolean freq = r.getStructure().getDimensions().stream()
-                    .anyMatch(attribute -> attribute.getId().equals("FREQ"));
-            return timeFormat || freq ? null : name();
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getStructure())
+                    .map(dsd -> !hasTimeFormatAttribute(dsd) && !hasFreqDimension(dsd))
+                    .orElse(false);
+        }
+
+        private boolean hasTimeFormatAttribute(DataStructure dsd) {
+            return dsd.getAttributes().stream().map(Attribute::getId).anyMatch("TIME_FORMAT"::equals);
+        }
+
+        private boolean hasFreqDimension(DataStructure dsd) {
+            return dsd.getDimensions().stream().map(Dimension::getId).anyMatch("FREQ"::equals);
         }
     },
-    NO_FLOW {
+    FLOW_MISSING {
         @Override
-        public String apply(WebResponse webResponse) {
-            return webResponse.hasFlow() ? null : name();
+        boolean isInvalid(WebResponse r) {
+            return r.getFlow() == null;
         }
     },
-    NO_STRUCT {
+    STRUCT_MISSING {
         @Override
-        public String apply(WebResponse webResponse) {
-            return webResponse.hasStructure() ? null : name();
+        boolean isInvalid(WebResponse r) {
+            return r.getStructure() == null;
         }
     },
-    DIMENSION_NOT_CODED {
+    DATA_MISSING {
         @Override
-        public String apply(WebResponse r) {
-            return r.hasStructure() && r.getStructure().getDimensions().stream().anyMatch(dimension -> !dimension.isCoded())
-                    ? name() : null;
+        boolean isInvalid(WebResponse r) {
+            return r.getData() == null;
+        }
+    },
+    STRUCT_UNCODED_DIMENSION {
+        @Override
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getStructure())
+                    .map(dsd -> dsd.getDimensions().stream().anyMatch(dimension -> !dimension.isCoded()))
+                    .orElse(false);
+        }
+    },
+    DATA_NULL_PERIOD {
+        @Override
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getData())
+                    .map(data -> data.stream()
+                            .flatMap(series -> series.getObs().stream())
+                            .anyMatch(obs -> obs.getPeriod() == null))
+                    .orElse(false);
         }
     };
+
+    abstract boolean isInvalid(WebResponse r);
+
+    @Override
+    final public String apply(WebResponse response) {
+        return isInvalid(response) ? name() : null;
+    }
 
     private static boolean isBlank(String o) {
         return o.trim().isEmpty();
@@ -189,5 +204,9 @@ public enum WebRule implements Function<WebResponse, String> {
                 .map(check -> check.apply(response))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public static int getObsCount(Collection<Series> data) {
+        return data.stream().mapToInt(series -> series.getObs().size()).sum();
     }
 }
