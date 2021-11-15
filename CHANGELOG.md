@@ -26,6 +26,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Replace multiple parameters with `DataRef` in API 
 - Change `SdmxWebSource#endpoint` type to URI
 - Change `SdmxWebSource#monitor` type to URI
+- Change cache default folder to `java.io.tmpdir/sdmx-dl/VERSION`
 
 ### Fixed
 - Improve error reporting in CLI
