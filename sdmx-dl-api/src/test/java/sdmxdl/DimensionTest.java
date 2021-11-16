@@ -19,14 +19,13 @@ package sdmxdl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Philippe Charles
  */
 @SuppressWarnings("ConstantConditions")
-public class DimentionTest {
+public class DimensionTest {
 
     final String someId = "dim1";
     final String someLabel = "Dim 1";
@@ -42,7 +41,7 @@ public class DimentionTest {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> Dimension.builder().id(someId).label(someLabel).codelist(someCodelist).build().getCodes().put("hello", "world"));
 
-        Assertions.assertThat(Dimension.builder().id(someId).label(someLabel).codelist(someCodelist).build())
+        assertThat(Dimension.builder().id(someId).label(someLabel).codelist(someCodelist).build())
                 .hasFieldOrPropertyWithValue("id", someId)
                 .hasFieldOrPropertyWithValue("codelist", someCodelist)
                 .hasFieldOrPropertyWithValue("label", someLabel)
@@ -51,7 +50,20 @@ public class DimentionTest {
 
     @Test
     public void testEquals() {
-        Assertions.assertThat(Dimension.builder().id("id").label("label").position(1).codelist(someCodelist).build())
+        assertThat(Dimension.builder().id("id").label("label").position(1).codelist(someCodelist).build())
                 .isEqualTo(Dimension.builder().id("id").label("label").position(1).codelist(someCodelist).build());
+    }
+
+    @Test
+    public void testComparable() {
+        Dimension d1a = Dimension.builder().id("id1a").label("label1").position(1).codelist(someCodelist).build();
+        Dimension d1b = Dimension.builder().id("id1b").label("label1").position(1).codelist(someCodelist).build();
+        Dimension d2 = Dimension.builder().id("id2").label("label2").position(2).codelist(someCodelist).build();
+
+        assertThat(d1a).isEqualByComparingTo(d1a);
+        assertThat(d1a).isLessThan(d2);
+        assertThat(d2).isGreaterThan(d1a);
+        assertThat(d1a).isLessThan(d1b);
+        assertThat(d1b).isLessThan(d2);
     }
 }

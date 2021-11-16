@@ -77,7 +77,6 @@ public interface SdmxCsvFieldWriter {
     static @NonNull SdmxCsvFieldWriter onKeyDimensions(@NonNull DataStructure dsd) {
         return onKeyDimensions(dsd.getDimensions()
                 .stream()
-                .sorted(Comparator.comparingInt(Dimension::getPosition))
                 .map(Dimension::getId)
                 .collect(Collectors.toList()));
     }

@@ -33,6 +33,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Restore setup-completion command
 - Fix setup commands names
 - Fix datetime parsing of undefined freq
+- Fix dimension ordering when used in key
 
 ## [3.0.0-beta.4] - 2021-10-21
 
