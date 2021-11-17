@@ -26,11 +26,12 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.PeriodParsers;
+import sdmxdl.util.parser.TimeFormatParsers;
 
 import java.util.Objects;
 
 import static sdmxdl.Frequency.*;
+import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * @author Philippe Charles
@@ -57,7 +58,7 @@ public final class EcbDialect implements SdmxDialect {
         Objects.requireNonNull(dsd);
         return new DefaultObsParser(
                 getFreqFactory(dsd),
-                PeriodParsers::onStandardFreq,
+                freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
                 Parser.onDouble()
         );
     }

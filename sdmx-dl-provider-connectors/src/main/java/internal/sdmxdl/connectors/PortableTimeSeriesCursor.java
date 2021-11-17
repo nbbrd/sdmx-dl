@@ -105,7 +105,11 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.period(current.get(index).getTimeslot()).parsePeriod();
+        String timeslot = current.get(index).getTimeslot();
+        if ("1970-08-17".equals(timeslot)) {
+            System.out.println("!!!!!!!!!!!!!!!!");
+        }
+        return obsParser.period(timeslot).parsePeriod();
     }
 
     @Override

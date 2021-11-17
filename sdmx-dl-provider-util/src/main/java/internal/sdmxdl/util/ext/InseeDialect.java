@@ -26,11 +26,13 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.PeriodParsers;
+import sdmxdl.util.parser.StandardReportingFormat;
+import sdmxdl.util.parser.TimeFormatParsers;
 
 import java.time.LocalDateTime;
 
 import static sdmxdl.Frequency.*;
+import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * https://www.insee.fr/fr/information/2862759
@@ -92,23 +94,16 @@ public final class InseeDialect implements SdmxDialect {
     }
 
     private static Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
-        switch (freq) {
-            case ANNUAL:
-                return ANNUAL_PARSER;
-            case HALF_YEARLY:
-                return HALF_YEARLY_PARSER;
-            case QUARTERLY:
-                return QUARTERLY_PARSER;
-            case MONTHLY:
-                return MONTHLY_PARSER;
-            default:
-                return DEFAULT_PARSER;
-        }
+        return freq == Frequency.MONTHLY ? EXTENDED_PARSER : PARSER;
     }
 
-    private static final Parser<LocalDateTime> ANNUAL_PARSER = PeriodParsers.onDatePattern("yyyy");
-    private static final Parser<LocalDateTime> HALF_YEARLY_PARSER = PeriodParsers.onYearFreqPos("S", 2);
-    private static final Parser<LocalDateTime> QUARTERLY_PARSER = PeriodParsers.onYearFreqPos("Q", 4);
-    private static final Parser<LocalDateTime> MONTHLY_PARSER = PeriodParsers.onDatePattern("yyyy-MM").orElse(PeriodParsers.onYearFreqPos("B", 6));
-    private static final Parser<LocalDateTime> DEFAULT_PARSER = Parser.onNull();
+    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+            .builder()
+            .indicator('B')
+            .durationOf("P2M")
+            .limitPerYear(6)
+            .build();
+
+    private static final Parser<LocalDateTime> PARSER = TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR);
+    private static final Parser<LocalDateTime> EXTENDED_PARSER = PARSER.orElse(TimeFormatParsers.getStartTimeParser(TWO_MONTH, FIRST_DAY_OF_YEAR));
 }

@@ -52,7 +52,7 @@ public class InseeDialectTest {
         assertThat(InseeDialect.getPeriodParser(QUARTERLY).parse("2014-Q3")).isEqualTo("2014-07-01T00:00:00");
         assertThat(InseeDialect.getPeriodParser(MONTHLY).parse("1990-09")).isEqualTo("1990-09-01T00:00:00");
         assertThat(InseeDialect.getPeriodParser(HALF_YEARLY).parse("2012-S2")).isEqualTo("2012-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(MINUTELY).parse("2012-S2")).isNull();
+        assertThat(InseeDialect.getPeriodParser(MINUTELY).parse("2012-S2")).isEqualTo("2012-07-01T00:00:00");
     }
 
     // https://bdm.insee.fr/series/sdmx/codelist/FR1/CL_PERIODICITE/1.0

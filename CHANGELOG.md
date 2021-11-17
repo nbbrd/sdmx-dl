@@ -27,6 +27,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Change `SdmxWebSource#endpoint` type to URI
 - Change `SdmxWebSource#monitor` type to URI
 - Change cache default folder to `java.io.tmpdir/sdmx-dl/VERSION`
+- Refactor parsing of SDMX time formats
 
 ### Fixed
 - Improve error reporting in CLI

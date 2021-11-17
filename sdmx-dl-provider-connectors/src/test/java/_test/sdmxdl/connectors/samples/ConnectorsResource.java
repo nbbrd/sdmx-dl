@@ -37,7 +37,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,26 +127,16 @@ public class ConnectorsResource {
         for (int i = 0; i < key.size(); i++) {
             result.addDimension(dims.get(i).getId(), key.get(i));
         }
-        series.getObs().forEach(obs -> result.add(toObservation(series.getFreq(), obs)));
+        series.getObs().forEach(obs -> result.add(toObservation(obs)));
         return result;
     }
 
-    private static DoubleObservation toObservation(Frequency frequency, Obs obs) {
-        return new DoubleObservation(toTimeslot(frequency, obs.getPeriod()), toValue(obs.getValue()), obs.getMeta());
+    private static DoubleObservation toObservation(Obs obs) {
+        return new DoubleObservation(toTimeslot(obs.getPeriod()), toValue(obs.getValue()), obs.getMeta());
     }
 
-    private static String toTimeslot(Frequency f, LocalDateTime o) {
-        if (o == null) {
-            return "NULL";
-        }
-        switch (f) {
-            case ANNUAL:
-                return String.valueOf(o.getYear());
-            case MONTHLY:
-                return YearMonth.from(o).toString();
-            default:
-                throw new RuntimeException("Not implemented yet");
-        }
+    private static String toTimeslot(LocalDateTime o) {
+        return o == null ? "NULL" : o.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private static double toValue(Double nullableValue) {

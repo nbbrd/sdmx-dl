@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
+
 /**
  * @author Philippe Charles
  */
@@ -44,7 +46,7 @@ public enum ObsFactories implements ObsFactory {
             Objects.requireNonNull(dsd);
             return new DefaultObsParser(
                     FreqFactory.sdmx20(dsd),
-                    PeriodParsers::onStandardFreq,
+                    freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
                     Parser.onDouble()
             );
         }
@@ -55,7 +57,7 @@ public enum ObsFactories implements ObsFactory {
             Objects.requireNonNull(dsd);
             return new DefaultObsParser(
                     FreqFactory.sdmx21(dsd),
-                    PeriodParsers::onStandardFreq,
+                    freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
                     Parser.onDouble()
             );
         }
