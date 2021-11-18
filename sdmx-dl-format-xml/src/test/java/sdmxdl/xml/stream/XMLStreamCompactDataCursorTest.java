@@ -16,7 +16,6 @@
  */
 package sdmxdl.xml.stream;
 
-import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
@@ -28,7 +27,6 @@ import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.DataCursorAssert;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.TimeFormatParsers;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -37,7 +35,6 @@ import java.io.InputStream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * @author Philippe Charles
@@ -51,7 +48,7 @@ public class XMLStreamCompactDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT), freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble());
+            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
             try {
                 return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
             } catch (XMLStreamException e) {
@@ -59,7 +56,7 @@ public class XMLStreamCompactDataCursorTest {
             }
         }, Key.ALL, DataFilter.FULL);
 
-        ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT), freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble());
+        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
         try (InputStream stream = xml.openStream();
              DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {
             int indexSeries = -1;
@@ -101,7 +98,7 @@ public class XMLStreamCompactDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx21(0), freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble());
+            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
             try {
                 return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
             } catch (XMLStreamException e) {
@@ -109,7 +106,7 @@ public class XMLStreamCompactDataCursorTest {
             }
         }, Key.ALL, DataFilter.FULL);
 
-        ObsParser obsParser = new DefaultObsParser(FreqFactory.sdmx21(0), freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble());
+        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
         try (InputStream stream = xml.openStream();
              DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {
             assertThat(o.nextSeries()).isTrue();

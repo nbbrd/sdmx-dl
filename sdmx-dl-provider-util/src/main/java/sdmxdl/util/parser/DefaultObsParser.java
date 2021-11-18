@@ -24,42 +24,37 @@ import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor
 public final class DefaultObsParser implements ObsParser {
 
-    private final BiFunction<Key.Builder, UnaryOperator<String>, Frequency> freqFactory;
-    private final Function<Frequency, Parser<LocalDateTime>> periodFactory;
-    private final Parser<Double> valueParser;
+    private final DefaultObsParserResource<Frequency> freqFactory;
+    private final DefaultObsParserResource<TimeFormatParser> periodFactory;
+    private final DefaultObsParserResource<Parser<Double>> valueFactory;
 
-    private Parser<LocalDateTime> periodParser = Parser.onNull();
-    private Frequency freq = null;
-    private String period = null;
-    private String value = null;
+    private TimeFormatParser periodParser;
+    private Parser<Double> valueParser;
+    private Frequency freq;
+    private String period;
+    private String value;
 
-    @Override
-    @NonNull
-    public Frequency getFrequency() {
-        return freq;
-    }
-
-    @Override
-    @Nullable
-    public String getPeriod() {
-        return period;
-    }
-
-    @Override
-    @Nullable
-    public String getValue() {
-        return value;
+    @lombok.Builder
+    private DefaultObsParser(DefaultObsParserResource<Frequency> freqFactory,
+                             DefaultObsParserResource<TimeFormatParser> periodFactory,
+                             DefaultObsParserResource<Parser<Double>> valueFactory) {
+        this.freqFactory = freqFactory != null ? freqFactory : (key, attributes) -> Frequency.UNDEFINED;
+        this.periodFactory = periodFactory != null ? periodFactory : (key, attributes) -> TimeFormatParser.onObservationalTimePeriod();
+        this.valueFactory = valueFactory != null ? valueFactory : (key, attributes) -> Parser.onDouble();
+        this.periodParser = TimeFormatParser.onNull();
+        this.valueParser = Parser.onNull();
+        this.freq = Frequency.UNDEFINED;
+        this.period = null;
+        this.value = null;
     }
 
     @Override
@@ -72,17 +67,12 @@ public final class DefaultObsParser implements ObsParser {
 
     @Override
     @NonNull
-    public ObsParser frequency(Key.@NonNull Builder key, @NonNull UnaryOperator<String> attributes) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(attributes);
-        Frequency freq = freqFactory.apply(key, attributes);
-        if (this.freq != freq) {
-            this.freq = freq;
-            this.periodParser = periodFactory.apply(freq);
-            if (this.periodParser == null) {
-                this.periodParser = Parser.onNull();
-            }
-        }
+    public ObsParser head(Key.@NonNull Builder seriesKey, @NonNull UnaryOperator<String> seriesAttributes) {
+        Objects.requireNonNull(seriesKey);
+        Objects.requireNonNull(seriesAttributes);
+        this.freq = freqFactory.get(seriesKey, seriesAttributes);
+        this.periodParser = periodFactory.get(seriesKey, seriesAttributes);
+        this.valueParser = valueFactory.get(seriesKey, seriesAttributes);
         return this;
     }
 
@@ -101,9 +91,16 @@ public final class DefaultObsParser implements ObsParser {
     }
 
     @Override
+    @NonNull
+    public Frequency getFrequency() {
+        return freq;
+    }
+
+    @Override
     @Nullable
-    public LocalDateTime parsePeriod() {
-        return periodParser.parse(period);
+    public LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes) {
+        Objects.requireNonNull(obsAttributes);
+        return periodParser.parse(period, getReportingYearStartDay(obsAttributes));
     }
 
     @Override
@@ -111,4 +108,18 @@ public final class DefaultObsParser implements ObsParser {
     public Double parseValue() {
         return valueParser.parse(value);
     }
+
+    // https://sis-cc.gitlab.io/dotstatsuite-documentation/using-api/typical-use-cases/#non-calendar-reporting-periods
+    private static MonthDay getReportingYearStartDay(UnaryOperator<String> obsAttributes) {
+        String reportingYearStartDay = obsAttributes.apply("REPORTING_YEAR_START_DAY");
+        if (reportingYearStartDay == null) {
+            reportingYearStartDay = obsAttributes.apply("REPYEARSTART");
+        }
+        if (reportingYearStartDay == null) {
+            return null;
+        }
+        return MONTH_DAY_PARSER.parse(reportingYearStartDay);
+    }
+
+    private static final Parser<MonthDay> MONTH_DAY_PARSER = Parser.of(MonthDay::parse);
 }

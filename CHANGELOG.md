@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add optional RNG driver [#163](https://github.com/nbbrd/sdmx-dl/issues/163)
 - Add cache-folder-path option in CLI
 - Add source from Statistics Canada [#165](https://github.com/nbbrd/sdmx-dl/issues/165)
+- Add support of non-calendar reporting periods
 
 ### Changed
 

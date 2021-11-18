@@ -16,23 +16,22 @@
  */
 package internal.sdmxdl.util.ext;
 
-import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Frequency;
+import sdmxdl.Key;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.StandardReportingFormat;
-import sdmxdl.util.parser.TimeFormatParsers;
+import sdmxdl.util.parser.TimeFormatParser;
 
-import java.time.LocalDateTime;
+import java.util.function.UnaryOperator;
 
 import static sdmxdl.Frequency.*;
-import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * https://www.insee.fr/fr/information/2862759
@@ -58,19 +57,19 @@ public final class InseeDialect implements SdmxDialect {
     }
 
     private static ObsParser getObsParser(DataStructure dsd) {
-        return new DefaultObsParser(
-                getFreqFactory(dsd),
-                InseeDialect::getPeriodParser,
-                Parser.onDouble()
-        );
+        return DefaultObsParser
+                .builder()
+                .freqFactory(getFreqFactory(dsd))
+                .periodFactory(InseeDialect::getPeriodParser)
+                .build();
     }
 
     static FreqFactory getFreqFactory(DataStructure dsd) {
         return FreqFactory.sdmx21(dsd).toBuilder().parser(InseeDialect::parseInseeFreq).build();
     }
 
-    static Parser<LocalDateTime> getPeriodParser(Frequency freq) {
-        return onInseeTimePeriod(freq);
+    static TimeFormatParser getPeriodParser(Key.Builder key, UnaryOperator<String> attributes) {
+        return EXTENDED_PARSER;
     }
 
     private static Frequency parseInseeFreq(CharSequence code) {
@@ -93,10 +92,6 @@ public final class InseeDialect implements SdmxDialect {
         return Frequency.UNDEFINED;
     }
 
-    private static Parser<LocalDateTime> onInseeTimePeriod(Frequency freq) {
-        return freq == Frequency.MONTHLY ? EXTENDED_PARSER : PARSER;
-    }
-
     private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
@@ -104,6 +99,7 @@ public final class InseeDialect implements SdmxDialect {
             .limitPerYear(6)
             .build();
 
-    private static final Parser<LocalDateTime> PARSER = TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR);
-    private static final Parser<LocalDateTime> EXTENDED_PARSER = PARSER.orElse(TimeFormatParsers.getStartTimeParser(TWO_MONTH, FIRST_DAY_OF_YEAR));
+    private static final TimeFormatParser EXTENDED_PARSER =
+            TimeFormatParser.onObservationalTimePeriod()
+                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
 }

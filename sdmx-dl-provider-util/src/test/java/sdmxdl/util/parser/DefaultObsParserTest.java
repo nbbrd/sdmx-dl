@@ -16,19 +16,16 @@
  */
 package sdmxdl.util.parser;
 
-import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.tck.ext.ObsParserAssert;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * @author Philippe Charles
@@ -38,7 +35,7 @@ public class DefaultObsParserTest {
     @Test
     public void testCompliance() {
         ObsParserAssert.assertCompliance(
-                new DefaultObsParser((key, attributes) -> Frequency.ANNUAL, freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble()),
+                DefaultObsParser.builder().build(),
                 ObsParserAssert.Sample
                         .builder()
                         .validKey(Key.builder(asList("a", "b")))
@@ -53,58 +50,21 @@ public class DefaultObsParserTest {
 
     @Test
     public void testPeriod() {
-        AtomicReference<Frequency> freq = new AtomicReference<>();
-        ObsParser x = new DefaultObsParser((key, attributes) -> freq.get(), freq1 -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR), Parser.onDouble());
+        ObsParser x = DefaultObsParser.builder().build();
 
-        Key.Builder key = Key.builder(asList("a", "b"));
+        x.head(Key.builder(asList("a", "b")), UnaryOperator.identity());
 
-        freq.set(Frequency.UNDEFINED);
-        x.frequency(key, UnaryOperator.identity());
+        UnaryOperator<String> none = o -> null;
+        UnaryOperator<String> id1 = singletonMap("REPORTING_YEAR_START_DAY", "--07-01")::get;
+        UnaryOperator<String> id2 = singletonMap("REPYEARSTART", "--07-01")::get;
 
+        assertThat(x.period("2010-Q2").parsePeriod(none)).isEqualTo("2010-04-01T00:00:00");
+        assertThat(x.period("2010-Q2").parsePeriod(id1)).isEqualTo("2010-10-01T00:00:00");
+        assertThat(x.period("2010-Q2").parsePeriod(id2)).isEqualTo("2010-10-01T00:00:00");
 
-//        assertThat(x.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-A1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-02").parsePeriod()).isNull();
-//        assertThat(x.period("2001-01-01").parsePeriod()).isNull();
-//        assertThat(x.period("hello").parsePeriod()).isNull();
-//        assertThat(x.period("").parsePeriod()).isNull();
-//
-//        assertThat(x.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-07").parsePeriod()).isEqualTo("2001-07-01T00:00:00");
-//        assertThat(x.period("2001-S1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-S2").parsePeriod()).isEqualTo("2001-07-01T00:00:00");
-//        assertThat(x.period("2001S2").parsePeriod()).isEqualTo("2001-07-01T00:00:00");
-//        assertThat(x.period("2001S0").parsePeriod()).isNull();
-//        assertThat(x.period("2001S3").parsePeriod()).isNull();
-//        assertThat(x.period("hello").parsePeriod()).isNull();
-//        assertThat(x.period("").parsePeriod()).isNull();
-//
-//        assertThat(x.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-04").parsePeriod()).isEqualTo("2001-04-01T00:00:00");
-//        assertThat(x.period("2001-Q1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-Q2").parsePeriod()).isEqualTo("2001-04-01T00:00:00");
-//        assertThat(x.period("2001Q2").parsePeriod()).isEqualTo("2001-04-01T00:00:00");
-//        assertThat(x.period("2001-Q0").parsePeriod()).isNull();
-//        assertThat(x.period("hello").parsePeriod()).isNull();
-//        assertThat(x.period("").parsePeriod()).isNull();
-//
-//        assertThat(x.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-02").parsePeriod()).isEqualTo("2001-02-01T00:00:00");
-//        assertThat(x.period("2001-M1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001M1").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-M0").parsePeriod()).isNull();
-//        assertThat(x.period("2001").parsePeriod()).isNull();
-//        assertThat(x.period("hello").parsePeriod()).isNull();
-//        assertThat(x.period("").parsePeriod()).isNull();
-//
-//        assertThat(x.period("2001").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-01").parsePeriod()).isEqualTo("2001-01-01T00:00:00");
-//        assertThat(x.period("2001-02").parsePeriod()).isEqualTo("2001-02-01T00:00:00");
-//        assertThat(x.period("2001-02-03").parsePeriod()).isEqualTo("2001-02-03T00:00:00");
-//        assertThat(x.period("2001-M1").parsePeriod()).isNull();
-//        assertThat(x.period("2001M1").parsePeriod()).isNull();
-//        assertThat(x.period("2001-M0").parsePeriod()).isNull();
-//        assertThat(x.period("hello").parsePeriod()).isNull();
-//        assertThat(x.period("").parsePeriod()).isNull();
+        assertThat(x.period("2000-W53").parsePeriod(none)).isEqualTo("2001-01-01T00:00:00");
+        assertThat(x.period("2011-W36").parsePeriod(none)).isEqualTo("2011-09-05T00:00:00");
+        assertThat(x.period("2011-W36").parsePeriod(id1)).isEqualTo("2012-03-05T00:00:00");
+        assertThat(x.period("2011-W36").parsePeriod(id2)).isEqualTo("2012-03-05T00:00:00");
     }
 }

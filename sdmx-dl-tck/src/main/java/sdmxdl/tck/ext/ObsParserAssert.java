@@ -33,45 +33,42 @@ public class ObsParserAssert {
     }
 
     private static void checkValue(SoftAssertions s, ObsParser parser, Sample sample) {
-        parser.frequency(sample.validKey, sample.validAttributes);
+        parser.head(sample.validKey, sample.validAttributes);
 
         s.assertThat(parser.value(null)).isEqualTo(parser);
-        s.assertThat(parser.getValue()).isNull();
         s.assertThat(parser.parseValue()).isNull();
 
         s.assertThat(parser.value(sample.validValue)).isEqualTo(parser);
-        s.assertThat(parser.getValue()).isEqualTo(sample.validValue);
         s.assertThat(parser.parseValue()).isNotNull();
 
         s.assertThat(parser.value(sample.invalidValue)).isEqualTo(parser);
-        s.assertThat(parser.getValue()).isEqualTo(sample.invalidValue);
         s.assertThat(parser.parseValue()).isNull();
     }
 
     private static void checkPeriod(SoftAssertions s, ObsParser parser, Sample sample) {
-        parser.frequency(sample.validKey, sample.validAttributes);
+        parser.head(sample.validKey, sample.validAttributes);
+
+        s.assertThatThrownBy(() -> parser.parsePeriod(null))
+                .isInstanceOf(NullPointerException.class);
 
         s.assertThat(parser.period(null)).isEqualTo(parser);
-        s.assertThat(parser.getPeriod()).isNull();
-        s.assertThat(parser.parsePeriod()).isNull();
+        s.assertThat(parser.parsePeriod(o -> null)).isNull();
 
         s.assertThat(parser.period(sample.validPeriod)).isEqualTo(parser);
-        s.assertThat(parser.getPeriod()).isEqualTo(sample.validPeriod);
-        s.assertThat(parser.parsePeriod()).isNotNull();
+        s.assertThat(parser.parsePeriod(o -> null)).isNotNull();
 
         s.assertThat(parser.period(sample.invalidPeriod)).isEqualTo(parser);
-        s.assertThat(parser.getPeriod()).isEqualTo(sample.invalidPeriod);
-        s.assertThat(parser.parsePeriod()).isNull();
+        s.assertThat(parser.parsePeriod(o -> null)).isNull();
     }
 
     private static void checkFrequency(SoftAssertions s, ObsParser parser, Sample sample) {
-        s.assertThatThrownBy(() -> parser.frequency(null, sample.validAttributes))
+        s.assertThatThrownBy(() -> parser.head(null, sample.validAttributes))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> parser.frequency(sample.validKey, null))
+        s.assertThatThrownBy(() -> parser.head(sample.validKey, null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThat(parser.frequency(sample.validKey, sample.validAttributes))
+        s.assertThat(parser.head(sample.validKey, sample.validAttributes))
                 .isEqualTo(parser);
     }
 

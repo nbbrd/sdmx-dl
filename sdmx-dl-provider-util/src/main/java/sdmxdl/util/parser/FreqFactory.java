@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<String>, Frequency> {
+public final class FreqFactory implements DefaultObsParserResource<Frequency> {
 
     @lombok.NonNull
     private final BiFunction<Key.Builder, UnaryOperator<String>, String> extractor;
@@ -41,7 +41,7 @@ public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<
     private final Parser<Frequency> parser;
 
     @Override
-    public Frequency apply(Key.Builder k, UnaryOperator<String> a) {
+    public Frequency get(Key.Builder k, UnaryOperator<String> a) {
         Frequency freq = parser.parse(extractor.apply(k, a));
         return freq != null ? freq : Frequency.UNDEFINED;
     }

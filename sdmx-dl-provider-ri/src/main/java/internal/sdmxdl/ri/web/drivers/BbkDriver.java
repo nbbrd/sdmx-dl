@@ -22,7 +22,6 @@ import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
 import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -31,7 +30,6 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.TimeFormatParsers;
 import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -42,7 +40,6 @@ import java.net.URL;
 import java.util.Objects;
 
 import static sdmxdl.util.SdmxFix.Category.QUERY;
-import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
 
 /**
  * @author Philippe Charles
@@ -158,11 +155,10 @@ public final class BbkDriver implements SdmxWebDriver {
         @Override
         public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {
             Objects.requireNonNull(dsd);
-            return new DefaultObsParser(
-                    FreqFactory.sdmx20(dsd),
-                    freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
-                    Parser.onDouble()
-            );
+            return DefaultObsParser
+                    .builder()
+                    .freqFactory(FreqFactory.sdmx20(dsd))
+                    .build();
         }
     }
 }

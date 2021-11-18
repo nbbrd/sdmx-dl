@@ -16,7 +16,6 @@
  */
 package sdmxdl.util.parser;
 
-import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
@@ -33,8 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static sdmxdl.util.parser.TimeFormatParsers.FIRST_DAY_OF_YEAR;
-
 /**
  * @author Philippe Charles
  */
@@ -44,22 +41,20 @@ public enum ObsFactories implements ObsFactory {
         @Override
         public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {
             Objects.requireNonNull(dsd);
-            return new DefaultObsParser(
-                    FreqFactory.sdmx20(dsd),
-                    freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
-                    Parser.onDouble()
-            );
+            return DefaultObsParser
+                    .builder()
+                    .freqFactory(FreqFactory.sdmx20(dsd))
+                    .build();
         }
     },
     SDMX21 {
         @Override
         public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {
             Objects.requireNonNull(dsd);
-            return new DefaultObsParser(
-                    FreqFactory.sdmx21(dsd),
-                    freq -> TimeFormatParsers.getObservationalTimePeriod(FIRST_DAY_OF_YEAR),
-                    Parser.onDouble()
-            );
+            return DefaultObsParser
+                    .builder()
+                    .freqFactory(FreqFactory.sdmx21(dsd))
+                    .build();
         }
     };
 

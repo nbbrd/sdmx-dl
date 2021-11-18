@@ -38,21 +38,22 @@ public class InseeDialectTest {
     @Test
     public void testFreqParser() {
         Key.Builder key = Key.builder(dsd);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).apply(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
     }
 
     @Test
     public void testPeriodParser() {
-        assertThat(InseeDialect.getPeriodParser(ANNUAL).parse("2013")).isEqualTo("2013-01-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(QUARTERLY).parse("2014-Q3")).isEqualTo("2014-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(MONTHLY).parse("1990-09")).isEqualTo("1990-09-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(HALF_YEARLY).parse("2012-S2")).isEqualTo("2012-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(MINUTELY).parse("2012-S2")).isEqualTo("2012-07-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("2013", null)).isEqualTo("2013-01-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("2014-Q3", null)).isEqualTo("2014-07-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("1990-09", null)).isEqualTo("1990-09-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-S2", null)).isEqualTo("2012-07-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-S2", null)).isEqualTo("2012-07-01T00:00:00");
+        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-B2", null)).isEqualTo("2012-03-01T00:00:00");
     }
 
     // https://bdm.insee.fr/series/sdmx/codelist/FR1/CL_PERIODICITE/1.0

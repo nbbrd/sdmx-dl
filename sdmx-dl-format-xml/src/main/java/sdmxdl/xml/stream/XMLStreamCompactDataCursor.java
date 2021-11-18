@@ -125,7 +125,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.parsePeriod();
+        return obsParser.parsePeriod(obsAttributes::getAttribute);
     }
 
     @Override
@@ -176,7 +176,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
 
     private Status parseSeries() {
         parserSerieHead();
-        obsParser.frequency(keyBuilder, seriesAttributes::getAttribute);
+        obsParser.head(keyBuilder, seriesAttributes::getAttribute);
         return SUSPEND;
     }
 

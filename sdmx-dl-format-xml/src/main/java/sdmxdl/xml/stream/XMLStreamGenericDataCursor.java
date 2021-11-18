@@ -146,7 +146,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.parsePeriod();
+        return obsParser.parsePeriod(obsAttributes::getAttribute);
     }
 
     @Override
@@ -197,7 +197,7 @@ final class XMLStreamGenericDataCursor implements DataCursor {
 
     private Status parseSeries() throws XMLStreamException {
         nextWhile(this::onSeriesHead);
-        obsParser.frequency(keyBuilder, seriesAttributes::getAttribute);
+        obsParser.head(keyBuilder, seriesAttributes::getAttribute);
         return SUSPEND;
     }
 
