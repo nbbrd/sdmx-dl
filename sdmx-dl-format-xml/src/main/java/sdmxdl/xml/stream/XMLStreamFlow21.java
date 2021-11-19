@@ -49,6 +49,7 @@ final class XMLStreamFlow21 {
     private static final String AGENCY_ID_ATTR = "agencyID";
     private static final String VERSION_ATTR = "version";
     private static final String LANG_ATTR = "lang";
+    private static final String IS_EXTERNAL_REFERENCE_ATTR = "isExternalReference";
 
     private final TextBuilder flowLabel;
 
@@ -91,10 +92,17 @@ final class XMLStreamFlow21 {
         while (nextTags(reader, DATAFLOWS_TAG)) {
             switch (reader.getLocalName()) {
                 case DATAFLOW_TAG:
-                    flows.add(parseDataflow(reader));
+                    if (!isExternalReference(reader)) {
+                        flows.add(parseDataflow(reader));
+                    }
                     break;
             }
         }
+    }
+
+    // FIXME: API currently not designed to handle external references
+    private boolean isExternalReference(XMLStreamReader reader) {
+        return "true".equals(reader.getAttributeValue(null, IS_EXTERNAL_REFERENCE_ATTR));
     }
 
     @SuppressWarnings("null")

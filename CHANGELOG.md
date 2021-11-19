@@ -36,6 +36,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix setup commands names
 - Fix datetime parsing of undefined freq
 - Fix dimension ordering when used in key
+- Fix external references in flows
 
 ## [3.0.0-beta.4] - 2021-10-21
 
