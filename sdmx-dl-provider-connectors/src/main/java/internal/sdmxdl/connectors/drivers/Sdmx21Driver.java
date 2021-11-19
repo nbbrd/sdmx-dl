@@ -51,6 +51,16 @@ public final class Sdmx21Driver implements SdmxWebDriver {
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .source(SdmxWebSource
                     .builder()
+                    .name("ABS")
+                    .description("Australian Bureau of Statistics")
+                    .driver(CONNECTORS_SDMX_21)
+                    .endpointOf("https://api.data.abs.gov.au")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://explore.data.abs.gov.au")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("BIS")
                     .description("Bank for International Settlements")
                     .driver(CONNECTORS_SDMX_21)

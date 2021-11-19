@@ -39,6 +39,7 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
+@Deprecated
 @ServiceProvider(SdmxWebDriver.class)
 public final class AbsDriver2 implements SdmxWebDriver {
 
@@ -51,15 +52,6 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .rank(NATIVE_RANK)
             .client(AbsDriver2::newClient)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
-                    .builder()
-                    .name("ABS")
-                    .description("Australian Bureau of Statistics")
-                    .driver(RI_ABS)
-                    .endpointOf("https://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
-                    .websiteOf("https://stat.data.abs.gov.au")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
-                    .build())
             .build();
 
     private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {

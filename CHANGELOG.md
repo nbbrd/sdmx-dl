@@ -37,6 +37,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix datetime parsing of undefined freq
 - Fix dimension ordering when used in key
 - Fix external references in flows
+- Migrate ABS source to the new server [#168](https://github.com/nbbrd/sdmx-dl/issues/168)
 
 ## [3.0.0-beta.4] - 2021-10-21
 

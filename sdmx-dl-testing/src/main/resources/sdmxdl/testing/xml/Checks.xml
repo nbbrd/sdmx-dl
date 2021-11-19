@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite>
-    <source name="ABS" minFlows="361">
-        <flow ref="ABS_REGIONAL_ASGS" dims="4">
-            <data key="BANKRUPT_2.AUS.0.A" minSeries="1" minObs="3"/>
+    <source name="ABS" minFlows="492">
+        <flow ref="ABS_REGIONAL_ASGS2016" dims="4">
+            <data key="INCOME_23.AUS.0.A" minSeries="1" minObs="4"/>
         </flow>
     </source>
     <source name="BBK" minFlows="49">
