@@ -9,6 +9,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [3.0.0-beta.5] - 2021-11-23
+
+This is the fifth beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+_Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
+production._
+
+This release adds the support of most SDMX time formats.
+The execution time of CLI is reduced greatly by using a smarter cache and by avoiding to load unnecessary resources.
+A few sources are also added, including a random data generator that can be used for tests/demos.
+
+### Added
+
 - Add support of codelist in API [#158](https://github.com/nbbrd/sdmx-dl/issues/158)
 - Add native driver for INSEE [#157](https://github.com/nbbrd/sdmx-dl/issues/157)
 - Add native driver for Eurostat [#155](https://github.com/nbbrd/sdmx-dl/issues/155)
@@ -31,6 +49,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Refactor parsing of SDMX time formats
 
 ### Fixed
+
 - Improve error reporting in CLI
 - Restore setup-completion command
 - Fix setup commands names
@@ -157,12 +176,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...HEAD
-
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...HEAD
+[3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
-
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
-
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
-
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
