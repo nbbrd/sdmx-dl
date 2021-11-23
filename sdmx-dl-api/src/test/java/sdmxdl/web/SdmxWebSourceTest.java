@@ -19,7 +19,7 @@ package sdmxdl.web;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,7 +38,7 @@ public class SdmxWebSourceTest {
                 .isThrownBy(() -> SdmxWebSource.builder().endpointOf("h ttp://localhost"));
 
         assertThat(SdmxWebSource.builder().endpointOf("http://localhost").name("").description("").driver("").build().getEndpoint())
-                .isEqualTo(new URL("http://localhost"));
+                .isEqualTo(URI.create("http://localhost"));
     }
 
     @Test

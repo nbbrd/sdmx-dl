@@ -18,10 +18,10 @@ package internal.sdmxdl.ri.web.drivers;
 
 import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.sdmxdl.ri.web.RiRestClient;
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.HttpResponseException;
+import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataFilter;
+import sdmxdl.DataRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.LanguagePriorityList;
@@ -34,8 +34,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static internal.sdmxdl.ri.web.drivers.NbbDriver2.NbbExecutor.checkInternalErrorRedirect;
+import static internal.sdmxdl.ri.web.drivers.NbbDriver2.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.DataFilter.FULL;
 
 /**
  * @author Philippe Charles
@@ -53,13 +54,13 @@ public class NbbDriver2Test {
 
         NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataflowRef.parse("EXR"), Key.parse("AUD.M"), DataFilter.FULL))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), Key.parse("AUD.M"), FULL)))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }
 
     @Test
-    public void testExecutor() {
+    public void testCheckInternalErrorRedirect() {
         MediaType xmlUTF8 = MediaType.parse("text/xml; charset=utf-8");
         MediaType htmlUTF8 = MediaType.parse("text/html; charset=utf-8");
 
@@ -81,7 +82,7 @@ public class NbbDriver2Test {
                     newClient(response).getFlows();
                 })
                 .withMessage("503: Service unavailable")
-                .isInstanceOfSatisfying(HttpRest.ResponseError.class, o -> {
+                .isInstanceOfSatisfying(HttpResponseException.class, o -> {
                     assertThat(o.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAVAILABLE);
                     assertThat(o.getResponseMessage()).isEqualTo("Service unavailable");
                     assertThat(o.getHeaderFields()).isEmpty();
@@ -104,7 +105,7 @@ public class NbbDriver2Test {
     }
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
-        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (query, mediaType, langs) -> response);
+        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (httpRequest) -> response);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

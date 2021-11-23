@@ -19,7 +19,6 @@ package sdmxdl.cli;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
-import internal.sdmxdl.cli.ext.ProxyOptions;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
 import nbbrd.io.text.Formatter;
@@ -69,7 +68,6 @@ public final class CheckAccessCommand implements Callable<Void> {
 
     private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
-        ProxyOptions.warmupProxySelector(manager.getProxySelector());
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
         return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, sourceName)), BY_SOURCE);
     }

@@ -16,15 +16,17 @@
  */
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.HttpRest;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
 import nbbrd.io.Resource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
@@ -38,20 +40,22 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
+import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
+
 /**
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public class RiRestClient implements SdmxWebClient {
+public class RiRestClient implements SdmxRestClient {
 
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c, @NonNull String defaultDialect,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
+                s.getId(),
+                s.getEndpoint().toURL(),
                 c.getLanguages(),
                 ObsFactories.getObsFactory(c, s, defaultDialect),
-                HttpRest.newClient(RestClients.getRestContext(s, c)),
+                RiHttpUtils.newClient(s, c),
                 queries,
                 parsers,
                 detailSupported);
@@ -62,7 +66,7 @@ public class RiRestClient implements SdmxWebClient {
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final ObsFactory obsFactory;
-    protected final HttpRest.Client executor;
+    protected final HttpClient httpClient;
     protected final RiRestQueries queries;
     protected final RiRestParsers parsers;
     protected final boolean detailSupported;
@@ -83,8 +87,13 @@ public class RiRestClient implements SdmxWebClient {
     }
 
     @Override
-    public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(request), dsd);
+    public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        return getData(getDataQuery(ref), dsd);
+    }
+
+    @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        return getCodelist(getCodelistQuery(ref), ref);
     }
 
     @Override
@@ -112,7 +121,8 @@ public class RiRestClient implements SdmxWebClient {
 
     @NonNull
     protected List<Dataflow> getFlows(@NonNull URL url) throws IOException {
-        try (HttpRest.Response response = executor.requestGET(url, parsers.getFlowsTypes(), langs.toString())) {
+        HttpRequest request = newRequest(url, parsers.getFlowsTypes(), langs);
+        try (HttpResponse response = httpClient.requestGET(request)) {
             return parsers
                     .getFlowsParser(response.getContentType(), langs)
                     .parseStream(response::getBody);
@@ -126,16 +136,17 @@ public class RiRestClient implements SdmxWebClient {
 
     @NonNull
     protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException {
-        try (HttpRest.Response response = executor.requestGET(url, parsers.getFlowTypes(), langs.toString())) {
+        HttpRequest request = newRequest(url, parsers.getFlowTypes(), langs);
+        try (HttpResponse response = httpClient.requestGET(request)) {
             return parsers
                     .getFlowParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
                     .orElseThrow(() -> SdmxException.missingFlow(name, ref));
-        } catch (HttpRest.ResponseError error) {
-            if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+        } catch (HttpResponseException ex) {
+            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
                 throw SdmxException.missingFlow(getName(), ref);
             }
-            throw error;
+            throw ex;
         }
     }
 
@@ -146,36 +157,59 @@ public class RiRestClient implements SdmxWebClient {
 
     @NonNull
     protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException {
-        try (HttpRest.Response response = executor.requestGET(url, parsers.getStructureTypes(), langs.toString())) {
+        HttpRequest request = newRequest(url, parsers.getStructureTypes(), langs);
+        try (HttpResponse response = httpClient.requestGET(request)) {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
                     .orElseThrow(() -> SdmxException.missingStructure(name, ref));
-        } catch (HttpRest.ResponseError error) {
-            if (error.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+        } catch (HttpResponseException ex) {
+            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
                 throw SdmxException.missingStructure(getName(), ref);
             }
-            throw error;
+            throw ex;
         }
     }
 
     @NonNull
-    protected URL getDataQuery(@NonNull DataRequest request) throws IOException {
-        return queries.getDataQuery(endpoint, request.getFlowRef(), request.getKey(), request.getFilter()).build();
+    protected URL getDataQuery(@NonNull DataRef ref) throws IOException {
+        return queries.getDataQuery(endpoint, ref).build();
     }
 
     @NonNull
     protected DataCursor getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
-        HttpRest.Response response = executor.requestGET(url, parsers.getDataTypes(), langs.toString());
+        HttpRequest request = newRequest(url, parsers.getDataTypes(), langs);
+        HttpResponse response = httpClient.requestGET(request);
         return parsers
                 .getDataParser(response.getContentType(), dsd, obsFactory)
                 .parseStream(() -> DisconnectingInputStream.of(response));
     }
 
+    @NonNull
+    protected URL getCodelistQuery(@NonNull CodelistRef ref) throws IOException {
+        return queries.getCodelistQuery(endpoint, ref).build();
+    }
+
+    @NonNull
+    protected Codelist getCodelist(@NonNull URL url, @NonNull CodelistRef ref) throws IOException {
+        HttpRequest request = newRequest(url, parsers.getCodelistTypes(), langs);
+        try (HttpResponse response = httpClient.requestGET(request)) {
+            return parsers
+                    .getCodelistParser(response.getContentType(), langs, ref)
+                    .parseStream(response::getBody)
+                    .orElseThrow(() -> SdmxException.missingCodelist(name, ref));
+        } catch (HttpResponseException ex) {
+            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
+                throw SdmxException.missingCodelist(getName(), ref);
+            }
+            throw ex;
+        }
+    }
+
     @lombok.RequiredArgsConstructor
     private static final class DisconnectingInputStream extends InputStream {
 
-        public static DisconnectingInputStream of(HttpRest.Response response) throws IOException {
+        public static DisconnectingInputStream of(HttpResponse response) throws IOException {
             return new DisconnectingInputStream(response.getBody(), response);
         }
 

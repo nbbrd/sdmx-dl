@@ -16,14 +16,12 @@
  */
 package internal.sdmxdl.ri.web.drivers;
 
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
-import internal.util.rest.HttpRest;
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -32,10 +30,7 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.PeriodParsers;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -55,12 +50,12 @@ public final class BbkDriver implements SdmxWebDriver {
     private static final String RI_BBK = "ri:bbk";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
-            .client(BbkDriver::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .client(BbkClient::new)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("BBK")
@@ -68,36 +63,34 @@ public final class BbkDriver implements SdmxWebDriver {
                     .driver(RI_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:BBK")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
                     .build())
             .build();
-
-    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) {
-        return new BbkClient(
-                SdmxWebClient.getClientName(s),
-                s.getEndpoint(),
-                c.getLanguages(),
-                HttpRest.newClient(RestClients.getRestContext(s, c))
-        );
-    }
 
     @VisibleForTesting
     static final class BbkClient extends RiRestClient {
 
-        private static final BbkObsFactory OBS_FACTORY = new BbkObsFactory();
-        private static final BbkQueries QUERIES = new BbkQueries();
-        private static final Sdmx21RestParsers PARSERS = new Sdmx21RestParsers();
-
-        public BbkClient(String name, URL endpoint, LanguagePriorityList langs, HttpRest.Client executor) {
-            super(name, endpoint, langs, OBS_FACTORY, executor, QUERIES, PARSERS, true);
+        BbkClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+            super(
+                    s.getId(),
+                    s.getEndpoint().toURL(),
+                    c.getLanguages(),
+                    new BbkObsFactory(),
+                    RiHttpUtils.newClient(s, c),
+                    new BbkQueries(),
+                    new Sdmx21RestParsers(),
+                    true);
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull DataRequest request, @NonNull DataStructure dsd) throws IOException {
-            if (request.getKey().equals(Key.ALL)) {
-                request = request.toBuilder().key(alternateAllOf(dsd)).build();
-            }
-            return super.getData(request, dsd);
+        public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+            return super.getData(fixDataRef(ref, dsd), dsd);
+        }
+
+        private DataRef fixDataRef(DataRef ref, DataStructure dsd) {
+            return ref.getKey().equals(Key.ALL)
+                    ? DataRef.of(ref.getFlowRef(), alternateAllOf(dsd), ref.getFilter())
+                    : ref;
         }
 
         @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
@@ -109,7 +102,7 @@ public final class BbkDriver implements SdmxWebDriver {
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {
 
-        public BbkQueries() {
+        BbkQueries() {
             super(false);
         }
 
@@ -123,8 +116,8 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "Meta uses custom resources path")
         @Override
-        protected RestQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
-            RestQueryBuilder result = RestQueryBuilder
+        protected URLQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
+            URLQueryBuilder result = URLQueryBuilder
                     .of(endpoint)
                     .path("metadata")
                     .path(resourcePath)
@@ -137,8 +130,8 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected RestQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
-            return RestQueryBuilder
+        protected URLQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
+            return URLQueryBuilder
                     .of(endpoint)
                     .path(resourcePath)
                     .path(flowRef.getId())
@@ -147,7 +140,7 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 5, category = QUERY, cause = "Data detail parameter for series-keys-only has a typo")
         @Override
-        protected void applyFilter(DataFilter filter, RestQueryBuilder result) {
+        protected void applyFilter(DataFilter filter, URLQueryBuilder result) {
             if (filter.getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY)) {
                 result.param(DETAIL_PARAM, "serieskeyonly");
             } else {
@@ -162,11 +155,10 @@ public final class BbkDriver implements SdmxWebDriver {
         @Override
         public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {
             Objects.requireNonNull(dsd);
-            return new DefaultObsParser(
-                    FreqFactory.sdmx20(dsd),
-                    PeriodParsers::onStandardFreq,
-                    Parser.onDouble()
-            );
+            return DefaultObsParser
+                    .builder()
+                    .freqFactory(FreqFactory.sdmx20(dsd))
+                    .build();
         }
     }
 }

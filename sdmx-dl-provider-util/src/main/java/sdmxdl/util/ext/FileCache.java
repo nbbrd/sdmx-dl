@@ -20,6 +20,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.About;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.web.SdmxWebMonitorReports;
@@ -42,7 +43,7 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = SystemProperties.DEFAULT.getJavaIoTmpdir().resolve("sdmxdl");
+    private final Path root = SystemProperties.DEFAULT.getJavaIoTmpdir().resolve(About.NAME).resolve(About.VERSION);
 
     @lombok.NonNull
     @lombok.Builder.Default

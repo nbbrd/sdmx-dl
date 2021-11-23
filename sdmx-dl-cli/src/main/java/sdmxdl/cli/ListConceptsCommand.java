@@ -71,7 +71,7 @@ public final class ListConceptsCommand implements Callable<Void> {
     }
 
     private Stream<Dimension> getDimensions(DataStructure dsd) {
-        return sort.applySort(dsd.getDimensions(), BY_POSITION);
+        return dsd.getDimensions().stream();
     }
 
     private Stream<Attribute> getAttributes(DataStructure dsd) {
@@ -86,6 +86,5 @@ public final class ListConceptsCommand implements Callable<Void> {
         return o instanceof Dimension ? ((Dimension) o).getPosition() : null;
     }
 
-    private static final Comparator<Dimension> BY_POSITION = Comparator.comparingInt(Dimension::getPosition);
     private static final Comparator<Attribute> BY_ID = Comparator.comparing(Attribute::getId);
 }

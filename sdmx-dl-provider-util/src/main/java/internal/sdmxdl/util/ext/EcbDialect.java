@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.util.ext;
 
-import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
@@ -26,7 +25,6 @@ import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.parser.PeriodParsers;
 
 import java.util.Objects;
 
@@ -55,11 +53,10 @@ public final class EcbDialect implements SdmxDialect {
 
     private static ObsParser getObsParser(DataStructure dsd) {
         Objects.requireNonNull(dsd);
-        return new DefaultObsParser(
-                getFreqFactory(dsd),
-                PeriodParsers::onStandardFreq,
-                Parser.onDouble()
-        );
+        return DefaultObsParser
+                .builder()
+                .freqFactory(getFreqFactory(dsd))
+                .build();
     }
 
     private static FreqFactory getFreqFactory(DataStructure dsd) {

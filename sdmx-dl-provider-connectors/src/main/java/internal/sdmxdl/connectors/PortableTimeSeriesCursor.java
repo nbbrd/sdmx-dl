@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.connectors;
 
+import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import sdmxdl.DataCursor;
 import sdmxdl.DataStructure;
@@ -57,7 +58,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
         if (result) {
             current = data.next();
             current.getDimensionsMap().forEach(keyBuilder::put);
-            obsParser.frequency(keyBuilder, current::getAttribute);
+            obsParser.head(keyBuilder, current::getAttribute);
             index = -1;
         } else {
             current = null;
@@ -105,7 +106,10 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     @Override
     public LocalDateTime getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.period(current.get(index).getTimeslot()).parsePeriod();
+        BaseObservation<? extends Double> obs = current.get(index);
+        return obsParser
+                .period(obs.getTimeslot())
+                .parsePeriod(obs::getAttributeValue);
     }
 
     @Override

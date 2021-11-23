@@ -31,16 +31,18 @@ public class ListCodesCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
-
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("sample", "data&struct", "FREQ", "--no-log", "-s", src.getPath(), "-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(cmd.execute("sample", "data&struct", "FREQ", "--sort", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .isEmpty();
 
         assertThat(FileSample.readAll(out))
                 .contains("Code,Label", atIndex(0))
-                .contains("M,Monthly", atIndex(9))
+                .contains("M,Monthly", atIndex(6))
                 .hasSize(11);
     }
 }

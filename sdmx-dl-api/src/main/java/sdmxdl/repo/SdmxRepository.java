@@ -142,30 +142,30 @@ public class SdmxRepository {
         }
 
         @Override
-        public Collection<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Collection<Series> getData(DataRef dataRef) throws IOException {
             checkState();
             return repo
-                    .getDataSet(flowRef)
-                    .map(dataSet -> dataSet.getData(key, filter))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
+                    .getDataSet(dataRef.getFlowRef())
+                    .map(dataSet -> dataSet.getData(dataRef.getKey(), dataRef.getFilter()))
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
             checkState();
             return repo
-                    .getDataSet(flowRef)
-                    .map(dataSet -> dataSet.getDataStream(key, filter))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
+                    .getDataSet(dataRef.getFlowRef())
+                    .map(dataSet -> dataSet.getDataStream(dataRef.getKey(), dataRef.getFilter()))
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+        public DataCursor getDataCursor(DataRef dataRef) throws IOException {
             checkState();
             return repo
-                    .getDataSet(flowRef)
-                    .map(dataSet -> dataSet.getDataCursor(key, filter))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef, key, filter));
+                    .getDataSet(dataRef.getFlowRef())
+                    .map(dataSet -> dataSet.getDataCursor(dataRef.getKey(), dataRef.getFilter()))
+                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
         }
 
         @Override

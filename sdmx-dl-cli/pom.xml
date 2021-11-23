@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.4</version>
+        <version>3.0.0-beta.5</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>7.0.2</version>
+            <version>7.0.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -171,8 +171,10 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>module-info.class</exclude>
+                                <exclude>**/module-info.class</exclude>
                                 <exclude>META-INF/MANIFEST.MF</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -200,7 +202,7 @@
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>0.7.0</version>
+                        <version>0.8.0</version>
                         <executions>
                             <execution>
                                 <phase>install</phase>

@@ -19,7 +19,7 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -35,7 +35,7 @@ public final class SeDriver implements SdmxWebDriver {
     private static final String CONNECTORS_ES = "connectors:es";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(CONNECTORS_ES)
             .rank(WRAPPED_RANK)
@@ -48,7 +48,7 @@ public final class SeDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_ES)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SE")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
                     .build())
             .build();
 

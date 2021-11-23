@@ -17,27 +17,39 @@
 package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.AuthOptions;
+import internal.sdmxdl.cli.ext.CacheOptions;
+import internal.sdmxdl.cli.ext.SslOptions;
+import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.SdmxWebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.kryo.KryoFileFormat;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.FileFormat;
+import sdmxdl.util.ext.MapCache;
+import sdmxdl.util.ext.VerboseCache;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -68,19 +80,54 @@ public class WebNetOptions extends WebOptions {
 
     @Override
     public SdmxWebManager loadManager() throws IOException {
-        SSLFactory sslFactory = networkOptions.getSslOptions().getSSLFactory();
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
                 .languages(langs)
-                .proxySelector(networkOptions.getProxyOptions().getProxySelector())
-                .sslSocketFactory(sslFactory.getSslSocketFactory())
-                .hostnameVerifier(sslFactory.getHostnameVerifier())
-                .cache(getCache())
+                .network(getNetworkFactory())
+                .cache(new DryCache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions())))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
                 .build();
+    }
+
+    private NetworkFactory getNetworkFactory() {
+        return new NetworkFactory() {
+
+            @lombok.Getter(lazy = true)
+            private final ProxySelector lazyProxySelector = initProxySelector();
+
+            @lombok.Getter(lazy = true)
+            private final SSLFactory lazySslFactory = initSSLFactory();
+
+            private ProxySelector initProxySelector() {
+                return networkOptions.getProxyOptions().getProxySelector();
+            }
+
+            private SSLFactory initSSLFactory() {
+                SslOptions sslOptions = networkOptions.getSslOptions();
+                if (getVerboseOptions().isVerbose()) {
+                    getVerboseOptions().reportToErrorStream("SSL", "Initializing SSL factory");
+                }
+                return sslOptions.getSSLFactory();
+            }
+
+            @Override
+            public @NonNull ProxySelector getProxySelector() {
+                return getLazyProxySelector();
+            }
+
+            @Override
+            public @NonNull SSLSocketFactory getSslSocketFactory() {
+                return getLazySslFactory().getSslSocketFactory();
+            }
+
+            @Override
+            public @NonNull HostnameVerifier getHostnameVerifier() {
+                return getLazySslFactory().getHostnameVerifier();
+            }
+        };
     }
 
     private List<SdmxWebSource> getForcedSslSources(SdmxWebManager manager) {
@@ -93,35 +140,53 @@ public class WebNetOptions extends WebOptions {
         return source.toBuilder().endpoint(toHttps(source.getEndpoint())).build();
     }
 
-    private static URL toHttps(URL url) {
-        try {
-            return url.getProtocol().equals("http")
-                    ? new URL("https" + url.toString().substring(4))
-                    : url;
-        } catch (MalformedURLException ex) {
-            throw new UncheckedIOException(ex);
+    private static URI toHttps(URI url) {
+        return url.getScheme().equals("http")
+                ? URI.create("https" + url.toString().substring(4))
+                : url;
+    }
+
+    private static SdmxCache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+        if (cacheOptions.isNoCache()) {
+            return SdmxCache.noOp();
         }
+        FileCache fileCache = getFileCache(cacheOptions, verboseOptions);
+        if (verboseOptions.isVerbose()) {
+            verboseOptions.reportToErrorStream(CACHE_ANCHOR, "Using cache folder '" + fileCache.getRoot() + "'");
+        }
+        return getVerboseCache(fileCache, verboseOptions);
     }
 
-    private SdmxCache getCache() {
-        return networkOptions.getCacheOptions().isNoCache()
-                ? SdmxCache.noOp()
-                : FileCache
+    private static FileCache getFileCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+        FileCache.Builder result = FileCache
                 .builder()
-                .repositoryFormat(getRepositoryFormat())
-                .monitorFormat(getMonitorFormat())
-                .onIOException((msg, ex) -> getVerboseOptions().reportToErrorStream("CACHE", msg, ex))
-                .build();
+                .repositoryFormat(getRepositoryFormat(cacheOptions))
+                .monitorFormat(getMonitorFormat(cacheOptions));
+        if (cacheOptions.getCache() != null) {
+            result.root(cacheOptions.getCache().toPath());
+        }
+        if (verboseOptions.isVerbose()) {
+            result.onIOException((msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex));
+        }
+        return result.build();
     }
 
-    private FileFormat<SdmxRepository> getRepositoryFormat() {
+    private static FileFormat<SdmxRepository> getRepositoryFormat(CacheOptions cacheOptions) {
         FileFormat<SdmxRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
-        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
+        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
-    private FileFormat<SdmxWebMonitorReports> getMonitorFormat() {
+    private static FileFormat<SdmxWebMonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
         FileFormat<SdmxWebMonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
-        return networkOptions.getCacheOptions().isNoCacheCompression() ? result : FileFormat.gzip(result);
+        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
+    }
+
+    private static SdmxCache getVerboseCache(SdmxCache delegate, VerboseOptions options) {
+        if (options.isVerbose()) {
+            BiConsumer<String, Boolean> listener = (key, hit) -> options.reportToErrorStream(CACHE_ANCHOR, (hit ? "Hit " : "Miss ") + key);
+            return new VerboseCache(delegate, listener, listener);
+        }
+        return delegate;
     }
 
     private List<SdmxWebAuthenticator> getAuthenticators() {
@@ -140,5 +205,59 @@ public class WebNetOptions extends WebOptions {
             }
         }
         return result;
+    }
+
+    private static final String CACHE_ANCHOR = "CCH";
+
+    private static final class DryCache implements SdmxCache {
+
+        private final SdmxCache delegate;
+        private final MapCache dry;
+
+        public DryCache(SdmxCache delegate) {
+            this.delegate = delegate;
+            this.dry = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), delegate.getClock());
+        }
+
+        @Override
+        public @NonNull Clock getClock() {
+            return delegate.getClock();
+        }
+
+        @Override
+        public @Nullable SdmxRepository getRepository(@NonNull String key) {
+            SdmxRepository result = dry.getRepository(key);
+            if (result == null) {
+                result = delegate.getRepository(key);
+                if (result != null) {
+                    dry.putRepository(key, result);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+            dry.putRepository(key, value);
+            delegate.putRepository(key, value);
+        }
+
+        @Override
+        public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+            SdmxWebMonitorReports result = dry.getWebMonitorReports(key);
+            if (result == null) {
+                result = delegate.getWebMonitorReports(key);
+                if (result != null) {
+                    dry.putWebMonitorReports(key, result);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
+            dry.putWebMonitorReports(key, value);
+            delegate.putWebMonitorReports(key, value);
+        }
     }
 }

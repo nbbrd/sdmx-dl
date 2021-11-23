@@ -16,6 +16,8 @@
  */
 package sdmxdl;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Map;
 
 /**
@@ -32,11 +34,10 @@ public class Attribute extends Component {
     String id;
 
     @lombok.NonNull
-    @lombok.Singular
-    Map<String, String> codes;
-
-    @lombok.NonNull
     String label;
+
+    @Nullable
+    Codelist codelist;
 
 //    @lombok.NonNull
 //    RelationShip relationShip;

@@ -40,13 +40,13 @@ public interface SdmxConnection extends Closeable {
     DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException;
 
     @NonNull
-    Collection<Series> getData(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
+    Collection<Series> getData(@NonNull DataRef dataRef) throws IOException;
 
     @NonNull
-    Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
+    Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException;
 
     @NonNull
-    DataCursor getDataCursor(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;
+    DataCursor getDataCursor(@NonNull DataRef dataRef) throws IOException;
 
     boolean isDetailSupported() throws IOException;
 }

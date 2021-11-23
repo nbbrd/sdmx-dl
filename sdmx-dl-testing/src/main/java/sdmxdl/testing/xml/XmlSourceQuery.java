@@ -19,6 +19,8 @@ package sdmxdl.testing.xml;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.index.qual.NonNegative;
+import sdmxdl.DataFilter;
+import sdmxdl.DataRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.testing.WebRequest;
@@ -59,8 +61,7 @@ public class XmlSourceQuery {
                     result.add(WebRequest
                             .builder()
                             .source(source.getName())
-                            .flow(flow.getRef())
-                            .key(data.getKey())
+                            .dataRef(DataRef.of(flow.getRef(), data.getKey(), DataFilter.FULL))
                             .minFlowCount(source.getMinFlowCount())
                             .dimensionCount(flow.getDimensionCount())
                             .minSeriesCount(data.getMinSeriesCount())

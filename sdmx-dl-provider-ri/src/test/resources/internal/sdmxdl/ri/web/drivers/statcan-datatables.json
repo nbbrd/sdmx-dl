@@ -1,0 +1,38 @@
+[
+    {
+        "productId": 10100001,
+        "cansimId": "183-0021",
+        "cubeTitleEn": "Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31",
+        "cubeTitleFr": "Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre",
+        "cubeStartDate": "1999-01-01",
+        "cubeEndDate": "2011-01-01",
+        "releaseTime": "2012-08-01T12:30",
+        "archived": "1",
+        "subjectCode": [
+            "10"
+        ],
+        "surveyCode": [
+            "1713"
+        ],
+        "frequencyCode": 12,
+        "corrections": []
+    },
+    {
+        "productId": 10100002,
+        "cansimId": "191-0002",
+        "cubeTitleEn": "Central government debt",
+        "cubeTitleFr": "Dette du gouvernement central",
+        "cubeStartDate": "2009-04-01",
+        "cubeEndDate": "2021-08-01",
+        "releaseTime": "2021-11-01T12:30",
+        "archived": "2",
+        "subjectCode": [
+            "10"
+        ],
+        "surveyCode": [
+            "7514"
+        ],
+        "frequencyCode": 6,
+        "corrections": []
+    }
+]

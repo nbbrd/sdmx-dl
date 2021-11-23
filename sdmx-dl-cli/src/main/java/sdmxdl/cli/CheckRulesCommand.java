@@ -18,7 +18,6 @@ package sdmxdl.cli;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
-import internal.sdmxdl.cli.ext.ProxyOptions;
 import picocli.CommandLine;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
@@ -31,12 +30,16 @@ import sdmxdl.web.SdmxWebSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Philippe Charles
@@ -63,7 +66,6 @@ public final class CheckRulesCommand implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         SdmxWebManager manager = web.loadManager();
-        ProxyOptions.warmupProxySelector(manager.getProxySelector());
 
         List<Summary> result = web.applyParallel(getRequests())
                 .filter(getSourceFilter())
@@ -98,8 +100,8 @@ public final class CheckRulesCommand implements Callable<Void> {
         static Target of(WebRequest request) {
             return new Target(
                     request.getSource(),
-                    request.getFlow(),
-                    request.getKey()
+                    request.getDataRef().getFlowRef(),
+                    request.getDataRef().getKey()
             );
         }
     }
@@ -113,12 +115,16 @@ public final class CheckRulesCommand implements Callable<Void> {
         String properties;
 
         static Config of(SdmxWebSource source) {
-            return new Config(
-                    source.getDriver(),
-                    source.getDialect(),
-                    source.getEndpoint().getProtocol(),
-                    DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
-            );
+            try {
+                return new Config(
+                        source.getDriver(),
+                        source.getDialect(),
+                        source.getEndpoint().toURL().getProtocol(),
+                        DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
+                );
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 
@@ -148,12 +154,12 @@ public final class CheckRulesCommand implements Callable<Void> {
         int seriesCount;
         int obsCount;
 
-        static Actual of(WebResponse response) {
+        static Actual of(WebResponse r) {
             return new Actual(
-                    response.hasFlows() ? response.getFlows().size() : -1,
-                    response.hasStructure() ? response.getStructure().getDimensions().size() : -1,
-                    response.hasData() ? response.getData().size() : -1,
-                    response.hasData() ? response.getData().stream().mapToInt(series -> series.getObs().size()).sum() : -1
+                    ofNullable(r.getFlows()).map(Collection::size).orElse(-1),
+                    ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1),
+                    ofNullable(r.getData()).map(Collection::size).orElse(-1),
+                    ofNullable(r.getData()).map(WebRule::getObsCount).orElse(-1)
             );
         }
     }
@@ -174,7 +180,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                     Config.of(r.getSource()),
                     Expected.of(r.getRequest()),
                     Actual.of(r),
-                    r.hasError() ? r.getError() : "",
+                    ofNullable(r.getError()).orElse(""),
                     WebRule.checkAll(r)
             );
         }

@@ -18,22 +18,21 @@ package sdmxdl.testing;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.logging.Level;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
+@lombok.extern.java.Log
 public class WebResponse {
 
     @lombok.NonNull
@@ -57,26 +56,6 @@ public class WebResponse {
     @Nullable
     Collection<Series> data;
 
-    public boolean hasError() {
-        return error != null;
-    }
-
-    public boolean hasFlows() {
-        return flows != null;
-    }
-
-    public boolean hasFlow() {
-        return flow != null;
-    }
-
-    public boolean hasStructure() {
-        return structure != null;
-    }
-
-    public boolean hasData() {
-        return data != null;
-    }
-
     @NonNull
     public static WebResponse of(@NonNull WebRequest request, @NonNull SdmxWebManager manager) {
         WebResponse.Builder result = WebResponse
@@ -87,10 +66,11 @@ public class WebResponse {
         try (SdmxWebConnection conn = manager.getConnection(request.getSource())) {
             result
                     .flows(conn.getFlows())
-                    .flow(conn.getFlow(request.getFlow()))
-                    .structure(conn.getStructure(request.getFlow()))
-                    .data(conn.getData(request.getFlow(), request.getKey(), DataFilter.FULL));
+                    .flow(conn.getFlow(request.getDataRef().getFlowRef()))
+                    .structure(conn.getStructure(request.getDataRef().getFlowRef()))
+                    .data(conn.getData(DataRef.of(request.getDataRef().getFlowRef(), request.getDataRef().getKey(), DataFilter.FULL)));
         } catch (IOException ex) {
+            log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));
         }
 
@@ -99,10 +79,10 @@ public class WebResponse {
 
     private static String toError(IOException ex) {
         StringBuilder sb = new StringBuilder();
-        sb.append(ex.getMessage());
+        sb.append(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         Throwable cause = ex.getCause();
         while (cause != null) {
-            sb.append(System.lineSeparator()).append(cause.getMessage());
+            sb.append(System.lineSeparator()).append(cause.getClass().getSimpleName() + ": " + cause.getMessage());
             cause = cause.getCause();
         }
         return sb.toString();

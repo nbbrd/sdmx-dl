@@ -21,6 +21,8 @@ import nbbrd.design.SealedType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Objects;
+
 /**
  * Abstract identifier of a resource.
  *
@@ -28,7 +30,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @SealedType({
         DataStructureRef.class,
-        DataflowRef.class
+        DataflowRef.class,
+        CodelistRef.class
 })
 public abstract class ResourceRef<T extends ResourceRef<T>> {
 
@@ -66,6 +69,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static <T extends ResourceRef<T>> T parse(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
+        Objects.requireNonNull(input, "input");
         String[] items = Chars.splitToArray(input, SEP);
         switch (items.length) {
             case 3:
@@ -81,6 +85,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory) throws IllegalArgumentException {
+        Objects.requireNonNull(id, "id");
         if (Chars.contains(id, SEP)) {
             throw new IllegalArgumentException(id);
         }

@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.MediaType;
+import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -29,6 +29,10 @@ public interface RiRestParsers {
     @NonNull List<MediaType> getDataTypes();
 
     @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory);
+
+    @NonNull List<MediaType> getCodelistTypes();
+
+    @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref);
 
     static <T extends Resource<R>, R extends ResourceRef<R>> @NonNull Function<List<T>, Optional<T>> getResourceSelector(@NonNull R ref) {
         Objects.requireNonNull(ref);

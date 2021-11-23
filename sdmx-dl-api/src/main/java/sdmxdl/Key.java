@@ -25,8 +25,10 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Parameter that defines the dimension values of the data to be returned.
@@ -113,18 +115,14 @@ public final class Key {
             return null;
         }
 
-        if (dsd.getDimensions().size() != size()) {
-            return "Expected " + dsd.getDimensions().size() + " dimensions instead of " + size();
+        List<Dimension> dimensions = dsd.getDimensionList();
+
+        if (dimensions.size() != size()) {
+            return "Expected " + dimensions.size() + " dimensions instead of " + size();
         }
 
-        Dimension[] dimensions = dsd
-                .getDimensions()
-                .stream()
-                .sorted(Comparator.comparingInt(Dimension::getPosition))
-                .toArray(Dimension[]::new);
-
-        for (int i = 0; i < dimensions.length; i++) {
-            Dimension dimension = dimensions[i];
+        for (int i = 0; i < dimensions.size(); i++) {
+            Dimension dimension = dimensions.get(i);
             if (dimension.isCoded()) {
                 for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
                     if (!isWildcardCode(code) && !dimension.getCodes().containsKey(code)) {
@@ -197,22 +195,21 @@ public final class Key {
 
     @NonNull
     public static Builder builder(@NonNull DataStructure dfs) {
-        return builder(dfs
-                .getDimensions()
-                .stream()
-                .sorted(Comparator.comparingInt(Dimension::getPosition))
-                .map(Dimension::getId)
-                .collect(Collectors.toList())
-        );
+        List<Dimension> dimensions = dfs.getDimensionList();
+        Map<String, Integer> result = new HashMap<>();
+        for (int i = 0; i < dimensions.size(); i++) {
+            result.put(dimensions.get(i).getId(), i);
+        }
+        return new Builder(result);
     }
 
     @NonNull
     public static Builder builder(@NonNull List<String> dimensionNames) {
-        Map<String, Integer> index = new HashMap<>();
+        Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensionNames.size(); i++) {
-            index.put(dimensionNames.get(i), i);
+            result.put(dimensionNames.get(i), i);
         }
-        return new Builder(index);
+        return new Builder(result);
     }
 
     public static final class Builder {

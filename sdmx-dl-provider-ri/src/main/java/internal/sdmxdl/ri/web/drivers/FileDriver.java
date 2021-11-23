@@ -11,7 +11,7 @@ import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -20,8 +20,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,10 +42,15 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
     public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(context, "context");
-        SdmxWebDriverSupport.checkSource(source, getName());
+        SdmxRestDriverSupport.checkSource(source, getName());
 
         return new WebOverFileConnection(open(source, context), getName());
     }
@@ -82,19 +86,19 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     @VisibleForTesting
-    static File toFile(URL url) throws IOException {
-        if (url != null) {
+    static File toFile(URI endpoint) throws IOException {
+        if (endpoint != null) {
             try {
-                return new File(url.toURI());
-            } catch (URISyntaxException | IllegalArgumentException ex) {
-                throw new IOException("Invalid file name: '" + url + "'", ex);
+                return new File(endpoint);
+            } catch (IllegalArgumentException ex) {
+                throw new IOException("Invalid file name: '" + endpoint + "'", ex);
             }
         }
         return null;
     }
 
-    private static final Property<URL> STRUCTURE_PROPERTY =
-            Property.of("structureURL", null, Parser.onURL(), Formatter.onURL());
+    private static final Property<URI> STRUCTURE_PROPERTY =
+            Property.of("structureURL", null, Parser.of(text -> URI.create(text.toString())), Formatter.of(Objects::toString));
 
     @VisibleForTesting
     @lombok.RequiredArgsConstructor

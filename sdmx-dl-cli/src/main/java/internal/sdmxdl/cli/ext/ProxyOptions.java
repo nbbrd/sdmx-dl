@@ -4,31 +4,21 @@ import nbbrd.net.proxy.SystemProxySelector;
 import picocli.CommandLine;
 
 import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 @lombok.Getter
 @lombok.Setter
 public class ProxyOptions {
 
     @CommandLine.Option(
-            names = {"--no-system-proxy"},
+            names = {"--auto-proxy"},
             defaultValue = "false",
-            descriptionKey = "cli.noSystemProxy"
+            descriptionKey = "cli.autoProxy"
     )
-    boolean noSystemProxy;
+    boolean autoProxyDetection;
 
     public ProxySelector getProxySelector() {
-        return !isNoSystemProxy() ? SystemProxySelector.ofServiceLoader() : ProxySelector.getDefault();
-    }
-
-    public static void warmupProxySelector(ProxySelector proxySelector) {
-        if (proxySelector instanceof SystemProxySelector) {
-            try {
-                proxySelector.select(new URI("http://localhost"));
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        return isAutoProxyDetection()
+                ? SystemProxySelector.ofServiceLoader()
+                : ProxySelector.getDefault();
     }
 }

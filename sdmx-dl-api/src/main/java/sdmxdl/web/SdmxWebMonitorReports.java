@@ -12,7 +12,7 @@ import java.util.List;
 public class SdmxWebMonitorReports {
 
     @lombok.NonNull
-    String provider;
+    String uriScheme;
 
     @lombok.Singular
     List<SdmxWebMonitorReport> reports;

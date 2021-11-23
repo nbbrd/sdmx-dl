@@ -13,19 +13,10 @@ import java.util.function.UnaryOperator;
 public interface ObsParser {
 
     @NonNull
-    Frequency getFrequency();
-
-    @Nullable
-    String getPeriod();
-
-    @Nullable
-    String getValue();
-
-    @NonNull
     ObsParser clear();
 
     @NonNull
-    ObsParser frequency(Key.@NonNull Builder key, @NonNull UnaryOperator<String> attributes);
+    ObsParser head(Key.@NonNull Builder seriesKey, @NonNull UnaryOperator<String> seriesAttributes);
 
     @NonNull
     ObsParser period(@Nullable String period);
@@ -33,8 +24,11 @@ public interface ObsParser {
     @NonNull
     ObsParser value(@Nullable String value);
 
+    @NonNull
+    Frequency getFrequency();
+
     @Nullable
-    LocalDateTime parsePeriod();
+    LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes);
 
     @Nullable
     Double parseValue();

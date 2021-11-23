@@ -118,10 +118,10 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             }
             obsParser.value(reader.toString());
 
-            Series.Builder series = data.computeIfAbsent(keyBuilder.build(), z -> Series.builder().key(z).freq(obsParser.frequency(keyBuilder, o -> null).getFrequency()));
+            Series.Builder series = data.computeIfAbsent(keyBuilder.build(), z -> Series.builder().key(z).freq(obsParser.head(keyBuilder, o -> null).getFrequency()));
             series.obs(obs
                     .clearMeta()
-                    .period(obsParser.parsePeriod())
+                    .period(obsParser.parsePeriod(o -> null))
                     .value(obsParser.parseValue())
                     .build()
             );

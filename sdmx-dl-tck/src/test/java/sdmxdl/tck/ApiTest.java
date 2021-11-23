@@ -15,7 +15,7 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
-import java.net.URL;
+import java.net.URI;
 
 public class ApiTest {
 
@@ -25,7 +25,7 @@ public class ApiTest {
                 SdmxRepositoryManager.builder().repository(RepoSamples.REPO).build(),
                 SdmxManagerAssert.Sample
                         .builder()
-                        .validName("test")
+                        .validName("repoName")
                         .invalidName("ko")
                         .build()
         );
@@ -33,7 +33,7 @@ public class ApiTest {
 
     @Test
     public void testSdmxWebManager() {
-        URL endpoint = TckUtil.asURL("http://" + RepoSamples.REPO.getName());
+        URI endpoint = TckUtil.asURI("http://" + RepoSamples.REPO.getName());
         SdmxWebSource source = SdmxWebSource
                 .builder()
                 .name("repoSource")
@@ -45,6 +45,7 @@ public class ApiTest {
                 .builder()
                 .name("repoDriver")
                 .rank(0)
+                .available(true)
                 .repo(endpoint, RepoSamples.REPO)
                 .source(source)
                 .build();

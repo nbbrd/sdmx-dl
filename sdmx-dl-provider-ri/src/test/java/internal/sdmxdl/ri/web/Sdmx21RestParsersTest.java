@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.MediaType;
+import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static internal.sdmxdl.ri.web.RiHttpUtils.GENERIC_DATA_21_TYPE;
+import static internal.sdmxdl.ri.web.RiHttpUtils.STRUCTURE_21_TYPE;
 import static internal.sdmxdl.ri.web.Sdmx21RestParsers.*;
-import static internal.util.rest.MediaType.ANY_TYPE;
+import static internal.util.http.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -36,9 +38,9 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetFlowParser() throws IOException {
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.GOOD_FLOW_REF);
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.FLOW_REF);
         testParser(DEFAULT_DATAFLOW_TYPES, extractor);
-        testContent(extractor, MediaType.parse(SdmxMediaType.STRUCTURE_21), SdmxSource.ECB_DATAFLOWS);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATAFLOWS);
     }
 
     @Test
@@ -50,7 +52,7 @@ public class Sdmx21RestParsersTest {
     public void testGetFlowsParser() throws IOException {
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowsParser(y, ANY);
         testParser(DEFAULT_DATAFLOW_TYPES, extractor);
-        testContent(extractor, MediaType.parse(SdmxMediaType.STRUCTURE_21), SdmxSource.ECB_DATAFLOWS);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATAFLOWS);
     }
 
     @Test
@@ -60,9 +62,9 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetStructureParser() throws IOException {
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getStructureParser(y, ANY, RepoSamples.GOOD_STRUCT_REF);
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getStructureParser(y, ANY, RepoSamples.STRUCT_REF);
         testParser(DEFAULT_DATASTRUCTURE_TYPES, extractor);
-        testContent(extractor, MediaType.parse(SdmxMediaType.STRUCTURE_21), SdmxSource.ECB_DATA_STRUCTURE);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATA_STRUCTURE);
     }
 
     @Test
@@ -75,7 +77,7 @@ public class Sdmx21RestParsersTest {
         DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxSource.ECB_DATA_STRUCTURE::openStream);
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, ObsFactories.SDMX21).andThen(IOFunction.unchecked(Sdmx21RestParsersTest::toDataSet));
         testParser(DEFAULT_DATA_TYPES, extractor);
-        testContent(extractor, MediaType.parse(SdmxMediaType.GENERIC_DATA_21), SdmxSource.ECB_DATA);
+        testContent(extractor, GENERIC_DATA_21_TYPE, SdmxSource.ECB_DATA);
     }
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {
@@ -101,16 +103,16 @@ public class Sdmx21RestParsersTest {
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isNotInstanceOf(FileOverTextParser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withoutParameters()))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isNotInstanceOf(FileOverTextParser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withCharset(StandardCharsets.US_ASCII)))
-                    .isInstanceOf(Sdmx21RestParsers.CharsetParser.class);
+                    .isInstanceOf(FileOverTextParser.class);
         }
     }
 

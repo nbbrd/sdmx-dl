@@ -58,17 +58,17 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
+        public List<Series> getData(DataRef dataRef) {
             return DATA;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
+        public Stream<Series> getDataStream(DataRef dataRef) {
             return DATA.stream();
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
+        public DataCursor getDataCursor(DataRef dataRef) {
             return DataCursor.empty();
         }
 
@@ -108,17 +108,17 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
+        public List<Series> getData(DataRef dataRef) {
             throw new CustomException();
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
+        public Stream<Series> getDataStream(DataRef dataRef) {
             throw new CustomException();
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
+        public DataCursor getDataCursor(DataRef dataRef) {
             throw new CustomException();
         }
 
@@ -159,17 +159,17 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataflowRef flowRef, Key key, DataFilter filter) {
+        public List<Series> getData(DataRef dataRef) {
             return null;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataflowRef flowRef, Key key, DataFilter filter) {
+        public Stream<Series> getDataStream(DataRef dataRef) {
             return null;
         }
 
         @Override
-        public DataCursor getDataCursor(DataflowRef flowRef, Key key, DataFilter filter) {
+        public DataCursor getDataCursor(DataRef dataRef) {
             return null;
         }
 

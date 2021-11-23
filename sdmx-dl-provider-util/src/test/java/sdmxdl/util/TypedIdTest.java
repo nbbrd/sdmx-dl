@@ -8,6 +8,7 @@ import sdmxdl.tck.ext.FakeClock;
 import sdmxdl.util.ext.MapCache;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,7 +20,7 @@ public class TypedIdTest {
     @Test
     public void test() throws IOException {
         TypedId<Integer> id = TypedId.of(
-                "key",
+                URI.create("cache://key"),
                 repo -> Integer.parseInt(repo.getName()),
                 data -> SdmxRepository.builder().name(Integer.toString(data)).build()
         );

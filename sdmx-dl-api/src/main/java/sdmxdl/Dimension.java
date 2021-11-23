@@ -18,7 +18,7 @@ package sdmxdl;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 
-import java.util.Map;
+import java.util.Comparator;
 
 /**
  * Statistical concept used in combination with other statistical concepts to identify a statistical series or individual observations.
@@ -28,21 +28,27 @@ import java.util.Map;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class Dimension extends Component {
+public class Dimension extends Component implements Comparable<Dimension> {
 
     @lombok.NonNull
     String id;
 
     @lombok.NonNull
-    @lombok.Singular
-    Map<String, String> codes;
+    String label;
 
     @lombok.NonNull
-    String label;
+    Codelist codelist;
 
     @NonNegative
     int position;
 
+    @Override
+    public int compareTo(Dimension that) {
+        return COMPARATOR.compare(this, that);
+    }
+
     public static final class Builder extends Component.Builder<Dimension.Builder> {
     }
+
+    private static final Comparator<Dimension> COMPARATOR = Comparator.comparingInt(Dimension::getPosition).thenComparing(Dimension::getId);
 }

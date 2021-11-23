@@ -1,10 +1,7 @@
 package sdmxdl.ext;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.*;
 
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -29,16 +26,7 @@ public class SdmxExceptionTest {
                 .isThrownBy(() -> SdmxException.missingStructure("abc", null));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.missingData(null, DataflowRef.parse("xyz"), Key.ALL, DataFilter.FULL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.missingData("abc", null, Key.ALL, DataFilter.FULL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.missingData("abc", DataflowRef.parse("xyz"), null, DataFilter.FULL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.missingData("abc", DataflowRef.parse("xyz"), Key.ALL, null));
+                .isThrownBy(() -> SdmxException.missingData(null, DataRef.of(DataflowRef.parse("xyz"), Key.ALL, DataFilter.FULL)));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxException.invalidKey(null, Key.ALL, "cause"));

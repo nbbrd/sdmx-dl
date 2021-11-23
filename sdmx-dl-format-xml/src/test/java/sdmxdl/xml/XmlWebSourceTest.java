@@ -42,7 +42,7 @@ public class XmlWebSourceTest {
                     .property("detailSupported", "true")
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
-                    .monitorOf("ABC", "xyz")
+                    .monitorOf("ABC:xyz")
                     .build(),
             SdmxWebSource
                     .builder()
@@ -64,7 +64,7 @@ public class XmlWebSourceTest {
             + "        <property key=\"detailSupported\" value=\"true\"/>\n"
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
-            + "        <monitor id=\"xyz\" provider=\"ABC\"/>\n"
+            + "        <monitor>ABC:xyz</monitor>\n"
             + "    </source>\n"
             + "    <source>\n"
             + "        <name>other</name>\n"

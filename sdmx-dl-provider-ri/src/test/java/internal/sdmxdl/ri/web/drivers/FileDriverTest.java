@@ -20,8 +20,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
@@ -38,20 +37,13 @@ public class FileDriverTest {
 
     @Test
     public void testToFile() throws IOException {
-        assertThat(FileDriver.toFile(new URL("file:/C:/temp/x.xml"))).isNotNull();
+        assertThat(FileDriver.toFile(URI.create("file:/C:/temp/x.xml"))).isNotNull();
 
-        URL illegal = new URL("file://C:/temp/x.xml");
+        URI illegal = URI.create("file://C:/temp/x.xml");
         assertThatIOException()
                 .isThrownBy(() -> FileDriver.toFile(illegal))
                 .withMessageStartingWith("Invalid file name: ")
                 .withMessageContaining(illegal.toString())
                 .withCauseExactlyInstanceOf(IllegalArgumentException.class);
-
-        URL syntax = new URL("file:/C :/temp/x.xml");
-        assertThatIOException()
-                .isThrownBy(() -> FileDriver.toFile(syntax))
-                .withMessageStartingWith("Invalid file name: ")
-                .withMessageContaining(syntax.toString())
-                .withCauseExactlyInstanceOf(URISyntaxException.class);
     }
 }

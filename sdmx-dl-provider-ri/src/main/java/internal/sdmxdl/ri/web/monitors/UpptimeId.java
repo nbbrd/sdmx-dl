@@ -1,15 +1,16 @@
 package internal.sdmxdl.ri.web.monitors;
 
-import internal.util.rest.RestQueryBuilder;
-import nbbrd.design.StringValue;
+import internal.util.http.URLQueryBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
-@StringValue
 @lombok.Value
-public class UpptimeId {
+class UpptimeId {
+
+    public static final String URI_SCHEME = "upptime";
 
     @lombok.NonNull
     String owner;
@@ -22,11 +23,11 @@ public class UpptimeId {
 
     @Override
     public String toString() {
-        return owner + ":" + repo + ":" + site;
+        return URI_SCHEME + ":/" + owner + "/" + repo + "/" + site;
     }
 
     public @NonNull URL toSummaryURL() throws MalformedURLException {
-        return RestQueryBuilder
+        return URLQueryBuilder
                 .of(new URL("https://raw.githubusercontent.com"))
                 .path(owner)
                 .path(repo)
@@ -36,10 +37,21 @@ public class UpptimeId {
                 .build();
     }
 
-    public static @NonNull UpptimeId parse(@NonNull CharSequence id) throws IllegalArgumentException {
-        String[] items = id.toString().split(":", -1);
+    public @NonNull URI toURI() {
+        return URI.create(toString());
+    }
+
+    public static @NonNull UpptimeId parse(@NonNull URI uri) throws IllegalArgumentException {
+        if (!uri.getScheme().equals(URI_SCHEME)) {
+            throw new IllegalArgumentException("Invalid scheme");
+        }
+        String path = uri.getRawPath();
+        if (path == null) {
+            throw new IllegalArgumentException("Missing path");
+        }
+        String[] items = path.substring(1).split("/", -1);
         if (items.length != 3) {
-            throw new IllegalArgumentException("Cannot parse id; expected 3 parts, found " + items.length);
+            throw new IllegalArgumentException("Invalid path; expected 3 parts, found " + items.length);
         }
         return new UpptimeId(items[0], items[1], items[2]);
     }

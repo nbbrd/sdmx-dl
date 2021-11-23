@@ -97,7 +97,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (DataCursor cursor = conn.getDataCursor(web.getFlow(), web.getKey(), getFilter())) {
+        try (DataCursor cursor = conn.getDataCursor(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
             return DataSet
                     .builder()
                     .ref(web.getFlow())

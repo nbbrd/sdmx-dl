@@ -77,7 +77,6 @@ public interface SdmxCsvFieldWriter {
     static @NonNull SdmxCsvFieldWriter onKeyDimensions(@NonNull DataStructure dsd) {
         return onKeyDimensions(dsd.getDimensions()
                 .stream()
-                .sorted(Comparator.comparingInt(Dimension::getPosition))
                 .map(Dimension::getId)
                 .collect(Collectors.toList()));
     }
@@ -87,6 +86,7 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull DataStructure dsd, @NonNull Formatter<LocalDateTime> formatter) {
+        // FIXME: dsd#getTimeDimensionId() might be null !
         return onTimeDimension(dsd.getTimeDimensionId(), formatter);
     }
 

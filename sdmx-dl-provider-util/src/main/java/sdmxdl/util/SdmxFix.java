@@ -35,6 +35,6 @@ public @interface SdmxFix {
     String cause();
 
     enum Category {
-        NONE, ENDPOINT, QUERY, MEDIA_TYPE, CONTENT
+        NONE, ENDPOINT, QUERY, MEDIA_TYPE, CONTENT, PROTOCOL
     }
 }

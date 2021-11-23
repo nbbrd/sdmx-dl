@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.file.spi.SdmxFileContext;
@@ -74,23 +75,21 @@ public class SdmxFileManager implements SdmxManager {
     @Override
     public SdmxFileConnection getConnection(String name) throws IOException {
         Objects.requireNonNull(name);
-        SdmxFileSource source = getSource(name)
-                .orElseThrow(() -> new IOException("Cannot find source for name '" + name + "'"));
+
+        SdmxFileSource source = lookupSource(name)
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxFileSource.class));
+
         return getConnection(source);
     }
 
     @NonNull
     public SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
         Objects.requireNonNull(source);
-        SdmxFileReader reader = getReader(source)
-                .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
-        return reader.read(source, getContext());
-    }
 
-    private Optional<SdmxFileReader> getReader(SdmxFileSource source) {
-        return readers.stream()
-                .filter(reader -> reader.canRead(source))
-                .findFirst();
+        SdmxFileReader reader = lookupReader(source)
+                .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
+
+        return reader.read(source, getContext());
     }
 
     private SdmxFileContext initContext() {
@@ -103,10 +102,16 @@ public class SdmxFileManager implements SdmxManager {
                 .build();
     }
 
-    private Optional<SdmxFileSource> getSource(String name) {
+    private Optional<SdmxFileSource> lookupSource(String name) {
         return readers.stream()
-                .map(decoder -> decoder.getSource(name))
+                .map(reader -> reader.getSource(name))
                 .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    private Optional<SdmxFileReader> lookupReader(SdmxFileSource source) {
+        return readers.stream()
+                .filter(reader -> reader.canRead(source))
                 .findFirst();
     }
 }

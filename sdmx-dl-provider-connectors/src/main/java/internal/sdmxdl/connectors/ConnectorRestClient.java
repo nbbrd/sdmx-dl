@@ -30,8 +30,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.DataRequest;
-import sdmxdl.util.web.SdmxWebClient;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -53,7 +53,7 @@ import static sdmxdl.util.web.SdmxWebProperty.*;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements SdmxWebClient {
+public final class ConnectorRestClient implements SdmxRestClient {
 
     @FunctionalInterface
     public interface SpecificSupplier {
@@ -66,14 +66,14 @@ public final class ConnectorRestClient implements SdmxWebClient {
     public interface GenericSupplier {
 
         @NonNull
-        RestSdmxClient get(@NonNull URI uri, @NonNull Map<String, String> properties);
+        RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
-                client.setEndpoint(source.getEndpoint().toURI());
+                client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
                 return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
             } catch (URISyntaxException ex) {
@@ -82,15 +82,11 @@ public final class ConnectorRestClient implements SdmxWebClient {
         };
     }
 
-    public static SdmxWebClient.@NonNull Supplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
         return (source, context) -> {
-            try {
-                RestSdmxClient client = supplier.get(source.getEndpoint().toURI(), source.getProperties());
-                configure(client, source, context);
-                return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
-            } catch (URISyntaxException ex) {
-                throw new RuntimeException(ex);
-            }
+            RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
+            configure(client, source, context);
+            return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
         };
     }
 
@@ -141,15 +137,28 @@ public final class ConnectorRestClient implements SdmxWebClient {
     }
 
     @Override
-    public DataCursor getData(DataRequest request, DataStructure dsd) throws IOException {
+    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
         try {
-            List<PortableTimeSeries<Double>> data = getData(connector, request, dsd);
+            List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
             return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return DataCursor.empty();
             }
-            throw wrap(ex, "Failed to get data '%s' from '%s'", request, name);
+            throw wrap(ex, "Failed to get data '%s' from '%s'", ref, name);
+        }
+    }
+
+    @Override
+    public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
+        try {
+            return Codelist
+                    .builder()
+                    .ref(ref)
+                    .codes(connector.getCodes(ref.getId(), ref.getAgency(), ref.getVersion()))
+                    .build();
+        } catch (SdmxException ex) {
+            throw wrap(ex, "Failed to get codelist '%s' from '%s'", ref, name);
         }
     }
 
@@ -182,12 +191,12 @@ public final class ConnectorRestClient implements SdmxWebClient {
             MAX_REDIRECTS_PROPERTY
     );
 
-    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRequest request, DataStructure dsd) throws SdmxException {
+    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(
-                Connectors.fromFlowQuery(request.getFlowRef(), dsd.getRef()),
-                Connectors.fromStructure(dsd), request.getKey().toString(),
+                Connectors.fromFlowQuery(ref.getFlowRef(), dsd.getRef()),
+                Connectors.fromStructure(dsd), ref.getKey().toString(),
                 null, null,
-                request.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
+                ref.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
                 null, false);
     }
 
@@ -199,9 +208,9 @@ public final class ConnectorRestClient implements SdmxWebClient {
         client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
-        client.setProxySelector(context.getProxySelector());
-        client.setSslSocketFactory(context.getSslSocketFactory());
-        client.setHostnameVerifier(context.getHostnameVerifier());
+        client.setProxySelector(context.getNetwork().getProxySelector());
+        client.setSslSocketFactory(context.getNetwork().getSslSocketFactory());
+        client.setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
         RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);

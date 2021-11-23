@@ -13,6 +13,7 @@ import sdmxdl.Key;
 import sdmxdl.Series;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ import static sdmxdl.tck.KeyAssert.keys;
 
 public class CachedFileClientTest {
 
-    private final String base = "abc";
+    private final URI base = URI.create("cache:file");
     private final Duration ttl = CachedFileClient.DEFAULT_CACHE_TTL;
 
     private CachedFileClient getClient(CachingAssert.Context ctx) {
@@ -41,7 +42,7 @@ public class CachedFileClientTest {
 
     @Test
     public void testDecode() throws IOException {
-        String decodeKey = "decode://" + base;
+        String decodeKey = base + "/decode";
         Method<SdmxFileInfo> x = CachedFileClient::decode;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(XRepoFileClient.infoOf(REPO))), decodeKey, ttl);
@@ -49,12 +50,12 @@ public class CachedFileClientTest {
 
     @Test
     public void testLoadData() throws IOException {
-        String loadDataKey = "loadData://" + base;
+        String loadDataKey = base + "/loadData";
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.loadData(client.decode(), GOOD_FLOW_REF, key, filter)) {
+                    try (DataCursor cursor = client.loadData(client.decode(), FLOW_REF, key, filter)) {
                         return cursor.toStream().collect(Collectors.toList());
                     }
                 };
@@ -76,7 +77,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         SdmxFileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, GOOD_FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
+        IOConsumer<Key> x = key -> client.loadData(info, FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

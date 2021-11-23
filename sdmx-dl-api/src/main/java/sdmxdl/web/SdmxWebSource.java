@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public class SdmxWebSource {
     String dialect;
 
     @lombok.NonNull
-    URL endpoint;
+    URI endpoint;
 
     @lombok.Singular
     Map<String, String> properties;
@@ -57,7 +58,7 @@ public class SdmxWebSource {
     URL website;
 
     @Nullable
-    SdmxWebMonitor monitor;
+    URI monitor;
 
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
@@ -72,16 +73,16 @@ public class SdmxWebSource {
         return aliases.contains(name);
     }
 
+    public @NonNull String getId() {
+        return getDriver() + ":" + getName();
+    }
+
     public static class Builder {
 
         @NonNull
         public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
             Objects.requireNonNull(endpoint);
-            try {
-                return endpoint(new URL(endpoint));
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
-            }
+            return endpoint(URI.create(endpoint));
         }
 
         @NonNull
@@ -101,8 +102,9 @@ public class SdmxWebSource {
         }
 
         @NonNull
-        public Builder monitorOf(@NonNull String provider, @NonNull String id) {
-            return monitor(SdmxWebMonitor.builder().provider(provider).id(id).build());
+        public Builder monitorOf(@NonNull String monitor) {
+            Objects.requireNonNull(monitor);
+            return monitor(URI.create(monitor));
         }
     }
 }

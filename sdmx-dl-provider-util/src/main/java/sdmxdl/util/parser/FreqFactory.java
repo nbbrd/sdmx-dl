@@ -23,14 +23,16 @@ import sdmxdl.Dimension;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<String>, Frequency> {
+public final class FreqFactory implements DefaultObsParserResource<Frequency> {
 
     @lombok.NonNull
     private final BiFunction<Key.Builder, UnaryOperator<String>, String> extractor;
@@ -39,7 +41,7 @@ public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<
     private final Parser<Frequency> parser;
 
     @Override
-    public Frequency apply(Key.Builder k, UnaryOperator<String> a) {
+    public Frequency get(Key.Builder k, UnaryOperator<String> a) {
         Frequency freq = parser.parse(extractor.apply(k, a));
         return freq != null ? freq : Frequency.UNDEFINED;
     }
@@ -91,13 +93,20 @@ public final class FreqFactory implements BiFunction<Key.Builder, UnaryOperator<
     public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
 
     public static int getFrequencyCodeIdIndex(@NonNull DataStructure dsd) {
-        for (Dimension o : dsd.getDimensions()) {
-            switch (o.getId()) {
-                case FREQ_CONCEPT:
-                case "FREQUENCY":
-                    return (o.getPosition() - 1);
-            }
+        List<Dimension> dimensions = dsd.getDimensionList();
+        return IntStream.range(0, dimensions.size())
+                .filter(i -> isFrequencyCodeId(dimensions.get(i)))
+                .findFirst()
+                .orElse(NO_FREQUENCY_CODE_ID_INDEX);
+    }
+
+    private static boolean isFrequencyCodeId(Dimension o) {
+        switch (o.getId()) {
+            case FREQ_CONCEPT:
+            case "FREQUENCY":
+                return true;
+            default:
+                return false;
         }
-        return NO_FREQUENCY_CODE_ID_INDEX;
     }
 }

@@ -18,13 +18,12 @@ package internal.sdmxdl.ri.web.drivers;
 
 import internal.sdmxdl.ri.web.DotStatRestParsers;
 import internal.sdmxdl.ri.web.DotStatRestQueries;
-import internal.sdmxdl.ri.web.RestClients;
+import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxWebClient;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -42,12 +41,12 @@ public final class DotStatDriver2 implements SdmxWebDriver {
     private static final String RI_DOTSTAT = "ri:dotstat";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(RI_DOTSTAT)
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::newClient)
-            .supportedProperties(RestClients.CONNECTION_PROPERTIES)
+            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .name("OECD")
@@ -55,7 +54,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:OECD")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -64,7 +63,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:SE")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -73,7 +72,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:UIS")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -82,11 +81,11 @@ public final class DotStatDriver2 implements SdmxWebDriver {
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:UKDS")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
                     .build())
             .build();
 
-    private static @NonNull SdmxWebClient newClient(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c) throws IOException {
+    private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
         return RiRestClient.of(s, c, "SDMX20", new DotStatRestQueries(), new DotStatRestParsers(), false);
     }
 

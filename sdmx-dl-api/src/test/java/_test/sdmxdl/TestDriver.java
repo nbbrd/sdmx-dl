@@ -40,6 +40,11 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
         public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
             return TestConnection.VALID;
         }
@@ -65,6 +70,11 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
+        public boolean isAvailable() {
+            throw new CustomException();
+        }
+
+        @Override
         public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
@@ -86,6 +96,11 @@ public enum TestDriver implements SdmxWebDriver {
 
         @Override
         public int getRank() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isAvailable() {
             throw new UnsupportedOperationException();
         }
 

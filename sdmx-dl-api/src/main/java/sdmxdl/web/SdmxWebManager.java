@@ -23,7 +23,9 @@ import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
@@ -31,11 +33,8 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.web.spi.SdmxWebMonitoring;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.net.ProxySelector;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -80,15 +79,7 @@ public class SdmxWebManager implements SdmxManager {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    ProxySelector proxySelector = ProxySelector.getDefault();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SSLSocketFactory sslSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+    NetworkFactory network = NetworkFactory.getDefault();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -123,7 +114,7 @@ public class SdmxWebManager implements SdmxManager {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
         return getConnection(source);
     }
@@ -145,7 +136,7 @@ public class SdmxWebManager implements SdmxManager {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> new IOException("Cannot find entry point for '" + name + "'"));
+                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
         return getMonitorReport(source);
     }
@@ -154,13 +145,13 @@ public class SdmxWebManager implements SdmxManager {
     public SdmxWebMonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
-        SdmxWebMonitor monitor = source.getMonitor();
+        URI monitor = source.getMonitor();
 
         if (monitor == null) {
             throw new IOException("Missing monitor for '" + source + "'");
         }
 
-        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getProvider())
+        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getScheme())
                 .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
 
         return monitoring.getReport(source, getContext());
@@ -177,21 +168,21 @@ public class SdmxWebManager implements SdmxManager {
         }
     }
 
-    private Optional<SdmxWebSource> lookupSource(String sourceName) {
-        return Optional.ofNullable(getSources().get(sourceName));
+    private Optional<SdmxWebSource> lookupSource(String name) {
+        return Optional.ofNullable(getSources().get(name));
     }
 
-    private Optional<SdmxWebDriver> lookupDriver(String driverName) {
+    private Optional<SdmxWebDriver> lookupDriver(String name) {
         return drivers
                 .stream()
-                .filter(webDriver -> driverName.equals(webDriver.getName()))
+                .filter(driver -> name.equals(driver.getName()))
                 .findFirst();
     }
 
-    private Optional<SdmxWebMonitoring> lookupMonitoring(String monitoringName) {
+    private Optional<SdmxWebMonitoring> lookupMonitoring(String uriScheme) {
         return monitorings
                 .stream()
-                .filter(monitoring -> monitoringName.equals(monitoring.getProviderName()))
+                .filter(monitoring -> uriScheme.equals(monitoring.getUriScheme()))
                 .findFirst();
     }
 
@@ -200,9 +191,7 @@ public class SdmxWebManager implements SdmxManager {
                 .builder()
                 .cache(cache)
                 .languages(languages)
-                .proxySelector(proxySelector)
-                .sslSocketFactory(sslSocketFactory)
-                .hostnameVerifier(hostnameVerifier)
+                .network(network)
                 .dialects(dialects)
                 .eventListener(eventListener)
                 .authenticators(authenticators)

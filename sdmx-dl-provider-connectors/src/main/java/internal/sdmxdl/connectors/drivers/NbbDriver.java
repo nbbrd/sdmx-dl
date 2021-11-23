@@ -19,7 +19,7 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -32,7 +32,7 @@ public final class NbbDriver implements SdmxWebDriver {
     private static final String CONNECTORS_NBB = "connectors:nbb";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(CONNECTORS_NBB)
             .rank(WRAPPED_RANK)
@@ -45,7 +45,7 @@ public final class NbbDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:NBB")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
                     .build())
             .build();
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.4</version>
+        <version>3.0.0-beta.5</version>
     </parent>
 
     <artifactId>sdmx-dl-tck</artifactId>
@@ -54,6 +54,12 @@
             <groupId>io.github.hakky54</groupId>
             <artifactId>logcaptor</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

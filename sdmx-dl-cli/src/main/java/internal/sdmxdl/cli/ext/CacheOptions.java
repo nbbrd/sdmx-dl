@@ -2,6 +2,8 @@ package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
 
+import java.io.File;
+
 @lombok.Getter
 @lombok.Setter
 public class CacheOptions {
@@ -20,4 +22,11 @@ public class CacheOptions {
             hidden = true
     )
     private boolean noCacheCompression;
+
+    @CommandLine.Option(
+            names = {"--cache"},
+            paramLabel = "<folder>",
+            descriptionKey = "cli.cache"
+    )
+    private File cache;
 }

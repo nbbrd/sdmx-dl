@@ -17,10 +17,7 @@
 package sdmxdl.ext;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataFilter;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.*;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -34,6 +31,11 @@ public final class SdmxException extends IOException {
         return new SdmxException(source, "Connection closed");
     }
 
+    public static @NonNull SdmxException missingSource(@NonNull String source, @NonNull Class<?> type) {
+        Objects.requireNonNull(source);
+        return new SdmxException(source, "Missing " + type.getSimpleName() + " '" + source + "'");
+    }
+
     public static @NonNull SdmxException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
         Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing flow '" + ref + "'");
@@ -44,11 +46,14 @@ public final class SdmxException extends IOException {
         return new SdmxException(source, "Missing structure '" + ref + "'");
     }
 
-    public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataflowRef ref, @NonNull Key key, @NonNull DataFilter filter) {
+    public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataRef dataRef) {
+        Objects.requireNonNull(dataRef);
+        return new SdmxException(source, "Missing data '" + dataRef.getFlowRef() + "'");
+    }
+
+    public static @NonNull SdmxException missingCodelist(@NonNull String source, @NonNull CodelistRef ref) {
         Objects.requireNonNull(ref);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return new SdmxException(source, "Missing data '" + ref + "'");
+        return new SdmxException(source, "Missing codelist '" + ref + "'");
     }
 
     public static @NonNull SdmxException invalidKey(@NonNull String source, @NonNull Key key, @NonNull String cause) {

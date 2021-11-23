@@ -132,6 +132,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(DataStructureRef.class, new DataStructureRefSerializer());
         result.register(Dataflow.class, new DataflowSerializer());
         result.register(DataflowRef.class, new DataflowRefSerializer());
+        result.register(Codelist.class, new CodelistSerializer());
+        result.register(CodelistRef.class, new CodelistRefSerializer());
         result.register(Frequency.class, new FrequencySerializer());
         result.register(Key.class, new KeySerializer());
         result.register(DataSet.class, new DataSetSerializer());
@@ -169,6 +171,21 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             setValuesCanBeNull(false);
             setKeyClass(String.class);
             setValueClass(String.class);
+        }
+    }
+
+    private static abstract class ResourceRefSerializer<T extends ResourceRef<T>> extends ImmutableSerializer<T> {
+
+        protected abstract T read(String input);
+
+        @Override
+        public void write(Kryo kryo, Output output, T t) {
+            output.writeString(t.toString());
+        }
+
+        @Override
+        public T read(Kryo kryo, Input input, Class<? extends T> type) {
+            return read(input.readString());
         }
     }
 
@@ -235,16 +252,11 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class DataStructureRefSerializer extends ImmutableSerializer<DataStructureRef> {
+    private static final class DataStructureRefSerializer extends ResourceRefSerializer<DataStructureRef> {
 
         @Override
-        public void write(Kryo kryo, Output output, DataStructureRef t) {
-            output.writeString(t.toString());
-        }
-
-        @Override
-        public DataStructureRef read(Kryo kryo, Input input, Class<? extends DataStructureRef> type) {
-            return DataStructureRef.parse(input.readString());
+        protected DataStructureRef read(String input) {
+            return DataStructureRef.parse(input);
         }
     }
 
@@ -267,16 +279,39 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class DataflowRefSerializer extends ImmutableSerializer<DataflowRef> {
+    private static final class DataflowRefSerializer extends ResourceRefSerializer<DataflowRef> {
 
         @Override
-        public void write(Kryo kryo, Output output, DataflowRef t) {
-            output.writeString(t.toString());
+        protected DataflowRef read(String input) {
+            return DataflowRef.parse(input);
+        }
+    }
+
+    private static final class CodelistSerializer extends ImmutableSerializer<Codelist> {
+
+        private final Serializer<Map<String, String>> codes = new StringMapSerializer();
+
+        @Override
+        public void write(Kryo kryo, Output output, Codelist t) {
+            kryo.writeObject(output, t.getRef());
+            kryo.writeObject(output, t.getCodes(), codes);
         }
 
         @Override
-        public DataflowRef read(Kryo kryo, Input input, Class<? extends DataflowRef> type) {
-            return DataflowRef.parse(input.readString());
+        public Codelist read(Kryo kryo, Input input, Class<? extends Codelist> type) {
+            return Codelist
+                    .builder()
+                    .ref(kryo.readObject(input, CodelistRef.class))
+                    .codes(kryo.readObject(input, HashMap.class, this.codes))
+                    .build();
+        }
+    }
+
+    private static final class CodelistRefSerializer extends ResourceRefSerializer<CodelistRef> {
+
+        @Override
+        protected CodelistRef read(String input) {
+            return CodelistRef.parse(input);
         }
     }
 
@@ -334,64 +369,59 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
     private static final class SeriesSerializer extends ImmutableSerializer<Series> {
 
         private final Serializer<Collection<Obs>> obs = new CustomCollectionSerializer<>(Obs.class);
-        private final Serializer<Map<String, String>> meta = new StringMapSerializer();
-        private final Series.Builder builder = Series.builder();
+        private final Serializer<Map<String, String>> seriesMeta = new StringMapSerializer();
 
         @Override
         public void write(Kryo kryo, Output output, Series t) {
             kryo.writeObject(output, t.getKey());
             kryo.writeObject(output, t.getFreq());
             kryo.writeObject(output, t.getObs(), obs);
-            kryo.writeObject(output, t.getMeta(), meta);
+            kryo.writeObject(output, t.getMeta(), seriesMeta);
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public Series read(Kryo kryo, Input input, Class<? extends Series> type) {
-            return builder
-                    .clearMeta()
-                    .clearObs()
+            return Series
+                    .builder()
                     .key(kryo.readObject(input, Key.class))
                     .freq(kryo.readObject(input, Frequency.class))
                     .obs(kryo.readObject(input, ArrayList.class, obs))
-                    .meta(kryo.readObject(input, HashMap.class, meta))
+                    .meta(kryo.readObject(input, HashMap.class, seriesMeta))
                     .build();
         }
     }
 
     private static final class ObsSerializer extends ImmutableSerializer<Obs> {
 
-        private final Serializer<Map<String, String>> meta = new StringMapSerializer();
-        private final Obs.Builder builder = Obs.builder();
+        private final Serializer<Map<String, String>> obsMeta = new StringMapSerializer();
 
         @Override
         public void write(Kryo kryo, Output output, Obs t) {
             kryo.writeObjectOrNull(output, t.getPeriod(), LocalDateTime.class);
             kryo.writeObjectOrNull(output, t.getValue(), Double.class);
-            kryo.writeObject(output, t.getMeta(), meta);
+            kryo.writeObject(output, t.getMeta(), obsMeta);
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
-            return builder
-                    .clearMeta()
+            return Obs
+                    .builder()
                     .period(kryo.readObjectOrNull(input, LocalDateTime.class))
                     .value(kryo.readObjectOrNull(input, Double.class))
-                    .meta(kryo.readObject(input, HashMap.class, meta))
+                    .meta(kryo.readObject(input, HashMap.class, obsMeta))
                     .build();
         }
     }
 
     private static final class DimensionSerializer extends ImmutableSerializer<Dimension> {
 
-        private final Serializer<Map<String, String>> codes = new StringMapSerializer();
-
         @Override
         public void write(Kryo kryo, Output output, Dimension t) {
             output.writeString(t.getId());
-            kryo.writeObject(output, t.getCodes(), codes);
             output.writeString(t.getLabel());
+            kryo.writeObject(output, t.getCodelist());
             output.writeInt(t.getPosition(), true);
         }
 
@@ -401,8 +431,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Dimension
                     .builder()
                     .id(input.readString())
-                    .codes(kryo.readObject(input, HashMap.class, codes))
                     .label(input.readString())
+                    .codelist(kryo.readObject(input, Codelist.class))
                     .position(input.readInt(true))
                     .build();
         }
@@ -410,13 +440,11 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
     private static final class AttributeSerializer extends ImmutableSerializer<Attribute> {
 
-        private final Serializer<Map<String, String>> codes = new StringMapSerializer();
-
         @Override
         public void write(Kryo kryo, Output output, Attribute t) {
             output.writeString(t.getId());
-            kryo.writeObject(output, t.getCodes(), codes);
             output.writeString(t.getLabel());
+            kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
         }
 
         @SuppressWarnings("unchecked")
@@ -425,8 +453,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Attribute
                     .builder()
                     .id(input.readString())
-                    .codes(kryo.readObject(input, HashMap.class, codes))
                     .label(input.readString())
+                    .codelist(kryo.readObjectOrNull(input, Codelist.class))
                     .build();
         }
     }
@@ -437,7 +465,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public void write(Kryo kryo, Output output, SdmxWebMonitorReports t) {
-            output.writeString(t.getProvider());
+            output.writeString(t.getUriScheme());
             kryo.writeObject(output, t.getReports(), reports);
             kryo.writeObject(output, t.getCreationTime());
             kryo.writeObject(output, t.getExpirationTime());
@@ -447,7 +475,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public SdmxWebMonitorReports read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReports> type) {
             return SdmxWebMonitorReports
                     .builder()
-                    .provider(input.readString())
+                    .uriScheme(input.readString())
                     .reports(kryo.readObject(input, ArrayList.class, reports))
                     .creationTime(kryo.readObject(input, Instant.class))
                     .expirationTime(kryo.readObject(input, Instant.class))

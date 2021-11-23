@@ -44,7 +44,7 @@ public class SdmxFileConnectionImplTest {
                         .builder()
                         .connection(SdmxConnectionAssert.Sample
                                 .builder()
-                                .validFlow(RepoSamples.GOOD_FLOW_REF)
+                                .validFlow(RepoSamples.FLOW_REF)
                                 .invalidFlow(RepoSamples.BAD_FLOW_REF)
                                 .validKey(RepoSamples.K1)
                                 .invalidKey(RepoSamples.INVALID_KEY)
@@ -60,9 +60,9 @@ public class SdmxFileConnectionImplTest {
 
         SdmxFileConnectionImpl conn = new SdmxFileConnectionImpl(r, RepoSamples.FLOW);
 
-        assertThat(conn.getDataflowRef()).isEqualTo(RepoSamples.GOOD_FLOW_REF);
-        assertThat(conn.getFlow()).isEqualTo(conn.getFlow(RepoSamples.GOOD_FLOW_REF));
-        assertThat(conn.getStructure()).isEqualTo(conn.getStructure(RepoSamples.GOOD_FLOW_REF));
+        assertThat(conn.getDataflowRef()).isEqualTo(RepoSamples.FLOW_REF);
+        assertThat(conn.getFlow()).isEqualTo(conn.getFlow(RepoSamples.FLOW_REF));
+        assertThat(conn.getStructure()).isEqualTo(conn.getStructure(RepoSamples.FLOW_REF));
         assertThatNullPointerException().isThrownBy(() -> conn.getDataCursor(Key.ALL, null));
         assertThatNullPointerException().isThrownBy(() -> conn.getDataStream(Key.ALL, null));
 

@@ -18,10 +18,7 @@ package sdmxdl.xml.stream;
 
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Attribute;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.samples.SdmxSource;
 
 import javax.xml.stream.XMLStreamException;
@@ -50,6 +47,8 @@ public class XMLStreamStructure21Test {
                 assertThat(x.getId()).isEqualTo("FREQ");
                 assertThat(x.getLabel()).isEqualTo("Frequency");
                 assertThat(x.getPosition()).isEqualTo(1);
+                assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("ECB", "CL_FREQ", "1.0"));
+                assertThat(x.getCodelist().getCodes()).hasSize(10).containsEntry("M", "Monthly");
             });
 
             Set<Attribute> attributes = o.getAttributes();

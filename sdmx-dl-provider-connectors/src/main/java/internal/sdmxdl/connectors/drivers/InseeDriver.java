@@ -27,7 +27,7 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxWebDriverSupport;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebDriver;
 
@@ -46,7 +46,7 @@ public final class InseeDriver implements SdmxWebDriver {
     private static final String CONNECTORS_INSEE = "connectors:insee";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)
@@ -59,7 +59,7 @@ public final class InseeDriver implements SdmxWebDriver {
                     .driver(CONNECTORS_INSEE)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:INSEE")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
                     .build())
             .build();
 

@@ -19,33 +19,24 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxWebDriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 /**
  * @author Philippe Charles
  */
+@Deprecated
 @ServiceProvider(SdmxWebDriver.class)
 public final class AbsDriver implements SdmxWebDriver {
 
     private static final String CONNECTORS_ABS = "connectors:abs";
 
     @lombok.experimental.Delegate
-    private final SdmxWebDriverSupport support = SdmxWebDriverSupport
+    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
             .builder()
             .name(CONNECTORS_ABS)
             .rank(WRAPPED_RANK)
             .client(ConnectorRestClient.of(ABS::new, "SDMX20"))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
-                    .builder()
-                    .name("ABS")
-                    .description("Australian Bureau of Statistics")
-                    .driver(CONNECTORS_ABS)
-                    .endpointOf("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx")
-                    .websiteOf("http://stat.data.abs.gov.au")
-                    .monitorOf("Upptime", "nbbrd:sdmx-upptime:ABS")
-                    .build())
             .build();
 }

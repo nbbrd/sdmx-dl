@@ -3,6 +3,7 @@ package internal.sdmxdl.ri.web.monitors;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,11 +13,8 @@ public class UpptimeIdTest {
 
     @Test
     public void testToString() {
-        assertThat(new UpptimeId("", "", "").toString())
-                .isEqualTo("::");
-
         assertThat(new UpptimeId("nbbrd", "sdmx-upptime", "ECB").toString())
-                .isEqualTo("nbbrd:sdmx-upptime:ECB");
+                .isEqualTo("upptime:/nbbrd/sdmx-upptime/ECB");
     }
 
     @Test
@@ -30,19 +28,27 @@ public class UpptimeIdTest {
 
     @Test
     public void parse() {
-        assertThat(UpptimeId.parse("::"))
-                .isEqualTo(new UpptimeId("", "", ""));
-
-        assertThat(UpptimeId.parse("nbbrd:sdmx-upptime:ECB"))
+        assertThat(UpptimeId.parse(URI.create("upptime:/nbbrd/sdmx-upptime/ECB")))
                 .isEqualTo(new UpptimeId("nbbrd", "sdmx-upptime", "ECB"));
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> UpptimeId.parse(""));
+                .isThrownBy(() -> UpptimeId.parse(URI.create("abc:/nbbrd/sdmx-upptime/ECB")))
+                .withMessageContaining("Invalid scheme");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> UpptimeId.parse(":"));
+                .isThrownBy(() -> UpptimeId.parse(URI.create("upptime:nbbrd/sdmx-upptime/ECB/")))
+                .withMessageContaining("Missing path");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> UpptimeId.parse(":::"));
+                .isThrownBy(() -> UpptimeId.parse(URI.create("upptime:/")))
+                .withMessageContaining("Invalid path");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> UpptimeId.parse(URI.create("upptime:/nbbrd")))
+                .withMessageContaining("Invalid path");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> UpptimeId.parse(URI.create("upptime:/nbbrd/sdmx-upptime")))
+                .withMessageContaining("Invalid path");
     }
 }

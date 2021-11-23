@@ -1,8 +1,10 @@
 package internal.sdmxdl.ri.web;
 
-import internal.util.rest.RestQueryBuilder;
+import internal.util.http.URLQueryBuilder;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.DataRef;
 
 import java.net.URL;
 
@@ -13,29 +15,35 @@ public class Sdmx21RestQueries implements RiRestQueries {
     private final boolean trailingSlashRequired;
 
     @Override
-    public RestQueryBuilder getFlowsQuery(URL endpoint) {
+    public URLQueryBuilder getFlowsQuery(URL endpoint) {
         return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, FLOWS)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public RestQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
+    public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
         return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, ref)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public RestQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+    public URLQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
         return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                 .param(REFERENCES_PARAM, "children")
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public RestQueryBuilder getDataQuery(URL endpoint, DataflowRef flowRef, Key key, DataFilter filter) {
-        RestQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, flowRef, key, DEFAULT_PROVIDER_REF);
-        applyFilter(filter, result);
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+        URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getKey(), DEFAULT_PROVIDER_REF);
+        applyFilter(ref.getFilter(), result);
         return result.trailingSlash(trailingSlashRequired);
+    }
+
+    @Override
+    public @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref) {
+        return onMeta(endpoint, DEFAULT_CODELIST_PATH, ref)
+                .trailingSlash(trailingSlashRequired);
     }
 
     @Override
@@ -43,7 +51,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
         return null;
     }
 
-    protected void applyFilter(DataFilter filter, RestQueryBuilder result) {
+    protected void applyFilter(DataFilter filter, URLQueryBuilder result) {
         switch (filter.getDetail()) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
@@ -57,8 +65,8 @@ public class Sdmx21RestQueries implements RiRestQueries {
         }
     }
 
-    protected RestQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
-        return RestQueryBuilder
+    protected URLQueryBuilder onMeta(URL endpoint, String resourcePath, ResourceRef<?> ref) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(resourcePath)
                 .path(ref.getAgency())
@@ -66,8 +74,8 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 .path(ref.getVersion());
     }
 
-    protected RestQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
-        return RestQueryBuilder
+    protected URLQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
+        return URLQueryBuilder
                 .of(endpoint)
                 .path(resourcePath)
                 .path(flowRef.toString())
@@ -75,14 +83,15 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 .path(providerRef);
     }
 
-    private static final String DEFAULT_DATAFLOW_PATH = "dataflow";
-    private static final String DEFAULT_DATASTRUCTURE_PATH = "datastructure";
-    private static final String DEFAULT_DATA_PATH = "data";
+    protected static final String DEFAULT_DATAFLOW_PATH = "dataflow";
+    protected static final String DEFAULT_DATASTRUCTURE_PATH = "datastructure";
+    protected static final String DEFAULT_DATA_PATH = "data";
+    protected static final String DEFAULT_CODELIST_PATH = "codelist";
 
-    private static final String DEFAULT_PROVIDER_REF = "all";
+    protected static final String DEFAULT_PROVIDER_REF = "all";
 
     protected static final String REFERENCES_PARAM = "references";
     protected static final String DETAIL_PARAM = "detail";
 
-    private static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
+    protected static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
 }

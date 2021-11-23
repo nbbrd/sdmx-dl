@@ -7,7 +7,7 @@ import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -23,8 +23,11 @@ public class MockedWebDriver implements SdmxWebDriver {
     @lombok.Getter
     private final int rank;
 
+    @lombok.Getter
+    private final boolean available;
+
     @lombok.Singular
-    private final Map<URL, SdmxRepository> repos;
+    private final Map<URI, SdmxRepository> repos;
 
     @lombok.Singular
     private final List<SdmxWebSource> sources;
@@ -44,7 +47,7 @@ public class MockedWebDriver implements SdmxWebDriver {
         return Collections.emptyList();
     }
 
-    private SdmxWebConnection connect(URL endpoint) throws IOException {
+    private SdmxWebConnection connect(URI endpoint) throws IOException {
         SdmxRepository result = repos.get(endpoint);
         if (result != null) {
             return new MockedWebConnection(name, result.asConnection());

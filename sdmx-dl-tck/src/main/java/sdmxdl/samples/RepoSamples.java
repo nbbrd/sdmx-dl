@@ -21,6 +21,7 @@ import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author Philippe Charles
@@ -28,48 +29,71 @@ import java.time.LocalDate;
 @lombok.experimental.UtilityClass
 public class RepoSamples {
 
-    public final DataStructureRef GOOD_STRUCT_REF = DataStructureRef.of("NBB", "goodStruct", "v1.0");
-    public final DataStructureRef BAD_STRUCT_REF = DataStructureRef.parse("badStruct");
-    public final DataflowRef GOOD_FLOW_REF = DataflowRef.of("NBB", "XYZ", "v2.0");
-    public final DataflowRef BAD_FLOW_REF = DataflowRef.parse("other");
+    public static final DataStructureRef BAD_STRUCT_REF = DataStructureRef.parse("badStruct");
+    public static final DataflowRef BAD_FLOW_REF = DataflowRef.parse("other");
+    public static final CodelistRef BAD_CODELIST_REF = CodelistRef.parse("badCodelist");
 
-    public final Dataflow FLOW = Dataflow.of(GOOD_FLOW_REF, GOOD_STRUCT_REF, "flow1");
+    public static final DataStructureRef STRUCT_REF = DataStructureRef.of("NBB", "goodStruct", "v1.0");
+    public static final DataflowRef FLOW_REF = DataflowRef.of("NBB", "XYZ", "v2.0");
 
-    public final DataStructure STRUCT = DataStructure
+    public static final Dataflow FLOW = Dataflow.of(FLOW_REF, STRUCT_REF, "flow1");
+
+    public static final CodelistRef CL_REF1 = CodelistRef.parse("CL_FREQ");
+    public static final CodelistRef CL_REF2 = CodelistRef.parse("CL_REGION");
+    public static final CodelistRef CL_REF3 = CodelistRef.parse("CL_SECTOR");
+    public static final CodelistRef CL_REF4 = CodelistRef.parse("CL_OBS_STATUS");
+
+    public static final Codelist CL1 = Codelist.builder().ref(CL_REF1).code("M", "Monthly").build();
+    public static final Codelist CL2 = Codelist.builder().ref(CL_REF2).code("BE", "Belgium").build();
+    public static final Codelist CL3 = Codelist.builder().ref(CL_REF3).code("INDUSTRY", "Industry").build();
+    public static final Codelist CL4 = Codelist.builder().ref(CL_REF4).code("A", "Normal value").build();
+
+    public static final Dimension DIM1 = Dimension.builder().id("FREQ").codelist(CL1).label("Frequency").position(1).build();
+    public static final Dimension DIM2 = Dimension.builder().id("REGION").codelist(CL2).label("Region").position(2).build();
+    public static final Dimension DIM3 = Dimension.builder().id("SECTOR").codelist(CL3).label("Sector").position(3).build();
+
+    public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").label("Title").build();
+    public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).label("Observation status").build();
+
+    public static final DataStructure STRUCT = DataStructure
             .builder()
-            .ref(GOOD_STRUCT_REF)
-            .dimension(Dimension.builder().id("FREQ").label("Frequency").position(1).build())
-            .dimension(Dimension.builder().id("REGION").label("Region").position(2).build())
-            .dimension(Dimension.builder().id("SECTOR").label("Sector").position(3).build())
-            .attribute(Attribute.builder().id("TITLE").label("Title").build())
+            .ref(STRUCT_REF)
+            .dimension(DIM1)
+            .dimension(DIM2)
+            .dimension(DIM3)
+            .attribute(NOT_CODED_ATTRIBUTE)
+            .attribute(CODED_ATTRIBUTE)
             .timeDimensionId("TIME")
-            .primaryMeasureId("")
-            .label("struct1")
+            .primaryMeasureId("OBS_VALUE")
+            .label("structName")
             .build();
 
-    public final Obs OBS1 = Obs.builder().period(LocalDate.of(2010, 1, 1).atStartOfDay()).value(Math.PI).build();
+    public static final Obs OBS1 = Obs.builder().period(dateTimeOf(2010, 1)).value(Math.PI).build();
+    public static final Obs OBS2 = Obs.builder().period(dateTimeOf(2010, 2)).value(Math.E).build();
 
-    public final Obs OBS2 = Obs.builder().period(LocalDate.of(2010, 2, 1).atStartOfDay()).value(Math.E).build();
+    public static final Key K1 = Key.of("M", "BE", "INDUSTRY");
+    public static final Key INVALID_KEY = Key.of("M", "BE");
 
-    public final Key K1 = Key.of("M", "BE", "INDUSTRY");
-    public final Key INVALID_KEY = Key.of("M", "BE");
-
-    public final Series S1 = Series
+    public static final Series S1 = Series
             .builder()
             .key(K1)
             .freq(Frequency.MONTHLY)
             .obs(OBS1)
             .obs(OBS2)
-            .meta("TITLE", "hello world")
+            .meta(NOT_CODED_ATTRIBUTE.getId(), "hello world")
             .build();
 
-    public final DataSet DATA_SET = DataSet.builder().ref(GOOD_FLOW_REF).series(S1).build();
+    public static final DataSet DATA_SET = DataSet.builder().ref(FLOW_REF).series(S1).build();
 
-    public final SdmxRepository REPO = SdmxRepository
+    public static final SdmxRepository REPO = SdmxRepository
             .builder()
-            .name("test")
+            .name("repoName")
             .structure(STRUCT)
             .flow(FLOW)
             .dataSet(DATA_SET)
             .build();
+
+    private static final LocalDateTime dateTimeOf(int year, int month) {
+        return LocalDate.of(year, month, 1).atStartOfDay();
+    }
 }

@@ -31,12 +31,14 @@ public class ListConceptsCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
-
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("sample", "data&struct", "--no-log", "-s", src.getPath(), "-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(cmd.execute("sample", "data&struct", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .isEmpty();
 
         assertThat(FileSample.readAll(out))
                 .contains("Concept,Label,Type,Coded,Position", atIndex(0))

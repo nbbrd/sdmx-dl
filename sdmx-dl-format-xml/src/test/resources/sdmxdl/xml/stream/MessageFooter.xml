@@ -1,0 +1,24 @@
+<!--https://ec.europa.eu/eurostat/SDMX/diss-web/rest/data/ESTAT%2Cnama_10_gdp%2C1.0/A.../all-->
+<message:GenericData xmlns:footer="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message/footer"
+                     xmlns:common="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
+                     xmlns:message="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+                     xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <message:Header>
+        <message:ID>83390445e0decb7c397b00eda6debb87</message:ID>
+        <message:Test>false</message:Test>
+        <message:Prepared>2021-11-02T10:09:31</message:Prepared>
+        <message:Sender id="ESTAT">
+            <common:Name xml:lang="en">Eurostat</common:Name>
+            <message:Timezone>+01:00</message:Timezone>
+        </message:Sender>
+        <message:Receiver id="RECEIVER"/>
+        <message:DataSetAction>Append</message:DataSetAction>
+        <message:DataSetID>nama_10_gdp</message:DataSetID>
+    </message:Header>
+    <footer:Footer>
+        <footer:Message code="413" severity="Infomation">
+            <common:Text xml:lang="en">Response too large due to client request</common:Text>
+            <common:Text xml:lang="en">Query size exceeds maximum limit (1000000 entries).</common:Text>
+        </footer:Message>
+    </footer:Footer>
+</message:GenericData>

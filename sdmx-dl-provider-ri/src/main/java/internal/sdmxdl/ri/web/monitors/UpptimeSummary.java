@@ -1,18 +1,19 @@
 package internal.sdmxdl.ri.web.monitors;
 
 import com.google.gson.Gson;
-import internal.util.rest.HttpRest;
-import internal.util.rest.MediaType;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpResponse;
+import internal.util.http.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.LanguagePriorityList;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 @lombok.Data
 class UpptimeSummary {
@@ -26,16 +27,15 @@ class UpptimeSummary {
         return Arrays.asList(new Gson().fromJson(reader, UpptimeSummary[].class));
     }
 
-    static @NonNull List<UpptimeSummary> request(HttpRest.@NonNull Client client, @NonNull UpptimeId id) throws IOException {
-        try (HttpRest.Response response = client.requestGET(id.toSummaryURL(), MEDIA_TYPES, LANGS)) {
-            try (InputStreamReader reader = new InputStreamReader(response.getBody(), response.getContentType().getCharset().orElse(StandardCharsets.UTF_8))) {
+    static @NonNull List<UpptimeSummary> request(@NonNull HttpClient client, @NonNull UpptimeId id) throws IOException {
+        try (HttpResponse response = client.requestGET(newRequest(id.toSummaryURL(), MEDIA_TYPES, ANY))) {
+            try (Reader reader = response.getBodyAsReader()) {
                 return parseAll(reader);
             }
         }
     }
 
     private static final List<MediaType> MEDIA_TYPES = Collections.singletonList(MediaType.ANY_TYPE);
-    private static final String LANGS = LanguagePriorityList.ANY.toString();
 
     static @NonNull UpptimeSummary of(String name, String status, String uptime, long time) {
         UpptimeSummary result = new UpptimeSummary();

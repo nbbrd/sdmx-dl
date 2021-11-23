@@ -78,7 +78,7 @@ public final class FetchExtraCommand implements Callable<Void> {
             Function<Series, String> toName = getName(dsd);
             Function<Series, String> toDescription = getDescription(dsd);
 
-            return sort.applySort(conn.getData(web.getFlow(), web.getKey(), getFilter()), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(DataRef.of(web.getFlow(), web.getKey(), getFilter())), SERIES_BY_KEY)
                     .map(series -> new Extra(
                             series.getKey(),
                             series.getFreq(),
@@ -107,7 +107,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     private static Function<Series, String> getValueUnit(DataStructure dsd) {
         Dimension dimension = first(dsd.getDimensions(), o -> o.getId().contains("UNIT") && !o.getId().contains("MULT"), BY_LENGTH_ID);
         if (dimension != null) {
-            return onDimension(dimension);
+            return onDimension(dsd.getDimensionList().indexOf(dimension));
         }
         Attribute attribute = first(dsd.getAttributes(), o -> o.getId().contains("UNIT") && !o.getId().contains("MULT"), BY_LENGTH_ID);
         if (attribute != null) {
@@ -133,15 +133,15 @@ public final class FetchExtraCommand implements Callable<Void> {
 
     private static Function<Series, String> NOT_FOUND = series -> "";
 
-    private static Function<Series, String> onDimension(Dimension component) {
-        return series -> series.getKey().get(component.getPosition() - 1);
+    private static Function<Series, String> onDimension(int dimensionIndex) {
+        return series -> series.getKey().get(dimensionIndex);
     }
 
     private static Function<Series, String> onAttribute(Attribute component) {
         return series -> series.getMeta().get(component.getId());
     }
 
-    private static <T extends Component> T first(Collection<T> list, Predicate<? super T> filter, Comparator<? super T> sorter) {
+    private static <T> T first(Collection<T> list, Predicate<? super T> filter, Comparator<? super T> sorter) {
         return list.stream().filter(filter).sorted(sorter).findAny().orElse(null);
     }
 

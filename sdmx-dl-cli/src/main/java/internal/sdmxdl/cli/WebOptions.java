@@ -68,7 +68,7 @@ public class WebOptions {
     private List<SdmxWebSource> parseCustomSources() throws IOException {
         if (sourcesFile != null) {
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream("CONFIG", "Using source file '" + sourcesFile + "'");
+                verboseOptions.reportToErrorStream("CFG", "Using source file '" + sourcesFile + "'");
             }
             return XmlWebSource.getParser().parseFile(sourcesFile);
         }

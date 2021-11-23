@@ -18,9 +18,7 @@ package internal.sdmxdl.ri.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dimension;
+import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;
 
 import java.util.*;
@@ -122,11 +120,14 @@ final class CustomDataStructureBuilder {
     }
 
     static Dimension dimension(String name, int pos, Collection<String> values) {
-        Dimension.Builder result = Dimension.builder()
+        Codelist.Builder codelist = Codelist.builder().ref(CodelistRef.parse(name));
+        values.forEach(o -> codelist.code(o, o));
+
+        return Dimension.builder()
                 .id(name)
                 .position(pos)
-                .label(name);
-        values.forEach(o -> result.code(o, o));
-        return result.build();
+                .label(name)
+                .codelist(codelist.build())
+                .build();
     }
 }

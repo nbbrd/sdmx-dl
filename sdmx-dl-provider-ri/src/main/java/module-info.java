@@ -10,16 +10,21 @@ module sdmxdl.web.ri {
     requires com.github.tuupertunut.powershelllibjava;
     requires nbbrd.picocsv;
     requires com.google.gson;
+    requires java.logging;
 
     requires transitive sdmxdl.api;
 
     provides sdmxdl.web.spi.SdmxWebDriver with
             internal.sdmxdl.ri.web.drivers.AbsDriver2,
+            internal.sdmxdl.ri.web.drivers.BbkDriver,
             internal.sdmxdl.ri.web.drivers.DotStatDriver2,
+            internal.sdmxdl.ri.web.drivers.EurostatDriver2,
             internal.sdmxdl.ri.web.drivers.FileDriver,
+            internal.sdmxdl.ri.web.drivers.InseeDriver2,
             internal.sdmxdl.ri.web.drivers.NbbDriver2,
+            internal.sdmxdl.ri.web.drivers.RngDriver,
             internal.sdmxdl.ri.web.drivers.Sdmx21Driver2,
-            internal.sdmxdl.ri.web.drivers.BbkDriver;
+            internal.sdmxdl.ri.web.drivers.StatCanDriver;
 
     provides sdmxdl.file.spi.SdmxFileReader with
             internal.sdmxdl.ri.file.readers.XmlFileReader;
@@ -33,7 +38,8 @@ module sdmxdl.web.ri {
     uses internal.util.http.HttpURLConnectionFactory;
 
     provides sdmxdl.web.spi.SdmxWebMonitoring with
-            internal.sdmxdl.ri.web.monitors.UpptimeMonitoring;
+            internal.sdmxdl.ri.web.monitors.Upptime,
+            internal.sdmxdl.ri.web.monitors.UptimeRobot;
 
     opens internal.sdmxdl.ri.web.monitors to com.google.gson;
 }

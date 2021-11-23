@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.connectors;
 
+import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
@@ -24,8 +25,6 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -64,12 +63,12 @@ public class Connectors {
     private <T extends Component.Builder<T>> T toComponent(T result, SdmxMetaElement o) {
         return result
                 .id(o.getId())
-                .codes(toCodes(o.getCodeList()))
+                .codelist(toCodelist(o.getCodeList()))
                 .label(toLabel(o));
     }
 
-    private Map<String, String> toCodes(Codelist o) {
-        return o != null ? o : Collections.emptyMap();
+    private sdmxdl.Codelist toCodelist(Codelist o) {
+        return o != null ? sdmxdl.Codelist.builder().ref(CodelistRef.of(o.getAgency(), o.getId(), o.getVersion())).codes(o).build() : null;
     }
 
     private String toLabel(SdmxMetaElement o) {
@@ -127,12 +126,18 @@ public class Connectors {
     private void fromComponent(SdmxMetaElement result, Component o) {
         result.setId(o.getId());
         result.setName(o.getLabel());
-        result.setCodeList(fromCodes(o.getCodes()));
+        result.setCodeList(fromCodelist(o.getCodelist()));
     }
 
-    private Codelist fromCodes(Map<String, String> o) {
+    private Codelist fromCodelist(sdmxdl.Codelist o) {
+        if (o == null) {
+            return null;
+        }
         Codelist result = new Codelist();
-        result.setCodes(o);
+        result.setAgency(o.getRef().getAgency());
+        result.setId(o.getRef().getId());
+        result.setVersion(o.getRef().getVersion());
+        result.setCodes(o.getCodes());
         return result;
     }
 
