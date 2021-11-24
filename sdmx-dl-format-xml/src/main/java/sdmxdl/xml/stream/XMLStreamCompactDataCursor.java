@@ -175,12 +175,19 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     private Status parseSeries() {
-        parserSerieHead();
-        obsParser.head(keyBuilder, seriesAttributes::getAttribute);
-        return SUSPEND;
+        if (isValidSeriesHead()) {
+            parserSeriesHead();
+            obsParser.head(keyBuilder, seriesAttributes::getAttribute);
+            return SUSPEND;
+        }
+        return CONTINUE;
     }
 
-    private void parserSerieHead() {
+    private boolean isValidSeriesHead() {
+        return reader.getAttributeCount() > 0;
+    }
+
+    private void parserSeriesHead() {
         for (int i = 0; i < reader.getAttributeCount(); i++) {
             String id = reader.getAttributeName(i).getLocalPart();
             if (keyBuilder.isDimension(id)) {

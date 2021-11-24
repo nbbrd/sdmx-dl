@@ -115,6 +115,10 @@
         <flow ref="DF_10100001" dims="2">
             <data key="1.1" minSeries="1" minObs="13"/>
         </flow>
+        <!-- missing series header in compact data -->
+        <flow ref="DF_10100139" dims="2">
+            <data key="1.1" minSeries="1" minObs="2099"/>
+        </flow>
     </source>
     <source name="UIS" minFlows="9">
         <flow ref="SCN_DS" dims="2">

@@ -16,6 +16,7 @@
  */
 package sdmxdl.xml.stream;
 
+import nbbrd.io.Resource;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
@@ -30,6 +31,7 @@ import sdmxdl.util.parser.FreqFactory;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -133,6 +135,18 @@ public class XMLStreamCompactDataCursorTest {
                 }
             }
             assertThat(indexObs).isEqualTo(56);
+            assertThat(o.nextSeries()).isFalse();
+        }
+    }
+
+    @Test
+    public void testMissingSeriesHeader() throws IOException, XMLStreamException {
+        ByteSource xml = () -> Resource.getResourceAsStream(XMLStreamCompactDataCursorTest.class, "10100139_187.xml").orElseThrow(FileNotFoundException::new);
+        Key.Builder builder = Key.builder(asList("A", "B"));
+        ObsParser obsParser = DefaultObsParser.builder().build();
+
+        try (InputStream stream = xml.openStream();
+             DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {
             assertThat(o.nextSeries()).isFalse();
         }
     }
