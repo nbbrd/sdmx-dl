@@ -123,27 +123,39 @@ public final class StatCanDriver implements SdmxWebDriver {
 
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
-            return getFlows()
-                    .stream()
-                    .filter(flowRef::containsRef)
-                    .findFirst()
-                    .orElseThrow(() -> SdmxException.missingFlow(source, flowRef));
+            try {
+                return getFlows()
+                        .stream()
+                        .filter(flowRef::containsRef)
+                        .findFirst()
+                        .orElseThrow(() -> SdmxException.missingFlow(source, flowRef));
+            } catch (IllegalArgumentException ex) {
+                throw new IOException(ex);
+            }
         }
 
         @Override
         public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
-            int productId = Converter.fromDataflowRef(flowRef);
-            DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
-            return client.getStructAndData(productId)
-                    .getStructure(dsdRef)
-                    .orElseThrow(() -> SdmxException.missingStructure(source, dsdRef));
+            try {
+                int productId = Converter.fromDataflowRef(flowRef);
+                DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
+                return client.getStructAndData(productId)
+                        .getStructure(dsdRef)
+                        .orElseThrow(() -> SdmxException.missingStructure(source, dsdRef));
+            } catch (IllegalArgumentException ex) {
+                throw new IOException(ex);
+            }
         }
 
         private DataSet getDataSet(DataRef dataRef) throws IOException {
-            int productId = Converter.fromDataflowRef(dataRef.getFlowRef());
-            return client.getStructAndData(productId)
-                    .getDataSet(dataRef.getFlowRef())
-                    .orElseThrow(() -> SdmxException.missingData(source, dataRef));
+            try {
+                int productId = Converter.fromDataflowRef(dataRef.getFlowRef());
+                return client.getStructAndData(productId)
+                        .getDataSet(dataRef.getFlowRef())
+                        .orElseThrow(() -> SdmxException.missingData(source, dataRef));
+            } catch (IllegalArgumentException ex) {
+                throw new IOException(ex);
+            }
         }
 
         @Override
@@ -367,21 +379,51 @@ public final class StatCanDriver implements SdmxWebDriver {
     @lombok.experimental.UtilityClass
     static class Converter {
 
+        private void requireArgument(boolean condition, String message) throws IllegalArgumentException {
+            if (!condition) {
+                throw new IllegalArgumentException(message);
+            }
+        }
+
+        private int checkProductId(int productId) throws IllegalArgumentException {
+            requireArgument(productId >= 0, "Product ID must be positive");
+            return productId;
+        }
+
+        private String checkAgency(String agency) throws IllegalArgumentException {
+            requireArgument(agency.equals(AGENCY) || agency.equals(ResourceRef.ALL_AGENCIES), "DataflowRef Agency must be 'StatCan'");
+            return agency;
+        }
+
+        private String checkVersion(String version) throws IllegalArgumentException {
+            requireArgument(version.equals(VERSION) || version.equals(ResourceRef.LATEST_VERSION), "DataflowRef Version must be '1.0'");
+            return version;
+        }
+
+        private String checkId(String id) throws IllegalArgumentException {
+            requireArgument(id.startsWith(FLOW_PREFIX), "DataflowRef Id must start with 'DF_'");
+            return id;
+        }
+
         static final String AGENCY = "StatCan";
         static final String FLOW_PREFIX = "DF_";
         static final String STRUCT_PREFIX = "Data_Structure_";
         static final String VERSION = "1.0";
 
-        static DataflowRef toDataflowRef(int productId) {
-            return DataflowRef.of(AGENCY, FLOW_PREFIX + productId, VERSION);
+        static DataflowRef toDataflowRef(int productId) throws IllegalArgumentException {
+            return DataflowRef.of(AGENCY, FLOW_PREFIX + checkProductId(productId), VERSION);
         }
 
-        static int fromDataflowRef(DataflowRef ref) {
-            return Integer.parseInt(ref.getId().substring(FLOW_PREFIX.length()));
+        static int fromDataflowRef(DataflowRef ref) throws IllegalArgumentException {
+            checkAgency(ref.getAgency());
+            checkVersion(ref.getVersion());
+            checkId(ref.getId());
+
+            return checkProductId(Integer.parseInt(ref.getId().substring(FLOW_PREFIX.length())));
         }
 
-        static DataStructureRef toDataStructureRef(int productId) {
-            return DataStructureRef.of(AGENCY, STRUCT_PREFIX + productId, VERSION);
+        static DataStructureRef toDataStructureRef(int productId) throws IllegalArgumentException {
+            return DataStructureRef.of(AGENCY, STRUCT_PREFIX + checkProductId(productId), VERSION);
         }
 
         static Dataflow toDataFlow(DataTable dataTable, LanguagePriorityList langs) {

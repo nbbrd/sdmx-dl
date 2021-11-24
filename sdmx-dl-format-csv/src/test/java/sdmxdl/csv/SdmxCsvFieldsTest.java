@@ -19,12 +19,16 @@ public class SdmxCsvFieldsTest {
         assertThat(parser.parse("all:EXR(latest)"))
                 .isEqualTo(DataflowRef.of(null, "EXR", null));
 
+        assertThat(parser.parse(":()"))
+                .isEqualTo(DataflowRef.of(null, "", null));
+
         assertThat(parser.parse(null)).isNull();
         assertThat(parser.parse("all:EXR(latest")).isNull();
         assertThat(parser.parse("all:EXRlatest)")).isNull();
         assertThat(parser.parse("allEXR(latest)")).isNull();
         assertThat(parser.parse("ECB,EXR,1.0")).isNull();
         assertThat(parser.parse("EXR")).isNull();
+        assertThat(parser.parse("")).isNull();
     }
 
     @Test
