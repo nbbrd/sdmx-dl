@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wiremock.com.google.common.io.ByteStreams;
 import wiremock.org.apache.commons.io.input.ReaderInputStream;
-import wiremock.org.apache.http.impl.io.EmptyInputStream;
+import wiremock.org.apache.hc.core5.http.io.entity.EmptyInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
