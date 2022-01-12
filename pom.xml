@@ -335,6 +335,11 @@
                                 <artifactId>pomchecker-enforcer-rules</artifactId>
                                 <version>1.2.0</version>
                             </dependency>
+                            <dependency>
+                                <groupId>org.codehaus.mojo</groupId>
+                                <artifactId>extra-enforcer-rules</artifactId>
+                                <version>1.5.1</version>
+                            </dependency>
                         </dependencies>
                         <executions>
                             <execution>
@@ -356,6 +361,12 @@
                                             <release>false</release>
                                             <strict>false</strict>
                                         </CheckMavenCentral>
+                                        <enforceBytecodeVersion>
+                                            <maxJdkVersion>8</maxJdkVersion>
+                                            <ignoredScopes>
+                                                <ignoreScope>test</ignoreScope>
+                                            </ignoredScopes>
+                                        </enforceBytecodeVersion>
                                     </rules>
                                 </configuration>
                             </execution>
@@ -557,4 +568,14 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
