@@ -16,7 +16,7 @@
  */
 package internal.util.http;
 
-import nbbrd.design.StringValue;
+import nbbrd.design.RepresentableAsString;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -30,7 +30,7 @@ import static java.util.Collections.*;
 /**
  * @author Philippe Charles
  */
-@StringValue
+@RepresentableAsString
 @lombok.AllArgsConstructor
 @lombok.EqualsAndHashCode
 @lombok.Getter

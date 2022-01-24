@@ -17,8 +17,8 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.StringValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language</a>
  * @see <a href="https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation">https://github.com/sdmx-twg/sdmx-rest/wiki/HTTP-content-negotiation</a>
  */
-@StringValue
+@RepresentableAsString
 @lombok.EqualsAndHashCode
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LanguagePriorityList {

@@ -1,12 +1,14 @@
 package internal.sdmxdl.ri.web.monitors;
 
 import internal.util.http.URLQueryBuilder;
+import nbbrd.design.RepresentableAs;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+@RepresentableAs(URI.class)
 @lombok.Value
 class UpptimeId {
 

@@ -1,12 +1,12 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.StringValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-@StringValue
+@RepresentableAsString
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode(callSuper = false)

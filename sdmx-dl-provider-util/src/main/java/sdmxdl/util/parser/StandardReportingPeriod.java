@@ -1,7 +1,7 @@
 package sdmxdl.util.parser;
 
 import nbbrd.design.MightBePromoted;
-import nbbrd.design.StringValue;
+import nbbrd.design.RepresentableAsString;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.MonthDay;
 import java.util.Objects;
 
-@StringValue
+@RepresentableAsString
 @lombok.Value
 public class StandardReportingPeriod {
 
