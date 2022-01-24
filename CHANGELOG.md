@@ -13,6 +13,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix input validation of StatCanDriver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
+- Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
+
 ## [3.0.0-beta.5] - 2021-11-23
 
 This is the fifth beta release of **sdmx-dl**.   
