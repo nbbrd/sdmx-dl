@@ -4,6 +4,7 @@ import _test.CommandWatcher;
 import _test.FileSample;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -25,6 +26,7 @@ public class CheckAccessCommandTest {
         assertThat(watcher.getErr()).isNotEmpty();
     }
 
+    @SetSystemProperty(key = "enableFileDriver", value = "true")
     @Test
     public void testContent(@TempDir Path temp) throws IOException {
         CommandLine cmd = new CommandLine(new CheckAccessCommand());

@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Change FileDriver to be optional
+
 ### Fixed
 
 - Fix input validation of StatCanDriver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)

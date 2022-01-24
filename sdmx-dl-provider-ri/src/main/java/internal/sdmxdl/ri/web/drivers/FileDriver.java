@@ -1,6 +1,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
@@ -26,14 +27,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-@ServiceProvider(SdmxWebDriver.class)
+@ServiceProvider
 public final class FileDriver implements SdmxWebDriver {
+
+    private static final String RI_FILE = "ri:file";
+
+    private static final BooleanProperty ENABLE =
+            BooleanProperty.of("enableFileDriver", false);
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
     @Override
     public @NonNull String getName() {
-        return "ri:file";
+        return RI_FILE;
     }
 
     @Override
@@ -43,7 +49,7 @@ public final class FileDriver implements SdmxWebDriver {
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return ENABLE.get(System.getProperties());
     }
 
     @Override
