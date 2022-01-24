@@ -17,10 +17,7 @@
 package sdmxdl;
 
 import internal.sdmxdl.Chars;
-import nbbrd.design.Immutable;
-import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.StringValue;
-import nbbrd.design.VisibleForTesting;
+import nbbrd.design.*;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -36,7 +33,7 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @Immutable
-@StringValue
+@RepresentableAsString
 public final class Key {
 
     private static final char SEP_CHAR = '.';
