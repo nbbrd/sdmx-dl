@@ -78,7 +78,7 @@ public class CurlRestClientTest extends DefaultHttpClientTest {
     public void testVersion() throws IOException {
         String[] versionCommand = new Curl.CurlCommandBuilder().version().build();
         try (BufferedReader reader = ProcessReader.newReader(versionCommand)) {
-            Curl.CurlVersion.parse(reader).getLines().forEach(System.out::println);
+            Curl.CurlVersion.parseText(reader).getLines().forEach(System.out::println);
         }
     }
 

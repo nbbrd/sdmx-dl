@@ -16,7 +16,6 @@
  */
 package internal.util.http;
 
-import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static java.util.Collections.emptyMap;
+import static internal.util.http.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -38,14 +37,13 @@ public class MediaTypeTest {
 
     private static final Map<String, Collection<String>> UTF_8 = singleton("charset", "utf-8");
 
-    static final MediaType ANY_TYPE = new MediaType(MediaType.WILDCARD, MediaType.WILDCARD, emptyMap());
-    static final MediaType ANY_TEXT_TYPE = new MediaType("text", MediaType.WILDCARD, emptyMap());
-    static final MediaType ANY_IMAGE_TYPE = new MediaType("image", MediaType.WILDCARD, emptyMap());
-    static final MediaType PLAIN_TEXT_UTF_8 = new MediaType("text", "plain", UTF_8);
-    static final MediaType HTML_UTF_8 = new MediaType("text", "html", UTF_8);
+    static final MediaType ANY_TEXT_TYPE = MediaType.builder().type("text").build();
+    static final MediaType ANY_IMAGE_TYPE = MediaType.builder().type("image").build();
+    static final MediaType PLAIN_TEXT_UTF_8 = MediaType.builder().type("text").subtype("plain").parameters(UTF_8).build();
+    static final MediaType HTML_UTF_8 = MediaType.builder().type("text").subtype("html").parameters(UTF_8).build();
 
-    static final MediaType XML_UTF_8 = new MediaType("text", "xml", UTF_8);
-    static final MediaType JSON_UTF_8 = new MediaType("application", "json", UTF_8);
+    static final MediaType XML_UTF_8 = MediaType.builder().type("text").subtype("xml").parameters(UTF_8).build();
+    static final MediaType JSON_UTF_8 = MediaType.builder().type("application").subtype("json").parameters(UTF_8).build();
 
     @Test
     @SuppressWarnings("null")

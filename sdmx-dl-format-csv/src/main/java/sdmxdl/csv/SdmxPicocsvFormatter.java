@@ -51,7 +51,7 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     @Override
     public void formatWriter(DataSet data, Writer charWriter) throws IOException {
         try (Csv.Writer csv = newCsvWriter(charWriter, TextBuffers.UNKNOWN)) {
-            format(data, csv);
+            formatCsv(data, csv);
         }
     }
 
@@ -59,11 +59,11 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     public void formatStream(DataSet data, OutputStream stream, Charset charset) throws IOException {
         CharsetEncoder encoder = charset.newEncoder();
         try (Csv.Writer csv = newCsvWriter(newBufferedWriter(stream, encoder), TextBuffers.of(stream, encoder))) {
-            format(data, csv);
+            formatCsv(data, csv);
         }
     }
 
-    public void format(@NonNull DataSet data, Csv.@NonNull Writer w) throws IOException {
+    public void formatCsv(@NonNull DataSet data, Csv.@NonNull Writer w) throws IOException {
         SdmxCsvFieldWriter[] writers = fields.stream()
                 .map(field -> getFieldWriter(data, field))
                 .toArray(SdmxCsvFieldWriter[]::new);

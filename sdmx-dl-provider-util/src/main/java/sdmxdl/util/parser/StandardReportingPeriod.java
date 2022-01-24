@@ -2,6 +2,7 @@ package sdmxdl.util.parser;
 
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.RepresentableAsString;
+import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -12,6 +13,7 @@ import java.util.Objects;
 
 @RepresentableAsString
 @lombok.Value
+@lombok.Builder
 public class StandardReportingPeriod {
 
     private static final char SEPARATOR_CHAR = '-';
@@ -52,6 +54,7 @@ public class StandardReportingPeriod {
         return result.toString();
     }
 
+    @StaticFactoryMethod
     public static @NonNull StandardReportingPeriod parse(@NonNull CharSequence text) {
         Objects.requireNonNull(text);
         StandardReportingPeriod result = parseOrNull(text);

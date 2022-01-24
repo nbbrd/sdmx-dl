@@ -42,7 +42,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
     @Override
     public @NonNull DataSet parseReader(@NonNull Reader reader) throws IOException {
         try (Csv.Reader csv = newCsvReader(reader, TextBuffers.UNKNOWN)) {
-            return parse(csv);
+            return parseCsv(csv);
         }
     }
 
@@ -50,12 +50,12 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
     public @NonNull DataSet parseStream(@NonNull InputStream stream, @NonNull Charset charset) throws IOException {
         CharsetDecoder decoder = charset.newDecoder();
         try (Csv.Reader csv = newCsvReader(newBufferedReader(stream, decoder), TextBuffers.of(stream, decoder))) {
-            return parse(csv);
+            return parseCsv(csv);
         }
     }
 
     @NonNull
-    public DataSet parse(Csv.@NonNull Reader reader) throws IOException {
+    public DataSet parseCsv(Csv.@NonNull Reader reader) throws IOException {
         List<String> header = readHeader(reader);
 
         int minHeaderSize = 3 + dsd.getDimensions().size();

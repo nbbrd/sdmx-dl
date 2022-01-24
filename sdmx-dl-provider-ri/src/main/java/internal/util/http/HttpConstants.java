@@ -1,5 +1,7 @@
 package internal.util.http;
 
+import nbbrd.design.StaticFactoryMethod;
+
 import java.net.Proxy;
 import java.net.URL;
 
@@ -41,11 +43,13 @@ public class HttpConstants {
         return !proxy.equals(Proxy.NO_PROXY);
     }
 
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
     public enum ResponseType {
 
         INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, UNKNOWN;
 
-        public static ResponseType parse(int code) {
+        @StaticFactoryMethod
+        public static ResponseType ofResponseCode(int code) {
             switch (code / 100) {
                 case 1:
                     return INFORMATIONAL;

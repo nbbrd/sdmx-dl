@@ -90,7 +90,7 @@ class Curl {
         @lombok.Singular
         List<String> lines;
 
-        public static CurlVersion parse(BufferedReader reader) throws IOException {
+        public static CurlVersion parseText(BufferedReader reader) throws IOException {
             CurlVersion.Builder result = new CurlVersion.Builder();
             try {
                 reader.lines().forEach(result::line);

@@ -50,7 +50,7 @@ public class DataStructureRef extends ResourceRef<DataStructureRef> {
     @StaticFactoryMethod
     @NonNull
     public static DataStructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return parse(input, DataStructureRef::new);
+        return create(input, DataStructureRef::new);
     }
 
     @StaticFactoryMethod

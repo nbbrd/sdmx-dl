@@ -25,11 +25,11 @@ import internal.util.http.ext.InterceptingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
-import static java.util.Collections.emptyMap;
 import static sdmxdl.util.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
@@ -96,7 +95,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
         return result;
     }
 
-    private static final MediaType HTML_TYPE = new MediaType("text", "html", emptyMap());
+    private static final MediaType HTML_TYPE = MediaType.builder().type("text").subtype("html").build();
     private static final HttpResponseException SERVICE_UNAVAILABLE = new HttpResponseException(HTTP_UNAVAILABLE, "Service unavailable");
 
     @VisibleForTesting

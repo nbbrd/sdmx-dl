@@ -267,7 +267,7 @@ public final class StatCanDriver implements SdmxWebDriver {
 
             try (HttpResponse response = client.requestGET(request)) {
                 try (Reader reader = response.getBodyAsReader()) {
-                    return FullTableDownloadSDMX.parse(reader);
+                    return FullTableDownloadSDMX.parseJson(reader);
                 }
             }
         }
@@ -370,7 +370,7 @@ public final class StatCanDriver implements SdmxWebDriver {
         String status;
         URL object;
 
-        static @NonNull FullTableDownloadSDMX parse(@NonNull Reader reader) {
+        public static @NonNull FullTableDownloadSDMX parseJson(@NonNull Reader reader) {
             return new Gson().fromJson(reader, FullTableDownloadSDMX.class);
         }
     }

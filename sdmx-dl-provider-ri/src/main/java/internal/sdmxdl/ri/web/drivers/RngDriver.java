@@ -1,5 +1,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
+import nbbrd.design.RepresentableAs;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
@@ -56,7 +58,7 @@ public final class RngDriver implements SdmxWebDriver {
         Objects.requireNonNull(context);
         SdmxRestDriverSupport.checkSource(source, getName());
 
-        RngConfig config = RngConfig.parse(source.getEndpoint());
+        RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngWebConnection(source.getId(), config);
     }
@@ -79,22 +81,29 @@ public final class RngDriver implements SdmxWebDriver {
         return emptyList();
     }
 
+    @RepresentableAs(URI.class)
     @lombok.Value
-    private static class RngConfig {
+    @lombok.Builder
+    private static class RngDriverId {
 
         int seriesCount;
         int yearCount;
         int seed;
         LocalDateTime start;
 
-        static RngConfig parse(URI endpoint) throws IllegalArgumentException {
+        public URI toURI() {
+            return URI.create("rng" + ":" + seriesCount + ":" + yearCount + ":" + seed + ":" + start.toLocalDate().toString());
+        }
+
+        @StaticFactoryMethod
+        public static RngDriverId parse(URI endpoint) throws IllegalArgumentException {
             String[] tmp = endpoint.toString().split(":", -1);
 
             if (tmp.length != 5) {
                 throw new IllegalArgumentException("Invalid uri");
             }
 
-            return new RngConfig(
+            return new RngDriverId(
                     INTEGER_PARSER.parseValue(tmp[1]).orElse(3),
                     INTEGER_PARSER.parseValue(tmp[2]).orElse(4),
                     INTEGER_PARSER.parseValue(tmp[3]).orElse(0),
@@ -112,8 +121,8 @@ public final class RngDriver implements SdmxWebDriver {
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";
 
-        private final String name;
-        private final RngConfig config;
+        private final String sourceId;
+        private final RngDriverId config;
 
         @Override
         public @NonNull Duration ping() {
@@ -136,7 +145,7 @@ public final class RngDriver implements SdmxWebDriver {
                     .stream()
                     .filter(flowRef::containsRef)
                     .findFirst()
-                    .orElseThrow(() -> SdmxException.missingFlow(name, flowRef));
+                    .orElseThrow(() -> SdmxException.missingFlow(sourceId, flowRef));
         }
 
         @Override

@@ -43,8 +43,8 @@ public final class XmlWebSource {
         return FORMATTER;
     }
 
-    private static final Xml.Parser<List<SdmxWebSource>> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parse);
-    private static final Xml.Formatter<List<SdmxWebSource>> FORMATTER = Stax.StreamFormatter.of(XmlWebSource::format);
+    private static final Xml.Parser<List<SdmxWebSource>> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parseXml);
+    private static final Xml.Formatter<List<SdmxWebSource>> FORMATTER = Stax.StreamFormatter.of(XmlWebSource::formatXml);
 
     private static final String SOURCES_TAG = "sources";
     private static final String SOURCE_TAG = "source";
@@ -60,7 +60,7 @@ public final class XmlWebSource {
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
 
-    private static List<SdmxWebSource> parse(XMLStreamReader reader) throws XMLStreamException {
+    private static List<SdmxWebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();
         SdmxWebSource.Builder item = SdmxWebSource.builder();
         while (reader.hasNext()) {
@@ -111,7 +111,7 @@ public final class XmlWebSource {
         return result;
     }
 
-    private static void format(List<SdmxWebSource> list, XMLStreamWriter writer, Charset encoding) throws XMLStreamException {
+    private static void formatXml(List<SdmxWebSource> list, XMLStreamWriter writer, Charset encoding) throws XMLStreamException {
         writer.writeStartDocument(encoding.name(), "1.0");
         writer.writeStartElement(SOURCES_TAG);
         for (SdmxWebSource source : list) {

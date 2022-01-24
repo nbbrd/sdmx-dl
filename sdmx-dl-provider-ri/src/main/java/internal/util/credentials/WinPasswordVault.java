@@ -48,7 +48,7 @@ public final class WinPasswordVault implements Closeable {
                 "  echo ($cred | Select-Object -Property Resource, UserName, Password | ConvertTo-Csv -NoTypeInformation)",
                 "}"
         );
-        return parse(result);
+        return parseCsv(result);
     }
 
     public void invalidate(String resource) throws IOException {
@@ -69,7 +69,7 @@ public final class WinPasswordVault implements Closeable {
         }
     }
 
-    private static PasswordCredential parse(String csv) throws IOException {
+    private static PasswordCredential parseCsv(String csv) throws IOException {
         try (Csv.Reader reader = Csv.Reader.of(Csv.Format.DEFAULT, Csv.ReaderOptions.DEFAULT, new StringReader(csv), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
             if (reader.readLine() && reader.readLine()) {
                 if (reader.readField()) {

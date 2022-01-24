@@ -1,9 +1,12 @@
 package internal.sdmxdl.ri.web.monitors;
 
+import nbbrd.design.RepresentableAs;
+import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URI;
 
+@RepresentableAs(URI.class)
 @lombok.Value
 @lombok.Builder
 class UptimeRobotId {
@@ -39,6 +42,7 @@ class UptimeRobotId {
         return URI.create(URI_SCHEME + ":" + apiKey);
     }
 
+    @StaticFactoryMethod
     public static @NonNull UptimeRobotId parse(@NonNull URI uri) {
         if (!uri.getScheme().equals(URI_SCHEME)) {
             throw new IllegalArgumentException("Invalid scheme");

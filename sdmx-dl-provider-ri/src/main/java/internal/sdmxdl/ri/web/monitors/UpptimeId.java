@@ -2,6 +2,7 @@ package internal.sdmxdl.ri.web.monitors;
 
 import internal.util.http.URLQueryBuilder;
 import nbbrd.design.RepresentableAs;
+import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
@@ -10,6 +11,7 @@ import java.net.URL;
 
 @RepresentableAs(URI.class)
 @lombok.Value
+@lombok.Builder
 class UpptimeId {
 
     public static final String URI_SCHEME = "upptime";
@@ -43,6 +45,7 @@ class UpptimeId {
         return URI.create(toString());
     }
 
+    @StaticFactoryMethod
     public static @NonNull UpptimeId parse(@NonNull URI uri) throws IllegalArgumentException {
         if (!uri.getScheme().equals(URI_SCHEME)) {
             throw new IllegalArgumentException("Invalid scheme");

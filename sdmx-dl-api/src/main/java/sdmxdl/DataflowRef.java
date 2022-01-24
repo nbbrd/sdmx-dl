@@ -59,7 +59,7 @@ public class DataflowRef extends ResourceRef<DataflowRef> {
     @StaticFactoryMethod
     @NonNull
     public static DataflowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return parse(input, DataflowRef::new);
+        return create(input, DataflowRef::new);
     }
 
     @StaticFactoryMethod

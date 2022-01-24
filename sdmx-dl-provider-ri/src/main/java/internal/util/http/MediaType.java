@@ -17,6 +17,7 @@
 package internal.util.http;
 
 import nbbrd.design.RepresentableAsString;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -31,11 +32,11 @@ import static java.util.Collections.*;
  * @author Philippe Charles
  */
 @RepresentableAsString
-@lombok.AllArgsConstructor
-@lombok.EqualsAndHashCode
-@lombok.Getter
+@lombok.Value
+@lombok.Builder
 public final class MediaType {
 
+    @StaticFactoryMethod
     public static @NonNull MediaType parse(@NonNull CharSequence text) throws IllegalArgumentException {
         String input = text.toString();
 
@@ -80,24 +81,27 @@ public final class MediaType {
     @VisibleForTesting
     static final String CHARSET_PARAMETER = "charset";
 
-    public static final MediaType ANY_TYPE = new MediaType(WILDCARD, WILDCARD, emptyMap());
+    public static final MediaType ANY_TYPE = builder().build();
 
     /**
      * The top-level media type.
      */
     @lombok.NonNull
-    private final String type;
+    @lombok.Builder.Default
+    private final String type = WILDCARD;
 
     /**
      * The media subtype.
      */
     @lombok.NonNull
-    private final String subtype;
+    @lombok.Builder.Default
+    private final String subtype = WILDCARD;
 
     /**
      * The parameters of this media type.
      */
     @lombok.NonNull
+    @lombok.Singular
     private final Map<String, Collection<String>> parameters;
 
     public boolean isCompatible(@NonNull MediaType other) {

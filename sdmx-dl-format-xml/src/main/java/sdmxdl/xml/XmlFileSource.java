@@ -28,10 +28,10 @@ public class XmlFileSource {
     private final Xml.Formatter<SdmxFileSource> FORMATTER = Stax.StreamFormatter
             .<SdmxFileSource>builder()
             .factory(() -> OUTPUT)
-            .handler2(XmlFileSource::format)
+            .handler2(XmlFileSource::formatXml)
             .build();
 
-    private void format(SdmxFileSource source, XMLStreamWriter xml, Charset encoding) throws XMLStreamException {
+    private void formatXml(SdmxFileSource source, XMLStreamWriter xml, Charset encoding) throws XMLStreamException {
         xml.writeStartDocument(encoding.name(), "1.0");
         xml.writeEmptyElement(ROOT_TAG);
 
@@ -53,10 +53,10 @@ public class XmlFileSource {
     private final Xml.Parser<SdmxFileSource> PARSER = Stax.StreamParser
             .<SdmxFileSource>builder()
             .factory(StaxUtil::getInputFactoryWithoutNamespace)
-            .value(XmlFileSource::parse)
+            .value(XmlFileSource::parseXml)
             .build();
 
-    private static SdmxFileSource parse(XMLStreamReader xml) throws XMLStreamException {
+    private static SdmxFileSource parseXml(XMLStreamReader xml) throws XMLStreamException {
         String data = null;
         String structure = null;
         String dialect = null;

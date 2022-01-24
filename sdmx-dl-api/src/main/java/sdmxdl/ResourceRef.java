@@ -68,7 +68,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
     }
 
     @NonNull
-    protected static <T extends ResourceRef<T>> T parse(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
+    protected static <T extends ResourceRef<T>> T create(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
         Objects.requireNonNull(input, "input");
         String[] items = Chars.splitToArray(input, SEP);
         switch (items.length) {

@@ -29,7 +29,7 @@ public class CodelistRef extends ResourceRef<CodelistRef> {
     @StaticFactoryMethod
     @NonNull
     public static CodelistRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return parse(input, CodelistRef::new);
+        return create(input, CodelistRef::new);
     }
 
     @StaticFactoryMethod

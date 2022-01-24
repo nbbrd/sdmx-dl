@@ -90,7 +90,7 @@ public class ConnectorsResource {
     }
 
     private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
     }
 
     private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
@@ -108,15 +108,15 @@ public class ConnectorsResource {
     }
 
     public List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
     private List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
     public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
     }
 
     private PortableTimeSeries<Double> toPortableTimeSeries(Series series, List<Dimension> dims) {
@@ -153,7 +153,7 @@ public class ConnectorsResource {
         return result;
     }
 
-    private <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
+    private <T> T parseXml(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
         XMLEventReader r = null;
         try {
             r = XIF.createXMLEventReader(xml.openReader());

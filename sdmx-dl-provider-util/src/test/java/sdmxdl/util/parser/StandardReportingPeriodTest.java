@@ -7,9 +7,29 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 public class StandardReportingPeriodTest {
 
-    final StandardReportingPeriod s = new StandardReportingPeriod(2010, 'S', 2, 1);
-    final StandardReportingPeriod m2 = new StandardReportingPeriod(2010, 'M', 3, 2);
-    final StandardReportingPeriod m1 = new StandardReportingPeriod(2010, 'M', 3, 1);
+    final StandardReportingPeriod s = StandardReportingPeriod
+            .builder()
+            .reportingYear(2010)
+            .periodIndicator('S')
+            .periodValue(2)
+            .periodValueDigits(1)
+            .build();
+
+    final StandardReportingPeriod m2 = StandardReportingPeriod
+            .builder()
+            .reportingYear(2010)
+            .periodIndicator('M')
+            .periodValue(3)
+            .periodValueDigits(2)
+            .build();
+
+    final StandardReportingPeriod m1 = StandardReportingPeriod
+            .builder()
+            .reportingYear(2010)
+            .periodIndicator('M')
+            .periodValue(3)
+            .periodValueDigits(1)
+            .build();
 
     @Test
     public void testToString() {
