@@ -16,7 +16,9 @@
  */
 package sdmxdl.util.web;
 
+import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataflowRef;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -51,6 +53,13 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
     @lombok.Singular
     private final Collection<String> supportedProperties;
 
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final Validator<DataflowRef> dataflowRefValidator = SdmxValidators.DEFAULT_DATAFLOW_REF_VALIDATOR;
+
+    @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
+    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(name);
+
     @Override
     public boolean isAvailable() {
         return true;
@@ -60,9 +69,9 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
-        checkSource(source, name);
+        getSourceValidator().checkValidity(source);
 
-        return SdmxRestConnection.of(getClient(source, context), name);
+        return SdmxRestConnection.of(getClient(source, context), name, dataflowRefValidator);
     }
 
     @Override
@@ -89,13 +98,6 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
         @NonNull
         public Builder supportedPropertyOf(@NonNull CharSequence property) {
             return supportedProperty(property.toString());
-        }
-    }
-
-    // TODO: move somewhere else
-    public static void checkSource(@NonNull SdmxWebSource source, @NonNull String name) throws IllegalArgumentException {
-        if (!source.getDriver().equals(name)) {
-            throw new IllegalArgumentException(source.toString());
         }
     }
 }

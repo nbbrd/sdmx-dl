@@ -429,10 +429,10 @@ public class KeyTest {
                 .isNot(validOn(dsd2));
 
         assertThat(Key.of("IND").validateOn(dsd2))
-                .isEqualTo("Expected 2 dimensions instead of 1");
+                .isEqualTo("Expected key 'IND' to have 2 dimensions instead of 1");
 
         assertThat(Key.of("IND", "XX").validateOn(dsd2))
-                .isEqualTo("Unknown code 'XX' for dimension 'REGION'");
+                .isEqualTo("Expected key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
     }
 
     private static Condition<Key> validOn(DataStructure dsd) {

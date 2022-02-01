@@ -4,10 +4,11 @@ import nbbrd.io.text.TextParser;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
+import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.SdmxWebContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,38 @@ public class StatCanDriverTest {
     @Test
     public void testCompliance() {
         SdmxWebDriverAssert.assertCompliance(new StatCanDriver());
+    }
+
+    @Test
+    public void testConnectionArgs() throws IOException {
+        StatCanDriver driver = new StatCanDriver();
+        SdmxWebSource source = driver.getDefaultSources().iterator().next();
+        try (SdmxWebConnection connection = driver.connect(source, SdmxWebContext.builder().build())) {
+            DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
+            String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> connection.getFlow(badDataflowRef))
+                    .withMessageContaining(msg);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> connection.getStructure(badDataflowRef))
+                    .withMessageContaining(msg);
+
+            DataRef badDataRef = DataRef.of(badDataflowRef, Key.ALL, DataFilter.FULL);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> connection.getData(badDataRef))
+                    .withMessageContaining(msg);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> connection.getDataStream(badDataRef))
+                    .withMessageContaining(msg);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> connection.getDataCursor(badDataRef))
+                    .withMessageContaining(msg);
+        }
     }
 
     @Test
@@ -69,27 +102,27 @@ public class StatCanDriverTest {
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "F_1234", "1.0")))
-                    .withMessageContaining("Id");
+                    .withMessage("Expecting DataflowRef id 'F_1234' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("tatCan", "DF_1234", "1.0")))
-                    .withMessageContaining("Agency");
+                    .withMessage("Expecting DataflowRef agency 'tatCan' to match pattern 'StatCan|all'");
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_1234", "1.")))
-                    .withMessageContaining("Version");
+                    .withMessage("Expecting DataflowRef version '1.' to match pattern '1\\.0|latest'");
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_", "1.0")))
-                    .isInstanceOf(NumberFormatException.class);
+                    .withMessage("Expecting DataflowRef id 'DF_' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_1234X", "1.0")))
-                    .isInstanceOf(NumberFormatException.class);
+                    .withMessage("Expecting DataflowRef id 'DF_1234X' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_-1234", "1.0")))
-                    .withMessageContaining("Product ID");
+                    .withMessage("Expecting DataflowRef id 'DF_-1234' to match pattern 'DF_\\d+'");
         }
 
         @Test

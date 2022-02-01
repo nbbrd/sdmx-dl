@@ -34,19 +34,19 @@ public interface SdmxConnection extends Closeable {
     Collection<Dataflow> getFlows() throws IOException;
 
     @NonNull
-    Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException;
+    Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException;
+    DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Collection<Series> getData(@NonNull DataRef dataRef) throws IOException;
+    Collection<Series> getData(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException;
+    Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    DataCursor getDataCursor(@NonNull DataRef dataRef) throws IOException;
+    DataCursor getDataCursor(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
 
     boolean isDetailSupported() throws IOException;
 }

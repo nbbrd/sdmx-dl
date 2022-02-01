@@ -120,6 +120,8 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
 
         try {
             result = delegate.getFlow(flowRef);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting flow", ex);
         }
@@ -139,6 +141,8 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
 
         try {
             result = delegate.getStructure(flowRef);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting structure", ex);
         }
@@ -158,6 +162,8 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
 
         try {
             result = delegate.getData(dataRef);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data", ex);
         }
@@ -177,6 +183,8 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
 
         try {
             result = delegate.getDataStream(dataRef);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data stream", ex);
         }
@@ -196,6 +204,8 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
 
         try {
             result = delegate.getDataCursor(dataRef);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while getting data cursor", ex);
         }

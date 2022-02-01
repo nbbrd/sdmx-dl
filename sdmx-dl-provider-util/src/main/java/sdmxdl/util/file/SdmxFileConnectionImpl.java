@@ -20,6 +20,7 @@ import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.util.web.SdmxValidators;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -62,7 +63,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+    public Dataflow getFlow(DataflowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return dataflow;
@@ -75,40 +76,40 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+    public DataStructure getStructure(DataflowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return client.decode().getStructure();
     }
 
     @Override
-    public List<Series> getData(Key key, DataFilter filter) throws IOException {
+    public List<Series> getData(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
         try (DataCursor cursor = getDataCursor(key, filter)) {
             return cursor.toStream().collect(Collectors.toList());
         }
     }
 
     @Override
-    public List<Series> getData(DataRef dataRef) throws IOException {
+    public List<Series> getData(DataRef dataRef) throws IOException, IllegalArgumentException {
         try (DataCursor cursor = getDataCursor(dataRef)) {
             return cursor.toStream().collect(Collectors.toList());
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException {
+    public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
         DataCursor cursor = getDataCursor(key, filter);
         return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override
-    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
+    public Stream<Series> getDataStream(DataRef dataRef) throws IOException, IllegalArgumentException {
         DataCursor cursor = getDataCursor(dataRef);
         return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
     }
 
     @Override
-    public DataCursor getDataCursor(Key key, DataFilter filter) throws IOException {
+    public DataCursor getDataCursor(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
         checkState();
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
@@ -120,7 +121,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
+    public DataCursor getDataCursor(DataRef dataRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(dataRef.getFlowRef());
 
@@ -150,11 +151,8 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         }
     }
 
-    private void checkKey(Key key, SdmxFileInfo info) throws IOException {
-        String msg = key.validateOn(info.getStructure());
-        if (msg != null) {
-            throw SdmxException.invalidKey(getName(), key, msg);
-        }
+    private void checkKey(Key key, SdmxFileInfo info) throws IllegalArgumentException {
+        SdmxValidators.onDataStructure(info.getStructure()).checkValidity(key);
     }
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {

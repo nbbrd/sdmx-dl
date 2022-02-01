@@ -102,6 +102,8 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
 
         try {
             result = delegate.connect(source, context);
+        }catch (IllegalArgumentException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             throw unexpectedError("Unexpected exception while connecting", ex);
         }

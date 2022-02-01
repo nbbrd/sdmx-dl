@@ -8,7 +8,8 @@ import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.SdmxValidators;
+import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -37,6 +38,8 @@ public final class RngDriver implements SdmxWebDriver {
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enableRngDriver", false);
 
+    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_RNG);
+
     @Override
     public @NonNull String getName() {
         return RI_RNG;
@@ -56,7 +59,7 @@ public final class RngDriver implements SdmxWebDriver {
     public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
-        SdmxRestDriverSupport.checkSource(source, getName());
+        sourceValidator.checkValidity(source);
 
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 

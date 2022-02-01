@@ -93,14 +93,14 @@ public class SdmxConnectionAssert {
     private void checkInvalidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) {
         DataRef invalidKey = DataRef.of(sample.validFlow, sample.invalidKey, filter);
         s.assertThatThrownBy(() -> conn.getData(invalidKey))
-                .isInstanceOf(IOException.class)
-                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContainingAll("Expected key", sample.invalidKey.toString());
         s.assertThatThrownBy(() -> conn.getDataCursor(invalidKey))
-                .isInstanceOf(IOException.class)
-                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContainingAll("Expected key", sample.invalidKey.toString());
         s.assertThatThrownBy(() -> conn.getDataStream(invalidKey))
-                .isInstanceOf(IOException.class)
-                .hasMessageContainingAll("Invalid key", sample.invalidKey.toString());
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContainingAll("Expected key", sample.invalidKey.toString());
     }
 
     private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) throws Exception {

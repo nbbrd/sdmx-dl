@@ -12,7 +12,8 @@ import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.SdmxValidators;
+import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
@@ -37,6 +38,8 @@ public final class FileDriver implements SdmxWebDriver {
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
+    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_FILE);
+
     @Override
     public @NonNull String getName() {
         return RI_FILE;
@@ -56,7 +59,7 @@ public final class FileDriver implements SdmxWebDriver {
     public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(context, "context");
-        SdmxRestDriverSupport.checkSource(source, getName());
+        sourceValidator.checkValidity(source);
 
         return new WebOverFileConnection(open(source, context), getName());
     }

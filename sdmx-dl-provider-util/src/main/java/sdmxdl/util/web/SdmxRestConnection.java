@@ -40,6 +40,9 @@ final class SdmxRestConnection implements SdmxWebConnection {
     @lombok.NonNull
     private final String driver;
 
+    @lombok.NonNull
+    private final Validator<DataflowRef> dataflowRefValidator;
+
     private boolean closed = false;
 
     @Override
@@ -51,12 +54,14 @@ final class SdmxRestConnection implements SdmxWebConnection {
     @Override
     public Dataflow getFlow(DataflowRef flowRef) throws IOException {
         checkState();
+        checkDataflowRef(flowRef);
         return client.getFlow(flowRef);
     }
 
     @Override
     public DataStructure getStructure(DataflowRef flowRef) throws IOException {
         checkState();
+        checkDataflowRef(flowRef);
 
         DataStructureRef structRef = client.peekStructureRef(flowRef);
         if (structRef == null) {
@@ -83,6 +88,7 @@ final class SdmxRestConnection implements SdmxWebConnection {
     @Override
     public DataCursor getDataCursor(DataRef dataRef) throws IOException {
         checkState();
+        checkDataflowRef(dataRef.getFlowRef());
 
         DataflowRef flowRef = dataRef.getFlowRef();
         DataStructureRef structRef = client.peekStructureRef(dataRef.getFlowRef());
@@ -132,10 +138,11 @@ final class SdmxRestConnection implements SdmxWebConnection {
         }
     }
 
-    private void checkKey(Key key, DataStructure structure) throws IOException {
-        String msg = key.validateOn(structure);
-        if (msg != null) {
-            throw SdmxException.invalidKey(client.getName(), key, msg);
-        }
+    private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {
+        dataflowRefValidator.checkValidity(ref);
+    }
+
+    private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
+        SdmxValidators.onDataStructure(dsd).checkValidity(key);
     }
 }

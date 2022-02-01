@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
+
 ### Changed
 
 - Change FileDriver to be optional
@@ -26,9 +28,9 @@ sdmx-dl follows [semantic versioning](http://semver.org/).
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
 
-This release adds the support of most SDMX time formats.
-The execution time of CLI is reduced greatly by using a smarter cache and by avoiding to load unnecessary resources.
-A few sources are also added, including a random data generator that can be used for tests/demos.
+This release adds the support of most SDMX time formats. The execution time of CLI is reduced greatly by using a smarter
+cache and by avoiding to load unnecessary resources. A few sources are also added, including a random data generator
+that can be used for tests/demos.
 
 ### Added
 
@@ -47,7 +49,7 @@ A few sources are also added, including a random data generator that can be used
 - Refactor network API to avoid unnecessary resource loading
 - Invert default activation of auto-proxy option in CLI
 - Simplify name of auto-proxy option in CLI
-- Replace multiple parameters with `DataRef` in API 
+- Replace multiple parameters with `DataRef` in API
 - Change `SdmxWebSource#endpoint` type to URI
 - Change `SdmxWebSource#monitor` type to URI
 - Change cache default folder to `java.io.tmpdir/sdmx-dl/VERSION`
@@ -182,8 +184,13 @@ production._
 - Initial release
 
 [Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...HEAD
+
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
+
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
+
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
+
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
+
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1

@@ -27,14 +27,5 @@ public class SdmxExceptionTest {
 
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxException.missingData(null, DataRef.of(DataflowRef.parse("xyz"), Key.ALL, DataFilter.FULL)));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.invalidKey(null, Key.ALL, "cause"));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.invalidKey("abc", null, "cause"));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.invalidKey("abc", Key.ALL, null));
     }
 }

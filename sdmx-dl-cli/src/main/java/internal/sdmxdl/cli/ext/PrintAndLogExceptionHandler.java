@@ -28,8 +28,15 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
     }
 
     private void reportToConsole(Exception ex, CommandLine cmd) {
-        String errorMessage = ex.getClass().getSimpleName() + ": " + ex.getMessage();
+        String errorMessage = getLabel(ex) + ": " + ex.getMessage();
         cmd.getErr().println(cmd.getColorScheme().errorText(errorMessage));
 //        cmd.getErr().println(cmd.getColorScheme().stackTraceText(ex));
+    }
+
+    private String getLabel(Exception ex) {
+        if (ex instanceof IllegalArgumentException) {
+            return "Invalid parameter";
+        }
+        return ex.getClass().getSimpleName();
     }
 }

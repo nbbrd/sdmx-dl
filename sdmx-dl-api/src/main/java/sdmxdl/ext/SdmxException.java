@@ -17,7 +17,10 @@
 package sdmxdl.ext;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import sdmxdl.CodelistRef;
+import sdmxdl.DataRef;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -54,12 +57,6 @@ public final class SdmxException extends IOException {
     public static @NonNull SdmxException missingCodelist(@NonNull String source, @NonNull CodelistRef ref) {
         Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing codelist '" + ref + "'");
-    }
-
-    public static @NonNull SdmxException invalidKey(@NonNull String source, @NonNull Key key, @NonNull String cause) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(cause);
-        return new SdmxException(source, "Invalid key '" + key + "': " + cause);
     }
 
     @lombok.Getter

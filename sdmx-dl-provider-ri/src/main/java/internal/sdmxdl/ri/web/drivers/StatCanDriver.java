@@ -18,7 +18,8 @@ import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.SdmxValidators;
+import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -42,12 +43,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.*;
+import static java.util.Arrays.asList;
+import static java.util.regex.Pattern.compile;
+import static sdmxdl.util.web.SdmxValidators.dataflowRefOf;
 import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
 public final class StatCanDriver implements SdmxWebDriver {
 
     private static final String RI_STATCAN = "ri:statcan";
+
+    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_STATCAN);
 
     @Override
     public @NonNull String getName() {
@@ -68,7 +74,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
-        SdmxRestDriverSupport.checkSource(source, RI_STATCAN);
+        sourceValidator.checkValidity(source);
 
         StatCanClient client = new DefaultStatCanClient(
                 source.getEndpoint().toURL(),
@@ -123,39 +129,28 @@ public final class StatCanDriver implements SdmxWebDriver {
 
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
-            try {
-                return getFlows()
-                        .stream()
-                        .filter(flowRef::containsRef)
-                        .findFirst()
-                        .orElseThrow(() -> SdmxException.missingFlow(source, flowRef));
-            } catch (IllegalArgumentException ex) {
-                throw new IOException(ex);
-            }
+            Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
+            return getFlows()
+                    .stream()
+                    .filter(flowRef::containsRef)
+                    .findFirst()
+                    .orElseThrow(() -> SdmxException.missingFlow(source, flowRef));
         }
 
         @Override
         public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
-            try {
-                int productId = Converter.fromDataflowRef(flowRef);
-                DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
-                return client.getStructAndData(productId)
-                        .getStructure(dsdRef)
-                        .orElseThrow(() -> SdmxException.missingStructure(source, dsdRef));
-            } catch (IllegalArgumentException ex) {
-                throw new IOException(ex);
-            }
+            int productId = Converter.fromDataflowRef(flowRef);
+            DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
+            return client.getStructAndData(productId)
+                    .getStructure(dsdRef)
+                    .orElseThrow(() -> SdmxException.missingStructure(source, dsdRef));
         }
 
         private DataSet getDataSet(DataRef dataRef) throws IOException {
-            try {
-                int productId = Converter.fromDataflowRef(dataRef.getFlowRef());
-                return client.getStructAndData(productId)
-                        .getDataSet(dataRef.getFlowRef())
-                        .orElseThrow(() -> SdmxException.missingData(source, dataRef));
-            } catch (IllegalArgumentException ex) {
-                throw new IOException(ex);
-            }
+            int productId = Converter.fromDataflowRef(dataRef.getFlowRef());
+            return client.getStructAndData(productId)
+                    .getDataSet(dataRef.getFlowRef())
+                    .orElseThrow(() -> SdmxException.missingData(source, dataRef));
         }
 
         @Override
@@ -390,34 +385,23 @@ public final class StatCanDriver implements SdmxWebDriver {
             return productId;
         }
 
-        private String checkAgency(String agency) throws IllegalArgumentException {
-            requireArgument(agency.equals(AGENCY) || agency.equals(ResourceRef.ALL_AGENCIES), "DataflowRef Agency must be 'StatCan'");
-            return agency;
-        }
-
-        private String checkVersion(String version) throws IllegalArgumentException {
-            requireArgument(version.equals(VERSION) || version.equals(ResourceRef.LATEST_VERSION), "DataflowRef Version must be '1.0'");
-            return version;
-        }
-
-        private String checkId(String id) throws IllegalArgumentException {
-            requireArgument(id.startsWith(FLOW_PREFIX), "DataflowRef Id must start with 'DF_'");
-            return id;
-        }
-
         static final String AGENCY = "StatCan";
         static final String FLOW_PREFIX = "DF_";
         static final String STRUCT_PREFIX = "Data_Structure_";
         static final String VERSION = "1.0";
+
+        static final Validator<DataflowRef> DATAFLOW_REF_VALIDATOR = dataflowRefOf(
+                compile("StatCan|all"),
+                compile("DF_\\d+"),
+                compile("1\\.0|latest")
+        );
 
         static DataflowRef toDataflowRef(int productId) throws IllegalArgumentException {
             return DataflowRef.of(AGENCY, FLOW_PREFIX + checkProductId(productId), VERSION);
         }
 
         static int fromDataflowRef(DataflowRef ref) throws IllegalArgumentException {
-            checkAgency(ref.getAgency());
-            checkVersion(ref.getVersion());
-            checkId(ref.getId());
+            DATAFLOW_REF_VALIDATOR.checkValidity(ref);
 
             return checkProductId(Integer.parseInt(ref.getId().substring(FLOW_PREFIX.length())));
         }
@@ -430,7 +414,7 @@ public final class StatCanDriver implements SdmxWebDriver {
             return Dataflow.of(
                     toDataflowRef(dataTable.getProductId()),
                     toDataStructureRef(dataTable.getProductId()),
-                    "fr".equals(langs.lookupTag(Arrays.asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn
+                    "fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn
             );
         }
 
