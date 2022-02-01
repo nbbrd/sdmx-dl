@@ -3,11 +3,11 @@ package internal.sdmxdl.ri.web;
 import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
+import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataCursor;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
-import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.repo.DataSet;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.RepoSamples;
@@ -103,16 +103,16 @@ public class Sdmx21RestParsersTest {
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(FileOverTextParser.class);
+                    .isInstanceOf(Xml.Parser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withoutParameters()))
                     .isNotInstanceOf(Sdmx21RestParsers.UnsupportedParser.class)
-                    .isNotInstanceOf(FileOverTextParser.class);
+                    .isInstanceOf(Xml.Parser.class);
 
             assertThat(new Sdmx21RestParsers())
                     .extracting(x -> extractor.apply(x, mediaType.withCharset(StandardCharsets.US_ASCII)))
-                    .isInstanceOf(FileOverTextParser.class);
+                    .isNotInstanceOf(Xml.Parser.class);
         }
     }
 

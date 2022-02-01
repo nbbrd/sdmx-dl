@@ -1,6 +1,5 @@
 package sdmxdl.csv;
 
-import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.TextBuffers;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.picocsv.Csv;
@@ -10,7 +9,9 @@ import sdmxdl.Obs;
 import sdmxdl.Series;
 import sdmxdl.repo.DataSet;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
+import static nbbrd.io.text.TextResource.newBufferedWriter;
 import static sdmxdl.csv.SdmxCsvFields.*;
 
 @lombok.Builder(toBuilder = true)
@@ -114,10 +116,5 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
             default:
                 return dataSet -> SdmxCsvFieldWriter.onConstant(field, "");
         }
-    }
-
-    @MightBePromoted
-    private static BufferedWriter newBufferedWriter(OutputStream outputStream, CharsetEncoder encoder) {
-        return new BufferedWriter(new OutputStreamWriter(outputStream, encoder));
     }
 }

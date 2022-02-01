@@ -135,6 +135,6 @@ public class Sdmx21RestParsers implements RiRestParsers {
     //    @MightBePromoted
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> FileParser<T> withCharset(Xml.Parser<T> parser, Optional<Charset> charset) {
-        return charset.isPresent() ? new FileOverTextParser<>(parser, charset.get()) : parser;
+        return charset.isPresent() ? parser.withCharset(charset.get()) : parser;
     }
 }

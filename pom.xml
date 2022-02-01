@@ -36,7 +36,6 @@
     </scm>
 
     <properties>
-        <java-io-util.version>0.0.15</java-io-util.version>
         <slf4j.version>1.7.35</slf4j.version>
     </properties>
 
@@ -82,18 +81,10 @@
             <!-- dependencies  -->
             <dependency>
                 <groupId>com.github.nbbrd.java-io-util</groupId>
-                <artifactId>java-io-base</artifactId>
-                <version>${java-io-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.nbbrd.java-io-util</groupId>
-                <artifactId>java-io-xml</artifactId>
-                <version>${java-io-util.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.nbbrd.java-io-util</groupId>
-                <artifactId>java-io-win</artifactId>
-                <version>${java-io-util.version}</version>
+                <artifactId>java-io-bom</artifactId>
+                <version>0.0.16</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.nbbrd.picocsv</groupId>

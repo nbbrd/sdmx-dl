@@ -6,10 +6,6 @@ import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 @lombok.Value
 public class FileFormat<T> {
@@ -37,8 +33,8 @@ public class FileFormat<T> {
 
     public static <T> @NonNull FileFormat<T> gzip(@NonNull FileFormat<T> delegate) {
         return new FileFormat<>(
-                gzipParser(delegate.getParser()),
-                gzipFormatter(delegate.getFormatter()),
+                FileParser.onParsingGzip(delegate.getParser()),
+                FileFormatter.onFormattingGzip(delegate.getFormatter()),
                 delegate.getFileExtension() + ".gz"
         );
     }
@@ -54,24 +50,6 @@ public class FileFormat<T> {
     private static <T> @NonNull FileFormatter<T> noOpFormatter() {
         return (value, resource) -> {
             throw new IOException("Cannot format stream");
-        };
-    }
-
-    @MightBePromoted
-    private static <T> @NonNull FileParser<T> gzipParser(@NonNull FileParser<T> delegate) {
-        return (resource) -> {
-            try (InputStream gzip = new GZIPInputStream(resource)) {
-                return delegate.parseStream(gzip);
-            }
-        };
-    }
-
-    @MightBePromoted
-    private static <T> @NonNull FileFormatter<T> gzipFormatter(@NonNull FileFormatter<T> delegate) {
-        return (value, resource) -> {
-            try (OutputStream gzip = new GZIPOutputStream(resource)) {
-                delegate.formatStream(value, gzip);
-            }
         };
     }
 }

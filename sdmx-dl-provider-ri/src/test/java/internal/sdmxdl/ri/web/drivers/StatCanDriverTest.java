@@ -1,8 +1,6 @@
 package internal.sdmxdl.ri.web.drivers;
 
-import _test.sdmxdl.ri.TextParsers;
 import nbbrd.io.text.TextParser;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -30,7 +28,7 @@ public class StatCanDriverTest {
 
     @Test
     public void testDataTableParseAll() throws IOException {
-        TextParser<StatCanDriver.DataTable[]> x = TextParsers.of(StatCanDriver.DataTable::parseAll);
+        TextParser<StatCanDriver.DataTable[]> x = TextParser.onParsingReader(StatCanDriver.DataTable::parseAll);
 
         assertThat(x.parseResource(StatCanDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
                 .hasSize(2)

@@ -11,12 +11,16 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.repo.DataSet;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static nbbrd.io.text.TextResource.newBufferedReader;
 
 @lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvParser implements TextParser<DataSet> {
@@ -147,11 +151,6 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
 
     private Csv.Reader newCsvReader(Reader charReader, TextBuffers buffers) throws IOException {
         return Csv.Reader.of(format, options, charReader, buffers.getCharBufferSize());
-    }
-
-    @MightBePromoted
-    private static BufferedReader newBufferedReader(InputStream inputStream, CharsetDecoder decoder) {
-        return new BufferedReader(new InputStreamReader(inputStream, decoder));
     }
 
     @MightBePromoted
