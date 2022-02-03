@@ -1,6 +1,6 @@
 package internal.sdmxdl.ri.web.drivers;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
@@ -27,6 +27,8 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -345,8 +347,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     }
 
     @VisibleForTesting
-    @lombok.Data
-    @lombok.Builder
+    @lombok.Value
     static class DataTable {
 
         int productId;
@@ -354,19 +355,48 @@ public final class StatCanDriver implements SdmxWebDriver {
         String cubeTitleFr;
 
         static @NonNull DataTable[] parseAll(@NonNull Reader reader) {
-            return new Gson().fromJson(reader, DataTable[].class);
+            return GSON.fromJson(reader, DataTable[].class);
+        }
+
+        private static final Gson GSON = new GsonBuilder()
+                .registerTypeAdapter(DataTable.class, (JsonDeserializer<DataTable>) DataTable::deserialize)
+                .create();
+
+        private static DataTable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            JsonObject x = json.getAsJsonObject();
+            return new DataTable(
+                    x.get("productId").getAsInt(),
+                    x.get("cubeTitleEn").getAsString(),
+                    x.get("cubeTitleFr").getAsString()
+            );
         }
     }
 
     @VisibleForTesting
-    @lombok.Data
+    @lombok.Value
     static class FullTableDownloadSDMX {
 
         String status;
         URL object;
 
         public static @NonNull FullTableDownloadSDMX parseJson(@NonNull Reader reader) {
-            return new Gson().fromJson(reader, FullTableDownloadSDMX.class);
+            return GSON.fromJson(reader, FullTableDownloadSDMX.class);
+        }
+
+        private static final Gson GSON = new GsonBuilder()
+                .registerTypeAdapter(FullTableDownloadSDMX.class, (JsonDeserializer<FullTableDownloadSDMX>) FullTableDownloadSDMX::deserialize)
+                .create();
+
+        private static FullTableDownloadSDMX deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+            JsonObject x = json.getAsJsonObject();
+            try {
+                return new FullTableDownloadSDMX(
+                        x.get("status").getAsString(),
+                        new URL(x.get("object").getAsString())
+                );
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 

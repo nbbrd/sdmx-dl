@@ -65,12 +65,11 @@ public class StatCanDriverTest {
 
         assertThat(x.parseResource(StatCanDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
                 .hasSize(2)
-                .contains(StatCanDriver.DataTable
-                        .builder()
-                        .productId(10100001)
-                        .cubeTitleEn("Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31")
-                        .cubeTitleFr("Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre")
-                        .build(), atIndex(0));
+                .contains(new StatCanDriver.DataTable(
+                        10100001,
+                        "Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31",
+                        "Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre"
+                ), atIndex(0));
     }
 
     @Nested
