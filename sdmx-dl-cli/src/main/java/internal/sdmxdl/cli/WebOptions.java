@@ -52,6 +52,13 @@ public class WebOptions {
     )
     private boolean noLog;
 
+    @CommandLine.Option(
+            names = {"--stackTrace"},
+            defaultValue = "false",
+            hidden = true
+    )
+    private boolean stackTrace;
+
     public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
