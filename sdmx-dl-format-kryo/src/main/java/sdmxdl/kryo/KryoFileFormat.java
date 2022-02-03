@@ -21,6 +21,7 @@ import com.esotericsoftware.kryo.kryo5.Serializer;
 import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.esotericsoftware.kryo.kryo5.serializers.CollectionSerializer;
+import com.esotericsoftware.kryo.kryo5.serializers.DefaultSerializers;
 import com.esotericsoftware.kryo.kryo5.serializers.ImmutableSerializer;
 import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
@@ -143,7 +144,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(Attribute.class, new AttributeSerializer());
         result.register(SdmxWebMonitorReports.class, new SdmxWebMonitorReportsSerializer());
         result.register(SdmxWebMonitorReport.class, new SdmxWebMonitorReportSerializer());
-        result.register(SdmxWebStatus.class);
+        result.register(SdmxWebStatus.class, new DefaultSerializers.EnumSerializer(SdmxWebStatus.class));
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class);
