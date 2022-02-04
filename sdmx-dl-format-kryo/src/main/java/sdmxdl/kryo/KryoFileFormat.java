@@ -20,10 +20,7 @@ import com.esotericsoftware.kryo.kryo5.Kryo;
 import com.esotericsoftware.kryo.kryo5.Serializer;
 import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
-import com.esotericsoftware.kryo.kryo5.serializers.CollectionSerializer;
-import com.esotericsoftware.kryo.kryo5.serializers.DefaultSerializers;
-import com.esotericsoftware.kryo.kryo5.serializers.ImmutableSerializer;
-import com.esotericsoftware.kryo.kryo5.serializers.MapSerializer;
+import com.esotericsoftware.kryo.kryo5.serializers.*;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
 import lombok.AccessLevel;
 import nbbrd.io.FileFormatter;
@@ -147,8 +144,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(SdmxWebStatus.class, new DefaultSerializers.EnumSerializer(SdmxWebStatus.class));
 
         result.register(ArrayList.class, new CollectionSerializer<>());
-        result.register(LocalDateTime.class);
-        result.register(Instant.class);
+        result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
+        result.register(Instant.class, new TimeSerializers.InstantSerializer());
 
         return result;
     }
