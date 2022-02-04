@@ -301,13 +301,15 @@
                         <configuration>
                             <imageName>${project.x.fileName}-${project.version}</imageName>
                             <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
-                            <!-- FIX: sdmx-dl: xml resources -->
+                            <!-- FIX: sdmx-dl: xml resources such as Checks.xml -->
+                            <!-- FIX: sdmx-dl: ps1 resources such as WinPasswordVault.ps1 -->
+                            <!-- FIX: sdmx-dl: properties resources such as pom.properties -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http
                                 --enable-https
                                 --report-unsupported-elements-at-runtime
-                                -H:IncludeResources=.*\.xml$
+                                -H:IncludeResources=.*\.(xml|ps1|properties)$
                             </buildArgs>
                         </configuration>
                     </plugin>
