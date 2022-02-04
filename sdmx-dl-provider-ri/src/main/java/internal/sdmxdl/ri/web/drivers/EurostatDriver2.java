@@ -81,7 +81,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                     .builder()
                     .name("ESTAT")
                     .alias("EUROSTAT")
-                    .description("Eurostat")
+                    .descriptionOf("Eurostat")
                     .driver(RI_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")

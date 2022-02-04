@@ -18,6 +18,7 @@ package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import picocli.CommandLine;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -46,6 +47,15 @@ public class WebOptions {
     private File sourcesFile;
 
     @CommandLine.Option(
+            names = {"-l", "--languages"},
+            paramLabel = "<langs>",
+            converter = LangsConverter.class,
+            defaultValue = LanguagePriorityList.ANY_KEYWORD,
+            descriptionKey = "cli.sdmx.languages"
+    )
+    private LanguagePriorityList langs;
+
+    @CommandLine.Option(
             names = {"--no-log"},
             defaultValue = "false",
             hidden = true
@@ -62,6 +72,7 @@ public class WebOptions {
     public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
+                .languages(langs)
                 .eventListener(getEventListener())
                 .customSources(parseCustomSources())
                 .build();

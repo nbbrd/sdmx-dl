@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -56,6 +57,7 @@ public final class XmlWebSource {
     private static final String PROPERTY_TAG = "property";
     private static final String ALIAS_TAG = "alias";
     private static final String WEBSITE_TAG = "website";
+    private static final String LANG_ATTR = "lang";
     private static final String KEY_ATTR = "key";
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
@@ -74,7 +76,8 @@ public final class XmlWebSource {
                             item.name(reader.getElementText());
                             break;
                         case DESCRIPTION_TAG:
-                            item.description(reader.getElementText());
+                            String lang = reader.getAttributeValue(null, LANG_ATTR);
+                            item.description(lang != null ? lang : Locale.ROOT.getLanguage(), reader.getElementText());
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());
@@ -117,15 +120,14 @@ public final class XmlWebSource {
         for (SdmxWebSource source : list) {
             writer.writeStartElement(SOURCE_TAG);
             writeTextElement(writer, NAME_TAG, source.getName());
-            writeTextElement(writer, DESCRIPTION_TAG, source.getDescription());
+            for (Map.Entry<String, String> description : source.getDescriptions().entrySet()) {
+                writeDescription(writer, description);
+            }
             writeTextElement(writer, DRIVER_TAG, source.getDriver());
             writeTextElement(writer, DIALECT_TAG, source.getDialect());
             writeTextElement(writer, ENDPOINT_TAG, source.getEndpoint().toString());
             for (Map.Entry<String, String> property : source.getProperties().entrySet()) {
-                writer.writeStartElement(PROPERTY_TAG);
-                writer.writeAttribute(KEY_ATTR, property.getKey());
-                writer.writeAttribute(VALUE_ATTR, property.getValue());
-                writer.writeEndElement();
+                writeProperty(writer, property);
             }
             for (String alias : source.getAliases()) {
                 writeTextElement(writer, ALIAS_TAG, alias);
@@ -136,6 +138,23 @@ public final class XmlWebSource {
         }
         writer.writeEndElement();
         writer.writeEndDocument();
+    }
+
+    private static void writeDescription(XMLStreamWriter writer, Map.Entry<String, String> description) throws XMLStreamException {
+        writer.writeStartElement(DESCRIPTION_TAG);
+        String lang = description.getKey();
+        if (!lang.isEmpty()) {
+            writer.writeAttribute(LANG_ATTR, lang);
+        }
+        writer.writeCharacters(description.getValue());
+        writer.writeEndElement();
+    }
+
+    private static void writeProperty(XMLStreamWriter writer, Map.Entry<String, String> property) throws XMLStreamException {
+        writer.writeStartElement(PROPERTY_TAG);
+        writer.writeAttribute(KEY_ATTR, property.getKey());
+        writer.writeAttribute(VALUE_ATTR, property.getValue());
+        writer.writeEndElement();
     }
 
     private static void writeTextElement(XMLStreamWriter writer, String name, Object value) throws XMLStreamException {

@@ -72,7 +72,7 @@ public final class RngDriver implements SdmxWebDriver {
                 SdmxWebSource
                         .builder()
                         .name("RNG")
-                        .description("Random number generator")
+                        .descriptionOf("Random number generator")
                         .driver(RI_RNG)
                         .endpointOf("rng:3:4:0:2010-01-01")
                         .build()

@@ -19,11 +19,13 @@ package sdmxdl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.LanguagePriorityList.parse;
 
 /**
  * @author Philippe Charles
@@ -61,5 +63,37 @@ public class LanguagePriorityListTest {
         Assertions.assertThat(LanguagePriorityList.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
         Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Collections.singletonList("nl"))).isNull();
         assertThatNullPointerException().isThrownBy(() -> LanguagePriorityList.parse("fr").lookupTag(null));
+    }
+
+    @Test
+    public void test() {
+        assertThat(ANY.select(emptyMap())).isNull();
+        assertThat(ANY.select(singletonMap("en", null))).isNull();
+        assertThat(ANY.select(singletonMap("en", "hello"))).isEqualTo("hello");
+        assertThat(ANY.select(mapOf("en", "hello", "fr", "bonjour"))).isEqualTo("hello");
+        assertThat(ANY.select(mapOf("fr", "bonjour", "en", "hello"))).isEqualTo("bonjour");
+
+        assertThatNullPointerException().isThrownBy(() -> ANY.select(null));
+
+        assertThat(parse("fr").select(mapOf("fr", "bonjour", "en", "hello"))).isEqualTo("bonjour");
+        assertThat(parse("en").select(mapOf("en", "hello", "fr", "bonjour"))).isEqualTo("hello");
+    }
+
+    @Test
+    public void testBlankText() {
+        assertThat(ANY.select(mapOf("en", "", "de", "Gewinn- und Verlustrechnung")))
+                .describedAs("No language priority should return first non-blank")
+                .isEqualTo("Gewinn- und Verlustrechnung");
+
+        assertThat(parse("en").select(mapOf("en", "", "de", "Gewinn- und Verlustrechnung")))
+                .describedAs("Specified language priority should return any text even if blank")
+                .isEqualTo("");
+    }
+
+    private static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2) {
+        Map<K, V> result = new LinkedHashMap<>();
+        result.put(k1, v1);
+        result.put(k2, v2);
+        return result;
     }
 }

@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -36,8 +37,8 @@ public class SdmxWebSource {
     @lombok.NonNull
     String name;
 
-    @Nullable
-    String description;
+    @lombok.Singular
+    Map<String, String> descriptions;
 
     @lombok.NonNull
     String driver;
@@ -79,20 +80,21 @@ public class SdmxWebSource {
 
     public static class Builder {
 
-        @NonNull
-        public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
+        public @NonNull Builder descriptionOf(@NonNull CharSequence description) throws IllegalArgumentException {
+            return description(Locale.ROOT.getLanguage(), description.toString());
+        }
+
+        public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
             Objects.requireNonNull(endpoint);
             return endpoint(URI.create(endpoint));
         }
 
-        @NonNull
-        public Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
+        public @NonNull Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             Objects.requireNonNull(key);
             return property(key.toString(), value.toString());
         }
 
-        @NonNull
-        public Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
+        public @NonNull Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
             Objects.requireNonNull(website);
             try {
                 return website(new URL(website));
@@ -101,8 +103,7 @@ public class SdmxWebSource {
             }
         }
 
-        @NonNull
-        public Builder monitorOf(@NonNull String monitor) {
+        public @NonNull Builder monitorOf(@NonNull String monitor) {
             Objects.requireNonNull(monitor);
             return monitor(URI.create(monitor));
         }

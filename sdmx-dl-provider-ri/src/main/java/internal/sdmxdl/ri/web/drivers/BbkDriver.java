@@ -59,7 +59,7 @@ public final class BbkDriver implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("BBK")
-                    .description("Bundesbank")
+                    .descriptionOf("Deutsche Bundesbank")
                     .driver(RI_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")

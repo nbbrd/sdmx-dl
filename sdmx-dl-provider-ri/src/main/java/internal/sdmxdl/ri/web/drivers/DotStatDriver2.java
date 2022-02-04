@@ -50,7 +50,11 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("OECD")
-                    .description("The Organisation for Economic Co-operation and Development")
+                    .descriptionOf("The Organisation for Economic Co-operation and Development")
+                    .description("en", "The Organisation for Economic Co-operation and Development")
+                    .description("es", "Organización para la Cooperación y el Desarrollo Económicos")
+                    .description("fr", "Organisation de coopération et de développement économiques")
+                    .description("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
@@ -59,7 +63,9 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("SE")
-                    .description("Statistics Estonia")
+                    .descriptionOf("Statistics Estonia")
+                    .description("en", "Statistics Estonia")
+                    .description("et", "Statistikaameti")
                     .driver(RI_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
@@ -68,7 +74,9 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("UIS")
-                    .description("Unesco Institute for Statistics")
+                    .descriptionOf("Unesco Institute for Statistics")
+                    .description("en", "Unesco Institute for Statistics")
+                    .description("fr", "Unesco Institut de statistique")
                     .driver(RI_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
@@ -77,7 +85,7 @@ public final class DotStatDriver2 implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("UKDS")
-                    .description("UK Data Service")
+                    .descriptionOf("UK Data Service")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")

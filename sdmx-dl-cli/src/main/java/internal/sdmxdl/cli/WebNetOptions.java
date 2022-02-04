@@ -25,7 +25,6 @@ import nl.altindag.ssl.SSLFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.kryo.KryoFileFormat;
@@ -59,15 +58,6 @@ import java.util.stream.Collectors;
 @lombok.Setter
 public class WebNetOptions extends WebOptions {
 
-    @CommandLine.Option(
-            names = {"-l", "--languages"},
-            paramLabel = "<langs>",
-            converter = LangsConverter.class,
-            defaultValue = LanguagePriorityList.ANY_KEYWORD,
-            descriptionKey = "cli.sdmx.languages"
-    )
-    private LanguagePriorityList langs;
-
     @CommandLine.ArgGroup(validate = false, headingKey = "network")
     private NetworkOptions networkOptions = new NetworkOptions();
 
@@ -83,7 +73,6 @@ public class WebNetOptions extends WebOptions {
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
-                .languages(langs)
                 .network(getNetworkFactory())
                 .cache(new DryCache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions())))
                 .clearAuthenticators()

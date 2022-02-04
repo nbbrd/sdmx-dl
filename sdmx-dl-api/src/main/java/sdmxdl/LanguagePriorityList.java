@@ -22,9 +22,7 @@ import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +83,25 @@ public final class LanguagePriorityList {
     @Override
     public String toString() {
         return asString(list);
+    }
+
+    public @Nullable String select(@NonNull Map<String, String> data) {
+        Objects.requireNonNull(data);
+        if (data.isEmpty()) {
+            return null;
+        }
+        String lang = lookupTag(data.keySet());
+        return lang != null ? data.get(lang) : getFirstNonBlankValue(data);
+    }
+
+    private static String getFirstNonBlankValue(Map<String, String> data) {
+        return data
+                .values()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(text -> !text.isEmpty())
+                .findFirst()
+                .orElse(null);
     }
 
     private static String asString(List<Locale.LanguageRange> list) {

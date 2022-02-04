@@ -60,7 +60,11 @@ public final class NbbDriver2 implements SdmxWebDriver {
             .source(SdmxWebSource
                     .builder()
                     .name("NBB")
-                    .description("National Bank of Belgium")
+                    .descriptionOf("National Bank of Belgium")
+                    .description("en", "National Bank of Belgium")
+                    .description("de", "Belgische National Bank")
+                    .description("fr", "Banque Nationale de Belgique")
+                    .description("nl", "Nationale Bank van België")
                     .driver(RI_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")

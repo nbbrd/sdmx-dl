@@ -51,20 +51,7 @@ final class TextBuilder {
 
     @Nullable
     public String build() {
-        if (data.isEmpty()) {
-            return null;
-        }
-        String lang = ranges.lookupTag(data.keySet());
-        return lang != null ? data.get(lang) : getFirstNonBlankText();
-    }
-
-    private String getFirstNonBlankText() {
-        return data
-                .values()
-                .stream()
-                .filter(text -> !text.isEmpty())
-                .findFirst()
-                .orElse(null);
+        return ranges.select(data);
     }
 
     @NonNull
