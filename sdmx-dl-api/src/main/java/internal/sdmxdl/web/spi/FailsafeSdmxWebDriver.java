@@ -61,12 +61,12 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
         try {
             result = delegate.getName();
         } catch (RuntimeException ex) {
-            onUnexpectedError.accept("Unexpected exception while getting name", ex);
+            unexpectedError("while getting name", ex);
             return delegate.getClass().getName();
         }
 
         if (result == null) {
-            onUnexpectedNull.accept("Unexpected null name");
+            unexpectedNull("null name");
             return delegate.getClass().getName();
         }
 
@@ -78,7 +78,7 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
         try {
             return delegate.getRank();
         } catch (RuntimeException ex) {
-            onUnexpectedError.accept("Unexpected exception while getting rank", ex);
+            unexpectedError("while getting rank", ex);
             return UNKNOWN;
         }
     }
@@ -88,7 +88,7 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
         try {
             return delegate.isAvailable();
         } catch (RuntimeException ex) {
-            onUnexpectedError.accept("Unexpected exception while getting availability", ex);
+            unexpectedError("while getting availability", ex);
             return false;
         }
     }
@@ -102,14 +102,14 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
 
         try {
             result = delegate.connect(source, context);
-        }catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while connecting", ex);
+            throw newUnexpectedError("while connecting", ex);
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null connection");
+            throw newUnexpectedNull("null connection");
         }
 
         return FailsafeSdmxWebConnection.wrap(result);
@@ -122,12 +122,12 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
         try {
             result = delegate.getDefaultSources();
         } catch (RuntimeException ex) {
-            onUnexpectedError.accept("Unexpected exception while getting default entry points", ex);
+            unexpectedError("while getting default entry points", ex);
             return Collections.emptyList();
         }
 
         if (result == null) {
-            onUnexpectedNull.accept("Unexpected null list");
+            unexpectedNull("null list");
             return Collections.emptyList();
         }
 
@@ -141,26 +141,38 @@ public final class FailsafeSdmxWebDriver implements SdmxWebDriver {
         try {
             result = delegate.getSupportedProperties();
         } catch (RuntimeException ex) {
-            onUnexpectedError.accept("Unexpected exception while getting supported properties", ex);
+            unexpectedError("while getting supported properties", ex);
             return Collections.emptyList();
         }
 
         if (result == null) {
-            onUnexpectedNull.accept("Unexpected null list");
+            unexpectedNull("null list");
             return Collections.emptyList();
         }
 
         return result;
     }
 
-    private IOException unexpectedError(String msg, RuntimeException ex) {
+    private IOException newUnexpectedError(String context, RuntimeException ex) {
+        String msg = "Unexpected " + ex.getClass().getSimpleName() + " " + context;
         onUnexpectedError.accept(msg, ex);
         return new IOException(msg, ex);
     }
 
-    private IOException unexpectedNull(String msg) {
+    private IOException newUnexpectedNull(String context) {
+        String msg = "Unexpected null " + context;
         onUnexpectedNull.accept(msg);
         return new IOException(msg);
+    }
+
+    private void unexpectedError(String context, RuntimeException ex) {
+        String msg = "Unexpected " + ex.getClass().getSimpleName() + " " + context;
+        onUnexpectedError.accept(msg, ex);
+    }
+
+    private void unexpectedNull(String context) {
+        String msg = "Unexpected null " + context;
+        onUnexpectedNull.accept(msg);
     }
 
     private static void logUnexpectedError(String msg, RuntimeException ex) {

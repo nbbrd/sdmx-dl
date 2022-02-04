@@ -68,11 +68,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         try {
             result = delegate.ping();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting ping", ex);
+            throw unexpectedError(ex, "while getting ping");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null ping");
+            throw unexpectedNull("ping");
         }
 
         return result;
@@ -85,11 +85,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         try {
             result = delegate.getDriver();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting driver", ex);
+            throw unexpectedError(ex, "while getting driver");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null driver");
+            throw unexpectedNull("driver");
         }
 
         return result;
@@ -102,11 +102,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         try {
             result = delegate.getFlows();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting flows", ex);
+            throw unexpectedError(ex, "while getting flows");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null flows");
+            throw unexpectedNull("flows");
         }
 
         return result;
@@ -123,11 +123,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting flow", ex);
+            throw unexpectedError(ex, "while getting flow");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null flow");
+            throw unexpectedNull("flow");
         }
 
         return result;
@@ -144,11 +144,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting structure", ex);
+            throw unexpectedError(ex, "while getting structure");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null structure");
+            throw unexpectedNull("structure");
         }
 
         return result;
@@ -165,11 +165,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting data", ex);
+            throw unexpectedError(ex, "while getting data");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null data");
+            throw unexpectedNull("data");
         }
 
         return result;
@@ -186,11 +186,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting data stream", ex);
+            throw unexpectedError(ex, "while getting data stream");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null data stream");
+            throw unexpectedNull("data stream");
         }
 
         return result;
@@ -207,11 +207,11 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting data cursor", ex);
+            throw unexpectedError(ex, "while getting data cursor");
         }
 
         if (result == null) {
-            throw unexpectedNull("Unexpected null data cursor");
+            throw unexpectedNull("data cursor");
         }
 
         return result;
@@ -222,7 +222,7 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         try {
             return delegate.isDetailSupported();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while getting detail support", ex);
+            throw unexpectedError(ex, "while getting detail support");
         }
     }
 
@@ -231,16 +231,18 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         try {
             delegate.close();
         } catch (RuntimeException ex) {
-            throw unexpectedError("Unexpected exception while closing", ex);
+            throw unexpectedError(ex, "while closing");
         }
     }
 
-    private IOException unexpectedError(String msg, RuntimeException ex) {
+    private IOException unexpectedError(RuntimeException ex, String context) {
+        String msg = "Unexpected " + ex.getClass().getSimpleName() + " " + context;
         onUnexpectedError.accept(msg, ex);
         return new IOException(msg, ex);
     }
 
-    private IOException unexpectedNull(String msg) {
+    private IOException unexpectedNull(String context) {
+        String msg = "Unexpected null " + context;
         onUnexpectedNull.accept(msg);
         return new IOException(msg);
     }

@@ -33,7 +33,7 @@ public class SdmxValidators {
     public static @NonNull Validator<SdmxWebSource> onDriverName(@NonNull String driverName) {
         Objects.requireNonNull(driverName);
         return source -> source == null || !source.getDriver().equals(driverName)
-                ? String.format("Expected driver name '%s' to be '%s'", source.getDriver(), driverName)
+                ? String.format("Expecting driver name '%s' to be '%s'", source.getDriver(), driverName)
                 : null;
     }
 

@@ -40,7 +40,7 @@ public class FailsafeSdmxWebDriverTest {
 
         failsafe.reset();
         Assertions.assertThat(failingDriver.getName()).isEqualTo(TestDriver.FAILING.getClass().getName());
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThat(nullDriver.getName()).isEqualTo(TestDriver.NULL.getClass().getName());
@@ -55,7 +55,7 @@ public class FailsafeSdmxWebDriverTest {
 
         failsafe.reset();
         Assertions.assertThat(failingDriver.getRank()).isEqualTo(SdmxWebDriver.UNKNOWN);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class FailsafeSdmxWebDriverTest {
 
         failsafe.reset();
         Assertions.assertThat(failingDriver.getDefaultSources()).isEmpty();
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThat(nullDriver.getDefaultSources()).isEmpty();
@@ -100,7 +100,7 @@ public class FailsafeSdmxWebDriverTest {
 
         failsafe.reset();
         Assertions.assertThat(failingDriver.getSupportedProperties()).isEmpty();
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThat(nullDriver.getSupportedProperties()).isEmpty();

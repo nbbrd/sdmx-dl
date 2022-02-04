@@ -41,7 +41,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(failingDriver::ping)
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -60,7 +60,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(failingDriver::getDriver)
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -79,7 +79,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(failingDriver::getFlows)
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -103,7 +103,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(() -> failingDriver.getFlow(TestConnection.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -127,7 +127,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(() -> failingDriver.getStructure(TestConnection.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -151,7 +151,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(() -> failingDriver.getData(dataRef))
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -176,7 +176,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(() -> failingDriver.getDataStream(dataRef))
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -200,7 +200,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(() -> failingDriver.getDataCursor(dataRef))
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
@@ -219,7 +219,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(failingDriver::isDetailSupported)
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     @Test
@@ -232,7 +232,7 @@ public class FailsafeSdmxWebConnectionTest {
         Assertions.assertThatIOException()
                 .isThrownBy(failingDriver::close)
                 .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected exception", CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     private final FailsafeHandler failsafe = new FailsafeHandler();
