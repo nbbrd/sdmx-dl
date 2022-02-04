@@ -106,6 +106,11 @@
             <data key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" minSeries="1" minObs="26"/>
         </flow>
     </source>
+    <source name="SIMEL" minFlows="77">
+        <flow ref="DF_AUS_TAS_SEX_EDA" dims="7">
+            <data key="_T.A.AUS_TAS._T._Z._T._Z" minSeries="1" minObs="12"/>
+        </flow>
+    </source>
     <source name="SPC" minFlows="55">
         <flow ref="DF_BOP" dims="4">
             <data key="A..AMTUSD." minSeries="503" minObs="6343"/>

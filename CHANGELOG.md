@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
+- Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
 
 ### Changed
 

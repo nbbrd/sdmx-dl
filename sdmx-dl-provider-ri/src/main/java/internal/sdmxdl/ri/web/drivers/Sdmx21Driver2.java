@@ -161,6 +161,16 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("SIMEL")
+                    .description("El Salvador Labour Market Information System")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://disseminatesimel.mtps.gob.sv/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://datasimel.mtps.gob.sv/")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("SPC")
                     .description("Pacific Data Hub")
                     .driver(RI_SDMX_21)
