@@ -16,8 +16,8 @@ import java.util.List;
 import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 import static sdmxdl.LanguagePriorityList.ANY;
 
-@lombok.Data
-final class UpptimeSummary {
+@lombok.Value
+class UpptimeSummary {
 
     String name;
     String status;
@@ -41,13 +41,13 @@ final class UpptimeSummary {
             .create();
 
     private static UpptimeSummary deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-        JsonObject jsonObject = json.getAsJsonObject();
-        UpptimeSummary result = new UpptimeSummary();
-        result.setName(jsonObject.get("name").getAsString());
-        result.setStatus(jsonObject.get("status").getAsString());
-        result.setUptime(jsonObject.get("uptime").getAsString());
-        result.setTime(jsonObject.get("time").getAsLong());
-        return result;
+        JsonObject x = json.getAsJsonObject();
+        return new UpptimeSummary(
+                x.get("name").getAsString(),
+                x.get("status").getAsString(),
+                x.get("uptime").getAsString(),
+                x.get("time").getAsLong()
+        );
     }
 
     private static final List<MediaType> MEDIA_TYPES = Collections.singletonList(MediaType.ANY_TYPE);
