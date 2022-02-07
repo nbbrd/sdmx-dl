@@ -167,7 +167,7 @@ public final class Sdmx21Driver2 implements SdmxWebDriver {
                     .description("en", "Italian National Institute of Statistics")
                     .description("it", "Istituto Nazionale di Statistica")
                     .driver(RI_SDMX_21)
-                    .endpointOf("http://sdmx.istat.it/SDMXWS/rest")
+                    .endpointOf("https://sdmx.istat.it/SDMXWS/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.istat.it/en/analysis-and-products")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")

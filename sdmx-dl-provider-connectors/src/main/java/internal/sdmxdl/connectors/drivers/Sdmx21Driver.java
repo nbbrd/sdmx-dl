@@ -134,7 +134,7 @@ public final class Sdmx21Driver implements SdmxWebDriver {
                     .name("ISTAT")
                     .descriptionOf("Istituto Nazionale di Statistica")
                     .driver(CONNECTORS_SDMX_21)
-                    .endpointOf("http://sdmx.istat.it/SDMXWS/rest")
+                    .endpointOf("https://sdmx.istat.it/SDMXWS/rest")
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.istat.it/en/analysis-and-products")
