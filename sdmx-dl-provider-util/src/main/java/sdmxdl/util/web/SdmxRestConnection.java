@@ -16,7 +16,6 @@
  */
 package sdmxdl.util.web;
 
-import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.web.SdmxWebConnection;
@@ -74,19 +73,13 @@ final class SdmxRestConnection implements SdmxWebConnection {
 
     @Override
     public List<Series> getData(DataRef dataRef) throws IOException {
-        try (DataCursor cursor = getDataCursor(dataRef)) {
-            return cursor.toStream().collect(Collectors.toList());
+        try (Stream<Series> cursor = getDataStream(dataRef)) {
+            return cursor.collect(Collectors.toList());
         }
     }
 
     @Override
     public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
-        DataCursor cursor = getDataCursor(dataRef);
-        return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
-    }
-
-    @Override
-    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
         checkState();
         checkDataflowRef(dataRef.getFlowRef());
 
@@ -107,7 +100,7 @@ final class SdmxRestConnection implements SdmxWebConnection {
 
         return isDetailSupported()
                 ? client.getData(DataRef.of(flowRef, key, filter), structure)
-                : client.getData(DataRef.of(flowRef, key, DataFilter.FULL), structure).filter(key, filter);
+                : client.getData(DataRef.of(flowRef, key, DataFilter.FULL), structure).filter(key::containsKey).map(filter::apply);
     }
 
     @Override

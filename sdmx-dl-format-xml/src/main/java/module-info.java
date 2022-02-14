@@ -1,5 +1,6 @@
 module sdmxdl.util.xml {
 
+    requires static nbbrd.design;
     requires static org.checkerframework.checker.qual;
     requires static lombok;
 

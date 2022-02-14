@@ -24,6 +24,7 @@ import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.*;
@@ -165,11 +166,6 @@ public final class StatCanDriver implements SdmxWebDriver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException {
             return getDataSet(dataRef).getDataStream(dataRef.getKey(), dataRef.getFilter());
-        }
-
-        @Override
-        public @NonNull DataCursor getDataCursor(@NonNull DataRef dataRef) throws IOException {
-            return getDataSet(dataRef).getDataCursor(dataRef.getKey(), dataRef.getFilter());
         }
 
         @Override

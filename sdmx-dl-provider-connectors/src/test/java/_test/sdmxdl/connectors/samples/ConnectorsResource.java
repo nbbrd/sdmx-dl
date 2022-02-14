@@ -60,7 +60,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0))).toStream()).build())
                 .name("NBB")
                 .detailSupported(false)
                 .build();
@@ -79,7 +79,7 @@ public class ConnectorsResource {
         return SdmxRepository.builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))).build())
+                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0))).toStream()).build())
                 .name("ECB")
                 .detailSupported(true)
                 .build();

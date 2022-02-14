@@ -160,15 +160,6 @@ public class SdmxRepository {
         }
 
         @Override
-        public DataCursor getDataCursor(DataRef dataRef) throws IOException {
-            checkState();
-            return repo
-                    .getDataSet(dataRef.getFlowRef())
-                    .map(dataSet -> dataSet.getDataCursor(dataRef.getKey(), dataRef.getFilter()))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
-        }
-
-        @Override
         public boolean isDetailSupported() {
             return repo.isDetailSupported();
         }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -62,7 +63,7 @@ public final class XCountingRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
         count.incrementAndGet();
         return delegate.getData(ref, dsd);
     }

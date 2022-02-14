@@ -197,27 +197,6 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public DataCursor getDataCursor(DataRef dataRef) throws IOException {
-        Objects.requireNonNull(dataRef);
-
-        DataCursor result;
-
-        try {
-            result = delegate.getDataCursor(dataRef);
-        } catch (IllegalArgumentException ex) {
-            throw ex;
-        } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting data cursor");
-        }
-
-        if (result == null) {
-            throw unexpectedNull("data cursor");
-        }
-
-        return result;
-    }
-
-    @Override
     public boolean isDetailSupported() throws IOException {
         try {
             return delegate.isDetailSupported();

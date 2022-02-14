@@ -46,6 +46,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static sdmxdl.util.web.SdmxWebProperty.*;
 
@@ -137,13 +138,13 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
         try {
             List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
-            return PortableTimeSeriesCursor.of(data, dataFactory, dsd);
+            return PortableTimeSeriesCursor.of(data, dataFactory, dsd).toStream();
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
-                return DataCursor.empty();
+                return Stream.empty();
             }
             throw wrap(ex, "Failed to get data '%s' from '%s'", ref, name);
         }

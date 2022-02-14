@@ -23,6 +23,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.MessageFooter;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.xml.DataCursor;
 
 import java.util.List;
 

@@ -32,6 +32,7 @@ import sdmxdl.util.file.SdmxFileInfo;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -47,38 +48,40 @@ public class XmlFileClientTest {
         SdmxSource.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileClient r = new XmlFileClient(source, ANY, DECODER, null, SdmxFileListener.noOp());
+        SdmxFileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxFileListener.noOp());
 
-        SdmxFileInfo info = r.decode();
+        SdmxFileInfo info = x.decode();
 
         assertThat(info.getDataType()).isEqualTo(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
         assertThat(info.getStructure().getDimensions()).hasSize(7);
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (DataCursor o = r.loadData(info, source.asDataflowRef(), Key.ALL, DataFilter.FULL)) {
-            assertThat(o.nextSeries()).isTrue();
-            assertThat(o.getSeriesKey()).isEqualTo(key);
-            assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
-            int indexObs = -1;
-            while (o.nextObs()) {
-                switch (++indexObs) {
-                    case 0:
-                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01T00:00:00");
-                        assertThat(o.getObsValue()).isEqualTo(92.0142);
-                        break;
-                    case 56:
-                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01T00:00:00");
-                        assertThat(o.getObsValue()).isEqualTo(386.5655);
-                        break;
-                }
-            }
-            assertThat(indexObs).isEqualTo(56);
-            assertThat(o.nextSeries()).isFalse();
+        try (Stream<Series> o = x.loadData(info, source.asDataflowRef(), Key.ALL, DataFilter.FULL)) {
+            assertThat(o)
+                    .hasSize(1)
+                    .element(0)
+                    .satisfies(series -> {
+                        assertThat(series.getKey()).isEqualTo(key);
+                        assertThat(series.getFreq()).isEqualTo(Frequency.ANNUAL);
+                        assertThat(series.getObs())
+                                .hasSize(57)
+                                .element(0)
+                                .satisfies(obs -> {
+                                    assertThat(obs.getPeriod()).isEqualTo("1960-01-01T00:00:00");
+                                    assertThat(obs.getValue()).isEqualTo(92.0142);
+                                });
+                        assertThat(series.getObs())
+                                .element(56)
+                                .satisfies(obs -> {
+                                    assertThat(obs.getPeriod()).isEqualTo("2016-01-01T00:00:00");
+                                    assertThat(obs.getValue()).isEqualTo(386.5655);
+                                });
+                    });
         }
 
         SdmxConnectionAssert.assertCompliance(
-                () -> new SdmxFileConnectionImpl(r, DATAFLOW),
+                () -> new SdmxFileConnectionImpl(x, DATAFLOW),
                 SdmxConnectionAssert.Sample
                         .builder()
                         .validFlow(source.asDataflowRef())

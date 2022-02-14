@@ -16,7 +16,6 @@
  */
 package sdmxdl.util.file;
 
-import nbbrd.io.function.IORunnable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.file.SdmxFileConnection;
@@ -84,32 +83,20 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
 
     @Override
     public List<Series> getData(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
-        try (DataCursor cursor = getDataCursor(key, filter)) {
-            return cursor.toStream().collect(Collectors.toList());
+        try (Stream<Series> cursor = getDataStream(key, filter)) {
+            return cursor.collect(Collectors.toList());
         }
     }
 
     @Override
     public List<Series> getData(DataRef dataRef) throws IOException, IllegalArgumentException {
-        try (DataCursor cursor = getDataCursor(dataRef)) {
-            return cursor.toStream().collect(Collectors.toList());
+        try (Stream<Series> cursor = getDataStream(dataRef)) {
+            return cursor.collect(Collectors.toList());
         }
     }
 
     @Override
     public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
-        DataCursor cursor = getDataCursor(key, filter);
-        return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
-    }
-
-    @Override
-    public Stream<Series> getDataStream(DataRef dataRef) throws IOException, IllegalArgumentException {
-        DataCursor cursor = getDataCursor(dataRef);
-        return cursor.toStream().onClose(IORunnable.unchecked(cursor::close));
-    }
-
-    @Override
-    public DataCursor getDataCursor(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
         checkState();
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
@@ -121,7 +108,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataCursor getDataCursor(DataRef dataRef) throws IOException, IllegalArgumentException {
+    public Stream<Series> getDataStream(DataRef dataRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(dataRef.getFlowRef());
 

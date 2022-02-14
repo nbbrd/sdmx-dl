@@ -5,7 +5,7 @@ import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataCursor;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
 import sdmxdl.repo.DataSet;
@@ -82,7 +82,7 @@ public class Sdmx21RestParsersTest {
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {
         try {
-            return DataSet.builder().ref(DataflowRef.parse("abc")).copyOf(cursor).build();
+            return DataSet.builder().ref(DataflowRef.parse("abc")).copyOf(cursor.toStream()).build();
         } finally {
             cursor.close();
         }

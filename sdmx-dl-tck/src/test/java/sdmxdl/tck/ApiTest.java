@@ -2,8 +2,6 @@ package sdmxdl.tck;
 
 import internal.sdmxdl.tck.TckUtil;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataFilter;
-import sdmxdl.Key;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
@@ -63,15 +61,6 @@ public class ApiTest {
     @Test
     public void testSdmxFileManager() {
 //        SdmxManagerAssert.assertCompliance(SdmxFileManager.builder().build());
-    }
-
-    @Test
-    @SuppressWarnings("null")
-    public void testDataSetCursor() {
-        DataCursorAssert.assertCompliance(
-                () -> RepoSamples.DATA_SET.getDataCursor(Key.ALL, DataFilter.FULL),
-                Key.ALL, DataFilter.FULL
-        );
     }
 
     @Test

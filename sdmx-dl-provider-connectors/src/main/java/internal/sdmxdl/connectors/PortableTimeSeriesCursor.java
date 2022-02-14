@@ -18,7 +18,7 @@ package internal.sdmxdl.connectors;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import sdmxdl.DataCursor;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.DataStructure;
 import sdmxdl.Frequency;
 import sdmxdl.Key;

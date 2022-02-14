@@ -27,6 +27,7 @@ import sdmxdl.util.TypedId;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -82,9 +83,9 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     @Override
-    public DataCursor loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public Stream<Series> loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         return !filter.getDetail().isDataRequested()
-                ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, flowRef), this::getTtl).getDataCursor(key, filter)
+                ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, flowRef), this::getTtl).getDataStream(key, filter)
                 : delegate.loadData(entry, flowRef, key, filter);
     }
 
@@ -93,8 +94,8 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     private DataSet copyAllNoData(SdmxFileInfo entry, DataflowRef flowRef) throws IOException {
-        try (DataCursor cursor = delegate.loadData(entry, flowRef, Key.ALL, DataFilter.NO_DATA)) {
-            return DataSet.builder().ref(flowRef).copyOf(cursor).build();
+        try (Stream<Series> stream = delegate.loadData(entry, flowRef, Key.ALL, DataFilter.NO_DATA)) {
+            return DataSet.builder().ref(flowRef).copyOf(stream).build();
         }
     }
 }

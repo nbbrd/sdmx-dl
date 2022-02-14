@@ -222,11 +222,6 @@ public final class RngDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull DataCursor getDataCursor(@NonNull DataRef dataRef) {
-            return DataCursor.of(getDataStream(dataRef).iterator());
-        }
-
-        @Override
         public boolean isDetailSupported() {
             return true;
         }

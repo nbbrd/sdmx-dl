@@ -23,6 +23,7 @@ import sdmxdl.*;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -37,7 +38,7 @@ public interface SdmxRestClient {
 
     @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException;
 
-    @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException;
+    @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException;
 
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 

@@ -16,7 +16,7 @@
  */
 package sdmxdl.repo;
 
-import internal.sdmxdl.FilteredCursor;
+import nbbrd.design.MightBePromoted;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
@@ -53,7 +53,7 @@ public class DataSet extends Resource<DataflowRef> {
     public Collection<Series> getData(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return FilteredCursor.isNoFilter(key, filter) ? data : DataCursor.of(data.iterator()).filter(key, filter).toStream().collect(Collectors.toList());
+        return isNoFilter(key, filter) ? data : filter(data.stream(), key, filter).collect(Collectors.toList());
     }
 
     @NonNull
@@ -65,31 +65,31 @@ public class DataSet extends Resource<DataflowRef> {
     public Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(filter);
-        return FilteredCursor.isNoFilter(key, filter) ? data.stream() : DataCursor.of(data.iterator()).filter(key, filter).toStream();
-    }
-
-    @NonNull
-    public DataCursor getDataCursor() {
-        return DataCursor.of(data.iterator());
-    }
-
-    @NonNull
-    public DataCursor getDataCursor(@NonNull Key key, @NonNull DataFilter filter) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return DataCursor.of(data.iterator()).filter(key, filter);
+        return isNoFilter(key, filter) ? data.stream() : filter(data.stream(), key, filter);
     }
 
     public static class Builder {
 
         @NonNull
-        public Builder copyOf(@NonNull DataCursor cursor) throws IOException {
+        public Builder copyOf(@NonNull Stream<Series> stream) throws IOException {
             try {
-                cursor.toStream().forEach(this::series);
+                stream.forEach(this::series);
             } catch (UncheckedIOException ex) {
                 throw ex.getCause();
             }
             return this;
         }
+    }
+
+    @MightBePromoted
+    private static Stream<Series> filter(Stream<Series> data, Key key, DataFilter filter) {
+        return data
+                .filter(key::containsKey)
+                .map(filter::apply);
+    }
+
+    @MightBePromoted
+    private static boolean isNoFilter(@NonNull Key key, @NonNull DataFilter filter) {
+        return Key.ALL.equals(key) && DataFilter.FULL.equals(filter);
     }
 }

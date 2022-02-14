@@ -33,8 +33,13 @@ import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
 import static sdmxdl.csv.SdmxCsvFields.*;
@@ -83,7 +88,7 @@ public final class FetchDataCommand implements Callable<Void> {
                 .ignoreHeader(true)
                 .fields(Arrays.asList(SERIESKEY, ATTRIBUTES, TIME_DIMENSION, OBS_VALUE))
                 .customFactory(ATTRIBUTES, dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, DEFAULT_MAP_FORMATTER))
-                .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format, dataSet)))
+                .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format)))
                 .customFactory(OBS_VALUE, dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
                 .build();
     }
@@ -92,17 +97,17 @@ public final class FetchDataCommand implements Callable<Void> {
         return Formatter.onNumberFormat(format.newNumberFormat());
     }
 
-    private static Formatter<LocalDateTime> getPeriodFormat(ObsFormat format, DataSet dataSet) {
+    private static Formatter<LocalDateTime> getPeriodFormat(ObsFormat format) {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (DataCursor cursor = conn.getDataCursor(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
+        try (Stream<Series> stream = conn.getDataStream(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
             return DataSet
                     .builder()
                     .ref(web.getFlow())
                     .key(web.getKey())
-                    .data(collectSeries(cursor, OBS_BY_PERIOD))
+                    .data(collectSeries(stream, OBS_BY_PERIOD))
                     .build();
         }
     }
@@ -111,39 +116,8 @@ public final class FetchDataCommand implements Callable<Void> {
         return DataFilter.FULL;
     }
 
-    private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
-        SortedSet<Series> sortedSeries = new TreeSet<>(WebFlowOptions.SERIES_BY_KEY);
-        Series.Builder builder = Series.builder();
-        while (cursor.nextSeries()) {
-            sortedSeries.add(builder
-                    .clearMeta()
-                    .clearObs()
-                    .key(cursor.getSeriesKey())
-                    .freq(cursor.getSeriesFrequency())
-                    .meta(cursor.getSeriesAttributes())
-                    .obs(collectObs(cursor, obsComparator))
-                    .build()
-            );
-        }
-        return sortedSeries;
-    }
-
-    private static Collection<Obs> collectObs(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
-        SortedSet<Obs> sortedObs = new TreeSet<>(obsComparator);
-        Obs.Builder builder = Obs.builder();
-        while (cursor.nextObs()) {
-            LocalDateTime period = cursor.getObsPeriod();
-            if (period != null) {
-                sortedObs.add(builder
-                        .clearMeta()
-                        .period(period)
-                        .value(cursor.getObsValue())
-                        .meta(cursor.getObsAttributes())
-                        .build()
-                );
-            }
-        }
-        return sortedObs;
+    private static Collection<Series> collectSeries(Stream<Series> stream, Comparator<Obs> obsComparator) {
+        return stream.collect(Collectors.toCollection(() -> new TreeSet<>(WebFlowOptions.SERIES_BY_KEY)));
     }
 
     private static final Comparator<Obs> OBS_BY_PERIOD = Comparator.comparing(Obs::getPeriod);

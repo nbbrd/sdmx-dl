@@ -17,14 +17,14 @@
 package sdmxdl.xml.stream;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataCursor;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.DataCursorAssert;
+import sdmxdl.xml.DataCursorAssert;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 

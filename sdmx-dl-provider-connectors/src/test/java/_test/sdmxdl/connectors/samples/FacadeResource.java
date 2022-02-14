@@ -22,6 +22,7 @@ import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;

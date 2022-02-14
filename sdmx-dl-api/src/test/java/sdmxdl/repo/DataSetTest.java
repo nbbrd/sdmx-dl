@@ -60,18 +60,6 @@ public class DataSetTest {
                 .containsExactly(series);
     }
 
-    @Test
-    public void testGetDataCursor() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataCursor(null, DataFilter.FULL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataCursor(Key.ALL, null));
-
-        assertThat(dataSet.getDataCursor(Key.ALL, DataFilter.FULL))
-                .isNotNull();
-    }
-
     private final DataStructureRef goodStructRef = DataStructureRef.of("NBB", "goodStruct", "v1.0");
     private final DataStructureRef badStructRef = DataStructureRef.parse("badStruct");
     private final DataflowRef goodFlowRef = DataflowRef.of("NBB", "XYZ", "v2.0");

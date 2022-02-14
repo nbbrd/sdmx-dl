@@ -33,6 +33,7 @@ import sdmxdl.util.web.SdmxRestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.xml.DataCursor;
 
 import java.io.IOException;
 

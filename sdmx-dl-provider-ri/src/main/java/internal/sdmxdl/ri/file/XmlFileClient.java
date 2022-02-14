@@ -26,9 +26,11 @@ import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
 import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -57,13 +59,15 @@ public class XmlFileClient implements SdmxFileClient {
     }
 
     @Override
-    public DataCursor loadData(SdmxFileInfo info, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public Stream<Series> loadData(SdmxFileInfo info, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
         if (eventListener.isEnabled()) {
             eventListener.onFileSourceEvent(source, "Loading data from file '" + source.getData() + "'");
         }
         return getDataSupplier(info.getDataType(), info.getStructure())
                 .parseFile(source.getData())
-                .filter(key, filter);
+                .toCloseableStream()
+                .filter(key::containsKey)
+                .map(filter::apply);
     }
 
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {

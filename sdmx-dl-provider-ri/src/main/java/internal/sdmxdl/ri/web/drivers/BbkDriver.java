@@ -38,6 +38,7 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
@@ -83,7 +84,7 @@ public final class BbkDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
             return super.getData(fixDataRef(ref, dsd), dsd);
         }
 

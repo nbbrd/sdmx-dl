@@ -29,6 +29,7 @@ import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.xml.DataCursor;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.Closeable;
@@ -39,6 +40,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 
@@ -87,8 +89,8 @@ public class RiRestClient implements SdmxRestClient {
     }
 
     @Override
-    public @NonNull DataCursor getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(ref), dsd);
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        return getData(getDataQuery(ref), dsd).toCloseableStream();
     }
 
     @Override

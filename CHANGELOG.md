@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Change FileDriver to be optional
 - Enforce https on ISTAT source
+- Remove DataCursor from API
 
 ### Fixed
 

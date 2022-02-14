@@ -5,6 +5,7 @@ import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.xml.DataCursor;
 
 import java.util.Comparator;
 import java.util.List;

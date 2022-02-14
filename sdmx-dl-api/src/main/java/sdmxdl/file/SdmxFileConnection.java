@@ -57,9 +57,4 @@ public interface SdmxFileConnection extends SdmxConnection {
     default Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) throws IOException, IllegalArgumentException {
         return getDataStream(DataRef.of(getDataflowRef(), key, filter));
     }
-
-    @NonNull
-    default DataCursor getDataCursor(@NonNull Key key, @NonNull DataFilter filter) throws IOException, IllegalArgumentException {
-        return getDataCursor(DataRef.of(getDataflowRef(), key, filter));
-    }
 }

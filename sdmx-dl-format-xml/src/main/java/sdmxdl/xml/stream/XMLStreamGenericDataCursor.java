@@ -18,7 +18,7 @@ package sdmxdl.xml.stream;
 
 import nbbrd.io.WrappedIOException;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataCursor;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;

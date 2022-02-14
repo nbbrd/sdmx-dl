@@ -7,7 +7,6 @@ import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 import sdmxdl.Series;
@@ -17,6 +16,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static _test.sdmxdl.util.CachingAssert.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,8 +55,8 @@ public class CachedFileClientTest {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
                 Method<Collection<Series>> x = client -> {
-                    try (DataCursor cursor = client.loadData(client.decode(), FLOW_REF, key, filter)) {
-                        return cursor.toStream().collect(Collectors.toList());
+                    try (Stream<Series> stream = client.loadData(client.decode(), FLOW_REF, key, filter)) {
+                        return stream.collect(Collectors.toList());
                     }
                 };
 

@@ -186,30 +186,6 @@ public class FailsafeSdmxWebConnectionTest {
     }
 
     @Test
-    public void testGetDataCursor() throws IOException {
-        failsafe.reset();
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.getDataCursor(null));
-        failsafe.assertEmpty();
-
-        failsafe.reset();
-        Assertions.assertThat(validDriver.getDataCursor(dataRef)).isNotNull();
-        failsafe.assertEmpty();
-
-        failsafe.reset();
-        Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getDataCursor(dataRef))
-                .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
-
-        failsafe.reset();
-        Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getDataCursor(dataRef))
-                .withNoCause();
-        failsafe.assertUnexpectedNull("unexpected null");
-    }
-
-    @Test
     public void testIsDetailSupported() throws IOException {
         failsafe.reset();
         Assertions.assertThat(validDriver.isDetailSupported()).isEqualTo(true);

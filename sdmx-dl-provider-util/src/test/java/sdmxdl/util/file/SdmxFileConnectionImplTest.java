@@ -63,7 +63,6 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getDataflowRef()).isEqualTo(RepoSamples.FLOW_REF);
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(RepoSamples.FLOW_REF));
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(RepoSamples.FLOW_REF));
-        assertThatNullPointerException().isThrownBy(() -> conn.getDataCursor(Key.ALL, null));
         assertThatNullPointerException().isThrownBy(() -> conn.getDataStream(Key.ALL, null));
 
         try (Stream<Series> stream = conn.getDataStream(Key.ALL, DataFilter.FULL)) {

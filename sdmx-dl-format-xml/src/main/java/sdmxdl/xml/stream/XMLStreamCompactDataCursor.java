@@ -17,7 +17,7 @@
 package sdmxdl.xml.stream;
 
 import nbbrd.io.WrappedIOException;
-import sdmxdl.DataCursor;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;

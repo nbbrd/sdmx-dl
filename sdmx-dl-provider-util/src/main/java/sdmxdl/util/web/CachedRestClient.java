@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -129,14 +130,14 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
         if (ref.getFilter().getDetail().isDataRequested()) {
             return delegate.getData(ref, dsd);
         }
         DataSet result = ref.getFilter().getDetail().isMetaRequested()
                 ? loadNoDataWithCache(ref, dsd)
                 : loadSeriesKeysOnlyWithCache(ref, dsd);
-        return result.getDataCursor(ref.getKey(), ref.getFilter());
+        return result.getDataStream(ref.getKey(), ref.getFilter());
     }
 
     @Override
@@ -203,12 +204,12 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     private DataSet copyData(DataRef ref, DataStructure structure) throws IOException {
-        try (DataCursor cursor = delegate.getData(ref, structure)) {
+        try (Stream<Series> stream = delegate.getData(ref, structure)) {
             return DataSet
                     .builder()
                     .ref(ref.getFlowRef())
                     .key(ref.getKey())
-                    .copyOf(cursor)
+                    .copyOf(stream)
                     .build();
         }
     }

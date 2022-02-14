@@ -52,10 +52,6 @@ public class StatCanDriverTest {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> connection.getDataStream(badDataRef))
                     .withMessageContaining(msg);
-
-            assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getDataCursor(badDataRef))
-                    .withMessageContaining(msg);
         }
     }
 

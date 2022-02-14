@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -59,11 +60,11 @@ public final class XRepoRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
         Objects.requireNonNull(ref);
         Objects.requireNonNull(dsd);
         return repo.getDataSet(ref.getFlowRef())
-                .map(dataSet -> dataSet.getDataCursor(ref.getKey(), ref.getFilter()))
+                .map(dataSet -> dataSet.getDataStream(ref.getKey(), ref.getFilter()))
                 .orElseThrow(() -> SdmxException.missingData(repo.getName(), ref));
     }
 

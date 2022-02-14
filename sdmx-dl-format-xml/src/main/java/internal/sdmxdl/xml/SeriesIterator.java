@@ -14,13 +14,11 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl;
+package internal.sdmxdl.xml;
 
-import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataCursor;
 import sdmxdl.Obs;
 import sdmxdl.Series;
+import sdmxdl.xml.DataCursor;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -30,14 +28,8 @@ import java.util.NoSuchElementException;
 /**
  * @author Philippe Charles
  */
-@lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.RequiredArgsConstructor
 public final class SeriesIterator implements Iterator<Series> {
-
-    public static @NonNull Iterator<Series> of(@NonNull DataCursor cursor) {
-        return cursor instanceof SeriesCursor
-                ? ((SeriesCursor) cursor).delegate
-                : new SeriesIterator(cursor);
-    }
 
     @lombok.NonNull
     final DataCursor delegate;

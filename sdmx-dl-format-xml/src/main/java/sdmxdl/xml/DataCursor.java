@@ -14,19 +14,19 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl;
+package sdmxdl.xml;
 
-import internal.sdmxdl.EmptyCursor;
-import internal.sdmxdl.FilteredCursor;
-import internal.sdmxdl.SeriesCursor;
-import internal.sdmxdl.SeriesIterator;
+import internal.sdmxdl.xml.SeriesIterator;
 import nbbrd.design.NotThreadSafe;
-import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Frequency;
+import sdmxdl.Key;
+import sdmxdl.Series;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
@@ -68,24 +68,18 @@ public interface DataCursor extends Closeable {
 
     @NonNull
     default Stream<Series> toStream() {
-        Iterator<Series> iterator = SeriesIterator.of(this);
+        Iterator<Series> iterator = new SeriesIterator(this);
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
     @NonNull
-    default DataCursor filter(@NonNull Key ref, @NonNull DataFilter filter) {
-        return FilteredCursor.of(this, ref, filter);
-    }
-
-    @StaticFactoryMethod
-    @NonNull
-    static DataCursor empty() {
-        return new EmptyCursor();
-    }
-
-    @StaticFactoryMethod
-    @NonNull
-    static DataCursor of(@NonNull Iterator<Series> list) {
-        return SeriesCursor.of(list);
+    default Stream<Series> toCloseableStream() {
+        return toStream().onClose(() -> {
+            try {
+                DataCursor.this.close();
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        });
     }
 }

@@ -18,13 +18,13 @@ package _test.sdmxdl.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -53,7 +53,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+        public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
             throw new CustomIOException();
         }
 
@@ -99,7 +99,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) {
+        public Stream<Series> getData(DataRef ref, DataStructure dsd) {
             throw new CustomRuntimeException();
         }
 
@@ -147,7 +147,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) {
+        public Stream<Series> getData(DataRef ref, DataStructure dsd) {
             Objects.requireNonNull(ref);
             Objects.requireNonNull(dsd);
             return null;

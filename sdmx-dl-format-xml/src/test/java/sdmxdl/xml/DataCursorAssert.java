@@ -14,13 +14,12 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.tck;
+package sdmxdl.xml;
 
 import internal.sdmxdl.tck.TckUtil;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.DataCursor;
 import sdmxdl.DataFilter;
 import sdmxdl.Key;
 

@@ -23,8 +23,6 @@ import org.assertj.core.api.SoftAssertions;
 import sdmxdl.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static sdmxdl.tck.DataFilterAssert.filters;
 
@@ -73,7 +71,6 @@ public class SdmxConnectionAssert {
         DataRef validFlow = DataRef.of(sample.validFlow, Key.ALL, DataFilter.FULL);
         assertState(s, supplier, o -> o.getData(validFlow), "getData(DataflowRef, Key, DataFilter)");
         assertState(s, supplier, o -> o.getDataStream(validFlow), "getDataStream(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataCursor(validFlow), "getDataCursor(DataflowRef, Key, DataFilter)");
         assertState(s, supplier, o -> o.getStructure(sample.validFlow), "getStructure(DataflowRef)");
         assertState(s, supplier, o -> o.getFlow(sample.validFlow), "getFlow(DataflowRef)");
         assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
@@ -95,9 +92,6 @@ public class SdmxConnectionAssert {
         s.assertThatThrownBy(() -> conn.getData(invalidKey))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
-        s.assertThatThrownBy(() -> conn.getDataCursor(invalidKey))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
         s.assertThatThrownBy(() -> conn.getDataStream(invalidKey))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
@@ -105,10 +99,7 @@ public class SdmxConnectionAssert {
 
     private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) throws Exception {
         DataRef validKey = DataRef.of(sample.validFlow, sample.validKey, filter);
-        DataCursorAssert.assertCompliance(s, () -> conn.getDataCursor(validKey), sample.validKey, filter);
-        List<Series> data = cursorToSeries(validKey, conn);
-        s.assertThat(conn.getData(validKey)).containsExactlyElementsOf(data);
-        s.assertThat(conn.getDataStream(validKey)).containsExactlyElementsOf(data);
+        s.assertThat(conn.getDataStream(validKey)).containsExactlyElementsOf(conn.getData(validKey));
     }
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) {
@@ -120,8 +111,6 @@ public class SdmxConnectionAssert {
                     .isInstanceOf(IOException.class);
             s.assertThatThrownBy(() -> conn.getData(invalidFlow))
                     .isInstanceOf(IOException.class);
-            s.assertThatThrownBy(() -> conn.getDataCursor(invalidFlow))
-                    .isInstanceOf(IOException.class);
             s.assertThatThrownBy(() -> conn.getStructure(sample.invalidFlow))
                     .isInstanceOf(IOException.class);
         }
@@ -129,10 +118,6 @@ public class SdmxConnectionAssert {
 
     @SuppressWarnings("null")
     private void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
-        s.assertThatThrownBy(() -> conn.getDataCursor(null))
-                .as("Expecting 'getDataCursor(DataRef)' to raise NPE when called with null dataRef")
-                .isInstanceOf(NullPointerException.class);
-
         s.assertThatThrownBy(() -> conn.getData(null))
                 .as("Expecting 'getData(DataRef)' to raise NPE when called with null dataRef")
                 .isInstanceOf(NullPointerException.class);
@@ -160,36 +145,5 @@ public class SdmxConnectionAssert {
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }
-    }
-
-    private List<Series> cursorToSeries(DataRef dataRef, SdmxConnection conn) throws IOException {
-        DataFilter.Detail detail = dataRef.getFilter().getDetail();
-        List<Series> result = new ArrayList<>();
-        try (DataCursor c = conn.getDataCursor(dataRef)) {
-            Series.Builder series = Series.builder();
-            while (c.nextSeries()) {
-                series.clearMeta()
-                        .clearObs()
-                        .key(c.getSeriesKey())
-                        .freq(c.getSeriesFrequency());
-                if (detail.isMetaRequested()) {
-                    series.meta(c.getSeriesAttributes());
-                }
-                if (detail.isDataRequested()) {
-                    Obs.Builder obs = Obs.builder();
-                    while (c.nextObs()) {
-                        series.obs(obs
-                                .clearMeta()
-                                .period(c.getObsPeriod())
-                                .value(c.getObsValue())
-                                .meta(c.getObsAttributes())
-                                .build()
-                        );
-                    }
-                }
-                result.add(series.build());
-            }
-        }
-        return result;
     }
 }

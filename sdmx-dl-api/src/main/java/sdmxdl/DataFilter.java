@@ -17,6 +17,7 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * @author Philippe Charles
@@ -66,5 +67,21 @@ public class DataFilter {
 
         @lombok.Getter
         private final boolean metaRequested;
+    }
+
+    public @NonNull Series apply(@NonNull Series series) {
+        if (detail.isDataRequested()) {
+            if (detail.isMetaRequested()) {
+                return series;
+            } else {
+                return series.toBuilder().clearMeta().build();
+            }
+        } else {
+            if (detail.isMetaRequested()) {
+                return series.toBuilder().clearObs().build();
+            } else {
+                return series.toBuilder().clearObs().clearMeta().build();
+            }
+        }
     }
 }

@@ -45,8 +45,5 @@ public interface SdmxConnection extends Closeable {
     @NonNull
     Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
 
-    @NonNull
-    DataCursor getDataCursor(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
-
     boolean isDetailSupported() throws IOException;
 }
