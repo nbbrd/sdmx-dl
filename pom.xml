@@ -105,6 +105,7 @@
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
+        <module>sdmx-dl-bom</module>
     </modules>
 
     <profiles>
