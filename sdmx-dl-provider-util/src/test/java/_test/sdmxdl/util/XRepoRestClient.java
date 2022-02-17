@@ -23,7 +23,6 @@ import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -91,7 +90,6 @@ public final class XRepoRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Duration ping() {
-        return Duration.ZERO;
+    public void testClient() {
     }
 }

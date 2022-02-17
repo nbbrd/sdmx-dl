@@ -156,8 +156,8 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Duration ping() throws IOException {
-        return delegate.ping();
+    public void testClient() throws IOException {
+        delegate.testClient();
     }
 
     private List<Dataflow> loadDataflowsWithCache() throws IOException {

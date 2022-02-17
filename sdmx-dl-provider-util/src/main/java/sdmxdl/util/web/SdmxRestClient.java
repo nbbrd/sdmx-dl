@@ -21,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -46,5 +45,5 @@ public interface SdmxRestClient {
 
     @Nullable DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;
 
-    @NonNull Duration ping() throws IOException;
+    void testClient() throws IOException;
 }

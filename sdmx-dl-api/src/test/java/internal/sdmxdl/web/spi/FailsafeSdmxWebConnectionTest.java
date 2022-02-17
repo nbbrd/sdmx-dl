@@ -32,22 +32,16 @@ import java.io.IOException;
 public class FailsafeSdmxWebConnectionTest {
 
     @Test
-    public void testPing() throws IOException {
+    public void testPing() {
         failsafe.reset();
-        Assertions.assertThat(validDriver.ping()).isEqualTo(TestConnection.PING);
+        Assertions.assertThatNoException().isThrownBy(() -> validDriver.testConnection());
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(failingDriver::ping)
+                .isThrownBy(failingDriver::testConnection)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
-
-        failsafe.reset();
-        Assertions.assertThatIOException()
-                .isThrownBy(nullDriver::ping)
-                .withNoCause();
-        failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test

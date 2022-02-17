@@ -29,6 +29,7 @@ import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.stream.Stream;
 
@@ -52,6 +53,16 @@ public class XmlFileClient implements SdmxFileClient {
 
     @lombok.NonNull
     SdmxFileListener eventListener;
+
+    @Override
+    public void testClient() throws IOException {
+        if (!source.getData().exists()) {
+            throw new FileNotFoundException(source.getData().toString());
+        }
+        if (source.getStructure() != null && !source.getStructure().exists()) {
+            throw new FileNotFoundException(source.getStructure().toString());
+        }
+    }
 
     @Override
     public SdmxFileInfo decode() throws IOException {

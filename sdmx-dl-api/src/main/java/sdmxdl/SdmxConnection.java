@@ -30,6 +30,8 @@ import java.util.stream.Stream;
 @NotThreadSafe
 public interface SdmxConnection extends Closeable {
 
+    void testConnection() throws IOException;
+
     @NonNull
     Collection<Dataflow> getFlows() throws IOException;
 

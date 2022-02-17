@@ -78,6 +78,11 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     @Override
+    public void testClient() throws IOException {
+        delegate.testClient();
+    }
+
+    @Override
     public SdmxFileInfo decode() throws IOException {
         return getIdOfDecode().load(cache, delegate::decode, this::getTtl);
     }

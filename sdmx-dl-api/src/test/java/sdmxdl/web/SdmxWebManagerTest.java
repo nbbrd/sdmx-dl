@@ -26,7 +26,6 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.Duration;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -323,11 +322,6 @@ public class SdmxWebManagerTest {
 
         @lombok.experimental.Delegate
         private final SdmxConnection delegate;
-
-        @Override
-        public Duration ping() {
-            return Duration.ZERO;
-        }
     }
 
     @lombok.RequiredArgsConstructor

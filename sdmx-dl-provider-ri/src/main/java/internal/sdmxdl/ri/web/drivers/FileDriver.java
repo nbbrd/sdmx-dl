@@ -23,7 +23,6 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -119,11 +118,6 @@ public final class FileDriver implements SdmxWebDriver {
 
         @lombok.NonNull
         private final String driver;
-
-        @Override
-        public @NonNull Duration ping() {
-            return Duration.ZERO;
-        }
 
         @Override
         public @NonNull String getDriver() {

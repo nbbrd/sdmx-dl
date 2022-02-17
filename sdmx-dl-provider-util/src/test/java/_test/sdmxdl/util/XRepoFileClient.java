@@ -19,6 +19,10 @@ public final class XRepoFileClient implements SdmxFileClient {
     private final SdmxRepository data;
 
     @Override
+    public void testClient() {
+    }
+
+    @Override
     public SdmxFileInfo decode() {
         return infoOf(data);
     }

@@ -17,7 +17,10 @@ import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -128,8 +131,7 @@ public final class RngDriver implements SdmxWebDriver {
         private final RngDriverId config;
 
         @Override
-        public @NonNull Duration ping() {
-            return Duration.ZERO;
+        public void testConnection() {
         }
 
         @Override

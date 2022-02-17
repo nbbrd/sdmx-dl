@@ -31,8 +31,7 @@ import java.util.stream.Stream;
 public enum TestConnection implements SdmxWebConnection {
     VALID {
         @Override
-        public Duration ping() {
-            return PING;
+        public void testConnection() {
         }
 
         @Override
@@ -76,7 +75,7 @@ public enum TestConnection implements SdmxWebConnection {
     },
     FAILING {
         @Override
-        public Duration ping() {
+        public void testConnection() {
             throw new CustomException();
         }
 
@@ -122,8 +121,7 @@ public enum TestConnection implements SdmxWebConnection {
     },
     NULL {
         @Override
-        public Duration ping() {
-            return null;
+        public void testConnection() {
         }
 
         @Override

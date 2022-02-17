@@ -44,6 +44,12 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     private boolean closed = false;
 
     @Override
+    public void testConnection() throws IOException {
+        checkState();
+        client.testClient();
+    }
+
+    @Override
     public DataflowRef getDataflowRef() throws IOException {
         checkState();
         return dataflow.getRef();

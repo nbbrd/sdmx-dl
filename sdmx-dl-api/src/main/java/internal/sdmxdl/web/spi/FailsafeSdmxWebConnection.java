@@ -21,7 +21,6 @@ import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -62,20 +61,12 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     private final Consumer<? super String> onUnexpectedNull;
 
     @Override
-    public Duration ping() throws IOException {
-        Duration result;
-
+    public void testConnection() throws IOException {
         try {
-            result = delegate.ping();
+            delegate.testConnection();
         } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting ping");
+            throw unexpectedError(ex, "while testing connection");
         }
-
-        if (result == null) {
-            throw unexpectedNull("ping");
-        }
-
-        return result;
     }
 
     @Override

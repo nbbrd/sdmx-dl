@@ -119,6 +119,10 @@ public class SdmxRepository {
         }
 
         @Override
+        public void testConnection() throws IOException {
+        }
+
+        @Override
         public Collection<Dataflow> getFlows() throws IOException {
             checkState();
             return repo.getFlows();

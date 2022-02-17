@@ -18,11 +18,9 @@ package _test.sdmxdl.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -85,7 +83,7 @@ public final class XCountingRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Duration ping() throws IOException {
-        return delegate.ping();
+    public void testClient() throws IOException {
+        delegate.testClient();
     }
 }

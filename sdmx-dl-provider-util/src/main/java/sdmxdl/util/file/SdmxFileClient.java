@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 
 public interface SdmxFileClient {
 
+    void testClient() throws IOException;
+
     @NonNull SdmxFileInfo decode() throws IOException;
 
     @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo info, @NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) throws IOException;

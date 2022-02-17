@@ -21,7 +21,6 @@ import sdmxdl.*;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -73,7 +72,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public Duration ping() throws IOException {
+        public void testClient() throws IOException {
             throw new CustomIOException();
         }
     },
@@ -119,7 +118,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public Duration ping() {
+        public void testClient() {
             throw new CustomRuntimeException();
         }
     },
@@ -171,8 +170,7 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public Duration ping() {
-            return null;
+        public void testClient() {
         }
     };
 

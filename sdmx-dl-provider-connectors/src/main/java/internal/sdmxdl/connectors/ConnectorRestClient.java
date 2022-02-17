@@ -40,9 +40,6 @@ import sdmxdl.web.spi.SdmxWebContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -175,12 +172,9 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Duration ping() throws IOException {
+    public void testClient() throws IOException {
         try {
-            Clock clock = Clock.systemDefaultZone();
-            Instant start = clock.instant();
             connector.getDataflows();
-            return Duration.between(start, clock.instant());
         } catch (SdmxException ex) {
             throw wrap(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
         }

@@ -21,7 +21,6 @@ import sdmxdl.ext.SdmxException;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,9 +108,9 @@ final class SdmxRestConnection implements SdmxWebConnection {
     }
 
     @Override
-    public Duration ping() throws IOException {
+    public void testConnection() throws IOException {
         checkState();
-        return client.ping();
+        client.testClient();
     }
 
     @Override

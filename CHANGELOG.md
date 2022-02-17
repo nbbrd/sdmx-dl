@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Enforce https on ISTAT source
 - Remove DataCursor from API
 - Refactor SdmxManager API
+- Replace `SdmxWebConnection#ping()` with `SdmxConnection#testConnection()`
 
 ### Fixed
 

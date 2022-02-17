@@ -174,8 +174,8 @@ public final class StatCanDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull Duration ping() throws IOException {
-            return client.ping();
+        public void testConnection() throws IOException {
+            client.ping();
         }
 
         @Override

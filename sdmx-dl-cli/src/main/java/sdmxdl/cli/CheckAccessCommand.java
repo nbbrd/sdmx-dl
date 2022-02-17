@@ -29,7 +29,9 @@ import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -84,7 +86,10 @@ public final class CheckAccessCommand implements Callable<Void> {
 
         static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
             try (final SdmxWebConnection conn = manager.getConnection(source)) {
-                return success(source, conn.ping());
+                Clock clock = Clock.systemDefaultZone();
+                Instant start = clock.instant();
+                conn.testConnection();
+                return success(source, Duration.between(start, clock.instant()));
             } catch (IOException ex) {
                 return failure(source, ex);
             }

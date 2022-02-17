@@ -36,9 +36,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -109,11 +106,8 @@ public class RiRestClient implements SdmxRestClient {
     }
 
     @Override
-    public @NonNull Duration ping() throws IOException {
-        Clock clock = Clock.systemDefaultZone();
-        Instant start = clock.instant();
+    public void testClient() throws IOException {
         getFlows();
-        return Duration.between(start, clock.instant());
     }
 
     @NonNull

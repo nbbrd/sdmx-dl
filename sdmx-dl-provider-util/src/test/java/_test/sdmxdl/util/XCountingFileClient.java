@@ -21,6 +21,11 @@ public final class XCountingFileClient implements SdmxFileClient {
     private final AtomicInteger count;
 
     @Override
+    public void testClient() throws IOException {
+        delegate.testClient();
+    }
+
+    @Override
     public SdmxFileInfo decode() throws IOException {
         count.incrementAndGet();
         return delegate.decode();
