@@ -20,7 +20,6 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.file.SdmxFileSource;
 
@@ -34,9 +33,6 @@ import java.io.IOException;
 )
 @ThreadSafe
 public interface SdmxFileReader {
-
-    @Nullable
-    SdmxFileSource getSource(@NonNull String name);
 
     boolean canRead(@NonNull SdmxFileSource source);
 

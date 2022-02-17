@@ -26,11 +26,9 @@ import java.io.IOException;
  * @author Philippe Charles
  */
 @ThreadSafe
-public interface SdmxManager {
+public interface SdmxManager<SOURCE> {
 
-    @NonNull
-    SdmxConnection getConnection(@NonNull String name) throws IOException;
+    @NonNull SdmxConnection getConnection(@NonNull SOURCE source) throws IOException;
 
-    @NonNull
-    LanguagePriorityList getLanguages();
+    @NonNull LanguagePriorityList getLanguages();
 }

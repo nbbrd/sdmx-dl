@@ -32,42 +32,42 @@ public class SdmxManagerAssert {
 
     @lombok.Value
     @lombok.Builder(toBuilder = true)
-    public static class Sample {
-        String validName;
-        String invalidName;
+    public static class Sample<SOURCE> {
+        SOURCE validSource;
+        SOURCE invalidSource;
     }
 
-    public void assertCompliance(SdmxManager manager, Sample sample) {
+    public <SOURCE> void assertCompliance(SdmxManager<SOURCE> manager, Sample<SOURCE> sample) {
         TckUtil.run(s -> assertCompliance(s, manager, sample));
     }
 
-    public void assertCompliance(SoftAssertions s, SdmxManager manager, Sample sample) {
+    public <SOURCE> void assertCompliance(SoftAssertions s, SdmxManager<SOURCE> manager, Sample<SOURCE> sample) {
         checkGetLanguages(s, manager);
         checkGetConnection(s, manager, sample);
     }
 
-    private void checkGetLanguages(SoftAssertions s, SdmxManager manager) {
+    private <SOURCE> void checkGetLanguages(SoftAssertions s, SdmxManager<SOURCE> manager) {
         s.assertThat(manager.getLanguages()).isNotNull();
     }
 
-    private void checkGetConnection(SoftAssertions s, SdmxManager manager, Sample sample) {
+    private <SOURCE> void checkGetConnection(SoftAssertions s, SdmxManager<SOURCE> manager, Sample<SOURCE> sample) {
         s.assertThatThrownBy(() -> manager.getConnection(null))
-                .as("Expecting 'getConnection(String)' to raise NPE when called with null name")
+                .as("Expecting 'getConnection(SOURCE)' to raise NPE when called with null name")
                 .isInstanceOf(NullPointerException.class);
 
-        if (sample.validName != null) {
-            try (SdmxConnection conn = manager.getConnection(sample.validName)) {
+        if (sample.validSource != null) {
+            try (SdmxConnection conn = manager.getConnection(sample.validSource)) {
                 s.assertThat(conn)
-                        .as("Expecting 'getConnection(String)' to return a non-null connection")
+                        .as("Expecting 'getConnection(SOURCE)' to return a non-null connection")
                         .isNotNull();
             } catch (IOException ex) {
-                s.fail("Expecting 'getConnection(String)' to not raise IOException on valid name", ex);
+                s.fail("Expecting 'getConnection(SOURCE)' to not raise IOException on valid name", ex);
             }
         }
 
-        if (sample.invalidName != null) {
-            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidName))
-                    .as("Expecting 'getConnection(String) to raise IOException on invalid name")
+        if (sample.invalidSource != null) {
+            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource))
+                    .as("Expecting 'getConnection(SOURCE) to raise IOException on invalid name")
                     .isInstanceOf(IOException.class);
         }
     }

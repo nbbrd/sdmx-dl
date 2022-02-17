@@ -3,7 +3,6 @@ package sdmxdl.tck;
 import internal.sdmxdl.tck.TckUtil;
 import org.junit.jupiter.api.Test;
 import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.repo.SdmxRepositoryManager;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.tck.ext.MockedDialect;
 import sdmxdl.tck.web.MockedWebDriver;
@@ -16,18 +15,6 @@ import sdmxdl.web.spi.SdmxWebDriver;
 import java.net.URI;
 
 public class ApiTest {
-
-    @Test
-    public void testSdmxRepositoryManager() {
-        SdmxManagerAssert.assertCompliance(
-                SdmxRepositoryManager.builder().repository(RepoSamples.REPO).build(),
-                SdmxManagerAssert.Sample
-                        .builder()
-                        .validName("repoName")
-                        .invalidName("ko")
-                        .build()
-        );
-    }
 
     @Test
     public void testSdmxWebManager() {
@@ -51,9 +38,9 @@ public class ApiTest {
         SdmxManagerAssert.assertCompliance(
                 SdmxWebManager.builder().driver(driver).dialect(dialect).build(),
                 SdmxManagerAssert.Sample
-                        .builder()
-                        .validName("repoSource")
-                        .invalidName("ko")
+                        .<SdmxWebSource>builder()
+                        .validSource(source)
+                        .invalidSource(source.toBuilder().driver("other").build())
                         .build()
         );
     }

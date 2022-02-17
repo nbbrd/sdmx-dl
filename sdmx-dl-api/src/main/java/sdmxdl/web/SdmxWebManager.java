@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxWebManager implements SdmxManager {
+public class SdmxWebManager implements SdmxManager<SdmxWebSource> {
 
     @NonNull
     public static SdmxWebManager ofServiceLoader() {
@@ -109,8 +109,7 @@ public class SdmxWebManager implements SdmxManager {
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     SdmxWebContext context = initContext();
 
-    @Override
-    public SdmxWebConnection getConnection(String name) throws IOException {
+    public @NonNull SdmxWebConnection getConnection(@NonNull String name) throws IOException {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
@@ -119,8 +118,8 @@ public class SdmxWebManager implements SdmxManager {
         return getConnection(source);
     }
 
-    @NonNull
-    public SdmxWebConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
+    @Override
+    public @NonNull SdmxWebConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
         SdmxWebDriver driver = lookupDriver(source.getDriver())

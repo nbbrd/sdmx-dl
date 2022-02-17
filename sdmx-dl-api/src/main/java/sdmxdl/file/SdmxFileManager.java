@@ -21,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxCache;
-import sdmxdl.ext.SdmxException;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.ext.spi.SdmxDialectLoader;
 import sdmxdl.file.spi.SdmxFileContext;
@@ -38,7 +37,7 @@ import java.util.Optional;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxFileManager implements SdmxManager {
+public class SdmxFileManager implements SdmxManager<SdmxFileSource> {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
@@ -73,17 +72,7 @@ public class SdmxFileManager implements SdmxManager {
     SdmxFileContext context = initContext();
 
     @Override
-    public SdmxFileConnection getConnection(String name) throws IOException {
-        Objects.requireNonNull(name);
-
-        SdmxFileSource source = lookupSource(name)
-                .orElseThrow(() -> SdmxException.missingSource(name, SdmxFileSource.class));
-
-        return getConnection(source);
-    }
-
-    @NonNull
-    public SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
+    public @NonNull SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
         Objects.requireNonNull(source);
 
         SdmxFileReader reader = lookupReader(source)
@@ -100,13 +89,6 @@ public class SdmxFileManager implements SdmxManager {
                 .cache(cache)
                 .dialects(dialects)
                 .build();
-    }
-
-    private Optional<SdmxFileSource> lookupSource(String name) {
-        return readers.stream()
-                .map(reader -> reader.getSource(name))
-                .filter(Objects::nonNull)
-                .findFirst();
     }
 
     private Optional<SdmxFileReader> lookupReader(SdmxFileSource source) {

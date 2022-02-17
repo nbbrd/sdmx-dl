@@ -26,7 +26,6 @@ public class SdmxFileReaderAssert {
 
     public void assertCompliance(SoftAssertions s, SdmxFileReader reader, Sample sample) {
         checkCanRead(s, reader, sample);
-        checkGetSource(s, reader, sample);
         checkRead(s, reader, sample);
     }
 
@@ -45,17 +44,6 @@ public class SdmxFileReaderAssert {
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);
         }
-    }
-
-    private static void checkGetSource(SoftAssertions s, SdmxFileReader reader, Sample sample) {
-        s.assertThatThrownBy(() -> reader.getSource(null))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThat(reader.getSource(sample.invalidName))
-                .isNull();
-
-        s.assertThat(reader.getSource(sample.validName))
-                .isEqualTo(sample.validSource);
     }
 
     private static void checkCanRead(SoftAssertions s, SdmxFileReader reader, Sample sample) {

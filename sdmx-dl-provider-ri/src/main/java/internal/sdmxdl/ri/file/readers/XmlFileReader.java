@@ -1,6 +1,7 @@
 package internal.sdmxdl.ri.file.readers;
 
-import internal.sdmxdl.ri.file.*;
+import internal.sdmxdl.ri.file.XmlDecoder;
+import internal.sdmxdl.ri.file.XmlFileClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
@@ -12,7 +13,6 @@ import sdmxdl.util.file.CachedFileClient;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileConnectionImpl;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.xml.XmlFileSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,15 +21,6 @@ import java.util.Objects;
 
 @ServiceProvider(SdmxFileReader.class)
 public class XmlFileReader implements SdmxFileReader {
-
-    @Override
-    public SdmxFileSource getSource(String name) {
-        try {
-            return XmlFileSource.getParser().parseChars(name);
-        } catch (IOException ex) {
-            return null;
-        }
-    }
 
     @Override
     public boolean canRead(SdmxFileSource source) {
