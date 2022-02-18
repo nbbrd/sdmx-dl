@@ -22,9 +22,9 @@ import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -71,9 +71,9 @@ final class SdmxRestConnection implements SdmxWebConnection {
     }
 
     @Override
-    public List<Series> getData(DataRef dataRef) throws IOException {
-        try (Stream<Series> cursor = getDataStream(dataRef)) {
-            return cursor.collect(Collectors.toList());
+    public DataSet getData(DataRef dataRef) throws IOException {
+        try (Stream<Series> stream = getDataStream(dataRef)) {
+            return stream.collect(toDataSet(dataRef));
         }
     }
 

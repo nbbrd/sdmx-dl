@@ -14,7 +14,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.util.parser.ObsFactories;
@@ -48,6 +47,7 @@ import java.util.zip.ZipFile;
 import static internal.sdmxdl.ri.web.RiHttpUtils.*;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
+import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.util.web.SdmxValidators.dataflowRefOf;
 import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
 
@@ -151,21 +151,23 @@ public final class StatCanDriver implements SdmxWebDriver {
                     .orElseThrow(() -> SdmxException.missingStructure(source, dsdRef));
         }
 
-        private DataSet getDataSet(DataRef dataRef) throws IOException {
-            int productId = Converter.fromDataflowRef(dataRef.getFlowRef());
-            return client.getStructAndData(productId)
-                    .getDataSet(dataRef.getFlowRef())
-                    .orElseThrow(() -> SdmxException.missingData(source, dataRef));
+        private Optional<DataSet> getDataSet(DataflowRef ref) throws IOException {
+            int productId = Converter.fromDataflowRef(ref);
+            return client.getStructAndData(productId).getDataSet(ref);
         }
 
         @Override
-        public @NonNull Collection<Series> getData(@NonNull DataRef dataRef) throws IOException {
-            return getDataSet(dataRef).getData(dataRef.getKey(), dataRef.getFilter());
+        public @NonNull DataSet getData(@NonNull DataRef dataRef) throws IOException {
+            return getDataSet(dataRef.getFlowRef())
+                    .orElseThrow(() -> SdmxException.missingData(source, dataRef))
+                    .getData(dataRef);
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException {
-            return getDataSet(dataRef).getDataStream(dataRef.getKey(), dataRef.getFilter());
+            return getDataSet(dataRef.getFlowRef())
+                    .orElseThrow(() -> SdmxException.missingData(source, dataRef))
+                    .getDataStream(dataRef);
         }
 
         @Override
@@ -450,16 +452,11 @@ public final class StatCanDriver implements SdmxWebDriver {
             try (ZipFile zipFile = new ZipFile(fullTable)) {
 
                 DataStructure dsd = parseStruct(zipFile, langs);
-                List<Series> data = parseData(zipFile, dsd);
 
                 return SdmxRepository
                         .builder()
                         .structure(dsd)
-                        .dataSet(DataSet
-                                .builder()
-                                .ref(toDataflowRef(productId))
-                                .data(data)
-                                .build())
+                        .dataSet(parseData(zipFile, dsd).collect(toDataSet(DataRef.of(toDataflowRef(productId)))))
                         .build();
             }
         }
@@ -480,7 +477,7 @@ public final class StatCanDriver implements SdmxWebDriver {
             }
         }
 
-        private static List<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
+        private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
             FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsFactories.SDMX21)
                     .andThen(IOFunction.unchecked(Converter::toSeries));
 
@@ -490,8 +487,7 @@ public final class StatCanDriver implements SdmxWebDriver {
                         .filter(entry -> !isDataStructure(entry))
                         .map(entry -> asSource(file, entry))
                         .map(IOFunction.unchecked(parser::parseStream))
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
+                        .flatMap(List::stream);
             } catch (UncheckedIOException ex) {
                 throw ex.getCause();
             }

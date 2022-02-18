@@ -19,7 +19,6 @@ package sdmxdl.util.web;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.web.SdmxWebSource;
@@ -29,6 +28,8 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -137,7 +138,7 @@ final class CachedRestClient implements SdmxRestClient {
         DataSet result = ref.getFilter().getDetail().isMetaRequested()
                 ? loadNoDataWithCache(ref, dsd)
                 : loadSeriesKeysOnlyWithCache(ref, dsd);
-        return result.getDataStream(ref.getKey(), ref.getFilter());
+        return result.getDataStream(ref);
     }
 
     @Override
@@ -171,12 +172,12 @@ final class CachedRestClient implements SdmxRestClient {
 
     private DataSet loadSeriesKeysOnlyWithCache(DataRef ref, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(ref.getFlowRef());
-        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o));
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o.getRef()));
     }
 
     private DataSet loadNoDataWithCache(DataRef ref, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
-        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o));
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o.getRef()));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
@@ -199,18 +200,13 @@ final class CachedRestClient implements SdmxRestClient {
         return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 
-    private boolean isNarrowerRequest(Key key, DataSet dataSet) {
-        return !key.supersedes(dataSet.getKey()) && dataSet.getKey().contains(key);
+    private boolean isNarrowerRequest(Key key, DataRef ref) {
+        return !key.supersedes(ref.getKey()) && ref.getKey().contains(key);
     }
 
     private DataSet copyData(DataRef ref, DataStructure structure) throws IOException {
         try (Stream<Series> stream = delegate.getData(ref, structure)) {
-            return DataSet
-                    .builder()
-                    .ref(ref.getFlowRef())
-                    .key(ref.getKey())
-                    .copyOf(stream)
-                    .build();
+            return stream.collect(toDataSet(ref));
         }
     }
 

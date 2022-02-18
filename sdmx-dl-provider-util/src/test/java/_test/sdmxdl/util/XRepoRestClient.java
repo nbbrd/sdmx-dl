@@ -34,48 +34,49 @@ import java.util.stream.Stream;
 public final class XRepoRestClient implements SdmxRestClient {
 
     @lombok.NonNull
-    private final SdmxRepository repo;
+    private final SdmxRepository repository;
 
     @Override
     public String getName() {
-        return repo.getName();
+        return repository.getName();
     }
 
     @Override
     public List<Dataflow> getFlows() {
-        return repo.getFlows();
+        return repository.getFlows();
     }
 
     @Override
     public Dataflow getFlow(DataflowRef ref) throws IOException {
-        return repo.getFlow(ref)
-                .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), ref));
+        return repository.getFlow(ref)
+                .orElseThrow(() -> SdmxException.missingFlow(repository.getName(), ref));
     }
 
     @Override
     public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        return repo.getStructure(ref)
-                .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), ref));
+        return repository.getStructure(ref)
+                .orElseThrow(() -> SdmxException.missingStructure(repository.getName(), ref));
     }
 
     @Override
     public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
         Objects.requireNonNull(ref);
         Objects.requireNonNull(dsd);
-        return repo.getDataSet(ref.getFlowRef())
-                .map(dataSet -> dataSet.getDataStream(ref.getKey(), ref.getFilter()))
-                .orElseThrow(() -> SdmxException.missingData(repo.getName(), ref));
+        return repository
+                .getDataSet(ref.getFlowRef())
+                .map(dataSet -> dataSet.getDataStream(ref))
+                .orElseThrow(() -> SdmxException.missingData(repository.getName(), ref));
     }
 
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
         Objects.requireNonNull(ref);
-        return repo.getStructures().stream()
+        return repository.getStructures().stream()
                 .flatMap(dsd -> dsd.getDimensions().stream())
                 .map(Component::getCodelist)
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> SdmxException.missingCodelist(repo.getName(), ref));
+                .orElseThrow(() -> SdmxException.missingCodelist(repository.getName(), ref));
     }
 
     @Override

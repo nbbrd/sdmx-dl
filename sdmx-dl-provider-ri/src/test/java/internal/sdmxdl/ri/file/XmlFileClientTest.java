@@ -57,7 +57,7 @@ public class XmlFileClientTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (Stream<Series> o = x.loadData(info, source.asDataflowRef(), Key.ALL, DataFilter.FULL)) {
+        try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), Key.ALL, DataFilter.FULL))) {
             assertThat(o)
                     .hasSize(1)
                     .element(0)

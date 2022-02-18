@@ -31,32 +31,17 @@ import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 public class DataSetTest {
 
     @Test
-    public void testBuilderCopyOf() {
+    public void testToDataSet() {
         assertThatNullPointerException()
-                .isThrownBy(() -> DataSet.builder().copyOf(null));
-    }
-
-    @Test
-    public void testGetData() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getData(null, DataFilter.FULL));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getData(Key.ALL, null));
-
-        assertThat(dataSet.getData(Key.ALL, DataFilter.FULL))
-                .containsExactly(series);
+                .isThrownBy(() -> DataSet.toDataSet(null));
     }
 
     @Test
     public void testGetDataStream() {
         assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataStream(null, DataFilter.FULL));
+                .isThrownBy(() -> dataSet.getDataStream(null));
 
-        assertThatNullPointerException()
-                .isThrownBy(() -> dataSet.getDataStream(Key.ALL, null));
-
-        assertThat(dataSet.getDataStream(Key.ALL, DataFilter.FULL))
+        assertThat(dataSet.getDataStream(dataSet.getRef()))
                 .containsExactly(series);
     }
 
@@ -68,5 +53,5 @@ public class DataSetTest {
     private final DataStructure struct = DataStructure.builder().ref(goodStructRef).primaryMeasureId("").label("struct1").build();
     private final Obs obs1 = Obs.builder().period(LocalDateTime.now()).value(Math.PI).build();
     private final Series series = Series.builder().key(Key.of("BE")).freq(Frequency.MONTHLY).obs(obs1).meta("hello", "world").build();
-    private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
+    private final DataSet dataSet = DataSet.builder().ref(DataRef.of(goodFlowRef)).series(series).build();
 }

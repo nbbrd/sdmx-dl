@@ -22,7 +22,6 @@ import sdmxdl.web.SdmxWebConnection;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -55,13 +54,13 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataRef dataRef) {
+        public DataSet getData(DataRef dataRef) {
             return DATA;
         }
 
         @Override
         public Stream<Series> getDataStream(DataRef dataRef) {
-            return DATA.stream();
+            return DATA.getData().stream();
         }
 
         @Override
@@ -100,7 +99,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataRef dataRef) {
+        public DataSet getData(DataRef dataRef) {
             throw new CustomException();
         }
 
@@ -145,7 +144,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public List<Series> getData(DataRef dataRef) {
+        public DataSet getData(DataRef dataRef) {
             return null;
         }
 
@@ -172,7 +171,7 @@ public enum TestConnection implements SdmxWebConnection {
     public static final DataStructureRef STRUCT_REF = DataStructureRef.parse("struct");
     public static final Dataflow FLOW = Dataflow.of(FLOW_REF, STRUCT_REF, "label");
     public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).primaryMeasureId("").label("").build();
-    public static final List<Series> DATA = Collections.emptyList();
+    public static final DataSet DATA =  DataSet.builder().ref(DataRef.of(FLOW_REF)).build();
     public static final Key KEY = Key.ALL;
     public static final DataFilter FILTER = DataFilter.FULL;
 }

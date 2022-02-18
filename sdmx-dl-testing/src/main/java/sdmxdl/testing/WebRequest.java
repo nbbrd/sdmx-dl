@@ -18,8 +18,6 @@ package sdmxdl.testing;
 
 import org.checkerframework.checker.index.qual.NonNegative;
 import sdmxdl.DataRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
 
 /**
  * @author Philippe Charles

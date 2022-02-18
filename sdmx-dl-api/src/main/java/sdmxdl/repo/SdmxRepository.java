@@ -96,7 +96,7 @@ public class SdmxRepository {
         Objects.requireNonNull(ref);
         return dataSets
                 .stream()
-                .filter(ref::containsRef)
+                .filter(dataSet -> ref.contains(dataSet.getRef().getFlowRef()))
                 .findFirst();
     }
 
@@ -146,11 +146,11 @@ public class SdmxRepository {
         }
 
         @Override
-        public Collection<Series> getData(DataRef dataRef) throws IOException {
+        public DataSet getData(DataRef dataRef) throws IOException {
             checkState();
             return repo
                     .getDataSet(dataRef.getFlowRef())
-                    .map(dataSet -> dataSet.getData(dataRef.getKey(), dataRef.getFilter()))
+                    .map(dataSet -> dataSet.getData(dataRef))
                     .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
         }
 
@@ -159,7 +159,7 @@ public class SdmxRepository {
             checkState();
             return repo
                     .getDataSet(dataRef.getFlowRef())
-                    .map(dataSet -> dataSet.getDataStream(dataRef.getKey(), dataRef.getFilter()))
+                    .map(dataSet -> dataSet.getDataStream(dataRef))
                     .orElseThrow(() -> SdmxException.missingData(repo.getName(), dataRef));
         }
 

@@ -17,7 +17,7 @@
 package sdmxdl.samples;
 
 import sdmxdl.*;
-import sdmxdl.repo.DataSet;
+import sdmxdl.DataSet;
 import sdmxdl.repo.SdmxRepository;
 
 import java.time.LocalDate;
@@ -100,7 +100,7 @@ public class RepoSamples {
 
     public static final DataSet DATA_SET = DataSet
             .builder()
-            .ref(FLOW_REF)
+            .ref(DataRef.of(FLOW_REF))
             .series(S1)
             .series(S2)
             .series(S3)

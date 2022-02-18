@@ -8,6 +8,7 @@ import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
+import sdmxdl.DataRef;
 import sdmxdl.Key;
 import sdmxdl.Series;
 
@@ -15,10 +16,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static _test.sdmxdl.util.CachingAssert.*;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static sdmxdl.samples.RepoSamples.*;
@@ -54,13 +55,15 @@ public class CachedFileClientTest {
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
+                DataRef ref = DataRef.of(FLOW_REF, key, filter);
+
                 Method<Collection<Series>> x = client -> {
-                    try (Stream<Series> stream = client.loadData(client.decode(), FLOW_REF, key, filter)) {
-                        return stream.collect(Collectors.toList());
+                    try (Stream<Series> stream = client.loadData(client.decode(), ref)) {
+                        return stream.collect(toList());
                     }
                 };
 
-                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getData(key, filter)));
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref).collect(toList())));
 
                 if (filter.getDetail().isDataRequested()) {
                     checkCacheMiss(this::getClient, x, validator, loadDataKey, ttl);
@@ -77,7 +80,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         SdmxFileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY).close();
+        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY)).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

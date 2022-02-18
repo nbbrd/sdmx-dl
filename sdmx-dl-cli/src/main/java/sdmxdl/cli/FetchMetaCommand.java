@@ -63,7 +63,7 @@ public final class FetchMetaCommand implements Callable<Void> {
 
     private Stream<MetaResult> getRows() throws IOException {
         return sort.applySort(web.loadSeries(web.loadManager(), getFilter())
-                        .stream()
+                        .getData().stream()
                         .flatMap(this::getMetaResultStream)
                 , BY_FLOW_KEY_CONCEPT);
     }

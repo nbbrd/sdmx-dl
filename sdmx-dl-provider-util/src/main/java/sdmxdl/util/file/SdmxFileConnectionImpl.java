@@ -24,10 +24,10 @@ import sdmxdl.util.web.SdmxValidators;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -88,29 +88,10 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public List<Series> getData(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
-        try (Stream<Series> cursor = getDataStream(key, filter)) {
-            return cursor.collect(Collectors.toList());
+    public DataSet getData(DataRef dataRef) throws IOException, IllegalArgumentException {
+        try (Stream<Series> stream = getDataStream(dataRef)) {
+            return stream.collect(toDataSet(dataRef));
         }
-    }
-
-    @Override
-    public List<Series> getData(DataRef dataRef) throws IOException, IllegalArgumentException {
-        try (Stream<Series> cursor = getDataStream(dataRef)) {
-            return cursor.collect(Collectors.toList());
-        }
-    }
-
-    @Override
-    public Stream<Series> getDataStream(Key key, DataFilter filter) throws IOException, IllegalArgumentException {
-        checkState();
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-
-        SdmxFileInfo info = client.decode();
-        checkKey(key, info);
-
-        return client.loadData(info, dataflow.getRef(), key, filter);
     }
 
     @Override
@@ -121,7 +102,7 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         SdmxFileInfo info = client.decode();
         checkKey(dataRef.getKey(), info);
 
-        return client.loadData(info, dataflow.getRef(), dataRef.getKey(), dataRef.getFilter());
+        return client.loadData(info, dataRef);
     }
 
     @Override

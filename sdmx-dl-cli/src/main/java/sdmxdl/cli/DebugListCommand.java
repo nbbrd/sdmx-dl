@@ -57,7 +57,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY));
+        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY).getData());
     }
 
     @Command

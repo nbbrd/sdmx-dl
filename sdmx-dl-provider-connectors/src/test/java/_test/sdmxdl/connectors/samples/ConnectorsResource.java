@@ -26,7 +26,6 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
@@ -39,7 +38,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -57,10 +58,15 @@ public class ConnectorsResource {
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0))).toStream()).build())
+        return SdmxRepository
+                .builder()
+                .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
+                .dataSet(
+                        PortableTimeSeriesCursor
+                                .of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))
+                                .toStream()
+                                .collect(toDataSet(DataRef.of(ref))))
                 .name("NBB")
                 .detailSupported(false)
                 .build();
@@ -76,10 +82,15 @@ public class ConnectorsResource {
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0))).toStream()).build())
+        return SdmxRepository
+                .builder()
+                .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
+                .dataSet(
+                        PortableTimeSeriesCursor
+                                .of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))
+                                .toStream()
+                                .collect(toDataSet(DataRef.of(ref))))
                 .name("ECB")
                 .detailSupported(true)
                 .build();
@@ -96,7 +107,7 @@ public class ConnectorsResource {
     private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
         return struct20(xml, l).stream()
                 .map(ConnectorsResource::asDataflow)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private List<PortableTimeSeries<Double>> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
@@ -104,7 +115,7 @@ public class ConnectorsResource {
         return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
                 .map((Series series) -> toPortableTimeSeries(series, dsd.getDimensions()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {

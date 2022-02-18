@@ -164,7 +164,7 @@ public class StatCanDriverTest {
                                         assertThat(dataSet.getData())
                                                 .hasSize(14);
                                         assertThat(dataSet.getRef())
-                                                .isEqualTo(toDataflowRef(10100001));
+                                                .isEqualTo(DataRef.of(toDataflowRef(10100001)));
                                     });
                         });
             }

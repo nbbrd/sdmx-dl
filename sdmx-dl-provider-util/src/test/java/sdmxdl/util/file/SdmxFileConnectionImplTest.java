@@ -19,6 +19,7 @@ package sdmxdl.util.file;
 import _test.sdmxdl.util.XRepoFileClient;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataFilter;
+import sdmxdl.DataRef;
 import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.samples.RepoSamples;
@@ -63,10 +64,12 @@ public class SdmxFileConnectionImplTest {
         assertThat(conn.getDataflowRef()).isEqualTo(RepoSamples.FLOW_REF);
         assertThat(conn.getFlow()).isEqualTo(conn.getFlow(RepoSamples.FLOW_REF));
         assertThat(conn.getStructure()).isEqualTo(conn.getStructure(RepoSamples.FLOW_REF));
-        assertThatNullPointerException().isThrownBy(() -> conn.getDataStream(Key.ALL, null));
+        assertThatNullPointerException().isThrownBy(() -> conn.getDataSetRef(Key.ALL, null));
+        assertThatNullPointerException().isThrownBy(() -> conn.getDataSetRef(null, DataFilter.NO_DATA));
 
-        try (Stream<Series> stream = conn.getDataStream(Key.ALL, DataFilter.FULL)) {
-            assertThat(stream).containsExactly(conn.getDataStream(Key.ALL, DataFilter.FULL).toArray(Series[]::new));
+        DataRef ref = conn.getDataSetRef(Key.ALL, DataFilter.FULL);
+        try (Stream<Series> stream = conn.getDataStream(ref)) {
+            assertThat(stream).containsExactly(conn.getDataStream(ref).toArray(Series[]::new));
         }
     }
 }

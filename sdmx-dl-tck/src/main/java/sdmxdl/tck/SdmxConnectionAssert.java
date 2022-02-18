@@ -99,7 +99,7 @@ public class SdmxConnectionAssert {
 
     private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataFilter filter) throws Exception {
         DataRef validKey = DataRef.of(sample.validFlow, sample.validKey, filter);
-        s.assertThat(conn.getDataStream(validKey)).containsExactlyElementsOf(conn.getData(validKey));
+        s.assertThat(conn.getDataStream(validKey)).containsExactlyElementsOf(conn.getData(validKey).getData());
     }
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) {

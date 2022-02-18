@@ -59,7 +59,7 @@ public final class FetchKeysCommand implements Callable<Void> {
     }
 
     private Stream<Series> getRows() throws IOException {
-        return sort.applySort(web.loadSeries(web.loadManager(), web.getKey(), getFilter()), WebFlowOptions.SERIES_BY_KEY);
+        return sort.applySort(web.loadSeries(web.loadManager(), web.getKey(), getFilter()).getData(), WebFlowOptions.SERIES_BY_KEY);
     }
 
     private DataFilter getFilter() {

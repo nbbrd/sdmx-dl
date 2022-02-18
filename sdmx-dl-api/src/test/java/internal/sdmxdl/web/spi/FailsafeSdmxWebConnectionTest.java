@@ -163,7 +163,7 @@ public class FailsafeSdmxWebConnectionTest {
 
         failsafe.reset();
         Assertions.assertThat(validDriver.getDataStream(dataRef))
-                .containsExactlyElementsOf(TestConnection.DATA);
+                .containsExactlyElementsOf(TestConnection.DATA.getData());
         failsafe.assertEmpty();
 
         failsafe.reset();

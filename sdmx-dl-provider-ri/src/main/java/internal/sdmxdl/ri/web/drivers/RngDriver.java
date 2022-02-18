@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static sdmxdl.DataSet.toDataSet;
 
 @ServiceProvider
 public final class RngDriver implements SdmxWebDriver {
@@ -191,8 +192,8 @@ public final class RngDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull Collection<Series> getData(@NonNull DataRef dataRef) {
-            return getDataStream(dataRef).collect(Collectors.toList());
+        public @NonNull DataSet getData(@NonNull DataRef dataRef) throws IOException {
+            return getDataStream(dataRef).collect(toDataSet(dataRef));
         }
 
         @Override

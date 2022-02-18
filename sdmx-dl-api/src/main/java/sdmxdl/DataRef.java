@@ -16,11 +16,27 @@
  */
 package sdmxdl;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Objects;
+
 /**
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(toBuilder = true)
 public class DataRef {
+
+    public static @NonNull DataRef of(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(filter);
+        return new DataRef(flowRef, key, filter);
+    }
+
+    public static @NonNull DataRef of(@NonNull DataflowRef flowRef) {
+        return of(flowRef, Key.ALL, DataFilter.FULL);
+    }
 
     @lombok.NonNull
     DataflowRef flowRef;

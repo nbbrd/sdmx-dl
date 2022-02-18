@@ -9,7 +9,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.repo.DataSet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static nbbrd.io.text.TextResource.newBufferedReader;
+import static sdmxdl.DataSet.toDataSet;
 
 @lombok.Builder(toBuilder = true)
 public final class SdmxPicocsvParser implements TextParser<DataSet> {
@@ -131,11 +131,10 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             );
         }
 
-        return DataSet
-                .builder()
-                .ref(dataflowRef)
-                .data(data.values().stream().map(Series.Builder::build).collect(Collectors.toList()))
-                .build();
+        return data.values()
+                .stream()
+                .map(Series.Builder::build)
+                .collect(toDataSet(DataRef.of(dataflowRef)));
     }
 
     private List<String> readHeader(Csv.Reader reader) throws IOException {

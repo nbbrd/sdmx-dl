@@ -21,8 +21,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -48,13 +46,7 @@ public interface SdmxFileConnection extends SdmxConnection {
         return getStructure(getDataflowRef());
     }
 
-    @NonNull
-    default Collection<Series> getData(@NonNull Key key, @NonNull DataFilter filter) throws IOException, IllegalArgumentException {
-        return getData(DataRef.of(getDataflowRef(), key, filter));
-    }
-
-    @NonNull
-    default Stream<Series> getDataStream(@NonNull Key key, @NonNull DataFilter filter) throws IOException, IllegalArgumentException {
-        return getDataStream(DataRef.of(getDataflowRef(), key, filter));
+    default @NonNull DataRef getDataSetRef(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
+        return DataRef.of(getDataflowRef(), key, filter);
     }
 }

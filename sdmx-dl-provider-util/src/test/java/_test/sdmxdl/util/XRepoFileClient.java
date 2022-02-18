@@ -1,8 +1,6 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.DataRef;
 import sdmxdl.Series;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.file.SdmxFileClient;
@@ -16,7 +14,7 @@ import java.util.stream.Stream;
 public final class XRepoFileClient implements SdmxFileClient {
 
     @lombok.NonNull
-    private final SdmxRepository data;
+    private final SdmxRepository repository;
 
     @Override
     public void testClient() {
@@ -24,17 +22,16 @@ public final class XRepoFileClient implements SdmxFileClient {
 
     @Override
     public SdmxFileInfo decode() {
-        return infoOf(data);
+        return infoOf(repository);
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
         Objects.requireNonNull(entry);
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return data.getDataSet(flowRef)
-                .map(dataSet -> dataSet.getDataStream(key, filter))
+        Objects.requireNonNull(dataRef);
+        return repository
+                .getDataSet(dataRef.getFlowRef())
+                .map(dataSet -> dataSet.getDataStream(dataRef))
                 .orElseThrow(IOException::new);
     }
 

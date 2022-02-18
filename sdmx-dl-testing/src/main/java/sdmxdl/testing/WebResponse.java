@@ -68,7 +68,7 @@ public class WebResponse {
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getDataRef().getFlowRef()))
                     .structure(conn.getStructure(request.getDataRef().getFlowRef()))
-                    .data(conn.getData(DataRef.of(request.getDataRef().getFlowRef(), request.getDataRef().getKey(), DataFilter.FULL)));
+                    .data(conn.getData(DataRef.of(request.getDataRef().getFlowRef(), request.getDataRef().getKey(), DataFilter.FULL)).getData());
         } catch (IOException ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));

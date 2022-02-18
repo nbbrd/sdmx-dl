@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Obs;
 import sdmxdl.Series;
-import sdmxdl.repo.DataSet;
+import sdmxdl.DataSet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -102,7 +102,7 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     private Function<DataSet, SdmxCsvFieldWriter> getDefaultFactory(String field) {
         switch (field) {
             case DATAFLOW:
-                return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef());
+                return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef().getFlowRef());
             case KEY_DIMENSIONS:
                 return dataSet -> SdmxCsvFieldWriter.onKeyDimensions(dsd);
             case TIME_DIMENSION:

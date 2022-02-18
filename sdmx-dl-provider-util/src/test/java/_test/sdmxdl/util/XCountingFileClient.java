@@ -1,8 +1,6 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.DataRef;
 import sdmxdl.Series;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
@@ -32,8 +30,8 @@ public final class XCountingFileClient implements SdmxFileClient {
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
         count.incrementAndGet();
-        return delegate.loadData(entry, flowRef, key, filter);
+        return delegate.loadData(entry, dataRef);
     }
 }

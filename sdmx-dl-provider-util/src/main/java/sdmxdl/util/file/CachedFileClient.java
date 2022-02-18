@@ -20,7 +20,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.repo.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.TypedId;
 
@@ -28,6 +27,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.stream.Stream;
+
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -88,10 +89,10 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        return !filter.getDetail().isDataRequested()
-                ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, flowRef), this::getTtl).getDataStream(key, filter)
-                : delegate.loadData(entry, flowRef, key, filter);
+    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
+        return !dataRef.getFilter().getDetail().isDataRequested()
+                ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, dataRef.getFlowRef()), this::getTtl).getDataStream(dataRef)
+                : delegate.loadData(entry, dataRef);
     }
 
     private Duration getTtl(Object o) {
@@ -99,8 +100,9 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     private DataSet copyAllNoData(SdmxFileInfo entry, DataflowRef flowRef) throws IOException {
-        try (Stream<Series> stream = delegate.loadData(entry, flowRef, Key.ALL, DataFilter.NO_DATA)) {
-            return DataSet.builder().ref(flowRef).copyOf(stream).build();
+        DataRef ref = DataRef.of(flowRef, Key.ALL, DataFilter.NO_DATA);
+        try (Stream<Series> stream = delegate.loadData(entry, ref)) {
+            return stream.collect(toDataSet(ref));
         }
     }
 }

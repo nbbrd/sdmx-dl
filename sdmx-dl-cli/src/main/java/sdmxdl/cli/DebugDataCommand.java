@@ -39,7 +39,7 @@ public final class DebugDataCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataFilter.FULL));
+        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataFilter.FULL).getData());
         return null;
     }
 }

@@ -5,14 +5,15 @@ import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.xml.DataCursor;
+import sdmxdl.DataRef;
+import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
-import sdmxdl.repo.DataSet;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class Sdmx21RestParsersTest {
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {
         try {
-            return DataSet.builder().ref(DataflowRef.parse("abc")).copyOf(cursor.toStream()).build();
+            return cursor.toStream().collect(DataSet.toDataSet(DataRef.of(DataflowRef.parse("abc"))));
         } finally {
             cursor.close();
         }

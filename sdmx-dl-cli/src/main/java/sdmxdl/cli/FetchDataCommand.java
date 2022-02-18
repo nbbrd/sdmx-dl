@@ -28,20 +28,16 @@ import picocli.CommandLine;
 import sdmxdl.*;
 import sdmxdl.csv.SdmxCsvFieldWriter;
 import sdmxdl.csv.SdmxPicocsvFormatter;
-import sdmxdl.repo.DataSet;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
+import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.csv.SdmxCsvFields.*;
 
 /**
@@ -103,22 +99,13 @@ public final class FetchDataCommand implements Callable<Void> {
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
         try (Stream<Series> stream = conn.getDataStream(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
-            return DataSet
-                    .builder()
-                    .ref(web.getFlow())
-                    .key(web.getKey())
-                    .data(collectSeries(stream, OBS_BY_PERIOD))
-                    .build();
+            return stream
+                    .sorted(WebFlowOptions.SERIES_BY_KEY)
+                    .collect(toDataSet(DataRef.of(web.getFlow(), web.getKey(), DataFilter.FULL)));
         }
     }
 
     private static DataFilter getFilter() {
         return DataFilter.FULL;
     }
-
-    private static Collection<Series> collectSeries(Stream<Series> stream, Comparator<Obs> obsComparator) {
-        return stream.collect(Collectors.toCollection(() -> new TreeSet<>(WebFlowOptions.SERIES_BY_KEY)));
-    }
-
-    private static final Comparator<Obs> OBS_BY_PERIOD = Comparator.comparing(Obs::getPeriod);
 }

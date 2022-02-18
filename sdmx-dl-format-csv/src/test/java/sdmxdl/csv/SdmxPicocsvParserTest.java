@@ -1,7 +1,7 @@
 package sdmxdl.csv;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.repo.DataSet;
+import sdmxdl.DataSet;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.util.parser.ObsFactories;
 

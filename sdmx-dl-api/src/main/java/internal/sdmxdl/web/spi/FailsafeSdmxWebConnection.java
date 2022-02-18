@@ -146,10 +146,10 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public Collection<Series> getData(DataRef dataRef) throws IOException {
+    public DataSet getData(DataRef dataRef) throws IOException {
         Objects.requireNonNull(dataRef);
 
-        Collection<Series> result;
+        DataSet result;
 
         try {
             result = delegate.getData(dataRef);

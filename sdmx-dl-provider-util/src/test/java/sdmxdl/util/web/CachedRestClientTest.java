@@ -32,10 +32,10 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static _test.sdmxdl.util.CachingAssert.*;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -104,13 +104,15 @@ public class CachedRestClientTest {
     public void testGetData() throws IOException {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataFilter filter : filters(DataFilter.Detail.values())) {
+                DataRef ref = DataRef.of(FLOW_REF, key, filter);
+
                 Method<Collection<Series>> x = client -> {
-                    try (Stream<Series> cursor = client.getData(DataRef.of(FLOW_REF, key, filter), STRUCT)) {
-                        return cursor.collect(Collectors.toList());
+                    try (Stream<Series> cursor = client.getData(ref, STRUCT)) {
+                        return cursor.collect(toList());
                     }
                 };
 
-                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getData(key, filter)));
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref).collect(toList())));
 
                 if (filter.getDetail().isDataRequested()) {
                     checkCacheMiss(this::getClient, x, validator, noDataId, ttl);

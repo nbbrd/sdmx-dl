@@ -22,7 +22,6 @@ import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Comparator;
 
 /**
@@ -46,7 +45,7 @@ public class WebFlowOptions extends WebSourceOptions {
         }
     }
 
-    public Collection<Series> loadSeries(SdmxWebManager manager, Key key, DataFilter filter) throws IOException {
+    public DataSet loadSeries(SdmxWebManager manager, Key key, DataFilter filter) throws IOException {
         try (SdmxWebConnection conn = open(manager)) {
             return conn.getData(DataRef.of(getFlow(), key, filter));
         }
