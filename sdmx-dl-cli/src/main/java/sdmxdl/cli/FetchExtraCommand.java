@@ -78,7 +78,7 @@ public final class FetchExtraCommand implements Callable<Void> {
             Function<Series, String> toName = getName(dsd);
             Function<Series, String> toDescription = getDescription(dsd);
 
-            return sort.applySort(conn.getData(DataRef.of(web.getFlow(), web.getKey(), getFilter())).getData(), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(web.getFlow(), DataQuery.of(web.getKey(), getDetail())).getData(), SERIES_BY_KEY)
                     .map(series -> new Extra(
                             series.getKey(),
                             series.getFreq(),
@@ -90,8 +90,8 @@ public final class FetchExtraCommand implements Callable<Void> {
         }
     }
 
-    private DataFilter getFilter() {
-        return DataFilter.NO_DATA;
+    private DataDetail getDetail() {
+        return DataDetail.NO_DATA;
     }
 
     @lombok.Value

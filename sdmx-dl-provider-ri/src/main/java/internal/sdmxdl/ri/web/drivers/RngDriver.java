@@ -192,24 +192,24 @@ public final class RngDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataRef dataRef) throws IOException {
-            return getDataStream(dataRef).collect(toDataSet(dataRef));
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+            return getDataStream(flowRef, query).collect(toDataSet(flowRef, query));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) {
-            return Freq.stream().flatMap(freq -> newSeriesStream(freq, dataRef));
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+            return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
         }
 
-        private Stream<Series> newSeriesStream(Freq freq, DataRef dataRef) {
+        private Stream<Series> newSeriesStream(Freq freq, DataQuery query) {
             return IntStream
                     .range(0, config.getSeriesCount())
                     .mapToObj(series -> Key.of(freq.name(), String.valueOf(series)))
-                    .filter(dataRef.getKey()::contains)
-                    .map(key -> newSeries(key, freq, dataRef.getFilter().getDetail()));
+                    .filter(query.getKey()::contains)
+                    .map(key -> newSeries(key, freq, query.getDetail()));
         }
 
-        private Series newSeries(Key key, Freq freq, DataFilter.Detail detail) {
+        private Series newSeries(Key key, Freq freq, DataDetail detail) {
             Series.Builder result = Series.builder().key(key).freq(freq.getFrequency());
             if (detail.isDataRequested()) {
                 int series = Integer.parseInt(key.get(1));

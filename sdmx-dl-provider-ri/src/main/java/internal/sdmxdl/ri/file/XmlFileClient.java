@@ -18,7 +18,6 @@ package internal.sdmxdl.ri.file;
 
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRef;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.Series;
@@ -26,6 +25,7 @@ import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
 import sdmxdl.util.parser.ObsFactories;
@@ -77,11 +77,11 @@ public class XmlFileClient implements SdmxFileClient {
         if (eventListener.isEnabled()) {
             eventListener.onFileSourceEvent(source, "Loading data from file '" + source.getData() + "'");
         }
-        return getDataSupplier(info.getDataType(), info.getStructure())
-                .parseFile(source.getData())
-                .toCloseableStream()
-                .filter(dataRef.getKey()::containsKey)
-                .map(dataRef.getFilter()::apply);
+        return dataRef.getQuery().execute(
+                getDataSupplier(info.getDataType(), info.getStructure())
+                        .parseFile(source.getData())
+                        .toCloseableStream()
+        );
     }
 
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {

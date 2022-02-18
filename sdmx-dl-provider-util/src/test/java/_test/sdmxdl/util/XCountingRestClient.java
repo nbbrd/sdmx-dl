@@ -18,6 +18,7 @@ package _test.sdmxdl.util;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;

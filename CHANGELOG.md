@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Remove DataCursor from API
 - Refactor SdmxManager API
 - Replace `SdmxWebConnection#ping()` with `SdmxConnection#testConnection()`
+- Refactor data queries API
 
 ### Fixed
 

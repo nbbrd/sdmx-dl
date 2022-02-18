@@ -66,7 +66,7 @@ public class ConnectorsResource {
                         PortableTimeSeriesCursor
                                 .of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))
                                 .toStream()
-                                .collect(toDataSet(DataRef.of(ref))))
+                                .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
                 .detailSupported(false)
                 .build();
@@ -90,7 +90,7 @@ public class ConnectorsResource {
                         PortableTimeSeriesCursor
                                 .of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))
                                 .toStream()
-                                .collect(toDataSet(DataRef.of(ref))))
+                                .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
                 .detailSupported(true)
                 .build();

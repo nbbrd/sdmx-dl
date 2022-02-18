@@ -22,10 +22,7 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.DataFilter;
-import sdmxdl.Dataflow;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.concurrent.Callable;
@@ -57,7 +54,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataFilter.SERIES_KEYS_ONLY).getData());
+        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataDetail.SERIES_KEYS_ONLY).getData());
     }
 
     @Command

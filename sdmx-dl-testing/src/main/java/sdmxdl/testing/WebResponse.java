@@ -18,7 +18,9 @@ package sdmxdl.testing;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.*;
+import sdmxdl.DataStructure;
+import sdmxdl.Dataflow;
+import sdmxdl.Series;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -66,9 +68,9 @@ public class WebResponse {
         try (SdmxWebConnection conn = manager.getConnection(request.getSource())) {
             result
                     .flows(conn.getFlows())
-                    .flow(conn.getFlow(request.getDataRef().getFlowRef()))
-                    .structure(conn.getStructure(request.getDataRef().getFlowRef()))
-                    .data(conn.getData(DataRef.of(request.getDataRef().getFlowRef(), request.getDataRef().getKey(), DataFilter.FULL)).getData());
+                    .flow(conn.getFlow(request.getFlowRef()))
+                    .structure(conn.getStructure(request.getFlowRef()))
+                    .data(conn.getData(request.getFlowRef(), request.getQuery()).getData());
         } catch (IOException ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));

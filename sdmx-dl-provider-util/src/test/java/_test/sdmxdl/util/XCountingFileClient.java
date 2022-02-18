@@ -1,6 +1,6 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataRef;
+import sdmxdl.util.DataRef;
 import sdmxdl.Series;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;

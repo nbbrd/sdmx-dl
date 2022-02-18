@@ -38,9 +38,9 @@ public interface SdmxConnection extends Closeable {
 
     @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException;
 
-    @NonNull DataSet getData(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
+    @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException;
 
-    @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException, IllegalArgumentException;
+    @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException;
 
     boolean isDetailSupported() throws IOException;
 }

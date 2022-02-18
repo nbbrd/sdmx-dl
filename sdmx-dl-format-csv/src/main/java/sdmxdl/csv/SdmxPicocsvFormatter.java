@@ -4,10 +4,10 @@ import nbbrd.io.text.TextBuffers;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.Obs;
 import sdmxdl.Series;
-import sdmxdl.DataSet;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -102,7 +102,7 @@ public final class SdmxPicocsvFormatter implements TextFormatter<DataSet> {
     private Function<DataSet, SdmxCsvFieldWriter> getDefaultFactory(String field) {
         switch (field) {
             case DATAFLOW:
-                return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef().getFlowRef());
+                return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef());
             case KEY_DIMENSIONS:
                 return dataSet -> SdmxCsvFieldWriter.onKeyDimensions(dsd);
             case TIME_DIMENSION:

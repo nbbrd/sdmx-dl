@@ -1,7 +1,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataRef;
+import sdmxdl.DataQuery;
 import sdmxdl.Dataflow;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebConnection;
@@ -9,9 +9,6 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
 import java.io.IOException;
-
-import static sdmxdl.DataFilter.FULL;
-import static sdmxdl.Key.ALL;
 
 public class RngDriverTest {
 
@@ -30,7 +27,7 @@ public class RngDriverTest {
                 for (Dataflow dataflow : conn.getFlows()) {
                     System.out.println(dataflow);
                     System.out.println(conn.getStructure(dataflow.getRef()));
-                    conn.getDataStream(DataRef.of(dataflow.getRef(), ALL, FULL))
+                    conn.getDataStream(dataflow.getRef(), DataQuery.ALL)
                             .forEach(series -> System.out.println(series.getKey() + " " + series.getObs().size()));
                 }
             }

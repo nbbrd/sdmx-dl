@@ -18,7 +18,11 @@ package sdmxdl.file;
 
 import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import sdmxdl.DataStructure;
+import sdmxdl.Dataflow;
+import sdmxdl.DataflowRef;
+import sdmxdl.SdmxConnection;
+import sdmxdl.ext.SdmxException;
 
 import java.io.IOException;
 
@@ -38,15 +42,11 @@ public interface SdmxFileConnection extends SdmxConnection {
                 .stream()
                 .filter(o -> o.getRef().equals(ref))
                 .findFirst()
-                .orElseThrow(IOException::new);
+                .orElseThrow(() -> SdmxException.missingFlow("", ref));
     }
 
     @NonNull
     default DataStructure getStructure() throws IOException {
         return getStructure(getDataflowRef());
-    }
-
-    default @NonNull DataRef getDataSetRef(@NonNull Key key, @NonNull DataFilter filter) throws IOException {
-        return DataRef.of(getDataflowRef(), key, filter);
     }
 }

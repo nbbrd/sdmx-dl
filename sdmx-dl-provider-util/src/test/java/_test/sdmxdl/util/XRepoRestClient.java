@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
@@ -64,8 +65,8 @@ public final class XRepoRestClient implements SdmxRestClient {
         Objects.requireNonNull(dsd);
         return repository
                 .getDataSet(ref.getFlowRef())
-                .map(dataSet -> dataSet.getDataStream(ref))
-                .orElseThrow(() -> SdmxException.missingData(repository.getName(), ref));
+                .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
+                .orElseThrow(() -> SdmxException.missingData(repository.getName(), ref.getFlowRef()));
     }
 
     @Override

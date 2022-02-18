@@ -18,16 +18,16 @@ package sdmxdl.xml.stream;
 
 import nbbrd.io.Resource;
 import org.junit.jupiter.api.Test;
-import sdmxdl.xml.DataCursor;
-import sdmxdl.DataFilter;
+import sdmxdl.DataDetail;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
-import sdmxdl.xml.DataCursorAssert;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
+import sdmxdl.xml.DataCursor;
+import sdmxdl.xml.DataCursorAssert;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -56,7 +56,7 @@ public class XMLStreamCompactDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        }, Key.ALL, DataFilter.FULL);
+        }, Key.ALL, DataDetail.FULL);
 
         ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
         try (InputStream stream = xml.openStream();
@@ -106,7 +106,7 @@ public class XMLStreamCompactDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        }, Key.ALL, DataFilter.FULL);
+        }, Key.ALL, DataDetail.FULL);
 
         ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
         try (InputStream stream = xml.openStream();

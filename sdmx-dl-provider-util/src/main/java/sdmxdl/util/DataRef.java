@@ -14,36 +14,20 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl;
+package sdmxdl.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.Objects;
+import sdmxdl.DataQuery;
+import sdmxdl.DataflowRef;
 
 /**
  * @author Philippe Charles
  */
-@lombok.Value
-@lombok.Builder(toBuilder = true)
+@lombok.Value(staticConstructor = "of")
 public class DataRef {
-
-    public static @NonNull DataRef of(@NonNull DataflowRef flowRef, @NonNull Key key, @NonNull DataFilter filter) {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return new DataRef(flowRef, key, filter);
-    }
-
-    public static @NonNull DataRef of(@NonNull DataflowRef flowRef) {
-        return of(flowRef, Key.ALL, DataFilter.FULL);
-    }
 
     @lombok.NonNull
     DataflowRef flowRef;
 
     @lombok.NonNull
-    Key key;
-
-    @lombok.NonNull
-    DataFilter filter;
+    DataQuery query;
 }

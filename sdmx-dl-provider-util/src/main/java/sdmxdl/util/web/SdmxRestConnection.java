@@ -16,8 +16,10 @@
  */
 package sdmxdl.util.web;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
+import sdmxdl.util.DataRef;
 import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
@@ -71,35 +73,35 @@ final class SdmxRestConnection implements SdmxWebConnection {
     }
 
     @Override
-    public DataSet getData(DataRef dataRef) throws IOException {
-        try (Stream<Series> stream = getDataStream(dataRef)) {
-            return stream.collect(toDataSet(dataRef));
+    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        try (Stream<Series> stream = getDataStream(flowRef, query)) {
+            return stream.collect(toDataSet(flowRef, query));
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
+    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         checkState();
-        checkDataflowRef(dataRef.getFlowRef());
+        checkDataflowRef(flowRef);
 
-        DataflowRef flowRef = dataRef.getFlowRef();
-        DataStructureRef structRef = client.peekStructureRef(dataRef.getFlowRef());
+        DataflowRef resultFlowRef = flowRef;
+        DataStructureRef structRef = client.peekStructureRef(flowRef);
 
         if (structRef == null) {
-            Dataflow flow = client.getFlow(dataRef.getFlowRef());
+            Dataflow flow = client.getFlow(flowRef);
             structRef = flow.getStructureRef();
-            flowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
+            resultFlowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
         }
 
-        Key key = dataRef.getKey();
-        DataFilter filter = dataRef.getFilter();
+        Key key = query.getKey();
+        DataDetail detail = query.getDetail();
 
         DataStructure structure = client.getStructure(structRef);
         checkKey(key, structure);
 
         return isDetailSupported()
-                ? client.getData(DataRef.of(flowRef, key, filter), structure)
-                : client.getData(DataRef.of(flowRef, key, DataFilter.FULL), structure).filter(key::containsKey).map(filter::apply);
+                ? client.getData(DataRef.of(resultFlowRef, DataQuery.of(key, detail)), structure)
+                : query.execute(client.getData(DataRef.of(resultFlowRef, DataQuery.of(key, DataDetail.FULL)), structure));
     }
 
     @Override

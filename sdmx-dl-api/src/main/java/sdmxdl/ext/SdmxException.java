@@ -18,7 +18,6 @@ package sdmxdl.ext;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.CodelistRef;
-import sdmxdl.DataRef;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 
@@ -49,9 +48,9 @@ public final class SdmxException extends IOException {
         return new SdmxException(source, "Missing structure '" + ref + "'");
     }
 
-    public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataRef dataRef) {
-        Objects.requireNonNull(dataRef);
-        return new SdmxException(source, "Missing data '" + dataRef.getFlowRef() + "'");
+    public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataflowRef ref) {
+        Objects.requireNonNull(ref);
+        return new SdmxException(source, "Missing data '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingCodelist(@NonNull String source, @NonNull CodelistRef ref) {

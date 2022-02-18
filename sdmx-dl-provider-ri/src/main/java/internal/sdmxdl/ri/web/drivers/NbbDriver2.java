@@ -25,7 +25,7 @@ import internal.util.http.ext.InterceptingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataRef;
+import sdmxdl.util.DataRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
@@ -112,7 +112,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)
                     .path(ref.getFlowRef().getId())
-                    .path(ref.getKey() + "/all")
+                    .path(ref.getQuery().getKey() + "/all")
                     .param("format", "compact_v2");
         }
     }

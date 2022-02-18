@@ -25,6 +25,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxException;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;

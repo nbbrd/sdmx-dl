@@ -1,6 +1,6 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataRef;
+import sdmxdl.util.DataRef;
 import sdmxdl.Series;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.file.SdmxFileClient;
@@ -31,7 +31,7 @@ public final class XRepoFileClient implements SdmxFileClient {
         Objects.requireNonNull(dataRef);
         return repository
                 .getDataSet(dataRef.getFlowRef())
-                .map(dataSet -> dataSet.getDataStream(dataRef))
+                .map(dataSet -> dataSet.getDataStream(dataRef.getQuery()))
                 .orElseThrow(IOException::new);
     }
 

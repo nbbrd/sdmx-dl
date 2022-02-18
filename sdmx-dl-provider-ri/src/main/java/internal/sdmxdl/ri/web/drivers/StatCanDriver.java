@@ -157,17 +157,17 @@ public final class StatCanDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataRef dataRef) throws IOException {
-            return getDataSet(dataRef.getFlowRef())
-                    .orElseThrow(() -> SdmxException.missingData(source, dataRef))
-                    .getData(dataRef);
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+            return getDataSet(flowRef)
+                    .orElseThrow(() -> SdmxException.missingData(source, flowRef))
+                    .getData(query);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataRef dataRef) throws IOException {
-            return getDataSet(dataRef.getFlowRef())
-                    .orElseThrow(() -> SdmxException.missingData(source, dataRef))
-                    .getDataStream(dataRef);
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+            return getDataSet(flowRef)
+                    .orElseThrow(() -> SdmxException.missingData(source, flowRef))
+                    .getDataStream(query);
         }
 
         @Override
@@ -456,7 +456,7 @@ public final class StatCanDriver implements SdmxWebDriver {
                 return SdmxRepository
                         .builder()
                         .structure(dsd)
-                        .dataSet(parseData(zipFile, dsd).collect(toDataSet(DataRef.of(toDataflowRef(productId)))))
+                        .dataSet(parseData(zipFile, dsd).collect(toDataSet(toDataflowRef(productId), DataQuery.ALL)))
                         .build();
             }
         }

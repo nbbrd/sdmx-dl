@@ -133,10 +133,9 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(CodelistRef.class, new CodelistRefSerializer());
         result.register(Frequency.class, new FrequencySerializer());
         result.register(Key.class, new KeySerializer());
-        result.register(DataFilter.class, new DataFilterSerializer());
-        result.register(DataFilter.Detail.class, new DefaultSerializers.EnumSerializer(DataFilter.Detail.class));
+        result.register(DataQuery.class, new DataQuerySerializer());
+        result.register(DataDetail.class, new DefaultSerializers.EnumSerializer(DataDetail.class));
         result.register(DataSet.class, new DataSetSerializer());
-        result.register(DataRef.class, new DataRefSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
         result.register(Dimension.class, new DimensionSerializer());
@@ -322,6 +321,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, DataSet t) {
             kryo.writeObject(output, t.getRef());
+            kryo.writeObject(output, t.getQuery());
             kryo.writeObject(output, t.getData(), data);
         }
 
@@ -330,29 +330,10 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public DataSet read(Kryo kryo, Input input, Class<? extends DataSet> type) {
             return DataSet
                     .builder()
-                    .ref(kryo.readObject(input, DataRef.class))
+                    .ref(kryo.readObject(input, DataflowRef.class))
+                    .query(kryo.readObject(input, DataQuery.class))
                     .data(kryo.readObject(input, ArrayList.class, data))
                     .build();
-        }
-    }
-
-    private static final class DataRefSerializer extends ImmutableSerializer<DataRef> {
-
-        @Override
-        public void write(Kryo kryo, Output output, DataRef t) {
-            kryo.writeObject(output, t.getFlowRef());
-            kryo.writeObject(output, t.getKey());
-            kryo.writeObject(output, t.getFilter());
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public DataRef read(Kryo kryo, Input input, Class<? extends DataRef> type) {
-            return DataRef.of(
-                    kryo.readObject(input, DataflowRef.class),
-                    kryo.readObject(input, Key.class),
-                    kryo.readObject(input, DataFilter.class)
-            );
         }
     }
 
@@ -384,16 +365,17 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class DataFilterSerializer extends ImmutableSerializer<DataFilter> {
+    private static final class DataQuerySerializer extends ImmutableSerializer<DataQuery> {
 
         @Override
-        public void write(Kryo kryo, Output output, DataFilter t) {
+        public void write(Kryo kryo, Output output, DataQuery t) {
+            kryo.writeObject(output, t.getKey());
             kryo.writeObject(output, t.getDetail());
         }
 
         @Override
-        public DataFilter read(Kryo kryo, Input input, Class<? extends DataFilter> type) {
-            return DataFilter.builder().detail(kryo.readObject(input, DataFilter.Detail.class)).build();
+        public DataQuery read(Kryo kryo, Input input, Class<? extends DataQuery> type) {
+            return DataQuery.of(kryo.readObject(input, Key.class), kryo.readObject(input, DataDetail.class));
         }
     }
 

@@ -16,14 +16,18 @@
  */
 package sdmxdl;
 
-import nbbrd.design.MightBePromoted;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Philippe Charles
@@ -31,48 +35,36 @@ import java.util.stream.Stream;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataSet {
+public class DataSet extends Resource<DataflowRef> {
 
     @lombok.NonNull
-    DataRef ref;
+    DataflowRef ref;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    DataQuery query = DataQuery.ALL;
 
     @lombok.NonNull
     @lombok.Singular("series")
     Collection<Series> data;
 
-    public @NonNull DataSet getData(@NonNull DataRef other) {
-        Objects.requireNonNull(other);
-        checkFlowRef(other.getFlowRef());
-        return isNoFilter(other) ? this : filter(data.stream(), other).collect(toDataSet(other));
+    public @NonNull DataSet getData(@NonNull DataQuery query) {
+        Objects.requireNonNull(query);
+        return query.equals(DataQuery.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));
     }
 
-    public @NonNull Stream<Series> getDataStream(@NonNull DataRef other) {
-        Objects.requireNonNull(other);
-        checkFlowRef(other.getFlowRef());
-        return isNoFilter(other) ? data.stream() : filter(data.stream(), other);
+    public @NonNull Stream<Series> getDataStream(@NonNull DataQuery query) {
+        Objects.requireNonNull(query);
+        return query.equals(DataQuery.ALL) ? data.stream() : query.execute(data.stream());
     }
 
-    private void checkFlowRef(DataflowRef flowRef) throws IllegalArgumentException {
+    public static @NonNull Collector<Series, ?, DataSet> toDataSet(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
         Objects.requireNonNull(flowRef);
-        if (!ref.getFlowRef().contains(flowRef)) {
-            throw new IllegalArgumentException(flowRef.toString());
-        }
+        Objects.requireNonNull(query);
+        return collectingAndThen(toList(), newDataSet(flowRef, query));
     }
 
-    public static @NonNull Collector<Series, ?, DataSet> toDataSet(@NonNull DataRef ref) {
-        Objects.requireNonNull(ref);
-        return Collectors.collectingAndThen(Collectors.toList(), list -> DataSet.builder().ref(ref).data(list).build());
-    }
-
-    @MightBePromoted
-    private static Stream<Series> filter(Stream<Series> data, DataRef filter) {
-        return data
-                .filter(filter.getKey()::containsKey)
-                .map(filter.getFilter()::apply);
-    }
-
-    @MightBePromoted
-    private static boolean isNoFilter(@NonNull DataRef ref) {
-        return Key.ALL.equals(ref.getKey()) && DataFilter.FULL.equals(ref.getFilter());
+    private static Function<List<Series>, DataSet> newDataSet(DataflowRef flowRef, DataQuery query) {
+        return list -> new DataSet(flowRef, query, unmodifiableList(list));
     }
 }

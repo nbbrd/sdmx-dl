@@ -56,7 +56,7 @@ public class SdmxPicocsvFormatterTest {
                 .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-01,3.141592653589793,,hello world,M.BE.INDUSTRY")
                 .contains("NBB:XYZ(v2.0),M,BE,INDUSTRY,2010-02,2.718281828459045,,hello world,M.BE.INDUSTRY");
 
-        assertThat(x.toBuilder().customFactory(DATAFLOW, dataSet -> SdmxCsvFieldWriter.onConstant("FLOW", dataSet.getRef().getFlowRef().getId())).build())
+        assertThat(x.toBuilder().customFactory(DATAFLOW, dataSet -> SdmxCsvFieldWriter.onConstant("FLOW", dataSet.getRef().getId())).build())
                 .as("Custom factory")
                 .extracting(extractor, Assertions.STRING)
                 .contains("FLOW,FREQ,REGION,SECTOR,TIME,OBS_VALUE,OBS_STATUS,TITLE,SERIESKEY")

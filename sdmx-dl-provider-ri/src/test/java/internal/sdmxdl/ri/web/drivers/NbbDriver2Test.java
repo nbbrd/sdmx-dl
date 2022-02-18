@@ -21,11 +21,9 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -36,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static internal.sdmxdl.ri.web.drivers.NbbDriver2.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DataFilter.FULL;
+import static sdmxdl.DataDetail.FULL;
 
 /**
  * @author Philippe Charles
@@ -54,7 +52,7 @@ public class NbbDriver2Test {
 
         NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), Key.parse("AUD.M"), FULL)))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.of(Key.parse("AUD.M"), FULL))))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }

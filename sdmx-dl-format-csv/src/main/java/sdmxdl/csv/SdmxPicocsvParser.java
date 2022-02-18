@@ -134,7 +134,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
         return data.values()
                 .stream()
                 .map(Series.Builder::build)
-                .collect(toDataSet(DataRef.of(dataflowRef)));
+                .collect(toDataSet(dataflowRef, DataQuery.ALL));
     }
 
     private List<String> readHeader(Csv.Reader reader) throws IOException {

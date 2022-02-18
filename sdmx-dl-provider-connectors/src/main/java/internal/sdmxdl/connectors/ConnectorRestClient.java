@@ -29,6 +29,7 @@ import nbbrd.io.text.BaseProperty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
@@ -189,9 +190,9 @@ public final class ConnectorRestClient implements SdmxRestClient {
     private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, DataStructure dsd) throws SdmxException {
         return connector.getTimeSeries(
                 Connectors.fromFlowQuery(ref.getFlowRef(), dsd.getRef()),
-                Connectors.fromStructure(dsd), ref.getKey().toString(),
+                Connectors.fromStructure(dsd), ref.getQuery().getKey().toString(),
                 null, null,
-                ref.getFilter().getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY),
+                ref.getQuery().getDetail().equals(DataDetail.SERIES_KEYS_ONLY),
                 null, false);
     }
 

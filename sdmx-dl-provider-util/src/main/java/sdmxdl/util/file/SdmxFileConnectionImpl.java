@@ -16,9 +16,11 @@
  */
 package sdmxdl.util.file;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxValidators;
 
 import java.io.IOException;
@@ -88,21 +90,21 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataSet getData(DataRef dataRef) throws IOException, IllegalArgumentException {
-        try (Stream<Series> stream = getDataStream(dataRef)) {
-            return stream.collect(toDataSet(dataRef));
+    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+        try (Stream<Series> stream = getDataStream(flowRef, query)) {
+            return stream.collect(toDataSet(flowRef, query));
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(DataRef dataRef) throws IOException, IllegalArgumentException {
+    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
         checkState();
-        checkFlowRef(dataRef.getFlowRef());
+        checkFlowRef(flowRef);
 
         SdmxFileInfo info = client.decode();
-        checkKey(dataRef.getKey(), info);
+        checkKey(query.getKey(), info);
 
-        return client.loadData(info, dataRef);
+        return client.loadData(info, DataRef.of(flowRef, query));
     }
 
     @Override

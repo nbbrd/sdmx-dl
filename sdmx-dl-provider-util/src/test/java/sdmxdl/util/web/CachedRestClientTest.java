@@ -25,6 +25,7 @@ import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.samples.RepoSamples;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
 
 import java.io.IOException;
@@ -40,7 +41,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static sdmxdl.samples.RepoSamples.*;
-import static sdmxdl.tck.DataFilterAssert.filters;
 import static sdmxdl.tck.KeyAssert.keys;
 
 /**
@@ -103,8 +103,8 @@ public class CachedRestClientTest {
     @Test
     public void testGetData() throws IOException {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
-            for (DataFilter filter : filters(DataFilter.Detail.values())) {
-                DataRef ref = DataRef.of(FLOW_REF, key, filter);
+            for (DataDetail filter : DataDetail.values()) {
+                DataRef ref = DataRef.of(FLOW_REF, DataQuery.of(key, filter));
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> cursor = client.getData(ref, STRUCT)) {
@@ -112,13 +112,13 @@ public class CachedRestClientTest {
                     }
                 };
 
-                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref).collect(toList())));
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref.getQuery()).collect(toList())));
 
-                if (filter.getDetail().isDataRequested()) {
+                if (filter.isDataRequested()) {
                     checkCacheMiss(this::getClient, x, validator, noDataId, ttl);
                     checkCacheMiss(this::getClient, x, validator, seriesKeysOnlyId, ttl);
                 } else {
-                    if (filter.getDetail().isMetaRequested()) {
+                    if (filter.isMetaRequested()) {
                         checkCacheHit(this::getClient, x, validator, noDataId, ttl);
                     } else {
                         checkCacheHit(this::getClient, x, validator, seriesKeysOnlyId, ttl);
@@ -133,8 +133,8 @@ public class CachedRestClientTest {
         Context ctx = new Context();
         CachedRestClient client = getClient(ctx);
 
-        for (DataFilter filter : new DataFilter[]{DataFilter.SERIES_KEYS_ONLY, DataFilter.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, key, filter), STRUCT).close();
+        for (DataDetail filter : new DataDetail[]{DataDetail.SERIES_KEYS_ONLY, DataDetail.NO_DATA}) {
+            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, DataQuery.of(key, filter)), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);

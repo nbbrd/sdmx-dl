@@ -17,7 +17,6 @@
 package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
-import sdmxdl.DataSet;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.samples.ByteSource;
 import sdmxdl.samples.SdmxSource;
@@ -53,7 +52,7 @@ public class FacadeResource {
             result = SdmxRepository.builder()
                     .structures(structs)
                     .flows(flows)
-                    .dataSet(DataSet.builder().ref(DataRef.of(NBB_FLOW_REF)).data(data).build())
+                    .dataSet(DataSet.builder().ref(NBB_FLOW_REF).data(data).build())
                     .name("NBB")
                     .detailSupported(false)
                     .build();
@@ -75,7 +74,7 @@ public class FacadeResource {
             result = SdmxRepository.builder()
                     .structures(structs)
                     .flows(flows)
-                    .dataSet(DataSet.builder().ref(DataRef.of(ECB_FLOW_REF)).data(data).build())
+                    .dataSet(DataSet.builder().ref(ECB_FLOW_REF).data(data).build())
                     .name("ECB")
                     .detailSupported(true)
                     .build();

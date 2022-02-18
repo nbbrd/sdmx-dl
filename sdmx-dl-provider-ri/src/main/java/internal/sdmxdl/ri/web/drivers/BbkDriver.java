@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
@@ -89,8 +90,8 @@ public final class BbkDriver implements SdmxWebDriver {
         }
 
         private DataRef fixDataRef(DataRef ref, DataStructure dsd) {
-            return ref.getKey().equals(Key.ALL)
-                    ? DataRef.of(ref.getFlowRef(), alternateAllOf(dsd), ref.getFilter())
+            return ref.getQuery().getKey().equals(Key.ALL)
+                    ? DataRef.of(ref.getFlowRef(), DataQuery.of(alternateAllOf(dsd), ref.getQuery().getDetail()))
                     : ref;
         }
 
@@ -141,11 +142,11 @@ public final class BbkDriver implements SdmxWebDriver {
 
         @SdmxFix(id = 5, category = QUERY, cause = "Data detail parameter for series-keys-only has a typo")
         @Override
-        protected void applyFilter(DataFilter filter, URLQueryBuilder result) {
-            if (filter.getDetail().equals(DataFilter.Detail.SERIES_KEYS_ONLY)) {
+        protected void applyFilter(DataDetail detail, URLQueryBuilder result) {
+            if (detail.equals(DataDetail.SERIES_KEYS_ONLY)) {
                 result.param(DETAIL_PARAM, "serieskeyonly");
             } else {
-                super.applyFilter(filter, result);
+                super.applyFilter(detail, result);
             }
         }
     }

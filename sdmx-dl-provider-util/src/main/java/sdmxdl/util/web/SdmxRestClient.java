@@ -19,6 +19,7 @@ package sdmxdl.util.web;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
+import sdmxdl.util.DataRef;
 
 import java.io.IOException;
 import java.util.List;

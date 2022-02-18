@@ -7,10 +7,8 @@ import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataFilter;
-import sdmxdl.DataRef;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.*;
+import sdmxdl.util.DataRef;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +21,6 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static sdmxdl.samples.RepoSamples.*;
-import static sdmxdl.tck.DataFilterAssert.filters;
 import static sdmxdl.tck.KeyAssert.keys;
 
 public class CachedFileClientTest {
@@ -54,8 +51,8 @@ public class CachedFileClientTest {
         String loadDataKey = base + "/loadData";
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
-            for (DataFilter filter : filters(DataFilter.Detail.values())) {
-                DataRef ref = DataRef.of(FLOW_REF, key, filter);
+            for (DataDetail detail : DataDetail.values()) {
+                DataRef ref = DataRef.of(FLOW_REF, DataQuery.of(key, detail));
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> stream = client.loadData(client.decode(), ref)) {
@@ -63,9 +60,9 @@ public class CachedFileClientTest {
                     }
                 };
 
-                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref).collect(toList())));
+                HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref.getQuery()).collect(toList())));
 
-                if (filter.getDetail().isDataRequested()) {
+                if (detail.isDataRequested()) {
                     checkCacheMiss(this::getClient, x, validator, loadDataKey, ttl);
                 } else {
                     checkCacheHit(this::getClient, x, validator, loadDataKey, ttl);
@@ -80,7 +77,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         SdmxFileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, key, DataFilter.SERIES_KEYS_ONLY)).close();
+        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, DataQuery.of(key, DataDetail.SERIES_KEYS_ONLY))).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

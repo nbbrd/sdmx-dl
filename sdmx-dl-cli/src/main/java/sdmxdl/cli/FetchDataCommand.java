@@ -98,14 +98,15 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (Stream<Series> stream = conn.getDataStream(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
+        DataQuery query = DataQuery.of(web.getKey(), getDetail());
+        try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
             return stream
                     .sorted(WebFlowOptions.SERIES_BY_KEY)
-                    .collect(toDataSet(DataRef.of(web.getFlow(), web.getKey(), DataFilter.FULL)));
+                    .collect(toDataSet(web.getFlow(), query));
         }
     }
 
-    private static DataFilter getFilter() {
-        return DataFilter.FULL;
+    private static DataDetail getDetail() {
+        return DataDetail.FULL;
     }
 }

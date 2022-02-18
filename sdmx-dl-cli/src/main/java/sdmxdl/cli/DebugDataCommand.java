@@ -19,7 +19,7 @@ package sdmxdl.cli;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebKeyOptions;
 import picocli.CommandLine;
-import sdmxdl.DataFilter;
+import sdmxdl.DataDetail;
 import sdmxdl.Series;
 
 import java.util.concurrent.Callable;
@@ -39,7 +39,7 @@ public final class DebugDataCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataFilter.FULL).getData());
+        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataDetail.FULL).getData());
         return null;
     }
 }

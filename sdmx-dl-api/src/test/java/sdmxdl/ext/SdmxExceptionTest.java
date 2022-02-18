@@ -1,7 +1,8 @@
 package sdmxdl.ext;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
 
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -26,6 +27,6 @@ public class SdmxExceptionTest {
                 .isThrownBy(() -> SdmxException.missingStructure("abc", null));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> SdmxException.missingData(null, DataRef.of(DataflowRef.parse("xyz"), Key.ALL, DataFilter.FULL)));
+                .isThrownBy(() -> SdmxException.missingData(null, DataflowRef.parse("xyz")));
     }
 }

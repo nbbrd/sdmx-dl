@@ -16,10 +16,10 @@
  */
 package _test.sdmxdl;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -54,12 +54,12 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public DataSet getData(DataRef dataRef) {
+        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return DATA;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataRef dataRef) {
+        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return DATA.getData().stream();
         }
 
@@ -99,12 +99,12 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public DataSet getData(DataRef dataRef) {
+        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             throw new CustomException();
         }
 
         @Override
-        public Stream<Series> getDataStream(DataRef dataRef) {
+        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             throw new CustomException();
         }
 
@@ -144,12 +144,12 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public DataSet getData(DataRef dataRef) {
+        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return null;
         }
 
         @Override
-        public Stream<Series> getDataStream(DataRef dataRef) {
+        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return null;
         }
 
@@ -164,14 +164,13 @@ public enum TestConnection implements SdmxWebConnection {
         }
     };
 
-    public static final Duration PING = Duration.ofMillis(123);
     public static final String DRIVER = "validDriver";
     public static final Collection<Dataflow> FLOWS = Collections.emptyList();
     public static final DataflowRef FLOW_REF = DataflowRef.parse("flow");
     public static final DataStructureRef STRUCT_REF = DataStructureRef.parse("struct");
     public static final Dataflow FLOW = Dataflow.of(FLOW_REF, STRUCT_REF, "label");
     public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).primaryMeasureId("").label("").build();
-    public static final DataSet DATA =  DataSet.builder().ref(DataRef.of(FLOW_REF)).build();
+    public static final DataSet DATA = DataSet.builder().ref(FLOW_REF).build();
     public static final Key KEY = Key.ALL;
-    public static final DataFilter FILTER = DataFilter.FULL;
+    public static final DataDetail FILTER = DataDetail.FULL;
 }

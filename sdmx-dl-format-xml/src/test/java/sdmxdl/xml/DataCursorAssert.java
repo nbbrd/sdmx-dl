@@ -20,7 +20,7 @@ import internal.sdmxdl.tck.TckUtil;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.DataFilter;
+import sdmxdl.DataDetail;
 import sdmxdl.Key;
 
 import java.io.IOException;
@@ -29,11 +29,11 @@ import java.io.IOException;
 @lombok.experimental.UtilityClass
 public class DataCursorAssert {
 
-    public void assertCompliance(IOSupplier<DataCursor> supplier, Key key, DataFilter filter) {
-        TckUtil.run(s -> assertCompliance(s, supplier, key, filter));
+    public void assertCompliance(IOSupplier<DataCursor> supplier, Key key, DataDetail detail) {
+        TckUtil.run(s -> assertCompliance(s, supplier, key, detail));
     }
 
-    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier, Key key, DataFilter filter) throws Exception {
+    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier, Key key, DataDetail detail) throws Exception {
         try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
                 assertNonnull(s, c);
@@ -41,14 +41,14 @@ public class DataCursorAssert {
                 s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey()).matches(key::contains);
                 s.assertThat(c.getSeriesFrequency()).isNotNull().isEqualTo(c.getSeriesFrequency());
                 // attributes
-                if (!filter.getDetail().isMetaRequested()) {
+                if (!detail.isMetaRequested()) {
                     s.assertThat(c.getSeriesAttributes()).isEmpty();
                 } else {
                     s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
                     s.assertThat(c.getSeriesAttribute("hello")).isEqualTo(c.getSeriesAttribute("hello"));
                 }
                 // values
-                if (!filter.getDetail().isDataRequested()) {
+                if (!detail.isDataRequested()) {
                     s.assertThat(c.nextObs()).isFalse();
                 } else {
                     while (c.nextObs()) {

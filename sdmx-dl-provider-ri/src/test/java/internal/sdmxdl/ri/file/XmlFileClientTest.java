@@ -25,6 +25,7 @@ import sdmxdl.file.SdmxFileSource;
 import sdmxdl.samples.RepoSamples;
 import sdmxdl.samples.SdmxSource;
 import sdmxdl.tck.SdmxConnectionAssert;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileConnectionImpl;
 import sdmxdl.util.file.SdmxFileInfo;
@@ -57,7 +58,7 @@ public class XmlFileClientTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), Key.ALL, DataFilter.FULL))) {
+        try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), DataQuery.ALL))) {
             assertThat(o)
                     .hasSize(1)
                     .element(0)

@@ -18,18 +18,16 @@ package internal.sdmxdl.ri.web;
 
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataRef;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
+import sdmxdl.*;
+import sdmxdl.util.DataRef;
 
 import java.net.URL;
 
 import static internal.sdmxdl.ri.web.Sdmx21RestQueries.builder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.DataFilter.FULL;
-import static sdmxdl.DataFilter.SERIES_KEYS_ONLY;
+import static sdmxdl.DataDetail.FULL;
+import static sdmxdl.DataDetail.SERIES_KEYS_ONLY;
 
 /**
  * @author Philippe Charles
@@ -46,7 +44,7 @@ public class Sdmx21RestQueriesTest {
             assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(base, null));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(null, specificStruct));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(base, null));
-            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, DataRef.of(specificFlow, Key.ALL, SERIES_KEYS_ONLY)));
+            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))));
             assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(base, null));
         }
     }
@@ -95,23 +93,23 @@ public class Sdmx21RestQueriesTest {
     public void testGetDataQuery() {
         assertThat(builder().build())
                 .satisfies(x -> {
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, Key.ALL, FULL)))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL))))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, Key.ALL, SERIES_KEYS_ONLY)))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, Key.ALL, SERIES_KEYS_ONLY)))
+                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))))
                             .hasToString("http://base/data/all%2CEXR%2Clatest/all/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, key, SERIES_KEYS_ONLY)))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(key, SERIES_KEYS_ONLY))))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/D.NOK.EUR.SP00.A/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, key, SERIES_KEYS_ONLY)))
+                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(key, SERIES_KEYS_ONLY))))
                             .hasToString("http://base/data/all%2CEXR%2Clatest/D.NOK.EUR.SP00.A/all?detail=serieskeysonly");
                 });
 
-        assertThat(builder().trailingSlashRequired(true).build().getDataQuery(base, DataRef.of(specificFlow, Key.ALL, FULL)))
+        assertThat(builder().trailingSlashRequired(true).build().getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL))))
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all/");
     }
 

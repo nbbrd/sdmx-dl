@@ -28,7 +28,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @SealedType({
         DataStructure.class,
         Dataflow.class,
-        Codelist.class
+        Codelist.class,
+        DataSet.class
 })
 public abstract class Resource<T extends ResourceRef<T>> {
 

@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.repo.SdmxRepository;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
 import sdmxdl.web.SdmxWebSource;
 
@@ -132,13 +133,13 @@ final class CachedRestClient implements SdmxRestClient {
 
     @Override
     public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
-        if (ref.getFilter().getDetail().isDataRequested()) {
+        if (ref.getQuery().getDetail().isDataRequested()) {
             return delegate.getData(ref, dsd);
         }
-        DataSet result = ref.getFilter().getDetail().isMetaRequested()
+        DataSet result = ref.getQuery().getDetail().isMetaRequested()
                 ? loadNoDataWithCache(ref, dsd)
                 : loadSeriesKeysOnlyWithCache(ref, dsd);
-        return result.getDataStream(ref);
+        return result.getDataStream(ref.getQuery());
     }
 
     @Override
@@ -172,12 +173,12 @@ final class CachedRestClient implements SdmxRestClient {
 
     private DataSet loadSeriesKeysOnlyWithCache(DataRef ref, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(ref.getFlowRef());
-        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o.getRef()));
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getQuery().getKey(), o.getQuery()));
     }
 
     private DataSet loadNoDataWithCache(DataRef ref, DataStructure dsd) throws IOException {
         TypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
-        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getKey(), o.getRef()));
+        return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getQuery().getKey(), o.getQuery()));
     }
 
     private Dataflow peekDataflowFromCache(DataflowRef ref) {
@@ -200,13 +201,13 @@ final class CachedRestClient implements SdmxRestClient {
         return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 
-    private boolean isNarrowerRequest(Key key, DataRef ref) {
-        return !key.supersedes(ref.getKey()) && ref.getKey().contains(key);
+    private boolean isNarrowerRequest(Key key, DataQuery query) {
+        return !key.supersedes(query.getKey()) && query.getKey().contains(key);
     }
 
     private DataSet copyData(DataRef ref, DataStructure structure) throws IOException {
         try (Stream<Series> stream = delegate.getData(ref, structure)) {
-            return stream.collect(toDataSet(ref));
+            return stream.collect(toDataSet(ref.getFlowRef(), ref.getQuery()));
         }
     }
 

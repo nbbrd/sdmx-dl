@@ -2,6 +2,7 @@ package sdmxdl.util.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
+import sdmxdl.util.DataRef;
 
 import java.io.IOException;
 import java.util.stream.Stream;

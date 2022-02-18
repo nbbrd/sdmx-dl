@@ -19,6 +19,7 @@ package internal.sdmxdl.ri.web.drivers;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
+import sdmxdl.util.DataRef;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,7 +46,7 @@ public class AbsDriver2Test {
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetDataStructure/ABS_REGIONAL_ASGS/ABS");
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("ABS_REGIONAL_ASGS"), Key.parse("BANKRUPT_2.AUS.0.A"), DataFilter.FULL)))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("ABS_REGIONAL_ASGS"), DataQuery.of(Key.parse("BANKRUPT_2.AUS.0.A"), DataDetail.FULL))))
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetData/ABS_REGIONAL_ASGS/BANKRUPT_2.AUS.0.A/ABS?format=compact_v2");
     }

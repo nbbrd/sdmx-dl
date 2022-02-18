@@ -17,6 +17,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
 
@@ -146,13 +147,14 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public DataSet getData(DataRef dataRef) throws IOException {
-        Objects.requireNonNull(dataRef);
+    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(query);
 
         DataSet result;
 
         try {
-            result = delegate.getData(dataRef);
+            result = delegate.getData(flowRef, query);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -167,13 +169,14 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public Stream<Series> getDataStream(DataRef dataRef) throws IOException {
-        Objects.requireNonNull(dataRef);
+    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        Objects.requireNonNull(flowRef);
+        Objects.requireNonNull(query);
 
         Stream<Series> result;
 
         try {
-            result = delegate.getDataStream(dataRef);
+            result = delegate.getDataStream(flowRef, query);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {

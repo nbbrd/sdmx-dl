@@ -106,11 +106,11 @@ public class SdmxCubeUtil {
     }
 
     private Stream<Series> request(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
-        return conn.getDataStream(DataRef.of(flow, key, DataFilter.NO_DATA));
+        return conn.getDataStream(flow, DataQuery.of(key, DataDetail.NO_DATA));
     }
 
     private Stream<Series> requestWithData(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
-        return conn.getDataStream(DataRef.of(flow, key, DataFilter.FULL));
+        return conn.getDataStream(flow, DataQuery.of(key, DataDetail.FULL));
     }
 
     private Stream<Series> computeKeys(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {

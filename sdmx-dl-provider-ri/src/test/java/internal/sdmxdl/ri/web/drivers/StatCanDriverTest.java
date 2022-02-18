@@ -4,7 +4,10 @@ import nbbrd.io.text.TextParser;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sdmxdl.*;
+import sdmxdl.DataQuery;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.tck.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
@@ -43,14 +46,12 @@ public class StatCanDriverTest {
                     .isThrownBy(() -> connection.getStructure(badDataflowRef))
                     .withMessageContaining(msg);
 
-            DataRef badDataRef = DataRef.of(badDataflowRef, Key.ALL, DataFilter.FULL);
-
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getData(badDataRef))
+                    .isThrownBy(() -> connection.getData(badDataflowRef, DataQuery.ALL))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getDataStream(badDataRef))
+                    .isThrownBy(() -> connection.getDataStream(badDataflowRef, DataQuery.ALL))
                     .withMessageContaining(msg);
         }
     }
@@ -164,7 +165,7 @@ public class StatCanDriverTest {
                                         assertThat(dataSet.getData())
                                                 .hasSize(14);
                                         assertThat(dataSet.getRef())
-                                                .isEqualTo(DataRef.of(toDataflowRef(10100001)));
+                                                .isEqualTo(toDataflowRef(10100001));
                                     });
                         });
             }
