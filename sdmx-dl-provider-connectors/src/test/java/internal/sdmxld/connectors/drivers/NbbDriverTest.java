@@ -18,7 +18,7 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.NbbDriver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 
 /**
  * @author Philippe Charles

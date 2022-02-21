@@ -19,7 +19,7 @@ package sdmxdl.util.parser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.tck.ext.ObsParserAssert;
+import tests.sdmxdl.ext.ObsParserAssert;
 
 import java.util.function.UnaryOperator;
 

@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Key.ALL;
-import static sdmxdl.samples.RepoSamples.*;
 import static sdmxdl.util.SdmxCubeUtil.*;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 @SuppressWarnings("ConstantConditions")
 public class SdmxCubeUtilTest {

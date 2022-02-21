@@ -23,7 +23,7 @@ import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +40,7 @@ public class XMLStreamFlow21Test {
     public void test() throws IOException {
         Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(LanguagePriorityList.ANY)::parse);
 
-        assertThat(p.parseReader(SdmxSource.ECB_DATAFLOWS::openReader))
+        assertThat(p.parseReader(SdmxXmlSources.ECB_DATAFLOWS::openReader))
                 .containsExactly(
                         Dataflow.of(DataflowRef.of("ECB", "AME", "1.0"), DataStructureRef.of("ECB", "ECB_AME1", "1.0"), "AMECO"),
                         Dataflow.of(DataflowRef.of("ECB", "BKN", "1.0"), DataStructureRef.of("ECB", "ECB_BKN1", "1.0"), "Banknotes statistics"),

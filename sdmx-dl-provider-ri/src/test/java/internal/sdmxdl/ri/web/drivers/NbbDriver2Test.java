@@ -22,7 +22,7 @@ import internal.util.http.HttpResponseException;
 import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 

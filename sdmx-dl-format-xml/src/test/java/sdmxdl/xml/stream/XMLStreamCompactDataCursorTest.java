@@ -22,8 +22,8 @@ import sdmxdl.DataDetail;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.xml.DataCursor;
@@ -45,7 +45,7 @@ public class XMLStreamCompactDataCursorTest {
 
     @Test
     public void testCompactData20() throws Exception {
-        ByteSource xml = SdmxSource.OTHER_COMPACT20;
+        ByteSource xml = SdmxXmlSources.OTHER_COMPACT20;
         Key.Builder builder = Key.builder(asList("FREQ", "COLLECTION", "VIS_CTY", "JD_TYPE", "JD_CATEGORY"));
 
         DataCursorAssert.assertCompliance(() -> {
@@ -95,7 +95,7 @@ public class XMLStreamCompactDataCursorTest {
 
     @Test
     public void testCompactData21() throws Exception {
-        ByteSource xml = SdmxSource.OTHER_COMPACT21;
+        ByteSource xml = SdmxXmlSources.OTHER_COMPACT21;
         Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {

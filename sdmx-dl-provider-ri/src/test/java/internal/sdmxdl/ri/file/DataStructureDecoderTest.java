@@ -19,7 +19,7 @@ package internal.sdmxdl.ri.file;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructure;
 import sdmxdl.DataStructureRef;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic20().parseReader(SdmxSource.OTHER_GENERIC20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic20().parseReader(SdmxXmlSources.OTHER_GENERIC20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact20().parseReader(SdmxSource.OTHER_COMPACT20::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact20().parseReader(SdmxXmlSources.OTHER_COMPACT20::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.generic21().parseReader(SdmxSource.OTHER_GENERIC21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.generic21().parseReader(SdmxXmlSources.OTHER_GENERIC21::openReader)).isEqualTo(ds);
     }
 
     @Test
@@ -99,6 +99,6 @@ public class DataStructureDecoderTest {
                 .primaryMeasureId("OBS_VALUE")
                 .build();
 
-        assertThat(DataStructureDecoder.compact21().parseReader(SdmxSource.OTHER_COMPACT21::openReader)).isEqualTo(ds);
+        assertThat(DataStructureDecoder.compact21().parseReader(SdmxXmlSources.OTHER_COMPACT21::openReader)).isEqualTo(ds);
     }
 }

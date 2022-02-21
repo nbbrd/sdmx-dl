@@ -10,7 +10,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.samples.RepoSamples.STRUCT_REF;
+import static tests.sdmxdl.api.RepoSamples.STRUCT_REF;
 
 public class RiRestParsersTest {
 

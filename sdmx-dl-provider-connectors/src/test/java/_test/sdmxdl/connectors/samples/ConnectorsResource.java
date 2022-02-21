@@ -27,9 +27,9 @@ import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -53,9 +53,9 @@ public class ConnectorsResource {
     public SdmxRepository nbb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE, l);
-        List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE, l);
-        List<PortableTimeSeries<Double>> data = data20(SdmxSource.NBB_DATA, structs.get(0), l);
+        List<DataFlowStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+        List<PortableTimeSeries<Double>> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 
@@ -76,9 +76,9 @@ public class ConnectorsResource {
     public SdmxRepository ecb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE, l);
-        List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS, l);
-        List<PortableTimeSeries<Double>> data = data21(SdmxSource.ECB_DATA, structs.get(0), l);
+        List<DataFlowStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
+        List<PortableTimeSeries<Double>> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 

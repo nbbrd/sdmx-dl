@@ -6,9 +6,9 @@ import internal.util.http.ext.DumpingClientTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,7 +19,7 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static sdmxdl.samples.RepoSamples.*;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 public class RiRestClientTest {
 
@@ -34,7 +34,7 @@ public class RiRestClientTest {
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
         DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
-        assertThat(of(onResponseStream(SdmxSource.ECB_DATAFLOWS)).getFlow(ref)).satisfies(dsd -> {
+        assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATAFLOWS)).getFlow(ref)).satisfies(dsd -> {
                     assertThat(dsd.getRef()).isEqualTo(ref);
                 }
         );
@@ -51,7 +51,7 @@ public class RiRestClientTest {
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
         DataStructureRef ref = DataStructureRef.of("ECB", "ECB_AME1", "1.0");
-        assertThat(of(onResponseStream(SdmxSource.ECB_DATA_STRUCTURE)).getStructure(ref)).satisfies(dsd -> {
+        assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATA_STRUCTURE)).getStructure(ref)).satisfies(dsd -> {
                     assertThat(dsd.getRef()).isEqualTo(ref);
                     assertThat(dsd.getDimensions()).hasSize(7);
                 }
@@ -69,7 +69,7 @@ public class RiRestClientTest {
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
         CodelistRef ref = CodelistRef.of("ECB", "CL_AME_AGG_METHOD", "1.0");
-        assertThat(of(onResponseStream(SdmxSource.ECB_DATA_STRUCTURE)).getCodelist(ref))
+        assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATA_STRUCTURE)).getCodelist(ref))
                 .isEqualTo(Codelist
                         .builder()
                         .ref(ref)

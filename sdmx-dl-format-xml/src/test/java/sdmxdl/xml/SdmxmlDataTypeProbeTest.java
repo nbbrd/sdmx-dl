@@ -18,7 +18,7 @@ package sdmxdl.xml;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 
@@ -31,25 +31,25 @@ public class SdmxmlDataTypeProbeTest {
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxSource.OTHER_GENERIC20::openReader))
+        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxXmlSources.OTHER_GENERIC20::openReader))
                 .isEqualTo(SdmxMediaType.GENERIC_DATA_20);
     }
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxSource.OTHER_COMPACT20::openReader))
+        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxXmlSources.OTHER_COMPACT20::openReader))
                 .isEqualTo(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20);
     }
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxSource.OTHER_GENERIC21::openReader))
+        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxXmlSources.OTHER_GENERIC21::openReader))
                 .isEqualTo(SdmxMediaType.GENERIC_DATA_21);
     }
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxSource.OTHER_COMPACT21::openReader))
+        assertThat(SdmxmlDataTypeProbe.of().parseReader(SdmxXmlSources.OTHER_COMPACT21::openReader))
                 .isEqualTo(SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21);
     }
 }

@@ -22,8 +22,8 @@ import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.ext.FakeClock;
-import sdmxdl.tck.ext.SdmxCacheAssert;
+import tests.sdmxdl.ext.FakeClock;
+import tests.sdmxdl.ext.SdmxCacheAssert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

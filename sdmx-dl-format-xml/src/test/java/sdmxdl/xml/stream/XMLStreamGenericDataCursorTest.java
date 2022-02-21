@@ -21,8 +21,8 @@ import sdmxdl.DataDetail;
 import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.xml.DataCursor;
@@ -43,7 +43,7 @@ public class XMLStreamGenericDataCursorTest {
 
     @Test
     public void testGenericData20() throws Exception {
-        ByteSource xml = SdmxSource.NBB_DATA;
+        ByteSource xml = SdmxXmlSources.NBB_DATA;
         Key.Builder builder = Key.builder(asList("SUBJECT", "LOCATION", "FREQUENCY"));
 
         DataCursorAssert.assertCompliance(() -> {
@@ -97,7 +97,7 @@ public class XMLStreamGenericDataCursorTest {
 
     @Test
     public void testGenericData21() throws Exception {
-        ByteSource xml = SdmxSource.OTHER_GENERIC21;
+        ByteSource xml = SdmxXmlSources.OTHER_GENERIC21;
         Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {
@@ -143,7 +143,7 @@ public class XMLStreamGenericDataCursorTest {
 
     @Test
     public void testGenericData21Bis() throws Exception {
-        ByteSource xml = SdmxSource.ECB_DATA;
+        ByteSource xml = SdmxXmlSources.ECB_DATA;
         Key.Builder builder = Key.builder(asList("FREQ", "AME_REF_AREA", "AME_TRANSFORMATION", "AME_AGG_METHOD", "AME_UNIT", "AME_REFERENCE", "AME_ITEM"));
 
         DataCursorAssert.assertCompliance(() -> {

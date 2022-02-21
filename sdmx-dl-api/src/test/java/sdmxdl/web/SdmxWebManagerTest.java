@@ -17,16 +17,19 @@
 package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.SdmxConnection;
-import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import tests.sdmxdl.api.RepoSamples;
+import tests.sdmxdl.api.SdmxManagerAssert;
+import tests.sdmxdl.ext.MockedDialect;
+import tests.sdmxdl.web.MockedWebDriver;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.web.spi.SdmxWebDriver.NATIVE_RANK;
@@ -36,6 +39,35 @@ import static sdmxdl.web.spi.SdmxWebDriver.WRAPPED_RANK;
  * @author Philippe Charles
  */
 public class SdmxWebManagerTest {
+
+    @Test
+    public void testCompliance() {
+        URI endpoint = URI.create("http://" + RepoSamples.REPO.getName());
+        SdmxWebSource source = SdmxWebSource
+                .builder()
+                .name("repoSource")
+                .driver("repoDriver")
+                .dialect("azerty")
+                .endpoint(endpoint)
+                .build();
+        SdmxWebDriver driver = tests.sdmxdl.web.MockedWebDriver
+                .builder()
+                .name("repoDriver")
+                .rank(0)
+                .available(true)
+                .repo(endpoint, RepoSamples.REPO)
+                .source(source)
+                .build();
+        SdmxDialect dialect = new tests.sdmxdl.ext.MockedDialect("azerty");
+        SdmxManagerAssert.assertCompliance(
+                SdmxWebManager.builder().driver(driver).dialect(dialect).build(),
+                SdmxManagerAssert.Sample
+                        .<SdmxWebSource>builder()
+                        .validSource(source)
+                        .invalidSource(source.toBuilder().driver("other").build())
+                        .build()
+        );
+    }
 
     @Test
     @SuppressWarnings("null")
@@ -266,79 +298,6 @@ public class SdmxWebManagerTest {
 
     private static URI asURI(String o) {
         return URI.create(o);
-    }
-
-    @lombok.RequiredArgsConstructor
-    @lombok.Builder(toBuilder = true)
-    private static final class MockedWebDriver implements SdmxWebDriver {
-
-        @lombok.Getter
-        private final String name;
-
-        @lombok.Getter
-        private final int rank;
-
-        @lombok.Getter
-        private final boolean available;
-
-        @lombok.Singular
-        private final Map<URI, SdmxRepository> repos;
-
-        @lombok.Singular
-        private final List<SdmxWebSource> sources;
-
-        @lombok.Singular
-        private final List<String> supportedProperties;
-
-        @Override
-        public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
-            return connect(source.getEndpoint());
-        }
-
-        @Override
-        public Collection<SdmxWebSource> getDefaultSources() {
-            return sources;
-        }
-
-        @Override
-        public Collection<String> getSupportedProperties() {
-            return supportedProperties;
-        }
-
-        private SdmxWebConnection connect(URI endpoint) throws IOException {
-            SdmxRepository result = repos.get(endpoint);
-            if (result != null) {
-                return new MockedWebConnection(name, result.asConnection());
-            }
-            throw new IOException(endpoint.toString());
-        }
-    }
-
-    @lombok.RequiredArgsConstructor
-    private static final class MockedWebConnection implements SdmxWebConnection {
-
-        @lombok.Getter
-        private final String driver;
-
-        @lombok.experimental.Delegate
-        private final SdmxConnection delegate;
-    }
-
-    @lombok.RequiredArgsConstructor
-    private static final class MockedDialect implements SdmxDialect {
-
-        @lombok.Getter
-        private final String name;
-
-        @Override
-        public String getDescription() {
-            return getName();
-        }
-
-        @Override
-        public ObsFactory getObsFactory() {
-            return dsd -> null;
-        }
     }
 
     private static <K, V> AbstractMap.SimpleEntry<K, V> entryOf(K name, V source) {

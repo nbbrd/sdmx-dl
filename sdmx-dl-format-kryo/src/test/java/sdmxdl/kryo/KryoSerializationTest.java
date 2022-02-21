@@ -4,10 +4,10 @@ import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.samples.RepoSamples;
 import sdmxdl.web.SdmxWebMonitorReport;
 import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebStatus;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

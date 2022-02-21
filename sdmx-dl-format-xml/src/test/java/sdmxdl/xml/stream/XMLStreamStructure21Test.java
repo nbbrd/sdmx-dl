@@ -19,7 +19,7 @@ package sdmxdl.xml.stream;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.List;
@@ -38,7 +38,7 @@ public class XMLStreamStructure21Test {
     public void test() throws Exception {
         Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
-        assertThat(parser.parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
+        assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
@@ -66,7 +66,7 @@ public class XMLStreamStructure21Test {
         });
 
         assertThatIOException()
-                .isThrownBy(() -> parser.parseReader(SdmxSource.NBB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> parser.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }

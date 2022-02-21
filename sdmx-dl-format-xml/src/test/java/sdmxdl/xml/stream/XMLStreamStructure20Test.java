@@ -19,7 +19,7 @@ package sdmxdl.xml.stream;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.List;
@@ -38,7 +38,7 @@ public class XMLStreamStructure20Test {
     public void test() throws Exception {
         Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
-        assertThat(p1.parseReader(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -65,7 +65,7 @@ public class XMLStreamStructure20Test {
 
         Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
-        assertThat(p2.parseReader(SdmxSource.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -78,7 +78,7 @@ public class XMLStreamStructure20Test {
         });
 
         assertThatIOException()
-                .isThrownBy(() -> p1.parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> p1.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }

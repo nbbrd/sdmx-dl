@@ -3,7 +3,7 @@ package internal.sdmxdl.ri.web.drivers;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
 import sdmxdl.Dataflow;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;

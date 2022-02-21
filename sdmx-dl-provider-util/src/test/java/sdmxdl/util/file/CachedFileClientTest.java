@@ -20,8 +20,8 @@ import static _test.sdmxdl.util.CachingAssert.*;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static sdmxdl.samples.RepoSamples.*;
-import static sdmxdl.tck.KeyAssert.keys;
+import static tests.sdmxdl.api.KeyAssert.keys;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 public class CachedFileClientTest {
 

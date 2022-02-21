@@ -18,11 +18,11 @@ package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -46,9 +46,9 @@ public class FacadeResource {
         if (result == null) {
             LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-            List<DataStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE, l);
-            List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE, l);
-            List<Series> data = data20(SdmxSource.NBB_DATA, structs.get(0));
+            List<DataStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+            List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+            List<Series> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0));
 
             result = SdmxRepository.builder()
                     .structures(structs)
@@ -67,9 +67,9 @@ public class FacadeResource {
         if (result == null) {
             LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-            List<DataStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE, l);
-            List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS, l);
-            List<Series> data = data21(SdmxSource.ECB_DATA, structs.get(0));
+            List<DataStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
+            List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
+            List<Series> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0));
 
             result = SdmxRepository.builder()
                     .structures(structs)

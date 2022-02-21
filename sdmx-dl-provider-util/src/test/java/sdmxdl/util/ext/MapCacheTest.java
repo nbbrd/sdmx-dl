@@ -18,7 +18,7 @@ package sdmxdl.util.ext;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.ext.SdmxCacheAssert;
+import tests.sdmxdl.ext.SdmxCacheAssert;
 
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;

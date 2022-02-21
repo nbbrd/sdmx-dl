@@ -9,12 +9,12 @@ import sdmxdl.DataQuery;
 import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.RepoSamples;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.api.RepoSamples;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +41,7 @@ public class Sdmx21RestParsersTest {
     public void testGetFlowParser() throws IOException {
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowParser(y, ANY, RepoSamples.FLOW_REF);
         testParser(DEFAULT_DATAFLOW_TYPES, extractor);
-        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATAFLOWS);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxXmlSources.ECB_DATAFLOWS);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class Sdmx21RestParsersTest {
     public void testGetFlowsParser() throws IOException {
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getFlowsParser(y, ANY);
         testParser(DEFAULT_DATAFLOW_TYPES, extractor);
-        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATAFLOWS);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxXmlSources.ECB_DATAFLOWS);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class Sdmx21RestParsersTest {
     public void testGetStructureParser() throws IOException {
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getStructureParser(y, ANY, RepoSamples.STRUCT_REF);
         testParser(DEFAULT_DATASTRUCTURE_TYPES, extractor);
-        testContent(extractor, STRUCTURE_21_TYPE, SdmxSource.ECB_DATA_STRUCTURE);
+        testContent(extractor, STRUCTURE_21_TYPE, SdmxXmlSources.ECB_DATA_STRUCTURE);
     }
 
     @Test
@@ -75,10 +75,10 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetDataParser() throws IOException {
-        DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxSource.ECB_DATA_STRUCTURE::openStream);
+        DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxXmlSources.ECB_DATA_STRUCTURE::openStream);
         BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, ObsFactories.SDMX21).andThen(IOFunction.unchecked(Sdmx21RestParsersTest::toDataSet));
         testParser(DEFAULT_DATA_TYPES, extractor);
-        testContent(extractor, GENERIC_DATA_21_TYPE, SdmxSource.ECB_DATA);
+        testContent(extractor, GENERIC_DATA_21_TYPE, SdmxXmlSources.ECB_DATA);
     }
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {

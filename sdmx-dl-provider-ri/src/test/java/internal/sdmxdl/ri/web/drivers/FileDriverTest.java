@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 
 import java.io.IOException;
 import java.net.URI;

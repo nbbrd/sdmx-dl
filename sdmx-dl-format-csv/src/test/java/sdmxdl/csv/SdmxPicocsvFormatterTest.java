@@ -11,8 +11,8 @@ import java.util.function.Function;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.csv.SdmxCsvFields.*;
-import static sdmxdl.samples.RepoSamples.DATA_SET;
-import static sdmxdl.samples.RepoSamples.STRUCT;
+import static tests.sdmxdl.api.RepoSamples.DATA_SET;
+import static tests.sdmxdl.api.RepoSamples.STRUCT;
 
 public class SdmxPicocsvFormatterTest {
 

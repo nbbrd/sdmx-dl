@@ -22,13 +22,13 @@ import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.samples.RepoSamples;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.SdmxConnectionAssert;
+import tests.sdmxdl.api.RepoSamples;
+import tests.sdmxdl.api.SdmxConnectionAssert;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileConnectionImpl;
 import sdmxdl.util.file.SdmxFileInfo;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class XmlFileClientTest {
     @Test
     public void testCompactData21(@TempDir Path temp) throws IOException {
         File compact21 = temp.resolve("compact21").toFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
+        SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
         SdmxFileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxFileListener.noOp());

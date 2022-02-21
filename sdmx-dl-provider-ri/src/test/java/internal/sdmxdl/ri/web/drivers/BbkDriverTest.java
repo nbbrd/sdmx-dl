@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.util.DataRef;
 
 import java.net.MalformedURLException;

@@ -61,11 +61,6 @@
             </dependency>
             <dependency>
                 <groupId>com.github.nbbrd.sdmx-dl</groupId>
-                <artifactId>sdmx-dl-tck</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.nbbrd.sdmx-dl</groupId>
                 <artifactId>sdmx-dl-testing</artifactId>
                 <version>${project.version}</version>
             </dependency>

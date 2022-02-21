@@ -24,9 +24,9 @@ import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.samples.RepoSamples;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,8 +40,8 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static sdmxdl.samples.RepoSamples.*;
-import static sdmxdl.tck.KeyAssert.keys;
+import static tests.sdmxdl.api.KeyAssert.keys;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 /**
  * @author Philippe Charles

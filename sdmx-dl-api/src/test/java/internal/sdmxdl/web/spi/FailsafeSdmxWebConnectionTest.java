@@ -22,6 +22,7 @@ import _test.sdmxdl.TestConnection;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
 
@@ -66,7 +67,7 @@ public class FailsafeSdmxWebConnectionTest {
     @Test
     public void testGetFlows() throws IOException {
         failsafe.reset();
-        Assertions.assertThat(validDriver.getFlows()).isEqualTo(TestConnection.FLOWS);
+        Assertions.assertThat(validDriver.getFlows()).isEqualTo(RepoSamples.REPO.getFlows());
         failsafe.assertEmpty();
 
         failsafe.reset();
@@ -90,18 +91,18 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getFlow(TestConnection.FLOW_REF)).isEqualTo(TestConnection.FLOW);
+        Assertions.assertThat(validDriver.getFlow(RepoSamples.FLOW_REF)).isEqualTo(RepoSamples.FLOW);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getFlow(TestConnection.FLOW_REF))
+                .isThrownBy(() -> failingDriver.getFlow(RepoSamples.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getFlow(TestConnection.FLOW_REF))
+                .isThrownBy(() -> nullDriver.getFlow(RepoSamples.FLOW_REF))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -114,18 +115,18 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getStructure(TestConnection.FLOW_REF)).isEqualTo(TestConnection.STRUCT);
+        Assertions.assertThat(validDriver.getStructure(RepoSamples.FLOW_REF)).isEqualTo(RepoSamples.STRUCT);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getStructure(TestConnection.FLOW_REF))
+                .isThrownBy(() -> failingDriver.getStructure(RepoSamples.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getStructure(TestConnection.FLOW_REF))
+                .isThrownBy(() -> nullDriver.getStructure(RepoSamples.FLOW_REF))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -138,18 +139,18 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getData(TestConnection.FLOW_REF, QUERY)).isEqualTo(TestConnection.DATA);
+        Assertions.assertThat(validDriver.getData(RepoSamples.FLOW_REF, QUERY)).isEqualTo(RepoSamples.DATA_SET);
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getData(TestConnection.FLOW_REF, QUERY))
+                .isThrownBy(() -> failingDriver.getData(RepoSamples.FLOW_REF, QUERY))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getData(TestConnection.FLOW_REF, QUERY))
+                .isThrownBy(() -> nullDriver.getData(RepoSamples.FLOW_REF, QUERY))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -162,19 +163,19 @@ public class FailsafeSdmxWebConnectionTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDataStream(TestConnection.FLOW_REF, QUERY))
-                .containsExactlyElementsOf(TestConnection.DATA.getData());
+        Assertions.assertThat(validDriver.getDataStream(RepoSamples.FLOW_REF, QUERY))
+                .containsExactlyElementsOf(RepoSamples.DATA_SET.getData());
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> failingDriver.getDataStream(TestConnection.FLOW_REF, QUERY))
+                .isThrownBy(() -> failingDriver.getDataStream(RepoSamples.FLOW_REF, QUERY))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(() -> nullDriver.getDataStream(TestConnection.FLOW_REF, QUERY))
+                .isThrownBy(() -> nullDriver.getDataStream(RepoSamples.FLOW_REF, QUERY))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -217,5 +218,5 @@ public class FailsafeSdmxWebConnectionTest {
     private final FailsafeSdmxWebConnection failingDriver = new FailsafeSdmxWebConnection(TestConnection.FAILING, failsafe, failsafe);
     private final FailsafeSdmxWebConnection nullDriver = new FailsafeSdmxWebConnection(TestConnection.NULL, failsafe, failsafe);
 
-    private static final DataQuery QUERY = DataQuery.of(TestConnection.KEY, TestConnection.FILTER);
+    private static final DataQuery QUERY = DataQuery.ALL;
 }

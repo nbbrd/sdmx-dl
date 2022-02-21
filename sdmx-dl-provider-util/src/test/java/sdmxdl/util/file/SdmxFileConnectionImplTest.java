@@ -18,19 +18,16 @@ package sdmxdl.util.file;
 
 import _test.sdmxdl.util.XRepoFileClient;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataDetail;
 import sdmxdl.DataQuery;
-import sdmxdl.Key;
 import sdmxdl.Series;
-import sdmxdl.samples.RepoSamples;
-import sdmxdl.tck.SdmxConnectionAssert;
-import sdmxdl.tck.file.SdmxFileConnectionAssert;
+import tests.sdmxdl.api.RepoSamples;
+import tests.sdmxdl.api.SdmxConnectionAssert;
+import tests.sdmxdl.file.SdmxFileConnectionAssert;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
  * @author Philippe Charles

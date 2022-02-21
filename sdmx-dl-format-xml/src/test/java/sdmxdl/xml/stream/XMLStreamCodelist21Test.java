@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Codelist;
 import sdmxdl.CodelistRef;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.List;
@@ -19,7 +19,7 @@ public class XMLStreamCodelist21Test {
     public void test() throws Exception {
         Xml.Parser<List<Codelist>> parser = SdmxXmlStreams.codelist21(LanguagePriorityList.ANY);
 
-        assertThat(parser.parseReader(SdmxSource.ECB_DATA_STRUCTURE::openReader))
+        assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader))
                 .hasSize(9)
                 .element(0)
                 .satisfies(codelist -> {
@@ -31,7 +31,7 @@ public class XMLStreamCodelist21Test {
                 });
 
         assertThatIOException()
-                .isThrownBy(() -> parser.parseReader(SdmxSource.NBB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> parser.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }

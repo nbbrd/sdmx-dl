@@ -16,7 +16,7 @@
  */
 package sdmxdl.xml;
 
-import internal.sdmxdl.tck.TckUtil;
+import tests.sdmxdl.api.TckUtil;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;

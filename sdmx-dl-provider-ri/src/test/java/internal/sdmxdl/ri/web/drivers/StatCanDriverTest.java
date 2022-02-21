@@ -8,7 +8,7 @@ import sdmxdl.DataQuery;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;

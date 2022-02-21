@@ -1,12 +1,12 @@
 package sdmxdl.util.web;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.samples.RepoSamples.REPO;
+import static tests.sdmxdl.api.RepoSamples.REPO;
 
 public class SdmxRepoDriverSupportTest {
 

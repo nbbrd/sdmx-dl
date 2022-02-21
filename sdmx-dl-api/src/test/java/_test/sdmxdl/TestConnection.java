@@ -19,9 +19,9 @@ package _test.sdmxdl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebConnection;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -42,27 +42,27 @@ public enum TestConnection implements SdmxWebConnection {
 
         @Override
         public Collection<Dataflow> getFlows() {
-            return FLOWS;
+            return RepoSamples.REPO.getFlows();
         }
 
         @Override
         public Dataflow getFlow(DataflowRef flowRef) {
-            return FLOW;
+            return RepoSamples.FLOW;
         }
 
         @Override
         public DataStructure getStructure(DataflowRef flowRef) {
-            return STRUCT;
+            return RepoSamples.STRUCT;
         }
 
         @Override
         public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
-            return DATA;
+            return RepoSamples.DATA_SET;
         }
 
         @Override
         public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
-            return DATA.getData().stream();
+            return RepoSamples.DATA_SET.getData().stream();
         }
 
         @Override
@@ -167,12 +167,4 @@ public enum TestConnection implements SdmxWebConnection {
     };
 
     public static final String DRIVER = "validDriver";
-    public static final Collection<Dataflow> FLOWS = Collections.emptyList();
-    public static final DataflowRef FLOW_REF = DataflowRef.parse("flow");
-    public static final DataStructureRef STRUCT_REF = DataStructureRef.parse("struct");
-    public static final Dataflow FLOW = Dataflow.of(FLOW_REF, STRUCT_REF, "label");
-    public static final DataStructure STRUCT = DataStructure.builder().ref(STRUCT_REF).primaryMeasureId("").label("").build();
-    public static final DataSet DATA = DataSet.builder().ref(FLOW_REF).build();
-    public static final Key KEY = Key.ALL;
-    public static final DataDetail FILTER = DataDetail.FULL;
 }

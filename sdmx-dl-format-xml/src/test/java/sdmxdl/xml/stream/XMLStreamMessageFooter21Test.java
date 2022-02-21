@@ -4,7 +4,7 @@ import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.MessageFooter;
-import sdmxdl.samples.SdmxSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -27,7 +27,7 @@ public class XMLStreamMessageFooter21Test {
                 });
 
         assertThatIOException()
-                .isThrownBy(() -> parser.parseReader(SdmxSource.NBB_DATA_STRUCTURE::openReader))
+                .isThrownBy(() -> parser.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader))
                 .withCauseInstanceOf(XMLStreamException.class)
                 .withMessageContaining("Invalid namespace");
     }

@@ -18,7 +18,7 @@ package internal.sdmxld.connectors;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructure;
-import sdmxdl.samples.RepoSamples;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.net.HttpURLConnection;
 
@@ -26,7 +26,7 @@ import static internal.sdmxdl.connectors.Connectors.*;
 import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static sdmxdl.samples.RepoSamples.*;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 /**
  * @author Philippe Charles

@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.SdmxFileContext;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.tck.file.SdmxFileReaderAssert;
+import tests.sdmxdl.file.SdmxFileReaderAssert;
 import sdmxdl.xml.XmlFileSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class XmlFileReaderTest {
     @Test
     public void testCompliance(@TempDir Path temp) throws IOException {
         File compact21 = temp.resolve("valid.xml").toFile();
-        SdmxSource.OTHER_COMPACT21.copyTo(compact21);
+        SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource validSource = SdmxFileSource.builder().data(compact21).build();
         String validName = XmlFileSource.getFormatter().formatToString(validSource);
