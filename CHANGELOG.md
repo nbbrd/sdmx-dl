@@ -11,21 +11,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
 - Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
-- Add multi-language descriptions in SdmxWebSource [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
+- Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
 - Add Maven BOM
 
 ### Changed
 
-- Change FileDriver to be optional
+- Change `FileDriver` to be optional
 - Enforce https on ISTAT source
-- Remove DataCursor from API
-- Refactor SdmxManager API
+- Refactor `SdmxManager` API
 - Replace `SdmxWebConnection#ping()` with `SdmxConnection#testConnection()`
-- Refactor data queries API
+- Refactor data query API [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
 
 ### Fixed
 
-- Fix input validation of StatCanDriver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
+- Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
 - Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
 - Fix use of reflection in native image
 - Fix missing resources in native image
