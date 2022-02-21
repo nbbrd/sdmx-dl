@@ -16,7 +16,7 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Feature;
+import sdmxdl.Feature;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;

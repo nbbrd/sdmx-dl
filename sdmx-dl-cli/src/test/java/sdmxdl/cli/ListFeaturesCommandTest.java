@@ -44,7 +44,7 @@ public class ListFeaturesCommandTest {
 
         assertThat(FileSample.readAll(out))
                 .contains("SupportedFeature", atIndex(0))
-                .contains("SERIES_KEYS_ONLY", atIndex(1))
-                .hasSize(2);
+                .contains("DATA_QUERY_DETAIL", atIndex(2))
+                .hasSize(3);
     }
 }

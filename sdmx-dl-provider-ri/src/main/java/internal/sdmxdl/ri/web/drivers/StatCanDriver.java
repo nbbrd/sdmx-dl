@@ -171,8 +171,8 @@ public final class StatCanDriver implements SdmxWebDriver {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            return true;
+        public Set<Feature> getSupportedFeatures() {
+            return EnumSet.allOf(Feature.class);
         }
 
         @Override

@@ -180,16 +180,22 @@ public class FailsafeSdmxWebConnectionTest {
     }
 
     @Test
-    public void testIsDetailSupported() throws IOException {
+    public void testGetSupportedFeatures() throws IOException {
         failsafe.reset();
-        Assertions.assertThat(validDriver.isDetailSupported()).isEqualTo(true);
+        Assertions.assertThat(validDriver.getSupportedFeatures()).isNotNull();
         failsafe.assertEmpty();
 
         failsafe.reset();
         Assertions.assertThatIOException()
-                .isThrownBy(failingDriver::isDetailSupported)
+                .isThrownBy(failingDriver::getSupportedFeatures)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
+
+        failsafe.reset();
+        Assertions.assertThatIOException()
+                .isThrownBy(() -> nullDriver.getSupportedFeatures())
+                .withNoCause();
+        failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test

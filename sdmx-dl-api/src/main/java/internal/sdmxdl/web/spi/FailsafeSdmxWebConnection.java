@@ -24,6 +24,7 @@ import sdmxdl.web.SdmxWebConnection;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -191,12 +192,20 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
     }
 
     @Override
-    public boolean isDetailSupported() throws IOException {
+    public Set<Feature> getSupportedFeatures() throws IOException {
+        Set<Feature> result;
+
         try {
-            return delegate.isDetailSupported();
+            result = delegate.getSupportedFeatures();
         } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting detail support");
+            throw unexpectedError(ex, "while getting supported features");
         }
+
+        if (result == null) {
+            throw unexpectedNull("supported features");
+        }
+
+        return result;
     }
 
     @Override

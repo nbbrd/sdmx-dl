@@ -23,9 +23,7 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -225,8 +223,8 @@ public final class RngDriver implements SdmxWebDriver {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            return true;
+        public Set<Feature> getSupportedFeatures() {
+            return EnumSet.allOf(Feature.class);
         }
 
         @Override

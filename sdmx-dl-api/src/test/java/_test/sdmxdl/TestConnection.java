@@ -22,6 +22,8 @@ import sdmxdl.web.SdmxWebConnection;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -64,8 +66,8 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            return true;
+        public Set<Feature> getSupportedFeatures() {
+            return EnumSet.noneOf(Feature.class);
         }
 
         @Override
@@ -109,7 +111,7 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isDetailSupported() {
+        public Set<Feature> getSupportedFeatures() {
             throw new CustomException();
         }
 
@@ -154,8 +156,8 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            throw new UnsupportedOperationException();
+        public Set<Feature> getSupportedFeatures() {
+            return null;
         }
 
         @Override

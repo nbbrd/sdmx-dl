@@ -25,6 +25,7 @@ import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -54,7 +55,6 @@ public class FacadeResource {
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(NBB_FLOW_REF).data(data).build())
                     .name("NBB")
-                    .detailSupported(false)
                     .build();
 
             NBB.set(result);
@@ -76,7 +76,7 @@ public class FacadeResource {
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(ECB_FLOW_REF).data(data).build())
                     .name("ECB")
-                    .detailSupported(true)
+                    .supportedFeatures(EnumSet.allOf(Feature.class))
                     .build();
 
             ECB.set(result);

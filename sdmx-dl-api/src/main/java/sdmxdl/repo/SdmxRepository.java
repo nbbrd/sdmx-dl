@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -53,8 +50,9 @@ public class SdmxRepository {
     @lombok.Singular
     List<DataSet> dataSets;
 
-    @lombok.Builder.Default
-    boolean detailSupported = true;
+    @lombok.NonNull
+    @lombok.Singular
+    Set<Feature> supportedFeatures;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -164,8 +162,8 @@ public class SdmxRepository {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            return repo.isDetailSupported();
+        public Set<Feature> getSupportedFeatures() {
+            return repo.getSupportedFeatures();
         }
 
         @Override

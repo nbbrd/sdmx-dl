@@ -18,12 +18,12 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
+import sdmxdl.Feature;
 import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -47,9 +47,7 @@ public class WebSourceOptions extends WebNetOptions {
 
     public Set<Feature> loadFeatures(SdmxWebManager manager) throws IOException {
         try (SdmxWebConnection conn = open(manager)) {
-            return conn.isDetailSupported()
-                    ? Collections.singleton(Feature.SERIES_KEYS_ONLY)
-                    : Collections.emptySortedSet();
+            return conn.getSupportedFeatures();
         }
     }
 

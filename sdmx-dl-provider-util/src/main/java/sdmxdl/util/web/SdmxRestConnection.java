@@ -24,6 +24,8 @@ import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -84,29 +86,35 @@ final class SdmxRestConnection implements SdmxWebConnection {
         checkState();
         checkDataflowRef(flowRef);
 
-        DataflowRef resultFlowRef = flowRef;
+        DataflowRef realFlowRef = flowRef;
         DataStructureRef structRef = client.peekStructureRef(flowRef);
 
         if (structRef == null) {
             Dataflow flow = client.getFlow(flowRef);
             structRef = flow.getStructureRef();
-            resultFlowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
+            realFlowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
         }
 
-        Key key = query.getKey();
-        DataDetail detail = query.getDetail();
-
         DataStructure structure = client.getStructure(structRef);
-        checkKey(key, structure);
+        checkKey(query.getKey(), structure);
 
-        return isDetailSupported()
-                ? client.getData(DataRef.of(resultFlowRef, DataQuery.of(key, detail)), structure)
-                : query.execute(client.getData(DataRef.of(resultFlowRef, DataQuery.of(key, DataDetail.FULL)), structure));
+        Set<Feature> features = getSupportedFeatures();
+
+        DataQuery realQuery = DataQuery.of(
+                features.contains(Feature.DATA_QUERY_KEY) ? query.getKey() : Key.ALL,
+                features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL
+        );
+
+        Stream<Series> result = client.getData(DataRef.of(realFlowRef, realQuery), structure);
+
+        return realQuery.equals(query) ? result : query.execute(result);
     }
 
     @Override
-    public boolean isDetailSupported() throws IOException {
-        return client.isDetailSupported();
+    public Set<Feature> getSupportedFeatures() throws IOException {
+        return client.isDetailSupported()
+                ? EnumSet.of(Feature.DATA_QUERY_KEY, Feature.DATA_QUERY_DETAIL)
+                : EnumSet.of(Feature.DATA_QUERY_KEY);
     }
 
     @Override

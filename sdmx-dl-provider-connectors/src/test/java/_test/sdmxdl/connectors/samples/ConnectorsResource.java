@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -68,7 +69,6 @@ public class ConnectorsResource {
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
-                .detailSupported(false)
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class ConnectorsResource {
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
-                .detailSupported(true)
+                .supportedFeatures(EnumSet.allOf(Feature.class))
                 .build();
     }
 

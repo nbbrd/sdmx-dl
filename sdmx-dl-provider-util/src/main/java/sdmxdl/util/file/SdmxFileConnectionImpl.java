@@ -24,9 +24,7 @@ import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxValidators;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -108,8 +106,8 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public boolean isDetailSupported() {
-        return true;
+    public Set<Feature> getSupportedFeatures() {
+        return EnumSet.allOf(Feature.class);
     }
 
     @Override

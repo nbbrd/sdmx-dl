@@ -2,10 +2,7 @@ package sdmxdl.util;
 
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Frequency;
-import sdmxdl.Key;
-import sdmxdl.SdmxConnection;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.repo.SdmxRepository;
 
 import java.io.IOException;
@@ -39,7 +36,7 @@ public class SdmxCubeUtilTest {
             .build();
 
     private static final SdmxRepository WITH_DETAIL = REPO;
-    private static final SdmxRepository WITHOUT_DETAIL = REPO.toBuilder().detailSupported(false).build();
+    private static final SdmxRepository WITHOUT_DETAIL = REPO.toBuilder().clearSupportedFeatures().build();
 
     @Test
     public void testGetAllSeries() throws IOException {
@@ -52,7 +49,7 @@ public class SdmxCubeUtilTest {
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
-                if (repo.isDetailSupported()) {
+                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, ALL))).containsExactly(noData(S1), noData(S2), noData(S3));
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, M__))).containsExactly(noData(S1), noData(S2), noData(S3));
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, M_BE_))).containsExactly(noData(S1), noData(S2));
@@ -76,7 +73,7 @@ public class SdmxCubeUtilTest {
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
-                if (repo.isDetailSupported()) {
+                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, ALL))).containsExactly(S1, S2, S3);
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, M__))).containsExactly(S1, S2, S3);
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, M_BE_))).containsExactly(S1, S2);
@@ -144,7 +141,7 @@ public class SdmxCubeUtilTest {
                 assertThat(getChildren(conn, FLOW_REF, M__, 1)).containsExactly("BE", "FR");
                 assertThat(getChildren(conn, FLOW_REF, M__, 2)).containsExactly("INDUSTRY", "XXX");
 
-                if (repo.isDetailSupported()) {
+                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
                     assertThat(getChildren(conn, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
                     assertThat(getChildren(conn, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY");
                 } else {

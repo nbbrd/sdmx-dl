@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -42,5 +43,5 @@ public interface SdmxConnection extends Closeable {
 
     @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException;
 
-    boolean isDetailSupported() throws IOException;
+    @NonNull Set<Feature> getSupportedFeatures() throws IOException;
 }

@@ -36,10 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Philippe Charles
@@ -124,6 +121,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.setReferences(false);
         result.setRegistrationRequired(true);
 
+        result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
         result.register(SdmxRepository.class, new SdmxRepositorySerializer());
         result.register(DataStructure.class, new DataStructureSerializer());
         result.register(DataStructureRef.class, new DataStructureRefSerializer());
@@ -147,6 +145,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
         result.register(Instant.class, new TimeSerializers.InstantSerializer());
+        result.register(HashSet.class, new CollectionSerializer());
 
         return result;
     }
@@ -193,6 +192,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         private final Serializer<Collection<DataStructure>> structures = new CustomCollectionSerializer<>(DataStructure.class);
         private final Serializer<Collection<Dataflow>> flows = new CustomCollectionSerializer<>(Dataflow.class);
         private final Serializer<Collection<DataSet>> dataSets = new CustomCollectionSerializer<>(DataSet.class);
+        private final Serializer<Collection<Feature>> features = new CustomCollectionSerializer<>(Feature.class);
 
         @Override
         public void write(Kryo kryo, Output output, SdmxRepository t) {
@@ -200,7 +200,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
-            output.writeBoolean(t.isDetailSupported());
+            kryo.writeObject(output, t.getSupportedFeatures(), features);
             kryo.writeObjectOrNull(output, t.getCreationTime(), Instant.class);
             kryo.writeObjectOrNull(output, t.getExpirationTime(), Instant.class);
         }
@@ -214,7 +214,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
-                    .detailSupported(input.readBoolean())
+                    .supportedFeatures(kryo.readObject(input, HashSet.class, features))
                     .creationTime(kryo.readObjectOrNull(input, Instant.class))
                     .expirationTime(kryo.readObjectOrNull(input, Instant.class))
                     .build();

@@ -39,7 +39,7 @@ public class SdmxCubeUtil {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
-        return conn.isDetailSupported()
+        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
                 ? request(conn, flow, node).map(series -> series.toBuilder().freq(Frequency.UNDEFINED).build())
                 : computeKeys(conn, flow, node);
     }
@@ -48,7 +48,7 @@ public class SdmxCubeUtil {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
-        return conn.isDetailSupported()
+        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
                 ? requestWithData(conn, flow, node)
                 : computeKeysAndRequestData(conn, flow, node);
     }
@@ -81,7 +81,7 @@ public class SdmxCubeUtil {
         if (!node.equals(Key.ALL) && !node.isWildcard(dimensionIndex)) {
             throw new IllegalArgumentException("Expecting wildcard on dimensionIndex");
         }
-        return conn.isDetailSupported()
+        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
                 ? request(conn, flow, node).map(series -> series.getKey().get(dimensionIndex)).distinct()
                 : computeAllPossibleChildren(conn.getStructure(flow).getDimensionList(), dimensionIndex);
     }
