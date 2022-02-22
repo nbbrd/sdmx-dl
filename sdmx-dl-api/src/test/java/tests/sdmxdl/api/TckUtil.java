@@ -1,6 +1,8 @@
 package tests.sdmxdl.api;
 
 import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.description.Description;
+import org.assertj.core.description.TextDescription;
 
 @lombok.experimental.UtilityClass
 public class TckUtil {
@@ -10,7 +12,7 @@ public class TckUtil {
         void run(SoftAssertions s) throws Exception;
     }
 
-    public void run(TckTests tests) {
+    public static void run(TckTests tests) {
         SoftAssertions s = new SoftAssertions();
         try {
             tests.run(s);
@@ -18,5 +20,9 @@ public class TckUtil {
             s.fail("Unexpected exception", ex);
         }
         s.assertAll();
+    }
+
+    public static Description nullDescriptionOf(String method, String parameter) {
+        return new TextDescription("Expecting '%s' to raise NPE when called with null %s", method, parameter);
     }
 }

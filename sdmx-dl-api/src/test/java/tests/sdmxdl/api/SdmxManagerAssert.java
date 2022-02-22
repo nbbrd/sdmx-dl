@@ -22,6 +22,8 @@ import sdmxdl.SdmxManager;
 
 import java.io.IOException;
 
+import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
+
 /**
  * @author Philippe Charles
  */
@@ -51,7 +53,7 @@ public class SdmxManagerAssert {
 
     private <SOURCE> void checkGetConnection(SoftAssertions s, SdmxManager<SOURCE> manager, Sample<SOURCE> sample) {
         s.assertThatThrownBy(() -> manager.getConnection(null))
-                .as("Expecting 'getConnection(SOURCE)' to raise NPE when called with null name")
+                .as(nullDescriptionOf("getConnection(SOURCE)", "source"))
                 .isInstanceOf(NullPointerException.class);
 
         if (sample.validSource != null) {
@@ -60,7 +62,7 @@ public class SdmxManagerAssert {
                         .as("Expecting 'getConnection(SOURCE)' to return a non-null connection")
                         .isNotNull();
             } catch (IOException ex) {
-                s.fail("Expecting 'getConnection(SOURCE)' to not raise IOException on valid name", ex);
+                s.fail("Not expected to raise exception", ex);
             }
         }
 

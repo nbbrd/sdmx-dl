@@ -37,7 +37,8 @@ import java.util.Optional;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxFileManager implements SdmxManager<SdmxFileSource> {
+@lombok.EqualsAndHashCode(callSuper = false)
+public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @NonNull
     public static SdmxFileManager ofServiceLoader() {

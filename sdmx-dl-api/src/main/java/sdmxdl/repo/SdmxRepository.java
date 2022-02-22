@@ -129,6 +129,7 @@ public class SdmxRepository {
         @Override
         public Dataflow getFlow(DataflowRef flowRef) throws IOException {
             checkState();
+            checkDataflowRef(flowRef);
             return repo
                     .getFlow(flowRef)
                     .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), flowRef));
@@ -137,6 +138,7 @@ public class SdmxRepository {
         @Override
         public DataStructure getStructure(DataflowRef flowRef) throws IOException {
             checkState();
+            checkDataflowRef(flowRef);
             DataStructureRef structRef = getFlow(flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
@@ -146,6 +148,8 @@ public class SdmxRepository {
         @Override
         public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             checkState();
+            checkDataflowRef(flowRef);
+            checkKey(query.getKey(), getStructure(flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
@@ -155,6 +159,8 @@ public class SdmxRepository {
         @Override
         public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             checkState();
+            checkDataflowRef(flowRef);
+            checkKey(query.getKey(), getStructure(flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
@@ -174,6 +180,19 @@ public class SdmxRepository {
         private void checkState() throws IOException {
             if (closed) {
                 throw SdmxException.connectionClosed(repo.getName());
+            }
+        }
+
+        private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {
+//            if (!repo.getFlow(ref).isPresent()) {
+//                throw new IllegalArgumentException(ref.toString());
+//            }
+        }
+
+        private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
+            String error = key.validateOn(dsd);
+            if (error != null) {
+                throw new IllegalArgumentException(error);
             }
         }
     }

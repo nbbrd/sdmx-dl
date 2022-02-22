@@ -12,7 +12,7 @@ public class SdmxFileListenerTest {
 
     @Test
     public void testDefault() {
-        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.SdmxListeners");
+        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.LoggingListener");
         logCaptor.setLogLevelToInfo();
 
         SdmxFileListenerAssert.assertCompliance(SdmxFileListener.getDefault());

@@ -16,7 +16,7 @@
  */
 package sdmxdl.web.spi;
 
-import internal.sdmxdl.web.spi.FailsafeSdmxWebDriver;
+import internal.sdmxdl.web.spi.FailsafeWebDriver;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
@@ -35,7 +35,7 @@ import java.util.Collection;
  */
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        wrapper = FailsafeSdmxWebDriver.class,
+        wrapper = FailsafeWebDriver.class,
         loaderName = "internal.util.SdmxWebDriverLoader"
 )
 @ThreadSafe

@@ -70,7 +70,7 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
     @NonNull
     protected static <T extends ResourceRef<T>> T create(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
         Objects.requireNonNull(input, "input");
-        String[] items = Chars.splitToArray(input, SEP);
+        String[] items = Chars.splitToArray(input.toString(), SEP);
         switch (items.length) {
             case 3:
                 return factory.create(Chars.emptyToDefault(items[0], ALL_AGENCIES), items[1], Chars.emptyToDefault(items[2], LATEST_VERSION));

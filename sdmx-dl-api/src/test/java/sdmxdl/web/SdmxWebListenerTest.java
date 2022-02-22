@@ -18,7 +18,7 @@ public class SdmxWebListenerTest {
 
     @Test
     public void testDefault() {
-        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.SdmxListeners");
+        LogCaptor logCaptor = LogCaptor.forName("internal.sdmxdl.LoggingListener");
         logCaptor.setLogLevelToInfo();
 
         SdmxWebListenerAssert.assertCompliance(SdmxWebListener.getDefault());

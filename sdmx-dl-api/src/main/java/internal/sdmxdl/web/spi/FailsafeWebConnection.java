@@ -27,30 +27,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
  */
 @SuppressWarnings("ConstantConditions")
-@lombok.extern.java.Log
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class FailsafeSdmxWebConnection implements SdmxWebConnection {
+final class FailsafeWebConnection implements SdmxWebConnection {
 
     static SdmxWebConnection wrap(SdmxWebConnection obj) {
-        return obj instanceof FailsafeSdmxWebConnection
-                ? obj
-                : new FailsafeSdmxWebConnection(obj,
-                FailsafeSdmxWebConnection::logUnexpectedError,
-                FailsafeSdmxWebConnection::logUnexpectedNull
-        );
-    }
-
-    static SdmxWebConnection unwrap(SdmxWebConnection obj) {
-        return obj instanceof FailsafeSdmxWebConnection
-                ? ((FailsafeSdmxWebConnection) obj).delegate
-                : obj;
+        if (obj instanceof FailsafeWebConnection) return obj;
+        FailsafeLogging logging = FailsafeLogging.of(FailsafeWebDriver.class);
+        return new FailsafeWebConnection(obj, logging::logUnexpectedError, logging::logUnexpectedNull);
     }
 
     @lombok.NonNull
@@ -227,17 +216,5 @@ final class FailsafeSdmxWebConnection implements SdmxWebConnection {
         String msg = "Unexpected null " + context;
         onUnexpectedNull.accept(msg);
         return new IOException(msg);
-    }
-
-    private static void logUnexpectedError(String msg, RuntimeException ex) {
-        if (log.isLoggable(Level.WARNING)) {
-            log.log(Level.WARNING, msg, ex);
-        }
-    }
-
-    private static void logUnexpectedNull(String msg) {
-        if (log.isLoggable(Level.WARNING)) {
-            log.log(Level.WARNING, msg);
-        }
     }
 }

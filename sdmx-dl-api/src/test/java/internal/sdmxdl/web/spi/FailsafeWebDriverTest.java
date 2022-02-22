@@ -19,99 +19,123 @@ package internal.sdmxdl.web.spi;
 import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
+import tests.sdmxdl.web.MockedWebDriver;
+import tests.sdmxdl.web.SdmxWebDriverAssert;
 
 import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 /**
  * @author Philippe Charles
  */
 @lombok.extern.java.Log
-public class FailsafeSdmxWebDriverTest {
+public class FailsafeWebDriverTest {
+
+    @Test
+    public void testCompliance() {
+        SdmxWebDriverAssert.assertCompliance(
+                FailsafeWebDriver.wrap(MockedWebDriver.builder().build())
+        );
+    }
 
     @Test
     public void testGetName() {
         failsafe.reset();
-        Assertions.assertThat(validDriver.getName()).isEqualTo("valid");
+        assertThat(valid.getName()).isEqualTo("valid");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(failingDriver.getName()).isEqualTo(TestDriver.FAILING.getClass().getName());
+        assertThat(failing.getName()).isEqualTo(TestDriver.FAILING.getClass().getName());
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        Assertions.assertThat(nullDriver.getName()).isEqualTo(TestDriver.NULL.getClass().getName());
+        assertThat(nul.getName()).isEqualTo(TestDriver.NULL.getClass().getName());
         failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test
     public void testGetRank() {
         failsafe.reset();
-        Assertions.assertThat(validDriver.getRank()).isEqualTo(SdmxWebDriver.NATIVE_RANK);
+        assertThat(valid.getRank()).isEqualTo(SdmxWebDriver.NATIVE_RANK);
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(failingDriver.getRank()).isEqualTo(SdmxWebDriver.UNKNOWN);
+        assertThat(failing.getRank()).isEqualTo(SdmxWebDriver.UNKNOWN);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
+    }
+
+    @Test
+    public void testIsAvailable() {
+        failsafe.reset();
+        assertThat(valid.isAvailable()).isTrue();
+        failsafe.assertEmpty();
+
+        failsafe.reset();
+        assertThat(failing.isAvailable()).isFalse();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     @Test
     public void testConnect() throws IOException {
         failsafe.reset();
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.connect(null, context));
-        failsafe.assertEmpty();
-
-        failsafe.reset();
-        Assertions.assertThatNullPointerException()
-                .isThrownBy(() -> validDriver.connect(TestDriver.SOURCE, null));
-        failsafe.assertEmpty();
-
-        failsafe.reset();
-        Assertions.assertThat(validDriver.connect(TestDriver.SOURCE, context))
+        assertThat(valid.connect(TestDriver.SOURCE, context))
                 .isNotNull()
-                .isInstanceOf(FailsafeSdmxWebConnection.class);
+                .isInstanceOf(FailsafeWebConnection.class);
         failsafe.assertEmpty();
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, context))
+                .withCauseInstanceOf(CustomException.class);
+        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
+
+        failsafe.reset();
+        assertThatIOException()
+                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, context))
+                .withNoCause();
+        failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test
     public void testGetDefaultSources() {
         failsafe.reset();
-        Assertions.assertThat(validDriver.getDefaultSources()).containsExactly(TestDriver.SOURCE);
+        assertThat(valid.getDefaultSources()).containsExactly(TestDriver.SOURCE);
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(failingDriver.getDefaultSources()).isEmpty();
+        assertThat(failing.getDefaultSources()).isEmpty();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        Assertions.assertThat(nullDriver.getDefaultSources()).isEmpty();
+        assertThat(nul.getDefaultSources()).isEmpty();
         failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test
     public void testGetSupportedProperties() {
         failsafe.reset();
-        Assertions.assertThat(validDriver.getSupportedProperties()).containsExactly("hello");
+        assertThat(valid.getSupportedProperties()).containsExactly("hello");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        Assertions.assertThat(failingDriver.getSupportedProperties()).isEmpty();
+        assertThat(failing.getSupportedProperties()).isEmpty();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        Assertions.assertThat(nullDriver.getSupportedProperties()).isEmpty();
+        assertThat(nul.getSupportedProperties()).isEmpty();
         failsafe.assertUnexpectedNull("unexpected null");
     }
 
     private final FailsafeHandler failsafe = new FailsafeHandler();
 
-    private final FailsafeSdmxWebDriver validDriver = new FailsafeSdmxWebDriver(TestDriver.VALID, failsafe, failsafe);
-    private final FailsafeSdmxWebDriver failingDriver = new FailsafeSdmxWebDriver(TestDriver.FAILING, failsafe, failsafe);
-    private final FailsafeSdmxWebDriver nullDriver = new FailsafeSdmxWebDriver(TestDriver.NULL, failsafe, failsafe);
+    private final FailsafeWebDriver valid = new FailsafeWebDriver(TestDriver.VALID, failsafe, failsafe);
+    private final FailsafeWebDriver failing = new FailsafeWebDriver(TestDriver.FAILING, failsafe, failsafe);
+    private final FailsafeWebDriver nul = new FailsafeWebDriver(TestDriver.NULL, failsafe, failsafe);
 
     private final SdmxWebContext context = SdmxWebContext.builder().build();
 }

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.repo;
+package sdmxdl;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;

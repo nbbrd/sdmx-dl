@@ -11,19 +11,23 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @lombok.RequiredArgsConstructor
 @lombok.Builder(toBuilder = true)
 public final class MockedWebDriver implements SdmxWebDriver {
 
     @lombok.Getter
-    private final String name;
+    @lombok.Builder.Default
+    private final String name = "mockedDriver";
 
     @lombok.Getter
-    private final int rank;
+    @lombok.Builder.Default
+    private final int rank = SdmxWebDriver.UNKNOWN;
 
     @lombok.Getter
-    private final boolean available;
+    @lombok.Builder.Default
+    private final boolean available = false;
 
     @lombok.Singular
     private final Map<URI, SdmxRepository> repos;
@@ -36,6 +40,9 @@ public final class MockedWebDriver implements SdmxWebDriver {
 
     @Override
     public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
+        Objects.requireNonNull(source);
+        Objects.requireNonNull(context);
+        checkSource(source);
         return connect(source.getEndpoint());
     }
 
@@ -47,6 +54,12 @@ public final class MockedWebDriver implements SdmxWebDriver {
     @Override
     public Collection<String> getSupportedProperties() {
         return supportedProperties;
+    }
+
+    private void checkSource(SdmxWebSource source) throws IllegalArgumentException {
+        if (!source.getDriver().equals(name)) {
+            throw new IllegalArgumentException(source.getDriver());
+        }
     }
 
     private SdmxWebConnection connect(URI endpoint) throws IOException {

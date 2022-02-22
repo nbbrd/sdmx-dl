@@ -16,12 +16,12 @@
  */
 package tests.sdmxdl.api;
 
-import nbbrd.io.function.IOConsumer;
-import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.*;
 
 import java.io.IOException;
+
+import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
 
 /**
  * @author Philippe Charles
@@ -46,33 +46,47 @@ public class SdmxConnectionAssert {
         Key invalidKey;
     }
 
-    public void assertCompliance(IOSupplier<SdmxConnection> supplier, Sample sample) {
+    @FunctionalInterface
+    public interface SdmxConnectionSupplier {
+        SdmxConnection getWithIO() throws IOException;
+    }
+
+    @FunctionalInterface
+    public interface SdmxConnectionConsumer {
+        void acceptWithIO(SdmxConnection connection) throws IOException;
+    }
+
+    public void assertCompliance(SdmxConnectionSupplier supplier, Sample sample) {
         TckUtil.run(s -> assertCompliance(s, supplier, sample));
     }
 
-    public void assertCompliance(SoftAssertions s, IOSupplier<SdmxConnection> supplier, Sample sample) {
+    public void assertCompliance(SoftAssertions s, SdmxConnectionSupplier supplier, Sample sample) {
         try (SdmxConnection conn = supplier.getWithIO()) {
             checkValidFlow(s, sample, conn);
             checkInvalidFlow(s, sample, conn);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             s.fail("Not expected to raise exception", ex);
         }
 
-        try (SdmxConnection conn = supplier.getWithIO()) {
-            //noinspection RedundantExplicitClose
-            conn.close();
-        } catch (Exception ex) {
-            s.fail("Subsequent calls to #close must not raise exception", ex);
-        }
+        checkRedundantClose(s, supplier);
 
-        assertState(s, supplier, o -> o.getData(sample.validFlow, DataQuery.ALL), "getData(DataflowRef, Key, DataFilter)");
-        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, DataQuery.ALL), "getDataStream(DataflowRef, Key, DataFilter)");
+        assertState(s, supplier, o -> o.getData(sample.validFlow, DataQuery.ALL), "getData(DataflowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, DataQuery.ALL), "getDataStream(DataflowRef, DataQuery)");
         assertState(s, supplier, o -> o.getStructure(sample.validFlow), "getStructure(DataflowRef)");
         assertState(s, supplier, o -> o.getFlow(sample.validFlow), "getFlow(DataflowRef)");
         assertState(s, supplier, SdmxConnection::getFlows, "getFlows()");
     }
 
-    private void checkValidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) throws Exception {
+    @SuppressWarnings("RedundantExplicitClose")
+    private void checkRedundantClose(SoftAssertions s, SdmxConnectionSupplier supplier) {
+        try (SdmxConnection conn = supplier.getWithIO()) {
+            conn.close();
+        } catch (IOException ex) {
+            s.fail("Subsequent calls to #close must not raise exception", ex);
+        }
+    }
+
+    private void checkValidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) throws IOException {
         assertNonnull(s, conn, sample.validFlow);
         for (DataDetail filter : DataDetail.values()) {
             checkValidKey(s, sample, conn, filter);
@@ -84,59 +98,77 @@ public class SdmxConnectionAssert {
     }
 
     private void checkInvalidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataDetail filter) {
-        s.assertThatThrownBy(() -> conn.getData(sample.validFlow, DataQuery.of(sample.invalidKey, filter)))
+        DataQuery invalidQuery = DataQuery.of(sample.invalidKey, filter);
+
+        s.assertThatThrownBy(() -> conn.getData(sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
-        s.assertThatThrownBy(() -> conn.getDataStream(sample.validFlow, DataQuery.of(sample.invalidKey, filter)))
+
+        s.assertThatThrownBy(() -> conn.getDataStream(sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
     }
 
-    private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataDetail filter) throws Exception {
-        s.assertThat(conn.getDataStream(sample.validFlow, DataQuery.of(sample.validKey, filter)))
-                .containsExactlyElementsOf(conn.getData(sample.validFlow, DataQuery.of(sample.validKey, filter)).getData());
+    private void checkValidKey(SoftAssertions s, Sample sample, SdmxConnection conn, DataDetail filter) throws IOException {
+        DataQuery validQuery = DataQuery.of(sample.validKey, filter);
+
+        s.assertThat(conn.getDataStream(sample.validFlow, validQuery))
+                .containsExactlyElementsOf(conn.getData(sample.validFlow, validQuery).getData());
     }
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, SdmxConnection conn) {
         for (DataDetail filter : DataDetail.values()) {
-            s.assertThatThrownBy(() -> conn.getDataStream(sample.invalidFlow, DataQuery.of(sample.validKey, filter)))
+            DataQuery validQuery = DataQuery.of(sample.validKey, filter);
+
+            s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
+
+            s.assertThatThrownBy(() -> conn.getDataStream(sample.invalidFlow, validQuery))
+                    .isInstanceOf(IOException.class);
+
             s.assertThatThrownBy(() -> conn.getFlow(sample.invalidFlow))
                     .isInstanceOf(IOException.class);
-            s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, DataQuery.of(sample.validKey, filter)))
-                    .isInstanceOf(IOException.class);
+
             s.assertThatThrownBy(() -> conn.getStructure(sample.invalidFlow))
                     .isInstanceOf(IOException.class);
         }
     }
 
-    @SuppressWarnings("null")
+    @SuppressWarnings("ConstantConditions")
     private void assertNonnull(SoftAssertions s, SdmxConnection conn, DataflowRef ref) {
         s.assertThatThrownBy(() -> conn.getData(null, DataQuery.ALL))
-                .as("Expecting 'getData(DataRef)' to raise NPE when called with null dataRef")
+                .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "flowRef"))
+                .isInstanceOf(NullPointerException.class);
+
+        s.assertThatThrownBy(() -> conn.getData(ref, null))
+                .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getDataStream(null, DataQuery.ALL))
-                .as("Expecting 'getDataStream(DataRef)' to raise NPE when called with null dataRef")
+                .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "flowRef"))
+                .isInstanceOf(NullPointerException.class);
+
+        s.assertThatThrownBy(() -> conn.getDataStream(ref, null))
+                .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getStructure(null))
-                .as("Expecting 'getStructure(DataflowRef)' to raise NPE when called with null flowRef")
+                .as(nullDescriptionOf("getStructure(DataflowRef)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
         s.assertThatThrownBy(() -> conn.getFlow(null))
-                .as("Expecting 'getFlow(DataflowRef)' to raise NPE when called with null flowRef")
+                .as(nullDescriptionOf("getFlow(DataflowRef)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
     }
 
-    private void assertState(SoftAssertions s, IOSupplier<SdmxConnection> supplier, IOConsumer<SdmxConnection> consumer, String expression) {
+    private void assertState(SoftAssertions s, SdmxConnectionSupplier supplier, SdmxConnectionConsumer consumer, String expression) {
         try (SdmxConnection conn = supplier.getWithIO()) {
             conn.close();
             s.assertThatThrownBy(() -> consumer.acceptWithIO(conn))
                     .as("Expecting '%s' to raise IOException when called after close", expression)
                     .isInstanceOf(IOException.class)
                     .hasMessageContaining("closed");
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             s.fail("Not expected to raise exception", ex);
         }
     }

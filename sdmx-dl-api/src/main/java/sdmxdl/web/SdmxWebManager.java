@@ -48,7 +48,8 @@ import java.util.stream.Stream;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxWebManager implements SdmxManager<SdmxWebSource> {
+@lombok.EqualsAndHashCode(callSuper = false)
+public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @NonNull
     public static SdmxWebManager ofServiceLoader() {

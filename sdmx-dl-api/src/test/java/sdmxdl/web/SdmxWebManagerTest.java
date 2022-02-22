@@ -17,10 +17,12 @@
 package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.LanguagePriorityList;
+import sdmxdl.ext.NetworkFactory;
+import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
 import sdmxdl.repo.SdmxRepository;
 import sdmxdl.web.spi.SdmxWebDriver;
-import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.ext.MockedDialect;
 import tests.sdmxdl.web.MockedWebDriver;
@@ -42,29 +44,12 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testCompliance() {
-        URI endpoint = URI.create("http://" + RepoSamples.REPO.getName());
-        SdmxWebSource source = SdmxWebSource
-                .builder()
-                .name("repoSource")
-                .driver("repoDriver")
-                .dialect("azerty")
-                .endpoint(endpoint)
-                .build();
-        SdmxWebDriver driver = tests.sdmxdl.web.MockedWebDriver
-                .builder()
-                .name("repoDriver")
-                .rank(0)
-                .available(true)
-                .repo(endpoint, RepoSamples.REPO)
-                .source(source)
-                .build();
-        SdmxDialect dialect = new tests.sdmxdl.ext.MockedDialect("azerty");
         SdmxManagerAssert.assertCompliance(
-                SdmxWebManager.builder().driver(driver).dialect(dialect).build(),
+                SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build(),
                 SdmxManagerAssert.Sample
                         .<SdmxWebSource>builder()
-                        .validSource(source)
-                        .invalidSource(source.toBuilder().driver("other").build())
+                        .validSource(sampleSource)
+                        .invalidSource(sampleSource.toBuilder().driver("other").build())
                         .build()
         );
     }
@@ -76,13 +61,26 @@ public class SdmxWebManagerTest {
             assertThat(o).isNotNull();
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getDialects()).isEmpty();
+            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
+            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
+            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getEventListener()).isEqualTo(SdmxWebListener.getDefault());
+            assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
+            assertThat(o.getSources()).isEmpty();
         });
 
         assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getDialects()).isEmpty();
+            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
+            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
+            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getEventListener()).isEqualTo(SdmxWebListener.getDefault());
+            assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
         });
@@ -90,8 +88,15 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.builder().driver(sampleDriver).build()).satisfies(o -> {
             assertThat(o.getDrivers()).containsExactly(sampleDriver);
             assertThat(o.getDialects()).isEmpty();
+            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
+            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
+            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getEventListener()).isEqualTo(SdmxWebListener.getDefault());
+            assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).containsAll(sampleDriver.getDefaultSources());
+            assertThat(o.getSources()).containsValues(sampleDriver.getDefaultSources().toArray(new SdmxWebSource[0]));
         });
     }
 

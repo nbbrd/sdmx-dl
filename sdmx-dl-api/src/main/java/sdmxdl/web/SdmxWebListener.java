@@ -1,7 +1,8 @@
 package sdmxdl.web;
 
 import internal.sdmxdl.FunctionalListener;
-import internal.sdmxdl.SdmxListeners;
+import internal.sdmxdl.LoggingListener;
+import internal.sdmxdl.NoOpListener;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,12 +18,12 @@ public interface SdmxWebListener {
 
     @StaticFactoryMethod
     static @NonNull SdmxWebListener getDefault() {
-        return SdmxListeners.LOG_TO_INFO;
+        return LoggingListener.INSTANCE;
     }
 
     @StaticFactoryMethod
     static @NonNull SdmxWebListener noOp() {
-        return SdmxListeners.NO_OP;
+        return NoOpListener.INSTANCE;
     }
 
     @StaticFactoryMethod

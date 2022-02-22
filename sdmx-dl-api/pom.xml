@@ -51,11 +51,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.nbbrd.java-io-util</groupId>
-            <artifactId>java-io-base</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>logcaptor</artifactId>
             <scope>test</scope>

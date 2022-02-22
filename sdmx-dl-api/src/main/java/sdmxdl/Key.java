@@ -160,7 +160,7 @@ public final class Key {
         if (ALL_KEYWORD.contentEquals(input)) {
             return ALL;
         }
-        String[] result = Chars.splitToArray(input, SEP_CHAR);
+        String[] result = Chars.splitToArray(input.toString(), SEP_CHAR);
         for (int i = 0; i < result.length; i++) {
             result[i] = parseCode(result[i]);
         }
