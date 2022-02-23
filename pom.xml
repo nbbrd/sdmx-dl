@@ -274,6 +274,14 @@
                                     </excludes>
                                 </configuration>
                             </execution>
+                            <!-- Third: compile all tests as Java8 -->
+                            <!-- This fails in NetBeans ... -->
+                            <execution>
+                                <id>default-testCompile</id>
+                                <configuration>
+                                    <release>8</release>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
