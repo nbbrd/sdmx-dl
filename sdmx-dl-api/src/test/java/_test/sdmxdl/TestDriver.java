@@ -16,7 +16,7 @@
  */
 package _test.sdmxdl;
 
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -45,7 +45,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
             return TestConnection.VALID;
         }
 
@@ -75,7 +75,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -105,7 +105,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
             return null;
         }
 

@@ -19,7 +19,6 @@ package internal.sdmxdl.web.spi;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -34,16 +33,16 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("ConstantConditions")
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class FailsafeWebConnection implements SdmxWebConnection {
+final class FailsafeConnection implements SdmxConnection {
 
-    static SdmxWebConnection wrap(SdmxWebConnection obj) {
-        if (obj instanceof FailsafeWebConnection) return obj;
+    static SdmxConnection wrap(SdmxConnection obj) {
+        if (obj instanceof FailsafeConnection) return obj;
         FailsafeLogging logging = FailsafeLogging.of(FailsafeWebDriver.class);
-        return new FailsafeWebConnection(obj, logging::logUnexpectedError, logging::logUnexpectedNull);
+        return new FailsafeConnection(obj, logging::logUnexpectedError, logging::logUnexpectedNull);
     }
 
     @lombok.NonNull
-    private final SdmxWebConnection delegate;
+    private final SdmxConnection delegate;
 
     @lombok.NonNull
     private final BiConsumer<? super String, ? super RuntimeException> onUnexpectedError;
@@ -58,23 +57,6 @@ final class FailsafeWebConnection implements SdmxWebConnection {
         } catch (RuntimeException ex) {
             throw unexpectedError(ex, "while testing connection");
         }
-    }
-
-    @Override
-    public String getDriver() throws IOException {
-        String result;
-
-        try {
-            result = delegate.getDriver();
-        } catch (RuntimeException ex) {
-            throw unexpectedError(ex, "while getting driver");
-        }
-
-        if (result == null) {
-            throw unexpectedNull("driver");
-        }
-
-        return result;
     }
 
     @Override

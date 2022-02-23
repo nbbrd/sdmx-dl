@@ -17,12 +17,14 @@
 package sdmxdl.web.spi;
 
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxManager;
 import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.web.SdmxWebListener;
+import sdmxdl.web.SdmxWebSource;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -45,7 +47,7 @@ public class SdmxWebContext {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    SdmxWebListener eventListener = SdmxWebListener.getDefault();
+    BiConsumer<? super SdmxWebSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular

@@ -22,6 +22,7 @@ import internal.util.SdmxWebMonitoringLoader;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxConnection;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.NetworkFactory;
 import sdmxdl.ext.SdmxCache;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -88,7 +90,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    SdmxWebListener eventListener = SdmxWebListener.getDefault();
+    BiConsumer<? super SdmxWebSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular
@@ -110,7 +112,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     SdmxWebContext context = initContext();
 
-    public @NonNull SdmxWebConnection getConnection(@NonNull String name) throws IOException {
+    public @NonNull SdmxConnection getConnection(@NonNull String name) throws IOException {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
@@ -120,7 +122,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     @Override
-    public @NonNull SdmxWebConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
+    public @NonNull SdmxConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
         SdmxWebDriver driver = lookupDriver(source.getDriver())
@@ -158,12 +160,12 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     private void checkSourceProperties(SdmxWebSource source, SdmxWebDriver driver) {
-        if (eventListener.isEnabled()) {
+        if (eventListener != NO_OP_EVENT_LISTENER) {
             Collection<String> expected = driver.getSupportedProperties();
             Collection<String> found = source.getProperties().keySet();
             String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
             if (!diff.isEmpty()) {
-                eventListener.onWebSourceEvent(source, "Unexpected properties [" + diff + "]");
+                eventListener.accept(source, "Unexpected properties [" + diff + "]");
             }
         }
     }

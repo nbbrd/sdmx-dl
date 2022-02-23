@@ -18,6 +18,7 @@ package sdmxdl.web;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.SdmxSource;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -32,7 +33,8 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxWebSource {
+@lombok.EqualsAndHashCode(callSuper = false)
+public class SdmxWebSource extends SdmxSource {
 
     @lombok.NonNull
     String name;

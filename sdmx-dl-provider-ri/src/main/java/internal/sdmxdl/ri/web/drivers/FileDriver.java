@@ -8,14 +8,10 @@ import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.SdmxConnection;
-import sdmxdl.file.SdmxFileConnection;
-import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
-import sdmxdl.web.SdmxWebConnection;
-import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -55,12 +51,19 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(context, "context");
         sourceValidator.checkValidity(source);
 
-        return new WebOverFileConnection(open(source, context), getName());
+        return fileManager
+                .toBuilder()
+                .languages(context.getLanguages())
+                .eventListener((fileSource, message) -> context.getEventListener().accept(source, message))
+                .cache(context.getCache())
+                .dialects(context.getDialects())
+                .build()
+                .getConnection(toFileSource(source));
     }
 
     @Override
@@ -71,17 +74,6 @@ public final class FileDriver implements SdmxWebDriver {
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
         return Collections.singletonList(STRUCTURE_PROPERTY.getKey());
-    }
-
-    private SdmxFileConnection open(SdmxWebSource source, SdmxWebContext context) throws IOException {
-        return fileManager
-                .toBuilder()
-                .languages(context.getLanguages())
-                .eventListener(new FileOverWebListener(source, context.getEventListener()))
-                .cache(context.getCache())
-                .dialects(context.getDialects())
-                .build()
-                .getConnection(toFileSource(source));
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
@@ -107,41 +99,4 @@ public final class FileDriver implements SdmxWebDriver {
 
     private static final Property<URI> STRUCTURE_PROPERTY =
             Property.of("structureURL", null, Parser.of(text -> URI.create(text.toString())), Formatter.of(Objects::toString));
-
-    @VisibleForTesting
-    @lombok.RequiredArgsConstructor
-    static final class WebOverFileConnection implements SdmxWebConnection {
-
-        @lombok.experimental.Delegate(types = SdmxConnection.class)
-        @lombok.NonNull
-        private final SdmxFileConnection delegate;
-
-        @lombok.NonNull
-        private final String driver;
-
-        @Override
-        public @NonNull String getDriver() {
-            return driver;
-        }
-    }
-
-    @lombok.RequiredArgsConstructor
-    static final class FileOverWebListener implements SdmxFileListener {
-
-        @lombok.NonNull
-        private final SdmxWebSource webSource;
-
-        @lombok.NonNull
-        private final SdmxWebListener webListener;
-
-        @Override
-        public boolean isEnabled() {
-            return webListener.isEnabled();
-        }
-
-        @Override
-        public void onFileSourceEvent(@NonNull SdmxFileSource source, @NonNull String message) {
-            webListener.onWebSourceEvent(webSource, message);
-        }
-    }
 }

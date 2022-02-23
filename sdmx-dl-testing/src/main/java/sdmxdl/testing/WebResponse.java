@@ -20,8 +20,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.Dataflow;
+import sdmxdl.SdmxConnection;
 import sdmxdl.Series;
-import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -65,7 +65,7 @@ public class WebResponse {
                 .request(request)
                 .source(manager.getSources().get(request.getSource()));
 
-        try (SdmxWebConnection conn = manager.getConnection(request.getSource())) {
+        try (SdmxConnection conn = manager.getConnection(request.getSource())) {
             result
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getFlowRef()))

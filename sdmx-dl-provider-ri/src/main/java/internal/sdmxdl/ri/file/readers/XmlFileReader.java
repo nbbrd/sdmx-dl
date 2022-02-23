@@ -5,7 +5,7 @@ import internal.sdmxdl.ri.file.XmlFileClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
-import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.SdmxFileContext;
 import sdmxdl.file.spi.SdmxFileReader;
@@ -28,7 +28,7 @@ public class XmlFileReader implements SdmxFileReader {
     }
 
     @Override
-    public SdmxFileConnection read(SdmxFileSource source, SdmxFileContext context) throws IOException, IllegalArgumentException {
+    public SdmxConnection read(SdmxFileSource source, SdmxFileContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         if (!canRead(source)) {

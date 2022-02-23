@@ -1,7 +1,7 @@
 package tests.sdmxdl.file;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.SdmxFileContext;
 import sdmxdl.file.spi.SdmxFileReader;
@@ -39,7 +39,7 @@ public class SdmxFileReaderAssert {
         s.assertThatThrownBy(() -> reader.read(sample.invalidSource, sample.context))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        try (SdmxFileConnection conn = reader.read(sample.validSource, sample.context)) {
+        try (SdmxConnection conn = reader.read(sample.validSource, sample.context)) {
             s.assertThat(conn).isNotNull();
         } catch (Exception ex) {
             s.fail("Not expected to raise exception", ex);

@@ -19,6 +19,7 @@ package sdmxdl.file;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataflowRef;
+import sdmxdl.SdmxSource;
 
 import java.io.File;
 
@@ -27,7 +28,8 @@ import java.io.File;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxFileSource {
+@lombok.EqualsAndHashCode(callSuper = false)
+public class SdmxFileSource extends SdmxSource {
 
     @lombok.NonNull
     File data;

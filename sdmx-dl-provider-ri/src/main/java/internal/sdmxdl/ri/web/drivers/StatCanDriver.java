@@ -19,7 +19,6 @@ import sdmxdl.util.TypedId;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
-import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -74,7 +73,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
@@ -119,7 +118,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class StatCanConnection implements SdmxWebConnection {
+    private static final class StatCanConnection implements SdmxConnection {
 
         @lombok.NonNull
         private final String source;
@@ -178,11 +177,6 @@ public final class StatCanDriver implements SdmxWebDriver {
         @Override
         public void testConnection() throws IOException {
             client.ping();
-        }
-
-        @Override
-        public @NonNull String getDriver() {
-            return RI_STATCAN;
         }
 
         @Override

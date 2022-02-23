@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Replace `SdmxWebConnection#ping()` with `SdmxConnection#testConnection()`
 - Refactor data query API [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
 - Replace `SdmxConnection#isDetailSupported()` with a more general solution [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
+- Simplify class hierarchy [#222](https://github.com/nbbrd/sdmx-dl/issues/222)
 
 ### Fixed
 

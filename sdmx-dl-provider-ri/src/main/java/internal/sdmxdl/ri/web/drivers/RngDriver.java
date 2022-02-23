@@ -10,7 +10,6 @@ import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
-import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -58,7 +57,7 @@ public final class RngDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxWebConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
@@ -121,7 +120,7 @@ public final class RngDriver implements SdmxWebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static class RngWebConnection implements SdmxWebConnection {
+    private static class RngWebConnection implements SdmxConnection {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";
@@ -131,11 +130,6 @@ public final class RngDriver implements SdmxWebDriver {
 
         @Override
         public void testConnection() {
-        }
-
-        @Override
-        public @NonNull String getDriver() {
-            return RI_RNG;
         }
 
         @Override

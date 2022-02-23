@@ -20,14 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
-import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.api.SdmxConnectionAssert;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileConnectionImpl;
 import sdmxdl.util.file.SdmxFileInfo;
+import tests.sdmxdl.api.RepoSamples;
+import tests.sdmxdl.api.SdmxConnectionAssert;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -49,7 +48,7 @@ public class XmlFileClientTest {
         SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxFileListener.noOp());
+        SdmxFileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxManager.NO_OP_EVENT_LISTENER);
 
         SdmxFileInfo info = x.decode();
 
@@ -97,6 +96,6 @@ public class XmlFileClientTest {
         return SdmxFileSource.builder().data(compact21).build();
     }
 
-    public static final SdmxDecoder DECODER = new XmlDecoder(SdmxFileListener.noOp());
+    public static final SdmxDecoder DECODER = new XmlDecoder(SdmxManager.NO_OP_EVENT_LISTENER);
     public static final Dataflow DATAFLOW = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");
 }

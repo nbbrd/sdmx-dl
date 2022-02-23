@@ -27,9 +27,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.util.web.SdmxWebEvents;
-import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebAuthenticator;
 import sdmxdl.web.spi.SdmxWebContext;
@@ -41,6 +41,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import static sdmxdl.util.web.SdmxWebProperty.*;
 
@@ -120,27 +121,27 @@ public class RiHttpUtils {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final SdmxWebListener listener;
+        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
 
         @Override
         public void onOpen(HttpRequest request, Proxy proxy, HttpAuthScheme scheme) {
             Objects.requireNonNull(request);
             Objects.requireNonNull(proxy);
             Objects.requireNonNull(scheme);
-            if (listener.isEnabled()) {
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 String message = SdmxWebEvents.onQuery(request.getQuery(), proxy);
                 if (!HttpAuthScheme.NONE.equals(scheme)) {
                     message += " with auth '" + scheme.name() + "'";
                 }
-                listener.onWebSourceEvent(source, message);
+                listener.accept(source, message);
             }
         }
 
         @Override
         public void onSuccess(@NonNull MediaType mediaType) {
             Objects.requireNonNull(mediaType);
-            if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Parsing '%s'", mediaType));
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
+                listener.accept(source, String.format("Parsing '%s'", mediaType));
             }
         }
 
@@ -148,8 +149,8 @@ public class RiHttpUtils {
         public void onRedirection(URL oldUrl, URL newUrl) {
             Objects.requireNonNull(oldUrl);
             Objects.requireNonNull(newUrl);
-            if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
+                listener.accept(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 
@@ -158,16 +159,16 @@ public class RiHttpUtils {
             Objects.requireNonNull(url);
             Objects.requireNonNull(oldScheme);
             Objects.requireNonNull(newScheme);
-            if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
+                listener.accept(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
             }
         }
 
         @Override
         public void onEvent(@NonNull String message) {
             Objects.requireNonNull(message);
-            if (listener.isEnabled()) {
-                listener.onWebSourceEvent(source, message);
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
+                listener.accept(source, message);
             }
         }
     }
@@ -182,7 +183,7 @@ public class RiHttpUtils {
         private final List<SdmxWebAuthenticator> authenticators;
 
         @lombok.NonNull
-        private final SdmxWebListener listener;
+        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
@@ -213,7 +214,7 @@ public class RiHttpUtils {
             try {
                 return authenticator.getPasswordAuthentication(source);
             } catch (IOException ex) {
-                listener.onWebSourceEvent(source, "Failed to get password authentication: " + ex.getMessage());
+                listener.accept(source, "Failed to get password authentication: " + ex.getMessage());
                 return null;
             }
         }
@@ -222,7 +223,7 @@ public class RiHttpUtils {
             try {
                 authenticator.invalidate(source);
             } catch (IOException ex) {
-                listener.onWebSourceEvent(source, "Failed to invalidate password authentication: " + ex.getMessage());
+                listener.accept(source, "Failed to invalidate password authentication: " + ex.getMessage());
             }
         }
     }

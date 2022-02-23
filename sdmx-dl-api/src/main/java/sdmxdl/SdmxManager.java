@@ -26,6 +26,7 @@ import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -35,7 +36,7 @@ import java.util.List;
         SdmxWebManager.class
 })
 @ThreadSafe
-public abstract class SdmxManager<SOURCE> {
+public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
     public abstract @NonNull SdmxConnection getConnection(@NonNull SOURCE source) throws IOException;
 
@@ -43,5 +44,12 @@ public abstract class SdmxManager<SOURCE> {
 
     public abstract @NonNull SdmxCache getCache();
 
+    public abstract @NonNull BiConsumer<? super SOURCE, ? super String> getEventListener();
+
     public abstract @NonNull List<SdmxDialect> getDialects();
+
+    public static final BiConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = SdmxManager::doNothing;
+
+    private static void doNothing(SdmxSource source, String message) {
+    }
 }

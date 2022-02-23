@@ -6,6 +6,7 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.SdmxManager;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.util.web.SdmxWebMonitors;
 import sdmxdl.web.SdmxWebMonitorReport;
@@ -94,8 +95,8 @@ public final class UptimeRobot implements SdmxWebMonitoring {
 
         Proxy proxy = context.getNetwork().getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
-        if (context.getEventListener().isEnabled()) {
-            context.getEventListener().onWebSourceEvent(source, SdmxWebEvents.onQuery(url, proxy));
+        if (context.getEventListener() != SdmxManager.NO_OP_EVENT_LISTENER) {
+            context.getEventListener().accept(source, SdmxWebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);

@@ -19,6 +19,7 @@ package sdmxdl.file;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxConnection;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxCache;
 import sdmxdl.ext.spi.SdmxDialect;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -58,7 +60,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    SdmxFileListener eventListener = SdmxFileListener.getDefault();
+    BiConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular
@@ -73,7 +75,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     SdmxFileContext context = initContext();
 
     @Override
-    public @NonNull SdmxFileConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
+    public @NonNull SdmxConnection getConnection(@NonNull SdmxFileSource source) throws IOException {
         Objects.requireNonNull(source);
 
         SdmxFileReader reader = lookupReader(source)

@@ -4,12 +4,8 @@ import nbbrd.io.text.TextParser;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sdmxdl.DataQuery;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import tests.sdmxdl.web.SdmxWebDriverAssert;
-import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
@@ -34,7 +30,7 @@ public class StatCanDriverTest {
     public void testConnectionArgs() throws IOException {
         StatCanDriver driver = new StatCanDriver();
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
-        try (SdmxWebConnection connection = driver.connect(source, SdmxWebContext.builder().build())) {
+        try (SdmxConnection connection = driver.connect(source, SdmxWebContext.builder().build())) {
             DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 

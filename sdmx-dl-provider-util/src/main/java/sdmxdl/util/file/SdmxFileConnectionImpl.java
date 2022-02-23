@@ -19,7 +19,6 @@ package sdmxdl.util.file;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.file.SdmxFileConnection;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxValidators;
 
@@ -33,7 +32,7 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public final class SdmxFileConnectionImpl implements SdmxFileConnection {
+public final class SdmxFileConnectionImpl implements SdmxConnection {
 
     @lombok.NonNull
     private final SdmxFileClient client;
@@ -50,21 +49,9 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
     }
 
     @Override
-    public DataflowRef getDataflowRef() throws IOException {
-        checkState();
-        return dataflow.getRef();
-    }
-
-    @Override
     public Collection<Dataflow> getFlows() throws IOException {
         checkState();
         return Collections.singleton(dataflow);
-    }
-
-    @Override
-    public Dataflow getFlow() throws IOException {
-        checkState();
-        return dataflow;
     }
 
     @Override
@@ -72,12 +59,6 @@ public final class SdmxFileConnectionImpl implements SdmxFileConnection {
         checkState();
         checkFlowRef(flowRef);
         return dataflow;
-    }
-
-    @Override
-    public DataStructure getStructure() throws IOException {
-        checkState();
-        return client.decode().getStructure();
     }
 
     @Override

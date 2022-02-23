@@ -28,7 +28,6 @@ import picocli.CommandLine;
 import sdmxdl.*;
 import sdmxdl.csv.SdmxCsvFieldWriter;
 import sdmxdl.csv.SdmxPicocsvFormatter;
-import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -71,7 +70,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private void writeBody(Csv.Writer w) throws IOException {
-        try (SdmxWebConnection conn = web.loadManager().getConnection(web.getSource())) {
+        try (SdmxConnection conn = web.loadManager().getConnection(web.getSource())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
             getBodyFormatter(dsd, format).formatCsv(getSortedSeries(conn, web), w);
         }
@@ -97,7 +96,7 @@ public final class FetchDataCommand implements Callable<Void> {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
 
-    private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
+    private static DataSet getSortedSeries(SdmxConnection conn, WebKeyOptions web) throws IOException {
         DataQuery query = DataQuery.of(web.getKey(), getDetail());
         try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
             return stream

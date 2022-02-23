@@ -1,19 +1,17 @@
 package tests.sdmxdl.web;
 
+import sdmxdl.SdmxConnection;
+import sdmxdl.ext.SdmxException;
 import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-@lombok.RequiredArgsConstructor
 @lombok.Builder(toBuilder = true)
 public final class MockedWebDriver implements SdmxWebDriver {
 
@@ -30,30 +28,27 @@ public final class MockedWebDriver implements SdmxWebDriver {
     private final boolean available = false;
 
     @lombok.Singular
-    private final Map<URI, SdmxRepository> repos;
+    private final List<SdmxRepository> repos;
 
+    @lombok.Getter
     @lombok.Singular
-    private final List<SdmxWebSource> sources;
+    private final List<SdmxWebSource> defaultSources;
 
+    @lombok.Getter
     @lombok.Singular
-    private final List<String> supportedProperties;
+    private final Collection<String> supportedProperties;
 
     @Override
-    public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
+    public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         checkSource(source);
-        return connect(source.getEndpoint());
-    }
 
-    @Override
-    public Collection<SdmxWebSource> getDefaultSources() {
-        return sources;
-    }
-
-    @Override
-    public Collection<String> getSupportedProperties() {
-        return supportedProperties;
+        return repos.stream()
+                .filter(repo -> repo.getName().equals(source.getEndpoint().toString()))
+                .map(SdmxRepository::asConnection)
+                .findFirst()
+                .orElseThrow(() -> SdmxException.missingSource(source.toString(), SdmxWebSource.class));
     }
 
     private void checkSource(SdmxWebSource source) throws IllegalArgumentException {
@@ -62,11 +57,17 @@ public final class MockedWebDriver implements SdmxWebDriver {
         }
     }
 
-    private SdmxWebConnection connect(URI endpoint) throws IOException {
-        SdmxRepository result = repos.get(endpoint);
-        if (result != null) {
-            return new MockedWebConnection(name, result.asConnection());
+    public static final class Builder {
+
+        public Builder generateSources(String driver, SdmxRepository repo) {
+            return defaultSource(
+                    SdmxWebSource
+                            .builder()
+                            .name(repo.getName())
+                            .driver(driver)
+                            .endpointOf(repo.getName())
+                            .build()
+            );
         }
-        throw new IOException(endpoint.toString());
     }
 }

@@ -85,7 +85,7 @@ public class FailsafeWebDriverTest {
         failsafe.reset();
         assertThat(valid.connect(TestDriver.SOURCE, context))
                 .isNotNull()
-                .isInstanceOf(FailsafeWebConnection.class);
+                .isInstanceOf(FailsafeConnection.class);
         failsafe.assertEmpty();
 
         failsafe.reset();

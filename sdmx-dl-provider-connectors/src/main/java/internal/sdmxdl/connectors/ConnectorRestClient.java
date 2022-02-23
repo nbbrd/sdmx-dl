@@ -34,7 +34,6 @@ import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
-import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
@@ -43,6 +42,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -220,17 +220,17 @@ public final class ConnectorRestClient implements SdmxRestClient {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final SdmxWebListener listener;
+        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
 
         @Override
         public void onSdmxEvent(RestSdmxEvent event) {
-            if (listener.isEnabled()) {
+            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.onWebSourceEvent(source, SdmxWebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(source, SdmxWebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.onWebSourceEvent(source, SdmxWebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(source, SdmxWebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

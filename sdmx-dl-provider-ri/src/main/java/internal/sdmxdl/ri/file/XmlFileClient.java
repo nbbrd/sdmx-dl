@@ -20,10 +20,10 @@ import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxManager;
 import sdmxdl.Series;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
@@ -34,6 +34,7 @@ import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 /**
@@ -55,7 +56,7 @@ public class XmlFileClient implements SdmxFileClient {
     private final ObsFactory obsFactory;
 
     @lombok.NonNull
-    SdmxFileListener eventListener;
+    BiConsumer<? super SdmxFileSource, ? super String> eventListener;
 
     @Override
     public void testClient() throws IOException {
@@ -74,8 +75,8 @@ public class XmlFileClient implements SdmxFileClient {
 
     @Override
     public Stream<Series> loadData(SdmxFileInfo info, DataRef dataRef) throws IOException {
-        if (eventListener.isEnabled()) {
-            eventListener.onFileSourceEvent(source, "Loading data from file '" + source.getData() + "'");
+        if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
+            eventListener.accept(source, "Loading data from file '" + source.getData() + "'");
         }
         return dataRef.getQuery().execute(
                 getDataSupplier(info.getDataType(), info.getStructure())

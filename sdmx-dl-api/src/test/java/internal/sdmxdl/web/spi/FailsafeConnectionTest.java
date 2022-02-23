@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.SdmxConnectionAssert;
-import tests.sdmxdl.web.MockedWebConnection;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -32,12 +31,12 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
  * @author Philippe Charles
  */
 @lombok.extern.java.Log
-public class FailsafeWebConnectionTest {
+public class FailsafeConnectionTest {
 
     @Test
     public void testCompliance() {
         SdmxConnectionAssert.assertCompliance(
-                () -> FailsafeWebConnection.wrap(new MockedWebConnection("driver", RepoSamples.REPO.asConnection())),
+                () -> FailsafeConnection.wrap(RepoSamples.REPO.asConnection()),
                 SdmxConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
@@ -60,26 +59,6 @@ public class FailsafeWebConnectionTest {
                 .isThrownBy(failing::testConnection)
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
-    }
-
-    @Test
-    public void testGetDriver() {
-        failsafe.reset();
-        assertThatNoException()
-                .isThrownBy(valid::getDriver);
-        failsafe.assertEmpty();
-
-        failsafe.reset();
-        assertThatIOException()
-                .isThrownBy(failing::getDriver)
-                .withCauseInstanceOf(CustomException.class);
-        failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
-
-        failsafe.reset();
-        assertThatIOException()
-                .isThrownBy(nul::getDriver)
-                .withNoCause();
-        failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test
@@ -218,7 +197,7 @@ public class FailsafeWebConnectionTest {
 
     private final FailsafeHandler failsafe = new FailsafeHandler();
 
-    private final FailsafeWebConnection valid = new FailsafeWebConnection(TestConnection.VALID, failsafe, failsafe);
-    private final FailsafeWebConnection failing = new FailsafeWebConnection(TestConnection.FAILING, failsafe, failsafe);
-    private final FailsafeWebConnection nul = new FailsafeWebConnection(TestConnection.NULL, failsafe, failsafe);
+    private final FailsafeConnection valid = new FailsafeConnection(TestConnection.VALID, failsafe, failsafe);
+    private final FailsafeConnection failing = new FailsafeConnection(TestConnection.FAILING, failsafe, failsafe);
+    private final FailsafeConnection nul = new FailsafeConnection(TestConnection.NULL, failsafe, failsafe);
 }

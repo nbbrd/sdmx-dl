@@ -20,7 +20,7 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.file.SdmxFileConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.file.SdmxFileSource;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public interface SdmxFileReader {
     boolean canRead(@NonNull SdmxFileSource source);
 
     @NonNull
-    SdmxFileConnection read(
+    SdmxConnection read(
             @NonNull SdmxFileSource source,
             @NonNull SdmxFileContext context
     ) throws IOException, IllegalArgumentException;

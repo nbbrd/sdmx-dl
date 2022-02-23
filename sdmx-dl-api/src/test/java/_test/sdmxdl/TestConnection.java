@@ -18,7 +18,6 @@ package _test.sdmxdl;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.web.SdmxWebConnection;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.util.Collection;
@@ -29,15 +28,10 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-public enum TestConnection implements SdmxWebConnection {
+public enum TestConnection implements SdmxConnection {
     VALID {
         @Override
         public void testConnection() {
-        }
-
-        @Override
-        public String getDriver() {
-            return DRIVER;
         }
 
         @Override
@@ -77,11 +71,6 @@ public enum TestConnection implements SdmxWebConnection {
     FAILING {
         @Override
         public void testConnection() {
-            throw new CustomException();
-        }
-
-        @Override
-        public String getDriver() {
             throw new CustomException();
         }
 
@@ -126,11 +115,6 @@ public enum TestConnection implements SdmxWebConnection {
         }
 
         @Override
-        public String getDriver() {
-            return null;
-        }
-
-        @Override
         public Collection<Dataflow> getFlows() {
             return null;
         }
@@ -165,6 +149,4 @@ public enum TestConnection implements SdmxWebConnection {
             throw new UnsupportedOperationException();
         }
     };
-
-    public static final String DRIVER = "validDriver";
 }

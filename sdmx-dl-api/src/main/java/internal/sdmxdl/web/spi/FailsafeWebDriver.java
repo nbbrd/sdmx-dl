@@ -17,7 +17,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -90,11 +90,11 @@ public final class FailsafeWebDriver implements SdmxWebDriver {
     }
 
     @Override
-    public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
 
-        SdmxWebConnection result;
+        SdmxConnection result;
 
         try {
             result = delegate.connect(source, context);
@@ -108,7 +108,7 @@ public final class FailsafeWebDriver implements SdmxWebDriver {
             throw newUnexpectedNull("null connection");
         }
 
-        return FailsafeWebConnection.wrap(result);
+        return FailsafeConnection.wrap(result);
     }
 
     @Override

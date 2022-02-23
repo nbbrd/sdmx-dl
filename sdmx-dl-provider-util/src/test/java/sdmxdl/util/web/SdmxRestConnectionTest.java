@@ -31,7 +31,7 @@ public class SdmxRestConnectionTest {
     public void testCompliance() {
         SdmxRepository repo = RepoSamples.REPO;
         SdmxConnectionAssert.assertCompliance(
-                () -> SdmxRestConnection.of(XRepoRestClient.of(repo), "", Validator.noOp()),
+                () -> SdmxRestConnection.of(XRepoRestClient.of(repo), Validator.noOp()),
                 SdmxConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

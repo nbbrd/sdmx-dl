@@ -19,8 +19,8 @@ package internal.sdmxdl.ri.file;
 import nbbrd.io.xml.Xml;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxMediaType;
-import sdmxdl.file.SdmxFileListener;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.file.SdmxFileInfo;
 import sdmxdl.xml.SdmxmlDataTypeProbe;
@@ -29,6 +29,7 @@ import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -37,7 +38,7 @@ import java.util.List;
 public final class XmlDecoder implements SdmxDecoder {
 
     @lombok.NonNull
-    private final SdmxFileListener eventListener;
+    private final BiConsumer<? super SdmxFileSource, ? super String> eventListener;
 
     @Override
     public SdmxFileInfo decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
@@ -46,8 +47,8 @@ public final class XmlDecoder implements SdmxDecoder {
     }
 
     private String probeDataType(SdmxFileSource source) throws IOException {
-        if (eventListener.isEnabled()) {
-            eventListener.onFileSourceEvent(source, "Probing data type from '" + source.getData() + "'");
+        if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
+            eventListener.accept(source, "Probing data type from '" + source.getData() + "'");
         }
         return SdmxmlDataTypeProbe.of()
                 .parseFile(source.getData());
@@ -60,8 +61,8 @@ public final class XmlDecoder implements SdmxDecoder {
     }
 
     private DataStructure parseStruct(String dataType, LanguagePriorityList langs, SdmxFileSource source) throws IOException {
-        if (eventListener.isEnabled()) {
-            eventListener.onFileSourceEvent(source, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
+        if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
+            eventListener.accept(source, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
         }
         return getStructParser(dataType, langs)
                 .parseFile(source.getStructure())
@@ -84,8 +85,8 @@ public final class XmlDecoder implements SdmxDecoder {
     }
 
     private DataStructure decodeStruct(String dataType, SdmxFileSource source) throws IOException {
-        if (eventListener.isEnabled()) {
-            eventListener.onFileSourceEvent(source, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
+        if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
+            eventListener.accept(source, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
         }
         return getStructDecoder(dataType)
                 .parseFile(source.getData());

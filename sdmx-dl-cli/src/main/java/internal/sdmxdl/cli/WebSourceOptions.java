@@ -19,7 +19,7 @@ package internal.sdmxdl.cli;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
 import sdmxdl.Feature;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -41,18 +41,18 @@ public class WebSourceOptions extends WebNetOptions {
     )
     private String source;
 
-    public SdmxWebConnection open(SdmxWebManager manager) throws IOException {
+    public SdmxConnection open(SdmxWebManager manager) throws IOException {
         return manager.getConnection(getSource());
     }
 
     public Set<Feature> loadFeatures(SdmxWebManager manager) throws IOException {
-        try (SdmxWebConnection conn = open(manager)) {
+        try (SdmxConnection conn = open(manager)) {
             return conn.getSupportedFeatures();
         }
     }
 
     public Collection<Dataflow> loadFlows(SdmxWebManager manager) throws IOException {
-        try (SdmxWebConnection conn = open(manager)) {
+        try (SdmxConnection conn = open(manager)) {
             return conn.getFlows();
         }
     }

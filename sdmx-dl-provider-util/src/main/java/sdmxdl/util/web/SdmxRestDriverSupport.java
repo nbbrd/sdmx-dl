@@ -19,7 +19,7 @@ package sdmxdl.util.web;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataflowRef;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.SdmxConnection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 import sdmxdl.web.spi.SdmxWebDriver;
@@ -66,12 +66,12 @@ public final class SdmxRestDriverSupport implements SdmxWebDriver {
     }
 
     @Override
-    public SdmxWebConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
+    public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IOException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         getSourceValidator().checkValidity(source);
 
-        return SdmxRestConnection.of(getClient(source, context), name, dataflowRefValidator);
+        return SdmxRestConnection.of(getClient(source, context), dataflowRefValidator);
     }
 
     @Override

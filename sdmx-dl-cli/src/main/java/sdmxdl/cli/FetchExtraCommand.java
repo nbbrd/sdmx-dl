@@ -23,7 +23,6 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.*;
-import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -70,7 +69,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     }
 
     private Stream<Extra> getRows() throws IOException {
-        try (SdmxWebConnection conn = web.open(web.loadManager())) {
+        try (SdmxConnection conn = web.open(web.loadManager())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
 
             Function<Series, String> toValueUnit = getValueUnit(dsd);

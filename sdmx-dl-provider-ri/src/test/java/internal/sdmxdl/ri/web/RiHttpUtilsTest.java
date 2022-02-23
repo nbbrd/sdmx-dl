@@ -5,7 +5,6 @@ import internal.util.http.HttpRequest;
 import internal.util.http.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.SdmxWebContext;
 
@@ -60,7 +59,7 @@ public class RiHttpUtilsTest {
 
         SdmxWebContext webContext = SdmxWebContext
                 .builder()
-                .eventListener(events)
+                .eventListener(events::onSourceEvent)
                 .build();
 
         HttpEventListener x = RiHttpUtils.newContext(source, webContext).getListener();
@@ -118,7 +117,7 @@ public class RiHttpUtilsTest {
         String message;
     }
 
-    private static class MockedSdmxWebListener implements SdmxWebListener {
+    private static class MockedSdmxWebListener {
 
         private List<Event> events = new ArrayList<>();
 
@@ -128,13 +127,7 @@ public class RiHttpUtilsTest {
             return result;
         }
 
-        @Override
-        public boolean isEnabled() {
-            return true;
-        }
-
-        @Override
-        public void onWebSourceEvent(@NonNull SdmxWebSource source, @NonNull String message) {
+        public void onSourceEvent(@NonNull SdmxWebSource source, @NonNull String message) {
             events.add(new Event(source, message));
         }
     }

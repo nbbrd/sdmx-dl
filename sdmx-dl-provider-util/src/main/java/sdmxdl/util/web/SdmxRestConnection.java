@@ -20,7 +20,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.DataRef;
-import sdmxdl.web.SdmxWebConnection;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -34,13 +33,10 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-final class SdmxRestConnection implements SdmxWebConnection {
+final class SdmxRestConnection implements SdmxConnection {
 
     @lombok.NonNull
     private final SdmxRestClient client;
-
-    @lombok.NonNull
-    private final String driver;
 
     @lombok.NonNull
     private final Validator<DataflowRef> dataflowRefValidator;
@@ -121,12 +117,6 @@ final class SdmxRestConnection implements SdmxWebConnection {
     public void testConnection() throws IOException {
         checkState();
         client.testClient();
-    }
-
-    @Override
-    public String getDriver() throws IOException {
-        checkState();
-        return driver;
     }
 
     @Override
