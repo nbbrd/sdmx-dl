@@ -9,27 +9,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
-- Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
-- Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
-- Add Maven BOM
+- ![API] Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
+- ![API] Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
+- ![SOURCE] Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
+- ![BUILD] Add Maven BOM
 
 ### Changed
 
-- Change `FileDriver` to be optional
-- Enforce https on ISTAT source
-- Refactor `SdmxManager` API
-- Replace `SdmxWebConnection#ping()` with `SdmxConnection#testConnection()`
-- Refactor data query API [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
-- Replace `SdmxConnection#isDetailSupported()` with a more general solution [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
-- Simplify class hierarchy [#222](https://github.com/nbbrd/sdmx-dl/issues/222)
+- ![API] Refactor data query [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
+- ![API] Replace `SdmxConnection#isDetailSupported()` with a more general solution [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
+- ![API] Simplify class hierarchy [#222](https://github.com/nbbrd/sdmx-dl/issues/222)
+- ![SOURCE] Enforce https on ISTAT source
+- ![PROVIDER] Change `FileDriver` to be optional
 
 ### Fixed
 
-- Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
-- Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
-- Fix use of reflection in native image
-- Fix missing resources in native image
+- ![FORMAT] Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
+- ![PROVIDER] Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
+- ![CLI] Fix use of reflection in native image
+- ![CLI] Fix missing resources in native image
 
 ## [3.0.0-beta.5] - 2021-11-23
 
@@ -195,13 +193,15 @@ production._
 - Initial release
 
 [Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...HEAD
-
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
-
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
-
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
-
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
-
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
+
+[API]: https://img.shields.io/badge/-API-068C09
+[BUILD]: https://img.shields.io/badge/-BUILD-e4e669
+[CLI]: https://img.shields.io/badge/-CLI-F813F7
+[FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
+[PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
+[SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
