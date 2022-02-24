@@ -20,9 +20,9 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
@@ -33,13 +33,13 @@ import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class Sdmx21Driver implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class Sdmx21Driver implements WebDriver {
 
     private static final String CONNECTORS_SDMX_21 = "connectors:sdmx21";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(CONNECTORS_SDMX_21)
             .rank(WRAPPED_RANK)

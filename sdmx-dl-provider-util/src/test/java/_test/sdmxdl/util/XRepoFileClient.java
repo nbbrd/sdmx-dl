@@ -2,7 +2,7 @@ package _test.sdmxdl.util;
 
 import sdmxdl.util.DataRef;
 import sdmxdl.Series;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
 
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public final class XRepoFileClient implements SdmxFileClient {
 
     @lombok.NonNull
-    private final SdmxRepository repository;
+    private final DataRepository repository;
 
     @Override
     public void testClient() {
@@ -35,7 +35,7 @@ public final class XRepoFileClient implements SdmxFileClient {
                 .orElseThrow(IOException::new);
     }
 
-    public static SdmxFileInfo infoOf(SdmxRepository data) {
+    public static SdmxFileInfo infoOf(DataRepository data) {
         return SdmxFileInfo.of(data.getName(), data.getStructures().get(0));
     }
 }

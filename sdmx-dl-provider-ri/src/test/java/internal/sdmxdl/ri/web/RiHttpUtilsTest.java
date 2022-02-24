@@ -6,7 +6,7 @@ import internal.util.http.MediaType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class RiHttpUtilsTest {
 
     @Test
     public void testUserAgent() {
-        SdmxWebContext webContext = SdmxWebContext
+        WebContext webContext = WebContext
                 .builder()
                 .build();
 
@@ -57,7 +57,7 @@ public class RiHttpUtilsTest {
         MockedSdmxWebListener events = new MockedSdmxWebListener();
         Proxy customProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress((InetAddress) null, 123));
 
-        SdmxWebContext webContext = SdmxWebContext
+        WebContext webContext = WebContext
                 .builder()
                 .eventListener(events::onSourceEvent)
                 .build();

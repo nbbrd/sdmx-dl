@@ -17,11 +17,11 @@
 package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
+import internal.util.DialectLoader;
 import org.junit.jupiter.api.Test;
-import sdmxdl.ext.spi.SdmxDialectLoader;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
+import tests.sdmxdl.web.WebDriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -32,14 +32,14 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new Sdmx20Driver());
+        WebDriverAssert.assertCompliance(new Sdmx20Driver());
     }
 
     @Test
     public void testConnect() {
-        SdmxWebContext context = SdmxWebContext
+        WebContext context = WebContext
                 .builder()
-                .dialects(SdmxDialectLoader.load())
+                .dialects(DialectLoader.load())
                 .build();
 
         SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDMX20").endpointOf("http://localhost").build();

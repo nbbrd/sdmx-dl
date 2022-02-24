@@ -4,13 +4,13 @@ import internal.util.credentials.WinPasswordVault;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
+import sdmxdl.web.spi.WebAuthenticator;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
 
 @ServiceProvider
-public final class WinPasswordVaultAuthenticator implements SdmxWebAuthenticator {
+public final class WinPasswordVaultAuthenticator implements WebAuthenticator {
 
     @Override
     public boolean isAvailable() {

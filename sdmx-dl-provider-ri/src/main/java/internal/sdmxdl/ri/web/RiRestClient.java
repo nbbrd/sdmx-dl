@@ -29,7 +29,7 @@ import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
 import sdmxdl.xml.DataCursor;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -48,7 +48,7 @@ import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements SdmxRestClient {
 
-    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull SdmxWebContext c, @NonNull String defaultDialect,
+    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c, @NonNull String defaultDialect,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
                 s.getId(),

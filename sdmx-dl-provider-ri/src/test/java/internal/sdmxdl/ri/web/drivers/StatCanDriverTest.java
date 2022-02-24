@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.*;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,14 +23,14 @@ public class StatCanDriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new StatCanDriver());
+        WebDriverAssert.assertCompliance(new StatCanDriver());
     }
 
     @Test
     public void testConnectionArgs() throws IOException {
         StatCanDriver driver = new StatCanDriver();
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
-        try (SdmxConnection connection = driver.connect(source, SdmxWebContext.builder().build())) {
+        try (Connection connection = driver.connect(source, WebContext.builder().build())) {
             DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 

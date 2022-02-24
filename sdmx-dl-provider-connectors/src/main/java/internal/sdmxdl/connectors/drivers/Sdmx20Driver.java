@@ -19,8 +19,8 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxRestDriverSupport;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.util.web.RestDriverSupport;
+import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
@@ -30,13 +30,13 @@ import static internal.sdmxdl.connectors.Connectors.NEEDS_CREDENTIALS_PROPERTY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class Sdmx20Driver implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class Sdmx20Driver implements WebDriver {
 
     private static final String CONNECTORS_SDMX_20 = "connectors:sdmx20";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(CONNECTORS_SDMX_20)
             .rank(WRAPPED_RANK)

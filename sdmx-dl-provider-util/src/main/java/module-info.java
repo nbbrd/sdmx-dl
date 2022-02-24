@@ -15,11 +15,11 @@ module sdmxdl.util {
     exports sdmxdl.util.parser;
     exports sdmxdl.util.web;
 
-    provides sdmxdl.ext.spi.SdmxDialect with
+    provides sdmxdl.ext.spi.Dialect with
             internal.sdmxdl.util.ext.EcbDialect,
             internal.sdmxdl.util.ext.InseeDialect,
             internal.sdmxdl.util.ext.Sdmx20Dialect,
             internal.sdmxdl.util.ext.Sdmx21Dialect;
 
-    uses sdmxdl.ext.spi.SdmxDialect;
+    uses sdmxdl.ext.spi.Dialect;
 }

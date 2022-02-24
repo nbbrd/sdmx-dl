@@ -3,7 +3,7 @@ package sdmxdl.util;
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,13 +35,13 @@ public class SdmxCubeUtilTest {
             .freq(Frequency.UNDEFINED)
             .build();
 
-    private static final SdmxRepository WITH_DETAIL = REPO;
-    private static final SdmxRepository WITHOUT_DETAIL = REPO.toBuilder().clearSupportedFeatures().build();
+    private static final DataRepository WITH_DETAIL = REPO;
+    private static final DataRepository WITHOUT_DETAIL = REPO.toBuilder().clearSupportedFeatures().build();
 
     @Test
     public void testGetAllSeries() throws IOException {
-        for (SdmxRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (SdmxConnection c = repo.asConnection()) {
+        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
+            try (Connection c = repo.asConnection()) {
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, FLOW_REF, null));
@@ -64,8 +64,8 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetAllSeriesWithData() throws IOException {
-        for (SdmxRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (SdmxConnection c = repo.asConnection()) {
+        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
+            try (Connection c = repo.asConnection()) {
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, FLOW_REF, null));
@@ -88,8 +88,8 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetSeries() throws IOException {
-        for (SdmxRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (SdmxConnection conn = repo.asConnection()) {
+        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
+            try (Connection conn = repo.asConnection()) {
                 assertThatNullPointerException().isThrownBy(() -> getSeries(null, FLOW_REF, K1));
                 assertThatNullPointerException().isThrownBy(() -> getSeries(conn, null, K1));
                 assertThatNullPointerException().isThrownBy(() -> getSeries(conn, FLOW_REF, null));
@@ -106,8 +106,8 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetSeriesWithData() throws IOException {
-        for (SdmxRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (SdmxConnection conn = repo.asConnection()) {
+        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
+            try (Connection conn = repo.asConnection()) {
                 assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(null, FLOW_REF, K1));
                 assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(conn, null, K1));
                 assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(conn, FLOW_REF, null));
@@ -124,8 +124,8 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetChildren() throws IOException {
-        for (SdmxRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (SdmxConnection conn = repo.asConnection()) {
+        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
+            try (Connection conn = repo.asConnection()) {
                 assertThatNullPointerException().isThrownBy(() -> getChildren(null, FLOW_REF, ALL, 0));
                 assertThatNullPointerException().isThrownBy(() -> getChildren(conn, null, ALL, 0));
                 assertThatNullPointerException().isThrownBy(() -> getChildren(conn, FLOW_REF, null, 0));

@@ -19,8 +19,8 @@ package sdmxdl;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.Cache;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
@@ -38,15 +38,15 @@ import java.util.function.BiConsumer;
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
-    public abstract @NonNull SdmxConnection getConnection(@NonNull SOURCE source) throws IOException;
+    public abstract @NonNull Connection getConnection(@NonNull SOURCE source) throws IOException;
 
     public abstract @NonNull LanguagePriorityList getLanguages();
 
-    public abstract @NonNull SdmxCache getCache();
+    public abstract @NonNull Cache getCache();
 
     public abstract @NonNull BiConsumer<? super SOURCE, ? super String> getEventListener();
 
-    public abstract @NonNull List<SdmxDialect> getDialects();
+    public abstract @NonNull List<Dialect> getDialects();
 
     public static final BiConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = SdmxManager::doNothing;
 

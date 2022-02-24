@@ -39,13 +39,13 @@ public class WebFlowOptions extends WebSourceOptions {
     private DataflowRef flow;
 
     public DataStructure loadStructure(SdmxWebManager manager) throws IOException {
-        try (SdmxConnection conn = open(manager)) {
+        try (Connection conn = open(manager)) {
             return conn.getStructure(getFlow());
         }
     }
 
     public DataSet loadSeries(SdmxWebManager manager, Key key, DataDetail detail) throws IOException {
-        try (SdmxConnection conn = open(manager)) {
+        try (Connection conn = open(manager)) {
             return conn.getData(getFlow(), DataQuery.of(key, detail));
         }
     }

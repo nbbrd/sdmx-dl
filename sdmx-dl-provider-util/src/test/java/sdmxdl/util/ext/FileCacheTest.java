@@ -21,9 +21,9 @@ import com.google.common.jimfs.Jimfs;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import tests.sdmxdl.ext.FakeClock;
-import tests.sdmxdl.ext.SdmxCacheAssert;
+import tests.sdmxdl.ext.CacheAssert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class FileCacheTest {
 
     @Test
     public void testCompliance() {
-        SdmxCacheAssert.assertCompliance(FileCache.builder().build());
+        CacheAssert.assertCompliance(FileCache.builder().build());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class FileCacheTest {
         try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
             FakeClock clock = new FakeClock();
             clock.set(1000);
-            FileFormat<SdmxRepository> serializer = newFakeFileFormat();
+            FileFormat<DataRepository> serializer = newFakeFileFormat();
 
             FileCache cache = FileCache
                     .builder()
@@ -67,7 +67,7 @@ public class FileCacheTest {
                     .as("Empty directory should return null")
                     .isNull();
 
-            SdmxRepository r1 = SdmxRepository
+            DataRepository r1 = DataRepository
                     .builder()
                     .name("r1")
                     .ttl(clock.instant(), Duration.ofMillis(10))
@@ -94,11 +94,11 @@ public class FileCacheTest {
                     .as("Expired key should be deleted")
                     .doesNotExist();
 
-            SdmxRepository r1b = r1
+            DataRepository r1b = r1
                     .toBuilder()
                     .ttl(clock.instant(), Duration.ofMillis(10))
                     .build();
-            SdmxRepository r2 = SdmxRepository
+            DataRepository r2 = DataRepository
                     .builder()
                     .name("r2")
                     .ttl(clock.instant(), Duration.ofMillis(10))
@@ -114,12 +114,12 @@ public class FileCacheTest {
         }
     }
 
-    private static FileFormat<SdmxRepository> newFakeFileFormat() {
-        Map<String, SdmxRepository> content = new HashMap<>();
+    private static FileFormat<DataRepository> newFakeFileFormat() {
+        Map<String, DataRepository> content = new HashMap<>();
         return new FileFormat<>(newFakeFileParser(content), newFakeFileFormatter(content), ".dat");
     }
 
-    private static FileParser<SdmxRepository> newFakeFileParser(Map<String, SdmxRepository> content) {
+    private static FileParser<DataRepository> newFakeFileParser(Map<String, DataRepository> content) {
         return (stream) -> {
             try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 String name = new BufferedReader(reader).lines().collect(Collectors.joining(""));
@@ -128,7 +128,7 @@ public class FileCacheTest {
         };
     }
 
-    private static FileFormatter<SdmxRepository> newFakeFileFormatter(Map<String, SdmxRepository> content) {
+    private static FileFormatter<DataRepository> newFakeFileFormatter(Map<String, DataRepository> content) {
         return (entry, stream) -> {
             try (Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
                 writer.write(entry.getName());

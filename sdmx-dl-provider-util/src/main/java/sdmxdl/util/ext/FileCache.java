@@ -21,9 +21,9 @@ import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.ext.Cache;
+import sdmxdl.DataRepository;
+import sdmxdl.web.MonitorReports;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,7 +39,7 @@ import java.util.function.UnaryOperator;
  */
 @lombok.Getter
 @lombok.Builder(toBuilder = true)
-public final class FileCache implements SdmxCache {
+public final class FileCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -59,11 +59,11 @@ public final class FileCache implements SdmxCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final FileFormat<SdmxRepository> repositoryFormat = FileFormat.noOp();
+    private final FileFormat<DataRepository> repositoryFormat = FileFormat.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final FileFormat<SdmxWebMonitorReports> monitorFormat = FileFormat.noOp();
+    private final FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -74,36 +74,36 @@ public final class FileCache implements SdmxCache {
     private final Clock clock = Clock.systemDefaultZone();
 
     @Override
-    public @Nullable SdmxRepository getRepository(@NonNull String key) {
+    public @Nullable DataRepository getRepository(@NonNull String key) {
         Objects.requireNonNull(key);
         return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
     }
 
     @Override
-    public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         write(repositoryFormat, key, FileType.REPOSITORY, value);
     }
 
     @Override
-    public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
         Objects.requireNonNull(key);
         return read(monitorFormat, this::isValid, key, FileType.MONITOR);
     }
 
     @Override
-    public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
+    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         write(monitorFormat, key, FileType.MONITOR, value);
     }
 
-    private boolean isValid(SdmxRepository value) {
+    private boolean isValid(DataRepository value) {
         return !value.isExpired(clock);
     }
 
-    private boolean isValid(SdmxWebMonitorReports value) {
+    private boolean isValid(MonitorReports value) {
         return !value.isExpired(clock);
     }
 

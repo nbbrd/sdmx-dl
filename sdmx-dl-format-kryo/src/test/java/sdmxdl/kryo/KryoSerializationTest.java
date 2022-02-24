@@ -3,10 +3,10 @@ package sdmxdl.kryo;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebMonitorReport;
-import sdmxdl.web.SdmxWebMonitorReports;
-import sdmxdl.web.SdmxWebStatus;
+import sdmxdl.DataRepository;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.MonitorStatus;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +25,7 @@ public class KryoSerializationTest {
     public void test() throws IOException {
         Instant now = Clock.systemDefaultZone().instant();
 
-        SdmxRepository repository = RepoSamples.REPO
+        DataRepository repository = RepoSamples.REPO
                 .toBuilder()
                 .ttl(now, Duration.ofMillis(100))
                 .build();
@@ -34,10 +34,10 @@ public class KryoSerializationTest {
                 .isEqualTo(repository)
                 .isNotSameAs(repository);
 
-        SdmxWebMonitorReports reports = SdmxWebMonitorReports
+        MonitorReports reports = MonitorReports
                 .builder()
                 .uriScheme("abc")
-                .report(SdmxWebMonitorReport.builder().source("xyz").status(SdmxWebStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
+                .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
                 .ttl(now, Duration.ofMillis(100))
                 .build();
 

@@ -22,7 +22,7 @@ import _test.sdmxdl.TestConnection;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.api.SdmxConnectionAssert;
+import tests.sdmxdl.api.ConnectionAssert;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -35,9 +35,9 @@ public class FailsafeConnectionTest {
 
     @Test
     public void testCompliance() {
-        SdmxConnectionAssert.assertCompliance(
+        ConnectionAssert.assertCompliance(
                 () -> FailsafeConnection.wrap(RepoSamples.REPO.asConnection()),
-                SdmxConnectionAssert.Sample
+                ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
                         .invalidFlow(RepoSamples.BAD_FLOW_REF)

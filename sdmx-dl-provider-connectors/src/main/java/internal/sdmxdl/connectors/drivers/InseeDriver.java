@@ -27,9 +27,9 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
@@ -40,13 +40,13 @@ import static sdmxdl.util.SdmxFix.Category.CONTENT;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class InseeDriver implements SdmxWebDriver {
+@ServiceProvider
+public final class InseeDriver implements WebDriver {
 
     private static final String CONNECTORS_INSEE = "connectors:insee";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)

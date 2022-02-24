@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli;
 
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
+import sdmxdl.web.spi.WebAuthenticator;
 
 import java.io.Console;
 import java.io.IOError;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class ConsoleAuthenticator implements SdmxWebAuthenticator {
+final class ConsoleAuthenticator implements WebAuthenticator {
 
     private final Console console = System.console();
 

@@ -20,23 +20,23 @@ import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.SslOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
-import internal.util.SdmxWebAuthenticatorLoader;
+import internal.util.WebAuthenticatorLoader;
 import nl.altindag.ssl.SSLFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.ext.NetworkFactory;
-import sdmxdl.ext.SdmxCache;
+import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
 import sdmxdl.kryo.KryoFileFormat;
-import sdmxdl.repo.SdmxRepository;
 import sdmxdl.util.ext.FileCache;
 import sdmxdl.util.ext.FileFormat;
 import sdmxdl.util.ext.MapCache;
 import sdmxdl.util.ext.VerboseCache;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebMonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
+import sdmxdl.web.spi.WebAuthenticator;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
@@ -81,8 +81,8 @@ public class WebNetOptions extends WebOptions {
                 .build();
     }
 
-    private NetworkFactory getNetworkFactory() {
-        return new NetworkFactory() {
+    private Network getNetworkFactory() {
+        return new Network() {
 
             @lombok.Getter(lazy = true)
             private final ProxySelector lazyProxySelector = initProxySelector();
@@ -135,9 +135,9 @@ public class WebNetOptions extends WebOptions {
                 : url;
     }
 
-    private static SdmxCache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+    private static Cache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
         if (cacheOptions.isNoCache()) {
-            return SdmxCache.noOp();
+            return Cache.noOp();
         }
         FileCache fileCache = getFileCache(cacheOptions, verboseOptions);
         if (verboseOptions.isVerbose()) {
@@ -160,17 +160,17 @@ public class WebNetOptions extends WebOptions {
         return result.build();
     }
 
-    private static FileFormat<SdmxRepository> getRepositoryFormat(CacheOptions cacheOptions) {
-        FileFormat<SdmxRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
+    private static FileFormat<DataRepository> getRepositoryFormat(CacheOptions cacheOptions) {
+        FileFormat<DataRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
         return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
-    private static FileFormat<SdmxWebMonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
-        FileFormat<SdmxWebMonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
+    private static FileFormat<MonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
+        FileFormat<MonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
         return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
-    private static SdmxCache getVerboseCache(SdmxCache delegate, VerboseOptions options) {
+    private static Cache getVerboseCache(Cache delegate, VerboseOptions options) {
         if (options.isVerbose()) {
             BiConsumer<String, Boolean> listener = (key, hit) -> options.reportToErrorStream(CACHE_ANCHOR, (hit ? "Hit " : "Miss ") + key);
             return new VerboseCache(delegate, listener, listener);
@@ -178,14 +178,14 @@ public class WebNetOptions extends WebOptions {
         return delegate;
     }
 
-    private List<SdmxWebAuthenticator> getAuthenticators() {
+    private List<WebAuthenticator> getAuthenticators() {
         AuthOptions authOptions = networkOptions.getAuthOptions();
         if (authOptions.hasUsername() && authOptions.hasPassword()) {
             return Collections.singletonList(new ConstantAuthenticator(authOptions.getUser()));
         }
-        List<SdmxWebAuthenticator> result = new ArrayList<>();
+        List<WebAuthenticator> result = new ArrayList<>();
         if (!authOptions.isNoSystemAuth()) {
-            result.addAll(SdmxWebAuthenticatorLoader.load());
+            result.addAll(WebAuthenticatorLoader.load());
         }
         if (result.isEmpty()) {
             ConsoleAuthenticator fallback = new ConsoleAuthenticator();
@@ -198,12 +198,12 @@ public class WebNetOptions extends WebOptions {
 
     private static final String CACHE_ANCHOR = "CCH";
 
-    private static final class DryCache implements SdmxCache {
+    private static final class DryCache implements Cache {
 
-        private final SdmxCache delegate;
+        private final Cache delegate;
         private final MapCache dry;
 
-        public DryCache(SdmxCache delegate) {
+        public DryCache(Cache delegate) {
             this.delegate = delegate;
             this.dry = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), delegate.getClock());
         }
@@ -214,8 +214,8 @@ public class WebNetOptions extends WebOptions {
         }
 
         @Override
-        public @Nullable SdmxRepository getRepository(@NonNull String key) {
-            SdmxRepository result = dry.getRepository(key);
+        public @Nullable DataRepository getRepository(@NonNull String key) {
+            DataRepository result = dry.getRepository(key);
             if (result == null) {
                 result = delegate.getRepository(key);
                 if (result != null) {
@@ -226,27 +226,27 @@ public class WebNetOptions extends WebOptions {
         }
 
         @Override
-        public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+        public void putRepository(@NonNull String key, @NonNull DataRepository value) {
             dry.putRepository(key, value);
             delegate.putRepository(key, value);
         }
 
         @Override
-        public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
-            SdmxWebMonitorReports result = dry.getWebMonitorReports(key);
+        public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
+            MonitorReports result = dry.getMonitorReports(key);
             if (result == null) {
-                result = delegate.getWebMonitorReports(key);
+                result = delegate.getMonitorReports(key);
                 if (result != null) {
-                    dry.putWebMonitorReports(key, result);
+                    dry.putMonitorReports(key, result);
                 }
             }
             return result;
         }
 
         @Override
-        public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
-            dry.putWebMonitorReports(key, value);
-            delegate.putWebMonitorReports(key, value);
+        public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
+            dry.putMonitorReports(key, value);
+            delegate.putMonitorReports(key, value);
         }
     }
 }

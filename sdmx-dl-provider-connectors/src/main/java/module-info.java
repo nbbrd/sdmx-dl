@@ -1,3 +1,5 @@
+import sdmxdl.web.spi.WebDriver;
+
 module sdmxdl.web.connectors {
 
     requires static nbbrd.service;
@@ -11,7 +13,7 @@ module sdmxdl.web.connectors {
 
     requires transitive sdmxdl.api;
 
-    provides sdmxdl.web.spi.SdmxWebDriver with
+    provides WebDriver with
             internal.sdmxdl.connectors.drivers.AbsDriver,
             internal.sdmxdl.connectors.drivers.EurostatDriver,
             internal.sdmxdl.connectors.drivers.ImfDriver,

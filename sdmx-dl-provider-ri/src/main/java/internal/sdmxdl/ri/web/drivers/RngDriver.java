@@ -11,8 +11,8 @@ import sdmxdl.ext.SdmxException;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,7 +32,7 @@ import static java.util.Collections.singleton;
 import static sdmxdl.DataSet.toDataSet;
 
 @ServiceProvider
-public final class RngDriver implements SdmxWebDriver {
+public final class RngDriver implements WebDriver {
 
     private static final String RI_RNG = "ri:rng";
 
@@ -57,7 +57,7 @@ public final class RngDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
@@ -120,7 +120,7 @@ public final class RngDriver implements SdmxWebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static class RngWebConnection implements SdmxConnection {
+    private static class RngWebConnection implements Connection {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";

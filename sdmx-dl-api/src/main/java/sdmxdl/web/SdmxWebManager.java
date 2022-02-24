@@ -16,23 +16,22 @@
  */
 package sdmxdl.web;
 
-import internal.util.SdmxWebAuthenticatorLoader;
-import internal.util.SdmxWebDriverLoader;
-import internal.util.SdmxWebMonitoringLoader;
+import internal.util.DialectLoader;
+import internal.util.WebAuthenticatorLoader;
+import internal.util.WebDriverLoader;
+import internal.util.WebMonitoringLoader;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxConnection;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.NetworkFactory;
-import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.ext.spi.SdmxDialectLoader;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
-import sdmxdl.web.spi.SdmxWebMonitoring;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.WebMonitoring;
 
 import java.io.IOException;
 import java.net.URI;
@@ -57,24 +56,24 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     public static SdmxWebManager ofServiceLoader() {
         return SdmxWebManager
                 .builder()
-                .drivers(SdmxWebDriverLoader.load())
-                .dialects(SdmxDialectLoader.load())
-                .monitorings(SdmxWebMonitoringLoader.load())
-                .authenticators(SdmxWebAuthenticatorLoader.load())
+                .drivers(WebDriverLoader.load())
+                .dialects(DialectLoader.load())
+                .monitorings(WebMonitoringLoader.load())
+                .authenticators(WebAuthenticatorLoader.load())
                 .build();
     }
 
     @lombok.NonNull
     @lombok.Singular
-    List<SdmxWebDriver> drivers;
+    List<WebDriver> drivers;
 
     @lombok.NonNull
     @lombok.Singular
-    List<SdmxDialect> dialects;
+    List<Dialect> dialects;
 
     @lombok.NonNull
     @lombok.Singular
-    List<SdmxWebMonitoring> monitorings;
+    List<WebMonitoring> monitorings;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -82,11 +81,11 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    NetworkFactory network = NetworkFactory.getDefault();
+    Network network = Network.getDefault();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    SdmxCache cache = SdmxCache.noOp();
+    Cache cache = Cache.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -94,7 +93,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Singular
-    List<SdmxWebAuthenticator> authenticators;
+    List<WebAuthenticator> authenticators;
 
     @lombok.NonNull
     @lombok.Singular
@@ -110,9 +109,9 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    SdmxWebContext context = initContext();
+    WebContext context = initContext();
 
-    public @NonNull SdmxConnection getConnection(@NonNull String name) throws IOException {
+    public @NonNull Connection getConnection(@NonNull String name) throws IOException {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
@@ -122,10 +121,10 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     @Override
-    public @NonNull SdmxConnection getConnection(@NonNull SdmxWebSource source) throws IOException {
+    public @NonNull Connection getConnection(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
-        SdmxWebDriver driver = lookupDriver(source.getDriver())
+        WebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
         checkSourceProperties(source, driver);
@@ -134,7 +133,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     @NonNull
-    public SdmxWebMonitorReport getMonitorReport(@NonNull String name) throws IOException {
+    public MonitorReport getMonitorReport(@NonNull String name) throws IOException {
         Objects.requireNonNull(name);
 
         SdmxWebSource source = lookupSource(name)
@@ -144,7 +143,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     @NonNull
-    public SdmxWebMonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
+    public MonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
         Objects.requireNonNull(source);
 
         URI monitor = source.getMonitor();
@@ -153,13 +152,13 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
             throw new IOException("Missing monitor for '" + source + "'");
         }
 
-        SdmxWebMonitoring monitoring = lookupMonitoring(monitor.getScheme())
+        WebMonitoring monitoring = lookupMonitoring(monitor.getScheme())
                 .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
 
         return monitoring.getReport(source, getContext());
     }
 
-    private void checkSourceProperties(SdmxWebSource source, SdmxWebDriver driver) {
+    private void checkSourceProperties(SdmxWebSource source, WebDriver driver) {
         if (eventListener != NO_OP_EVENT_LISTENER) {
             Collection<String> expected = driver.getSupportedProperties();
             Collection<String> found = source.getProperties().keySet();
@@ -174,22 +173,22 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return Optional.ofNullable(getSources().get(name));
     }
 
-    private Optional<SdmxWebDriver> lookupDriver(String name) {
+    private Optional<WebDriver> lookupDriver(String name) {
         return drivers
                 .stream()
                 .filter(driver -> name.equals(driver.getName()))
                 .findFirst();
     }
 
-    private Optional<SdmxWebMonitoring> lookupMonitoring(String uriScheme) {
+    private Optional<WebMonitoring> lookupMonitoring(String uriScheme) {
         return monitorings
                 .stream()
                 .filter(monitoring -> uriScheme.equals(monitoring.getUriScheme()))
                 .findFirst();
     }
 
-    private SdmxWebContext initContext() {
-        return SdmxWebContext
+    private WebContext initContext() {
+        return WebContext
                 .builder()
                 .cache(cache)
                 .languages(languages)
@@ -200,7 +199,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .build();
     }
 
-    private static List<SdmxWebSource> initDefaultSources(List<SdmxWebDriver> drivers) {
+    private static List<SdmxWebSource> initDefaultSources(List<WebDriver> drivers) {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())

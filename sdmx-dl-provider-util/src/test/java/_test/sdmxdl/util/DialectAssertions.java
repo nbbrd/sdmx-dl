@@ -16,7 +16,7 @@
  */
 package _test.sdmxdl.util;
 
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DialectAssertions {
 
     @SuppressWarnings("null")
-    public void assertDialectCompliance(SdmxDialect d) {
+    public void assertDialectCompliance(Dialect d) {
         assertThat(d.getName()).isNotBlank();
         assertThat(d.getDescription()).isNotBlank();
         assertThat(d.getObsFactory()).isNotNull();

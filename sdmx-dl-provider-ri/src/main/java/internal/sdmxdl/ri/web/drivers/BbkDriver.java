@@ -31,10 +31,10 @@ import sdmxdl.util.DataRef;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -46,13 +46,13 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class BbkDriver implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class BbkDriver implements WebDriver {
 
     private static final String RI_BBK = "ri:bbk";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
@@ -72,7 +72,7 @@ public final class BbkDriver implements SdmxWebDriver {
     @VisibleForTesting
     static final class BbkClient extends RiRestClient {
 
-        BbkClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+        BbkClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),

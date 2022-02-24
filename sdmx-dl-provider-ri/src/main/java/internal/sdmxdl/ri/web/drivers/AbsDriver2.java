@@ -26,10 +26,10 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.DataRef;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,13 +40,13 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
  * @author Philippe Charles
  */
 @Deprecated
-@ServiceProvider(SdmxWebDriver.class)
-public final class AbsDriver2 implements SdmxWebDriver {
+@ServiceProvider
+public final class AbsDriver2 implements WebDriver {
 
     private static final String RI_ABS = "ri:abs";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(RI_ABS)
             .rank(NATIVE_RANK)
@@ -54,7 +54,7 @@ public final class AbsDriver2 implements SdmxWebDriver {
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return RiRestClient.of(s, c, "SDMX20", new AbsQueries(), new DotStatRestParsers(), false);
     }
 

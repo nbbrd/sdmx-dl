@@ -12,16 +12,16 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -51,7 +51,7 @@ import static sdmxdl.util.web.SdmxValidators.dataflowRefOf;
 import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
-public final class StatCanDriver implements SdmxWebDriver {
+public final class StatCanDriver implements WebDriver {
 
     private static final String RI_STATCAN = "ri:statcan";
 
@@ -73,7 +73,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source);
         Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
@@ -118,7 +118,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class StatCanConnection implements SdmxConnection {
+    private static final class StatCanConnection implements Connection {
 
         @lombok.NonNull
         private final String source;
@@ -189,7 +189,7 @@ public final class StatCanDriver implements SdmxWebDriver {
 
         @NonNull List<Dataflow> getFlows() throws IOException;
 
-        @NonNull SdmxRepository getStructAndData(int productId) throws IOException;
+        @NonNull DataRepository getStructAndData(int productId) throws IOException;
 
         @NonNull Duration ping() throws IOException;
     }
@@ -210,10 +210,10 @@ public final class StatCanDriver implements SdmxWebDriver {
         }
 
         @Override
-        public @NonNull SdmxRepository getStructAndData(int productId) throws IOException {
+        public @NonNull DataRepository getStructAndData(int productId) throws IOException {
             FullTableDownloadSDMX ref = getFullTableDownloadSDMX(productId);
             File downloaded = getFullTableDownloadSDMX(ref);
-            SdmxRepository result = Converter.toSdmxRepository(downloaded, productId, langs);
+            DataRepository result = Converter.toSdmxRepository(downloaded, productId, langs);
             if (!downloaded.delete()) {
                 throw new IOException("Cannot delete temp file");
             }
@@ -285,7 +285,7 @@ public final class StatCanDriver implements SdmxWebDriver {
     static class CachedStatCanClient implements StatCanClient {
 
         static @NonNull CachedStatCanClient of(
-                @NonNull StatCanClient client, @NonNull SdmxCache cache, long ttlInMillis,
+                @NonNull StatCanClient client, @NonNull Cache cache, long ttlInMillis,
                 @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
@@ -298,7 +298,7 @@ public final class StatCanDriver implements SdmxWebDriver {
         private final StatCanClient delegate;
 
         @lombok.NonNull
-        private final SdmxCache cache;
+        private final Cache cache;
 
         @lombok.NonNull
         private final URI base;
@@ -310,16 +310,16 @@ public final class StatCanDriver implements SdmxWebDriver {
         private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<SdmxRepository> idOfRepo = initIdOfRepo(base);
+        private final TypedId<DataRepository> idOfRepo = initIdOfRepo(base);
 
         private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
             return TypedId.of(base,
-                    SdmxRepository::getFlows,
-                    flows -> SdmxRepository.builder().flows(flows).build()
+                    DataRepository::getFlows,
+                    flows -> DataRepository.builder().flows(flows).build()
             ).with("flows");
         }
 
-        private static TypedId<SdmxRepository> initIdOfRepo(URI base) {
+        private static TypedId<DataRepository> initIdOfRepo(URI base) {
             return TypedId.of(base, Function.identity(), Function.identity())
                     .with("structAndData");
         }
@@ -330,7 +330,7 @@ public final class StatCanDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxRepository getStructAndData(int productId) throws IOException {
+        public DataRepository getStructAndData(int productId) throws IOException {
             return getIdOfRepo().with(productId).load(cache, () -> delegate.getStructAndData(productId), o -> ttl);
         }
 
@@ -442,12 +442,12 @@ public final class StatCanDriver implements SdmxWebDriver {
             );
         }
 
-        static SdmxRepository toSdmxRepository(File fullTable, int productId, LanguagePriorityList langs) throws IOException {
+        static DataRepository toSdmxRepository(File fullTable, int productId, LanguagePriorityList langs) throws IOException {
             try (ZipFile zipFile = new ZipFile(fullTable)) {
 
                 DataStructure dsd = parseStruct(zipFile, langs);
 
-                return SdmxRepository
+                return DataRepository
                         .builder()
                         .structure(dsd)
                         .dataSet(parseData(zipFile, dsd).collect(toDataSet(toDataflowRef(productId), DataQuery.ALL)))

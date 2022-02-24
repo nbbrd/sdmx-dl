@@ -18,7 +18,7 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.OecdDriver;
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +27,6 @@ public class OecdDriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new OecdDriver());
+        WebDriverAssert.assertCompliance(new OecdDriver());
     }
 }

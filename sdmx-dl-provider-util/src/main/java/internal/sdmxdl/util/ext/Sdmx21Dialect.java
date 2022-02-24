@@ -19,14 +19,14 @@ package internal.sdmxdl.util.ext;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.parser.ObsFactories;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxDialect.class)
-public final class Sdmx21Dialect implements SdmxDialect {
+@ServiceProvider(Dialect.class)
+public final class Sdmx21Dialect implements Dialect {
 
     @Override
     public String getName() {

@@ -33,10 +33,10 @@ import sdmxdl.ext.MessageFooter;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.IOException;
@@ -57,8 +57,8 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class EurostatDriver2 implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class EurostatDriver2 implements WebDriver {
 
     public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
             IntProperty.of("asyncMaxRetries", 10);
@@ -69,7 +69,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
     private static final String RI_EUROSTAT = "ri:estat";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(RI_EUROSTAT)
             .rank(NATIVE_RANK)
@@ -89,7 +89,7 @@ public final class EurostatDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static SdmxRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+    private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return new RiRestClient(
                 s.getId(),
                 s.getEndpoint().toURL(),
@@ -102,13 +102,13 @@ public final class EurostatDriver2 implements SdmxWebDriver {
         );
     }
 
-    private static InterceptingClient getHttpClient(SdmxWebSource s, SdmxWebContext c) {
+    private static InterceptingClient getHttpClient(SdmxWebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
         long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
         return new InterceptingClient(RiHttpUtils.newClient(getContext(s, c)), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries));
     }
 
-    private static HttpContext getContext(SdmxWebSource s, SdmxWebContext c) {
+    private static HttpContext getContext(SdmxWebSource s, WebContext c) {
         return fixCompression(RiHttpUtils.newContext(s, c));
     }
 

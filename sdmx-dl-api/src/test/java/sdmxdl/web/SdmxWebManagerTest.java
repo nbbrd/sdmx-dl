@@ -18,16 +18,15 @@ package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxConnection;
+import sdmxdl.Connection;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.NetworkFactory;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.ext.spi.SdmxDialect;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.ext.Cache;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.DataRepository;
+import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.ext.MockedDialect;
-import tests.sdmxdl.web.MockedWebDriver;
+import tests.sdmxdl.web.MockedDriver;
 
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.web.spi.SdmxWebDriver.NATIVE_RANK;
-import static sdmxdl.web.spi.SdmxWebDriver.WRAPPED_RANK;
+import static sdmxdl.web.spi.WebDriver.NATIVE_RANK;
+import static sdmxdl.web.spi.WebDriver.WRAPPED_RANK;
 
 /**
  * @author Philippe Charles
@@ -64,8 +63,8 @@ public class SdmxWebManagerTest {
             assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
-            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getCache()).isEqualTo(Cache.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
@@ -78,8 +77,8 @@ public class SdmxWebManagerTest {
             assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
-            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getCache()).isEqualTo(Cache.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
@@ -91,8 +90,8 @@ public class SdmxWebManagerTest {
             assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(NetworkFactory.getDefault());
-            assertThat(o.getCache()).isEqualTo(SdmxCache.noOp());
+            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getCache()).isEqualTo(Cache.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
@@ -110,7 +109,7 @@ public class SdmxWebManagerTest {
         SdmxWebSource nbbAlias = nbb.alias("bnb");
         SdmxWebSource nbbDialect = nbb.toBuilder().dialect("custom").clearAliases().build();
 
-        SdmxWebDriver sdmx21 = MockedWebDriver
+        WebDriver sdmx21 = MockedDriver
                 .builder()
                 .name("sdmx21")
                 .rank(WRAPPED_RANK)
@@ -180,11 +179,11 @@ public class SdmxWebManagerTest {
     public void testGetDefaultSources() {
         SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").endpointOf("http://abc").build();
         SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").endpointOf("http://abc").build();
-        SdmxWebDriver driverX = MockedWebDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).defaultSource(source1a).defaultSource(source2).build();
+        WebDriver driverX = MockedDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).defaultSource(source1a).defaultSource(source2).build();
 
         SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").endpointOf("http://xyz").build();
         SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").endpointOf("http://xyz").build();
-        SdmxWebDriver driverY = MockedWebDriver.builder().name("dY").rank(NATIVE_RANK).available(true).defaultSource(source1b).defaultSource(source3).build();
+        WebDriver driverY = MockedDriver.builder().name("dY").rank(NATIVE_RANK).available(true).defaultSource(source1b).defaultSource(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
                 .containsExactly(source1a, source2, source3);
@@ -206,7 +205,7 @@ public class SdmxWebManagerTest {
 
         assertThatCode(() -> manager.getConnection(sampleSource.getName()).close()).doesNotThrowAnyException();
 
-        SdmxWebDriver driver1 = MockedWebDriver
+        WebDriver driver1 = MockedDriver
                 .builder()
                 .name("d1")
                 .rank(WRAPPED_RANK)
@@ -215,7 +214,7 @@ public class SdmxWebManagerTest {
                 .defaultSource(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
-        SdmxWebDriver driver2 = MockedWebDriver
+        WebDriver driver2 = MockedDriver
                 .builder()
                 .name("d2")
                 .rank(NATIVE_RANK)
@@ -224,7 +223,7 @@ public class SdmxWebManagerTest {
                 .defaultSource(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
-        try (SdmxConnection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
+        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
             // TODO: create code that verifies that driver2 is selected
 //            assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
@@ -262,24 +261,24 @@ public class SdmxWebManagerTest {
                 .build();
 
         SdmxWebSource noProp = sampleSource.toBuilder().name("noProp").clearProperties().build();
-        try (SdmxConnection ignored = manager.getConnection(noProp)) {
+        try (Connection ignored = manager.getConnection(noProp)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource validProp = sampleSource.toBuilder().name("validProp").build();
-        try (SdmxConnection ignored = manager.getConnection(validProp)) {
+        try (Connection ignored = manager.getConnection(validProp)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource invalidProp = sampleSource.toBuilder().name("invalidProp").property("boom", "123").build();
-        try (SdmxConnection ignored = manager.getConnection(invalidProp)) {
+        try (Connection ignored = manager.getConnection(invalidProp)) {
         }
         assertThat(events).hasSize(1).element(0, STRING)
                 .contains(invalidProp.getName())
                 .contains("boom");
     }
 
-    private final SdmxRepository sample = SdmxRepository.builder().name("repo").build();
+    private final DataRepository sample = DataRepository.builder().name("repo").build();
     private final SdmxWebSource sampleSource = SdmxWebSource
             .builder()
             .name("repoSource")
@@ -288,7 +287,7 @@ public class SdmxWebManagerTest {
             .endpointOf(sample.getName())
             .property("someproperty", "somevalue")
             .build();
-    private final SdmxWebDriver sampleDriver = MockedWebDriver
+    private final WebDriver sampleDriver = MockedDriver
             .builder()
             .name("repoDriver")
             .rank(0)
@@ -297,7 +296,7 @@ public class SdmxWebManagerTest {
             .supportedProperty("someproperty")
             .defaultSource(sampleSource)
             .build();
-    private final SdmxDialect sampleDialect = new MockedDialect("azerty");
+    private final Dialect sampleDialect = new MockedDialect("azerty");
 
     private static <K, V> AbstractMap.SimpleEntry<K, V> entryOf(K name, V source) {
         return new AbstractMap.SimpleEntry<>(name, source);

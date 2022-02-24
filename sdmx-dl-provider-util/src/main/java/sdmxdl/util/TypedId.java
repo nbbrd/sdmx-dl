@@ -20,8 +20,8 @@ import lombok.AccessLevel;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.ext.Cache;
+import sdmxdl.DataRepository;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -47,8 +47,8 @@ public final class TypedId<T> {
     @NonNull
     public static <T> TypedId<T> of(
             @NonNull URI content,
-            @NonNull Function<SdmxRepository, T> loader,
-            @NonNull Function<T, SdmxRepository> storer) {
+            @NonNull Function<DataRepository, T> loader,
+            @NonNull Function<T, DataRepository> storer) {
         return new TypedId<>(content, loader, storer);
     }
 
@@ -57,10 +57,10 @@ public final class TypedId<T> {
     private final URI content;
 
     @lombok.NonNull
-    private final Function<SdmxRepository, T> loader;
+    private final Function<DataRepository, T> loader;
 
     @lombok.NonNull
-    private final Function<T, SdmxRepository> storer;
+    private final Function<T, DataRepository> storer;
 
     @NonNull
     public TypedId<T> with(@NonNull Object o) {
@@ -69,18 +69,18 @@ public final class TypedId<T> {
     }
 
     @Nullable
-    public T peek(@NonNull SdmxCache cache) {
-        SdmxRepository repo = cache.getRepository(content.toString());
+    public T peek(@NonNull Cache cache) {
+        DataRepository repo = cache.getRepository(content.toString());
         return repo != null ? loader.apply(repo) : null;
     }
 
     @NonNull
-    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
+    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
         return load(cache, factory, ttl, o -> true);
     }
 
     @NonNull
-    public T load(@NonNull SdmxCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
+    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();

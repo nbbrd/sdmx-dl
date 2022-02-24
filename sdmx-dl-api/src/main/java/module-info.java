@@ -12,13 +12,12 @@ module sdmxdl.api {
     exports sdmxdl.ext.spi;
     exports sdmxdl.file;
     exports sdmxdl.file.spi;
-    exports sdmxdl.repo;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
-    uses sdmxdl.ext.spi.SdmxDialect;
-    uses sdmxdl.file.spi.SdmxFileReader;
-    uses sdmxdl.web.spi.SdmxWebAuthenticator;
-    uses sdmxdl.web.spi.SdmxWebDriver;
-    uses sdmxdl.web.spi.SdmxWebMonitoring;
+    uses sdmxdl.ext.spi.Dialect;
+    uses sdmxdl.file.spi.FileReader;
+    uses sdmxdl.web.spi.WebAuthenticator;
+    uses sdmxdl.web.spi.WebDriver;
+    uses sdmxdl.web.spi.WebMonitoring;
 }

@@ -19,20 +19,20 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebDriver;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class EurostatDriver implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class EurostatDriver implements WebDriver {
 
     private static final String CONNECTORS_EUROSTAT = "connectors:eurostat";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(CONNECTORS_EUROSTAT)
             .rank(WRAPPED_RANK)

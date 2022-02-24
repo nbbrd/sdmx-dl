@@ -7,14 +7,14 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.SdmxConnection;
+import sdmxdl.Connection;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 @ServiceProvider
-public final class FileDriver implements SdmxWebDriver {
+public final class FileDriver implements WebDriver {
 
     private static final String RI_FILE = "ri:file";
 
@@ -51,7 +51,7 @@ public final class FileDriver implements SdmxWebDriver {
     }
 
     @Override
-    public @NonNull SdmxConnection connect(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(context, "context");
         sourceValidator.checkValidity(source);

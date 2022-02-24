@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-public enum TestConnection implements SdmxConnection {
+public enum TestConnection implements Connection {
     VALID {
         @Override
         public void testConnection() {

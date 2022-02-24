@@ -2,13 +2,13 @@ package internal.sdmxdl.cli;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
+import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
 
 import java.net.PasswordAuthentication;
 
 @lombok.AllArgsConstructor
-final class ConstantAuthenticator implements SdmxWebAuthenticator {
+final class ConstantAuthenticator implements WebAuthenticator {
 
     private final PasswordAuthentication user;
 

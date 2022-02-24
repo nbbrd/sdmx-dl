@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebMonitorReport;
+import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
@@ -94,21 +94,21 @@ public final class CheckStatusCommand implements Callable<Void> {
             }
         }
 
-        static @NonNull Status success(@NonNull SdmxWebMonitorReport report) {
+        static @NonNull Status success(@NonNull MonitorReport report) {
             return new Status(report, null);
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull IOException cause) {
-            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause.getMessage());
+            return new Status(MonitorReport.builder().source(source).build(), cause.getMessage());
         }
 
         static @NonNull Status failure(@NonNull String source, @NonNull String cause) {
-            return new Status(SdmxWebMonitorReport.builder().source(source).build(), cause);
+            return new Status(MonitorReport.builder().source(source).build(), cause);
         }
 
         @lombok.NonNull
         @lombok.experimental.Delegate
-        SdmxWebMonitorReport report;
+        MonitorReport report;
 
         @Nullable
         String cause;

@@ -17,7 +17,7 @@
 package tests.sdmxdl.api;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.SdmxConnection;
+import sdmxdl.Connection;
 import sdmxdl.SdmxManager;
 import sdmxdl.SdmxSource;
 
@@ -58,7 +58,7 @@ public class SdmxManagerAssert {
                 .isInstanceOf(NullPointerException.class);
 
         if (sample.validSource != null) {
-            try (SdmxConnection conn = manager.getConnection(sample.validSource)) {
+            try (Connection conn = manager.getConnection(sample.validSource)) {
                 s.assertThat(conn)
                         .as("Expecting 'getConnection(SOURCE)' to return a non-null connection")
                         .isNotNull();

@@ -18,9 +18,9 @@ package sdmxdl.util.file;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
 
@@ -38,7 +38,7 @@ import static sdmxdl.DataSet.toDataSet;
 public final class CachedFileClient implements SdmxFileClient {
 
     public static @NonNull CachedFileClient of(
-            @NonNull SdmxFileClient client, @NonNull SdmxCache cache,
+            @NonNull SdmxFileClient client, @NonNull Cache cache,
             @NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
@@ -54,7 +54,7 @@ public final class CachedFileClient implements SdmxFileClient {
     private final SdmxFileClient delegate;
 
     @lombok.NonNull
-    private final SdmxCache cache;
+    private final Cache cache;
 
     @lombok.NonNull
     private final URI base;
@@ -68,14 +68,14 @@ public final class CachedFileClient implements SdmxFileClient {
     private static TypedId<SdmxFileInfo> initIdOfDecode(URI base) {
         return TypedId.of(base,
                 repo -> SdmxFileInfo.of(repo.getName(), repo.getStructures().stream().findFirst().orElse(null)),
-                info -> SdmxRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
+                info -> DataRepository.builder().name(info.getDataType()).structure(info.getStructure()).build()
         ).with("decode");
     }
 
     private static TypedId<DataSet> initIdOfLoadData(URI base) {
         return TypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
-                data -> SdmxRepository.builder().dataSet(data).build()
+                data -> DataRepository.builder().dataSet(data).build()
         ).with("loadData");
     }
 

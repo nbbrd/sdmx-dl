@@ -19,7 +19,7 @@ package sdmxdl.util.file;
 import _test.sdmxdl.util.XRepoFileClient;
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.api.SdmxConnectionAssert;
+import tests.sdmxdl.api.ConnectionAssert;
 
 import java.io.IOException;
 
@@ -30,9 +30,9 @@ public class SdmxFileConnectionImplTest {
 
     @Test
     public void testCompliance() throws IOException {
-        SdmxConnectionAssert.assertCompliance(
-                () -> new SdmxFileConnectionImpl(new XRepoFileClient(RepoSamples.REPO), RepoSamples.FLOW),
-                SdmxConnectionAssert.Sample
+        ConnectionAssert.assertCompliance(
+                () -> new FileConnectionImpl(new XRepoFileClient(RepoSamples.REPO), RepoSamples.FLOW),
+                ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
                         .invalidFlow(RepoSamples.BAD_FLOW_REF)

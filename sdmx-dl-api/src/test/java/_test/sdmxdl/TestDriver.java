@@ -16,10 +16,10 @@
  */
 package _test.sdmxdl;
 
-import sdmxdl.SdmxConnection;
+import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import java.util.Collections;
 /**
  * @author Philippe Charles
  */
-public enum TestDriver implements SdmxWebDriver {
+public enum TestDriver implements WebDriver {
     VALID {
         @Override
         public String getName() {
@@ -45,7 +45,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
             return TestConnection.VALID;
         }
 
@@ -75,7 +75,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -105,7 +105,7 @@ public enum TestDriver implements SdmxWebDriver {
         }
 
         @Override
-        public SdmxConnection connect(SdmxWebSource source, SdmxWebContext context) throws IllegalArgumentException {
+        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
             return null;
         }
 

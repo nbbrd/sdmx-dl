@@ -17,7 +17,7 @@
 package tests.sdmxdl.api;
 
 import sdmxdl.*;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,7 +105,7 @@ public class RepoSamples {
             .series(S3)
             .build();
 
-    public static final SdmxRepository REPO = SdmxRepository
+    public static final DataRepository REPO = DataRepository
             .builder()
             .name("repoName")
             .structure(STRUCT)

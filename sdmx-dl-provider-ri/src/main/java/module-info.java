@@ -14,7 +14,7 @@ module sdmxdl.web.ri {
 
     requires transitive sdmxdl.api;
 
-    provides sdmxdl.web.spi.SdmxWebDriver with
+    provides sdmxdl.web.spi.WebDriver with
             internal.sdmxdl.ri.web.drivers.AbsDriver2,
             internal.sdmxdl.ri.web.drivers.BbkDriver,
             internal.sdmxdl.ri.web.drivers.DotStatDriver2,
@@ -26,10 +26,10 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.web.drivers.Sdmx21Driver2,
             internal.sdmxdl.ri.web.drivers.StatCanDriver;
 
-    provides sdmxdl.file.spi.SdmxFileReader with
-            internal.sdmxdl.ri.file.readers.XmlFileReader;
+    provides sdmxdl.file.spi.FileReader with
+            internal.sdmxdl.ri.file.readers.XmlReader;
 
-    provides sdmxdl.web.spi.SdmxWebAuthenticator with
+    provides sdmxdl.web.spi.WebAuthenticator with
             internal.sdmxdl.ri.web.authenticators.WinPasswordVaultAuthenticator;
 
     provides internal.util.http.HttpURLConnectionFactory with
@@ -37,9 +37,9 @@ module sdmxdl.web.ri {
 
     uses internal.util.http.HttpURLConnectionFactory;
 
-    provides sdmxdl.web.spi.SdmxWebMonitoring with
-            internal.sdmxdl.ri.web.monitors.Upptime,
-            internal.sdmxdl.ri.web.monitors.UptimeRobot;
+    provides sdmxdl.web.spi.WebMonitoring with
+            internal.sdmxdl.ri.web.monitors.UpptimeMonitoring,
+            internal.sdmxdl.ri.web.monitors.UptimeRobotMonitoring;
 
     opens internal.sdmxdl.ri.web.monitors to com.google.gson;
 }

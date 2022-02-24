@@ -22,7 +22,7 @@ import internal.util.http.HttpResponseException;
 import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.parser.ObsFactories;
 
@@ -43,7 +43,7 @@ public class NbbDriver2Test {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new NbbDriver2());
+        WebDriverAssert.assertCompliance(new NbbDriver2());
     }
 
     @Test

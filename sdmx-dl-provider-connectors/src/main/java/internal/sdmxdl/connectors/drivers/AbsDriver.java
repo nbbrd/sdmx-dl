@@ -19,20 +19,20 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxRestDriverSupport;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.util.web.RestDriverSupport;
+import sdmxdl.web.spi.WebDriver;
 
 /**
  * @author Philippe Charles
  */
 @Deprecated
-@ServiceProvider(SdmxWebDriver.class)
-public final class AbsDriver implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class AbsDriver implements WebDriver {
 
     private static final String CONNECTORS_ABS = "connectors:abs";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(CONNECTORS_ABS)
             .rank(WRAPPED_RANK)

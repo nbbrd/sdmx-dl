@@ -69,7 +69,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     }
 
     private Stream<Extra> getRows() throws IOException {
-        try (SdmxConnection conn = web.open(web.loadManager())) {
+        try (Connection conn = web.open(web.loadManager())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
 
             Function<Series, String> toValueUnit = getValueUnit(dsd);

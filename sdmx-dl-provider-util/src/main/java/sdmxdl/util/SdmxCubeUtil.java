@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 @lombok.experimental.UtilityClass
 public class SdmxCubeUtil {
 
-    public @NonNull Stream<Series> getAllSeries(@NonNull SdmxConnection conn, @NonNull DataflowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getAllSeries(@NonNull Connection conn, @NonNull DataflowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
@@ -44,7 +44,7 @@ public class SdmxCubeUtil {
                 : computeKeys(conn, flow, node);
     }
 
-    public @NonNull Stream<Series> getAllSeriesWithData(@NonNull SdmxConnection conn, @NonNull DataflowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getAllSeriesWithData(@NonNull Connection conn, @NonNull DataflowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
@@ -53,7 +53,7 @@ public class SdmxCubeUtil {
                 : computeKeysAndRequestData(conn, flow, node);
     }
 
-    public @NonNull Optional<Series> getSeries(@NonNull SdmxConnection conn, @NonNull DataflowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
+    public @NonNull Optional<Series> getSeries(@NonNull Connection conn, @NonNull DataflowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
@@ -62,7 +62,7 @@ public class SdmxCubeUtil {
         }
     }
 
-    public @NonNull Optional<Series> getSeriesWithData(@NonNull SdmxConnection conn, @NonNull DataflowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
+    public @NonNull Optional<Series> getSeriesWithData(@NonNull Connection conn, @NonNull DataflowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
@@ -71,7 +71,7 @@ public class SdmxCubeUtil {
         }
     }
 
-    public @NonNull Stream<String> getChildren(@NonNull SdmxConnection conn, @NonNull DataflowRef flow, @NonNull Key node, @NonNegative int dimensionIndex) throws IOException {
+    public @NonNull Stream<String> getChildren(@NonNull Connection conn, @NonNull DataflowRef flow, @NonNull Key node, @NonNegative int dimensionIndex) throws IOException {
         if (dimensionIndex < 0) {
             throw new IllegalArgumentException("Expecting dimensionIndex >= 0");
         }
@@ -105,26 +105,26 @@ public class SdmxCubeUtil {
         return OptionalInt.empty();
     }
 
-    private Stream<Series> request(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
+    private Stream<Series> request(Connection conn, DataflowRef flow, Key key) throws IOException {
         return conn.getDataStream(flow, DataQuery.of(key, DataDetail.NO_DATA));
     }
 
-    private Stream<Series> requestWithData(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
+    private Stream<Series> requestWithData(Connection conn, DataflowRef flow, Key key) throws IOException {
         return conn.getDataStream(flow, DataQuery.of(key, DataDetail.FULL));
     }
 
-    private Stream<Series> computeKeys(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
+    private Stream<Series> computeKeys(Connection conn, DataflowRef flow, Key key) throws IOException {
         return computeAllPossibleSeries(conn.getStructure(flow), key)
                 .map(SdmxCubeUtil::emptySeriesOf);
     }
 
-    private Stream<Series> computeKeysAndRequestData(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
+    private Stream<Series> computeKeysAndRequestData(Connection conn, DataflowRef flow, Key key) throws IOException {
         Map<Key, Series> dataByKey = dataByKey(conn, flow, key);
         return computeAllPossibleSeries(conn.getStructure(flow), key)
                 .map(seriesKey -> dataByKey.computeIfAbsent(seriesKey, SdmxCubeUtil::emptySeriesOf));
     }
 
-    private Map<Key, Series> dataByKey(SdmxConnection conn, DataflowRef flow, Key key) throws IOException {
+    private Map<Key, Series> dataByKey(Connection conn, DataflowRef flow, Key key) throws IOException {
         try (Stream<Series> cursor = requestWithData(conn, flow, key)) {
             return cursor.collect(Collectors.toMap(Series::getKey, Function.identity()));
         }

@@ -17,8 +17,8 @@
 package sdmxdl.util.ext;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.repo.SdmxRepository;
-import tests.sdmxdl.ext.SdmxCacheAssert;
+import sdmxdl.DataRepository;
+import tests.sdmxdl.ext.CacheAssert;
 
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,18 +34,18 @@ public class MapCacheTest {
 
     @Test
     public void testCompliance() {
-        SdmxCacheAssert.assertCompliance(MapCache.of());
+        CacheAssert.assertCompliance(MapCache.of());
     }
 
     @Test
     public void testGetRepository() {
-        ConcurrentMap<String, SdmxRepository> map = new ConcurrentHashMap<>();
+        ConcurrentMap<String, DataRepository> map = new ConcurrentHashMap<>();
 
         assertThat(MapCache.getRepository(map, clock(1000), "KEY1"))
                 .as("Empty map should return null")
                 .isNull();
 
-        SdmxRepository r1000 = SdmxRepository
+        DataRepository r1000 = DataRepository
                 .builder()
                 .name("r1")
                 .ttl(clock(1000).instant(), Duration.ofMillis(10))
@@ -66,7 +66,7 @@ public class MapCacheTest {
                 .as("Non-existing key should return null")
                 .isNull();
 
-        SdmxRepository r1009 = SdmxRepository
+        DataRepository r1009 = DataRepository
                 .builder()
                 .name("r2")
                 .ttl(clock(1009).instant(), Duration.ofMillis(10))

@@ -2,8 +2,8 @@ package sdmxdl.util;
 
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.ext.Cache;
+import sdmxdl.DataRepository;
 import tests.sdmxdl.ext.FakeClock;
 import sdmxdl.util.ext.MapCache;
 
@@ -22,12 +22,12 @@ public class TypedIdTest {
         TypedId<Integer> id = TypedId.of(
                 URI.create("cache://key"),
                 repo -> Integer.parseInt(repo.getName()),
-                data -> SdmxRepository.builder().name(Integer.toString(data)).build()
+                data -> DataRepository.builder().name(Integer.toString(data)).build()
         );
 
         FakeClock clock = new FakeClock();
 
-        SdmxCache cache = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), clock);
+        Cache cache = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), clock);
 
         IOSupplier<Integer> factory = new AtomicInteger()::getAndIncrement;
 

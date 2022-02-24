@@ -19,9 +19,9 @@ package sdmxdl.util.ext;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.ext.Cache;
+import sdmxdl.DataRepository;
+import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
 import java.util.Objects;
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
  */
 @lombok.Getter
 @lombok.AllArgsConstructor(staticName = "of")
-public final class MapCache implements SdmxCache {
+public final class MapCache implements Cache {
 
     @NonNull
     public static MapCache of() {
@@ -42,47 +42,47 @@ public final class MapCache implements SdmxCache {
     }
 
     @lombok.NonNull
-    private final ConcurrentMap<String, SdmxRepository> repositories;
+    private final ConcurrentMap<String, DataRepository> repositories;
 
     @lombok.NonNull
-    private final ConcurrentMap<String, SdmxWebMonitorReports> webMonitors;
+    private final ConcurrentMap<String, MonitorReports> webMonitors;
 
     @lombok.NonNull
     private final Clock clock;
 
     @Override
-    public @Nullable SdmxRepository getRepository(@NonNull String key) {
+    public @Nullable DataRepository getRepository(@NonNull String key) {
         Objects.requireNonNull(key);
         return getRepository(repositories, clock, key);
     }
 
     @Override
-    public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
+    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         put(repositories, key, value);
     }
 
     @Override
-    public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
+    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
         Objects.requireNonNull(key);
         return getWebMonitorReports(webMonitors, clock, key);
     }
 
     @Override
-    public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
+    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         put(webMonitors, key, value);
     }
 
     @VisibleForTesting
-    static SdmxRepository getRepository(@NonNull ConcurrentMap<String, SdmxRepository> map, @NonNull Clock clock, @NonNull String key) {
+    static DataRepository getRepository(@NonNull ConcurrentMap<String, DataRepository> map, @NonNull Clock clock, @NonNull String key) {
         return get(reports -> !reports.isExpired(clock), map, key);
     }
 
     @VisibleForTesting
-    static SdmxWebMonitorReports getWebMonitorReports(@NonNull ConcurrentMap<String, SdmxWebMonitorReports> map, @NonNull Clock clock, @NonNull String key) {
+    static MonitorReports getWebMonitorReports(@NonNull ConcurrentMap<String, MonitorReports> map, @NonNull Clock clock, @NonNull String key) {
         return get(reports -> !reports.isExpired(clock), map, key);
     }
 

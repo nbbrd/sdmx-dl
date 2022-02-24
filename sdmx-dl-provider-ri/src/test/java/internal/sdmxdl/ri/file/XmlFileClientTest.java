@@ -23,10 +23,10 @@ import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
-import sdmxdl.util.file.SdmxFileConnectionImpl;
+import sdmxdl.util.file.FileConnectionImpl;
 import sdmxdl.util.file.SdmxFileInfo;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.api.SdmxConnectionAssert;
+import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -80,9 +80,9 @@ public class XmlFileClientTest {
                     });
         }
 
-        SdmxConnectionAssert.assertCompliance(
-                () -> new SdmxFileConnectionImpl(x, DATAFLOW),
-                SdmxConnectionAssert.Sample
+        ConnectionAssert.assertCompliance(
+                () -> new FileConnectionImpl(x, DATAFLOW),
+                ConnectionAssert.Sample
                         .builder()
                         .validFlow(source.asDataflowRef())
                         .invalidFlow(RepoSamples.BAD_FLOW_REF)

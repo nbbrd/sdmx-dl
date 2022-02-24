@@ -21,11 +21,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.file.spi.SdmxFileContext;
+import sdmxdl.file.spi.FileContext;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,16 +58,16 @@ public enum ObsFactories implements ObsFactory {
         }
     };
 
-    private static Optional<ObsFactory> lookupObsFactory(List<SdmxDialect> dialects, String name) {
+    private static Optional<ObsFactory> lookupObsFactory(List<Dialect> dialects, String name) {
         return dialects
                 .stream()
                 .filter(dialect -> dialect.getName().equals(name))
                 .findFirst()
-                .map(SdmxDialect::getObsFactory);
+                .map(Dialect::getObsFactory);
     }
 
     @Nullable
-    public static ObsFactory getObsFactory(@NonNull SdmxFileContext context, @NonNull SdmxFileSource source) throws IOException {
+    public static ObsFactory getObsFactory(@NonNull FileContext context, @NonNull SdmxFileSource source) throws IOException {
         String dialectName = source.getDialect();
         if (dialectName == null) {
             return null;
@@ -77,7 +77,7 @@ public enum ObsFactories implements ObsFactory {
     }
 
     @NonNull
-    public static ObsFactory getObsFactory(@NonNull SdmxWebContext context, @NonNull SdmxWebSource source, @NonNull String defaultDialect) throws IOException {
+    public static ObsFactory getObsFactory(@NonNull WebContext context, @NonNull SdmxWebSource source, @NonNull String defaultDialect) throws IOException {
         String dialectName = source.getDialect() != null ? source.getDialect() : defaultDialect;
         return lookupObsFactory(context.getDialects(), dialectName)
                 .orElseThrow(() -> new IOException("Failed to find a suitable dialect for '" + source + "'"));

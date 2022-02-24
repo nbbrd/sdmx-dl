@@ -17,7 +17,7 @@
 package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
@@ -41,8 +41,8 @@ public class FacadeResource {
 
     public static final DataflowRef NBB_FLOW_REF = DataflowRef.of("NBB", "TEST_DATASET", null);
 
-    public SdmxRepository nbb() throws IOException {
-        SdmxRepository result = NBB.get();
+    public DataRepository nbb() throws IOException {
+        DataRepository result = NBB.get();
         if (result == null) {
             LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
@@ -50,7 +50,7 @@ public class FacadeResource {
             List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
             List<Series> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0));
 
-            result = SdmxRepository.builder()
+            result = DataRepository.builder()
                     .structures(structs)
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(NBB_FLOW_REF).data(data).build())
@@ -62,8 +62,8 @@ public class FacadeResource {
         return result;
     }
 
-    public SdmxRepository ecb() throws IOException {
-        SdmxRepository result = ECB.get();
+    public DataRepository ecb() throws IOException {
+        DataRepository result = ECB.get();
         if (result == null) {
             LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
@@ -71,7 +71,7 @@ public class FacadeResource {
             List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
             List<Series> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0));
 
-            result = SdmxRepository.builder()
+            result = DataRepository.builder()
                     .structures(structs)
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(ECB_FLOW_REF).data(data).build())
@@ -84,8 +84,8 @@ public class FacadeResource {
         return result;
     }
 
-    private static final AtomicReference<SdmxRepository> NBB = new AtomicReference<>();
-    private static final AtomicReference<SdmxRepository> ECB = new AtomicReference<>();
+    private static final AtomicReference<DataRepository> NBB = new AtomicReference<>();
+    private static final AtomicReference<DataRepository> ECB = new AtomicReference<>();
 
     private List<DataStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
         return SdmxXmlStreams.struct20(l).parseReader(xml::openReader);

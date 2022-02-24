@@ -19,7 +19,7 @@ package _test.sdmxdl.util;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 public final class XRepoRestClient implements SdmxRestClient {
 
     @lombok.NonNull
-    private final SdmxRepository repository;
+    private final DataRepository repository;
 
     @Override
     public String getName() {

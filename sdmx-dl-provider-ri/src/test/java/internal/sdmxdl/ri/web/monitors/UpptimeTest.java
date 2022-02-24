@@ -1,8 +1,8 @@
 package internal.sdmxdl.ri.web.monitors;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebMonitorReport;
-import sdmxdl.web.SdmxWebStatus;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,13 +10,13 @@ public class UpptimeTest {
 
     @Test
     public void testGetReport() {
-        assertThat(Upptime.getReport(new UpptimeSummary("ABS", "up", "100.00%", 4674)))
-                .isEqualTo(SdmxWebMonitorReport.builder().source("ABS").status(SdmxWebStatus.UP).uptimeRatio(1d).averageResponseTime(4674L).build());
+        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ABS", "up", "100.00%", 4674)))
+                .isEqualTo(MonitorReport.builder().source("ABS").status(MonitorStatus.UP).uptimeRatio(1d).averageResponseTime(4674L).build());
 
-        assertThat(Upptime.getReport(new UpptimeSummary("ILO", "down", "20.97%", 14989)))
-                .isEqualTo(SdmxWebMonitorReport.builder().source("ILO").status(SdmxWebStatus.DOWN).uptimeRatio(.2097d).averageResponseTime(14989L).build());
+        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ILO", "down", "20.97%", 14989)))
+                .isEqualTo(MonitorReport.builder().source("ILO").status(MonitorStatus.DOWN).uptimeRatio(.2097d).averageResponseTime(14989L).build());
 
-        assertThat(Upptime.getReport(new UpptimeSummary("ILO", "down", "X", -1)))
-                .isEqualTo(SdmxWebMonitorReport.builder().source("ILO").status(SdmxWebStatus.DOWN).averageResponseTime(-1L).build());
+        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ILO", "down", "X", -1)))
+                .isEqualTo(MonitorReport.builder().source("ILO").status(MonitorStatus.DOWN).averageResponseTime(-1L).build());
     }
 }

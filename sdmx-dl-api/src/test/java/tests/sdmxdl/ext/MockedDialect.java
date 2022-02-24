@@ -1,10 +1,10 @@
 package tests.sdmxdl.ext;
 
 import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 
 @lombok.RequiredArgsConstructor
-public final class MockedDialect implements SdmxDialect {
+public final class MockedDialect implements Dialect {
 
     @lombok.Getter
     private final String name;

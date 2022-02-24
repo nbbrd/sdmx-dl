@@ -18,7 +18,7 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.EurostatDriver;
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +27,6 @@ public class EurostatDriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new EurostatDriver());
+        WebDriverAssert.assertCompliance(new EurostatDriver());
     }
 }

@@ -29,10 +29,10 @@ import sdmxdl.*;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 import sdmxdl.xml.DataCursor;
 
 import java.io.IOException;
@@ -44,13 +44,13 @@ import static sdmxdl.util.SdmxFix.Category.MEDIA_TYPE;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class InseeDriver2 implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class InseeDriver2 implements WebDriver {
 
     private static final String RI_INSEE = "ri:insee";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
@@ -93,7 +93,7 @@ public final class InseeDriver2 implements SdmxWebDriver {
 
     private final static class InseeClient extends RiRestClient {
 
-        InseeClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+        InseeClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),

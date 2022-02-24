@@ -26,7 +26,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.repo.SdmxRepository;
+import sdmxdl.DataRepository;
 import sdmxdl.util.parser.ObsFactories;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.xml.SdmxXmlSources;
@@ -50,7 +50,7 @@ import static sdmxdl.DataSet.toDataSet;
 public class ConnectorsResource {
 
     @NonNull
-    public SdmxRepository nbb() throws IOException {
+    public DataRepository nbb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
         List<DataFlowStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
@@ -59,7 +59,7 @@ public class ConnectorsResource {
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository
+        return DataRepository
                 .builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
@@ -73,7 +73,7 @@ public class ConnectorsResource {
     }
 
     @NonNull
-    public SdmxRepository ecb() throws IOException {
+    public DataRepository ecb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
         List<DataFlowStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
@@ -82,7 +82,7 @@ public class ConnectorsResource {
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository
+        return DataRepository
                 .builder()
                 .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))

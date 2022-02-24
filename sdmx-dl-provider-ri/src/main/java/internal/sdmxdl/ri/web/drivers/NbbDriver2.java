@@ -30,10 +30,10 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxRestDriverSupport;
+import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -45,13 +45,13 @@ import static sdmxdl.util.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxWebDriver.class)
-public final class NbbDriver2 implements SdmxWebDriver {
+@ServiceProvider(WebDriver.class)
+public final class NbbDriver2 implements WebDriver {
 
     private static final String RI_NBB = "ri:nbb";
 
     @lombok.experimental.Delegate
-    private final SdmxRestDriverSupport support = SdmxRestDriverSupport
+    private final RestDriverSupport support = RestDriverSupport
             .builder()
             .name(RI_NBB)
             .rank(NATIVE_RANK)
@@ -72,7 +72,7 @@ public final class NbbDriver2 implements SdmxWebDriver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, SdmxWebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return newClient(
                 s.getId(),
                 s.getEndpoint().toURL(),

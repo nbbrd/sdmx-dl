@@ -18,7 +18,7 @@ package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 import sdmxdl.util.DataRef;
 
 import java.net.MalformedURLException;
@@ -33,7 +33,7 @@ public class AbsDriver2Test {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new AbsDriver2());
+        WebDriverAssert.assertCompliance(new AbsDriver2());
     }
 
     @Test

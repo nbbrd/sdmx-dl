@@ -17,7 +17,7 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 
 /**
  * @author Philippe Charles
@@ -26,6 +26,6 @@ public class DotStatDriver2Test {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new DotStatDriver2());
+        WebDriverAssert.assertCompliance(new DotStatDriver2());
     }
 }

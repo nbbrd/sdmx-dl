@@ -23,7 +23,7 @@ import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.parser.StandardReportingFormat;
@@ -38,8 +38,8 @@ import static sdmxdl.Frequency.*;
  *
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxDialect.class)
-public final class InseeDialect implements SdmxDialect {
+@ServiceProvider(Dialect.class)
+public final class InseeDialect implements Dialect {
 
     @Override
     public String getName() {

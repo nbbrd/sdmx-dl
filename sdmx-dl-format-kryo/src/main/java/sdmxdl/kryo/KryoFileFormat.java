@@ -26,10 +26,10 @@ import lombok.AccessLevel;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import sdmxdl.*;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebMonitorReport;
-import sdmxdl.web.SdmxWebMonitorReports;
-import sdmxdl.web.SdmxWebStatus;
+import sdmxdl.DataRepository;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.MonitorStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +44,8 @@ import java.util.*;
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
 
-    public static final KryoFileFormat<SdmxRepository> REPOSITORY = new KryoFileFormat<>(SdmxRepository.class);
-    public static final KryoFileFormat<SdmxWebMonitorReports> MONITOR = new KryoFileFormat<>(SdmxWebMonitorReports.class);
+    public static final KryoFileFormat<DataRepository> REPOSITORY = new KryoFileFormat<>(DataRepository.class);
+    public static final KryoFileFormat<MonitorReports> MONITOR = new KryoFileFormat<>(MonitorReports.class);
 
     @lombok.NonNull
     private final Class<T> type;
@@ -122,7 +122,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.setRegistrationRequired(true);
 
         result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
-        result.register(SdmxRepository.class, new SdmxRepositorySerializer());
+        result.register(DataRepository.class, new SdmxRepositorySerializer());
         result.register(DataStructure.class, new DataStructureSerializer());
         result.register(DataStructureRef.class, new DataStructureRefSerializer());
         result.register(Dataflow.class, new DataflowSerializer());
@@ -138,9 +138,9 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(Obs.class, new ObsSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
-        result.register(SdmxWebMonitorReports.class, new SdmxWebMonitorReportsSerializer());
-        result.register(SdmxWebMonitorReport.class, new SdmxWebMonitorReportSerializer());
-        result.register(SdmxWebStatus.class, new DefaultSerializers.EnumSerializer(SdmxWebStatus.class));
+        result.register(MonitorReports.class, new SdmxWebMonitorReportsSerializer());
+        result.register(MonitorReport.class, new SdmxWebMonitorReportSerializer());
+        result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
@@ -187,7 +187,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class SdmxRepositorySerializer extends ImmutableSerializer<SdmxRepository> {
+    private static final class SdmxRepositorySerializer extends ImmutableSerializer<DataRepository> {
 
         private final Serializer<Collection<DataStructure>> structures = new CustomCollectionSerializer<>(DataStructure.class);
         private final Serializer<Collection<Dataflow>> flows = new CustomCollectionSerializer<>(Dataflow.class);
@@ -195,7 +195,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         private final Serializer<Collection<Feature>> features = new CustomCollectionSerializer<>(Feature.class);
 
         @Override
-        public void write(Kryo kryo, Output output, SdmxRepository t) {
+        public void write(Kryo kryo, Output output, DataRepository t) {
             output.writeString(t.getName());
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
@@ -207,8 +207,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @SuppressWarnings("unchecked")
         @Override
-        public SdmxRepository read(Kryo kryo, Input input, Class<? extends SdmxRepository> type) {
-            return SdmxRepository
+        public DataRepository read(Kryo kryo, Input input, Class<? extends DataRepository> type) {
+            return DataRepository
                     .builder()
                     .name(input.readString())
                     .structures(kryo.readObject(input, ArrayList.class, structures))
@@ -472,12 +472,12 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class SdmxWebMonitorReportsSerializer extends ImmutableSerializer<SdmxWebMonitorReports> {
+    private static final class SdmxWebMonitorReportsSerializer extends ImmutableSerializer<MonitorReports> {
 
-        private final Serializer<Collection<SdmxWebMonitorReport>> reports = new CustomCollectionSerializer<>(SdmxWebMonitorReport.class);
+        private final Serializer<Collection<MonitorReport>> reports = new CustomCollectionSerializer<>(MonitorReport.class);
 
         @Override
-        public void write(Kryo kryo, Output output, SdmxWebMonitorReports t) {
+        public void write(Kryo kryo, Output output, MonitorReports t) {
             output.writeString(t.getUriScheme());
             kryo.writeObject(output, t.getReports(), reports);
             kryo.writeObject(output, t.getCreationTime());
@@ -485,8 +485,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
 
         @Override
-        public SdmxWebMonitorReports read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReports> type) {
-            return SdmxWebMonitorReports
+        public MonitorReports read(Kryo kryo, Input input, Class<? extends MonitorReports> type) {
+            return MonitorReports
                     .builder()
                     .uriScheme(input.readString())
                     .reports(kryo.readObject(input, ArrayList.class, reports))
@@ -496,10 +496,10 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class SdmxWebMonitorReportSerializer extends ImmutableSerializer<SdmxWebMonitorReport> {
+    private static final class SdmxWebMonitorReportSerializer extends ImmutableSerializer<MonitorReport> {
 
         @Override
-        public void write(Kryo kryo, Output output, SdmxWebMonitorReport t) {
+        public void write(Kryo kryo, Output output, MonitorReport t) {
             output.writeString(t.getSource());
             kryo.writeObject(output, t.getStatus());
             kryo.writeObjectOrNull(output, t.getUptimeRatio(), Double.class);
@@ -507,11 +507,11 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
 
         @Override
-        public SdmxWebMonitorReport read(Kryo kryo, Input input, Class<? extends SdmxWebMonitorReport> type) {
-            return SdmxWebMonitorReport
+        public MonitorReport read(Kryo kryo, Input input, Class<? extends MonitorReport> type) {
+            return MonitorReport
                     .builder()
                     .source(input.readString())
-                    .status(kryo.readObject(input, SdmxWebStatus.class))
+                    .status(kryo.readObject(input, MonitorStatus.class))
                     .uptimeRatio(kryo.readObjectOrNull(input, Double.class))
                     .averageResponseTime(kryo.readObjectOrNull(input, Long.class))
                     .build();

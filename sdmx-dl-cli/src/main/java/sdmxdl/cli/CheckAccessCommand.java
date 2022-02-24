@@ -25,7 +25,7 @@ import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.SdmxConnection;
+import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -85,7 +85,7 @@ public final class CheckAccessCommand implements Callable<Void> {
     private static class Access {
 
         static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
-            try (SdmxConnection conn = manager.getConnection(source)) {
+            try (Connection conn = manager.getConnection(source)) {
                 Clock clock = Clock.systemDefaultZone();
                 Instant start = clock.instant();
                 conn.testConnection();

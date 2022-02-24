@@ -35,7 +35,7 @@ import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.net.URI;
@@ -200,7 +200,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
         return new IOException(String.format(format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, SdmxWebSource source, SdmxWebContext context) {
+    private static void configure(RestSdmxClient client, SdmxWebSource source, WebContext context) {
         client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));

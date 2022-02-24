@@ -22,7 +22,7 @@ import sdmxdl.DataStructure;
 import sdmxdl.Frequency;
 import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
-import sdmxdl.ext.spi.SdmxDialect;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.parser.FreqFactory;
 
@@ -33,8 +33,8 @@ import static sdmxdl.Frequency.*;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(SdmxDialect.class)
-public final class EcbDialect implements SdmxDialect {
+@ServiceProvider(Dialect.class)
+public final class EcbDialect implements Dialect {
 
     @Override
     public String getName() {

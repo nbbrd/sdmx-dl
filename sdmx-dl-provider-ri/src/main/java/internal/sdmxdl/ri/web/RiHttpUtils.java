@@ -31,8 +31,8 @@ import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.util.web.SdmxWebEvents;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.SdmxWebAuthenticator;
-import sdmxdl.web.spi.SdmxWebContext;
+import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class RiHttpUtils {
                 .build();
     }
 
-    public static @NonNull HttpClient newClient(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) {
+    public static @NonNull HttpClient newClient(@NonNull SdmxWebSource source, @NonNull WebContext context) {
         return newClient(newContext(source, context));
     }
 
@@ -98,7 +98,7 @@ public class RiHttpUtils {
         return new DumpingClient(dumpFile.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
-    public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull SdmxWebContext context) {
+    public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull WebContext context) {
         return HttpContext
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
@@ -180,7 +180,7 @@ public class RiHttpUtils {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final List<SdmxWebAuthenticator> authenticators;
+        private final List<WebAuthenticator> authenticators;
 
         @lombok.NonNull
         private final BiConsumer<? super SdmxWebSource, ? super String> listener;
@@ -210,7 +210,7 @@ public class RiHttpUtils {
                     || url.getPort() != source.getEndpoint().getPort();
         }
 
-        private PasswordAuthentication getPasswordAuthentication(SdmxWebAuthenticator authenticator) {
+        private PasswordAuthentication getPasswordAuthentication(WebAuthenticator authenticator) {
             try {
                 return authenticator.getPasswordAuthentication(source);
             } catch (IOException ex) {
@@ -219,7 +219,7 @@ public class RiHttpUtils {
             }
         }
 
-        private void invalidate(SdmxWebAuthenticator authenticator) {
+        private void invalidate(WebAuthenticator authenticator) {
             try {
                 authenticator.invalidate(source);
             } catch (IOException ex) {

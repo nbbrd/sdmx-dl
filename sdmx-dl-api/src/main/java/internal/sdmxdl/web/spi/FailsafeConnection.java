@@ -33,16 +33,16 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("ConstantConditions")
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class FailsafeConnection implements SdmxConnection {
+final class FailsafeConnection implements Connection {
 
-    static SdmxConnection wrap(SdmxConnection obj) {
+    static Connection wrap(Connection obj) {
         if (obj instanceof FailsafeConnection) return obj;
-        FailsafeLogging logging = FailsafeLogging.of(FailsafeWebDriver.class);
+        FailsafeLogging logging = FailsafeLogging.of(FailsafeDriver.class);
         return new FailsafeConnection(obj, logging::logUnexpectedError, logging::logUnexpectedNull);
     }
 
     @lombok.NonNull
-    private final SdmxConnection delegate;
+    private final Connection delegate;
 
     @lombok.NonNull
     private final BiConsumer<? super String, ? super RuntimeException> onUnexpectedError;
