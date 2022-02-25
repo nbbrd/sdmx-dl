@@ -3,14 +3,17 @@ package sdmxdl.util;
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.DataRepository;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.WebContext;
+import sdmxdl.web.spi.WebDriver;
+import tests.sdmxdl.web.MockedDriver;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Key.ALL;
 import static sdmxdl.util.SdmxCubeUtil.*;
@@ -35,13 +38,20 @@ public class SdmxCubeUtilTest {
             .freq(Frequency.UNDEFINED)
             .build();
 
-    private static final DataRepository WITH_DETAIL = REPO;
-    private static final DataRepository WITHOUT_DETAIL = REPO.toBuilder().clearSupportedFeatures().build();
+    private final WebContext webContext = WebContext.builder().build();
+
+    private List<WebDriver> getDrivers() {
+        return Stream.of(EnumSet.noneOf(Feature.class), EnumSet.allOf(Feature.class))
+                .map(features -> MockedDriver.builder().repo(REPO, features).build())
+                .collect(Collectors.toList());
+    }
 
     @Test
     public void testGetAllSeries() throws IOException {
-        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (Connection c = repo.asConnection()) {
+        for (WebDriver driver : getDrivers()) {
+            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+
+            try (Connection c = driver.connect(source, webContext)) {
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, FLOW_REF, null));
@@ -49,7 +59,7 @@ public class SdmxCubeUtilTest {
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
-                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
+                if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, ALL))).containsExactly(noData(S1), noData(S2), noData(S3));
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, M__))).containsExactly(noData(S1), noData(S2), noData(S3));
                     assertThat(listOf(() -> getAllSeries(c, FLOW_REF, M_BE_))).containsExactly(noData(S1), noData(S2));
@@ -64,8 +74,10 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetAllSeriesWithData() throws IOException {
-        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (Connection c = repo.asConnection()) {
+        for (WebDriver driver : getDrivers()) {
+            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+
+            try (Connection c = driver.connect(source, webContext)) {
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, FLOW_REF, null));
@@ -73,7 +85,7 @@ public class SdmxCubeUtilTest {
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
                 assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
-                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
+                if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, ALL))).containsExactly(S1, S2, S3);
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, M__))).containsExactly(S1, S2, S3);
                     assertThat(listOf(() -> getAllSeriesWithData(c, FLOW_REF, M_BE_))).containsExactly(S1, S2);
@@ -88,65 +100,71 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetSeries() throws IOException {
-        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (Connection conn = repo.asConnection()) {
+        for (WebDriver driver : getDrivers()) {
+            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+
+            try (Connection c = driver.connect(source, webContext)) {
                 assertThatNullPointerException().isThrownBy(() -> getSeries(null, FLOW_REF, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeries(conn, null, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeries(conn, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getSeries(c, null, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeries(c, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(conn, FLOW_REF, ALL)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(conn, FLOW_REF, M__)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(conn, FLOW_REF, M_BE_)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, FLOW_REF, ALL)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, FLOW_REF, M__)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, FLOW_REF, M_BE_)).withMessageContaining("leaf");
 
-                assertThat(getSeries(conn, FLOW_REF, M_BE_INDUSTRY)).contains(noData(S1));
-                assertThat(getSeries(conn, FLOW_REF, M_FR_XXX)).isEmpty();
+                assertThat(getSeries(c, FLOW_REF, M_BE_INDUSTRY)).contains(noData(S1));
+                assertThat(getSeries(c, FLOW_REF, M_FR_XXX)).isEmpty();
             }
         }
     }
 
     @Test
     public void testGetSeriesWithData() throws IOException {
-        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (Connection conn = repo.asConnection()) {
+        for (WebDriver driver : getDrivers()) {
+            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+
+            try (Connection c = driver.connect(source, webContext)) {
                 assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(null, FLOW_REF, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(conn, null, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(conn, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, null, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(conn, FLOW_REF, ALL)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(conn, FLOW_REF, M__)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(conn, FLOW_REF, M_BE_)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, FLOW_REF, ALL)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, FLOW_REF, M__)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, FLOW_REF, M_BE_)).withMessageContaining("leaf");
 
-                assertThat(getSeriesWithData(conn, FLOW_REF, M_BE_INDUSTRY)).contains(S1);
-                assertThat(getSeriesWithData(conn, FLOW_REF, M_FR_XXX)).isEmpty();
+                assertThat(getSeriesWithData(c, FLOW_REF, M_BE_INDUSTRY)).contains(S1);
+                assertThat(getSeriesWithData(c, FLOW_REF, M_FR_XXX)).isEmpty();
             }
         }
     }
 
     @Test
     public void testGetChildren() throws IOException {
-        for (DataRepository repo : asList(WITH_DETAIL, WITHOUT_DETAIL)) {
-            try (Connection conn = repo.asConnection()) {
+        for (WebDriver driver : getDrivers()) {
+            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+
+            try (Connection c = driver.connect(source, webContext)) {
                 assertThatNullPointerException().isThrownBy(() -> getChildren(null, FLOW_REF, ALL, 0));
-                assertThatNullPointerException().isThrownBy(() -> getChildren(conn, null, ALL, 0));
-                assertThatNullPointerException().isThrownBy(() -> getChildren(conn, FLOW_REF, null, 0));
+                assertThatNullPointerException().isThrownBy(() -> getChildren(c, null, ALL, 0));
+                assertThatNullPointerException().isThrownBy(() -> getChildren(c, FLOW_REF, null, 0));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(conn, FLOW_REF, ALL, -1)).withMessageContaining("dimensionIndex");
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(conn, FLOW_REF, M_BE_INDUSTRY, 0)).withMessageContaining("node");
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(conn, FLOW_REF, M_BE_, 0)).withMessageContaining("dimensionIndex");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, FLOW_REF, ALL, -1)).withMessageContaining("dimensionIndex");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, FLOW_REF, M_BE_INDUSTRY, 0)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, FLOW_REF, M_BE_, 0)).withMessageContaining("dimensionIndex");
 
-                assertThat(getChildren(conn, FLOW_REF, ALL, 0)).containsExactly("M");
-                assertThat(getChildren(conn, FLOW_REF, ALL, 1)).containsExactly("BE", "FR");
-                assertThat(getChildren(conn, FLOW_REF, ALL, 2)).containsExactly("INDUSTRY", "XXX");
+                assertThat(getChildren(c, FLOW_REF, ALL, 0)).containsExactly("M");
+                assertThat(getChildren(c, FLOW_REF, ALL, 1)).containsExactly("BE", "FR");
+                assertThat(getChildren(c, FLOW_REF, ALL, 2)).containsExactly("INDUSTRY", "XXX");
 
-                assertThat(getChildren(conn, FLOW_REF, M__, 1)).containsExactly("BE", "FR");
-                assertThat(getChildren(conn, FLOW_REF, M__, 2)).containsExactly("INDUSTRY", "XXX");
+                assertThat(getChildren(c, FLOW_REF, M__, 1)).containsExactly("BE", "FR");
+                assertThat(getChildren(c, FLOW_REF, M__, 2)).containsExactly("INDUSTRY", "XXX");
 
-                if (repo.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
-                    assertThat(getChildren(conn, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
-                    assertThat(getChildren(conn, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY");
+                if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
+                    assertThat(getChildren(c, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY");
                 } else {
-                    assertThat(getChildren(conn, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
-                    assertThat(getChildren(conn, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY", "XXX");
                 }
             }
         }

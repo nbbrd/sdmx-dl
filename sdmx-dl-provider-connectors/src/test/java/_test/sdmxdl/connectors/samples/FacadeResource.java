@@ -17,7 +17,6 @@
 package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
-import sdmxdl.DataRepository;
 import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
@@ -25,7 +24,6 @@ import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -76,7 +74,6 @@ public class FacadeResource {
                     .flows(flows)
                     .dataSet(DataSet.builder().ref(ECB_FLOW_REF).data(data).build())
                     .name("ECB")
-                    .supportedFeatures(EnumSet.allOf(Feature.class))
                     .build();
 
             ECB.set(result);

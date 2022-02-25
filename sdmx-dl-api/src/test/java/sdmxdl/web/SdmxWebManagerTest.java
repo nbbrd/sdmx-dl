@@ -17,12 +17,9 @@
 package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.Connection;
-import sdmxdl.SdmxManager;
+import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.DataRepository;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.ext.MockedDialect;
@@ -31,6 +28,7 @@ import tests.sdmxdl.web.MockedDriver;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -114,8 +112,8 @@ public class SdmxWebManagerTest {
                 .name("sdmx21")
                 .rank(WRAPPED_RANK)
                 .available(true)
-                .defaultSource(nbb)
-                .defaultSource(ecb)
+                .customSource(nbb)
+                .customSource(ecb)
                 .build();
 
         assertThat(
@@ -179,11 +177,11 @@ public class SdmxWebManagerTest {
     public void testGetDefaultSources() {
         SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").endpointOf("http://abc").build();
         SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").endpointOf("http://abc").build();
-        WebDriver driverX = MockedDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).defaultSource(source1a).defaultSource(source2).build();
+        WebDriver driverX = MockedDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).customSource(source1a).customSource(source2).build();
 
         SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").endpointOf("http://xyz").build();
         SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").endpointOf("http://xyz").build();
-        WebDriver driverY = MockedDriver.builder().name("dY").rank(NATIVE_RANK).available(true).defaultSource(source1b).defaultSource(source3).build();
+        WebDriver driverY = MockedDriver.builder().name("dY").rank(NATIVE_RANK).available(true).customSource(source1b).customSource(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
                 .containsExactly(source1a, source2, source3);
@@ -210,8 +208,8 @@ public class SdmxWebManagerTest {
                 .name("d1")
                 .rank(WRAPPED_RANK)
                 .available(true)
-                .repo(sample)
-                .defaultSource(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
+                .repo(sample, EnumSet.allOf(Feature.class))
+                .customSource(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
         WebDriver driver2 = MockedDriver
@@ -219,8 +217,8 @@ public class SdmxWebManagerTest {
                 .name("d2")
                 .rank(NATIVE_RANK)
                 .available(true)
-                .repo(sample)
-                .defaultSource(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
+                .repo(sample, EnumSet.allOf(Feature.class))
+                .customSource(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
         try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
@@ -285,16 +283,14 @@ public class SdmxWebManagerTest {
             .driver("repoDriver")
             .dialect("azerty")
             .endpointOf(sample.getName())
-            .property("someproperty", "somevalue")
             .build();
     private final WebDriver sampleDriver = MockedDriver
             .builder()
             .name("repoDriver")
             .rank(0)
             .available(true)
-            .repo(sample)
-            .supportedProperty("someproperty")
-            .defaultSource(sampleSource)
+            .repo(sample, EnumSet.allOf(Feature.class))
+            .customSource(sampleSource)
             .build();
     private final Dialect sampleDialect = new MockedDialect("azerty");
 

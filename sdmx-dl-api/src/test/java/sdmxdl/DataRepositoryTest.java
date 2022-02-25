@@ -18,7 +18,6 @@ package sdmxdl;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +31,7 @@ public class DataRepositoryTest {
 
     @Test
     public void testBuilder() {
-        assertThat(DataRepository.builder().name("test").dataSet(dataSet).build().getSupportedFeatures()).isEmpty();
+        assertThat(DataRepository.builder().name("test").dataSet(dataSet).build()).isNotNull();
     }
 
     @Test

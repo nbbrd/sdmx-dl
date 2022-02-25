@@ -17,7 +17,6 @@
 package tests.sdmxdl.api;
 
 import sdmxdl.*;
-import sdmxdl.DataRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

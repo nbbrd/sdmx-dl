@@ -17,14 +17,13 @@
 package sdmxdl;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.ext.SdmxException;
 
-import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Philippe Charles
@@ -50,10 +49,6 @@ public class DataRepository {
     List<DataSet> dataSets;
 
     @lombok.NonNull
-    @lombok.Singular
-    Set<Feature> supportedFeatures;
-
-    @lombok.NonNull
     @lombok.Builder.Default
     Instant creationTime = Instant.EPOCH;
 
@@ -63,11 +58,6 @@ public class DataRepository {
 
     public boolean isExpired(@NonNull Clock clock) {
         return !clock.instant().isBefore(expirationTime);
-    }
-
-    @NonNull
-    public Connection asConnection() {
-        return new RepoConnection(this);
     }
 
     @NonNull
@@ -103,97 +93,4 @@ public class DataRepository {
             return creationTime(creationTime).expirationTime(creationTime.plus(ttl));
         }
     }
-
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
-    private static final class RepoConnection implements Connection {
-
-        private final DataRepository repo;
-        private boolean closed;
-
-        private RepoConnection(DataRepository repo) {
-            this.repo = repo;
-            this.closed = false;
-        }
-
-        @Override
-        public void testConnection() throws IOException {
-        }
-
-        @Override
-        public Collection<Dataflow> getFlows() throws IOException {
-            checkState();
-            return repo.getFlows();
-        }
-
-        @Override
-        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
-            checkState();
-            checkDataflowRef(flowRef);
-            return repo
-                    .getFlow(flowRef)
-                    .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), flowRef));
-        }
-
-        @Override
-        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
-            checkState();
-            checkDataflowRef(flowRef);
-            DataStructureRef structRef = getFlow(flowRef).getStructureRef();
-            return repo
-                    .getStructure(structRef)
-                    .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), structRef));
-        }
-
-        @Override
-        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-            checkState();
-            checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
-            return repo
-                    .getDataSet(flowRef)
-                    .map(dataSet -> dataSet.getData(query))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef));
-        }
-
-        @Override
-        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-            checkState();
-            checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
-            return repo
-                    .getDataSet(flowRef)
-                    .map(dataSet -> dataSet.getDataStream(query))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef));
-        }
-
-        @Override
-        public Set<Feature> getSupportedFeatures() {
-            return repo.getSupportedFeatures();
-        }
-
-        @Override
-        public void close() {
-            closed = true;
-        }
-
-        private void checkState() throws IOException {
-            if (closed) {
-                throw SdmxException.connectionClosed(repo.getName());
-            }
-        }
-
-        private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {
-//            if (!repo.getFlow(ref).isPresent()) {
-//                throw new IllegalArgumentException(ref.toString());
-//            }
-        }
-
-        private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
-            String error = key.validateOn(dsd);
-            if (error != null) {
-                throw new IllegalArgumentException(error);
-            }
-        }
-    }
-    //</editor-fold>}
 }

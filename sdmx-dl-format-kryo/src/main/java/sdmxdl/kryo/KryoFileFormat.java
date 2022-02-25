@@ -26,7 +26,6 @@ import lombok.AccessLevel;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import sdmxdl.*;
-import sdmxdl.DataRepository;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
@@ -200,7 +199,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
-            kryo.writeObject(output, t.getSupportedFeatures(), features);
             kryo.writeObjectOrNull(output, t.getCreationTime(), Instant.class);
             kryo.writeObjectOrNull(output, t.getExpirationTime(), Instant.class);
         }
@@ -214,7 +212,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
-                    .supportedFeatures(kryo.readObject(input, HashSet.class, features))
                     .creationTime(kryo.readObjectOrNull(input, Instant.class))
                     .expirationTime(kryo.readObjectOrNull(input, Instant.class))
                     .build();

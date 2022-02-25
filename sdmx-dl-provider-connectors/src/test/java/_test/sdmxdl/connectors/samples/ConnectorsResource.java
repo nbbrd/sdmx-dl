@@ -26,7 +26,6 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.DataRepository;
 import sdmxdl.util.parser.ObsFactories;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.xml.SdmxXmlSources;
@@ -37,7 +36,6 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -92,7 +90,6 @@ public class ConnectorsResource {
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
-                .supportedFeatures(EnumSet.allOf(Feature.class))
                 .build();
     }
 
