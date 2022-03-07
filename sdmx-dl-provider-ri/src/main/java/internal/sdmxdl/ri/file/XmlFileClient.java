@@ -22,19 +22,20 @@ import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.Series;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.SdmxMediaType;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -53,7 +54,7 @@ public class XmlFileClient implements SdmxFileClient {
     private final SdmxDecoder decoder;
 
     @Nullable
-    private final ObsFactory obsFactory;
+    private final Supplier<ObsParser> obsFactory;
 
     @lombok.NonNull
     BiConsumer<? super SdmxFileSource, ? super String> eventListener;
@@ -88,13 +89,13 @@ public class XmlFileClient implements SdmxFileClient {
     private Xml.Parser<DataCursor> getDataSupplier(String dataType, DataStructure dsd) throws IOException {
         switch (dataType) {
             case SdmxMediaType.GENERIC_DATA_20:
-                return SdmxXmlStreams.genericData20(dsd, obsFactory != null ? obsFactory : ObsFactories.SDMX20);
+                return SdmxXmlStreams.genericData20(dsd, obsFactory != null ? obsFactory : DefaultObsParser::newDefault);
             case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_20:
-                return SdmxXmlStreams.compactData20(dsd, obsFactory != null ? obsFactory : ObsFactories.SDMX20);
+                return SdmxXmlStreams.compactData20(dsd, obsFactory != null ? obsFactory : DefaultObsParser::newDefault);
             case SdmxMediaType.GENERIC_DATA_21:
-                return SdmxXmlStreams.genericData21(dsd, obsFactory != null ? obsFactory : ObsFactories.SDMX21);
+                return SdmxXmlStreams.genericData21(dsd, obsFactory != null ? obsFactory : DefaultObsParser::newDefault);
             case SdmxMediaType.STRUCTURE_SPECIFIC_DATA_21:
-                return SdmxXmlStreams.compactData21(dsd, obsFactory != null ? obsFactory : ObsFactories.SDMX21);
+                return SdmxXmlStreams.compactData21(dsd, obsFactory != null ? obsFactory : DefaultObsParser::newDefault);
             default:
                 throw new IOException("Don't known how to handle type '" + dataType + "'");
         }

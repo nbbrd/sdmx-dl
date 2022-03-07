@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 
 /**
  * @author Philippe Charles
@@ -37,7 +38,7 @@ public class XmlWebSourceTest {
                     .name("ECB")
                     .description("en", "European Central Bank")
                     .driver("ri:sdmx21")
-                    .dialect("SDMX21")
+                    .dialect(SDMX21_DIALECT)
                     .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
                     .property("detailSupported", "true")
                     .alias("XYZ")

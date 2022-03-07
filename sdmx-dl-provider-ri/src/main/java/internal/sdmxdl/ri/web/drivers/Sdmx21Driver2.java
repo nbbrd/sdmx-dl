@@ -21,14 +21,15 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.RestDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 
+import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.util.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
 
@@ -49,6 +50,7 @@ public final class Sdmx21Driver2 implements WebDriver {
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
+            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("ABS")
@@ -254,7 +256,7 @@ public final class Sdmx21Driver2 implements WebDriver {
 
     private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return RiRestClient.of(
-                s, c, "SDMX21",
+                s, c,
                 Sdmx21RestQueries
                         .builder()
                         .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()))

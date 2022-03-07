@@ -22,10 +22,11 @@ import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.MessageFooter;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.xml.DataCursor;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author Philippe Charles
@@ -33,31 +34,31 @@ import java.util.List;
 @lombok.experimental.UtilityClass
 public class SdmxXmlStreams {
 
-    public Xml.@NonNull Parser<DataCursor> compactData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
+    public Xml.@NonNull Parser<DataCursor> compactData20(@NonNull DataStructure dsd, @NonNull Supplier<ObsParser> df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
-                .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
+                .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.get(), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> compactData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
+    public Xml.@NonNull Parser<DataCursor> compactData21(@NonNull DataStructure dsd, @NonNull Supplier<ObsParser> df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
-                .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.getObsParser(dsd), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
+                .handler((o, onClose) -> new XMLStreamCompactDataCursor(o, onClose, Key.builder(dsd), df.get(), dsd.getTimeDimensionId(), dsd.getPrimaryMeasureId()))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> genericData20(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
+    public Xml.@NonNull Parser<DataCursor> genericData20(@NonNull DataStructure dsd, @NonNull Supplier<ObsParser> df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
-                .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx20(o, onClose, Key.builder(dsd), df.getObsParser(dsd)))
+                .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx20(o, onClose, Key.builder(dsd), df.get()))
                 .build();
     }
 
-    public Xml.@NonNull Parser<DataCursor> genericData21(@NonNull DataStructure dsd, @NonNull ObsFactory df) {
+    public Xml.@NonNull Parser<DataCursor> genericData21(@NonNull DataStructure dsd, @NonNull Supplier<ObsParser> df) {
         return Stax.StreamParser.<DataCursor>builder()
                 .factory(StaxUtil::getInputFactoryWithoutNamespace)
-                .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx21(o, onClose, Key.builder(dsd), df.getObsParser(dsd)))
+                .handler((o, onClose) -> XMLStreamGenericDataCursor.sdmx21(o, onClose, Key.builder(dsd), df.get()))
                 .build();
     }
 

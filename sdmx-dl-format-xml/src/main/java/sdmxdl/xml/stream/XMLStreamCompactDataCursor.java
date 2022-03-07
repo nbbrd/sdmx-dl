@@ -17,10 +17,9 @@
 package sdmxdl.xml.stream;
 
 import nbbrd.io.WrappedIOException;
-import sdmxdl.xml.DataCursor;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
+import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.XMLStreamUtil.Status;
 
 import javax.xml.stream.XMLStreamException;
@@ -105,12 +104,6 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public Frequency getSeriesFrequency() throws IOException {
-        checkSeriesState();
-        return obsParser.getFrequency();
-    }
-
-    @Override
     public String getSeriesAttribute(String key) throws IOException {
         checkSeriesState();
         return seriesAttributes.getAttribute(key);
@@ -177,7 +170,6 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     private Status parseSeries() {
         if (isValidSeriesHead()) {
             parserSeriesHead();
-            obsParser.head(keyBuilder, seriesAttributes::getAttribute);
             return SUSPEND;
         }
         return CONTINUE;

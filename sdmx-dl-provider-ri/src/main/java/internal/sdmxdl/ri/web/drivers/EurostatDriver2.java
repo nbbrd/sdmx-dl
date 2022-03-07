@@ -31,9 +31,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataflowRef;
 import sdmxdl.ext.MessageFooter;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -51,6 +51,7 @@ import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 import static internal.sdmxdl.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
@@ -77,6 +78,7 @@ public final class EurostatDriver2 implements WebDriver {
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
+            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("ESTAT")
@@ -94,7 +96,7 @@ public final class EurostatDriver2 implements WebDriver {
                 s.getId(),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
-                ObsFactories.getObsFactory(c, s, "SDMX21"),
+                DefaultObsParser::newDefault,
                 getHttpClient(s, c),
                 new EurostatRestQueries(),
                 new Sdmx21RestParsers(),

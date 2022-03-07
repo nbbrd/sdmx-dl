@@ -4,13 +4,14 @@ import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.*;
@@ -59,7 +60,7 @@ public class DotStatRestParsers implements RiRestParsers {
 
     @SdmxFix(id = 1, category = CONTENT, cause = "Time dimension is always TIME in data")
     @Override
-    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory) {
+    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
         DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams.compactData20(modifiedDsd, dataFactory);
     }

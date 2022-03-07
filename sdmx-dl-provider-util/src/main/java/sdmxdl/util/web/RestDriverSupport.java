@@ -18,8 +18,8 @@ package sdmxdl.util.web;
 
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.DataflowRef;
 import sdmxdl.Connection;
+import sdmxdl.DataflowRef;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -52,6 +52,10 @@ public final class RestDriverSupport implements WebDriver {
 
     @lombok.Singular
     private final Collection<String> supportedProperties;
+
+    @lombok.Getter
+    @lombok.Builder.Default
+    private final String defaultDialect = NO_DEFAULT_DIALECT;
 
     @lombok.NonNull
     @lombok.Builder.Default

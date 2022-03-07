@@ -21,15 +21,17 @@ import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.RestDriverSupport;
+import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 
 /**
@@ -47,6 +49,7 @@ public final class DotStatDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .client(DotStatDriver2::newClient)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("OECD")
@@ -94,7 +97,7 @@ public final class DotStatDriver2 implements WebDriver {
             .build();
 
     private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(s, c, "SDMX20", new DotStatRestQueries(), new DotStatRestParsers(), false);
+        return RiRestClient.of(s, c, new DotStatRestQueries(), new DotStatRestParsers(), false);
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

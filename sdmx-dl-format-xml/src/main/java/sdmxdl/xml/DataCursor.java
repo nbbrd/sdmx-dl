@@ -20,7 +20,6 @@ import internal.sdmxdl.xml.SeriesIterator;
 import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.Series;
 
@@ -45,9 +44,6 @@ public interface DataCursor extends Closeable {
 
     @NonNull
     Key getSeriesKey() throws IOException, IllegalStateException;
-
-    @NonNull
-    Frequency getSeriesFrequency() throws IOException, IllegalStateException;
 
     @Nullable
     String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException;

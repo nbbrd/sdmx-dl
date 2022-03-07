@@ -40,7 +40,7 @@ public class SdmxCubeUtil {
             throw new IllegalArgumentException("Expecting node");
         }
         return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
-                ? request(conn, flow, node).map(series -> series.toBuilder().freq(Frequency.UNDEFINED).build())
+                ? request(conn, flow, node)
                 : computeKeys(conn, flow, node);
     }
 
@@ -58,7 +58,7 @@ public class SdmxCubeUtil {
             throw new IllegalArgumentException("Expecting leaf");
         }
         try (Stream<Series> stream = request(conn, flow, leaf)) {
-            return stream.findFirst().map(series -> series.toBuilder().freq(Frequency.UNDEFINED).build());
+            return stream.findFirst();
         }
     }
 
@@ -163,6 +163,6 @@ public class SdmxCubeUtil {
     }
 
     private Series emptySeriesOf(Key key) {
-        return Series.builder().key(key).freq(Frequency.UNDEFINED).build();
+        return Series.builder().key(key).build();
     }
 }

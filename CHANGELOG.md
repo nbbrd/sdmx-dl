@@ -16,10 +16,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- ![API] Refactor data query [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
-- ![API] Replace `SdmxConnection#isDetailSupported()` with a more general solution [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
+- ![API] Refactor data queries [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
+- ![API] Refactor features discovery [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
 - ![API] Simplify class hierarchy [#222](https://github.com/nbbrd/sdmx-dl/issues/222)
 - ![API] Simplify class naming scheme [#220](https://github.com/nbbrd/sdmx-dl/issues/220)
+- ![API] Refactor dialects handling [#227](https://github.com/nbbrd/sdmx-dl/issues/227)
 - ![SOURCE] Enforce https on ISTAT source
 - ![PROVIDER] Change `FileDriver` to be optional
 

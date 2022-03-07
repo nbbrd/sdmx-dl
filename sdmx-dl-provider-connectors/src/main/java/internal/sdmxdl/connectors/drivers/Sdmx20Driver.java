@@ -19,6 +19,8 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.spi.WebDriver;
 
@@ -40,9 +42,10 @@ public final class Sdmx20Driver implements WebDriver {
             .builder()
             .name(CONNECTORS_SDMX_20)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx20Client::new, "SDMX20"))
+            .client(ConnectorRestClient.of(Sdmx20Client::new, DefaultObsParser::newDefault))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
+            .defaultDialect(Dialect.SDMX20_DIALECT)
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

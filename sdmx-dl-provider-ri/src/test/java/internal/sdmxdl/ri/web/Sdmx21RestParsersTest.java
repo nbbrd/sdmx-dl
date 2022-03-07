@@ -9,8 +9,8 @@ import sdmxdl.DataQuery;
 import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
+import sdmxdl.util.parser.DefaultObsParser;
 import tests.sdmxdl.api.RepoSamples;
-import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 import tests.sdmxdl.api.ByteSource;
@@ -76,7 +76,7 @@ public class Sdmx21RestParsersTest {
     @Test
     public void testGetDataParser() throws IOException {
         DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxXmlSources.ECB_DATA_STRUCTURE::openStream);
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, ObsFactories.SDMX21).andThen(IOFunction.unchecked(Sdmx21RestParsersTest::toDataSet));
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, DefaultObsParser::newDefault).andThen(IOFunction.unchecked(Sdmx21RestParsersTest::toDataSet));
         testParser(DEFAULT_DATA_TYPES, extractor);
         testContent(extractor, GENERIC_DATA_21_TYPE, SdmxXmlSources.ECB_DATA);
     }

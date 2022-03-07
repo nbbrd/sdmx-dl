@@ -14,13 +14,17 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.ext;
+package internal.sdmxdl.ri.ext;
 
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.DataStructure;
+import sdmxdl.Series;
+import sdmxdl.ext.SeriesMeta;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.ext.SeriesMetaFactory;
+
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -30,7 +34,7 @@ public final class Sdmx20Dialect implements Dialect {
 
     @Override
     public String getName() {
-        return "SDMX20";
+        return SDMX20_DIALECT;
     }
 
     @Override
@@ -39,7 +43,7 @@ public final class Sdmx20Dialect implements Dialect {
     }
 
     @Override
-    public @NonNull ObsFactory getObsFactory() {
-        return ObsFactories.SDMX20;
+    public @NonNull Function<Series, SeriesMeta> getMetaFactory(DataStructure dsd) {
+        return SeriesMetaFactory.sdmx20(dsd)::get;
     }
 }

@@ -2,7 +2,10 @@ package sdmxdl.util;
 
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
+import sdmxdl.Connection;
+import sdmxdl.Feature;
+import sdmxdl.Key;
+import sdmxdl.Series;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -35,7 +38,6 @@ public class SdmxCubeUtilTest {
     private static final Series FAKE_S4 = Series
             .builder()
             .key(M_FR_XXX)
-            .freq(Frequency.UNDEFINED)
             .build();
 
     private final WebContext webContext = WebContext.builder().build();
@@ -193,10 +195,10 @@ public class SdmxCubeUtilTest {
     }
 
     private static Series noData(Series series) {
-        return series.toBuilder().freq(Frequency.UNDEFINED).clearObs().build();
+        return series.toBuilder().clearObs().build();
     }
 
     private static Series noMetaNoData(Series series) {
-        return series.toBuilder().freq(Frequency.UNDEFINED).clearMeta().clearObs().build();
+        return series.toBuilder().clearMeta().clearObs().build();
     }
 }

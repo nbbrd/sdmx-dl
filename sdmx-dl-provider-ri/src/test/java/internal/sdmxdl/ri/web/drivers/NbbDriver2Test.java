@@ -21,10 +21,12 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import internal.util.http.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
-import tests.sdmxdl.web.WebDriverAssert;
+import sdmxdl.DataQuery;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.util.DataRef;
-import sdmxdl.util.parser.ObsFactories;
+import tests.sdmxdl.web.WebDriverAssert;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -103,7 +105,11 @@ public class NbbDriver2Test {
     }
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
-        return NbbDriver2.newClient("NBBFIX2", new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"), LanguagePriorityList.ANY, ObsFactories.SDMX20, (httpRequest) -> response);
+        return NbbDriver2.newClient(
+                "NBBFIX2",
+                new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"),
+                LanguagePriorityList.ANY,
+                (httpRequest) -> response);
     }
 
     private static void hasSuppressedMessage(Throwable ex, String msg) {

@@ -74,7 +74,6 @@ public final class SeriesIterator implements Iterator<Series> {
         builder.clearMeta()
                 .clearObs()
                 .key(cursor.getSeriesKey())
-                .freq(cursor.getSeriesFrequency())
                 .meta(cursor.getSeriesAttributes());
         Obs.Builder obs = Obs.builder();
         while (cursor.nextObs()) {

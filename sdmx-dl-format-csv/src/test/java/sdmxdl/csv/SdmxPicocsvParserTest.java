@@ -2,7 +2,7 @@ package sdmxdl.csv;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataSet;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class SdmxPicocsvParserTest {
         DataSet found = SdmxPicocsvParser
                 .builder()
                 .dsd(RepoSamples.STRUCT)
-                .factory(ObsFactories.SDMX21)
+                .factory(DefaultObsParser::newDefault)
                 .build()
                 .parseChars(csv);
 

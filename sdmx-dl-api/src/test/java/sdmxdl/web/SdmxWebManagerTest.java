@@ -43,7 +43,7 @@ public class SdmxWebManagerTest {
     @Test
     public void testCompliance() {
         SdmxManagerAssert.assertCompliance(
-                SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build(),
+                SdmxWebManager.builder().driver(sampleDriver).build(),
                 SdmxManagerAssert.Sample
                         .<SdmxWebSource>builder()
                         .validSource(sampleSource)
@@ -58,7 +58,6 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.ofServiceLoader()).satisfies(o -> {
             assertThat(o).isNotNull();
             assertThat(o.getDrivers()).isEmpty();
-            assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
@@ -72,7 +71,6 @@ public class SdmxWebManagerTest {
 
         assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
-            assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
@@ -85,7 +83,6 @@ public class SdmxWebManagerTest {
 
         assertThat(SdmxWebManager.builder().driver(sampleDriver).build()).satisfies(o -> {
             assertThat(o.getDrivers()).containsExactly(sampleDriver);
-            assertThat(o.getDialects()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
@@ -193,7 +190,7 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testGetConnection() throws IOException {
-        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build();
+        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null));
 
@@ -221,7 +218,7 @@ public class SdmxWebManagerTest {
                 .customSource(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
-        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).dialect(sampleDialect).build().getConnection("source")) {
+        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source")) {
             // TODO: create code that verifies that driver2 is selected
 //            assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
@@ -230,7 +227,7 @@ public class SdmxWebManagerTest {
     @Test
     @SuppressWarnings("null")
     public void testGetConnectionOfSource() {
-        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).dialect(sampleDialect).build();
+        SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
         assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null));
 
@@ -254,7 +251,6 @@ public class SdmxWebManagerTest {
         SdmxWebManager manager = SdmxWebManager
                 .builder()
                 .driver(sampleDriver)
-                .dialect(sampleDialect)
                 .eventListener((source, event) -> events.add(source.getName() + ":" + event))
                 .build();
 

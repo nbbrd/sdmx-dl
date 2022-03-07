@@ -18,15 +18,14 @@ package sdmxdl.xml.stream;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataDetail;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import tests.sdmxdl.api.ByteSource;
-import tests.sdmxdl.xml.SdmxXmlSources;
+import sdmxdl.util.ext.SeriesMetaFactory;
 import sdmxdl.util.parser.DefaultObsParser;
-import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.DataCursorAssert;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -48,7 +47,7 @@ public class XMLStreamGenericDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
+            ObsParser obsParser = DefaultObsParser.newDefault();
             try {
                 return XMLStreamGenericDataCursor.sdmx20(xif.createXMLStreamReader(stream), stream, builder, obsParser);
             } catch (XMLStreamException e) {
@@ -56,7 +55,7 @@ public class XMLStreamGenericDataCursorTest {
             }
         }, Key.ALL, DataDetail.FULL);
 
-        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
         try (InputStream stream = xml.openStream();
              DataCursor o = XMLStreamGenericDataCursor.sdmx20(xif.createXMLStreamReader(stream), stream, builder, obsParser)) {
             int indexSeries = -1;
@@ -64,11 +63,10 @@ public class XMLStreamGenericDataCursorTest {
                 switch (++indexSeries) {
                     case 0:
                         assertThat(o.getSeriesKey()).isEqualTo(Key.of("LOCSTL04", "AUS", "M"));
-                        assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.MONTHLY);
                         assertThat(o.getSeriesAttributes())
                                 .hasSize(1)
-                                .containsEntry(FreqFactory.TIME_FORMAT_CONCEPT, "P1M");
-                        assertThat(o.getSeriesAttribute(FreqFactory.TIME_FORMAT_CONCEPT)).isEqualTo("P1M");
+                                .containsEntry(SeriesMetaFactory.TIME_FORMAT_CONCEPT, "P1M");
+                        assertThat(o.getSeriesAttribute(SeriesMetaFactory.TIME_FORMAT_CONCEPT)).isEqualTo("P1M");
                         assertThat(o.getSeriesAttribute("hello")).isNull();
                         int indexObs = -1;
                         while (o.nextObs()) {
@@ -102,7 +100,7 @@ public class XMLStreamGenericDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+            ObsParser obsParser = DefaultObsParser.newDefault();
             try {
                 return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
             } catch (XMLStreamException e) {
@@ -110,12 +108,11 @@ public class XMLStreamGenericDataCursorTest {
             }
         }, Key.ALL, DataDetail.FULL);
 
-        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
         try (InputStream stream = xml.openStream();
              DataCursor o = XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser)) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
-            assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
             assertThat(o.getSeriesAttributes())
                     .hasSize(3)
                     .containsEntry("EXT_TITLE", "Belgium - Gross domestic product at 2010 market prices")
@@ -148,7 +145,7 @@ public class XMLStreamGenericDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+            ObsParser obsParser = DefaultObsParser.newDefault();
             try {
                 return XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser);
             } catch (XMLStreamException e) {
@@ -156,7 +153,7 @@ public class XMLStreamGenericDataCursorTest {
             }
         }, Key.ALL, DataDetail.FULL);
 
-        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
         try (InputStream stream = xml.openStream();
              DataCursor o = XMLStreamGenericDataCursor.sdmx21(xif.createXMLStreamReader(stream), stream, builder, obsParser)) {
             int indexSeries = -1;
@@ -164,7 +161,6 @@ public class XMLStreamGenericDataCursorTest {
                 switch (++indexSeries) {
                     case 0:
                         assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "DEU", "1", "0", "319", "0", "UBLGE"));
-                        assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
                         int indexObs = -1;
                         while (o.nextObs()) {
                             switch (++indexObs) {
@@ -182,7 +178,6 @@ public class XMLStreamGenericDataCursorTest {
                         break;
                     case 119:
                         assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "HRV", "1", "0", "0", "0", "ZUTN"));
-                        assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
                         assertThat(o.nextObs()).isFalse();
                         break;
                 }

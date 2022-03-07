@@ -25,14 +25,20 @@ import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.util.SdmxFix;
+import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.util.parser.StandardReportingFormat;
+import sdmxdl.util.parser.TimeFormatParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
@@ -50,8 +56,9 @@ public final class InseeDriver implements WebDriver {
             .builder()
             .name(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(InseeClient::new, DIALECT))
+            .client(ConnectorRestClient.of(InseeClient::new, OBS_FACTORY))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("INSEE")
@@ -120,4 +127,17 @@ public final class InseeDriver implements WebDriver {
             }
         }
     }
+
+    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+            .builder()
+            .indicator('B')
+            .durationOf("P2M")
+            .limitPerYear(6)
+            .build();
+
+    private static final TimeFormatParser EXTENDED_PARSER =
+            TimeFormatParser.onObservationalTimePeriod()
+                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new DefaultObsParser(EXTENDED_PARSER, Parser.onDouble());
 }

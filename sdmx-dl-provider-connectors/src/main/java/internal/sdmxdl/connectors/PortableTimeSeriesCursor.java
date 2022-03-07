@@ -18,12 +18,10 @@ package internal.sdmxdl.connectors;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import sdmxdl.xml.DataCursor;
 import sdmxdl.DataStructure;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
-import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
+import sdmxdl.xml.DataCursor;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -31,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @author Philippe Charles
@@ -38,8 +37,8 @@ import java.util.Objects;
 @lombok.RequiredArgsConstructor
 public final class PortableTimeSeriesCursor implements DataCursor {
 
-    public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, ObsFactory df, DataStructure dsd) {
-        return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), df.getObsParser(dsd));
+    public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, Supplier<ObsParser> df, DataStructure dsd) {
+        return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), df.get());
     }
 
     private final Iterator<PortableTimeSeries<Double>> data;
@@ -58,7 +57,6 @@ public final class PortableTimeSeriesCursor implements DataCursor {
         if (result) {
             current = data.next();
             current.getDimensionsMap().forEach(keyBuilder::put);
-            obsParser.head(keyBuilder, current::getAttribute);
             index = -1;
         } else {
             current = null;
@@ -77,12 +75,6 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     public Key getSeriesKey() throws IOException {
         checkSeriesState();
         return keyBuilder.build();
-    }
-
-    @Override
-    public Frequency getSeriesFrequency() throws IOException {
-        checkSeriesState();
-        return obsParser.getFrequency();
     }
 
     @Override

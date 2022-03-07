@@ -20,12 +20,11 @@ import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -46,10 +45,10 @@ public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
     public abstract @NonNull BiConsumer<? super SOURCE, ? super String> getEventListener();
 
-    public abstract @NonNull List<Dialect> getDialects();
+    public abstract @NonNull Optional<String> getDialect(@NonNull SOURCE source);
 
     public static final BiConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = SdmxManager::doNothing;
 
-    private static void doNothing(SdmxSource source, String message) {
+    private static void doNothing(SdmxSource ignoredSource, String message) {
     }
 }

@@ -287,7 +287,7 @@ public class KeyTest {
     }
 
     private static Condition<Key> containingKey(String key) {
-        Series series = Series.builder().key(Key.parse(key)).freq(Frequency.MONTHLY).build();
+        Series series = Series.builder().key(Key.parse(key)).build();
         return new Condition<>(parent -> parent.containsKey(series), "Must contain key %s", key);
     }
 

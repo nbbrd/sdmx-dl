@@ -85,6 +85,11 @@ public final class RngDriver implements WebDriver {
         return emptyList();
     }
 
+    @Override
+    public @NonNull String getDefaultDialect() {
+        return NO_DEFAULT_DIALECT;
+    }
+
     @RepresentableAs(URI.class)
     @lombok.Value
     @lombok.Builder
@@ -202,7 +207,7 @@ public final class RngDriver implements WebDriver {
         }
 
         private Series newSeries(Key key, Freq freq, DataDetail detail) {
-            Series.Builder result = Series.builder().key(key).freq(freq.getFrequency());
+            Series.Builder result = Series.builder().key(key);
             if (detail.isDataRequested()) {
                 int series = Integer.parseInt(key.get(1));
                 int obsCount = (int) freq.getUnit().between(config.getStart(), config.getStart().plusYears(config.getYearCount()));
@@ -232,12 +237,11 @@ public final class RngDriver implements WebDriver {
         @lombok.AllArgsConstructor
         @lombok.Getter
         enum Freq {
-            A("Annual", Frequency.ANNUAL, ChronoUnit.YEARS),
-            M("Monthly", Frequency.MONTHLY, ChronoUnit.MONTHS),
-            D("Daily", Frequency.DAILY, ChronoUnit.DAYS);
+            A("Annual", ChronoUnit.YEARS),
+            M("Monthly", ChronoUnit.MONTHS),
+            D("Daily", ChronoUnit.DAYS);
 
             private final String label;
-            private final Frequency frequency;
             private final ChronoUnit unit;
 
             public static Stream<Freq> stream() {

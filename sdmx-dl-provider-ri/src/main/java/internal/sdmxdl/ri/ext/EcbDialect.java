@@ -14,21 +14,18 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.ext;
+package internal.sdmxdl.ri.ext;
 
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
-import sdmxdl.Frequency;
-import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.ObsParser;
+import sdmxdl.Series;
+import sdmxdl.ext.SeriesMeta;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.util.parser.DefaultObsParser;
-import sdmxdl.util.parser.FreqFactory;
+import sdmxdl.util.ext.SeriesMetaFactory;
 
-import java.util.Objects;
-
-import static sdmxdl.Frequency.*;
+import java.time.temporal.TemporalAmount;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -47,46 +44,42 @@ public final class EcbDialect implements Dialect {
     }
 
     @Override
-    public @NonNull ObsFactory getObsFactory() {
-        return EcbDialect::getObsParser;
+    public @NonNull Function<Series, SeriesMeta> getMetaFactory(DataStructure dsd) {
+        return getFreqFactory(dsd)::get;
     }
 
-    private static ObsParser getObsParser(DataStructure dsd) {
-        Objects.requireNonNull(dsd);
-        return DefaultObsParser
-                .builder()
-                .freqFactory(getFreqFactory(dsd))
+    private static SeriesMetaFactory getFreqFactory(DataStructure dsd) {
+        return SeriesMetaFactory
+                .sdmx21(dsd)
+                .toBuilder()
+                .byDimension(SeriesMetaFactory.getFrequencyCodeIdIndex(dsd), EcbDialect::parseFreq)
                 .build();
     }
 
-    private static FreqFactory getFreqFactory(DataStructure dsd) {
-        return FreqFactory.sdmx21(dsd).toBuilder().parser(EcbDialect::parseFreq).build();
-    }
-
-    private static Frequency parseFreq(CharSequence code) {
+    private static TemporalAmount parseFreq(CharSequence code) {
         if (code != null && code.length() == 1) {
             switch (code.charAt(0)) {
                 case 'A':
-                    return ANNUAL;
+                    return SeriesMetaFactory.ANNUAL;
                 case 'S':
                 case 'H':
-                    return HALF_YEARLY;
+                    return SeriesMetaFactory.HALF_YEARLY;
                 case 'Q':
-                    return QUARTERLY;
+                    return SeriesMetaFactory.QUARTERLY;
                 case 'M':
-                    return MONTHLY;
+                    return SeriesMetaFactory.MONTHLY;
                 case 'W':
-                    return WEEKLY;
+                    return SeriesMetaFactory.WEEKLY;
                 case 'D':
-                    return DAILY;
+                    return SeriesMetaFactory.DAILY;
                 case 'B':
-                    return DAILY_BUSINESS;
+                    return SeriesMetaFactory.DAILY_BUSINESS;
                 case 'N':
-                    return MINUTELY;
+                    return SeriesMetaFactory.MINUTELY;
                 default:
                     return null;
             }
         }
-        return Frequency.UNDEFINED;
+        return SeriesMetaFactory.UNDEFINED;
     }
 }

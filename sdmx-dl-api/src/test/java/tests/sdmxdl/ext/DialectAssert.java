@@ -14,32 +14,23 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.ext;
+package tests.sdmxdl.ext;
 
-import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.util.parser.ObsFactories;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Dialect.class)
-public final class Sdmx21Dialect implements Dialect {
+@lombok.experimental.UtilityClass
+public class DialectAssert {
 
-    @Override
-    public String getName() {
-        return "SDMX21";
-    }
+    @SuppressWarnings("null")
+    public void assertDialectCompliance(Dialect d) {
+        assertThat(d.getName()).isNotBlank();
+        assertThat(d.getDescription()).isNotBlank();
 
-    @Override
-    public String getDescription() {
-        return getName();
-    }
-
-    @Override
-    public @NonNull ObsFactory getObsFactory() {
-        return ObsFactories.SDMX21;
+        assertThat(d.getClass()).isFinal();
     }
 }

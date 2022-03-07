@@ -42,4 +42,12 @@ module sdmxdl.web.ri {
             internal.sdmxdl.ri.web.monitors.UptimeRobotMonitoring;
 
     opens internal.sdmxdl.ri.web.monitors to com.google.gson;
+
+    provides sdmxdl.ext.spi.Dialect with
+            internal.sdmxdl.ri.ext.EcbDialect,
+            internal.sdmxdl.ri.ext.InseeDialect,
+            internal.sdmxdl.ri.ext.Sdmx20Dialect,
+            internal.sdmxdl.ri.ext.Sdmx21Dialect;
+
+    uses sdmxdl.ext.spi.Dialect;
 }

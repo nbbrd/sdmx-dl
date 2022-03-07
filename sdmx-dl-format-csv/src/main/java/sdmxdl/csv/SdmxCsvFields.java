@@ -4,7 +4,6 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataflowRef;
-import sdmxdl.Frequency;
 import sdmxdl.Series;
 
 import java.text.DecimalFormat;
@@ -41,7 +40,7 @@ public class SdmxCsvFields {
     }
 
     public @NonNull Formatter<LocalDateTime> getPeriodFormatter(@NonNull Collection<Series> data) {
-        return Formatter.onDateTimeFormatter(getDateTimeFormatter(Frequency.getHighest(data)));
+        return Formatter.onDateTimeFormatter(getDateTimeFormatter());
     }
 
     private static NumberFormat getNumberFormat(Locale encoding) {
@@ -50,27 +49,8 @@ public class SdmxCsvFields {
         return decimalFormat;
     }
 
-    private static DateTimeFormatter getDateTimeFormatter(Frequency freq) {
-        switch (freq) {
-            case ANNUAL:
-                return DateTimeFormatter.ofPattern("yyyy");
-            case HALF_YEARLY:
-            case QUARTERLY:
-            case MONTHLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM");
-            case WEEKLY:
-            case DAILY:
-            case DAILY_BUSINESS:
-                return DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            case HOURLY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-ddTHH");
-            case MINUTELY:
-                return DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
-            case UNDEFINED:
-                return DateTimeFormatter.ISO_DATE_TIME;
-            default:
-                throw new RuntimeException();
-        }
+    private static DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ISO_DATE_TIME;
     }
 
     private static String formatDataflowField(DataflowRef ref) {

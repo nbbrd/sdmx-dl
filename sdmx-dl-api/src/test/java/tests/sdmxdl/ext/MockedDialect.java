@@ -1,7 +1,12 @@
 package tests.sdmxdl.ext;
 
-import sdmxdl.ext.ObsFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataStructure;
+import sdmxdl.Series;
+import sdmxdl.ext.SeriesMeta;
 import sdmxdl.ext.spi.Dialect;
+
+import java.util.function.Function;
 
 @lombok.RequiredArgsConstructor
 public final class MockedDialect implements Dialect {
@@ -15,7 +20,7 @@ public final class MockedDialect implements Dialect {
     }
 
     @Override
-    public ObsFactory getObsFactory() {
-        return dsd -> null;
+    public @NonNull Function<Series, SeriesMeta> getMetaFactory(DataStructure dsd) {
+        return series -> SeriesMeta.EMPTY;
     }
 }

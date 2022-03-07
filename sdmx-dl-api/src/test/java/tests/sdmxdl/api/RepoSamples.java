@@ -77,7 +77,6 @@ public class RepoSamples {
     public static final Series S1 = Series
             .builder()
             .key(K1)
-            .freq(Frequency.MONTHLY)
             .obs(OBS1)
             .obs(OBS2)
             .meta(NOT_CODED_ATTRIBUTE.getId(), "hello world")
@@ -86,13 +85,11 @@ public class RepoSamples {
     public static final Series S2 = Series
             .builder()
             .key(K2)
-            .freq(Frequency.MONTHLY)
             .build();
 
     public static final Series S3 = Series
             .builder()
             .key(K3)
-            .freq(Frequency.MONTHLY)
             .obs(OBS1)
             .build();
 

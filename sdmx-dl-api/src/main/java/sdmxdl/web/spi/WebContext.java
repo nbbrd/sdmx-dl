@@ -18,9 +18,8 @@ package sdmxdl.web.spi;
 
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.spi.Dialect;
-import sdmxdl.web.Network;
 import sdmxdl.ext.Cache;
+import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.List;
@@ -40,10 +39,6 @@ public class WebContext {
     @lombok.NonNull
     @lombok.Builder.Default
     Cache cache = Cache.noOp();
-
-    @lombok.NonNull
-    @lombok.Singular
-    List<Dialect> dialects;
 
     @lombok.NonNull
     @lombok.Builder.Default

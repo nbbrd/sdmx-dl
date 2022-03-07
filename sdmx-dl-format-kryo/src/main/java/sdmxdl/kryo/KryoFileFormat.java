@@ -128,7 +128,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(DataflowRef.class, new DataflowRefSerializer());
         result.register(Codelist.class, new CodelistSerializer());
         result.register(CodelistRef.class, new CodelistRefSerializer());
-        result.register(Frequency.class, new FrequencySerializer());
         result.register(Key.class, new KeySerializer());
         result.register(DataQuery.class, new DataQuerySerializer());
         result.register(DataDetail.class, new DefaultSerializers.EnumSerializer(DataDetail.class));
@@ -334,21 +333,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         }
     }
 
-    private static final class FrequencySerializer extends ImmutableSerializer<Frequency> {
-
-        private final Frequency[] freqs = Frequency.values();
-
-        @Override
-        public void write(Kryo kryo, Output output, Frequency t) {
-            output.writeInt(t.ordinal(), true);
-        }
-
-        @Override
-        public Frequency read(Kryo kryo, Input input, Class<? extends Frequency> type) {
-            return freqs[input.readInt(true)];
-        }
-    }
-
     private static final class KeySerializer extends ImmutableSerializer<Key> {
 
         @Override
@@ -384,7 +368,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, Series t) {
             kryo.writeObject(output, t.getKey());
-            kryo.writeObject(output, t.getFreq());
             kryo.writeObject(output, t.getObs(), obs);
             kryo.writeObject(output, t.getMeta(), seriesMeta);
         }
@@ -395,7 +378,6 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Series
                     .builder()
                     .key(kryo.readObject(input, Key.class))
-                    .freq(kryo.readObject(input, Frequency.class))
                     .obs(kryo.readObject(input, ArrayList.class, obs))
                     .meta(kryo.readObject(input, HashMap.class, seriesMeta))
                     .build();

@@ -19,8 +19,6 @@ package sdmxdl.util.parser;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.Frequency;
-import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
 
 import java.time.LocalDateTime;
@@ -31,48 +29,23 @@ import java.util.function.UnaryOperator;
 /**
  * @author Philippe Charles
  */
+@lombok.RequiredArgsConstructor
 public final class DefaultObsParser implements ObsParser {
 
-    private final DefaultObsParserResource<Frequency> freqFactory;
-    private final DefaultObsParserResource<TimeFormatParser> periodFactory;
-    private final DefaultObsParserResource<Parser<Double>> valueFactory;
-
-    private TimeFormatParser periodParser;
-    private Parser<Double> valueParser;
-    private Frequency freq;
-    private String period;
-    private String value;
-
-    @lombok.Builder
-    private DefaultObsParser(DefaultObsParserResource<Frequency> freqFactory,
-                             DefaultObsParserResource<TimeFormatParser> periodFactory,
-                             DefaultObsParserResource<Parser<Double>> valueFactory) {
-        this.freqFactory = freqFactory != null ? freqFactory : (key, attributes) -> Frequency.UNDEFINED;
-        this.periodFactory = periodFactory != null ? periodFactory : (key, attributes) -> TimeFormatParser.onObservationalTimePeriod();
-        this.valueFactory = valueFactory != null ? valueFactory : (key, attributes) -> Parser.onDouble();
-        this.periodParser = TimeFormatParser.onNull();
-        this.valueParser = Parser.onNull();
-        this.freq = Frequency.UNDEFINED;
-        this.period = null;
-        this.value = null;
+    public static @NonNull DefaultObsParser newDefault() {
+        return new DefaultObsParser(TimeFormatParser.onObservationalTimePeriod(), Parser.onDouble());
     }
+
+    private final TimeFormatParser periodParser;
+    private final Parser<Double> valueParser;
+    private String period = null;
+    private String value = null;
 
     @Override
     @NonNull
     public ObsParser clear() {
         this.period = null;
         this.value = null;
-        return this;
-    }
-
-    @Override
-    @NonNull
-    public ObsParser head(Key.@NonNull Builder seriesKey, @NonNull UnaryOperator<String> seriesAttributes) {
-        Objects.requireNonNull(seriesKey);
-        Objects.requireNonNull(seriesAttributes);
-        this.freq = freqFactory.get(seriesKey, seriesAttributes);
-        this.periodParser = periodFactory.get(seriesKey, seriesAttributes);
-        this.valueParser = valueFactory.get(seriesKey, seriesAttributes);
         return this;
     }
 
@@ -88,12 +61,6 @@ public final class DefaultObsParser implements ObsParser {
     public ObsParser value(@Nullable String value) {
         this.value = value;
         return this;
-    }
-
-    @Override
-    @NonNull
-    public Frequency getFrequency() {
-        return freq;
     }
 
     @Override

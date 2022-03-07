@@ -19,15 +19,14 @@ package sdmxdl.xml.stream;
 import nbbrd.io.Resource;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataDetail;
-import sdmxdl.Frequency;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
-import tests.sdmxdl.api.ByteSource;
-import tests.sdmxdl.xml.SdmxXmlSources;
 import sdmxdl.util.parser.DefaultObsParser;
-import sdmxdl.util.parser.FreqFactory;
+import sdmxdl.util.ext.SeriesMetaFactory;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.DataCursorAssert;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -50,7 +49,7 @@ public class XMLStreamCompactDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
+            ObsParser obsParser = DefaultObsParser.newDefault();
             try {
                 return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
             } catch (XMLStreamException e) {
@@ -58,7 +57,7 @@ public class XMLStreamCompactDataCursorTest {
             }
         }, Key.ALL, DataDetail.FULL);
 
-        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx20(FreqFactory.TIME_FORMAT_CONCEPT)).build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
         try (InputStream stream = xml.openStream();
              DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {
             int indexSeries = -1;
@@ -66,11 +65,10 @@ public class XMLStreamCompactDataCursorTest {
                 switch (++indexSeries) {
                     case 0:
                         assertThat(o.getSeriesKey()).isEqualTo(Key.of("M", "B", "MX", "P", "A"));
-                        assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.MONTHLY);
                         assertThat(o.getSeriesAttributes())
                                 .hasSize(1)
-                                .containsEntry(FreqFactory.TIME_FORMAT_CONCEPT, "P1M");
-                        assertThat(o.getSeriesAttribute(FreqFactory.TIME_FORMAT_CONCEPT)).isEqualTo("P1M");
+                                .containsEntry(SeriesMetaFactory.TIME_FORMAT_CONCEPT, "P1M");
+                        assertThat(o.getSeriesAttribute(SeriesMetaFactory.TIME_FORMAT_CONCEPT)).isEqualTo("P1M");
                         assertThat(o.getSeriesAttribute("hello")).isNull();
                         int indexObs = -1;
                         while (o.nextObs()) {
@@ -100,7 +98,7 @@ public class XMLStreamCompactDataCursorTest {
 
         DataCursorAssert.assertCompliance(() -> {
             InputStream stream = xml.openStream();
-            ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+            ObsParser obsParser = DefaultObsParser.newDefault();
             try {
                 return new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE");
             } catch (XMLStreamException e) {
@@ -108,12 +106,11 @@ public class XMLStreamCompactDataCursorTest {
             }
         }, Key.ALL, DataDetail.FULL);
 
-        ObsParser obsParser = DefaultObsParser.builder().freqFactory(FreqFactory.sdmx21(0)).build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
         try (InputStream stream = xml.openStream();
              DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {
             assertThat(o.nextSeries()).isTrue();
             assertThat(o.getSeriesKey()).isEqualTo(Key.of("A", "BEL", "1", "0", "0", "0", "OVGD"));
-            assertThat(o.getSeriesFrequency()).isEqualTo(Frequency.ANNUAL);
             assertThat(o.getSeriesAttributes())
                     .hasSize(3)
                     .containsEntry("EXT_TITLE", "Belgium - Gross domestic product at 2010 market prices")
@@ -143,7 +140,7 @@ public class XMLStreamCompactDataCursorTest {
     public void testMissingSeriesHeader() throws IOException, XMLStreamException {
         ByteSource xml = () -> Resource.getResourceAsStream(XMLStreamCompactDataCursorTest.class, "10100139_187.xml").orElseThrow(FileNotFoundException::new);
         Key.Builder builder = Key.builder(asList("A", "B"));
-        ObsParser obsParser = DefaultObsParser.builder().build();
+        ObsParser obsParser = DefaultObsParser.newDefault();
 
         try (InputStream stream = xml.openStream();
              DataCursor o = new XMLStreamCompactDataCursor(xif.createXMLStreamReader(stream), stream, builder, obsParser, "TIME_PERIOD", "OBS_VALUE")) {

@@ -4,7 +4,7 @@ import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.xml.DataCursor;
 
 import java.util.Comparator;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface RiRestParsers {
 
@@ -29,7 +30,7 @@ public interface RiRestParsers {
 
     @NonNull List<MediaType> getDataTypes();
 
-    @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory);
+    @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory);
 
     @NonNull List<MediaType> getCodelistTypes();
 

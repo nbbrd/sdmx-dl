@@ -61,7 +61,6 @@ public final class FileDriver implements WebDriver {
                 .languages(context.getLanguages())
                 .eventListener((fileSource, message) -> context.getEventListener().accept(source, message))
                 .cache(context.getCache())
-                .dialects(context.getDialects())
                 .build()
                 .getConnection(toFileSource(source));
     }
@@ -74,6 +73,11 @@ public final class FileDriver implements WebDriver {
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
         return Collections.singletonList(STRUCTURE_PROPERTY.getKey());
+    }
+
+    @Override
+    public @NonNull String getDefaultDialect() {
+        return NO_DEFAULT_DIALECT;
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {

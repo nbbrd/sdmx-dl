@@ -28,9 +28,8 @@ import lombok.AccessLevel;
 import nbbrd.io.text.BaseProperty;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.util.DataRef;
-import sdmxdl.util.parser.ObsFactories;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.util.web.SdmxRestClientSupplier;
 import sdmxdl.util.web.SdmxWebEvents;
@@ -43,6 +42,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,24 +68,24 @@ public final class ConnectorRestClient implements SdmxRestClient {
         RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
     }
 
-    public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
-                return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
+                return new ConnectorRestClient(source.getName(), client, obsFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
 
-    public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull String defaultDialect) {
+    public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
-            return new ConnectorRestClient(source.getName(), client, ObsFactories.getObsFactory(context, source, defaultDialect));
+            return new ConnectorRestClient(source.getName(), client, obsFactory);
         };
     }
 
@@ -96,7 +96,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
     private final RestSdmxClient connector;
 
     @lombok.NonNull
-    private final ObsFactory dataFactory;
+    private final Supplier<ObsParser> dataFactory;
 
     @Override
     public String getName() {

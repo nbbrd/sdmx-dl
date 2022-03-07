@@ -25,11 +25,11 @@ import internal.util.http.ext.InterceptingClient;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.util.DataRef;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
@@ -57,6 +58,7 @@ public final class NbbDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .client(NbbDriver2::newClient)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("NBB")
@@ -77,14 +79,13 @@ public final class NbbDriver2 implements WebDriver {
                 s.getId(),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
-                ObsFactories.getObsFactory(c, s, "SDMX20"),
                 RiHttpUtils.newClient(s, c)
         );
     }
 
     @VisibleForTesting
-    static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull ObsFactory obsFactory, @NonNull HttpClient executor) {
-        return new RiRestClient(name, endpoint, langs, obsFactory,
+    static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull HttpClient executor) {
+        return new RiRestClient(name, endpoint, langs, DefaultObsParser::newDefault,
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),
                 new DotStatRestParsers(),

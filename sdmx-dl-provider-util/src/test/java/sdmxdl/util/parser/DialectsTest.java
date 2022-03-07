@@ -3,11 +3,10 @@ package sdmxdl.util.parser;
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.ext.ObsFactoryAssert;
 
-public class ObsFactoriesTest {
+public class DialectsTest {
 
     @Test
     public void testCompliance() {
-        ObsFactoryAssert.assertCompliance(ObsFactories.SDMX20);
-        ObsFactoryAssert.assertCompliance(ObsFactories.SDMX21);
+        ObsFactoryAssert.assertCompliance(DefaultObsParser::newDefault);
     }
 }

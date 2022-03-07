@@ -14,16 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.util.ext;
+package internal.sdmxdl.ri.ext;
 
-import _test.sdmxdl.util.DialectAssertions;
+import sdmxdl.util.ext.SeriesMetaFactory;
+import tests.sdmxdl.ext.DialectAssert;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
-import java.util.function.UnaryOperator;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.Frequency.*;
 
 /**
  * @author Philippe Charles
@@ -32,28 +30,18 @@ public class InseeDialectTest {
 
     @Test
     public void testCompliance() {
-        DialectAssertions.assertDialectCompliance(new InseeDialect());
+        DialectAssert.assertDialectCompliance(new InseeDialect());
     }
 
     @Test
     public void testFreqParser() {
         Key.Builder key = Key.builder(dsd);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "A"), UnaryOperator.identity())).isEqualTo(ANNUAL);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "T"), UnaryOperator.identity())).isEqualTo(QUARTERLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "M"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "B"), UnaryOperator.identity())).isEqualTo(MONTHLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "S"), UnaryOperator.identity())).isEqualTo(HALF_YEARLY);
-        assertThat(InseeDialect.getFreqFactory(dsd).get(key.put("FREQ", "X"), UnaryOperator.identity())).isEqualTo(UNDEFINED);
-    }
-
-    @Test
-    public void testPeriodParser() {
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("2013", null)).isEqualTo("2013-01-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("2014-Q3", null)).isEqualTo("2014-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("1990-09", null)).isEqualTo("1990-09-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-S2", null)).isEqualTo("2012-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-S2", null)).isEqualTo("2012-07-01T00:00:00");
-        assertThat(InseeDialect.getPeriodParser(null, null).parse("2012-B2", null)).isEqualTo("2012-03-01T00:00:00");
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "A").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.ANNUAL);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "T").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.QUARTERLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "M").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.MONTHLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "B").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.MONTHLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "S").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.HALF_YEARLY);
+        assertThat(InseeDialect.getFreqFactory(dsd).get(Series.builder().key(key.put("FREQ", "X").build()).build()).getTimeUnit()).isEqualTo(SeriesMetaFactory.UNDEFINED);
     }
 
     // https://bdm.insee.fr/series/sdmx/codelist/FR1/CL_PERIODICITE/1.0

@@ -17,6 +17,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -144,6 +145,25 @@ public final class FailsafeDriver implements WebDriver {
         if (result == null) {
             unexpectedNull("null list");
             return Collections.emptyList();
+        }
+
+        return result;
+    }
+
+    @Override
+    public @NonNull String getDefaultDialect() {
+        String result;
+
+        try {
+            result = delegate.getDefaultDialect();
+        } catch (RuntimeException ex) {
+            unexpectedError("while getting default dialect", ex);
+            return NO_DEFAULT_DIALECT;
+        }
+
+        if (result == null) {
+            unexpectedNull("null list");
+            return NO_DEFAULT_DIALECT;
         }
 
         return result;

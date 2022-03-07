@@ -20,6 +20,7 @@ import internal.sdmxdl.connectors.ConnectorRestClient;
 import internal.sdmxdl.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
@@ -28,6 +29,7 @@ import java.net.URI;
 import java.util.Map;
 
 import static internal.sdmxdl.connectors.Connectors.*;
+import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.util.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
 
 /**
@@ -43,12 +45,13 @@ public final class Sdmx21Driver implements WebDriver {
             .builder()
             .name(CONNECTORS_SDMX_21)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx21Client::new, "SDMX21"))
+            .client(ConnectorRestClient.of(Sdmx21Client::new, DefaultObsParser::newDefault))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
             .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
             .supportedPropertyOf(NEEDS_URL_ENCODING_PROPERTY)
             .supportedPropertyOf(SUPPORTS_COMPRESSION_PROPERTY)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
+            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("ABS")

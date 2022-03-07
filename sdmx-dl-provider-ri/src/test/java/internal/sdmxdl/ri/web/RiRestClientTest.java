@@ -6,7 +6,7 @@ import internal.util.http.ext.DumpingClientTest;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
@@ -87,7 +87,7 @@ public class RiRestClientTest {
                 "abc",
                 new URL("http://localhost"),
                 LanguagePriorityList.ANY,
-                ObsFactories.SDMX21,
+                DefaultObsParser::newDefault,
                 executor,
                 new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),

@@ -26,7 +26,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
@@ -63,7 +63,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
                 .dataSet(
                         PortableTimeSeriesCursor
-                                .of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))
+                                .of(data, DefaultObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
@@ -86,7 +86,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
                 .dataSet(
                         PortableTimeSeriesCursor
-                                .of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))
+                                .of(data, DefaultObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
@@ -129,7 +129,7 @@ public class ConnectorsResource {
 
     private PortableTimeSeries<Double> toPortableTimeSeries(Series series, List<Dimension> dims) {
         PortableTimeSeries<Double> result = new PortableTimeSeries<>();
-        result.setFrequency(String.valueOf(formatByStandardFreq(series.getFreq())));
+//        result.setFrequency(String.valueOf(formatByStandardFreq(series.getFreq())));
         series.getMeta().forEach(result::addAttribute);
         Key key = series.getKey();
         for (int i = 0; i < key.size(); i++) {
@@ -179,30 +179,30 @@ public class ConnectorsResource {
         }
     }
 
-    private char formatByStandardFreq(Frequency code) {
-        switch (code) {
-            case ANNUAL:
-                return 'A';
-            case HALF_YEARLY:
-                return 'S';
-            case QUARTERLY:
-                return 'Q';
-            case MONTHLY:
-                return 'M';
-            case WEEKLY:
-                return 'W';
-            case DAILY:
-                return 'D';
-            case HOURLY:
-                return 'H';
-            case DAILY_BUSINESS:
-                return 'B';
-            case MINUTELY:
-                return 'N';
-            default:
-                return '?';
-        }
-    }
+//    private char formatByStandardFreq(Frequency code) {
+//        switch (code) {
+//            case ANNUAL:
+//                return 'A';
+//            case HALF_YEARLY:
+//                return 'S';
+//            case QUARTERLY:
+//                return 'Q';
+//            case MONTHLY:
+//                return 'M';
+//            case WEEKLY:
+//                return 'W';
+//            case DAILY:
+//                return 'D';
+//            case HOURLY:
+//                return 'H';
+//            case DAILY_BUSINESS:
+//                return 'B';
+//            case MINUTELY:
+//                return 'N';
+//            default:
+//                return '?';
+//        }
+//    }
 
     private final XMLInputFactory XIF = XMLInputFactory.newFactory();
 }

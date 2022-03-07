@@ -18,14 +18,13 @@ package sdmxdl.testing;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Connection;
 import sdmxdl.DataStructure;
 import sdmxdl.Dataflow;
-import sdmxdl.Connection;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
 
@@ -71,7 +70,7 @@ public class WebResponse {
                     .flow(conn.getFlow(request.getFlowRef()))
                     .structure(conn.getStructure(request.getFlowRef()))
                     .data(conn.getData(request.getFlowRef(), request.getQuery()).getData());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));
         }
@@ -79,7 +78,7 @@ public class WebResponse {
         return result.build();
     }
 
-    private static String toError(IOException ex) {
+    private static String toError(Exception ex) {
         StringBuilder sb = new StringBuilder();
         sb.append(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         Throwable cause = ex.getCause();

@@ -6,7 +6,7 @@ import nbbrd.io.FileParser;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.*;
 import static internal.sdmxdl.ri.web.RiRestParsers.getResourceSelector;
@@ -75,7 +76,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory) {
+    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
 
         if (mediaType.isCompatibleWithoutParameters(GENERIC_DATA_21_TYPE)) {
             return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());

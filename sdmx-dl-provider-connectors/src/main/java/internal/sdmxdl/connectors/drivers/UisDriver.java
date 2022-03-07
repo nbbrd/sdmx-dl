@@ -19,7 +19,9 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.SdmxFix;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
@@ -27,6 +29,7 @@ import sdmxdl.web.spi.WebDriver;
 import java.net.URI;
 import java.util.Map;
 
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.ENDPOINT;
 
 /**
@@ -42,8 +45,9 @@ public final class UisDriver implements WebDriver {
             .builder()
             .name(CONNECTORS_UIS)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(UIS2::new, "SDMX20"))
+            .client(ConnectorRestClient.of(UIS2::new, DefaultObsParser::newDefault))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("UIS")

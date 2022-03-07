@@ -17,13 +17,14 @@
 package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
-import internal.util.DialectLoader;
 import org.junit.jupiter.api.Test;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.WebDriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 
 /**
  * @author Philippe Charles
@@ -39,10 +40,9 @@ public class Sdmx20DriverTest {
     public void testConnect() {
         WebContext context = WebContext
                 .builder()
-                .dialects(DialectLoader.load())
                 .build();
 
-        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect("SDMX20").endpointOf("http://localhost").build();
+        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect(SDMX20_DIALECT).endpointOf("http://localhost").build();
 
         assertThatCode(() -> new Sdmx20Driver().connect(x, context).close()).doesNotThrowAnyException();
     }

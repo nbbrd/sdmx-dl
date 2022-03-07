@@ -14,34 +14,33 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.util.parser;
+package sdmxdl.util.ext;
 
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.Frequency;
 
-import static sdmxdl.Frequency.*;
+import java.time.temporal.TemporalAmount;
 
 /**
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class FreqParsers {
+public class TimeUnitParsers {
 
     @NonNull
-    public Parser<Frequency> onFreqCodeList() {
-        return FreqParsers::parseFreqCode;
+    public Parser<TemporalAmount> onFreqCodeList() {
+        return TimeUnitParsers::parseFreqCode;
     }
 
     @NonNull
-    public Parser<Frequency> onTimeFormatCodeList() {
-        return FreqParsers::parseTimeFormatCode;
+    public Parser<TemporalAmount> onTimeFormatCodeList() {
+        return TimeUnitParsers::parseTimeFormatCode;
     }
 
     // http://sdmx.org/wp-content/uploads/CL_FREQ_v2.0_update_April_2015.doc
     @VisibleForTesting
-    Frequency parseFreqCode(CharSequence code) {
+    TemporalAmount parseFreqCode(CharSequence code) {
         if (code == null) {
             return null;
         }
@@ -51,31 +50,31 @@ public class FreqParsers {
             case 1:
                 return parseStandardFreqCode(code.charAt(0));
             default:
-                Frequency base = parseStandardFreqCode(code.charAt(0));
+                TemporalAmount base = parseStandardFreqCode(code.charAt(0));
                 return isMultiplier(code.toString().substring(1)) ? base : null;
         }
     }
 
-    private Frequency parseStandardFreqCode(char code) {
+    private TemporalAmount parseStandardFreqCode(char code) {
         switch (code) {
             case 'A':
-                return ANNUAL;
+                return SeriesMetaFactory.ANNUAL;
             case 'S':
-                return HALF_YEARLY;
+                return SeriesMetaFactory.HALF_YEARLY;
             case 'Q':
-                return QUARTERLY;
+                return SeriesMetaFactory.QUARTERLY;
             case 'M':
-                return MONTHLY;
+                return SeriesMetaFactory.MONTHLY;
             case 'W':
-                return WEEKLY;
+                return SeriesMetaFactory.WEEKLY;
             case 'D':
-                return DAILY;
+                return SeriesMetaFactory.DAILY;
             case 'H':
-                return HOURLY;
+                return SeriesMetaFactory.HOURLY;
             case 'B':
-                return DAILY_BUSINESS;
+                return SeriesMetaFactory.DAILY_BUSINESS;
             case 'N':
-                return MINUTELY;
+                return SeriesMetaFactory.MINUTELY;
             default:
                 return null;
         }
@@ -91,25 +90,25 @@ public class FreqParsers {
 
     // http://sdmx.org/wp-content/uploads/CL_TIME_FORMAT_1.0_2009.doc
     @VisibleForTesting
-    Frequency parseTimeFormatCode(CharSequence code) {
+    TemporalAmount parseTimeFormatCode(CharSequence code) {
         if (code == null) {
             return null;
         }
         switch (code.toString()) {
             case "P1Y":
-                return ANNUAL;
+                return SeriesMetaFactory.ANNUAL;
             case "P6M":
-                return HALF_YEARLY;
+                return SeriesMetaFactory.HALF_YEARLY;
             case "P3M":
-                return QUARTERLY;
+                return SeriesMetaFactory.QUARTERLY;
             case "P1M":
-                return MONTHLY;
+                return SeriesMetaFactory.MONTHLY;
             case "P7D":
-                return WEEKLY;
+                return SeriesMetaFactory.WEEKLY;
             case "P1D":
-                return DAILY;
+                return SeriesMetaFactory.DAILY;
             case "PT1M":
-                return MINUTELY;
+                return SeriesMetaFactory.MINUTELY;
             default:
                 return null;
         }

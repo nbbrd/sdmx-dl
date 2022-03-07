@@ -14,24 +14,36 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package _test.sdmxdl.util;
+package internal.sdmxdl.ri.ext;
 
+import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.DataStructure;
+import sdmxdl.Series;
+import sdmxdl.ext.SeriesMeta;
 import sdmxdl.ext.spi.Dialect;
+import sdmxdl.util.ext.SeriesMetaFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
  */
-@lombok.experimental.UtilityClass
-public class DialectAssertions {
+@ServiceProvider(Dialect.class)
+public final class Sdmx21Dialect implements Dialect {
 
-    @SuppressWarnings("null")
-    public void assertDialectCompliance(Dialect d) {
-        assertThat(d.getName()).isNotBlank();
-        assertThat(d.getDescription()).isNotBlank();
-        assertThat(d.getObsFactory()).isNotNull();
+    @Override
+    public String getName() {
+        return SDMX21_DIALECT;
+    }
 
-        assertThat(d.getClass()).isFinal();
+    @Override
+    public String getDescription() {
+        return getName();
+    }
+
+    @Override
+    public @NonNull Function<Series, SeriesMeta> getMetaFactory(DataStructure dsd) {
+        return SeriesMetaFactory.sdmx21(dsd)::get;
     }
 }

@@ -33,6 +33,10 @@ public final class MockedDriver implements WebDriver {
     @lombok.Singular
     private final Collection<SdmxWebSource> customSources;
 
+    @lombok.Getter
+    @lombok.Builder.Default
+    private final String defaultDialect = NO_DEFAULT_DIALECT;
+
     @Override
     public Connection connect(SdmxWebSource source, WebContext context) throws IOException {
         Objects.requireNonNull(source);

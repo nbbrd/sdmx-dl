@@ -20,7 +20,11 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.DataStructure;
+import sdmxdl.Series;
+import sdmxdl.ext.SeriesMeta;
+
+import java.util.function.Function;
 
 /**
  * @author Philippe Charles
@@ -38,6 +42,8 @@ public interface Dialect {
     @NonNull
     String getDescription();
 
-    @NonNull
-    ObsFactory getObsFactory();
+    @NonNull Function<Series, SeriesMeta> getMetaFactory(@NonNull DataStructure dsd);
+
+    String SDMX20_DIALECT = "SDMX20";
+    String SDMX21_DIALECT = "SDMX21";
 }

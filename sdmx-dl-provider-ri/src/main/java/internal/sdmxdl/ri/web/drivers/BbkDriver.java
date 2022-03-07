@@ -25,12 +25,10 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
-import sdmxdl.ext.ObsParser;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.parser.DefaultObsParser;
-import sdmxdl.util.parser.FreqFactory;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -38,9 +36,9 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.stream.Stream;
 
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
 /**
@@ -58,6 +56,7 @@ public final class BbkDriver implements WebDriver {
             .rank(NATIVE_RANK)
             .client(BbkClient::new)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("BBK")
@@ -77,7 +76,7 @@ public final class BbkDriver implements WebDriver {
                     s.getId(),
                     s.getEndpoint().toURL(),
                     c.getLanguages(),
-                    new BbkObsFactory(),
+                    DefaultObsParser::newDefault,
                     RiHttpUtils.newClient(s, c),
                     new BbkQueries(),
                     new Sdmx21RestParsers(),
@@ -152,15 +151,5 @@ public final class BbkDriver implements WebDriver {
     }
 
     // FIXME: use TIME_FORMAT attribute instead of FREQ dimension in SDMX21 ?
-    private static final class BbkObsFactory implements ObsFactory {
-
-        @Override
-        public @NonNull ObsParser getObsParser(@NonNull DataStructure dsd) {
-            Objects.requireNonNull(dsd);
-            return DefaultObsParser
-                    .builder()
-                    .freqFactory(FreqFactory.sdmx20(dsd))
-                    .build();
-        }
-    }
+    private static final String DIALECT = SDMX20_DIALECT;
 }

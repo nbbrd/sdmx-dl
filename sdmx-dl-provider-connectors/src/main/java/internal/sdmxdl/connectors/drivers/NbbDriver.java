@@ -19,6 +19,8 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
@@ -36,8 +38,9 @@ public final class NbbDriver implements WebDriver {
             .builder()
             .name(CONNECTORS_NBB)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(NBB::new, "SDMX20"))
+            .client(ConnectorRestClient.of(NBB::new, DefaultObsParser::newDefault))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .defaultDialect(Dialect.SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("NBB")

@@ -17,7 +17,7 @@
 package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 import tests.sdmxdl.api.ByteSource;
@@ -96,7 +96,7 @@ public class FacadeResource {
     }
 
     List<Series> data20(ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData20(dsd, ObsFactories.SDMX20).parseReader(xml::openReader)) {
+        try (DataCursor c = SdmxXmlStreams.genericData20(dsd, DefaultObsParser::newDefault).parseReader(xml::openReader)) {
             return c.toStream().collect(Collectors.toList());
         }
     }
@@ -110,7 +110,7 @@ public class FacadeResource {
     }
 
     List<Series> data21(ByteSource xml, DataStructure dsd) throws IOException {
-        try (DataCursor c = SdmxXmlStreams.genericData21(dsd, ObsFactories.SDMX21).parseReader(xml::openReader)) {
+        try (DataCursor c = SdmxXmlStreams.genericData21(dsd, DefaultObsParser::newDefault).parseReader(xml::openReader)) {
             return c.toStream().collect(Collectors.toList());
         }
     }

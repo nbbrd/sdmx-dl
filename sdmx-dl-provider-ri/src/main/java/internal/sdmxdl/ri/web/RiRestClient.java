@@ -23,10 +23,10 @@ import internal.util.http.HttpResponseException;
 import nbbrd.io.Resource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.DataRef;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
@@ -48,13 +49,13 @@ import static internal.sdmxdl.ri.web.RiHttpUtils.newRequest;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements SdmxRestClient {
 
-    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c, @NonNull String defaultDialect,
+    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
                 s.getId(),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
-                ObsFactories.getObsFactory(c, s, defaultDialect),
+                DefaultObsParser::newDefault,
                 RiHttpUtils.newClient(s, c),
                 queries,
                 parsers,
@@ -65,7 +66,7 @@ public class RiRestClient implements SdmxRestClient {
     protected final String name;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
-    protected final ObsFactory obsFactory;
+    protected final Supplier<ObsParser> obsFactory;
     protected final HttpClient httpClient;
     protected final RiRestQueries queries;
     protected final RiRestParsers parsers;

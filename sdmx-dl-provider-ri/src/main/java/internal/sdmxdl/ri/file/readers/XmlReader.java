@@ -3,16 +3,16 @@ package internal.sdmxdl.ri.file.readers;
 import internal.sdmxdl.ri.file.XmlDecoder;
 import internal.sdmxdl.ri.file.XmlFileClient;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Connection;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
-import sdmxdl.Connection;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 import sdmxdl.util.file.CachedFileClient;
-import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.FileConnectionImpl;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.file.SdmxFileClient;
+import sdmxdl.util.parser.DefaultObsParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class XmlReader implements FileReader {
                 source,
                 context.getLanguages(),
                 new XmlDecoder(context.getEventListener()),
-                ObsFactories.getObsFactory(context, source),
+                DefaultObsParser::newDefault,
                 context.getEventListener()
         );
         return CachedFileClient.of(client, context.getCache(), source, context.getLanguages());

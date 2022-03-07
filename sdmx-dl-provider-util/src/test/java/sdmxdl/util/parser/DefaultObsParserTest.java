@@ -35,10 +35,10 @@ public class DefaultObsParserTest {
     @Test
     public void testCompliance() {
         ObsParserAssert.assertCompliance(
-                DefaultObsParser.builder().build(),
+                DefaultObsParser.newDefault(),
                 ObsParserAssert.Sample
                         .builder()
-                        .validKey(Key.builder(asList("a", "b")))
+                        .validKey(Key.builder(asList("a", "b"))::getItem)
                         .validAttributes(UnaryOperator.identity())
                         .validPeriod("2001")
                         .invalidPeriod("abc")
@@ -50,9 +50,7 @@ public class DefaultObsParserTest {
 
     @Test
     public void testPeriod() {
-        ObsParser x = DefaultObsParser.builder().build();
-
-        x.head(Key.builder(asList("a", "b")), UnaryOperator.identity());
+        ObsParser x = DefaultObsParser.newDefault();
 
         UnaryOperator<String> none = o -> null;
         UnaryOperator<String> id1 = singletonMap("REPORTING_YEAR_START_DAY", "--07-01")::get;

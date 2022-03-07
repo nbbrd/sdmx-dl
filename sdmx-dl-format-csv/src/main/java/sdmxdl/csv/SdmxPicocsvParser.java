@@ -7,7 +7,6 @@ import nbbrd.io.text.TextParser;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
 import sdmxdl.ext.ObsParser;
 
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static nbbrd.io.text.TextResource.newBufferedReader;
@@ -29,7 +29,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
     private final DataStructure dsd;
 
     @lombok.NonNull
-    private final ObsFactory factory;
+    private final Supplier<ObsParser> factory;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -90,7 +90,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             }
         }
 
-        ObsParser obsParser = factory.getObsParser(dsd);
+        ObsParser obsParser = factory.get();
         Parser<DataflowRef> refParser = SdmxCsvFields.getDataflowRefParser();
 
         DataflowRef dataflowRef = DataflowRef.of(null, "", null);
@@ -122,7 +122,7 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             }
             obsParser.value(reader.toString());
 
-            Series.Builder series = data.computeIfAbsent(keyBuilder.build(), z -> Series.builder().key(z).freq(obsParser.head(keyBuilder, o -> null).getFrequency()));
+            Series.Builder series = data.computeIfAbsent(keyBuilder.build(), z -> Series.builder().key(z));
             series.obs(obs
                     .clearMeta()
                     .period(obsParser.parsePeriod(o -> null))

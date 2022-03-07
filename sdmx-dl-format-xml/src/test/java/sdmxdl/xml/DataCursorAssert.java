@@ -16,12 +16,12 @@
  */
 package sdmxdl.xml;
 
-import tests.sdmxdl.api.TckUtil;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataDetail;
 import sdmxdl.Key;
+import tests.sdmxdl.api.TckUtil;
 
 import java.io.IOException;
 
@@ -39,7 +39,6 @@ public class DataCursorAssert {
                 assertNonnull(s, c);
                 // header
                 s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey()).matches(key::contains);
-                s.assertThat(c.getSeriesFrequency()).isNotNull().isEqualTo(c.getSeriesFrequency());
                 // attributes
                 if (!detail.isMetaRequested()) {
                     s.assertThat(c.getSeriesAttributes()).isEmpty();
@@ -82,7 +81,6 @@ public class DataCursorAssert {
 
         assertSeriesState(s, supplier, DataCursor::getSeriesKey, "#getSeriesKey");
         assertSeriesState(s, supplier, DataCursor::getSeriesAttributes, "#getSeriesAttributes");
-        assertSeriesState(s, supplier, DataCursor::getSeriesFrequency, "#getSeriesFrequency");
         assertSeriesState(s, supplier, o -> o.getSeriesAttribute(""), "#getSeriesAttribute");
         assertSeriesState(s, supplier, DataCursor::nextObs, "#nextObs");
 

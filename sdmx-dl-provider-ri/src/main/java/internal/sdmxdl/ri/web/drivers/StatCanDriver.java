@@ -16,7 +16,7 @@ import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.DataRepository;
 import sdmxdl.util.TypedId;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.SdmxValidators;
 import sdmxdl.util.web.Validator;
 import sdmxdl.web.SdmxWebSource;
@@ -115,6 +115,11 @@ public final class StatCanDriver implements WebDriver {
         result.addAll(CONNECTION_PROPERTIES);
         result.add(CACHE_TTL_PROPERTY.getKey());
         return result;
+    }
+
+    @Override
+    public @NonNull String getDefaultDialect() {
+        return NO_DEFAULT_DIALECT;
     }
 
     @lombok.AllArgsConstructor
@@ -472,7 +477,7 @@ public final class StatCanDriver implements WebDriver {
         }
 
         private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
-            FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsFactories.SDMX21)
+            FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, DefaultObsParser::newDefault)
                     .andThen(IOFunction.unchecked(Converter::toSeries));
 
             try {

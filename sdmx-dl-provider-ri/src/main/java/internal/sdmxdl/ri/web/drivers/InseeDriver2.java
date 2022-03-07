@@ -21,14 +21,18 @@ import internal.sdmxdl.ri.web.RiRestClient;
 import internal.sdmxdl.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.ri.web.Sdmx21RestQueries;
 import internal.util.http.MediaType;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
+import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.ObsFactory;
+import sdmxdl.ext.ObsParser;
 import sdmxdl.util.SdmxFix;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.util.parser.StandardReportingFormat;
+import sdmxdl.util.parser.TimeFormatParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -36,6 +40,7 @@ import sdmxdl.web.spi.WebDriver;
 import sdmxdl.xml.DataCursor;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.STRUCTURE_SPECIFIC_DATA_21_TYPE;
 import static sdmxdl.util.SdmxFix.Category.CONTENT;
@@ -56,6 +61,7 @@ public final class InseeDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .client(InseeClient::new)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("INSEE")
@@ -98,7 +104,7 @@ public final class InseeDriver2 implements WebDriver {
                     s.getId(),
                     s.getEndpoint().toURL(),
                     c.getLanguages(),
-                    ObsFactories.getObsFactory(c, s, DIALECT),
+                    OBS_FACTORY,
                     RiHttpUtils.newClient(s, c),
                     new Sdmx21RestQueries(false),
                     new InseeRestParsers(),
@@ -120,8 +126,22 @@ public final class InseeDriver2 implements WebDriver {
     private static final class InseeRestParsers extends Sdmx21RestParsers {
 
         @Override
-        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull ObsFactory dataFactory) {
+        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
             return super.getDataParser(DATA_TYPE, dsd, dataFactory);
         }
     }
+
+    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+            .builder()
+            .indicator('B')
+            .durationOf("P2M")
+            .limitPerYear(6)
+            .build();
+
+    @VisibleForTesting
+    static final TimeFormatParser EXTENDED_PARSER =
+            TimeFormatParser.onObservationalTimePeriod()
+                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new DefaultObsParser(EXTENDED_PARSER, Parser.onDouble());
 }

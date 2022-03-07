@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2015 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,29 +14,19 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl;
+package sdmxdl.ext;
 
-import java.util.Collection;
-import java.util.Map;
+import java.time.temporal.TemporalAmount;
 
-/**
- * @author Philippe Charles
- */
 @lombok.Value
-@lombok.Builder(toBuilder = true)
-public class Series {
+@lombok.Builder
+public class SeriesMeta {
 
-    @lombok.NonNull
-    Key key;
+    public static final SeriesMeta EMPTY = SeriesMeta.builder().build();
 
-    @lombok.NonNull
-    @lombok.Singular("meta")
-    Map<String, String> meta;
-
-    @lombok.NonNull
-    @lombok.Singular("obs")
-    Collection<Obs> obs;
-
-    public static final class Builder {
-    }
+    TemporalAmount timeUnit;
+    String valueUnit;
+    String decimals;
+    String name;
+    String description;
 }

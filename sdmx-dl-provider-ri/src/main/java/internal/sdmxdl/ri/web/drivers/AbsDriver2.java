@@ -24,8 +24,9 @@ import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
-import sdmxdl.util.SdmxFix;
+import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.DataRef;
+import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -34,6 +35,7 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 import java.net.URL;
 
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.util.SdmxFix.Category.QUERY;
 
 /**
@@ -52,10 +54,11 @@ public final class AbsDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .client(AbsDriver2::newClient)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .defaultDialect(SDMX20_DIALECT)
             .build();
 
     private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(s, c, "SDMX20", new AbsQueries(), new DotStatRestParsers(), false);
+        return RiRestClient.of(s, c, new AbsQueries(), new DotStatRestParsers(), false);
     }
 
     @VisibleForTesting

@@ -16,7 +16,6 @@
  */
 package sdmxdl.file;
 
-import internal.util.DialectLoader;
 import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -24,7 +23,6 @@ import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 
@@ -45,7 +43,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @NonNull
     public static SdmxFileManager ofServiceLoader() {
         return builder()
-                .dialects(DialectLoader.load())
                 .readers(FileReaderLoader.load())
                 .build();
     }
@@ -61,10 +58,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @lombok.NonNull
     @lombok.Builder.Default
     BiConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
-
-    @lombok.NonNull
-    @lombok.Singular
-    List<Dialect> dialects;
 
     @lombok.NonNull
     @lombok.Singular
@@ -84,13 +77,19 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
         return reader.read(source, getContext());
     }
 
+    @Override
+    public @NonNull Optional<String> getDialect(@NonNull SdmxFileSource source) {
+        Objects.requireNonNull(source);
+
+        return Optional.ofNullable(source.getDialect());
+    }
+
     private FileContext initContext() {
         return FileContext
                 .builder()
                 .languages(languages)
                 .eventListener(eventListener)
                 .cache(cache)
-                .dialects(dialects)
                 .build();
     }
 

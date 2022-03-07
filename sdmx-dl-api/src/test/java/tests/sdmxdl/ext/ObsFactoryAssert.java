@@ -1,26 +1,24 @@
 package tests.sdmxdl.ext;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.ext.ObsFactory;
-import tests.sdmxdl.api.RepoSamples;
+import sdmxdl.ext.ObsParser;
 import tests.sdmxdl.api.TckUtil;
+
+import java.util.function.Supplier;
 
 @lombok.experimental.UtilityClass
 public class ObsFactoryAssert {
 
-    public void assertCompliance(ObsFactory factory) {
+    public void assertCompliance(Supplier<ObsParser> factory) {
         TckUtil.run(s -> assertCompliance(s, factory));
     }
 
-    public void assertCompliance(SoftAssertions s, ObsFactory factory) {
+    public void assertCompliance(SoftAssertions s, Supplier<ObsParser> factory) {
         checkGetParser(s, factory);
     }
 
-    private static void checkGetParser(SoftAssertions s, ObsFactory factory) {
-        s.assertThatThrownBy(() -> factory.getObsParser(null))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThat(factory.getObsParser(RepoSamples.STRUCT))
+    private static void checkGetParser(SoftAssertions s, Supplier<ObsParser> factory) {
+        s.assertThat(factory.get())
                 .isNotNull();
     }
 }

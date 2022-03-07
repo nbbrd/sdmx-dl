@@ -16,7 +16,6 @@
  */
 package sdmxdl.web;
 
-import internal.util.DialectLoader;
 import internal.util.WebAuthenticatorLoader;
 import internal.util.WebDriverLoader;
 import internal.util.WebMonitoringLoader;
@@ -27,7 +26,6 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -57,7 +55,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return SdmxWebManager
                 .builder()
                 .drivers(WebDriverLoader.load())
-                .dialects(DialectLoader.load())
                 .monitorings(WebMonitoringLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
@@ -66,10 +63,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @lombok.NonNull
     @lombok.Singular
     List<WebDriver> drivers;
-
-    @lombok.NonNull
-    @lombok.Singular
-    List<Dialect> dialects;
 
     @lombok.NonNull
     @lombok.Singular
@@ -158,6 +151,15 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return monitoring.getReport(source, getContext());
     }
 
+    @Override
+    public @NonNull Optional<String> getDialect(@NonNull SdmxWebSource source) {
+        Objects.requireNonNull(source);
+
+        return source.getDialect() != null
+                ? Optional.of(source.getDialect())
+                : lookupDriver(source.getDriver()).map(WebDriver::getDefaultDialect);
+    }
+
     private void checkSourceProperties(SdmxWebSource source, WebDriver driver) {
         if (eventListener != NO_OP_EVENT_LISTENER) {
             Collection<String> expected = driver.getSupportedProperties();
@@ -193,7 +195,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .cache(cache)
                 .languages(languages)
                 .network(network)
-                .dialects(dialects)
                 .eventListener(eventListener)
                 .authenticators(authenticators)
                 .build();

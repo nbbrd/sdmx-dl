@@ -19,8 +19,12 @@ package internal.sdmxdl.connectors.drivers;
 import internal.sdmxdl.connectors.ConnectorRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.ABS;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.ext.spi.Dialect;
+import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.web.spi.WebDriver;
+
+import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 
 /**
  * @author Philippe Charles
@@ -36,7 +40,8 @@ public final class AbsDriver implements WebDriver {
             .builder()
             .name(CONNECTORS_ABS)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(ABS::new, "SDMX20"))
+            .client(ConnectorRestClient.of(ABS::new, DefaultObsParser::newDefault))
             .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .defaultDialect(SDMX20_DIALECT)
             .build();
 }
