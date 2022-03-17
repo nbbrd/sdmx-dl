@@ -1,19 +1,17 @@
-import sdmxdl.web.spi.WebDriver;
+module sdmxdl.provider.connectors {
 
-module sdmxdl.web.connectors {
-
+    requires static lombok;
     requires static nbbrd.service;
     requires static org.checkerframework.checker.qual;
-    requires static lombok;
 
-    requires sdmxdl.util;
-    requires sdmxdl.util.xml;
+    requires sdmxdl.format.xml;
+    requires sdmxdl.provider.util;
     requires it.bancaditalia.oss.sdmx;
     requires java.logging;
 
     requires transitive sdmxdl.api;
 
-    provides WebDriver with
+    provides sdmxdl.web.spi.WebDriver with
             internal.sdmxdl.connectors.drivers.AbsDriver,
             internal.sdmxdl.connectors.drivers.EurostatDriver,
             internal.sdmxdl.connectors.drivers.ImfDriver,

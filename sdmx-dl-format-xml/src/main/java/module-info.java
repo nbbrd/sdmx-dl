@@ -1,8 +1,8 @@
-module sdmxdl.util.xml {
+module sdmxdl.format.xml {
 
+    requires static lombok;
     requires static nbbrd.design;
     requires static org.checkerframework.checker.qual;
-    requires static lombok;
 
     requires transitive sdmxdl.api;
     requires transitive nbbrd.io.xml;

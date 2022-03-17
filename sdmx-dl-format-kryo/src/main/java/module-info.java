@@ -1,11 +1,11 @@
-module sdmxdl.kryo {
+module sdmxdl.format.kryo {
 
-    requires static org.checkerframework.checker.qual;
     requires static lombok;
+    requires static org.checkerframework.checker.qual;
 
     requires transitive sdmxdl.api;
     requires transitive nbbrd.io.base;
-    requires com.esotericsoftware.kryo.kryo5;
+    requires transitive com.esotericsoftware.kryo.kryo5;
 
     exports sdmxdl.kryo;
 }

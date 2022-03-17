@@ -86,11 +86,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.nbbrd.picocsv</groupId>
-                <artifactId>picocsv</artifactId>
-                <version>2.1.0</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

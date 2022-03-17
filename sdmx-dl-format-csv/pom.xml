@@ -43,11 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>
-            <artifactId>java-io-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.picocsv</groupId>
-            <artifactId>picocsv</artifactId>
+            <artifactId>java-io-picocsv</artifactId>
         </dependency>
 
         <!-- test only -->

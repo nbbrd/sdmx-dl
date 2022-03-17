@@ -38,6 +38,10 @@
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>
+            <artifactId>java-io-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-io-util</groupId>
             <artifactId>java-io-xml</artifactId>
         </dependency>
 

@@ -1,18 +1,16 @@
-module sdmxdl.web.ri {
+module sdmxdl.provider.ri {
 
-    requires static nbbrd.service;
-    requires static nbbrd.design;
-    requires static org.checkerframework.checker.qual;
     requires static lombok;
+    requires static nbbrd.design;
+    requires static nbbrd.service;
+    requires static org.checkerframework.checker.qual;
 
-    requires sdmxdl.util;
-    requires sdmxdl.util.xml;
+    requires sdmxdl.format.csv;
+    requires sdmxdl.format.xml;
+    requires sdmxdl.provider.util;
     requires com.github.tuupertunut.powershelllibjava;
-    requires nbbrd.picocsv;
     requires com.google.gson;
     requires java.logging;
-
-    requires transitive sdmxdl.api;
 
     provides sdmxdl.web.spi.WebDriver with
             internal.sdmxdl.ri.web.drivers.AbsDriver2,

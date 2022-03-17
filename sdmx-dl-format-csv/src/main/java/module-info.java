@@ -1,12 +1,11 @@
-module sdmxdl.util.csv {
+module sdmxdl.format.csv {
 
-    requires static org.checkerframework.checker.qual;
     requires static lombok;
     requires static nbbrd.design;
+    requires static org.checkerframework.checker.qual;
 
     requires transitive sdmxdl.api;
-    requires transitive nbbrd.io.base;
-    requires transitive nbbrd.picocsv;
+    requires transitive nbbrd.io.picocsv;
 
     exports sdmxdl.csv;
 }
