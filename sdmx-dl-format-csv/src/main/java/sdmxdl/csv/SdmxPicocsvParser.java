@@ -1,65 +1,40 @@
 package sdmxdl.csv;
 
 import nbbrd.design.MightBePromoted;
+import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.Parser;
-import nbbrd.io.text.TextBuffers;
-import nbbrd.io.text.TextParser;
 import nbbrd.picocsv.Csv;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsParser;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static nbbrd.io.text.TextResource.newBufferedReader;
 import static sdmxdl.DataSet.toDataSet;
 
 @lombok.Builder(toBuilder = true)
-public final class SdmxPicocsvParser implements TextParser<DataSet> {
-
-    @lombok.NonNull
-    private final DataStructure dsd;
+public final class SdmxPicocsvParser {
 
     @lombok.NonNull
     private final Supplier<ObsParser> factory;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Csv.Format format = Csv.Format.RFC4180;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final Csv.ReaderOptions options = Csv.ReaderOptions.DEFAULT;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
     private final Locale locale = Locale.ROOT;
 
-    @Override
-    public @NonNull DataSet parseReader(@NonNull Reader reader) throws IOException {
-        try (Csv.Reader csv = newCsvReader(reader, TextBuffers.UNKNOWN)) {
-            return parseCsv(csv);
-        }
+    public Picocsv.@NonNull Parser<DataSet> getParser(DataStructure dsd) {
+        return Picocsv.Parser.builder(getInputHandler(dsd)).build();
     }
 
-    @Override
-    public @NonNull DataSet parseStream(@NonNull InputStream stream, @NonNull Charset charset) throws IOException {
-        CharsetDecoder decoder = charset.newDecoder();
-        try (Csv.Reader csv = newCsvReader(newBufferedReader(stream, decoder), TextBuffers.of(stream, decoder))) {
-            return parseCsv(csv);
-        }
+    private Picocsv.InputHandler<DataSet> getInputHandler(DataStructure dsd) {
+        return reader -> parseCsv(dsd, reader);
     }
 
-    @NonNull
-    public DataSet parseCsv(Csv.@NonNull Reader reader) throws IOException {
+    private DataSet parseCsv(DataStructure dsd, Csv.Reader reader) throws IOException {
         List<String> header = readHeader(reader);
 
         int minHeaderSize = 3 + dsd.getDimensions().size();
@@ -146,10 +121,6 @@ public final class SdmxPicocsvParser implements TextParser<DataSet> {
             result.add(reader.toString());
         }
         return result;
-    }
-
-    private Csv.Reader newCsvReader(Reader charReader, TextBuffers buffers) throws IOException {
-        return Csv.Reader.of(format, options, charReader, buffers.getCharBufferSize());
     }
 
     @MightBePromoted

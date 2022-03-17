@@ -15,15 +15,15 @@ public class SdmxPicocsvParserTest {
 
         String csv = SdmxPicocsvFormatter
                 .builder()
-                .dsd(RepoSamples.STRUCT)
                 .build()
+                .getFormatter(RepoSamples.STRUCT)
                 .formatToString(expected);
 
         DataSet found = SdmxPicocsvParser
                 .builder()
-                .dsd(RepoSamples.STRUCT)
                 .factory(DefaultObsParser::newDefault)
                 .build()
+                .getParser(RepoSamples.STRUCT)
                 .parseChars(csv);
 
         System.out.println(csv);
