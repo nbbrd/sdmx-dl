@@ -23,21 +23,19 @@ public class CsvUtil {
     }
 
     public static <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {
-        return asFormatter(
-                elementsFormatter(itemFormatter)
-                        .format(Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build())
-                        .build()
-                        .compose(Iterable::iterator)
-        );
+        return elementsFormatter(itemFormatter)
+                .format(Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build())
+                .build()
+                .compose(Iterable<T>::iterator)
+                .asFormatter();
     }
 
     public static <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
-        return asFormatter(
-                mapEntriesFormatter(keyFormatter, valueFormatter)
-                        .format(Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build())
-                        .build()
-                        .compose(map -> map.entrySet().iterator())
-        );
+        return mapEntriesFormatter(keyFormatter, valueFormatter)
+                .format(Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build())
+                .build()
+                .asFormatter()
+                .compose(map -> map.entrySet().iterator());
     }
 
     public static final Formatter<Map<String, String>> DEFAULT_MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
@@ -70,16 +68,5 @@ public class CsvUtil {
                 csv.writeField(value.format(next.getValue()));
             }
         }
-    }
-
-    @MightBePromoted
-    private static <T> Formatter<T> asFormatter(TextFormatter<T> textFormatter) {
-        return input -> {
-            try {
-                return input != null ? textFormatter.formatToString(input) : null;
-            } catch (IOException ex) {
-                return null;
-            }
-        };
     }
 }

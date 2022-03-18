@@ -2,7 +2,6 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.http.MediaType;
 import nbbrd.io.FileParser;
-import nbbrd.io.function.IOFunction;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
@@ -10,10 +9,10 @@ import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
 import sdmxdl.util.parser.DefaultObsParser;
-import tests.sdmxdl.api.RepoSamples;
 import sdmxdl.xml.DataCursor;
 import sdmxdl.xml.stream.SdmxXmlStreams;
 import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class Sdmx21RestParsersTest {
     @Test
     public void testGetDataParser() throws IOException {
         DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxXmlSources.ECB_DATA_STRUCTURE::openStream);
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, DefaultObsParser::newDefault).andThen(IOFunction.unchecked(Sdmx21RestParsersTest::toDataSet));
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, DefaultObsParser::newDefault).andThen(Sdmx21RestParsersTest::toDataSet);
         testParser(DEFAULT_DATA_TYPES, extractor);
         testContent(extractor, GENERIC_DATA_21_TYPE, SdmxXmlSources.ECB_DATA);
     }

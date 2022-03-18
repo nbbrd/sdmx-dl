@@ -27,11 +27,7 @@ public final class SdmxPicocsvParser {
     private final Locale locale = Locale.ROOT;
 
     public Picocsv.@NonNull Parser<DataSet> getParser(DataStructure dsd) {
-        return Picocsv.Parser.builder(getInputHandler(dsd)).build();
-    }
-
-    private Picocsv.InputHandler<DataSet> getInputHandler(DataStructure dsd) {
-        return reader -> parseCsv(dsd, reader);
+        return Picocsv.Parser.builder(reader -> parseCsv(dsd, reader)).build();
     }
 
     private DataSet parseCsv(DataStructure dsd, Csv.Reader reader) throws IOException {

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
 
+import java.io.IOException;
+
 import static internal.sdmxdl.ri.web.RiRestParsers.getResourceSelector;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -15,7 +17,7 @@ import static tests.sdmxdl.api.RepoSamples.STRUCT_REF;
 public class RiRestParsersTest {
 
     @Test
-    public void testGetResourceSelector() {
+    public void testGetResourceSelector() throws IOException {
         assertThatNullPointerException()
                 .isThrownBy(() -> getResourceSelector(null));
 
@@ -25,30 +27,30 @@ public class RiRestParsersTest {
         DataflowRef fullRef2 = DataflowRef.of("NBB", "XYZ", "v2.0");
         Dataflow resource2 = Dataflow.of(fullRef2, STRUCT_REF, "flow2");
 
-        assertThat(getResourceSelector(fullRef1).apply(emptyList()))
+        assertThat(getResourceSelector(fullRef1).applyWithIO(emptyList()))
                 .isEmpty();
 
-        assertThat(getResourceSelector(fullRef1).apply(singletonList(resource2)))
+        assertThat(getResourceSelector(fullRef1).applyWithIO(singletonList(resource2)))
                 .isEmpty();
 
-        assertThat(getResourceSelector(fullRef1).apply(asList(resource1, resource2)))
+        assertThat(getResourceSelector(fullRef1).applyWithIO(asList(resource1, resource2)))
                 .contains(resource1);
 
-        assertThat(getResourceSelector(fullRef1).apply(asList(resource2, resource1)))
+        assertThat(getResourceSelector(fullRef1).applyWithIO(asList(resource2, resource1)))
                 .contains(resource1);
 
         DataflowRef partialRef = DataflowRef.of(null, "XYZ", null);
 
-        assertThat(getResourceSelector(partialRef).apply(emptyList()))
+        assertThat(getResourceSelector(partialRef).applyWithIO(emptyList()))
                 .isEmpty();
 
-        assertThat(getResourceSelector(partialRef).apply(singletonList(resource2)))
+        assertThat(getResourceSelector(partialRef).applyWithIO(singletonList(resource2)))
                 .contains(resource2);
 
-        assertThat(getResourceSelector(partialRef).apply(asList(resource1, resource2)))
+        assertThat(getResourceSelector(partialRef).applyWithIO(asList(resource1, resource2)))
                 .contains(resource1);
 
-        assertThat(getResourceSelector(partialRef).apply(asList(resource2, resource1)))
+        assertThat(getResourceSelector(partialRef).applyWithIO(asList(resource2, resource1)))
                 .contains(resource1);
     }
 }

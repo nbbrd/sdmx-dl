@@ -3,6 +3,7 @@ package internal.sdmxdl.ri.web;
 import internal.util.http.MediaType;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
+import nbbrd.io.function.IOFunction;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
@@ -16,7 +17,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.ri.web.RiHttpUtils.*;
@@ -129,7 +129,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
         }
 
         @Override
-        public @NonNull <V> FileParser<V> andThen(@NonNull Function<? super T, ? extends V> after) {
+        public @NonNull <V> FileParser<V> andThen(@NonNull IOFunction<? super T, ? extends V> after) {
             return new UnsupportedParser<>(mediaType);
         }
     }
@@ -137,6 +137,6 @@ public class Sdmx21RestParsers implements RiRestParsers {
     //    @MightBePromoted
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> FileParser<T> withCharset(Xml.Parser<T> parser, Optional<Charset> charset) {
-        return charset.isPresent() ? parser.withCharset(charset.get()) : parser;
+        return charset.map(parser::asFileParser).orElse(parser);
     }
 }

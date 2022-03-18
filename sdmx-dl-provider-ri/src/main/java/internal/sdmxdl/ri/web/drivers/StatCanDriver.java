@@ -14,7 +14,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.DataRepository;
 import sdmxdl.util.TypedId;
 import sdmxdl.util.parser.DefaultObsParser;
 import sdmxdl.util.web.SdmxValidators;
@@ -478,7 +477,7 @@ public final class StatCanDriver implements WebDriver {
 
         private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
             FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, DefaultObsParser::newDefault)
-                    .andThen(IOFunction.unchecked(Converter::toSeries));
+                    .andThen(Converter::toSeries);
 
             try {
                 return file.stream()

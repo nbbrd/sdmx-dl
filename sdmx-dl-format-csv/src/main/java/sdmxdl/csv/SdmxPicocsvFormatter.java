@@ -34,11 +34,7 @@ public final class SdmxPicocsvFormatter {
     private final boolean ignoreHeader = false;
 
     public Picocsv.@NonNull Formatter<DataSet> getFormatter(DataStructure dsd) {
-        return Picocsv.Formatter.builder(getOutputHandler(dsd)).build();
-    }
-
-    public Picocsv.OutputHandler<DataSet> getOutputHandler(DataStructure dsd) {
-        return (value, writer) -> formatCsv(dsd, value, writer);
+        return Picocsv.Formatter.<DataSet>builder((value, writer) -> formatCsv(dsd, value, writer)).build();
     }
 
     private void formatCsv(DataStructure dsd, DataSet data, Csv.Writer w) throws IOException {
