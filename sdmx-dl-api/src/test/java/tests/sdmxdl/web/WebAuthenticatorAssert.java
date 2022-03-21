@@ -1,8 +1,8 @@
 package tests.sdmxdl.web;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.WebAuthenticator;
 import tests.sdmxdl.api.TckUtil;
 
 @SuppressWarnings("ConstantConditions")

@@ -16,6 +16,7 @@
  */
 package sdmxdl.xml.stream;
 
+import lombok.NonNull;
 import nbbrd.io.WrappedIOException;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
@@ -95,7 +96,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public Key getSeriesKey() throws IOException {
+    public @NonNull Key getSeriesKey() throws IOException {
         checkSeriesState();
         if (!keyBuilder.isSeries()) {
             throw new IOException("Invalid series key '" + keyBuilder + "'");
@@ -104,13 +105,13 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public String getSeriesAttribute(String key) throws IOException {
+    public String getSeriesAttribute(@NonNull String key) throws IOException {
         checkSeriesState();
         return seriesAttributes.getAttribute(key);
     }
 
     @Override
-    public Map<String, String> getSeriesAttributes() throws IOException {
+    public @NonNull Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
         return seriesAttributes.build();
     }
@@ -128,7 +129,7 @@ final class XMLStreamCompactDataCursor implements DataCursor {
     }
 
     @Override
-    public Map<String, String> getObsAttributes() throws IOException {
+    public @NonNull Map<String, String> getObsAttributes() throws IOException {
         checkObsState();
         return obsAttributes.build();
     }

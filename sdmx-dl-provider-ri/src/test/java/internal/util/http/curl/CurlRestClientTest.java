@@ -17,10 +17,10 @@
 package internal.util.http.curl;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import internal.util.http.HttpURLConnectionFactory;
 import internal.util.http.DefaultHttpClientTest;
+import internal.util.http.HttpURLConnectionFactory;
+import lombok.NonNull;
 import nbbrd.io.sys.ProcessReader;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

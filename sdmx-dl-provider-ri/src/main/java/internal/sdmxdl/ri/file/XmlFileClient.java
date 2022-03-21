@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.ri.file;
 
+import lombok.NonNull;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
@@ -70,12 +71,12 @@ public class XmlFileClient implements SdmxFileClient {
     }
 
     @Override
-    public SdmxFileInfo decode() throws IOException {
+    public @NonNull SdmxFileInfo decode() throws IOException {
         return decoder.decode(source, languages);
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo info, DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo info, @NonNull DataRef dataRef) throws IOException {
         if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
             eventListener.accept(source, "Loading data from file '" + source.getData() + "'");
         }

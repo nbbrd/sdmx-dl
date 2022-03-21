@@ -1,12 +1,11 @@
 package sdmxdl.util.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.web.SdmxWebSource;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -31,14 +30,12 @@ public class SdmxValidators {
     }
 
     public static @NonNull Validator<SdmxWebSource> onDriverName(@NonNull String driverName) {
-        Objects.requireNonNull(driverName);
         return source -> source == null || !source.getDriver().equals(driverName)
                 ? String.format("Expecting driver name '%s' to be '%s'", source.getDriver(), driverName)
                 : null;
     }
 
     public static @NonNull Validator<Key> onDataStructure(@NonNull DataStructure dsd) {
-        Objects.requireNonNull(dsd);
         return key -> key != null ? key.validateOn(dsd) : "Missing key";
     }
 }

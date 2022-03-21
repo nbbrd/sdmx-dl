@@ -17,8 +17,6 @@
 package sdmxdl.util.ext;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.util.ext.SeriesMetaFactory;
-import sdmxdl.util.ext.TimeUnitParsers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,7 +16,7 @@
  */
 package _test.sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -33,7 +33,7 @@ import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 public enum TestDriver implements WebDriver {
     VALID {
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             return "valid";
         }
 
@@ -48,17 +48,17 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.VALID;
         }
 
         @Override
-        public Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
             return Collections.singletonList(SOURCE);
         }
 
         @Override
-        public Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getSupportedProperties() {
             return Collections.singletonList("hello");
         }
 
@@ -68,7 +68,7 @@ public enum TestDriver implements WebDriver {
         }
     }, FAILING {
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             throw new CustomException();
         }
 
@@ -83,17 +83,17 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
         @Override
-        public Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
             throw new CustomException();
         }
 
         @Override
-        public Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getSupportedProperties() {
             throw new CustomException();
         }
 
@@ -103,7 +103,7 @@ public enum TestDriver implements WebDriver {
         }
     }, NULL {
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             return null;
         }
 
@@ -118,17 +118,17 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public Connection connect(SdmxWebSource source, WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 
         @Override
-        public Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
             return null;
         }
 
         @Override
-        public Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getSupportedProperties() {
             return null;
         }
 

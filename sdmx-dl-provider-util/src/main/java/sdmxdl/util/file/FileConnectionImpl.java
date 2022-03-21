@@ -16,14 +16,17 @@
  */
 package sdmxdl.util.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxValidators;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -49,34 +52,34 @@ public final class FileConnectionImpl implements Connection {
     }
 
     @Override
-    public Collection<Dataflow> getFlows() throws IOException {
+    public @NonNull Collection<Dataflow> getFlows() throws IOException {
         checkState();
         return Collections.singleton(dataflow);
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return dataflow;
     }
 
     @Override
-    public DataStructure getStructure(DataflowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return client.decode().getStructure();
     }
 
     @Override
-    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
         try (Stream<Series> stream = getDataStream(flowRef, query)) {
             return stream.collect(toDataSet(flowRef, query));
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
 
@@ -87,7 +90,7 @@ public final class FileConnectionImpl implements Connection {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() {
+    public @NonNull Set<Feature> getSupportedFeatures() {
         return EnumSet.allOf(Feature.class);
     }
 
@@ -111,7 +114,6 @@ public final class FileConnectionImpl implements Connection {
     }
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {
-        Objects.requireNonNull(flowRef);
         if (!this.dataflow.getRef().contains(flowRef)) {
             throw SdmxException.missingFlow(getName(), flowRef);
         }

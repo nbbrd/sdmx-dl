@@ -1,8 +1,10 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.http.URLQueryBuilder;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import lombok.NonNull;
+import sdmxdl.CodelistRef;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
 import sdmxdl.util.DataRef;
 
 import java.net.URL;

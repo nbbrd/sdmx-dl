@@ -16,13 +16,12 @@
  */
 package sdmxdl.ext;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * @author Philippe Charles
@@ -34,27 +33,22 @@ public final class SdmxException extends IOException {
     }
 
     public static @NonNull SdmxException missingSource(@NonNull String source, @NonNull Class<?> type) {
-        Objects.requireNonNull(source);
         return new SdmxException(source, "Missing " + type.getSimpleName() + " '" + source + "'");
     }
 
     public static @NonNull SdmxException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
-        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing flow '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingStructure(@NonNull String source, @NonNull DataStructureRef ref) {
-        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing structure '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingData(@NonNull String source, @NonNull DataflowRef ref) {
-        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing data '" + ref + "'");
     }
 
     public static @NonNull SdmxException missingCodelist(@NonNull String source, @NonNull CodelistRef ref) {
-        Objects.requireNonNull(ref);
         return new SdmxException(source, "Missing codelist '" + ref + "'");
     }
 
@@ -62,8 +56,8 @@ public final class SdmxException extends IOException {
     @NonNull
     private final String source;
 
-    private SdmxException(String source, String message) {
+    private SdmxException(@NonNull String source, @NonNull String message) {
         super(message);
-        this.source = Objects.requireNonNull(source);
+        this.source = source;
     }
 }

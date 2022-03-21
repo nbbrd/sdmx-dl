@@ -1,6 +1,6 @@
 package sdmxdl.util.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
@@ -22,7 +22,6 @@ public interface Validator<T> {
     }
 
     default @NonNull Validator<T> and(@NonNull Validator<T> next) {
-        Objects.requireNonNull(next);
         return value -> {
             String result = this.validate(value);
             return (result != null) ? result : next.validate(value);
@@ -30,12 +29,10 @@ public interface Validator<T> {
     }
 
     default @NonNull <X> Validator<X> compose(@NonNull Function<X, T> before) {
-        Objects.requireNonNull(before);
         return value -> this.validate(before.apply(value));
     }
 
     static @NonNull <T> Validator<T> onAll(@NonNull List<Validator<T>> validators) {
-        Objects.requireNonNull(validators);
         return value -> validators
                 .stream()
                 .map(validator -> validator.validate(value))
@@ -45,8 +42,6 @@ public interface Validator<T> {
     }
 
     static @NonNull Validator<String> onRegex(@NonNull String name, @NonNull Pattern regex) {
-        Objects.requireNonNull(regex);
-        Objects.requireNonNull(name);
         return value -> value == null || !regex.matcher(value).matches()
                 ? String.format("Expecting %s '%s' to match pattern '%s'", name, value, regex.pattern())
                 : null;

@@ -16,8 +16,8 @@
  */
 package sdmxdl;
 
+import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.Closeable;
 import java.io.IOException;

@@ -1,11 +1,11 @@
 package internal.sdmxdl.ri.web.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.web.SdmxValidators;
@@ -22,7 +22,10 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -58,8 +61,6 @@ public final class RngDriver implements WebDriver {
 
     @Override
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
 
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
@@ -222,7 +223,7 @@ public final class RngDriver implements WebDriver {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return EnumSet.allOf(Feature.class);
         }
 

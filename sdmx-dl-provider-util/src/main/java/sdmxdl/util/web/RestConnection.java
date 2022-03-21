@@ -16,7 +16,7 @@
  */
 package sdmxdl.util.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.util.DataRef;
@@ -44,20 +44,20 @@ final class RestConnection implements Connection {
     private boolean closed = false;
 
     @Override
-    public Collection<Dataflow> getFlows() throws IOException {
+    public @NonNull Collection<Dataflow> getFlows() throws IOException {
         checkState();
         return client.getFlows();
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
         checkState();
         checkDataflowRef(flowRef);
         return client.getFlow(flowRef);
     }
 
     @Override
-    public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
         checkState();
         checkDataflowRef(flowRef);
 
@@ -71,14 +71,14 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         try (Stream<Series> stream = getDataStream(flowRef, query)) {
             return stream.collect(toDataSet(flowRef, query));
         }
     }
 
     @Override
-    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         checkState();
         checkDataflowRef(flowRef);
 
@@ -107,7 +107,7 @@ final class RestConnection implements Connection {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() throws IOException {
+    public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
         return client.isDetailSupported()
                 ? EnumSet.of(Feature.DATA_QUERY_KEY, Feature.DATA_QUERY_DETAIL)
                 : EnumSet.of(Feature.DATA_QUERY_KEY);

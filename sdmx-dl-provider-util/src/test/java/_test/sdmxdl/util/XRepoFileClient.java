@@ -1,13 +1,13 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.util.DataRef;
-import sdmxdl.Series;
+import lombok.NonNull;
 import sdmxdl.DataRepository;
+import sdmxdl.Series;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @lombok.RequiredArgsConstructor
@@ -21,14 +21,12 @@ public final class XRepoFileClient implements SdmxFileClient {
     }
 
     @Override
-    public SdmxFileInfo decode() {
+    public @NonNull SdmxFileInfo decode() {
         return infoOf(repository);
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
-        Objects.requireNonNull(entry);
-        Objects.requireNonNull(dataRef);
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
         return repository
                 .getDataSet(dataRef.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(dataRef.getQuery()))

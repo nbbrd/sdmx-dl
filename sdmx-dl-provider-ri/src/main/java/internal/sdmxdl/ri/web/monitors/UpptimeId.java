@@ -1,9 +1,9 @@
 package internal.sdmxdl.ri.web.monitors;
 
 import internal.util.http.URLQueryBuilder;
+import lombok.NonNull;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.MalformedURLException;
 import java.net.URI;

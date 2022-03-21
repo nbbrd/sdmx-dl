@@ -7,7 +7,10 @@ import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
+import sdmxdl.DataDetail;
+import sdmxdl.DataQuery;
+import sdmxdl.Key;
+import sdmxdl.Series;
 import sdmxdl.util.DataRef;
 
 import java.io.IOException;

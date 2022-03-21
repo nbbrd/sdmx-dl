@@ -1,10 +1,10 @@
 package sdmxdl.csv;
 
+import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.Parser;
 import nbbrd.picocsv.Csv;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsParser;
 

@@ -2,6 +2,7 @@ package internal.sdmxdl.ri.file.readers;
 
 import internal.sdmxdl.ri.file.XmlDecoder;
 import internal.sdmxdl.ri.file.XmlFileClient;
+import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
 import sdmxdl.DataStructureRef;
@@ -17,20 +18,17 @@ import sdmxdl.util.parser.DefaultObsParser;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
 
 @ServiceProvider
 public class XmlReader implements FileReader {
 
     @Override
-    public boolean canRead(SdmxFileSource source) {
+    public boolean canRead(@NonNull SdmxFileSource source) {
         return isXmlFileName(source.getData());
     }
 
     @Override
-    public Connection read(SdmxFileSource source, FileContext context) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
+    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull FileContext context) throws IOException, IllegalArgumentException {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }

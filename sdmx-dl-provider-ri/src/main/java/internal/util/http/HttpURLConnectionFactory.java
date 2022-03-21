@@ -1,9 +1,9 @@
 package internal.util.http;
 
+import lombok.NonNull;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceFilter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

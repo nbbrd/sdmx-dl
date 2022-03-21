@@ -21,7 +21,6 @@ import internal.sdmxdl.ri.web.DotStatRestQueries;
 import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.sdmxdl.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.RestDriverSupport;
 import sdmxdl.util.web.SdmxRestClient;

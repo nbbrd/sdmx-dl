@@ -16,13 +16,12 @@
  */
 package sdmxdl.xml.stream;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.LanguagePriorityList;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Philippe Charles
@@ -42,7 +41,6 @@ final class TextBuilder {
 
     @NonNull
     public TextBuilder put(@NonNull String lang, @Nullable String text) {
-        Objects.requireNonNull(lang);
         if (text != null) {
             data.put(lang, text);
         }
@@ -56,7 +54,6 @@ final class TextBuilder {
 
     @NonNull
     public String build(@NonNull String defaultValue) {
-        Objects.requireNonNull(defaultValue);
         String result = build();
         return result != null ? result : defaultValue;
     }

@@ -17,7 +17,7 @@
 package sdmxdl.xml.stream;
 
 import internal.sdmxdl.xml.Sdmxml;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 
 import javax.xml.stream.XMLStreamException;

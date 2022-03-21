@@ -1,12 +1,12 @@
 package internal.sdmxdl.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Connection;
 import sdmxdl.DataQuery;
 import sdmxdl.Dataflow;
-import sdmxdl.Connection;
-import tests.sdmxdl.web.WebDriverAssert;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
+import tests.sdmxdl.web.WebDriverAssert;
 
 import java.io.IOException;
 

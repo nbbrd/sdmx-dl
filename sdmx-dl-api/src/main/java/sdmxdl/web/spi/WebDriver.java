@@ -17,12 +17,12 @@
 package sdmxdl.web.spi;
 
 import internal.sdmxdl.web.spi.FailsafeDriver;
+import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceFilter;
 import nbbrd.service.ServiceSorter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebSource;
 

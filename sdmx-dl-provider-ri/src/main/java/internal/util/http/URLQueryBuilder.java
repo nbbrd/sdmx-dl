@@ -16,7 +16,7 @@
  */
 package internal.util.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
@@ -25,7 +25,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Philippe Charles
@@ -64,7 +67,6 @@ public final class URLQueryBuilder {
      */
     @NonNull
     public URLQueryBuilder path(@NonNull String path) {
-        Objects.requireNonNull(path);
         paths.add(path);
         return this;
     }
@@ -78,7 +80,6 @@ public final class URLQueryBuilder {
      */
     @NonNull
     public URLQueryBuilder path(@NonNull List<String> path) {
-        Objects.requireNonNull(path);
         paths.addAll(path);
         return this;
     }
@@ -93,8 +94,6 @@ public final class URLQueryBuilder {
      */
     @NonNull
     public URLQueryBuilder param(@NonNull String key, @NonNull String value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
         params.put(key, value);
         return this;
     }

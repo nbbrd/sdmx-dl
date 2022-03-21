@@ -16,11 +16,10 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
@@ -49,18 +48,14 @@ public class DataSet extends Resource<DataflowRef> {
     Collection<Series> data;
 
     public @NonNull DataSet getData(@NonNull DataQuery query) {
-        Objects.requireNonNull(query);
         return query.equals(DataQuery.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));
     }
 
     public @NonNull Stream<Series> getDataStream(@NonNull DataQuery query) {
-        Objects.requireNonNull(query);
         return query.equals(DataQuery.ALL) ? data.stream() : query.execute(data.stream());
     }
 
     public static @NonNull Collector<Series, ?, DataSet> toDataSet(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(query);
         return collectingAndThen(toList(), newDataSet(flowRef, query));
     }
 

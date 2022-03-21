@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxMediaType;

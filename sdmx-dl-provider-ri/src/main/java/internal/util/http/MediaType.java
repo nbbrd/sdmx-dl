@@ -16,11 +16,11 @@
  */
 package internal.util.http;
 
+import lombok.NonNull;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.nio.charset.Charset;
 import java.util.*;

@@ -16,9 +16,9 @@
  */
 package sdmxdl;
 
+import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;

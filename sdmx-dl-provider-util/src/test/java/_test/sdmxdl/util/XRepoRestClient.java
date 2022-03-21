@@ -16,16 +16,14 @@
  */
 package _test.sdmxdl.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
-import sdmxdl.DataRepository;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -38,31 +36,29 @@ public final class XRepoRestClient implements SdmxRestClient {
     private final DataRepository repository;
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return repository.getName();
     }
 
     @Override
-    public List<Dataflow> getFlows() {
+    public @NonNull List<Dataflow> getFlows() {
         return repository.getFlows();
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         return repository.getFlow(ref)
                 .orElseThrow(() -> SdmxException.missingFlow(repository.getName(), ref));
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return repository.getStructure(ref)
                 .orElseThrow(() -> SdmxException.missingStructure(repository.getName(), ref));
     }
 
     @Override
-    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
-        Objects.requireNonNull(ref);
-        Objects.requireNonNull(dsd);
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
@@ -71,7 +67,6 @@ public final class XRepoRestClient implements SdmxRestClient {
 
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
-        Objects.requireNonNull(ref);
         return repository.getStructures().stream()
                 .flatMap(dsd -> dsd.getDimensions().stream())
                 .map(Component::getCodelist)
@@ -86,8 +81,7 @@ public final class XRepoRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
-        Objects.requireNonNull(flowRef);
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
         return null;
     }
 

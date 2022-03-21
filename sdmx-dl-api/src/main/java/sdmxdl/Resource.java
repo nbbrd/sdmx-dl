@@ -16,8 +16,8 @@
  */
 package sdmxdl;
 
+import lombok.NonNull;
 import nbbrd.design.SealedType;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 
 /**

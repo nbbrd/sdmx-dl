@@ -21,12 +21,12 @@ import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.io.text.Formatter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.MonitorReport;
+import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;

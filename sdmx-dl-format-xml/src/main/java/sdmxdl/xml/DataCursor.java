@@ -17,8 +17,8 @@
 package sdmxdl.xml;
 
 import internal.sdmxdl.xml.SeriesIterator;
+import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Key;
 import sdmxdl.Series;

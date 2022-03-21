@@ -4,7 +4,7 @@ import com.google.gson.*;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponse;
 import internal.util.http.MediaType;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.io.Reader;

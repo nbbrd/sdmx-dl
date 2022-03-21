@@ -4,8 +4,8 @@ import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import internal.util.http.MediaType;
+import lombok.NonNull;
 import nbbrd.io.Resource;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;

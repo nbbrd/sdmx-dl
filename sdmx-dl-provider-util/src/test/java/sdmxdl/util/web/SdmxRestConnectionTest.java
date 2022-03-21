@@ -19,8 +19,8 @@ package sdmxdl.util.web;
 import _test.sdmxdl.util.XRepoRestClient;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.ConnectionAssert;
+import tests.sdmxdl.api.RepoSamples;
 
 /**
  * @author Philippe Charles

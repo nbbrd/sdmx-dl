@@ -17,9 +17,9 @@
 package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
+import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.web.MonitorReports;

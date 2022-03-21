@@ -16,14 +16,13 @@
  */
 package sdmxdl.util.parser;
 
+import lombok.NonNull;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ext.ObsParser;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
-import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 /**
@@ -66,7 +65,6 @@ public final class DefaultObsParser implements ObsParser {
     @Override
     @Nullable
     public LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes) {
-        Objects.requireNonNull(obsAttributes);
         return periodParser.parse(period, getReportingYearStartDay(obsAttributes));
     }
 

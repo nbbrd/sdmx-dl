@@ -1,7 +1,8 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.util.DataRef;
+import lombok.NonNull;
 import sdmxdl.Series;
+import sdmxdl.util.DataRef;
 import sdmxdl.util.file.SdmxFileClient;
 import sdmxdl.util.file.SdmxFileInfo;
 
@@ -24,13 +25,13 @@ public final class XCountingFileClient implements SdmxFileClient {
     }
 
     @Override
-    public SdmxFileInfo decode() throws IOException {
+    public @NonNull SdmxFileInfo decode() throws IOException {
         count.incrementAndGet();
         return delegate.decode();
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
         count.incrementAndGet();
         return delegate.loadData(entry, dataRef);
     }

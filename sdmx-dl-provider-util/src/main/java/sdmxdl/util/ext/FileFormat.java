@@ -1,9 +1,9 @@
 package sdmxdl.util.ext;
 
+import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 

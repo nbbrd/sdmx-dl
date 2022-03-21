@@ -1,9 +1,9 @@
 package internal.sdmxdl.cli;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.WebAuthenticator;
 
 import java.net.PasswordAuthentication;
 

@@ -17,11 +17,11 @@
 package sdmxdl.util;
 
 import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.ext.Cache;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -30,7 +30,6 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -64,7 +63,6 @@ public final class TypedId<T> {
 
     @NonNull
     public TypedId<T> with(@NonNull Object o) {
-        Objects.requireNonNull(o);
         return new TypedId<>(resolveURI(content, o.toString()), loader, storer);
     }
 

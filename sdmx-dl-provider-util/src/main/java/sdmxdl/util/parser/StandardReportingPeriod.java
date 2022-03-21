@@ -1,15 +1,14 @@
 package sdmxdl.util.parser;
 
+import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
-import java.util.Objects;
 
 @RepresentableAsString
 @lombok.Value
@@ -56,7 +55,6 @@ public class StandardReportingPeriod {
 
     @StaticFactoryMethod
     public static @NonNull StandardReportingPeriod parse(@NonNull CharSequence text) {
-        Objects.requireNonNull(text);
         StandardReportingPeriod result = parseOrNull(text);
         if (result == null) {
             throw new IllegalArgumentException(text.toString());

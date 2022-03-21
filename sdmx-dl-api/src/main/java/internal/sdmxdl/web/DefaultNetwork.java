@@ -1,6 +1,6 @@
 package internal.sdmxdl.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.web.Network;
 
 import javax.net.ssl.HostnameVerifier;

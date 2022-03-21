@@ -18,7 +18,7 @@ package sdmxdl.file;
 
 import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -28,7 +28,6 @@ import sdmxdl.file.spi.FileReader;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -69,8 +68,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @Override
     public @NonNull Connection getConnection(@NonNull SdmxFileSource source) throws IOException {
-        Objects.requireNonNull(source);
-
         FileReader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
@@ -79,8 +76,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @Override
     public @NonNull Optional<String> getDialect(@NonNull SdmxFileSource source) {
-        Objects.requireNonNull(source);
-
         return Optional.ofNullable(source.getDialect());
     }
 

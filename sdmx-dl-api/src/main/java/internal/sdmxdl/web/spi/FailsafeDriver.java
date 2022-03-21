@@ -17,7 +17,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -26,7 +26,6 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -52,7 +51,7 @@ public final class FailsafeDriver implements WebDriver {
     private final Consumer<? super String> onUnexpectedNull;
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         String result;
 
         try {
@@ -91,10 +90,7 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public Connection connect(SdmxWebSource source, WebContext context) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
-
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Connection result;
 
         try {
@@ -113,7 +109,7 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public Collection<SdmxWebSource> getDefaultSources() {
+    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
         Collection<SdmxWebSource> result;
 
         try {
@@ -132,7 +128,7 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public Collection<String> getSupportedProperties() {
+    public @NonNull Collection<String> getSupportedProperties() {
         Collection<String> result;
 
         try {

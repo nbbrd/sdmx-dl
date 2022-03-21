@@ -17,9 +17,9 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
+import sdmxdl.Connection;
 import sdmxdl.Dataflow;
 import sdmxdl.Feature;
-import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;

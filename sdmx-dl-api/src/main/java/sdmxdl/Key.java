@@ -17,12 +17,12 @@
 package sdmxdl;
 
 import internal.sdmxdl.Chars;
+import lombok.NonNull;
 import nbbrd.design.Immutable;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;

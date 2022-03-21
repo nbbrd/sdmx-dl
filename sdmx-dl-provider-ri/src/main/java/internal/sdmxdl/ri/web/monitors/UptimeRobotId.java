@@ -1,8 +1,8 @@
 package internal.sdmxdl.ri.web.monitors;
 
+import lombok.NonNull;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URI;
 

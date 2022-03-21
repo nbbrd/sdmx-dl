@@ -16,10 +16,10 @@
  */
 package sdmxdl.xml.stream;
 
+import lombok.NonNull;
 import nbbrd.io.Resource;
 import nbbrd.io.WrappedIOException;
 import nbbrd.io.xml.Stax;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.xml.stream.*;
 import javax.xml.stream.util.XMLEventAllocator;

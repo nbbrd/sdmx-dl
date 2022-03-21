@@ -17,9 +17,9 @@
 package sdmxdl.xml.stream;
 
 
+import lombok.NonNull;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.MessageFooter;
 import sdmxdl.ext.ObsParser;

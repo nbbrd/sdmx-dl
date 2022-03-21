@@ -16,13 +16,12 @@
  */
 package sdmxdl.xml.stream;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  *
@@ -48,7 +47,6 @@ final class AttributesBuilder {
 
     @Nullable
     String getAttribute(@NonNull String key) {
-        Objects.requireNonNull(key);
         return data.get(key);
     }
 

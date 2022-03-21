@@ -1,6 +1,6 @@
 package tests.sdmxdl.ext;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Series;
 import sdmxdl.ext.SeriesMeta;

@@ -1,6 +1,6 @@
 package sdmxdl.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.time.Clock;
 import java.time.Duration;

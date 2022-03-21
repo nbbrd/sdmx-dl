@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
-import tests.sdmxdl.file.FileReaderAssert;
 import sdmxdl.xml.XmlFileSource;
+import tests.sdmxdl.file.FileReaderAssert;
 import tests.sdmxdl.xml.SdmxXmlSources;
 
 import java.io.File;

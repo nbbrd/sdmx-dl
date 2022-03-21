@@ -5,7 +5,6 @@ import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.Formatter;
-import nbbrd.io.text.TextFormatter;
 import nbbrd.picocsv.Csv;
 
 import java.io.IOException;

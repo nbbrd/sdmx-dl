@@ -16,11 +16,10 @@
  */
 package sdmxdl.util.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.DataRepository;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
 
@@ -85,12 +84,12 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     @Override
-    public SdmxFileInfo decode() throws IOException {
+    public @NonNull SdmxFileInfo decode() throws IOException {
         return getIdOfDecode().load(cache, delegate::decode, this::getTtl);
     }
 
     @Override
-    public Stream<Series> loadData(SdmxFileInfo entry, DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
         return !dataRef.getQuery().getDetail().isDataRequested()
                 ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, dataRef.getFlowRef()), this::getTtl).getDataStream(dataRef.getQuery())
                 : delegate.loadData(entry, dataRef);

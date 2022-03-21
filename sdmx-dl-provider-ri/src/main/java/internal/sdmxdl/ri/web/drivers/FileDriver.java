@@ -1,12 +1,12 @@
 package internal.sdmxdl.ri.web.drivers;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
@@ -52,8 +52,6 @@ public final class FileDriver implements WebDriver {
 
     @Override
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(source, "source");
-        Objects.requireNonNull(context, "context");
         sourceValidator.checkValidity(source);
 
         return fileManager

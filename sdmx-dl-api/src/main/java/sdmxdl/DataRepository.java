@@ -16,13 +16,12 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -62,7 +61,6 @@ public class DataRepository {
 
     @NonNull
     public Optional<DataStructure> getStructure(@NonNull DataStructureRef ref) {
-        Objects.requireNonNull(ref);
         return structures
                 .stream()
                 .filter(ref::equalsRef)
@@ -71,7 +69,6 @@ public class DataRepository {
 
     @NonNull
     public Optional<Dataflow> getFlow(@NonNull DataflowRef ref) {
-        Objects.requireNonNull(ref);
         return flows
                 .stream()
                 .filter(ref::containsRef)
@@ -80,7 +77,6 @@ public class DataRepository {
 
     @NonNull
     public Optional<DataSet> getDataSet(@NonNull DataflowRef ref) {
-        Objects.requireNonNull(ref);
         return dataSets
                 .stream()
                 .filter(ref::containsRef)

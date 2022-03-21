@@ -17,7 +17,7 @@
 package sdmxdl.util.web;
 
 import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
 import sdmxdl.web.SdmxWebSource;
@@ -26,7 +26,6 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Objects;
 
 import static sdmxdl.util.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
 
@@ -70,21 +69,19 @@ public final class RestDriverSupport implements WebDriver {
     }
 
     @Override
-    public Connection connect(SdmxWebSource source, WebContext context) throws IOException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         getSourceValidator().checkValidity(source);
 
         return RestConnection.of(getClient(source, context), dataflowRefValidator);
     }
 
     @Override
-    public Collection<SdmxWebSource> getDefaultSources() {
+    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
         return sources;
     }
 
     @Override
-    public Collection<String> getSupportedProperties() {
+    public @NonNull Collection<String> getSupportedProperties() {
         return supportedProperties;
     }
 

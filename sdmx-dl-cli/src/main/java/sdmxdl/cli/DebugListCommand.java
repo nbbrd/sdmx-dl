@@ -16,7 +16,10 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.*;
+import internal.sdmxdl.cli.DebugOutputOptions;
+import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebOptions;
+import internal.sdmxdl.cli.WebSourceOptions;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;

@@ -16,15 +16,14 @@
  */
 package sdmxdl.util.ext;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.ext.Cache;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
@@ -52,27 +51,21 @@ public final class MapCache implements Cache {
 
     @Override
     public @Nullable DataRepository getRepository(@NonNull String key) {
-        Objects.requireNonNull(key);
         return getRepository(repositories, clock, key);
     }
 
     @Override
     public void putRepository(@NonNull String key, @NonNull DataRepository value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
         put(repositories, key, value);
     }
 
     @Override
     public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
-        Objects.requireNonNull(key);
         return getWebMonitorReports(webMonitors, clock, key);
     }
 
     @Override
     public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
         put(webMonitors, key, value);
     }
 
@@ -101,7 +94,6 @@ public final class MapCache implements Cache {
 
     @VisibleForTesting
     static <T> void put(@NonNull ConcurrentMap<String, T> map, @NonNull String key, @NonNull T value) {
-        Objects.requireNonNull(value);
         map.put(key, value);
     }
 }

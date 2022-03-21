@@ -1,7 +1,7 @@
 package sdmxdl.util.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.*;
+import lombok.NonNull;
+import sdmxdl.Series;
 import sdmxdl.util.DataRef;
 
 import java.io.IOException;

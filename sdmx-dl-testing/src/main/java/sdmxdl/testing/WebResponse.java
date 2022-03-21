@@ -16,7 +16,7 @@
  */
 package sdmxdl.testing;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Connection;
 import sdmxdl.DataStructure;

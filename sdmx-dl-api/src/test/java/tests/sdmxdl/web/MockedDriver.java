@@ -1,6 +1,6 @@
 package tests.sdmxdl.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxException;
 import sdmxdl.web.SdmxWebSource;
@@ -8,7 +8,10 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,9 +41,7 @@ public final class MockedDriver implements WebDriver {
     private final String defaultDialect = NO_DEFAULT_DIALECT;
 
     @Override
-    public Connection connect(SdmxWebSource source, WebContext context) throws IOException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
         return repos
@@ -100,13 +101,13 @@ public final class MockedDriver implements WebDriver {
         }
 
         @Override
-        public Collection<Dataflow> getFlows() throws IOException {
+        public @NonNull Collection<Dataflow> getFlows() throws IOException {
             checkState();
             return repo.getFlows();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) throws IOException {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             return repo
@@ -115,7 +116,7 @@ public final class MockedDriver implements WebDriver {
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) throws IOException {
+        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             DataStructureRef structRef = getFlow(flowRef).getStructureRef();
@@ -125,7 +126,7 @@ public final class MockedDriver implements WebDriver {
         }
 
         @Override
-        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             checkKey(query.getKey(), getStructure(flowRef));
@@ -136,7 +137,7 @@ public final class MockedDriver implements WebDriver {
         }
 
         @Override
-        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             checkKey(query.getKey(), getStructure(flowRef));
@@ -147,7 +148,7 @@ public final class MockedDriver implements WebDriver {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return supportedFeatures;
         }
 

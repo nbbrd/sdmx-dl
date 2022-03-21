@@ -1,8 +1,8 @@
 package sdmxdl.csv;
 
+import lombok.NonNull;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataflowRef;
 import sdmxdl.Series;
 

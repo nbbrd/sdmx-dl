@@ -3,7 +3,7 @@ package internal.sdmxdl.ri.web;
 import internal.util.http.HttpEventListener;
 import internal.util.http.HttpRequest;
 import internal.util.http.MediaType;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;

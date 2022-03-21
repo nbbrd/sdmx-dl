@@ -2,16 +2,16 @@ package internal.sdmxdl.ri.web.monitors;
 
 import internal.sdmxdl.ri.web.RiHttpUtils;
 import internal.util.http.HttpClient;
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.ext.Cache;
 import sdmxdl.util.web.SdmxWebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.MonitorStatus;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebMonitoring;
 

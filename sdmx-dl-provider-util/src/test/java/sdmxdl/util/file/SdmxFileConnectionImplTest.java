@@ -18,8 +18,8 @@ package sdmxdl.util.file;
 
 import _test.sdmxdl.util.XRepoFileClient;
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.ConnectionAssert;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
 

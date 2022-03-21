@@ -17,12 +17,11 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -60,7 +59,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public Collection<Dataflow> getFlows() throws IOException {
+    public @NonNull Collection<Dataflow> getFlows() throws IOException {
         Collection<Dataflow> result;
 
         try {
@@ -77,9 +76,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef flowRef) throws IOException {
-        Objects.requireNonNull(flowRef);
-
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
         Dataflow result;
 
         try {
@@ -98,9 +95,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public DataStructure getStructure(DataflowRef flowRef) throws IOException {
-        Objects.requireNonNull(flowRef);
-
+    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
         DataStructure result;
 
         try {
@@ -119,10 +114,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(query);
-
+    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         DataSet result;
 
         try {
@@ -141,10 +133,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(query);
-
+    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         Stream<Series> result;
 
         try {
@@ -163,7 +152,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() throws IOException {
+    public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
         Set<Feature> result;
 
         try {

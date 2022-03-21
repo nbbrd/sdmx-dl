@@ -16,7 +16,7 @@
  */
 package sdmxdl.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataflowRef;
 import sdmxdl.SdmxSource;

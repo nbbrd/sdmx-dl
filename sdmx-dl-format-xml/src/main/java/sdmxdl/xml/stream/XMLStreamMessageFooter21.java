@@ -1,8 +1,8 @@
 package sdmxdl.xml.stream;
 
 import internal.sdmxdl.xml.Sdmxml;
+import lombok.NonNull;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.MessageFooter;
 

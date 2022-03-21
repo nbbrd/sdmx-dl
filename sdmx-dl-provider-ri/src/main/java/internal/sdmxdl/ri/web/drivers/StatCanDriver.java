@@ -5,12 +5,12 @@ import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import internal.util.http.URLQueryBuilder;
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxException;
@@ -73,8 +73,6 @@ public final class StatCanDriver implements WebDriver {
 
     @Override
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(context);
         sourceValidator.checkValidity(source);
 
         StatCanClient client = new DefaultStatCanClient(
@@ -174,7 +172,7 @@ public final class StatCanDriver implements WebDriver {
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return EnumSet.allOf(Feature.class);
         }
 

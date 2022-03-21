@@ -16,9 +16,9 @@
  */
 package sdmxdl.util.ext;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.time.temporal.TemporalAmount;
 

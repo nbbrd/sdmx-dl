@@ -16,10 +16,10 @@
  */
 package internal.sdmxdl.ri.ext;
 
-import sdmxdl.util.ext.SeriesMetaFactory;
-import tests.sdmxdl.ext.DialectAssert;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
+import sdmxdl.util.ext.SeriesMetaFactory;
+import tests.sdmxdl.ext.DialectAssert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

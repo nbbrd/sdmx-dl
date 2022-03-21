@@ -16,8 +16,8 @@
  */
 package sdmxdl.util;
 
+import lombok.NonNull;
 import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 
 import java.io.IOException;
@@ -88,14 +88,10 @@ public class SdmxCubeUtil {
 
 
     public @NonNull Optional<Dimension> getDimensionById(@NonNull DataStructure dsd, @NonNull String id) {
-        Objects.requireNonNull(dsd);
-        Objects.requireNonNull(id);
         return dsd.getDimensions().stream().filter(dimension -> dimension.getId().equals(id)).findFirst();
     }
 
     public @NonNull OptionalInt getDimensionIndexById(@NonNull DataStructure dsd, @NonNull String id) {
-        Objects.requireNonNull(dsd);
-        Objects.requireNonNull(id);
         List<Dimension> dimensionList = dsd.getDimensionList();
         for (int i = 0; i < dimensionList.size(); i++) {
             if (dimensionList.get(i).getId().equals(id)) {

@@ -18,6 +18,7 @@ package internal.sdmxdl.connectors;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
+import lombok.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Key;
 import sdmxdl.ext.ObsParser;
@@ -28,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -72,20 +72,19 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     @Override
-    public Key getSeriesKey() throws IOException {
+    public @NonNull Key getSeriesKey() throws IOException {
         checkSeriesState();
         return keyBuilder.build();
     }
 
     @Override
-    public String getSeriesAttribute(String key) throws IOException {
+    public String getSeriesAttribute(@NonNull String key) throws IOException {
         checkSeriesState();
-        Objects.requireNonNull(key);
         return current.getAttribute(key);
     }
 
     @Override
-    public Map<String, String> getSeriesAttributes() throws IOException {
+    public @NonNull Map<String, String> getSeriesAttributes() throws IOException {
         checkSeriesState();
         Map<String, String> result = current.getAttributesMap();
         result.remove(PortableTimeSeries.GENERATEDNAME_ATTR_NAME);
@@ -111,7 +110,7 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     @Override
-    public Map<String, String> getObsAttributes() throws IOException, IllegalStateException {
+    public @NonNull Map<String, String> getObsAttributes() throws IOException, IllegalStateException {
         checkObsState();
         return current.get(index).getAttributes();
     }

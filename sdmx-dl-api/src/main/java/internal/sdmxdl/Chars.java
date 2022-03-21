@@ -1,6 +1,6 @@
 package internal.sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @lombok.experimental.UtilityClass

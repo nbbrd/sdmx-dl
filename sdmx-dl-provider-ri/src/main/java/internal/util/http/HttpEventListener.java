@@ -1,10 +1,9 @@
 package internal.util.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.net.Proxy;
 import java.net.URL;
-import java.util.List;
 
 public interface HttpEventListener {
 

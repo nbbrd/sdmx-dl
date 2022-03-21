@@ -18,7 +18,6 @@ package internal.sdmxld.connectors.drivers;
 
 import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.WebDriverAssert;

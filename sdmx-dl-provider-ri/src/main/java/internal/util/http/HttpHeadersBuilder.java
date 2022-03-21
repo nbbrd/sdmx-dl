@@ -1,7 +1,7 @@
 package internal.util.http;
 
+import lombok.NonNull;
 import nbbrd.design.BuilderPattern;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -22,7 +22,6 @@ public final class HttpHeadersBuilder {
     }
 
     public @NonNull HttpHeadersBuilder put(@NonNull Map<String, List<String>> headers) {
-        Objects.requireNonNull(headers);
         keyValues(headers).forEach(data::add);
         return this;
     }
@@ -33,7 +32,6 @@ public final class HttpHeadersBuilder {
     }
 
     public @NonNull HttpHeadersBuilder filter(@NonNull BiPredicate<String, String> filter) {
-        Objects.requireNonNull(filter);
         this.filter = filter;
         return this;
     }
@@ -63,7 +61,6 @@ public final class HttpHeadersBuilder {
     }
 
     private static Map.@NonNull Entry<String, String> headerOf(@NonNull String key, @Nullable String value) {
-        Objects.requireNonNull(key);
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 

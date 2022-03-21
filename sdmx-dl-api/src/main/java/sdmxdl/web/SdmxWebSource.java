@@ -16,7 +16,7 @@
  */
 package sdmxdl.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.SdmxSource;
 
@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -65,7 +64,6 @@ public class SdmxWebSource extends SdmxSource {
 
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
-        Objects.requireNonNull(name);
         if (!aliases.contains(name)) {
             throw new IllegalArgumentException(name);
         }
@@ -87,17 +85,14 @@ public class SdmxWebSource extends SdmxSource {
         }
 
         public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
-            Objects.requireNonNull(endpoint);
             return endpoint(URI.create(endpoint));
         }
 
         public @NonNull Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
-            Objects.requireNonNull(key);
             return property(key.toString(), value.toString());
         }
 
         public @NonNull Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
-            Objects.requireNonNull(website);
             try {
                 return website(new URL(website));
             } catch (MalformedURLException ex) {
@@ -106,7 +101,6 @@ public class SdmxWebSource extends SdmxSource {
         }
 
         public @NonNull Builder monitorOf(@NonNull String monitor) {
-            Objects.requireNonNull(monitor);
             return monitor(URI.create(monitor));
         }
     }

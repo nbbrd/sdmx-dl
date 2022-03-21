@@ -1,7 +1,7 @@
 package sdmxdl.ext;
 
+import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.time.LocalDateTime;

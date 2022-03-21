@@ -1,8 +1,8 @@
 package sdmxdl.csv;
 
+import lombok.NonNull;
 import nbbrd.io.picocsv.Picocsv;
 import nbbrd.picocsv.Csv;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataSet;
 import sdmxdl.DataStructure;
 import sdmxdl.Obs;

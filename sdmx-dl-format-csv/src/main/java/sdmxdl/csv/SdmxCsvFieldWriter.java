@@ -1,8 +1,8 @@
 package sdmxdl.csv;
 
+import lombok.NonNull;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.text.Formatter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 
@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface SdmxCsvFieldWriter {
@@ -27,8 +26,6 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter single(@NonNull String label, @NonNull SingleField value) {
-        Objects.requireNonNull(label);
-        Objects.requireNonNull(value);
         return new SdmxCsvFieldWriter() {
             @Override
             public void writeHead(IOConsumer<CharSequence> output) throws IOException {
@@ -49,8 +46,6 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter multi(@NonNull List<String> labels, @NonNull MultiField values) {
-        Objects.requireNonNull(labels);
-        Objects.requireNonNull(values);
         return new SdmxCsvFieldWriter() {
             @Override
             public void writeHead(IOConsumer<CharSequence> output) throws IOException {
@@ -69,7 +64,6 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onDataflow(@NonNull String label, @NonNull DataflowRef ref) {
-        Objects.requireNonNull(ref);
         String dataflow = SdmxCsvFields.getDataflowRefFormatter().formatAsString(ref);
         return single(label, (series, obs) -> dataflow);
     }
@@ -91,12 +85,10 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull String label, @NonNull Formatter<LocalDateTime> formatter) {
-        Objects.requireNonNull(formatter);
         return single(label, (series, obs) -> formatter.format(obs.getPeriod()));
     }
 
     static @NonNull SdmxCsvFieldWriter onObsValue(@NonNull String label, @NonNull Formatter<Number> formatter) {
-        Objects.requireNonNull(formatter);
         return single(label, (series, obs) -> formatter.format(obs.getValue()));
     }
 
@@ -117,7 +109,6 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onCompactObsAttributes(@NonNull String label, @NonNull Formatter<Map<String, String>> formatter) {
-        Objects.requireNonNull(formatter);
         return single(label, (series, obs) -> formatter.format(obs.getMeta()));
     }
 
@@ -126,7 +117,6 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onConstant(@NonNull String label, @NonNull String value) {
-        Objects.requireNonNull(value);
         return single(label, (series, obs) -> value);
     }
 }

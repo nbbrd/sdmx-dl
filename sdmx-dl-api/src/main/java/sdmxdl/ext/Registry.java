@@ -1,7 +1,7 @@
 package sdmxdl.ext;
 
 import internal.util.DialectLoader;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.SdmxManager;
 import sdmxdl.SdmxSource;

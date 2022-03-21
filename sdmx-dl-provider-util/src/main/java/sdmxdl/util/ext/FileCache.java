@@ -16,20 +16,19 @@
  */
 package sdmxdl.util.ext;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.SystemProperties;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
-import sdmxdl.ext.Cache;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -75,27 +74,21 @@ public final class FileCache implements Cache {
 
     @Override
     public @Nullable DataRepository getRepository(@NonNull String key) {
-        Objects.requireNonNull(key);
         return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
     }
 
     @Override
     public void putRepository(@NonNull String key, @NonNull DataRepository value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
         write(repositoryFormat, key, FileType.REPOSITORY, value);
     }
 
     @Override
     public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
-        Objects.requireNonNull(key);
         return read(monitorFormat, this::isValid, key, FileType.MONITOR);
     }
 
     @Override
     public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
         write(monitorFormat, key, FileType.MONITOR, value);
     }
 

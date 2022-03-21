@@ -1,6 +1,6 @@
 package internal.util.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

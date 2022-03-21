@@ -20,7 +20,7 @@ import internal.util.WebAuthenticatorLoader;
 import internal.util.WebDriverLoader;
 import internal.util.WebMonitoringLoader;
 import lombok.AccessLevel;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -105,8 +105,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     WebContext context = initContext();
 
     public @NonNull Connection getConnection(@NonNull String name) throws IOException {
-        Objects.requireNonNull(name);
-
         SdmxWebSource source = lookupSource(name)
                 .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
@@ -115,8 +113,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @Override
     public @NonNull Connection getConnection(@NonNull SdmxWebSource source) throws IOException {
-        Objects.requireNonNull(source);
-
         WebDriver driver = lookupDriver(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
@@ -127,8 +123,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @NonNull
     public MonitorReport getMonitorReport(@NonNull String name) throws IOException {
-        Objects.requireNonNull(name);
-
         SdmxWebSource source = lookupSource(name)
                 .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
 
@@ -137,8 +131,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @NonNull
     public MonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
-        Objects.requireNonNull(source);
-
         URI monitor = source.getMonitor();
 
         if (monitor == null) {
@@ -153,8 +145,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @Override
     public @NonNull Optional<String> getDialect(@NonNull SdmxWebSource source) {
-        Objects.requireNonNull(source);
-
         return source.getDialect() != null
                 ? Optional.of(source.getDialect())
                 : lookupDriver(source.getDriver()).map(WebDriver::getDefaultDialect);

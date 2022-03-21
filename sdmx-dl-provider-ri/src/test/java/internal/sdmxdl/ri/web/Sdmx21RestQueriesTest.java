@@ -18,7 +18,10 @@ package internal.sdmxdl.ri.web;
 
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
+import sdmxdl.DataQuery;
+import sdmxdl.DataStructureRef;
+import sdmxdl.DataflowRef;
+import sdmxdl.Key;
 import sdmxdl.util.DataRef;
 
 import java.net.URL;

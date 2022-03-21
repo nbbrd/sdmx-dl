@@ -16,8 +16,8 @@
  */
 package internal.util.http;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -25,7 +25,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +49,6 @@ public final class DefaultHttpClient implements HttpClient {
 
     @Override
     public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
-        Objects.requireNonNull(request);
         return open(request, 0, getPreemptiveAuthScheme());
     }
 

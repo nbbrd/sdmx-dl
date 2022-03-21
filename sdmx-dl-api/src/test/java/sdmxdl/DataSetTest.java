@@ -17,7 +17,6 @@
 package sdmxdl;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
 
 import java.time.LocalDateTime;
 

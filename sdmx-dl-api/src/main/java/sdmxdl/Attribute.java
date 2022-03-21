@@ -18,8 +18,6 @@ package sdmxdl;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Map;
-
 /**
  * Statistical concept providing qualitative information about a specific statistical object.
  *

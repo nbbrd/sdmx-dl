@@ -17,11 +17,9 @@
 package sdmxdl;
 
 import internal.sdmxdl.Chars;
+import lombok.NonNull;
 import nbbrd.design.SealedType;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Objects;
 
 /**
  * Abstract identifier of a resource.
@@ -69,7 +67,6 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static <T extends ResourceRef<T>> T create(@NonNull CharSequence input, @NonNull Factory<T> factory) throws IllegalArgumentException {
-        Objects.requireNonNull(input, "input");
         String[] items = Chars.splitToArray(input.toString(), SEP);
         switch (items.length) {
             case 3:
@@ -85,7 +82,6 @@ public abstract class ResourceRef<T extends ResourceRef<T>> {
 
     @NonNull
     protected static <T extends ResourceRef<T>> T of(@Nullable String agencyId, @NonNull String id, @Nullable String version, @NonNull Factory<T> factory) throws IllegalArgumentException {
-        Objects.requireNonNull(id, "id");
         if (Chars.contains(id, SEP)) {
             throw new IllegalArgumentException(id);
         }

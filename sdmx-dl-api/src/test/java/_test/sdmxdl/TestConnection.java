@@ -16,7 +16,7 @@
  */
 package _test.sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import tests.sdmxdl.api.RepoSamples;
 
@@ -35,32 +35,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Dataflow> getFlows() {
             return RepoSamples.REPO.getFlows();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
             return RepoSamples.FLOW;
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) {
+        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
             return RepoSamples.STRUCT;
         }
 
         @Override
-        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return RepoSamples.DATA_SET;
         }
 
         @Override
-        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return RepoSamples.DATA_SET.getData().stream();
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return EnumSet.noneOf(Feature.class);
         }
 
@@ -75,32 +75,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Dataflow> getFlows() {
             throw new CustomException();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) {
+        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             throw new CustomException();
         }
 
         @Override
-        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             throw new CustomException();
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             throw new CustomException();
         }
 
@@ -115,32 +115,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Dataflow> getFlows() {
             return null;
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef flowRef) {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
             return null;
         }
 
         @Override
-        public DataStructure getStructure(DataflowRef flowRef) {
+        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
             return null;
         }
 
         @Override
-        public DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return null;
         }
 
         @Override
-        public Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
             return null;
         }
 
         @Override
-        public Set<Feature> getSupportedFeatures() {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return null;
         }
 

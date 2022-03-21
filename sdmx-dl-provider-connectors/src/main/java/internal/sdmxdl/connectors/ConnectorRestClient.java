@@ -25,8 +25,8 @@ import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEventListener;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.ObsParser;
 import sdmxdl.util.DataRef;
@@ -99,12 +99,12 @@ public final class ConnectorRestClient implements SdmxRestClient {
     private final Supplier<ObsParser> dataFactory;
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return name;
     }
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Dataflow> getFlows() throws IOException {
         try {
             return connector
                     .getDataflows()
@@ -118,7 +118,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         try {
             return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
@@ -127,7 +127,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
@@ -136,7 +136,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
         try {
             List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
             return PortableTimeSeriesCursor.of(data, dataFactory, dsd).toStream();
@@ -168,7 +168,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef ref) {
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef ref) {
         return connector instanceof DotStat ? DataStructureRef.of(ref.getAgency(), ref.getId(), ref.getVersion()) : null;
     }
 

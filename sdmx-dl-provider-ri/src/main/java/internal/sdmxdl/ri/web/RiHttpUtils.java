@@ -18,12 +18,12 @@ package internal.sdmxdl.ri.web;
 
 import internal.util.http.*;
 import internal.util.http.ext.DumpingClient;
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
@@ -124,10 +124,7 @@ public class RiHttpUtils {
         private final BiConsumer<? super SdmxWebSource, ? super String> listener;
 
         @Override
-        public void onOpen(HttpRequest request, Proxy proxy, HttpAuthScheme scheme) {
-            Objects.requireNonNull(request);
-            Objects.requireNonNull(proxy);
-            Objects.requireNonNull(scheme);
+        public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 String message = SdmxWebEvents.onQuery(request.getQuery(), proxy);
                 if (!HttpAuthScheme.NONE.equals(scheme)) {
@@ -139,26 +136,20 @@ public class RiHttpUtils {
 
         @Override
         public void onSuccess(@NonNull MediaType mediaType) {
-            Objects.requireNonNull(mediaType);
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 listener.accept(source, String.format("Parsing '%s'", mediaType));
             }
         }
 
         @Override
-        public void onRedirection(URL oldUrl, URL newUrl) {
-            Objects.requireNonNull(oldUrl);
-            Objects.requireNonNull(newUrl);
+        public void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 listener.accept(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 
         @Override
-        public void onUnauthorized(URL url, HttpAuthScheme oldScheme, HttpAuthScheme newScheme) {
-            Objects.requireNonNull(url);
-            Objects.requireNonNull(oldScheme);
-            Objects.requireNonNull(newScheme);
+        public void onUnauthorized(@NonNull URL url, @NonNull HttpAuthScheme oldScheme, @NonNull HttpAuthScheme newScheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 listener.accept(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
             }
@@ -166,7 +157,6 @@ public class RiHttpUtils {
 
         @Override
         public void onEvent(@NonNull String message) {
-            Objects.requireNonNull(message);
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 listener.accept(source, message);
             }

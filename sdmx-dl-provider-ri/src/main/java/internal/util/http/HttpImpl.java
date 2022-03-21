@@ -16,7 +16,7 @@
  */
 package internal.util.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -38,13 +37,11 @@ class HttpImpl {
         NONE {
             @Override
             public @Nullable PasswordAuthentication getPasswordAuthentication(@NonNull URL url) {
-                Objects.requireNonNull(url);
                 return null;
             }
 
             @Override
             public void invalidate(@NonNull URL url) {
-                Objects.requireNonNull(url);
             }
         }
     }
@@ -52,33 +49,23 @@ class HttpImpl {
     enum EventListeners implements HttpEventListener {
         NONE {
             @Override
-            public void onOpen(HttpRequest request, Proxy proxy, HttpAuthScheme scheme) {
-                Objects.requireNonNull(request);
-                Objects.requireNonNull(proxy);
-                Objects.requireNonNull(scheme);
+            public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
             }
 
             @Override
             public void onSuccess(@NonNull MediaType mediaType) {
-                Objects.requireNonNull(mediaType);
             }
 
             @Override
-            public void onRedirection(URL oldUrl, URL newUrl) {
-                Objects.requireNonNull(oldUrl);
-                Objects.requireNonNull(newUrl);
+            public void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl) {
             }
 
             @Override
-            public void onUnauthorized(URL url, HttpAuthScheme oldScheme, HttpAuthScheme newScheme) {
-                Objects.requireNonNull(url);
-                Objects.requireNonNull(oldScheme);
-                Objects.requireNonNull(newScheme);
+            public void onUnauthorized(@NonNull URL url, @NonNull HttpAuthScheme oldScheme, @NonNull HttpAuthScheme newScheme) {
             }
 
             @Override
             public void onEvent(@NonNull String message) {
-                Objects.requireNonNull(message);
             }
         }
     }
@@ -87,7 +74,6 @@ class HttpImpl {
         NONE {
             @Override
             public @NonNull InputStream decode(@NonNull InputStream stream) {
-                Objects.requireNonNull(stream);
                 return stream;
             }
         },

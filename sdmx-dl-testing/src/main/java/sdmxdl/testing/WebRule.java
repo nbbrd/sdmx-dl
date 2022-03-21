@@ -1,6 +1,6 @@
 package sdmxdl.testing;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 
 import java.util.Collection;

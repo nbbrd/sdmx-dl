@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.ri.file;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.util.file.SdmxFileInfo;

@@ -24,7 +24,6 @@ import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.SdmxFix;
 import sdmxdl.util.web.RestDriverSupport;

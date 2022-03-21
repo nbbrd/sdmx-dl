@@ -16,10 +16,9 @@
  */
 package sdmxdl.util.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.DataRepository;
 import sdmxdl.util.DataRef;
 import sdmxdl.util.TypedId;
 import sdmxdl.web.SdmxWebSource;
@@ -111,28 +110,28 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @Override
-    public String getName() throws IOException {
+    public @NonNull String getName() throws IOException {
         return delegate.getName();
     }
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Dataflow> getFlows() throws IOException {
         return loadDataflowsWithCache();
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         Dataflow result = peekDataflowFromCache(ref);
         return result != null ? result : loadDataflowWithCache(ref);
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return loadDataStructureWithCache(ref);
     }
 
     @Override
-    public Stream<Series> getData(DataRef ref, DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
         if (ref.getQuery().getDetail().isDataRequested()) {
             return delegate.getData(ref, dsd);
         }
@@ -153,7 +152,7 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
         return delegate.peekStructureRef(flowRef);
     }
 

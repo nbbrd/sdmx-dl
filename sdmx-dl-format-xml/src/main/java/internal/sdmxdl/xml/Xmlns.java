@@ -1,6 +1,6 @@
 package internal.sdmxdl.xml;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import java.net.URI;
 

@@ -17,9 +17,9 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -86,7 +86,6 @@ public final class LanguagePriorityList {
     }
 
     public @Nullable String select(@NonNull Map<String, String> data) {
-        Objects.requireNonNull(data);
         if (data.isEmpty()) {
             return null;
         }

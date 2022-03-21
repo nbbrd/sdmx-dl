@@ -2,10 +2,10 @@ package sdmxdl.util;
 
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
-import sdmxdl.ext.Cache;
 import sdmxdl.DataRepository;
-import tests.sdmxdl.ext.FakeClock;
+import sdmxdl.ext.Cache;
 import sdmxdl.util.ext.MapCache;
+import tests.sdmxdl.ext.FakeClock;
 
 import java.io.IOException;
 import java.net.URI;

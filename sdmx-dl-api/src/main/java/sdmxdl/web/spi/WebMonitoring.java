@@ -1,9 +1,9 @@
 package sdmxdl.web.spi;
 
+import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebSource;
 

@@ -25,9 +25,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.net.URI;
 
+import static internal.sdmxdl.xml.Sdmxml.*;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static internal.sdmxdl.xml.Sdmxml.*;
 
 /**
  * @author Philippe Charles

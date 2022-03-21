@@ -16,8 +16,8 @@
  */
 package internal.sdmxdl.ri.ext;
 
+import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.DataStructure;
 import sdmxdl.Series;
 import sdmxdl.ext.SeriesMeta;

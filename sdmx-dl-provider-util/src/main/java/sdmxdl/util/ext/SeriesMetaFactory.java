@@ -16,8 +16,8 @@
  */
 package sdmxdl.util.ext;
 
+import lombok.NonNull;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.SeriesMeta;
 

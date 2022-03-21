@@ -1,7 +1,7 @@
 package internal.sdmxdl.ri.web;
 
 import internal.util.http.URLQueryBuilder;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataStructureRef;
