@@ -153,6 +153,10 @@ class Curl {
             return push("-m").push(fixNumericalParameter(seconds));
         }
 
+        public CurlCommandBuilder sslRevokeBestEffort() {
+            return push("--ssl-revoke-best-effort");
+        }
+
         public CurlCommandBuilder insecure(boolean insecure) {
             return insecure ? insecure() : this;
         }

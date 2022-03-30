@@ -91,6 +91,7 @@ final class CurlHttpURLConnection extends HttpURLConnection {
                 .url(getURL())
                 .http1_1()
                 .silent()
+                .sslRevokeBestEffort()
                 .insecure(insecure)
                 .proxy(proxy)
                 .output(output)

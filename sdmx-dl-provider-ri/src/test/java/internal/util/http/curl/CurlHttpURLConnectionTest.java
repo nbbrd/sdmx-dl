@@ -46,7 +46,7 @@ public class CurlHttpURLConnectionTest {
         conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
         conn.setRequestProperty("P3P", "CP=\"This is not a P3P policy! See g.co/p3phelp for more info.");
         assertThat(conn.createCurlCommand(Paths.get("output")))
-                .containsExactly("curl", "http://localhost", "--http1.1", "-s",
+                .containsExactly("curl", "http://localhost", "--http1.1", "-s", "--ssl-revoke-best-effort",
                         "-x", "http://localhost:123",
                         "-o", "output",
                         "-D", "-",

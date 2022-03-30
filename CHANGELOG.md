@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Simplify module names
 - ![SOURCE] Enforce https on ISTAT source
 - ![PROVIDER] Change `FileDriver` to be optional
+- ![PROVIDER] Set SSL revoke best effort in curl backend
 
 ### Fixed
 
