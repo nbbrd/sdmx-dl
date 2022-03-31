@@ -153,8 +153,9 @@ class Curl {
             return push("-m").push(fixNumericalParameter(seconds));
         }
 
-        public CurlCommandBuilder sslRevokeBestEffort() {
-            return push("--ssl-revoke-best-effort");
+        @CurlMinVersion("7.70.0")
+        public CurlCommandBuilder sslRevokeBestEffort(boolean sslRevokeBestEffort) {
+            return sslRevokeBestEffort ? push("--ssl-revoke-best-effort") : this;
         }
 
         public CurlCommandBuilder insecure(boolean insecure) {
@@ -179,6 +180,7 @@ class Curl {
             return push("-V");
         }
 
+        @CurlMinVersion("7.33.0")
         public CurlCommandBuilder http1_1() {
             return push("--http1.1");
         }
@@ -191,5 +193,9 @@ class Curl {
         private String fixNumericalParameter(float seconds) {
             return Integer.toString((int) seconds);
         }
+    }
+
+    private @interface CurlMinVersion {
+        String value();
     }
 }

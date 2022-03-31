@@ -24,12 +24,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Simplify module names
 - ![SOURCE] Enforce https on ISTAT source
 - ![PROVIDER] Change `FileDriver` to be optional
-- ![PROVIDER] Set SSL revoke best effort in curl backend
 
 ### Fixed
 
 - ![FORMAT] Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
 - ![PROVIDER] Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
+- ![PROVIDER] Fix curl certificate revocation checks on missing/offline check lists
 - ![CLI] Fix use of reflection in native image
 - ![CLI] Fix missing resources in native image
 
