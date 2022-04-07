@@ -3,9 +3,10 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.DataRepository;
 import sdmxdl.Series;
-import sdmxdl.util.DataRef;
-import sdmxdl.util.file.SdmxFileClient;
-import sdmxdl.util.file.SdmxFileInfo;
+import sdmxdl.format.MediaType;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.file.SdmxFileClient;
+import sdmxdl.provider.file.SdmxFileInfo;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -34,6 +35,6 @@ public final class XRepoFileClient implements SdmxFileClient {
     }
 
     public static SdmxFileInfo infoOf(DataRepository data) {
-        return SdmxFileInfo.of(data.getName(), data.getStructures().get(0));
+        return SdmxFileInfo.of(MediaType.parse("repo/" + data.getName()), data.getStructures().get(0));
     }
 }

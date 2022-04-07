@@ -3,7 +3,7 @@ package internal.util.http.ext;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
-import internal.util.http.MediaType;
+import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;

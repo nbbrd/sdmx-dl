@@ -1,8 +1,8 @@
 package _test;
 
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.xml.XmlWebSource;
-import tests.sdmxdl.xml.SdmxXmlSources;
+import sdmxdl.format.xml.XmlWebSource;
+import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
 import java.io.IOException;

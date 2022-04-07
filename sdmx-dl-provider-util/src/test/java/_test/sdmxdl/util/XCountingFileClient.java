@@ -2,9 +2,9 @@ package _test.sdmxdl.util;
 
 import lombok.NonNull;
 import sdmxdl.Series;
-import sdmxdl.util.DataRef;
-import sdmxdl.util.file.SdmxFileClient;
-import sdmxdl.util.file.SdmxFileInfo;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.file.SdmxFileClient;
+import sdmxdl.provider.file.SdmxFileInfo;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

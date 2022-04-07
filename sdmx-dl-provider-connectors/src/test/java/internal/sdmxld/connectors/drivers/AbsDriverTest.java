@@ -16,7 +16,7 @@
  */
 package internal.sdmxld.connectors.drivers;
 
-import internal.sdmxdl.connectors.drivers.AbsDriver;
+import internal.sdmxdl.provider.connectors.drivers.AbsDriver;
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.web.WebDriverAssert;
 

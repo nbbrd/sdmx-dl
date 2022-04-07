@@ -16,7 +16,7 @@
  */
 package internal.sdmxld.connectors.drivers;
 
-import internal.sdmxdl.connectors.drivers.EurostatDriver;
+import internal.sdmxdl.provider.connectors.drivers.EurostatDriver;
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.web.WebDriverAssert;
 

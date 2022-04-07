@@ -18,9 +18,9 @@ package _test.sdmxdl.util;
 
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxException;
-import sdmxdl.util.DataRef;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,13 +48,13 @@ public final class XRepoRestClient implements SdmxRestClient {
     @Override
     public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         return repository.getFlow(ref)
-                .orElseThrow(() -> SdmxException.missingFlow(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(repository.getName(), ref));
     }
 
     @Override
     public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return repository.getStructure(ref)
-                .orElseThrow(() -> SdmxException.missingStructure(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(repository.getName(), ref));
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class XRepoRestClient implements SdmxRestClient {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
-                .orElseThrow(() -> SdmxException.missingData(repository.getName(), ref.getFlowRef()));
+                .orElseThrow(() -> CommonSdmxExceptions.missingData(repository.getName(), ref.getFlowRef()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class XRepoRestClient implements SdmxRestClient {
                 .map(Component::getCodelist)
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> SdmxException.missingCodelist(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(repository.getName(), ref));
     }
 
     @Override

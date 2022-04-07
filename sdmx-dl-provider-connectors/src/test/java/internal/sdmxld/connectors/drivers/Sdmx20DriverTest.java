@@ -16,7 +16,7 @@
  */
 package internal.sdmxld.connectors.drivers;
 
-import internal.sdmxdl.connectors.drivers.Sdmx20Driver;
+import internal.sdmxdl.provider.connectors.drivers.Sdmx20Driver;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;

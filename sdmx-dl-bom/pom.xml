@@ -37,6 +37,18 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <artifactId>sdmx-dl-format-util</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-format-util</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
                 <artifactId>sdmx-dl-format-csv</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>

@@ -17,8 +17,8 @@
 package internal.sdmxld.connectors;
 
 import _test.sdmxdl.connectors.samples.ConnectorsResource;
-import internal.sdmxdl.connectors.Connectors;
-import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
+import internal.sdmxdl.provider.connectors.Connectors;
+import internal.sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
@@ -26,9 +26,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Key;
 import sdmxdl.Obs;
-import sdmxdl.util.parser.DefaultObsParser;
-import sdmxdl.xml.DataCursor;
-import tests.sdmxdl.xml.SdmxXmlSources;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.DataCursor;
+import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -53,7 +53,7 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void test() throws IOException {
-        try (DataCursor c = PortableTimeSeriesCursor.of(DATA, DefaultObsParser::newDefault, Connectors.toStructure(DSD))) {
+        try (DataCursor c = PortableTimeSeriesCursor.of(DATA, ObsParser::newDefault, Connectors.toStructure(DSD))) {
             assertThat(c.toStream())
                     .hasSize(120)
 //                    .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))

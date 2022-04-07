@@ -16,8 +16,8 @@
  */
 package _test.sdmxdl.connectors.samples;
 
-import internal.sdmxdl.connectors.Connectors;
-import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
+import internal.sdmxdl.provider.connectors.Connectors;
+import internal.sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
@@ -26,9 +26,9 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.parser.DefaultObsParser;
+import sdmxdl.format.ObsParser;
 import tests.sdmxdl.api.ByteSource;
-import tests.sdmxdl.xml.SdmxXmlSources;
+import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -63,7 +63,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
                 .dataSet(
                         PortableTimeSeriesCursor
-                                .of(data, DefaultObsParser::newDefault, Connectors.toStructure(structs.get(0)))
+                                .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
@@ -86,7 +86,7 @@ public class ConnectorsResource {
                 .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
                 .dataSet(
                         PortableTimeSeriesCursor
-                                .of(data, DefaultObsParser::newDefault, Connectors.toStructure(structs.get(0)))
+                                .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .toStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")

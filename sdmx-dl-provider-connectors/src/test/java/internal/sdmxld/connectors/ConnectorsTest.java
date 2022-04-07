@@ -22,7 +22,7 @@ import tests.sdmxdl.api.RepoSamples;
 
 import java.net.HttpURLConnection;
 
-import static internal.sdmxdl.connectors.Connectors.*;
+import static internal.sdmxdl.provider.connectors.Connectors.*;
 import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

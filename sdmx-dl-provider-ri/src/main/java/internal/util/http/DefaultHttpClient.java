@@ -18,6 +18,7 @@ package internal.util.http;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
+import sdmxdl.format.MediaType;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

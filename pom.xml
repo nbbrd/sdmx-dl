@@ -91,6 +91,7 @@
 
     <modules>
         <module>sdmx-dl-api</module>
+        <module>sdmx-dl-format-util</module>
         <module>sdmx-dl-format-csv</module>
         <module>sdmx-dl-format-kryo</module>
         <module>sdmx-dl-format-xml</module>

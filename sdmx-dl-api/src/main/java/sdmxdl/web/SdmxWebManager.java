@@ -25,7 +25,6 @@ import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.Cache;
-import sdmxdl.ext.SdmxException;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -106,7 +105,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     public @NonNull Connection getConnection(@NonNull String name) throws IOException {
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
+                .orElseThrow(() -> newMissingSource(name));
 
         return getConnection(source);
     }
@@ -124,7 +123,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @NonNull
     public MonitorReport getMonitorReport(@NonNull String name) throws IOException {
         SdmxWebSource source = lookupSource(name)
-                .orElseThrow(() -> SdmxException.missingSource(name, SdmxWebSource.class));
+                .orElseThrow(() -> newMissingSource(name));
 
         return getMonitorReport(source);
     }
@@ -209,6 +208,10 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return !source.getAliases().isEmpty()
                 ? Stream.concat(first, source.getAliases().stream().map(source::alias))
                 : first;
+    }
+
+    private static IOException newMissingSource(String name) {
+        return new IOException("Missing " + SdmxWebManager.class.getSimpleName() + " '" + name + "'");
     }
 
     private static <T> Collector<T, ?, T> reducingByFirst() {

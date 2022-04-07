@@ -1,5 +1,7 @@
 package internal.util.http;
 
+import sdmxdl.format.MediaType;
+
 import java.net.URL;
 import java.util.List;
 

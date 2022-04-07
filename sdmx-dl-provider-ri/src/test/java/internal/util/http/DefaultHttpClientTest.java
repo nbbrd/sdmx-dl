@@ -1,6 +1,8 @@
 package internal.util.http;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.format.MediaType;
+import sdmxdl.format.xml.XmlMediaTypes;
 
 import java.io.IOException;
 import java.net.ProxySelector;
@@ -8,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static internal.sdmxdl.ri.web.RiHttpUtils.GENERIC_DATA_21_TYPE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -55,7 +56,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
         assertThat(sslSocketFactoryCount).hasValue(0);
         assertThat(hostnameVerifierCount).hasValue(0);
 
-        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
             assertSameSampleContent(response);
         }
 

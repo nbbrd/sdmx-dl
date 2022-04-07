@@ -2,7 +2,6 @@ package tests.sdmxdl.web;
 
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxException;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -50,7 +49,7 @@ public final class MockedDriver implements WebDriver {
                 .filter(entry -> entry.getKey().getName().equals(source.getEndpoint().toString()))
                 .map(entry -> new MockedConnection(entry.getKey(), entry.getValue()))
                 .findFirst()
-                .orElseThrow(() -> SdmxException.missingSource(source.toString(), SdmxWebSource.class));
+                .orElseThrow(() -> missingSource(source.toString(), SdmxWebSource.class));
     }
 
     @Override
@@ -112,7 +111,7 @@ public final class MockedDriver implements WebDriver {
             checkDataflowRef(flowRef);
             return repo
                     .getFlow(flowRef)
-                    .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), flowRef));
+                    .orElseThrow(() -> missingFlow(repo.getName(), flowRef));
         }
 
         @Override
@@ -122,7 +121,7 @@ public final class MockedDriver implements WebDriver {
             DataStructureRef structRef = getFlow(flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
-                    .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), structRef));
+                    .orElseThrow(() -> missingStructure(repo.getName(), structRef));
         }
 
         @Override
@@ -133,7 +132,7 @@ public final class MockedDriver implements WebDriver {
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef));
+                    .orElseThrow(() -> missingData(repo.getName(), flowRef));
         }
 
         @Override
@@ -144,7 +143,7 @@ public final class MockedDriver implements WebDriver {
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
-                    .orElseThrow(() -> SdmxException.missingData(repo.getName(), flowRef));
+                    .orElseThrow(() -> missingData(repo.getName(), flowRef));
         }
 
         @Override
@@ -159,7 +158,7 @@ public final class MockedDriver implements WebDriver {
 
         private void checkState() throws IOException {
             if (closed) {
-                throw SdmxException.connectionClosed(repo.getName());
+                throw connectionClosed(repo.getName());
             }
         }
 
@@ -175,5 +174,25 @@ public final class MockedDriver implements WebDriver {
                 throw new IllegalArgumentException(error);
             }
         }
+
+        public static @NonNull IOException connectionClosed(@NonNull String source) {
+            return new IOException("Connection closed");
+        }
+
+        public static @NonNull IOException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
+            return new IOException("Missing flow '" + ref + "'");
+        }
+
+        public static @NonNull IOException missingStructure(@NonNull String source, @NonNull DataStructureRef ref) {
+            return new IOException("Missing structure '" + ref + "'");
+        }
+
+        public static @NonNull IOException missingData(@NonNull String source, @NonNull DataflowRef ref) {
+            return new IOException("Missing data '" + ref + "'");
+        }
+    }
+
+    public static @NonNull IOException missingSource(@NonNull String source, @NonNull Class<?> type) {
+        return new IOException("Missing " + type.getSimpleName() + " '" + source + "'");
     }
 }

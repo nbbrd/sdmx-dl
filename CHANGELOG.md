@@ -22,6 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Simplify class naming scheme [#220](https://github.com/nbbrd/sdmx-dl/issues/220)
 - ![API] Refactor dialects handling [#227](https://github.com/nbbrd/sdmx-dl/issues/227)
 - ![API] Simplify module names
+- ![API] Refactor format and provider utilities
 - ![SOURCE] Enforce https on ISTAT source
 - ![PROVIDER] Change `FileDriver` to be optional
 

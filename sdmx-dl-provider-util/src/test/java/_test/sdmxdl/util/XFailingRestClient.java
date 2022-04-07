@@ -18,8 +18,8 @@ package _test.sdmxdl.util;
 
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.util.DataRef;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.web.SdmxRestClient;
 
 import java.io.IOException;
 import java.util.List;

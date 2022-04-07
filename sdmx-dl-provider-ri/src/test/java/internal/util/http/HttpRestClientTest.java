@@ -24,6 +24,8 @@ import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import sdmxdl.LanguagePriorityList;
+import sdmxdl.format.MediaType;
+import sdmxdl.format.xml.XmlMediaTypes;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -38,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static internal.sdmxdl.ri.web.RiHttpUtils.*;
 import static internal.util.http.HttpConstants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -89,12 +90,12 @@ public abstract class HttpRestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
             assertSameSampleContent(response);
         }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
-                        .withHeader(HTTP_ACCEPT_HEADER, equalTo(GENERIC_DATA_21_TYPE.toString()))
+                        .withHeader(HTTP_ACCEPT_HEADER, equalTo(XmlMediaTypes.GENERIC_DATA_21.toString()))
                         .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
                         .withHeader(HTTP_ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
                         .withHeader(HTTP_LOCATION_HEADER, absent())
@@ -116,7 +117,7 @@ public abstract class HttpRestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
-        List<MediaType> mediaTypes = asList(GENERIC_DATA_21_TYPE, STRUCTURE_SPECIFIC_DATA_21_TYPE);
+        List<MediaType> mediaTypes = asList(XmlMediaTypes.GENERIC_DATA_21, XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
 
         try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), mediaTypes, ANY_LANG))) {
             assertSameSampleContent(response);
@@ -147,7 +148,7 @@ public abstract class HttpRestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_XML_TYPE), ANY_LANG)))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(MediaType.XML_TYPE), ANY_LANG)))
                 .withMessage("500: " + customErrorMessage)
                 .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
                     assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
@@ -166,7 +167,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("ftp://localhost"), singletonList(GENERIC_XML_TYPE), "")))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("ftp://localhost"), singletonList(MediaType.XML_TYPE), "")))
                 .withMessage("Unsupported protocol 'ftp'");
     }
 
@@ -178,7 +179,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://localhoooooost"), singletonList(GENERIC_XML_TYPE), "")))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(new URL("http://localhoooooost"), singletonList(MediaType.XML_TYPE), "")))
                 .isInstanceOf(UnknownHostException.class)
                 .withMessage("localhoooooost");
     }
@@ -201,7 +202,7 @@ public abstract class HttpRestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatCode(() -> {
-                    try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
+                    try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
                         assertSameSampleContent(response);
                     }
                 })
@@ -230,7 +231,7 @@ public abstract class HttpRestClientTest {
                 wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
                 assertThatIOException()
-                        .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                        .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                         .describedAs("Max redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                         .withMessage("Max redirection reached");
             }
@@ -251,7 +252,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                     .describedAs("Invalid redirect: code %s from '%s'", redirection, wireURL(SAMPLE_URL))
                     .withMessage("Missing redirection url");
         }
@@ -274,7 +275,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                     .describedAs("Downgrading protocol on redirect: code %s from '%s' to '%s'", redirection, wireURL(SAMPLE_URL), location)
                     .withMessageContaining("Downgrading protocol on redirect");
         }
@@ -291,7 +292,7 @@ public abstract class HttpRestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                 .isInstanceOf(SSLException.class);
     }
 
@@ -314,7 +315,7 @@ public abstract class HttpRestClientTest {
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(readTimeout * 2)));
 
         assertThatIOException()
-                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                 .withMessageContaining("Read timed out");
     }
 
@@ -334,7 +335,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
+            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
                 assertSameSampleContent(response);
             }
 
@@ -359,7 +360,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                     .withMessage("401: Unauthorized")
                     .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
                         assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
@@ -388,7 +389,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "xyz").willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                     .withMessage("401: Unauthorized")
                     .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
                         assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_UNAUTHORIZED);
@@ -418,7 +419,7 @@ public abstract class HttpRestClientTest {
             String location = wireHttpUrl(SAMPLE_URL);
 
             assertThatIOException()
-                    .isThrownBy(() -> x.requestGET(new HttpRequest(new URL(location), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG)))
+                    .isThrownBy(() -> x.requestGET(new HttpRequest(new URL(location), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG)))
                     .withMessageContaining("Insecure protocol");
 
             wire.verify(preemptive ? 0 : 1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
@@ -441,7 +442,7 @@ public abstract class HttpRestClientTest {
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
             wire.stubFor(get(SAMPLE_URL).withBasicAuth("user", "password").willReturn(okXml(SAMPLE_XML)));
 
-            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(GENERIC_DATA_21_TYPE), ANY_LANG))) {
+            try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
                 assertSameSampleContent(response);
             }
 
@@ -484,7 +485,7 @@ public abstract class HttpRestClientTest {
     }
 
     protected void assertSameSampleContent(HttpResponse response) throws IOException {
-        assertThat(response.getContentType()).isEqualTo(GENERIC_XML_TYPE);
+        assertThat(response.getContentType()).isEqualTo(MediaType.XML_TYPE);
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }

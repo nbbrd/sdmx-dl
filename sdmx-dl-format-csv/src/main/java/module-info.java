@@ -4,8 +4,8 @@ module sdmxdl.format.csv {
     requires static nbbrd.design;
     requires static org.checkerframework.checker.qual;
 
-    requires transitive sdmxdl.api;
+    requires transitive sdmxdl.format.util;
     requires transitive nbbrd.io.picocsv;
 
-    exports sdmxdl.csv;
+    exports sdmxdl.format.csv;
 }

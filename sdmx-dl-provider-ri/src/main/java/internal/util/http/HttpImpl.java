@@ -18,6 +18,7 @@ package internal.util.http;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.format.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;

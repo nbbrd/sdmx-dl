@@ -26,8 +26,8 @@ import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.*;
-import sdmxdl.csv.SdmxCsvFieldWriter;
-import sdmxdl.csv.SdmxPicocsvFormatter;
+import sdmxdl.format.csv.SdmxCsvFieldWriter;
+import sdmxdl.format.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.csv.SdmxCsvFields.*;
+import static sdmxdl.format.csv.SdmxCsvFields.*;
 
 /**
  * @author Philippe Charles
