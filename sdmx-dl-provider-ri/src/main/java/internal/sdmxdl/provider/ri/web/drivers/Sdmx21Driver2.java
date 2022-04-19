@@ -218,6 +218,18 @@ public final class Sdmx21Driver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("STATEC")
+                    .descriptionOf("National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
+                    .description("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
+                    .description("fr", "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://lustat.statec.lu/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://lustat.statec.lu")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("UNDATA")
                     .descriptionOf("Data access system to UN databases")
                     .driver(RI_SDMX_21)

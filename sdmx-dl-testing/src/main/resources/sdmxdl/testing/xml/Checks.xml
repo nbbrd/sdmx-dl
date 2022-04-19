@@ -125,6 +125,11 @@
             <data key="1.1" minSeries="1" minObs="2099"/>
         </flow>
     </source>
+    <source name="STATEC" minFlows="652">
+        <flow ref="DF_D8103" dims="3">
+            <data key="A03.SL03.A" minSeries="1" minObs="16"/>
+        </flow>
+    </source>
     <source name="UIS" minFlows="9">
         <flow ref="SCN_DS" dims="2">
             <data key="20000.AGO" minSeries="1" minObs="1"/>
