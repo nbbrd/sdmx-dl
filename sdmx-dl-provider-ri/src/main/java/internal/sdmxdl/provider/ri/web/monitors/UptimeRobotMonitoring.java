@@ -54,8 +54,8 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
         SEEMS_DOWN(8, MonitorStatus.DOWN),
         DOWN(9, MonitorStatus.DOWN);
 
-        int code;
-        MonitorStatus report;
+        final int code;
+        final MonitorStatus report;
     }
 
     private static final Parser<MonitorStatus> STATUS_PARSER =

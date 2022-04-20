@@ -14,32 +14,36 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.cli;
+package sdmxdl.cli.experimental;
 
-import internal.sdmxdl.cli.DebugOutputOptions;
-import internal.sdmxdl.cli.WebKeyOptions;
+import nbbrd.console.picocli.PrintContext;
 import picocli.CommandLine;
-import sdmxdl.DataDetail;
-import sdmxdl.Series;
 
 import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "data", description = "Print raw data")
-@SuppressWarnings("FieldMayBeFinal")
-public final class DebugDataCommand implements Callable<Void> {
+@CommandLine.Command(
+        name = "debug",
+        description = "Experimental debug tools.",
+        hidden = true,
+        subcommands = {
+                PrintContext.class,
+                DebugDataCommand.class,
+                DebugListCommand.class,
+                DebugStructCommand.class,
+                DebugConsoleCommand.class
+        }
+)
+public final class DebugCommand implements Callable<Void> {
 
-    @CommandLine.Mixin
-    private WebKeyOptions web;
-
-    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
-    private DebugOutputOptions output = new DebugOutputOptions();
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
 
     @Override
-    public Void call() throws Exception {
-        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataDetail.FULL).getData());
+    public Void call() {
+        spec.commandLine().usage(spec.commandLine().getOut());
         return null;
     }
 }

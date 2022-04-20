@@ -14,31 +14,32 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.cli;
+package sdmxdl.cli.experimental;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
-import internal.sdmxdl.cli.WebFlowOptions;
+import internal.sdmxdl.cli.WebKeyOptions;
 import picocli.CommandLine;
-import sdmxdl.DataStructure;
+import sdmxdl.DataDetail;
+import sdmxdl.Series;
 
 import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "struct", description = "Print raw struct")
+@CommandLine.Command(name = "data", description = "Print raw data")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DebugStructCommand implements Callable<Void> {
+public final class DebugDataCommand implements Callable<Void> {
 
     @CommandLine.Mixin
-    private WebFlowOptions web;
+    private WebKeyOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        output.dump(DataStructure.class, web.loadStructure(web.loadManager()));
+        output.dumpAll(Series.class, web.loadSeries(web.loadManager(), DataDetail.FULL).getData());
         return null;
     }
 }

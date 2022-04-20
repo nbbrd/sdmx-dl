@@ -14,46 +14,31 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.cli;
+package sdmxdl.cli.experimental;
 
 import internal.sdmxdl.cli.DebugOutputOptions;
-import nbbrd.console.properties.ConsoleProperties;
+import internal.sdmxdl.cli.WebFlowOptions;
 import picocli.CommandLine;
+import sdmxdl.DataStructure;
 
-import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "console", description = "Print console info")
+@CommandLine.Command(name = "struct", description = "Print raw struct")
 @SuppressWarnings("FieldMayBeFinal")
-public final class DebugConsoleCommand implements Callable<Void> {
+public final class DebugStructCommand implements Callable<Void> {
+
+    @CommandLine.Mixin
+    private WebFlowOptions web;
 
     @CommandLine.ArgGroup(validate = false, headingKey = "debug")
     private DebugOutputOptions output = new DebugOutputOptions();
 
     @Override
     public Void call() throws Exception {
-        output.dump(ConsoleInfo.class, ConsoleInfo.of(ConsoleProperties.ofServiceLoader()));
+        output.dump(DataStructure.class, web.loadStructure(web.loadManager()));
         return null;
-    }
-
-    @lombok.AllArgsConstructor
-    private static class ConsoleInfo {
-
-        String stdInEncoding;
-        String stdOutEncoding;
-        int columns;
-        int rows;
-
-        static ConsoleInfo of(ConsoleProperties properties) {
-            return new ConsoleInfo(
-                    properties.getStdInEncoding().map(Charset::name).orElse(null),
-                    properties.getStdOutEncoding().map(Charset::name).orElse(null),
-                    properties.getColumns().orElse(-1),
-                    properties.getRows().orElse(-1)
-            );
-        }
     }
 }

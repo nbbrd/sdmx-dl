@@ -148,5 +148,5 @@ public enum TestConnection implements Connection {
         public void close() {
             throw new UnsupportedOperationException();
         }
-    };
+    }
 }
