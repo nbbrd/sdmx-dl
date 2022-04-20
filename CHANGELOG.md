@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This is the sixth beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+This release focuses on API refactoring to allow future improvements.
+It introduces a mechanism that validates the input parameters to give a better feedback in case of error.
+A few sources are also added.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+
 ### Added
 
 - ![API] Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
