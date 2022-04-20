@@ -273,6 +273,9 @@
                                         </scoop>
                                         <brew>
                                             <active>RELEASE</active>
+                                            <extraProperties>
+                                                <skipJava>true</skipJava>
+                                            </extraProperties>
                                         </brew>
                                         <jbang>
                                             <active>RELEASE</active>
