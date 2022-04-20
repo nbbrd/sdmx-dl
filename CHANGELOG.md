@@ -32,6 +32,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![FORMAT] Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
 - ![PROVIDER] Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
 - ![PROVIDER] Fix curl certificate revocation checks on missing/offline check lists
+- ![CLI] Fix Java package requirement in Homebrew distribution [#206](https://github.com/nbbrd/sdmx-dl/issues/206)
 - ![CLI] Fix use of reflection in native image
 - ![CLI] Fix missing resources in native image
 
