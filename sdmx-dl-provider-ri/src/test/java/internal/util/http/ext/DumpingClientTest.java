@@ -3,16 +3,16 @@ package internal.util.http.ext;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
-import internal.util.http.MediaType;
+import sdmxdl.format.MediaType;
+import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wiremock.com.google.common.io.ByteStreams;
 import wiremock.org.apache.commons.io.input.ReaderInputStream;
-import wiremock.org.apache.http.impl.io.EmptyInputStream;
+import wiremock.org.apache.hc.core5.http.io.entity.EmptyInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -157,10 +156,7 @@ public class DumpingClientTest {
         private final IOSupplier<MockedResponse> response;
 
         @Override
-        public @NonNull HttpResponse requestGET(HttpRequest httpRequest) throws IOException {
-            Objects.requireNonNull(httpRequest.getQuery());
-            Objects.requireNonNull(httpRequest.getMediaTypes());
-            Objects.requireNonNull(httpRequest.getLangs());
+        public @NonNull HttpResponse requestGET(@NonNull HttpRequest httpRequest) throws IOException {
             return response.getWithIO();
         }
     }

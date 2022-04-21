@@ -16,15 +16,14 @@
  */
 package _test.sdmxdl.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.DataRef;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -33,27 +32,27 @@ public enum XFailingRestClient implements SdmxRestClient {
 
     EXPECTED {
         @Override
-        public String getName() throws IOException {
+        public @NonNull String getName() throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public List<Dataflow> getFlows() throws IOException {
+        public @NonNull List<Dataflow> getFlows() throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef ref) throws IOException {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public DataStructure getStructure(DataStructureRef ref) throws IOException {
+        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
             throw new CustomIOException();
         }
 
@@ -68,38 +67,38 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public Duration ping() throws IOException {
+        public void testClient() throws IOException {
             throw new CustomIOException();
         }
     },
     UNEXPECTED {
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public List<Dataflow> getFlows() {
+        public @NonNull List<Dataflow> getFlows() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef ref) {
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public DataStructure getStructure(DataStructureRef ref) {
+        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) {
             throw new CustomRuntimeException();
         }
 
@@ -114,48 +113,43 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataStructureRef peekStructureRef(DataflowRef flowRef) {
+        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public Duration ping() {
+        public void testClient() {
             throw new CustomRuntimeException();
         }
     },
     NULL {
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             return null;
         }
 
         @Override
-        public List<Dataflow> getFlows() {
+        public @NonNull List<Dataflow> getFlows() {
             return null;
         }
 
         @Override
-        public Dataflow getFlow(DataflowRef ref) {
-            Objects.requireNonNull(ref);
+        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) {
             return null;
         }
 
         @Override
-        public DataStructure getStructure(DataStructureRef ref) {
-            Objects.requireNonNull(ref);
+        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) {
             return null;
         }
 
         @Override
-        public DataCursor getData(DataRef ref, DataStructure dsd) {
-            Objects.requireNonNull(ref);
-            Objects.requireNonNull(dsd);
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) {
             return null;
         }
 
         @Override
         public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) {
-            Objects.requireNonNull(ref);
             return null;
         }
 
@@ -165,14 +159,12 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataStructureRef peekStructureRef(DataflowRef flowRef) {
-            Objects.requireNonNull(flowRef);
+        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
             return null;
         }
 
         @Override
-        public Duration ping() {
-            return null;
+        public void testClient() {
         }
     };
 

@@ -19,7 +19,7 @@ package internal.sdmxdl.cli;
 import nbbrd.io.text.Parser;
 import picocli.CommandLine;
 import sdmxdl.DataflowRef;
-import sdmxdl.csv.SdmxCsvFields;
+import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
  * @author Philippe Charles

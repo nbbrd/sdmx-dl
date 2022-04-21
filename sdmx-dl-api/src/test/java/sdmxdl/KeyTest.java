@@ -287,7 +287,7 @@ public class KeyTest {
     }
 
     private static Condition<Key> containingKey(String key) {
-        Series series = Series.builder().key(Key.parse(key)).freq(Frequency.MONTHLY).build();
+        Series series = Series.builder().key(Key.parse(key)).build();
         return new Condition<>(parent -> parent.containsKey(series), "Must contain key %s", key);
     }
 
@@ -429,10 +429,10 @@ public class KeyTest {
                 .isNot(validOn(dsd2));
 
         assertThat(Key.of("IND").validateOn(dsd2))
-                .isEqualTo("Expected 2 dimensions instead of 1");
+                .isEqualTo("Expecting key 'IND' to have 2 dimensions instead of 1");
 
         assertThat(Key.of("IND", "XX").validateOn(dsd2))
-                .isEqualTo("Unknown code 'XX' for dimension 'REGION'");
+                .isEqualTo("Expecting key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
     }
 
     private static Condition<Key> validOn(DataStructure dsd) {

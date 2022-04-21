@@ -1,0 +1,23 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<message:StructureSpecificData xmlns:ss="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/structurespecific"
+                               xmlns:ns1="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=StatCan:DF_10100139(1.0):ObsLevelDim:TIME_PERIOD"
+                               xmlns:message="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message"
+                               xmlns:common="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
+                               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <message:Header>
+        <message:ID>DS1598331006473</message:ID>
+        <message:Test>false</message:Test>
+        <message:Prepared>2020-08-25T04:50:06</message:Prepared>
+        <message:Sender id="MetadataTechnology"/>
+        <message:Structure structureID="StatCan_DF_10100139_1_0"
+                           namespace="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=StatCan:DF_10100139(1.0):ObsLevelDim:TIME_PERIOD"
+                           dimensionAtObservation="TIME_PERIOD">
+            <common:StructureUsage>
+                <Ref agencyID="StatCan" id="DF_10100139" version="1.0"/>
+            </common:StructureUsage>
+        </message:Structure>
+    </message:Header>
+    <message:DataSet ss:dataScope="DataStructure" xsi:type="ns1:DataSetType" ss:structureRef="StatCan_DF_10100139_1_0">
+        <Series/>
+    </message:DataSet>
+</message:StructureSpecificData>

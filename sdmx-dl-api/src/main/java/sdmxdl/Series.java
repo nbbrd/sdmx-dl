@@ -30,9 +30,6 @@ public class Series {
     Key key;
 
     @lombok.NonNull
-    Frequency freq;
-
-    @lombok.NonNull
     @lombok.Singular("meta")
     Map<String, String> meta;
 

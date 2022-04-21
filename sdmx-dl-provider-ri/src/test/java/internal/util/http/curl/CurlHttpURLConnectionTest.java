@@ -45,16 +45,30 @@ public class CurlHttpURLConnectionTest {
         conn.setReadTimeout(3000);
         conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
         conn.setRequestProperty("P3P", "CP=\"This is not a P3P policy! See g.co/p3phelp for more info.");
-        assertThat(conn.createCurlCommand(Paths.get("output")))
-                .containsExactly("curl", "http://localhost", "--http1.1", "-s",
-                        "-x", "http://localhost:123",
-                        "-o", "output",
-                        "-D", "-",
-                        "--connect-timeout", "2",
-                        "-m", "3",
-                        "-H", "P3P: CP=\"This is not a P3P policy! See g.co/p3phelp for more info.",
-                        "-H", "Content-Type: text/html; charset=ISO-8859-1"
-                );
+        String[] command = conn.createCurlCommand(Paths.get("output"));
+        if (conn.isSchannel()) {
+            assertThat(command)
+                    .containsExactly("curl", "http://localhost", "--http1.1", "-s", "--ssl-revoke-best-effort",
+                            "-x", "http://localhost:123",
+                            "-o", "output",
+                            "-D", "-",
+                            "--connect-timeout", "2",
+                            "-m", "3",
+                            "-H", "P3P: CP=\"This is not a P3P policy! See g.co/p3phelp for more info.",
+                            "-H", "Content-Type: text/html; charset=ISO-8859-1"
+                    );
+        } else {
+            assertThat(command)
+                    .containsExactly("curl", "http://localhost", "--http1.1", "-s",
+                            "-x", "http://localhost:123",
+                            "-o", "output",
+                            "-D", "-",
+                            "--connect-timeout", "2",
+                            "-m", "3",
+                            "-H", "P3P: CP=\"This is not a P3P policy! See g.co/p3phelp for more info.",
+                            "-H", "Content-Type: text/html; charset=ISO-8859-1"
+                    );
+        }
     }
 
     @Test

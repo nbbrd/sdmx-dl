@@ -16,13 +16,13 @@
  */
 package sdmxdl.cli;
 
-import internal.sdmxdl.cli.Feature;
 import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.Feature;
 
 import java.io.IOException;
 import java.util.Comparator;

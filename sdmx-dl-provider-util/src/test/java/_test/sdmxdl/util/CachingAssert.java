@@ -2,10 +2,10 @@ package _test.sdmxdl.util;
 
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.Condition;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.tck.ext.FakeClock;
-import sdmxdl.util.ext.MapCache;
-import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.DataRepository;
+import sdmxdl.provider.ext.MapCache;
+import sdmxdl.web.MonitorReports;
+import tests.sdmxdl.ext.FakeClock;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -39,10 +39,10 @@ public class CachingAssert {
         AtomicInteger count = new AtomicInteger(0);
 
         @lombok.NonNull
-        ConcurrentMap<String, SdmxRepository> map = new ConcurrentHashMap<>();
+        ConcurrentMap<String, DataRepository> map = new ConcurrentHashMap<>();
 
         @lombok.NonNull
-        ConcurrentMap<String, SdmxWebMonitorReports> monitors = new ConcurrentHashMap<>();
+        ConcurrentMap<String, MonitorReports> monitors = new ConcurrentHashMap<>();
 
         @lombok.NonNull
         FakeClock clock = new FakeClock().set(0);
@@ -131,7 +131,7 @@ public class CachingAssert {
 
         int count;
 
-        SdmxRepository value;
+        DataRepository value;
 
         static State of(Context context, String key) {
             return new State(context.getCount().get(), context.getMap().get(key));

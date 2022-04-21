@@ -1,12 +1,13 @@
 package internal.sdmxdl.cli.ext;
 
 import nbbrd.console.picocli.csv.CsvOutput;
+import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOConsumer;
+import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,51 +22,50 @@ public class CsvUtil {
     }
 
     public static <T> Formatter<Iterable<T>> fromIterable(Formatter<T> itemFormatter, char delimiter) {
-        Csv.Format format = Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build();
-        return list -> list != null ? formatIterator(list.iterator(), format, itemFormatter) : null;
+        return elementsFormatter(itemFormatter)
+                .format(Csv.Format.RFC4180.toBuilder().delimiter(delimiter).build())
+                .build()
+                .compose(Iterable<T>::iterator)
+                .asFormatter();
     }
 
     public static <K, V> Formatter<Map<K, V>> fromMap(Formatter<K> keyFormatter, Formatter<V> valueFormatter, char listDelimiter, char entryDelimiter) {
-        Csv.Format csvFormat = Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build();
-        return map -> map != null ? formatMap(map, csvFormat, keyFormatter, valueFormatter) : null;
+        return mapEntriesFormatter(keyFormatter, valueFormatter)
+                .format(Csv.Format.RFC4180.toBuilder().delimiter(entryDelimiter).separator(String.valueOf(listDelimiter)).build())
+                .build()
+                .asFormatter()
+                .compose(map -> map.entrySet().iterator());
     }
 
     public static final Formatter<Map<String, String>> DEFAULT_MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 
-    private static <T> CharSequence formatIterator(Iterator<T> iterator, Csv.Format csvFormat, Formatter<T> itemFormatter) {
-        try {
-            StringWriter result = new StringWriter();
-            try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
-                while (iterator.hasNext()) {
-                    w.writeField(itemFormatter.format(iterator.next()));
-                }
-            }
-            return result.toString();
-        } catch (IOException ex) {
-            return null;
+    @MightBePromoted
+    private static <T> Picocsv.Formatter.Builder<Iterator<T>> elementsFormatter(Formatter<T> element) {
+        return Picocsv.Formatter.builder((iterator, csv) -> formatElements(csv, iterator, element));
+    }
+
+    private static <T> void formatElements(Csv.Writer csv, Iterator<T> iterator, Formatter<T> element) throws IOException {
+        while (iterator.hasNext()) {
+            csv.writeField(element.format(iterator.next()));
         }
     }
 
-    private static <K, V> CharSequence formatMap(Map<K, V> map, Csv.Format csvFormat, Formatter<K> keyFormatter, Formatter<V> valueFormatter) {
-        try {
-            StringWriter result = new StringWriter();
-            try (Csv.Writer w = Csv.Writer.of(csvFormat, Csv.WriterOptions.DEFAULT, result, Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
-                Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
-                if (iterator.hasNext()) {
-                    Map.Entry<K, V> first = iterator.next();
-                    w.writeField(keyFormatter.format(first.getKey()));
-                    w.writeField(valueFormatter.format(first.getValue()));
-                }
-                while (iterator.hasNext()) {
-                    Map.Entry<K, V> next = iterator.next();
-                    w.writeEndOfLine();
-                    w.writeField(keyFormatter.format(next.getKey()));
-                    w.writeField(valueFormatter.format(next.getValue()));
-                }
+    @MightBePromoted
+    private static <K, V> Picocsv.Formatter.Builder<Iterator<Map.Entry<K, V>>> mapEntriesFormatter(Formatter<K> key, Formatter<V> value) {
+        return Picocsv.Formatter.builder((mapEntries, csv) -> formatMapEntries(csv, mapEntries, key, value));
+    }
+
+    private static <K, V> void formatMapEntries(Csv.Writer csv, Iterator<Map.Entry<K, V>> mapEntries, Formatter<K> key, Formatter<V> value) throws IOException {
+        if (mapEntries.hasNext()) {
+            Map.Entry<K, V> first = mapEntries.next();
+            csv.writeField(key.format(first.getKey()));
+            csv.writeField(value.format(first.getValue()));
+            while (mapEntries.hasNext()) {
+                csv.writeEndOfLine();
+                Map.Entry<K, V> next = mapEntries.next();
+                csv.writeField(key.format(next.getKey()));
+                csv.writeField(value.format(next.getValue()));
             }
-            return result.toString();
-        } catch (IOException ex) {
-            return null;
         }
     }
 }

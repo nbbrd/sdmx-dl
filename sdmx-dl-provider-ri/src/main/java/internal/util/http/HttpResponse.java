@@ -1,6 +1,7 @@
 package internal.util.http;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
+import sdmxdl.format.MediaType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

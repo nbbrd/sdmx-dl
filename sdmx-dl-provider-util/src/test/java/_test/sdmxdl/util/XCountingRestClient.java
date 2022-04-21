@@ -16,15 +16,15 @@
  */
 package _test.sdmxdl.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.DataRef;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -39,30 +39,30 @@ public final class XCountingRestClient implements SdmxRestClient {
     private final AtomicInteger count;
 
     @Override
-    public String getName() throws IOException {
+    public @NonNull String getName() throws IOException {
         return delegate.getName();
     }
 
     @Override
-    public List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Dataflow> getFlows() throws IOException {
         count.incrementAndGet();
         return delegate.getFlows();
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         count.incrementAndGet();
         return delegate.getFlow(ref);
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         count.incrementAndGet();
         return delegate.getStructure(ref);
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
         count.incrementAndGet();
         return delegate.getData(ref, dsd);
     }
@@ -79,12 +79,12 @@ public final class XCountingRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) throws IOException {
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
         return delegate.peekStructureRef(flowRef);
     }
 
     @Override
-    public Duration ping() throws IOException {
-        return delegate.ping();
+    public void testClient() throws IOException {
+        delegate.testClient();
     }
 }

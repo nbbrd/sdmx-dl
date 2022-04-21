@@ -16,8 +16,9 @@
  */
 package internal.util.http;
 
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.format.MediaType;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -25,7 +26,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +50,6 @@ public final class DefaultHttpClient implements HttpClient {
 
     @Override
     public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
-        Objects.requireNonNull(request);
         return open(request, 0, getPreemptiveAuthScheme());
     }
 
@@ -63,7 +66,7 @@ public final class DefaultHttpClient implements HttpClient {
 
         HttpURLConnection connection = openConnection(request, requestScheme, proxy);
 
-        switch (ResponseType.parse(connection.getResponseCode())) {
+        switch (ResponseType.ofResponseCode(connection.getResponseCode())) {
             case REDIRECTION:
                 return redirect(connection, request, redirects);
             case SUCCESSFUL:
@@ -149,7 +152,7 @@ public final class DefaultHttpClient implements HttpClient {
 
     private HttpResponse recoverClientError(HttpURLConnection connection, HttpRequest request, int redirects, AuthSchemeHelper requestScheme) throws IOException {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            AuthSchemeHelper responseScheme = AuthSchemeHelper.parse(connection).orElse(AuthSchemeHelper.BASIC);
+            AuthSchemeHelper responseScheme = AuthSchemeHelper.get(connection).orElse(AuthSchemeHelper.BASIC);
             if (!requestScheme.equals(responseScheme)) {
                 context.getListener().onUnauthorized(connection.getURL(), requestScheme.authScheme, responseScheme.authScheme);
                 return open(request, redirects + 1, responseScheme);
@@ -227,7 +230,7 @@ public final class DefaultHttpClient implements HttpClient {
 
         abstract boolean hasResponseHeader(HttpURLConnection http) throws IOException;
 
-        static Optional<AuthSchemeHelper> parse(HttpURLConnection http) {
+        static Optional<AuthSchemeHelper> get(HttpURLConnection http) {
             return Stream.of(AuthSchemeHelper.values())
                     .filter(authScheme -> {
                         try {

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.5</version>
+        <version>3.0.0-beta.6</version>
     </parent>
 
     <artifactId>sdmx-dl-format-kryo</artifactId>
@@ -29,21 +29,22 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-design-util</groupId>
+            <artifactId>java-design-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-api</artifactId>
+            <artifactId>sdmx-dl-format-util</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.java-io-util</groupId>
-            <artifactId>java-io-base</artifactId>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>
             <artifactId>kryo5</artifactId>
-            <version>5.2.0</version>
+            <version>5.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.esotericsoftware</groupId>
@@ -54,14 +55,21 @@
 
         <!-- test only -->
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-tck</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

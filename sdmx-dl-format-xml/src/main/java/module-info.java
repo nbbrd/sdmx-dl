@@ -1,11 +1,11 @@
-module sdmxdl.util.xml {
+module sdmxdl.format.xml {
 
-    requires static org.checkerframework.checker.qual;
     requires static lombok;
+    requires static nbbrd.design;
+    requires static org.checkerframework.checker.qual;
 
-    requires transitive sdmxdl.api;
+    requires transitive sdmxdl.format.util;
     requires transitive nbbrd.io.xml;
 
-    exports sdmxdl.xml;
-    exports sdmxdl.xml.stream;
+    exports sdmxdl.format.xml;
 }

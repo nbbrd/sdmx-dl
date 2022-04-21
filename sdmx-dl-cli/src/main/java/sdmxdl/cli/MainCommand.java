@@ -23,6 +23,7 @@ import nbbrd.console.picocli.LoggerHelper;
 import picocli.CommandLine;
 import picocli.jansi.graalvm.AnsiConsole;
 import sdmxdl.About;
+import sdmxdl.cli.experimental.DebugCommand;
 
 import java.util.Properties;
 import java.util.concurrent.Callable;

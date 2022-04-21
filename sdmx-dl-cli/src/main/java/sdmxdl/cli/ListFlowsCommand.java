@@ -23,7 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
-import sdmxdl.csv.SdmxCsvFields;
+import sdmxdl.format.csv.SdmxCsvFields;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;

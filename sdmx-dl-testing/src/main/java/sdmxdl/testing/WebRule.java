@@ -1,6 +1,6 @@
 package sdmxdl.testing;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlow())
-                    .map(flow -> !r.getRequest().getDataRef().getFlowRef().containsRef(flow))
+                    .map(flow -> !r.getRequest().getFlowRef().containsRef(flow))
                     .orElse(false);
         }
     },

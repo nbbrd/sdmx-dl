@@ -1,14 +1,14 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.util.file.SdmxFileClient;
-import sdmxdl.util.file.SdmxFileInfo;
+import lombok.NonNull;
+import sdmxdl.Series;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.file.SdmxFileClient;
+import sdmxdl.provider.file.SdmxFileInfo;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 @lombok.RequiredArgsConstructor
 public final class XCountingFileClient implements SdmxFileClient {
@@ -20,14 +20,19 @@ public final class XCountingFileClient implements SdmxFileClient {
     private final AtomicInteger count;
 
     @Override
-    public SdmxFileInfo decode() throws IOException {
+    public void testClient() throws IOException {
+        delegate.testClient();
+    }
+
+    @Override
+    public @NonNull SdmxFileInfo decode() throws IOException {
         count.incrementAndGet();
         return delegate.decode();
     }
 
     @Override
-    public DataCursor loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
         count.incrementAndGet();
-        return delegate.loadData(entry, flowRef, key, filter);
+        return delegate.loadData(entry, dataRef);
     }
 }

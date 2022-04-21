@@ -16,14 +16,15 @@
  */
 package sdmxdl.web;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.SdmxSource;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -31,13 +32,14 @@ import java.util.Set;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class SdmxWebSource {
+@lombok.EqualsAndHashCode(callSuper = false)
+public class SdmxWebSource extends SdmxSource {
 
     @lombok.NonNull
     String name;
 
-    @Nullable
-    String description;
+    @lombok.Singular
+    Map<String, String> descriptions;
 
     @lombok.NonNull
     String driver;
@@ -62,7 +64,6 @@ public class SdmxWebSource {
 
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
-        Objects.requireNonNull(name);
         if (!aliases.contains(name)) {
             throw new IllegalArgumentException(name);
         }
@@ -79,21 +80,19 @@ public class SdmxWebSource {
 
     public static class Builder {
 
-        @NonNull
-        public Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
-            Objects.requireNonNull(endpoint);
+        public @NonNull Builder descriptionOf(@NonNull CharSequence description) throws IllegalArgumentException {
+            return description(Locale.ROOT.getLanguage(), description.toString());
+        }
+
+        public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
             return endpoint(URI.create(endpoint));
         }
 
-        @NonNull
-        public Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
-            Objects.requireNonNull(key);
+        public @NonNull Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             return property(key.toString(), value.toString());
         }
 
-        @NonNull
-        public Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
-            Objects.requireNonNull(website);
+        public @NonNull Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
             try {
                 return website(new URL(website));
             } catch (MalformedURLException ex) {
@@ -101,9 +100,7 @@ public class SdmxWebSource {
             }
         }
 
-        @NonNull
-        public Builder monitorOf(@NonNull String monitor) {
-            Objects.requireNonNull(monitor);
+        public @NonNull Builder monitorOf(@NonNull String monitor) {
             return monitor(URI.create(monitor));
         }
     }

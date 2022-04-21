@@ -16,21 +16,19 @@
  */
 package _test.sdmxdl.connectors.samples;
 
-import internal.sdmxdl.connectors.Connectors;
-import internal.sdmxdl.connectors.PortableTimeSeriesCursor;
+import internal.sdmxdl.provider.connectors.Connectors;
+import internal.sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.repo.DataSet;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.samples.ByteSource;
-import sdmxdl.samples.SdmxSource;
-import sdmxdl.util.parser.ObsFactories;
+import sdmxdl.format.ObsParser;
+import tests.sdmxdl.api.ByteSource;
+import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -39,7 +37,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -48,40 +48,48 @@ import java.util.stream.Collectors;
 public class ConnectorsResource {
 
     @NonNull
-    public SdmxRepository nbb() throws IOException {
+    public DataRepository nbb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataFlowStructure> structs = struct20(SdmxSource.NBB_DATA_STRUCTURE, l);
-        List<Dataflow> flows = flow20(SdmxSource.NBB_DATA_STRUCTURE, l);
-        List<PortableTimeSeries<Double>> data = data20(SdmxSource.NBB_DATA, structs.get(0), l);
+        List<DataFlowStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+        List<PortableTimeSeries<Double>> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX20, Connectors.toStructure(structs.get(0)))).build())
+        return DataRepository
+                .builder()
+                .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
+                .dataSet(
+                        PortableTimeSeriesCursor
+                                .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
+                                .toStream()
+                                .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
-                .detailSupported(false)
                 .build();
     }
 
     @NonNull
-    public SdmxRepository ecb() throws IOException {
+    public DataRepository ecb() throws IOException {
         LanguagePriorityList l = LanguagePriorityList.parse("fr");
 
-        List<DataFlowStructure> structs = struct21(SdmxSource.ECB_DATA_STRUCTURE, l);
-        List<Dataflow> flows = flow21(SdmxSource.ECB_DATAFLOWS, l);
-        List<PortableTimeSeries<Double>> data = data21(SdmxSource.ECB_DATA, structs.get(0), l);
+        List<DataFlowStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
+        List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
+        List<PortableTimeSeries<Double>> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0), l);
 
         DataflowRef ref = firstOf(flows);
 
-        return SdmxRepository.builder()
-                .structures(structs.stream().map(Connectors::toStructure).collect(Collectors.toList()))
-                .flows(flows.stream().map(Connectors::toFlow).collect(Collectors.toList()))
-                .dataSet(DataSet.builder().ref(ref).copyOf(PortableTimeSeriesCursor.of(data, ObsFactories.SDMX21, Connectors.toStructure(structs.get(0)))).build())
+        return DataRepository
+                .builder()
+                .structures(structs.stream().map(Connectors::toStructure).collect(toList()))
+                .flows(flows.stream().map(Connectors::toFlow).collect(toList()))
+                .dataSet(
+                        PortableTimeSeriesCursor
+                                .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
+                                .toStream()
+                                .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
-                .detailSupported(true)
                 .build();
     }
 
@@ -90,13 +98,13 @@ public class ConnectorsResource {
     }
 
     private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
     }
 
     private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
         return struct20(xml, l).stream()
                 .map(ConnectorsResource::asDataflow)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private List<PortableTimeSeries<Double>> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
@@ -104,24 +112,24 @@ public class ConnectorsResource {
         return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
                 .map((Series series) -> toPortableTimeSeries(series, dsd.getDimensions()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
     private List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
     public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
-        return parse(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
+        return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
     }
 
     private PortableTimeSeries<Double> toPortableTimeSeries(Series series, List<Dimension> dims) {
         PortableTimeSeries<Double> result = new PortableTimeSeries<>();
-        result.setFrequency(String.valueOf(formatByStandardFreq(series.getFreq())));
+//        result.setFrequency(String.valueOf(formatByStandardFreq(series.getFreq())));
         series.getMeta().forEach(result::addAttribute);
         Key key = series.getKey();
         for (int i = 0; i < key.size(); i++) {
@@ -153,7 +161,7 @@ public class ConnectorsResource {
         return result;
     }
 
-    private <T> T parse(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
+    private <T> T parseXml(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
         XMLEventReader r = null;
         try {
             r = XIF.createXMLEventReader(xml.openReader());
@@ -171,30 +179,30 @@ public class ConnectorsResource {
         }
     }
 
-    private char formatByStandardFreq(Frequency code) {
-        switch (code) {
-            case ANNUAL:
-                return 'A';
-            case HALF_YEARLY:
-                return 'S';
-            case QUARTERLY:
-                return 'Q';
-            case MONTHLY:
-                return 'M';
-            case WEEKLY:
-                return 'W';
-            case DAILY:
-                return 'D';
-            case HOURLY:
-                return 'H';
-            case DAILY_BUSINESS:
-                return 'B';
-            case MINUTELY:
-                return 'N';
-            default:
-                return '?';
-        }
-    }
+//    private char formatByStandardFreq(Frequency code) {
+//        switch (code) {
+//            case ANNUAL:
+//                return 'A';
+//            case HALF_YEARLY:
+//                return 'S';
+//            case QUARTERLY:
+//                return 'Q';
+//            case MONTHLY:
+//                return 'M';
+//            case WEEKLY:
+//                return 'W';
+//            case DAILY:
+//                return 'D';
+//            case HOURLY:
+//                return 'H';
+//            case DAILY_BUSINESS:
+//                return 'B';
+//            case MINUTELY:
+//                return 'N';
+//            default:
+//                return '?';
+//        }
+//    }
 
     private final XMLInputFactory XIF = XMLInputFactory.newFactory();
 }

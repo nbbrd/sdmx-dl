@@ -16,16 +16,15 @@
  */
 package _test.sdmxdl.util;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.ext.SdmxException;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.util.web.SdmxRestClient;
+import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.web.SdmxRestClient;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -34,48 +33,46 @@ import java.util.Objects;
 public final class XRepoRestClient implements SdmxRestClient {
 
     @lombok.NonNull
-    private final SdmxRepository repo;
+    private final DataRepository repository;
 
     @Override
-    public String getName() {
-        return repo.getName();
+    public @NonNull String getName() {
+        return repository.getName();
     }
 
     @Override
-    public List<Dataflow> getFlows() {
-        return repo.getFlows();
+    public @NonNull List<Dataflow> getFlows() {
+        return repository.getFlows();
     }
 
     @Override
-    public Dataflow getFlow(DataflowRef ref) throws IOException {
-        return repo.getFlow(ref)
-                .orElseThrow(() -> SdmxException.missingFlow(repo.getName(), ref));
+    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+        return repository.getFlow(ref)
+                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(repository.getName(), ref));
     }
 
     @Override
-    public DataStructure getStructure(DataStructureRef ref) throws IOException {
-        return repo.getStructure(ref)
-                .orElseThrow(() -> SdmxException.missingStructure(repo.getName(), ref));
+    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+        return repository.getStructure(ref)
+                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(repository.getName(), ref));
     }
 
     @Override
-    public DataCursor getData(DataRef ref, DataStructure dsd) throws IOException {
-        Objects.requireNonNull(ref);
-        Objects.requireNonNull(dsd);
-        return repo.getDataSet(ref.getFlowRef())
-                .map(dataSet -> dataSet.getDataCursor(ref.getKey(), ref.getFilter()))
-                .orElseThrow(() -> SdmxException.missingData(repo.getName(), ref));
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        return repository
+                .getDataSet(ref.getFlowRef())
+                .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
+                .orElseThrow(() -> CommonSdmxExceptions.missingData(repository.getName(), ref.getFlowRef()));
     }
 
     @Override
     public @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException {
-        Objects.requireNonNull(ref);
-        return repo.getStructures().stream()
+        return repository.getStructures().stream()
                 .flatMap(dsd -> dsd.getDimensions().stream())
                 .map(Component::getCodelist)
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> SdmxException.missingCodelist(repo.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(repository.getName(), ref));
     }
 
     @Override
@@ -84,13 +81,11 @@ public final class XRepoRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef flowRef) {
-        Objects.requireNonNull(flowRef);
+    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
         return null;
     }
 
     @Override
-    public Duration ping() {
-        return Duration.ZERO;
+    public void testClient() {
     }
 }

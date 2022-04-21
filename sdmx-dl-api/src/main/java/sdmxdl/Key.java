@@ -17,12 +17,12 @@
 package sdmxdl;
 
 import internal.sdmxdl.Chars;
+import lombok.NonNull;
 import nbbrd.design.Immutable;
+import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.StringValue;
 import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @Immutable
-@StringValue
+@RepresentableAsString
 public final class Key {
 
     private static final char SEP_CHAR = '.';
@@ -118,7 +118,7 @@ public final class Key {
         List<Dimension> dimensions = dsd.getDimensionList();
 
         if (dimensions.size() != size()) {
-            return "Expected " + dimensions.size() + " dimensions instead of " + size();
+            return String.format("Expecting key '%s' to have %d dimensions instead of %d", this, dimensions.size(), size());
         }
 
         for (int i = 0; i < dimensions.size(); i++) {
@@ -126,7 +126,7 @@ public final class Key {
             if (dimension.isCoded()) {
                 for (String code : Chars.splitToArray(get(i), OR_CHAR)) {
                     if (!isWildcardCode(code) && !dimension.getCodes().containsKey(code)) {
-                        return "Unknown code '" + code + "' for dimension '" + dimension.getId() + "'";
+                        return String.format("Expecting key '%s' to have a known code at position %d for dimension '%s' instead of '%s'", this, i + 1, dimension.getId(), code);
                     }
                 }
             }
@@ -160,7 +160,7 @@ public final class Key {
         if (ALL_KEYWORD.contentEquals(input)) {
             return ALL;
         }
-        String[] result = Chars.splitToArray(input, SEP_CHAR);
+        String[] result = Chars.splitToArray(input.toString(), SEP_CHAR);
         for (int i = 0; i < result.length; i++) {
             result[i] = parseCode(result[i]);
         }

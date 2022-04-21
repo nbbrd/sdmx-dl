@@ -37,8 +37,36 @@ public class SdmxWebSourceTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> SdmxWebSource.builder().endpointOf("h ttp://localhost"));
 
-        assertThat(SdmxWebSource.builder().endpointOf("http://localhost").name("").description("").driver("").build().getEndpoint())
+        assertThat(SdmxWebSource.builder().endpointOf("http://localhost").name("").driver("").build().getEndpoint())
                 .isEqualTo(URI.create("http://localhost"));
+    }
+
+    @Test
+    public void testBuilderDescription() {
+        SdmxWebSource base = SdmxWebSource.builder().endpointOf("http://localhost").name("").driver("").build();
+
+        assertThat(
+                base
+                        .toBuilder()
+                        .description("en", "European Central Bank")
+                        .description("fr", "Banque Centrale Européenne")
+                        .build()
+                        .getDescriptions()
+                        .keySet())
+                .containsExactly("en", "fr");
+
+        assertThat(
+                base
+                        .toBuilder()
+                        .description("fr", "Banque Centrale Européenne")
+                        .description("en", "European Central Bank")
+                        .build()
+                        .getDescriptions()
+                        .keySet())
+                .containsExactly("fr", "en");
+
+        assertThatNullPointerException()
+                .isThrownBy(() -> base.toBuilder().descriptionOf(null));
     }
 
     @Test
@@ -49,7 +77,7 @@ public class SdmxWebSourceTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxWebSource.builder().propertyOf("", null));
 
-        assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").name("").description("").driver("").build().getProperties())
+        assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").name("").driver("").build().getProperties())
                 .containsEntry("hello", "world");
     }
 

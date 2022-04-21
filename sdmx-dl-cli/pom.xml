@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.5</version>
+        <version>3.0.0-beta.6</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>7.0.3</version>
+            <version>7.4.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.29</version>
+            <version>1.30</version>
         </dependency>
 
         <!-- runtime only -->
@@ -139,14 +139,35 @@
 
         <!-- test only -->
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-xml</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-tck</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <version>1.7.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -157,7 +178,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -202,7 +223,7 @@
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>1.0.0</version>
                         <executions>
                             <execution>
                                 <phase>install</phase>
@@ -252,6 +273,9 @@
                                         </scoop>
                                         <brew>
                                             <active>RELEASE</active>
+                                            <extraProperties>
+                                                <skipJava>true</skipJava>
+                                            </extraProperties>
                                         </brew>
                                         <jbang>
                                             <active>RELEASE</active>
@@ -295,13 +319,15 @@
                         <configuration>
                             <imageName>${project.x.fileName}-${project.version}</imageName>
                             <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
-                            <!-- FIX: sdmx-dl: xml resources -->
+                            <!-- FIX: sdmx-dl: xml resources such as Checks.xml -->
+                            <!-- FIX: sdmx-dl: ps1 resources such as WinPasswordVault.ps1 -->
+                            <!-- FIX: sdmx-dl: properties resources such as pom.properties -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http
                                 --enable-https
                                 --report-unsupported-elements-at-runtime
-                                -H:IncludeResources=.*\.xml$
+                                -H:IncludeResources=.*\.(xml|ps1|properties)$
                             </buildArgs>
                         </configuration>
                     </plugin>

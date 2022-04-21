@@ -41,8 +41,7 @@ public class SdmxFileManagerTest {
     @SuppressWarnings({"null", "ConstantConditions"})
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection((String) null));
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection((SdmxFileSource) null));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection(null));
     }
 
     private final SdmxFileSource source = SdmxFileSource.builder().data(new File("hello")).build();

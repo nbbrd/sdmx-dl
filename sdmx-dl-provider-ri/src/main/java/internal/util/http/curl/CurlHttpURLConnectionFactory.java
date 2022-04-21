@@ -1,8 +1,8 @@
 package internal.util.http.curl;
 
 import internal.util.http.HttpURLConnectionFactory;
+import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.HttpURLConnection;
 import java.net.Proxy;

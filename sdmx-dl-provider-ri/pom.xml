@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.5</version>
+        <version>3.0.0-beta.6</version>
     </parent>
 
     <artifactId>sdmx-dl-provider-ri</artifactId>
@@ -42,12 +42,12 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-api</artifactId>
+            <artifactId>sdmx-dl-provider-util</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-util</artifactId>
+            <artifactId>sdmx-dl-format-csv</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -61,32 +61,42 @@
             <version>2.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.nbbrd.picocsv</groupId>
-            <artifactId>picocsv</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.9</version>
+            <version>2.9.0</version>
         </dependency>
 
         <!-- test only -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-xml</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-tck</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8-standalone</artifactId>
-            <version>2.31.0</version>
+            <version>2.33.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

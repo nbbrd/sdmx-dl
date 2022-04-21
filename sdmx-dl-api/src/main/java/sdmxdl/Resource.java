@@ -16,9 +16,8 @@
  */
 package sdmxdl;
 
+import lombok.NonNull;
 import nbbrd.design.SealedType;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.repo.DataSet;
 
 
 /**
@@ -27,10 +26,10 @@ import sdmxdl.repo.DataSet;
  * @author Philippe Charles
  */
 @SealedType({
-        DataSet.class,
         DataStructure.class,
         Dataflow.class,
-        Codelist.class
+        Codelist.class,
+        DataSet.class
 })
 public abstract class Resource<T extends ResourceRef<T>> {
 

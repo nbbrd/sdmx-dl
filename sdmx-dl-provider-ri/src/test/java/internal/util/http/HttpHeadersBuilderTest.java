@@ -1,6 +1,5 @@
 package internal.util.http;
 
-import internal.util.http.HttpHeadersBuilder;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;

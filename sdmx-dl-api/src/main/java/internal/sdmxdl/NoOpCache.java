@@ -16,19 +16,18 @@
  */
 package internal.sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.ext.SdmxCache;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.web.SdmxWebMonitorReports;
+import sdmxdl.DataRepository;
+import sdmxdl.ext.Cache;
+import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
-import java.util.Objects;
 
 /**
  * @author Philippe Charles
  */
-public enum NoOpCache implements SdmxCache {
+public enum NoOpCache implements Cache {
 
     INSTANCE;
 
@@ -38,26 +37,20 @@ public enum NoOpCache implements SdmxCache {
     }
 
     @Override
-    public SdmxRepository getRepository(@NonNull String key) {
-        Objects.requireNonNull(key);
+    public DataRepository getRepository(@NonNull String key) {
         return null;
     }
 
     @Override
-    public void putRepository(@NonNull String key, @NonNull SdmxRepository value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
+    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
     }
 
     @Override
-    public @Nullable SdmxWebMonitorReports getWebMonitorReports(@NonNull String key) {
-        Objects.requireNonNull(key);
+    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
         return null;
     }
 
     @Override
-    public void putWebMonitorReports(@NonNull String key, @NonNull SdmxWebMonitorReports value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
+    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
     }
 }

@@ -3,6 +3,8 @@ package internal.util.credentials;
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import nbbrd.io.Resource;
+import nbbrd.io.picocsv.Picocsv;
+import nbbrd.io.text.TextParser;
 import nbbrd.picocsv.Csv;
 
 import java.io.*;
@@ -48,7 +50,7 @@ public final class WinPasswordVault implements Closeable {
                 "  echo ($cred | Select-Object -Property Resource, UserName, Password | ConvertTo-Csv -NoTypeInformation)",
                 "}"
         );
-        return parse(result);
+        return CREDENTIAL_PARSER.parseChars(result);
     }
 
     public void invalidate(String resource) throws IOException {
@@ -69,22 +71,22 @@ public final class WinPasswordVault implements Closeable {
         }
     }
 
-    private static PasswordCredential parse(String csv) throws IOException {
-        try (Csv.Reader reader = Csv.Reader.of(Csv.Format.DEFAULT, Csv.ReaderOptions.DEFAULT, new StringReader(csv), Csv.DEFAULT_CHAR_BUFFER_SIZE)) {
-            if (reader.readLine() && reader.readLine()) {
+    private static final TextParser<PasswordCredential> CREDENTIAL_PARSER = Picocsv.Parser.builder(WinPasswordVault::parseCsv).build();
+
+    private static PasswordCredential parseCsv(Csv.Reader reader) throws IOException {
+        if (reader.readLine() && reader.readLine()) {
+            if (reader.readField()) {
+                String resource = reader.toString();
                 if (reader.readField()) {
-                    String resource = reader.toString();
+                    String userName = reader.toString();
                     if (reader.readField()) {
-                        String userName = reader.toString();
-                        if (reader.readField()) {
-                            String password = reader.toString();
-                            return new PasswordCredential(resource, userName, password.toCharArray());
-                        }
+                        String password = reader.toString();
+                        return new PasswordCredential(resource, userName, password.toCharArray());
                     }
                 }
             }
-            return null;
         }
+        throw new IOException("Invalid content");
     }
 
     private static String[] loadCode() throws IOException {

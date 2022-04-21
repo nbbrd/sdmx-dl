@@ -1,43 +1,29 @@
 package internal.sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @lombok.experimental.UtilityClass
 public class Chars {
 
-    @NonNull
-    public static String emptyToDefault(@NonNull String input, @NonNull String defaultValue) {
+    public static @NonNull String emptyToDefault(@NonNull String input, @NonNull String defaultValue) {
         return input.isEmpty() ? defaultValue : input;
     }
 
-    @NonNull
-    public static String nullOrEmptyToDefault(@Nullable String input, @NonNull String defaultValue) {
+    public static @NonNull String nullOrEmptyToDefault(@Nullable String input, @NonNull String defaultValue) {
         return input == null || input.isEmpty() ? defaultValue : input;
     }
 
-    public static String[] splitToArray(CharSequence text, char c) {
+    public static @NonNull String[] splitToArray(@NonNull String text, char c) {
         String regex = (isRegexMeta(c) ? "\\" : "") + c;
-        return text.toString().split(regex, -1);
+        return text.split(regex, -1);
     }
 
-    public static boolean contains(CharSequence text, char c) {
-        return indexOf(text, c) != NOT_FOUND;
+    public static boolean contains(@NonNull String text, char c) {
+        return text.indexOf(c) != NOT_FOUND;
     }
 
-    public static int indexOf(CharSequence text, char c) {
-        if (text instanceof String) {
-            return ((String) text).indexOf(c);
-        }
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == c) {
-                return i;
-            }
-        }
-        return NOT_FOUND;
-    }
-
-    public static String join(char delimiter, CharSequence... elements) {
+    public static @NonNull String join(char delimiter, @NonNull String[] elements) {
         if (elements.length == 0) {
             return "";
         }

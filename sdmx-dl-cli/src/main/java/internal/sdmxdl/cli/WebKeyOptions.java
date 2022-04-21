@@ -17,13 +17,12 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.DataFilter;
+import sdmxdl.DataDetail;
+import sdmxdl.DataSet;
 import sdmxdl.Key;
-import sdmxdl.Series;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.Collection;
 
 /**
  * @author Philippe Charles
@@ -40,7 +39,7 @@ public class WebKeyOptions extends WebFlowOptions {
     )
     private Key key;
 
-    public Collection<Series> loadSeries(SdmxWebManager manager, DataFilter filter) throws IOException {
-        return loadSeries(manager, getKey(), filter);
+    public DataSet loadSeries(SdmxWebManager manager, DataDetail detail) throws IOException {
+        return loadSeries(manager, getKey(), detail);
     }
 }

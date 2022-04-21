@@ -22,7 +22,7 @@ import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.web.spi.SdmxWebDriver;
+import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,15 +46,15 @@ public final class ListDriversCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<SdmxWebDriver> getTable() {
+    private CsvTable<WebDriver> getTable() {
         return CsvTable
-                .builderOf(SdmxWebDriver.class)
-                .columnOf("Name", SdmxWebDriver::getName, Formatter.onString())
-                .columnOf("SupportedProperties", SdmxWebDriver::getSupportedProperties, CsvUtil.fromIterable(Formatter.onString(), ','))
+                .builderOf(WebDriver.class)
+                .columnOf("Name", WebDriver::getName, Formatter.onString())
+                .columnOf("SupportedProperties", WebDriver::getSupportedProperties, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .build();
     }
 
-    private List<SdmxWebDriver> getRows() throws IOException {
+    private List<WebDriver> getRows() throws IOException {
         return web.loadManager().getDrivers();
     }
 }

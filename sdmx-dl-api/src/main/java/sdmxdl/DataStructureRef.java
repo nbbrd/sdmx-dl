@@ -17,9 +17,9 @@
 package sdmxdl;
 
 import lombok.AccessLevel;
+import lombok.NonNull;
+import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.StringValue;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -27,7 +27,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Philippe Charles
  */
-@StringValue
+@RepresentableAsString
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode(callSuper = false)
@@ -50,7 +50,7 @@ public class DataStructureRef extends ResourceRef<DataStructureRef> {
     @StaticFactoryMethod
     @NonNull
     public static DataStructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return parse(input, DataStructureRef::new);
+        return create(input, DataStructureRef::new);
     }
 
     @StaticFactoryMethod

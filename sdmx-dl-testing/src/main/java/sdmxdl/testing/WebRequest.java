@@ -17,9 +17,8 @@
 package sdmxdl.testing;
 
 import org.checkerframework.checker.index.qual.NonNegative;
-import sdmxdl.DataRef;
+import sdmxdl.DataQuery;
 import sdmxdl.DataflowRef;
-import sdmxdl.Key;
 
 /**
  * @author Philippe Charles
@@ -32,7 +31,10 @@ public class WebRequest {
     String source;
 
     @lombok.NonNull
-    DataRef dataRef;
+    DataflowRef flowRef;
+
+    @lombok.NonNull
+    DataQuery query;
 
     @NonNegative
     int minFlowCount;

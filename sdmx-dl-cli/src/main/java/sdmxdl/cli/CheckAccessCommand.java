@@ -21,15 +21,17 @@ import internal.sdmxdl.cli.WebSourcesOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import nbbrd.io.text.Formatter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.Connection;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -83,8 +85,11 @@ public final class CheckAccessCommand implements Callable<Void> {
     private static class Access {
 
         static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
-            try (final SdmxWebConnection conn = manager.getConnection(source)) {
-                return success(source, conn.ping());
+            try (Connection conn = manager.getConnection(source)) {
+                Clock clock = Clock.systemDefaultZone();
+                Instant start = clock.instant();
+                conn.testConnection();
+                return success(source, Duration.between(start, clock.instant()));
             } catch (IOException ex) {
                 return failure(source, ex);
             }

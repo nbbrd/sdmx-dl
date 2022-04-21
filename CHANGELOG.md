@@ -7,11 +7,45 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.6] - 2022-04-21
+
+This is the sixth beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+This release focuses on API refactoring to allow future improvements.
+It introduces a mechanism that validates the input parameters to give a better feedback in case of error.
+A few sources are also added.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+
 ### Added
+
+- ![API] Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
+- ![API] Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
+- ![SOURCE] Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
+- ![SOURCE] Add source from Statistics Luxembourg [#245](https://github.com/nbbrd/sdmx-dl/issues/245)
+- ![BUILD] Add Maven BOM
 
 ### Changed
 
+- ![API] Refactor data queries [#218](https://github.com/nbbrd/sdmx-dl/issues/218)
+- ![API] Refactor features discovery [#89](https://github.com/nbbrd/sdmx-dl/issues/89)
+- ![API] Simplify class hierarchy [#222](https://github.com/nbbrd/sdmx-dl/issues/222)
+- ![API] Simplify class naming scheme [#220](https://github.com/nbbrd/sdmx-dl/issues/220)
+- ![API] Refactor dialects handling [#227](https://github.com/nbbrd/sdmx-dl/issues/227)
+- ![API] Simplify module names
+- ![API] Refactor format and provider utilities
+- ![SOURCE] Enforce https on ISTAT source
+- ![PROVIDER] Change `FileDriver` to be optional
+
 ### Fixed
+
+- ![FORMAT] Fix missing series header in compact data [#172](https://github.com/nbbrd/sdmx-dl/issues/172)
+- ![PROVIDER] Fix input validation in Statistics Canada driver [#171](https://github.com/nbbrd/sdmx-dl/issues/171)
+- ![PROVIDER] Fix curl certificate revocation checks on missing/offline check lists
+- ![CLI] Fix Java package requirement in Homebrew distribution [#206](https://github.com/nbbrd/sdmx-dl/issues/206)
+- ![CLI] Fix use of reflection in native image
+- ![CLI] Fix missing resources in native image
 
 ## [3.0.0-beta.5] - 2021-11-23
 
@@ -21,9 +55,9 @@ sdmx-dl follows [semantic versioning](http://semver.org/).
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
 
-This release adds the support of most SDMX time formats.
-The execution time of CLI is reduced greatly by using a smarter cache and by avoiding to load unnecessary resources.
-A few sources are also added, including a random data generator that can be used for tests/demos.
+This release adds the support of most SDMX time formats. The execution time of CLI is reduced greatly by using a smarter
+cache and by avoiding to load unnecessary resources. A few sources are also added, including a random data generator
+that can be used for tests/demos.
 
 ### Added
 
@@ -42,7 +76,7 @@ A few sources are also added, including a random data generator that can be used
 - Refactor network API to avoid unnecessary resource loading
 - Invert default activation of auto-proxy option in CLI
 - Simplify name of auto-proxy option in CLI
-- Replace multiple parameters with `DataRef` in API 
+- Replace multiple parameters with `DataRef` in API
 - Change `SdmxWebSource#endpoint` type to URI
 - Change `SdmxWebSource#monitor` type to URI
 - Change cache default folder to `java.io.tmpdir/sdmx-dl/VERSION`
@@ -176,9 +210,17 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...HEAD
+[3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
+
+[API]: https://img.shields.io/badge/-API-068C09
+[BUILD]: https://img.shields.io/badge/-BUILD-e4e669
+[CLI]: https://img.shields.io/badge/-CLI-F813F7
+[FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
+[PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
+[SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A

@@ -90,7 +90,7 @@ class Curl {
         @lombok.Singular
         List<String> lines;
 
-        public static CurlVersion parse(BufferedReader reader) throws IOException {
+        public static CurlVersion parseText(BufferedReader reader) throws IOException {
             CurlVersion.Builder result = new CurlVersion.Builder();
             try {
                 reader.lines().forEach(result::line);
@@ -153,6 +153,11 @@ class Curl {
             return push("-m").push(fixNumericalParameter(seconds));
         }
 
+        @CurlMinVersion("7.70.0")
+        public CurlCommandBuilder sslRevokeBestEffort(boolean sslRevokeBestEffort) {
+            return sslRevokeBestEffort ? push("--ssl-revoke-best-effort") : this;
+        }
+
         public CurlCommandBuilder insecure(boolean insecure) {
             return insecure ? insecure() : this;
         }
@@ -175,6 +180,7 @@ class Curl {
             return push("-V");
         }
 
+        @CurlMinVersion("7.33.0")
         public CurlCommandBuilder http1_1() {
             return push("--http1.1");
         }
@@ -187,5 +193,9 @@ class Curl {
         private String fixNumericalParameter(float seconds) {
             return Integer.toString((int) seconds);
         }
+    }
+
+    private @interface CurlMinVersion {
+        String value();
     }
 }

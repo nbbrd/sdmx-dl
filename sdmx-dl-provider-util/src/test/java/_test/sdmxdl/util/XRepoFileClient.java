@@ -1,39 +1,40 @@
 package _test.sdmxdl.util;
 
-import sdmxdl.DataCursor;
-import sdmxdl.DataFilter;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.repo.SdmxRepository;
-import sdmxdl.util.file.SdmxFileClient;
-import sdmxdl.util.file.SdmxFileInfo;
+import lombok.NonNull;
+import sdmxdl.DataRepository;
+import sdmxdl.Series;
+import sdmxdl.format.MediaType;
+import sdmxdl.provider.DataRef;
+import sdmxdl.provider.file.SdmxFileClient;
+import sdmxdl.provider.file.SdmxFileInfo;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 @lombok.RequiredArgsConstructor
 public final class XRepoFileClient implements SdmxFileClient {
 
     @lombok.NonNull
-    private final SdmxRepository data;
+    private final DataRepository repository;
 
     @Override
-    public SdmxFileInfo decode() {
-        return infoOf(data);
+    public void testClient() {
     }
 
     @Override
-    public DataCursor loadData(SdmxFileInfo entry, DataflowRef flowRef, Key key, DataFilter filter) throws IOException {
-        Objects.requireNonNull(entry);
-        Objects.requireNonNull(flowRef);
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(filter);
-        return data.getDataSet(flowRef)
-                .map(dataSet -> dataSet.getDataCursor(key, filter))
+    public @NonNull SdmxFileInfo decode() {
+        return infoOf(repository);
+    }
+
+    @Override
+    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
+        return repository
+                .getDataSet(dataRef.getFlowRef())
+                .map(dataSet -> dataSet.getDataStream(dataRef.getQuery()))
                 .orElseThrow(IOException::new);
     }
 
-    public static SdmxFileInfo infoOf(SdmxRepository data) {
-        return SdmxFileInfo.of(data.getName(), data.getStructures().get(0));
+    public static SdmxFileInfo infoOf(DataRepository data) {
+        return SdmxFileInfo.of(MediaType.parse("repo/" + data.getName()), data.getStructures().get(0));
     }
 }

@@ -3,6 +3,7 @@ package internal.util.http.curl;
 import internal.util.http.HttpHeadersBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.EndOfProcessException;
+import nbbrd.io.sys.OS;
 import nbbrd.io.sys.ProcessReader;
 
 import java.io.BufferedReader;
@@ -86,11 +87,17 @@ final class CurlHttpURLConnection extends HttpURLConnection {
     }
 
     @VisibleForTesting
+    boolean isSchannel() {
+        return OS.NAME.equals(OS.Name.WINDOWS);
+    }
+
+    @VisibleForTesting
     String[] createCurlCommand(Path output) {
         return new CurlCommandBuilder()
                 .url(getURL())
                 .http1_1()
                 .silent()
+                .sslRevokeBestEffort(isSchannel())
                 .insecure(insecure)
                 .proxy(proxy)
                 .output(output)

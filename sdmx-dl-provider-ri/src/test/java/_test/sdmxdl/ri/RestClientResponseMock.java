@@ -1,10 +1,10 @@
 package _test.sdmxdl.ri;
 
 import internal.util.http.HttpResponse;
-import internal.util.http.MediaType;
+import sdmxdl.format.MediaType;
+import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;

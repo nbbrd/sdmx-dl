@@ -17,10 +17,10 @@
 package internal.util.http.curl;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import internal.util.http.HttpURLConnectionFactory;
 import internal.util.http.DefaultHttpClientTest;
+import internal.util.http.HttpURLConnectionFactory;
+import lombok.NonNull;
 import nbbrd.io.sys.ProcessReader;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -78,7 +78,7 @@ public class CurlRestClientTest extends DefaultHttpClientTest {
     public void testVersion() throws IOException {
         String[] versionCommand = new Curl.CurlCommandBuilder().version().build();
         try (BufferedReader reader = ProcessReader.newReader(versionCommand)) {
-            Curl.CurlVersion.parse(reader).getLines().forEach(System.out::println);
+            Curl.CurlVersion.parseText(reader).getLines().forEach(System.out::println);
         }
     }
 

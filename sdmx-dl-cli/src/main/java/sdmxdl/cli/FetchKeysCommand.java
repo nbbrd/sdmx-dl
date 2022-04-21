@@ -23,7 +23,7 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.DataFilter;
+import sdmxdl.DataDetail;
 import sdmxdl.Series;
 
 import java.io.IOException;
@@ -59,10 +59,10 @@ public final class FetchKeysCommand implements Callable<Void> {
     }
 
     private Stream<Series> getRows() throws IOException {
-        return sort.applySort(web.loadSeries(web.loadManager(), web.getKey(), getFilter()), WebFlowOptions.SERIES_BY_KEY);
+        return sort.applySort(web.loadSeries(web.loadManager(), web.getKey(), getDetail()).getData(), WebFlowOptions.SERIES_BY_KEY);
     }
 
-    private DataFilter getFilter() {
-        return DataFilter.SERIES_KEYS_ONLY;
+    private DataDetail getDetail() {
+        return DataDetail.SERIES_KEYS_ONLY;
     }
 }

@@ -16,9 +16,9 @@
  */
 package internal.sdmxld.connectors.drivers;
 
-import internal.sdmxdl.connectors.drivers.UisDriver;
+import internal.sdmxdl.provider.connectors.drivers.UisDriver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +27,6 @@ public class UisDriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new UisDriver());
+        WebDriverAssert.assertCompliance(new UisDriver());
     }
 }

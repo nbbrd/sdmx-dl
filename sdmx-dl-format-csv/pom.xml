@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.5</version>
+        <version>3.0.0-beta.6</version>
     </parent>
 
     <artifactId>sdmx-dl-format-csv</artifactId>
@@ -38,34 +38,31 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-api</artifactId>
+            <artifactId>sdmx-dl-format-util</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-io-util</groupId>
-            <artifactId>java-io-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.picocsv</groupId>
-            <artifactId>picocsv</artifactId>
+            <artifactId>java-io-picocsv</artifactId>
         </dependency>
 
         <!-- test only -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-tck</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-util</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -17,13 +17,16 @@
 package internal.sdmxld.connectors;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.samples.RepoSamples;
+import sdmxdl.DataStructure;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.net.HttpURLConnection;
 
-import static internal.sdmxdl.connectors.Connectors.*;
+import static internal.sdmxdl.provider.connectors.Connectors.*;
 import static it.bancaditalia.oss.sdmx.exceptions.SdmxExceptionFactory.createRestException;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static tests.sdmxdl.api.RepoSamples.*;
 
 /**
  * @author Philippe Charles
@@ -44,14 +47,14 @@ public class ConnectorsTest {
 
     @Test
     public void testStructureRef() {
-        assertThat(toStructureRef(fromStructureRef(RepoSamples.STRUCT_REF)))
-                .isEqualTo(RepoSamples.STRUCT_REF);
+        assertThat(toStructureRef(fromStructureRef(STRUCT_REF)))
+                .isEqualTo(STRUCT_REF);
     }
 
     @Test
     public void testDimension() {
-        assertThat(toDimension(fromDimension(RepoSamples.DIM1)))
-                .isEqualTo(RepoSamples.DIM1);
+        assertThat(toDimension(fromDimension(DIM1)))
+                .isEqualTo(DIM1);
     }
 
     @Test
@@ -62,7 +65,19 @@ public class ConnectorsTest {
 
     @Test
     public void testStructure() {
-        assertThat(toStructure(fromStructure(RepoSamples.STRUCT)))
-                .isEqualTo(RepoSamples.STRUCT);
+        assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)
+                .describedAs("Non-contiguous positions fail in connectors")
+                .isThrownBy(() -> toStructure(fromStructure(RepoSamples.STRUCT)));
+
+        DataStructure contiguousPositions = RepoSamples.STRUCT
+                .toBuilder()
+                .clearDimensions()
+                .dimension(DIM1)
+                .dimension(DIM2.toBuilder().position(2).build())
+                .dimension(DIM3.toBuilder().position(3).build())
+                .build();
+
+        assertThat(toStructure(fromStructure(contiguousPositions)))
+                .isEqualTo(contiguousPositions);
     }
 }

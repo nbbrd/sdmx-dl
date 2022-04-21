@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.xml.XmlWebSource;
+import sdmxdl.format.xml.XmlWebSource;
 
 import java.io.File;
 import java.io.IOException;

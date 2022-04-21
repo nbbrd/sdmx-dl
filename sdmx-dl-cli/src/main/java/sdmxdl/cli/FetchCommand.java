@@ -17,6 +17,7 @@
 package sdmxdl.cli;
 
 import picocli.CommandLine;
+import sdmxdl.cli.experimental.FetchExtraCommand;
 
 import java.util.concurrent.Callable;
 

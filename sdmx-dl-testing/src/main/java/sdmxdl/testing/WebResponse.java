@@ -16,14 +16,15 @@
  */
 package sdmxdl.testing;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.*;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.Connection;
+import sdmxdl.DataStructure;
+import sdmxdl.Dataflow;
+import sdmxdl.Series;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
 
@@ -63,13 +64,13 @@ public class WebResponse {
                 .request(request)
                 .source(manager.getSources().get(request.getSource()));
 
-        try (SdmxWebConnection conn = manager.getConnection(request.getSource())) {
+        try (Connection conn = manager.getConnection(request.getSource())) {
             result
                     .flows(conn.getFlows())
-                    .flow(conn.getFlow(request.getDataRef().getFlowRef()))
-                    .structure(conn.getStructure(request.getDataRef().getFlowRef()))
-                    .data(conn.getData(DataRef.of(request.getDataRef().getFlowRef(), request.getDataRef().getKey(), DataFilter.FULL)));
-        } catch (IOException ex) {
+                    .flow(conn.getFlow(request.getFlowRef()))
+                    .structure(conn.getStructure(request.getFlowRef()))
+                    .data(conn.getData(request.getFlowRef(), request.getQuery()).getData());
+        } catch (Exception ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));
         }
@@ -77,7 +78,7 @@ public class WebResponse {
         return result.build();
     }
 
-    private static String toError(IOException ex) {
+    private static String toError(Exception ex) {
         StringBuilder sb = new StringBuilder();
         sb.append(ex.getClass().getSimpleName() + ": " + ex.getMessage());
         Throwable cause = ex.getCause();

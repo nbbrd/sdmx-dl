@@ -26,18 +26,18 @@ import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.*;
-import sdmxdl.csv.SdmxCsvFieldWriter;
-import sdmxdl.csv.SdmxPicocsvFormatter;
-import sdmxdl.repo.DataSet;
-import sdmxdl.web.SdmxWebConnection;
+import sdmxdl.format.csv.SdmxCsvFieldWriter;
+import sdmxdl.format.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.cli.ext.CsvUtil.DEFAULT_MAP_FORMATTER;
-import static sdmxdl.csv.SdmxCsvFields.*;
+import static sdmxdl.DataSet.toDataSet;
+import static sdmxdl.format.csv.SdmxCsvFields.*;
 
 /**
  * @author Philippe Charles
@@ -70,20 +70,19 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private void writeBody(Csv.Writer w) throws IOException {
-        try (SdmxWebConnection conn = web.loadManager().getConnection(web.getSource())) {
+        try (Connection conn = web.loadManager().getConnection(web.getSource())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
-            getBodyFormatter(dsd, format).format(getSortedSeries(conn, web), w);
+            getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, web), w);
         }
     }
 
     private static SdmxPicocsvFormatter getBodyFormatter(DataStructure dsd, ObsFormat format) {
         return SdmxPicocsvFormatter
                 .builder()
-                .dsd(dsd)
                 .ignoreHeader(true)
                 .fields(Arrays.asList(SERIESKEY, ATTRIBUTES, TIME_DIMENSION, OBS_VALUE))
                 .customFactory(ATTRIBUTES, dataSet -> SdmxCsvFieldWriter.onCompactObsAttributes(ATTRIBUTES, DEFAULT_MAP_FORMATTER))
-                .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format, dataSet)))
+                .customFactory(TIME_DIMENSION, dataSet -> SdmxCsvFieldWriter.onTimeDimension(dsd, getPeriodFormat(format)))
                 .customFactory(OBS_VALUE, dataSet -> SdmxCsvFieldWriter.onObsValue(OBS_VALUE, getValueFormat(format)))
                 .build();
     }
@@ -92,59 +91,20 @@ public final class FetchDataCommand implements Callable<Void> {
         return Formatter.onNumberFormat(format.newNumberFormat());
     }
 
-    private static Formatter<LocalDateTime> getPeriodFormat(ObsFormat format, DataSet dataSet) {
+    private static Formatter<LocalDateTime> getPeriodFormat(ObsFormat format) {
         return Formatter.onDateTimeFormatter(format.newDateTimeFormatter(true));
     }
 
-    private static DataSet getSortedSeries(SdmxWebConnection conn, WebKeyOptions web) throws IOException {
-        try (DataCursor cursor = conn.getDataCursor(DataRef.of(web.getFlow(), web.getKey(), getFilter()))) {
-            return DataSet
-                    .builder()
-                    .ref(web.getFlow())
-                    .key(web.getKey())
-                    .data(collectSeries(cursor, OBS_BY_PERIOD))
-                    .build();
+    private static DataSet getSortedSeries(Connection conn, WebKeyOptions web) throws IOException {
+        DataQuery query = DataQuery.of(web.getKey(), getDetail());
+        try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
+            return stream
+                    .sorted(WebFlowOptions.SERIES_BY_KEY)
+                    .collect(toDataSet(web.getFlow(), query));
         }
     }
 
-    private static DataFilter getFilter() {
-        return DataFilter.FULL;
+    private static DataDetail getDetail() {
+        return DataDetail.FULL;
     }
-
-    private static Collection<Series> collectSeries(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
-        SortedSet<Series> sortedSeries = new TreeSet<>(WebFlowOptions.SERIES_BY_KEY);
-        Series.Builder builder = Series.builder();
-        while (cursor.nextSeries()) {
-            sortedSeries.add(builder
-                    .clearMeta()
-                    .clearObs()
-                    .key(cursor.getSeriesKey())
-                    .freq(cursor.getSeriesFrequency())
-                    .meta(cursor.getSeriesAttributes())
-                    .obs(collectObs(cursor, obsComparator))
-                    .build()
-            );
-        }
-        return sortedSeries;
-    }
-
-    private static Collection<Obs> collectObs(DataCursor cursor, Comparator<Obs> obsComparator) throws IOException {
-        SortedSet<Obs> sortedObs = new TreeSet<>(obsComparator);
-        Obs.Builder builder = Obs.builder();
-        while (cursor.nextObs()) {
-            LocalDateTime period = cursor.getObsPeriod();
-            if (period != null) {
-                sortedObs.add(builder
-                        .clearMeta()
-                        .period(period)
-                        .value(cursor.getObsValue())
-                        .meta(cursor.getObsAttributes())
-                        .build()
-                );
-            }
-        }
-        return sortedObs;
-    }
-
-    private static final Comparator<Obs> OBS_BY_PERIOD = Comparator.comparing(Obs::getPeriod);
 }

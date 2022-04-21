@@ -16,9 +16,9 @@
  */
 package internal.sdmxld.connectors.drivers;
 
-import internal.sdmxdl.connectors.drivers.NbbDriver;
+import internal.sdmxdl.provider.connectors.drivers.NbbDriver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.tck.web.SdmxWebDriverAssert;
+import tests.sdmxdl.web.WebDriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +27,6 @@ public class NbbDriverTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebDriverAssert.assertCompliance(new NbbDriver());
+        WebDriverAssert.assertCompliance(new NbbDriver());
     }
 }
