@@ -1,10 +1,11 @@
-package internal.util.http.curl;
+package internal.http.curl;
 
-import internal.util.http.HttpHeadersBuilder;
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.sys.EndOfProcessException;
 import nbbrd.io.sys.OS;
 import nbbrd.io.sys.ProcessReader;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,29 +17,36 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.function.Consumer;
 
-import static internal.util.http.HttpConstants.hasProxy;
-import static internal.util.http.curl.Curl.*;
+import static internal.http.curl.Curl.*;
 
-@lombok.extern.java.Log
-final class CurlHttpURLConnection extends HttpURLConnection {
+public final class CurlHttpURLConnection extends HttpURLConnection {
+
+    public static @NonNull CurlHttpURLConnection of(@NonNull URL url, @NonNull Proxy proxy) {
+        return new CurlHttpURLConnection(url, proxy, false);
+    }
+
+    public static @NonNull CurlHttpURLConnection insecureForTestOnly(@NonNull URL url, @NonNull Proxy proxy) {
+        return new CurlHttpURLConnection(url, proxy, true);
+    }
 
     @lombok.NonNull
     private final Proxy proxy;
 
     private final boolean insecure;
 
+    private final Consumer<String[]> onExec = command -> {
+    };
+
     private Map<String, List<String>> headerFields = Collections.emptyMap();
 
     private Path body = null;
 
-    @VisibleForTesting
-    CurlHttpURLConnection(URL url, Proxy proxy, boolean insecure) {
+    private CurlHttpURLConnection(URL url, Proxy proxy, boolean insecure) {
         super(url);
         this.proxy = proxy;
         this.insecure = insecure;
@@ -46,7 +54,7 @@ final class CurlHttpURLConnection extends HttpURLConnection {
 
     @Override
     public boolean usingProxy() {
-        return hasProxy(proxy);
+        return Curl.hasProxy(proxy);
     }
 
     @Override
@@ -73,7 +81,7 @@ final class CurlHttpURLConnection extends HttpURLConnection {
 
     @Override
     public String getHeaderField(String name) {
-        return HttpHeadersBuilder.lastValueOrNull(headerFields, name);
+        return lastValueOrNull(headerFields, name);
     }
 
     @Override
@@ -109,9 +117,7 @@ final class CurlHttpURLConnection extends HttpURLConnection {
     }
 
     private CurlHead executeCurlCommand(String[] command) throws IOException {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine(Arrays.toString(command));
-        }
+        onExec.accept(command);
         try (BufferedReader reader = ProcessReader.newReader(command)) {
             return CurlHead.parseResponse(reader);
         } catch (EndOfProcessException ex) {
@@ -132,9 +138,14 @@ final class CurlHttpURLConnection extends HttpURLConnection {
 
     private static String getFailureReceivingNetworkDataMessage(Proxy proxy) {
         String result = "Failure in receiving network data.";
-        if (hasProxy(proxy)) {
+        if (Curl.hasProxy(proxy)) {
             result = "Unable to tunnel through proxy. " + result;
         }
         return result;
+    }
+
+    private static @Nullable String lastValueOrNull(@NonNull Map<String, List<String>> headers, @NonNull String name) {
+        List<String> header = headers.get(name);
+        return header != null && !header.isEmpty() ? header.get(header.size() - 1) : null;
     }
 }

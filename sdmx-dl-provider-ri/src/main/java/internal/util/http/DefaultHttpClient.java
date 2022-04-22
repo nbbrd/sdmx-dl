@@ -16,9 +16,11 @@
  */
 package internal.util.http;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import sdmxdl.format.MediaType;
+import sdmxdl.web.URLConnectionFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -39,14 +41,19 @@ import static java.util.Collections.emptyMap;
 /**
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
+@lombok.RequiredArgsConstructor
 public final class DefaultHttpClient implements HttpClient {
 
+    @lombok.Getter(value = AccessLevel.PRIVATE)
     @lombok.NonNull
     private final HttpContext context;
 
-    @lombok.NonNull
-    private final HttpURLConnectionFactory factory;
+    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final URLConnectionFactory lazyFactory = initURLConnectionFactory();
+
+    private URLConnectionFactory initURLConnectionFactory() {
+        return getContext().getUrlConnectionFactory().get();
+    }
 
     @Override
     public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
@@ -79,7 +86,7 @@ public final class DefaultHttpClient implements HttpClient {
     }
 
     private HttpURLConnection openConnection(HttpRequest request, AuthSchemeHelper requestScheme, Proxy proxy) throws IOException {
-        HttpURLConnection result = factory.openConnection(request.getQuery(), proxy);
+        HttpURLConnection result = (HttpURLConnection) getLazyFactory().openConnection(request.getQuery(), proxy);
         result.setReadTimeout(context.getReadTimeout());
         result.setConnectTimeout(context.getConnectTimeout());
 

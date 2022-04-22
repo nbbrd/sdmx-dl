@@ -30,11 +30,6 @@ module sdmxdl.provider.ri {
     provides sdmxdl.web.spi.WebAuthenticator with
             internal.sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
 
-    provides internal.util.http.HttpURLConnectionFactory with
-            internal.util.http.curl.CurlHttpURLConnectionFactory;
-
-    uses internal.util.http.HttpURLConnectionFactory;
-
     provides sdmxdl.web.spi.WebMonitoring with
             internal.sdmxdl.provider.ri.web.monitors.UpptimeMonitoring,
             internal.sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;

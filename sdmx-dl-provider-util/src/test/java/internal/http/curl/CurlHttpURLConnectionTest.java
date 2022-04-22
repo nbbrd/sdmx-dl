@@ -1,8 +1,8 @@
-package internal.util.http.curl;
+package internal.http.curl;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import internal.util.http.HttpHeadersBuilder;
 import nbbrd.io.sys.ProcessReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -40,7 +40,7 @@ public class CurlHttpURLConnectionTest {
         URL url = new URL("http://localhost");
         Proxy proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved("http://localhost", 123));
 
-        CurlHttpURLConnection conn = new CurlHttpURLConnection(url, proxy, false);
+        CurlHttpURLConnection conn = CurlHttpURLConnection.of(url, proxy);
         conn.setConnectTimeout(2000);
         conn.setReadTimeout(3000);
         conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
@@ -76,8 +76,8 @@ public class CurlHttpURLConnectionTest {
         String customErrorMessage = "Custom error message";
 
         wire.resetAll();
-        wire.stubFor(get(SAMPLE_URL)
-                .willReturn(aResponse()
+        wire.stubFor(WireMock.get(SAMPLE_URL)
+                .willReturn(WireMock.aResponse()
                         .withStatus(HttpsURLConnection.HTTP_INTERNAL_ERROR)
                         .withStatusMessage(customErrorMessage)
                         .withHeader("key", "value")
@@ -103,25 +103,25 @@ public class CurlHttpURLConnectionTest {
                     .satisfies(head -> {
                         assertThat(head.getCode()).isEqualTo(500);
                         assertThat(head.getMessage()).isEqualTo(customErrorMessage);
-                        assertThat(head.getHeaders()).containsAllEntriesOf(new HttpHeadersBuilder().put("key", "value").build());
+                        assertThat(head.getHeaders()).containsEntry("key", singletonList("value"));
                     });
         }
 
-        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        wire.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(SAMPLE_URL)));
     }
 
     @Test
     public void testDisconnect() throws IOException {
         wire.resetAll();
-        wire.stubFor(get(SAMPLE_URL)
-                .willReturn(aResponse()
+        wire.stubFor(WireMock.get(SAMPLE_URL)
+                .willReturn(WireMock.aResponse()
                         .withStatus(HttpsURLConnection.HTTP_OK)
                         .withStatusMessage("ok")
                         .withHeader("key", "value")
                         .withBody("hello world")
                 ));
 
-        CurlHttpURLConnection x = new CurlHttpURLConnection(wireURL(SAMPLE_URL), Proxy.NO_PROXY, true);
+        CurlHttpURLConnection x = CurlHttpURLConnection.insecureForTestOnly(wireURL(SAMPLE_URL), Proxy.NO_PROXY);
         x.setRequestMethod("GET");
         x.connect();
         x.disconnect();
@@ -129,7 +129,7 @@ public class CurlHttpURLConnectionTest {
                 .describedAs("Subsequent call to #disconnect() should not fail")
                 .doesNotThrowAnyException();
 
-        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+        wire.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(SAMPLE_URL)));
     }
 
     private URL wireURL(String path) throws MalformedURLException {

@@ -14,21 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.util.http.curl;
+package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import internal.util.http.DefaultHttpClientTest;
-import internal.util.http.HttpURLConnectionFactory;
-import lombok.NonNull;
-import nbbrd.io.sys.ProcessReader;
+import internal.http.curl.CurlHttpURLConnection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import sdmxdl.web.URLConnectionFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +31,8 @@ import java.util.stream.Collectors;
 public class CurlRestClientTest extends DefaultHttpClientTest {
 
     @Override
-    protected HttpURLConnectionFactory getURLConnectionFactory() {
-        return new InsecureCurlHttpURLConnectionFactory();
+    protected URLConnectionFactory getURLConnectionFactory() {
+        return CurlHttpURLConnection::insecureForTestOnly;
     }
 
     @Override
@@ -71,22 +64,5 @@ public class CurlRestClientTest extends DefaultHttpClientTest {
             return result.stream().filter(code -> code != 308).collect(Collectors.toList());
         }
         return result;
-    }
-
-    @Disabled
-    @Test
-    public void testVersion() throws IOException {
-        String[] versionCommand = new Curl.CurlCommandBuilder().version().build();
-        try (BufferedReader reader = ProcessReader.newReader(versionCommand)) {
-            Curl.CurlVersion.parseText(reader).getLines().forEach(System.out::println);
-        }
-    }
-
-    private static final class InsecureCurlHttpURLConnectionFactory implements HttpURLConnectionFactory {
-
-        @Override
-        public @NonNull HttpURLConnection openConnection(@NonNull URL url, @NonNull Proxy proxy) {
-            return new CurlHttpURLConnection(url, proxy, true);
-        }
     }
 }

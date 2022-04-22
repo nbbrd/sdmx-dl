@@ -1,6 +1,6 @@
-package internal.util.http.curl;
+package internal.http.curl;
 
-import internal.util.http.HttpHeadersBuilder;
+import lombok.NonNull;
 import nbbrd.design.BuilderPattern;
 
 import java.io.BufferedReader;
@@ -11,11 +11,9 @@ import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static internal.util.http.HttpConstants.hasProxy;
+import java.util.TreeMap;
 
 @lombok.experimental.UtilityClass
 class Curl {
@@ -35,8 +33,8 @@ class Curl {
         @lombok.Builder.Default
         String message = null;
 
-        @lombok.Builder.Default
-        Map<String, List<String>> headers = Collections.emptyMap();
+        @lombok.Singular
+        Map<String, List<String>> headers;
 
         public static CurlHead parseResponse(BufferedReader reader) throws IOException {
             CurlHead.Builder result = new Builder();
@@ -67,15 +65,19 @@ class Curl {
 
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#headers_2
         private static void parseHeaders(BufferedReader reader, CurlHead.Builder result) throws IOException {
-            HttpHeadersBuilder headers = new HttpHeadersBuilder();
+            Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             String line;
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 int index = line.indexOf(":");
                 if (index != -1) {
-                    headers.put(line.substring(0, index), line.substring(index + 1).trim());
+                    String key = line.substring(0, index);
+                    String value = line.substring(index + 1).trim();
+                    if (value != null && !value.isEmpty()) {
+                        headers.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
+                    }
                 }
             }
-            result.headers(headers.build());
+            result.headers(headers);
         }
 
         public static final class Builder {
@@ -171,8 +173,7 @@ class Curl {
         }
 
         public CurlCommandBuilder headers(Map<String, List<String>> headers) {
-            HttpHeadersBuilder.keyValues(headers)
-                    .forEach(header -> header(header.getKey(), header.getValue()));
+            headers.forEach((key, values) -> values.forEach(value -> header(key, value)));
             return this;
         }
 
@@ -197,5 +198,9 @@ class Curl {
 
     private @interface CurlMinVersion {
         String value();
+    }
+
+    static boolean hasProxy(@NonNull Proxy proxy) {
+        return !proxy.equals(Proxy.NO_PROXY);
     }
 }

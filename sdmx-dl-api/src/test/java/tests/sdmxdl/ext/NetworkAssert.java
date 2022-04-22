@@ -13,7 +13,7 @@ public class NetworkAssert {
 
     public void assertCompliance(SoftAssertions s, Network network) {
         s.assertThat(network.getHostnameVerifier()).isNotNull();
-        s.assertThat(network.getSslSocketFactory()).isNotNull();
+        s.assertThat(network.getSSLSocketFactory()).isNotNull();
         s.assertThat(network.getProxySelector()).isNotNull();
     }
 }

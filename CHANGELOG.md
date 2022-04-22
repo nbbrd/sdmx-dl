@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![API] Add URL connection factory in Network 
+
+### Changed
+
+- ![CLI] Use option instead of property to enable curl backend
+
+### Fixed
+
 ## [3.0.0-beta.6] - 2022-04-21
 
 This is the sixth beta release of **sdmx-dl**.   

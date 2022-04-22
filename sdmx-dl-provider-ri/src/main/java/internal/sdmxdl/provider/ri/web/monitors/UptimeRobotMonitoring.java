@@ -102,7 +102,7 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSslSocketFactory());
+            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSSLSocketFactory());
             ((HttpsURLConnection) conn).setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         }
 

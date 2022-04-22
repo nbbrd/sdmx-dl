@@ -205,7 +205,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setProxySelector(context.getNetwork().getProxySelector());
-        client.setSslSocketFactory(context.getNetwork().getSslSocketFactory());
+        client.setSslSocketFactory(context.getNetwork().getSSLSocketFactory());
         client.setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
         RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());

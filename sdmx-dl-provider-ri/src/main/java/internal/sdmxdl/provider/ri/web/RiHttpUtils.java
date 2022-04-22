@@ -81,7 +81,7 @@ public class RiHttpUtils {
     }
 
     public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
-        HttpClient result = new DefaultHttpClient(context, HttpURLConnectionFactoryLoader.get());
+        HttpClient result = new DefaultHttpClient(context);
         File dumpFile = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
         return dumpFile != null ? newDumpingClient(context, result, dumpFile) : result;
     }
@@ -98,8 +98,9 @@ public class RiHttpUtils {
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
                 .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(source.getProperties()))
                 .proxySelector(context.getNetwork()::getProxySelector)
-                .sslSocketFactory(context.getNetwork()::getSslSocketFactory)
+                .sslSocketFactory(context.getNetwork()::getSSLSocketFactory)
                 .hostnameVerifier(context.getNetwork()::getHostnameVerifier)
+                .urlConnectionFactory(context.getNetwork()::getURLConnectionFactory)
                 .listener(new RiHttpEventListener(source, context.getEventListener()))
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getEventListener()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))

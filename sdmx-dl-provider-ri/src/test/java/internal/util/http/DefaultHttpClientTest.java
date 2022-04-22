@@ -3,6 +3,7 @@ package internal.util.http;
 import org.junit.jupiter.api.Test;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.xml.XmlMediaTypes;
+import sdmxdl.web.URLConnectionFactory;
 
 import java.io.IOException;
 import java.net.ProxySelector;
@@ -17,13 +18,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class DefaultHttpClientTest extends HttpRestClientTest {
 
-    abstract protected HttpURLConnectionFactory getURLConnectionFactory();
+    abstract protected URLConnectionFactory getURLConnectionFactory();
 
     abstract protected boolean isHttpsURLConnectionSupported();
 
     @Override
     protected HttpClient getRestClient(HttpContext context) {
-        return new DefaultHttpClient(context, getURLConnectionFactory());
+        return new DefaultHttpClient(
+                context
+                        .toBuilder()
+                        .urlConnectionFactory(this::getURLConnectionFactory)
+                        .build()
+        );
     }
 
     @Test

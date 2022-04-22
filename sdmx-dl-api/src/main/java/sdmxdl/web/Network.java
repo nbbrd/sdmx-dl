@@ -11,9 +11,11 @@ public interface Network {
 
     @NonNull ProxySelector getProxySelector();
 
-    @NonNull SSLSocketFactory getSslSocketFactory();
+    @NonNull SSLSocketFactory getSSLSocketFactory();
 
     @NonNull HostnameVerifier getHostnameVerifier();
+
+    @NonNull URLConnectionFactory getURLConnectionFactory();
 
     static @NonNull Network getDefault() {
         return DefaultNetwork.INSTANCE;
