@@ -322,12 +322,15 @@
                             <!-- FIX: sdmx-dl: xml resources such as Checks.xml -->
                             <!-- FIX: sdmx-dl: ps1 resources such as WinPasswordVault.ps1 -->
                             <!-- FIX: sdmx-dl: properties resources such as pom.properties -->
+                            <!-- FIX: sdmx-dl: some Windows charsets are not included by default -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http
                                 --enable-https
                                 --report-unsupported-elements-at-runtime
                                 -H:IncludeResources=.*\.(xml|ps1|properties)$
+                                -H:+AddAllCharsets
+                                -H:+TraceSecurityServices
                             </buildArgs>
                         </configuration>
                     </plugin>

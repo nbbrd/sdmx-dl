@@ -17,6 +17,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![CLI] Fix missing charsets in native image
+- ![CLI] Fix registration of system SSL in native image
+
 ## [3.0.0-beta.6] - 2022-04-21
 
 This is the sixth beta release of **sdmx-dl**.   
