@@ -21,7 +21,8 @@ public class NetworkOptions {
 
     @CommandLine.Option(
             names = "--curl-backend",
-            defaultValue = "false"
+            defaultValue = "false",
+            descriptionKey = "cli.sdmx.curlBackend"
     )
     private boolean curlBackend;
 
