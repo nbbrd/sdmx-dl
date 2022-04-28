@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![CLI] Use option instead of property to enable curl backend
 - ![CLI] Remove cache folder option
+- ![CLI] Replace position column with index column in list-concepts command
 
 ### Fixed
 

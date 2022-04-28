@@ -21,6 +21,7 @@ import internal.sdmxdl.cli.WebFlowOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Attribute;
 import sdmxdl.Component;
@@ -29,8 +30,10 @@ import sdmxdl.Dimension;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -54,37 +57,47 @@ public final class ListConceptsCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Component> getTable() {
+    private CsvTable<IndexedComponent> getTable() {
         return CsvTable
-                .builderOf(Component.class)
-                .columnOf("Concept", Component::getId, Formatter.onString())
-                .columnOf("Label", Component::getLabel, Formatter.onString())
-                .columnOf("Type", Component::getClass, ListConceptsCommand::getTypeName)
-                .columnOf("Coded", Component::isCoded, Formatter.onBoolean())
-                .columnOf("Position", ListConceptsCommand::getPositionOrNull, Formatter.onInteger())
+                .builderOf(IndexedComponent.class)
+                .columnOf("Concept", IndexedComponent::getId, Formatter.onString())
+                .columnOf("Label", IndexedComponent::getLabel, Formatter.onString())
+                .columnOf("Type", IndexedComponent::getTypeName, Formatter.onString())
+                .columnOf("Coded", IndexedComponent::isCoded, Formatter.onBoolean())
+                .columnOf("Index", IndexedComponent::getIndexOrNull, Formatter.onInteger())
                 .build();
     }
 
-    private Stream<Component> getRows() throws IOException {
+    private Stream<IndexedComponent> getRows() throws IOException {
         DataStructure dsd = web.loadStructure(web.loadManager());
         return Stream.concat(getDimensions(dsd), getAttributes(dsd));
     }
 
-    private Stream<Dimension> getDimensions(DataStructure dsd) {
-        return dsd.getDimensions().stream();
+    private Stream<IndexedComponent> getDimensions(DataStructure dsd) {
+        List<Dimension> dimensions = dsd.getDimensionList();
+        return IntStream
+                .range(0, dimensions.size())
+                .mapToObj(i -> new IndexedComponent(i, dimensions.get(i)));
     }
 
-    private Stream<Attribute> getAttributes(DataStructure dsd) {
-        return sort.applySort(dsd.getAttributes(), BY_ID);
-    }
-
-    private static String getTypeName(Class<? extends Component> o) {
-        return o.getSimpleName().toLowerCase(Locale.ROOT);
-    }
-
-    private static Integer getPositionOrNull(Component o) {
-        return o instanceof Dimension ? ((Dimension) o).getPosition() : null;
+    private Stream<IndexedComponent> getAttributes(DataStructure dsd) {
+        return sort.applySort(dsd.getAttributes(), BY_ID).map(attribute -> new IndexedComponent(null, attribute));
     }
 
     private static final Comparator<Attribute> BY_ID = Comparator.comparing(Attribute::getId);
+
+    @lombok.Value
+    private static class IndexedComponent {
+
+        @Nullable
+        Integer indexOrNull;
+
+        @lombok.NonNull
+        @lombok.experimental.Delegate
+        Component component;
+
+        String getTypeName() {
+            return component.getClass().getSimpleName().toLowerCase(Locale.ROOT);
+        }
+    }
 }

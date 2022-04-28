@@ -43,8 +43,8 @@ public class ListConceptsCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Concept,Label,Type,Coded,Position", atIndex(0))
-                .contains("FREQ,Frequency,dimension,true,1", atIndex(1))
+                .contains("Concept,Label,Type,Coded,Index", atIndex(0))
+                .contains("FREQ,Frequency,dimension,true,0", atIndex(1))
                 .contains("TITLE_COMPL,Title complement,attribute,false,", atIndex(18))
                 .hasSize(19);
     }
