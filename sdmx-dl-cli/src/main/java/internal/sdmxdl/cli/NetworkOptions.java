@@ -20,11 +20,11 @@ public class NetworkOptions {
     private boolean dummyNetworkOption;
 
     @CommandLine.Option(
-            names = "--curl-backend",
+            names = "--curl",
             defaultValue = "false",
-            descriptionKey = "cli.sdmx.curlBackend"
+            descriptionKey = "cli.sdmx.curl"
     )
-    private boolean curlBackend;
+    private boolean curl;
 
     @CommandLine.ArgGroup(validate = false)
     private CacheOptions cacheOptions = new CacheOptions();
@@ -39,6 +39,6 @@ public class NetworkOptions {
     private AuthOptions authOptions = new AuthOptions();
 
     public URLConnectionFactory getURLConnectionFactory() {
-        return isCurlBackend() ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
+        return isCurl() ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
     }
 }

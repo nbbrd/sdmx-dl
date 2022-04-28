@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - ![CLI] Use option instead of property to enable curl backend
+- ![CLI] Remove cache folder option
 
 ### Fixed
 

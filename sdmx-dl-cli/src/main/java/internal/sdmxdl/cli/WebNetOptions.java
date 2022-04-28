@@ -109,8 +109,8 @@ public class WebNetOptions extends WebOptions {
                 .builder()
                 .repositoryFormat(getRepositoryFormat(cacheOptions))
                 .monitorFormat(getMonitorFormat(cacheOptions));
-        if (cacheOptions.getCache() != null) {
-            result.root(cacheOptions.getCache().toPath());
+        if (cacheOptions.getCacheFolder() != null) {
+            result.root(cacheOptions.getCacheFolder().toPath());
         }
         if (verboseOptions.isVerbose()) {
             result.onIOException((msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex));
