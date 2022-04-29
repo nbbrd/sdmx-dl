@@ -65,11 +65,11 @@ public class WebOptions {
     private boolean noLog;
 
     @CommandLine.Option(
-            names = {"--stackTrace"},
+            names = {"--debug"},
             defaultValue = "false",
             hidden = true
     )
-    private boolean stackTrace;
+    private boolean debug;
 
     public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()

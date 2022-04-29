@@ -10,12 +10,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add URL connection factory in Network 
+- ![CLI] Add `list/availability` command
 
 ### Changed
 
 - ![CLI] Use option instead of property to enable curl backend
 - ![CLI] Remove cache folder option
-- ![CLI] Replace position column with index column in list-concepts command
+- ![CLI] Replace position column with index column in `list/concepts` command
 
 ### Fixed
 

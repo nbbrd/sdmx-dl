@@ -46,6 +46,6 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
     }
 
     private boolean isStackTraceRequired(CommandLine.ParseResult parseResult) {
-        return parseResult.hasMatchedOption("--stackTrace");
+        return parseResult.hasMatchedOption("--debug");
     }
 }

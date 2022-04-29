@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
                 ListFlowsCommand.class,
                 ListConceptsCommand.class,
                 ListCodesCommand.class,
+                ListAvailabilityCommand.class,
                 ListFeaturesCommand.class,
                 ListDriversCommand.class
         }
