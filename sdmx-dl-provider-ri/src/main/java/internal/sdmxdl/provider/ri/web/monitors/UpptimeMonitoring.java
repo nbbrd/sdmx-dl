@@ -73,7 +73,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
                 .builder()
                 .source(summary.getName())
                 .status(parseStatus(summary.getStatus()))
-                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).map(Number::doubleValue).orElse(null))
+                .uptimeRatio(parseUptimeRatio(summary.getUptime()))
                 .averageResponseTime(summary.getTime())
                 .build();
     }
@@ -89,5 +89,12 @@ public final class UpptimeMonitoring implements WebMonitoring {
         }
     }
 
-    private static final @NonNull Parser<Number> NUMBER_PARSER = Parser.onNumberFormat(NumberFormat.getPercentInstance(Locale.ROOT));
+    private static Double parseUptimeRatio(String uptime) {
+        // onNumberFormat parser is NOT thread-safe!
+        return Parser
+                .onNumberFormat(NumberFormat.getPercentInstance(Locale.ROOT))
+                .parseValue(uptime)
+                .map(Number::doubleValue)
+                .orElse(null);
+    }
 }

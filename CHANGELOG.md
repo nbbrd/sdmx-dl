@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![PROVIDER] Fix uptime parsing on multi-thread environment
 - ![CLI] Fix missing charsets in native image
 - ![CLI] Fix registration of system SSL in native image
 
