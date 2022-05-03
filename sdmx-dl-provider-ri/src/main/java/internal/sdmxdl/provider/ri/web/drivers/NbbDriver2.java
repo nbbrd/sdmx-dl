@@ -16,20 +16,23 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
+import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.util.http.*;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
+import internal.util.http.URLQueryBuilder;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.MediaType;
+import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
 import sdmxdl.provider.web.RestDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;

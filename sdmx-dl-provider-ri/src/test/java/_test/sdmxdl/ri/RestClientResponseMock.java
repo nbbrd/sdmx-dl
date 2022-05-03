@@ -1,10 +1,10 @@
 package _test.sdmxdl.ri;
 
 import internal.util.http.HttpResponse;
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
+import sdmxdl.format.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;

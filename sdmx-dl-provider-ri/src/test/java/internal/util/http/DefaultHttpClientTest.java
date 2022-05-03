@@ -15,6 +15,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 public abstract class DefaultHttpClientTest extends HttpRestClientTest {
 
@@ -69,6 +70,39 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
         assertThat(proxySelectorCount).hasValue(1);
         assertThat(sslSocketFactoryCount).hasValue(isHttpsURLConnectionSupported() ? 1 : 0);
         assertThat(hostnameVerifierCount).hasValue(isHttpsURLConnectionSupported() ? 1 : 0);
+
+        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+    }
+
+    @Test
+    public void testDefaultResponse() throws IOException {
+        HttpContext context = HttpContext
+                .builder()
+                .proxySelector(ProxySelector::getDefault)
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
+                .build();
+        HttpClient x = getRestClient(context);
+
+        wire.resetAll();
+        wire.stubFor(get(SAMPLE_URL).willReturn(ok()));
+
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
+            assertThatIOException()
+                    .isThrownBy(response::getContentType)
+                    .withMessageContaining("Missing content-type in HTTP response header");
+        }
+
+        wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
+
+        wire.resetAll();
+        wire.stubFor(get(SAMPLE_URL).willReturn(okForContentType("/ / /", "body")));
+
+        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
+            assertThatIOException()
+                    .isThrownBy(response::getContentType)
+                    .withMessageContaining("Invalid content-type in HTTP response header");
+        }
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL)));
     }

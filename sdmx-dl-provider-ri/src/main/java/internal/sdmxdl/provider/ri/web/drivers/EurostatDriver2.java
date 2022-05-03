@@ -17,9 +17,9 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.util.http.*;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
@@ -31,15 +31,15 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.DataflowRef;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.MessageFooter;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
 import sdmxdl.provider.web.RestDriverSupport;
 import sdmxdl.provider.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
-import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.io.IOException;
 import java.io.InputStream;

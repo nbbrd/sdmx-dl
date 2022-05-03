@@ -42,6 +42,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import static sdmxdl.provider.web.SdmxWebProperty.*;
 
@@ -128,9 +129,9 @@ public class RiHttpUtils {
         }
 
         @Override
-        public void onSuccess(@NonNull MediaType mediaType) {
+        public void onSuccess(@NonNull Supplier<String> contentType) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format("Parsing '%s'", mediaType));
+                listener.accept(source, String.format("Parsing '%s' content-type", contentType.get()));
             }
         }
 

@@ -23,13 +23,13 @@ import internal.util.http.HttpResponseException;
 import lombok.NonNull;
 import nbbrd.io.Resource;
 import sdmxdl.*;
+import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
-import sdmxdl.format.ObsParser;
 import sdmxdl.provider.web.SdmxRestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.format.DataCursor;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.Closeable;

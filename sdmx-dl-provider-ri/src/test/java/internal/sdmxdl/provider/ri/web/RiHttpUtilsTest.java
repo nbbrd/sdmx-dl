@@ -2,9 +2,9 @@ package internal.sdmxdl.provider.ri.web;
 
 import internal.util.http.HttpEventListener;
 import internal.util.http.HttpRequest;
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import org.junit.jupiter.api.Test;
+import sdmxdl.format.MediaType;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
@@ -85,8 +85,8 @@ public class RiHttpUtilsTest {
         x.onEvent("hello");
         assertThat(events.pop()).containsExactly(new Event(source, "hello"));
 
-        x.onSuccess(MediaType.ANY_TYPE);
-        assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*'"));
+        x.onSuccess(MediaType.ANY_TYPE::toString);
+        assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*' content-type"));
 
         x.onOpen(request, NO_PROXY, NONE);
         assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost"));

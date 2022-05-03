@@ -77,7 +77,7 @@ public final class DefaultHttpClient implements HttpClient {
             case REDIRECTION:
                 return redirect(connection, request, redirects);
             case SUCCESSFUL:
-                return getBody(connection);
+                return getResponse(connection);
             case CLIENT_ERROR:
                 return recoverClientError(connection, request, redirects, requestScheme);
             default:
@@ -170,9 +170,9 @@ public final class DefaultHttpClient implements HttpClient {
         throw getError(connection);
     }
 
-    private HttpResponse getBody(HttpURLConnection connection) throws IOException {
+    private HttpResponse getResponse(HttpURLConnection connection) {
         DefaultResponse result = new DefaultResponse(connection, context.getDecoders());
-        context.getListener().onSuccess(result.getContentType());
+        context.getListener().onSuccess(result::httpContentTypeOrNull);
         return result;
     }
 
@@ -207,7 +207,7 @@ public final class DefaultHttpClient implements HttpClient {
             }
 
             @Override
-            boolean hasResponseHeader(HttpURLConnection http) throws IOException {
+            boolean hasResponseHeader(HttpURLConnection http) {
                 String value = http.getHeaderField(HTTP_AUTHENTICATE_HEADER);
                 return value != null && value.startsWith("Basic");
             }
@@ -268,16 +268,20 @@ public final class DefaultHttpClient implements HttpClient {
         @lombok.NonNull
         private final List<StreamDecoder> decoders;
 
+        String httpContentTypeOrNull() {
+            return conn.getHeaderField(HTTP_CONTENT_TYPE_HEADER);
+        }
+
         @Override
         public @NonNull MediaType getContentType() throws IOException {
-            String contentType = conn.getHeaderField(HTTP_CONTENT_TYPE_HEADER);
-            if (contentType == null) {
-                throw new IOException("Content type not known");
+            String contentTypeOrNull = httpContentTypeOrNull();
+            if (contentTypeOrNull == null) {
+                throw new IOException("Missing content-type in HTTP response header");
             }
             try {
-                return MediaType.parse(contentType);
+                return MediaType.parse(contentTypeOrNull);
             } catch (IllegalArgumentException ex) {
-                throw new IOException("Invalid content type '" + contentType + "'", ex);
+                throw new IOException("Invalid content-type in HTTP response header: '" + contentTypeOrNull + "'", ex);
             }
         }
 
