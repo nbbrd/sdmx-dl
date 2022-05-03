@@ -19,7 +19,7 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlows())
-                    .map(flows -> flows.size() < r.getRequest().getMinFlowCount())
+                    .map(flows -> !r.getRequest().getMinFlowCount().contains(flows.size()))
                     .orElse(false);
         }
     },
@@ -67,7 +67,7 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getStructure())
-                    .map(dsd -> dsd.getDimensions().size() != r.getRequest().getDimensionCount())
+                    .map(dsd -> !r.getRequest().getDimensionCount().contains(dsd.getDimensions().size()))
                     .orElse(false);
         }
     },
@@ -87,7 +87,7 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getData())
-                    .map(data -> data.size() < r.getRequest().getMinSeriesCount())
+                    .map(data -> !r.getRequest().getMinSeriesCount().contains(data.size()))
                     .orElse(false);
         }
     },
@@ -95,7 +95,7 @@ public enum WebRule implements Function<WebResponse, String> {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getData())
-                    .map(data -> getObsCount(data) < r.getRequest().getMinObsCount())
+                    .map(data -> !r.getRequest().getMinObsCount().contains(getObsCount(data)))
                     .orElse(false);
         }
     },

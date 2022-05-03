@@ -18,11 +18,11 @@ package sdmxdl.testing.xml;
 
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.index.qual.NonNegative;
 import sdmxdl.DataDetail;
 import sdmxdl.DataQuery;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
+import sdmxdl.testing.IntRange;
 import sdmxdl.testing.WebRequest;
 
 import javax.xml.stream.XMLStreamException;
@@ -60,6 +60,7 @@ public class XmlSourceQuery {
                 for (DataNode data : flow.getData()) {
                     result.add(WebRequest
                             .builder()
+                            .digest(data.getDigest())
                             .source(source.getName())
                             .flowRef(flow.getRef())
                             .query(DataQuery.of(data.getKey(), DataDetail.FULL))
@@ -94,7 +95,7 @@ public class XmlSourceQuery {
     private static SourceNode parseEndpoint(XMLStreamReader reader) throws XMLStreamException {
         SourceNode.Builder result = SourceNode.builder()
                 .name(reader.getAttributeValue(null, "name"))
-                .minFlowCount(Integer.parseInt(reader.getAttributeValue(null, "minFlows")));
+                .minFlowCount(parseRange(reader.getAttributeValue(null, "flowCount")));
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
@@ -118,16 +119,17 @@ public class XmlSourceQuery {
     private static FlowNode parseFlow(XMLStreamReader reader) throws XMLStreamException {
         FlowNode.Builder result = FlowNode.builder()
                 .ref(DataflowRef.parse(reader.getAttributeValue(null, "ref")))
-                .dimensionCount(Integer.parseInt(reader.getAttributeValue(null, "dims")));
+                .dimensionCount(parseRange(reader.getAttributeValue(null, "dimCount")));
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case "data":
                             result.data(DataNode.builder()
+                                    .digest(reader.getAttributeValue(null, "digest"))
                                     .key(Key.parse(reader.getAttributeValue(null, "key")))
-                                    .minSeriesCount(Integer.parseInt(reader.getAttributeValue(null, "minSeries")))
-                                    .minObsCount(Integer.parseInt(reader.getAttributeValue(null, "minObs")))
+                                    .minSeriesCount(parseRange(reader.getAttributeValue(null, "seriesCount")))
+                                    .minObsCount(parseRange(reader.getAttributeValue(null, "obsCount")))
                                     .build());
                             break;
                     }
@@ -143,6 +145,14 @@ public class XmlSourceQuery {
         return result.build();
     }
 
+    private static IntRange parseRange(CharSequence text) {
+        try {
+            return IntRange.parse(text);
+        } catch (IllegalArgumentException ex) {
+            return IntRange.all();
+        }
+    }
+
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     private static class SourceNode {
@@ -150,8 +160,8 @@ public class XmlSourceQuery {
         @lombok.NonNull
         String name;
 
-        @NonNegative
-        int minFlowCount;
+        @lombok.NonNull
+        IntRange minFlowCount;
 
         @lombok.Singular
         List<FlowNode> flowQueries;
@@ -164,8 +174,8 @@ public class XmlSourceQuery {
         @lombok.NonNull
         DataflowRef ref;
 
-        @NonNegative
-        int dimensionCount;
+        @lombok.NonNull
+        IntRange dimensionCount;
 
         @lombok.Singular(value = "data")
         List<DataNode> data;
@@ -175,13 +185,15 @@ public class XmlSourceQuery {
     @lombok.Builder(toBuilder = true)
     private static class DataNode {
 
+        String digest;
+
         @lombok.NonNull
         Key key;
 
-        @NonNegative
-        int minSeriesCount;
+        @lombok.NonNull
+        IntRange minSeriesCount;
 
-        @NonNegative
-        int minObsCount;
+        @lombok.NonNull
+        IntRange minObsCount;
     }
 }
