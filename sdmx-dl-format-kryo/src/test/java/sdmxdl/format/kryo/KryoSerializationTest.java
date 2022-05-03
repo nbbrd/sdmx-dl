@@ -12,6 +12,7 @@ import tests.sdmxdl.api.RepoSamples;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -37,7 +38,7 @@ public class KryoSerializationTest {
         MonitorReports reports = MonitorReports
                 .builder()
                 .uriScheme("abc")
-                .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
+                .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).webReport(new URL("http://localhost")).build())
                 .ttl(now, Duration.ofMillis(100))
                 .build();
 

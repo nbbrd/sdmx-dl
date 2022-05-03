@@ -16,11 +16,11 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebMonitoring;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 @ServiceProvider
 public final class UpptimeMonitoring implements WebMonitoring {
@@ -53,28 +53,23 @@ public final class UpptimeMonitoring implements WebMonitoring {
                 .orElseThrow(IOException::new);
     }
 
-    private MonitorReports createReports(HttpClient client, UpptimeId id, Clock clock) throws IOException {
-        return MonitorReports
-                .builder()
-                .uriScheme(getUriScheme())
-                .reports(
-                        UpptimeSummary.request(client, id)
-                                .stream()
-                                .map(UpptimeMonitoring::getReport)
-                                .collect(Collectors.toList())
-                )
-                .ttl(clock.instant(), Duration.ofMinutes(5))
-                .build();
+    private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {
+        MonitorReports.Builder result = MonitorReports.builder().uriScheme(getUriScheme());
+        for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURL())) {
+            result.report(getReport(summary, base.toBuilder().site(summary.getName()).build().toReportURL()));
+        }
+        return result.ttl(clock.instant(), Duration.ofMinutes(5)).build();
     }
 
     @VisibleForTesting
-    static MonitorReport getReport(UpptimeSummary summary) {
+    static MonitorReport getReport(UpptimeSummary summary, URL webReport) {
         return MonitorReport
                 .builder()
                 .source(summary.getName())
                 .status(parseStatus(summary.getStatus()))
                 .uptimeRatio(parseUptimeRatio(summary.getUptime()))
                 .averageResponseTime(summary.getTime())
+                .webReport(webReport)
                 .build();
     }
 

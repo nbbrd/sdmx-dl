@@ -10,6 +10,7 @@ import lombok.NonNull;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +29,8 @@ class UpptimeSummary {
         return Arrays.asList(GSON.fromJson(reader, UpptimeSummary[].class));
     }
 
-    static @NonNull List<UpptimeSummary> request(@NonNull HttpClient client, @NonNull UpptimeId id) throws IOException {
-        try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(id.toSummaryURL(), MEDIA_TYPES, ANY))) {
+    static @NonNull List<UpptimeSummary> request(@NonNull HttpClient client, @NonNull URL summaryURL) throws IOException {
+        try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(summaryURL, MEDIA_TYPES, ANY))) {
             try (Reader reader = response.getBodyAsReader()) {
                 return parseAll(reader);
             }

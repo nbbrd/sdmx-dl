@@ -41,8 +41,8 @@ public class CheckStatusCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Source,Status,UptimeRatio,AverageResponseTime,ErrorMessage", atIndex(0))
-                .contains("sample,UNKNOWN,,,No monitor defined", atIndex(1))
+                .contains("Source,Status,UptimeRatio,AverageResponseTime,ErrorMessage,WebReport", atIndex(0))
+                .contains("sample,UNKNOWN,,,No monitor defined,", atIndex(1))
                 .hasSize(2);
     }
 }

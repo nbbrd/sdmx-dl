@@ -33,6 +33,7 @@ import sdmxdl.web.MonitorStatus;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -144,6 +145,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
         result.register(Instant.class, new TimeSerializers.InstantSerializer());
         result.register(HashSet.class, new CollectionSerializer());
+        result.register(URL.class, new DefaultSerializers.URLSerializer());
 
         return result;
     }
@@ -483,6 +485,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getStatus());
             kryo.writeObjectOrNull(output, t.getUptimeRatio(), Double.class);
             kryo.writeObjectOrNull(output, t.getAverageResponseTime(), Long.class);
+            kryo.writeObjectOrNull(output, t.getWebReport(), URL.class);
         }
 
         @Override
@@ -493,6 +496,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .status(kryo.readObject(input, MonitorStatus.class))
                     .uptimeRatio(kryo.readObjectOrNull(input, Double.class))
                     .averageResponseTime(kryo.readObjectOrNull(input, Long.class))
+                    .webReport(kryo.readObjectOrNull(input, URL.class))
                     .build();
         }
     }

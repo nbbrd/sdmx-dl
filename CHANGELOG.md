@@ -10,7 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add URL connection factory in Network 
+- ![API] Add `webReport` field in `MonitorReport`
 - ![CLI] Add `list/availability` command
+- ![CLI] Add `WebReport` column in `check/status` command
 
 ### Changed
 

@@ -2,6 +2,8 @@ package sdmxdl.web;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.net.URL;
+
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 public class MonitorReport {
@@ -20,4 +22,8 @@ public class MonitorReport {
     @Nullable
     @lombok.Builder.Default
     Long averageResponseTime = null;
+
+    @Nullable
+    @lombok.Builder.Default
+    URL webReport = null;
 }
