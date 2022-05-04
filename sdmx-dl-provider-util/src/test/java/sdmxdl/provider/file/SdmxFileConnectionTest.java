@@ -26,12 +26,12 @@ import java.io.IOException;
 /**
  * @author Philippe Charles
  */
-public class SdmxFileConnectionImplTest {
+public class SdmxFileConnectionTest {
 
     @Test
     public void testCompliance() throws IOException {
         ConnectionAssert.assertCompliance(
-                () -> new FileConnectionImpl(new XRepoFileClient(RepoSamples.REPO), RepoSamples.FLOW),
+                () -> new FileConnection(new XRepoFileClient(RepoSamples.REPO), RepoSamples.FLOW),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

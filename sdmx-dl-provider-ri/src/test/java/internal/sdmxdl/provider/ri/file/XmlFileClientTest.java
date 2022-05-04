@@ -22,7 +22,7 @@ import sdmxdl.*;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.file.FileConnectionImpl;
+import sdmxdl.provider.file.FileConnection;
 import sdmxdl.provider.file.SdmxFileClient;
 import sdmxdl.provider.file.SdmxFileInfo;
 import tests.sdmxdl.api.ConnectionAssert;
@@ -81,7 +81,7 @@ public class XmlFileClientTest {
         }
 
         ConnectionAssert.assertCompliance(
-                () -> new FileConnectionImpl(x, DATAFLOW),
+                () -> new FileConnection(x, DATAFLOW),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(source.asDataflowRef())

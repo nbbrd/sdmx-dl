@@ -65,7 +65,7 @@ public final class RngDriver implements WebDriver {
 
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
-        return new RngWebConnection(source.getId(), config);
+        return new RngConnection(source.getId(), config);
     }
 
     @Override
@@ -126,7 +126,7 @@ public final class RngDriver implements WebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static class RngWebConnection implements Connection {
+    private static final class RngConnection implements Connection {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";

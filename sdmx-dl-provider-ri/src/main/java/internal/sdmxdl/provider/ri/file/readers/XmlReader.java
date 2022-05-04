@@ -11,7 +11,7 @@ import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 import sdmxdl.provider.file.CachedFileClient;
-import sdmxdl.provider.file.FileConnectionImpl;
+import sdmxdl.provider.file.FileConnection;
 import sdmxdl.provider.file.SdmxFileClient;
 import sdmxdl.format.ObsParser;
 
@@ -32,7 +32,7 @@ public class XmlReader implements FileReader {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }
-        return new FileConnectionImpl(getClient(source, context), getDataflow(source));
+        return new FileConnection(getClient(source, context), getDataflow(source));
     }
 
     private boolean isXmlFileName(File file) {

@@ -35,7 +35,7 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public final class FileConnectionImpl implements Connection {
+public final class FileConnection implements Connection {
 
     @lombok.NonNull
     private final SdmxFileClient client;

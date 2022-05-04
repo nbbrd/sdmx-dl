@@ -207,7 +207,7 @@ public class FailsafeConnectionTest {
 
     private final FailsafeHandler failsafe = new FailsafeHandler();
 
-    private final FailsafeConnection valid = new FailsafeConnection(TestConnection.VALID, failsafe, failsafe);
-    private final FailsafeConnection failing = new FailsafeConnection(TestConnection.FAILING, failsafe, failsafe);
-    private final FailsafeConnection nul = new FailsafeConnection(TestConnection.NULL, failsafe, failsafe);
+    private final FailsafeConnection valid = new FailsafeConnection(TestConnection.TEST_VALID, failsafe, failsafe);
+    private final FailsafeConnection failing = new FailsafeConnection(TestConnection.TEST_FAILING, failsafe, failsafe);
+    private final FailsafeConnection nul = new FailsafeConnection(TestConnection.TEST_NULL, failsafe, failsafe);
 }

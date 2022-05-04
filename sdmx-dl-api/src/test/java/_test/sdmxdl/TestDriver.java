@@ -49,7 +49,7 @@ public enum TestDriver implements WebDriver {
 
         @Override
         public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
-            return TestConnection.VALID;
+            return TestConnection.TEST_VALID;
         }
 
         @Override
