@@ -110,7 +110,7 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @Override
-    public @NonNull String getName() throws IOException {
+    public @NonNull String getName() {
         return delegate.getName();
     }
 

@@ -72,7 +72,7 @@ public final class RestDriverSupport implements WebDriver {
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         getSourceValidator().checkValidity(source);
 
-        return RestConnection.of(getClient(source, context), dataflowRefValidator);
+        return RestConnection.of(getClient(source, context), dataflowRefValidator, false);
     }
 
     @Override

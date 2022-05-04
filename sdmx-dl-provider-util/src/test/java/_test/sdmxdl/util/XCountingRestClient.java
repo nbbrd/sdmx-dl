@@ -39,7 +39,7 @@ public final class XCountingRestClient implements SdmxRestClient {
     private final AtomicInteger count;
 
     @Override
-    public @NonNull String getName() throws IOException {
+    public @NonNull String getName() {
         return delegate.getName();
     }
 

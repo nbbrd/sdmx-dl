@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  */
 public interface SdmxRestClient {
 
-    @NonNull String getName() throws IOException;
+    @NonNull String getName();
 
     @NonNull List<Dataflow> getFlows() throws IOException;
 

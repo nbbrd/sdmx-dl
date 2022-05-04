@@ -32,8 +32,8 @@ public enum XFailingRestClient implements SdmxRestClient {
 
     EXPECTED {
         @Override
-        public @NonNull String getName() throws IOException {
-            throw new CustomIOException();
+        public @NonNull String getName() {
+            return "";
         }
 
         @Override
