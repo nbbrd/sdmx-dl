@@ -1,6 +1,7 @@
 package sdmxdl.provider.web;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.provider.Validator;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.provider.SdmxPatterns.FLOW_REF_PATTERN;

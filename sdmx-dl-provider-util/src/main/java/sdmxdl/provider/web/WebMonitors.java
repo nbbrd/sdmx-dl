@@ -3,7 +3,7 @@ package sdmxdl.provider.web;
 import java.net.URI;
 
 @lombok.experimental.UtilityClass
-public class SdmxWebMonitors {
+public class WebMonitors {
     
     public static void checkMonitor(URI monitor, String uriScheme) {
         if (monitor == null) {

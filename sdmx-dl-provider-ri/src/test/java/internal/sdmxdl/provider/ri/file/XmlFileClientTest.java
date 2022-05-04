@@ -23,8 +23,8 @@ import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.file.FileConnection;
-import sdmxdl.provider.file.SdmxFileClient;
-import sdmxdl.provider.file.SdmxFileInfo;
+import sdmxdl.provider.file.FileClient;
+import sdmxdl.provider.file.FileInfo;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -48,9 +48,9 @@ public class XmlFileClientTest {
         SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        SdmxFileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxManager.NO_OP_EVENT_LISTENER);
+        FileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxManager.NO_OP_EVENT_LISTENER);
 
-        SdmxFileInfo info = x.decode();
+        FileInfo info = x.decode();
 
         assertThat(info.getDataType()).isEqualTo(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
         assertThat(info.getStructure().getDimensions()).hasSize(7);

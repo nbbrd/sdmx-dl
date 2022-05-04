@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static internal.sdmxdl.provider.connectors.Connectors.*;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
-import static sdmxdl.provider.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
+import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
 
 /**
  * @author Philippe Charles

@@ -17,7 +17,6 @@
 package sdmxdl.provider.web;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-public interface SdmxRestClient {
+public interface RestClient {
 
     @NonNull String getName();
 
@@ -43,8 +42,6 @@ public interface SdmxRestClient {
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
     boolean isDetailSupported() throws IOException;
-
-    @Nullable DataStructureRef peekStructureRef(@NonNull DataflowRef ref) throws IOException;
 
     void testClient() throws IOException;
 }

@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
+import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -27,7 +28,7 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 import java.util.Collection;
 
-import static sdmxdl.provider.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -44,7 +45,7 @@ public final class RestDriverSupport implements WebDriver {
     private final int rank = UNKNOWN;
 
     @lombok.NonNull
-    private final SdmxRestClientSupplier client;
+    private final RestClientSupplier client;
 
     @lombok.Singular
     private final Collection<SdmxWebSource> sources;
@@ -58,10 +59,10 @@ public final class RestDriverSupport implements WebDriver {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Validator<DataflowRef> dataflowRefValidator = SdmxValidators.DEFAULT_DATAFLOW_REF_VALIDATOR;
+    private final Validator<DataflowRef> dataflowRefValidator = WebValidators.DEFAULT_DATAFLOW_REF_VALIDATOR;
 
     @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(name);
+    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(name);
 
     @Override
     public boolean isAvailable() {
@@ -85,7 +86,7 @@ public final class RestDriverSupport implements WebDriver {
         return supportedProperties;
     }
 
-    private SdmxRestClient getClient(SdmxWebSource source, WebContext context) throws IOException {
+    private RestClient getClient(SdmxWebSource source, WebContext context) throws IOException {
         return CachedRestClient.of(
                 client.get(source, context),
                 context.getCache(),

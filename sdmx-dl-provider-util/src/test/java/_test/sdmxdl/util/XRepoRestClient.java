@@ -20,7 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-public final class XRepoRestClient implements SdmxRestClient {
+public final class XRepoRestClient implements RestClient {
 
     @lombok.NonNull
     private final DataRepository repository;
@@ -78,11 +78,6 @@ public final class XRepoRestClient implements SdmxRestClient {
     @Override
     public boolean isDetailSupported() {
         return true;
-    }
-
-    @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
-        return null;
     }
 
     @Override

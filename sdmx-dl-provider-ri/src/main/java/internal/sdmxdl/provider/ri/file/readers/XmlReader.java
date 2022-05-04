@@ -12,7 +12,7 @@ import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 import sdmxdl.provider.file.CachedFileClient;
 import sdmxdl.provider.file.FileConnection;
-import sdmxdl.provider.file.SdmxFileClient;
+import sdmxdl.provider.file.FileClient;
 import sdmxdl.format.ObsParser;
 
 import java.io.File;
@@ -39,8 +39,8 @@ public class XmlReader implements FileReader {
         return file.toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private SdmxFileClient getClient(SdmxFileSource source, FileContext context) throws IOException {
-        SdmxFileClient client = new XmlFileClient(
+    private FileClient getClient(SdmxFileSource source, FileContext context) throws IOException {
+        FileClient client = new XmlFileClient(
                 source,
                 context.getLanguages(),
                 new XmlDecoder(context.getEventListener()),

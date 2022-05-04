@@ -1,4 +1,4 @@
-package sdmxdl.provider.web;
+package sdmxdl.provider;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

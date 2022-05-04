@@ -27,7 +27,7 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public class RiRestClient implements SdmxRestClient {
+public class RiRestClient implements RestClient {
 
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
@@ -97,11 +97,6 @@ public class RiRestClient implements SdmxRestClient {
     @Override
     public boolean isDetailSupported() {
         return detailSupported;
-    }
-
-    @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
-        return queries.peekStructureRef(flowRef);
     }
 
     @Override

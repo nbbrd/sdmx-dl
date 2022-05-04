@@ -5,6 +5,7 @@ import sdmxdl.DataStructure;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.provider.SdmxPatterns;
+import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
 import static java.util.Arrays.asList;
 
 @lombok.experimental.UtilityClass
-public class SdmxValidators {
+public class WebValidators {
 
     public static final Validator<DataflowRef> DEFAULT_DATAFLOW_REF_VALIDATOR = dataflowRefOf(
             SdmxPatterns.AGENCY_ID_PATTERN,

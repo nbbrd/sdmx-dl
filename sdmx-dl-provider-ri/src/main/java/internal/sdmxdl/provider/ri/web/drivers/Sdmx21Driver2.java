@@ -22,7 +22,7 @@ import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.RestDriverSupport;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -30,8 +30,8 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
-import static sdmxdl.provider.web.SdmxWebProperty.DETAIL_SUPPORTED_PROPERTY;
-import static sdmxdl.provider.web.SdmxWebProperty.TRAILING_SLASH_REQUIRED_PROPERTY;
+import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
+import static sdmxdl.provider.web.WebProperties.TRAILING_SLASH_REQUIRED_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -266,7 +266,7 @@ public final class Sdmx21Driver2 implements WebDriver {
                     .build())
             .build();
 
-    private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return RiRestClient.of(
                 s, c,
                 Sdmx21RestQueries

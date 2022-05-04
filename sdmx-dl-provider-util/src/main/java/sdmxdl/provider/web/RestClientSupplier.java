@@ -7,7 +7,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 
 @FunctionalInterface
-public interface SdmxRestClientSupplier {
+public interface RestClientSupplier {
 
-    @NonNull SdmxRestClient get(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException;
+    @NonNull RestClient get(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException;
 }

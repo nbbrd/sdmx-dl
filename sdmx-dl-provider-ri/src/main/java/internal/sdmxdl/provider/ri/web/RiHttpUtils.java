@@ -29,7 +29,7 @@ import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.format.MediaType;
-import sdmxdl.provider.web.SdmxWebEvents;
+import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import static sdmxdl.provider.web.SdmxWebProperty.*;
+import static sdmxdl.provider.web.WebProperties.*;
 
 /**
  * @author Philippe Charles
@@ -120,7 +120,7 @@ public class RiHttpUtils {
         @Override
         public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                String message = SdmxWebEvents.onQuery(request.getQuery(), proxy);
+                String message = WebEvents.onQuery(request.getQuery(), proxy);
                 if (!HttpAuthScheme.NONE.equals(scheme)) {
                     message += " with auth '" + scheme.name() + "'";
                 }
@@ -138,7 +138,7 @@ public class RiHttpUtils {
         @Override
         public void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
+                listener.accept(source, WebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 

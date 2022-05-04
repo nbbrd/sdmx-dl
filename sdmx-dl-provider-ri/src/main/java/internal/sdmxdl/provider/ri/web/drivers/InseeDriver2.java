@@ -58,7 +58,7 @@ public final class InseeDriver2 implements WebDriver {
             .builder()
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
-            .client(InseeClient::new)
+            .client(InseeRestClient::new)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
@@ -96,9 +96,9 @@ public final class InseeDriver2 implements WebDriver {
     @SdmxFix(id = 5, category = MEDIA_TYPE, cause = "Default media type is compact instead of generic")
     private static final MediaType DATA_TYPE = XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21;
 
-    private final static class InseeClient extends RiRestClient {
+    private final static class InseeRestClient extends RiRestClient {
 
-        InseeClient(SdmxWebSource s, WebContext c) throws IOException {
+        InseeRestClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),

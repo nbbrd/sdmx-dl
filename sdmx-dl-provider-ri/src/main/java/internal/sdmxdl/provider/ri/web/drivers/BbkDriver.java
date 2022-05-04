@@ -53,7 +53,7 @@ public final class BbkDriver implements WebDriver {
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
-            .client(BbkClient::new)
+            .client(BbkRestClient::new)
             .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
@@ -68,9 +68,9 @@ public final class BbkDriver implements WebDriver {
             .build();
 
     @VisibleForTesting
-    static final class BbkClient extends RiRestClient {
+    static final class BbkRestClient extends RiRestClient {
 
-        BbkClient(SdmxWebSource s, WebContext c) throws IOException {
+        BbkRestClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),

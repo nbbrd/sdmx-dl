@@ -4,7 +4,7 @@ import java.net.Proxy;
 import java.net.URL;
 
 @lombok.experimental.UtilityClass
-public class SdmxWebEvents {
+public class WebEvents {
 
     public static String onQuery(URL url, Proxy proxy) {
         String result = "Querying " + url;

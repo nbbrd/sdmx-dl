@@ -19,6 +19,7 @@ package sdmxdl.provider.web;
 import _test.sdmxdl.util.XRepoRestClient;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
+import sdmxdl.provider.Validator;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
 

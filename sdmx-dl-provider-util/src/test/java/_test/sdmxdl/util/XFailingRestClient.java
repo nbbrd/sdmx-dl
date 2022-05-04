@@ -19,7 +19,7 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,9 +28,9 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-public enum XFailingRestClient implements SdmxRestClient {
+public enum XFailingRestClient implements RestClient {
 
-    EXPECTED {
+    TEST_EXPECTED {
         @Override
         public @NonNull String getName() {
             return "";
@@ -67,16 +67,11 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
-            throw new CustomIOException();
-        }
-
-        @Override
         public void testClient() throws IOException {
             throw new CustomIOException();
         }
     },
-    UNEXPECTED {
+    TEST_UNEXPECTED {
         @Override
         public @NonNull String getName() {
             throw new CustomRuntimeException();
@@ -113,16 +108,11 @@ public enum XFailingRestClient implements SdmxRestClient {
         }
 
         @Override
-        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
-            throw new CustomRuntimeException();
-        }
-
-        @Override
         public void testClient() {
             throw new CustomRuntimeException();
         }
     },
-    NULL {
+    TEST_NULL {
         @Override
         public @NonNull String getName() {
             return null;
@@ -156,11 +146,6 @@ public enum XFailingRestClient implements SdmxRestClient {
         @Override
         public boolean isDetailSupported() {
             return false;
-        }
-
-        @Override
-        public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
-            return null;
         }
 
         @Override

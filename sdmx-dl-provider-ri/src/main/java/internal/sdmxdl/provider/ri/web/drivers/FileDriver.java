@@ -10,8 +10,8 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.provider.web.SdmxValidators;
-import sdmxdl.provider.web.Validator;
+import sdmxdl.provider.web.WebValidators;
+import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -33,7 +33,7 @@ public final class FileDriver implements WebDriver {
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
-    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_FILE);
+    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_FILE);
 
     @Override
     public @NonNull String getName() {

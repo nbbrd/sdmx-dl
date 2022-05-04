@@ -30,8 +30,8 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.file.SdmxFileClient;
-import sdmxdl.provider.file.SdmxFileInfo;
+import sdmxdl.provider.file.FileClient;
+import sdmxdl.provider.file.FileInfo;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,7 +43,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public class XmlFileClient implements SdmxFileClient {
+public class XmlFileClient implements FileClient {
 
     @lombok.NonNull
     private final SdmxFileSource source;
@@ -71,12 +71,12 @@ public class XmlFileClient implements SdmxFileClient {
     }
 
     @Override
-    public @NonNull SdmxFileInfo decode() throws IOException {
+    public @NonNull FileInfo decode() throws IOException {
         return decoder.decode(source, languages);
     }
 
     @Override
-    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo info, @NonNull DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull FileInfo info, @NonNull DataRef dataRef) throws IOException {
         if (eventListener != SdmxManager.NO_OP_EVENT_LISTENER) {
             eventListener.accept(source, "Loading data from file '" + source.getData() + "'");
         }

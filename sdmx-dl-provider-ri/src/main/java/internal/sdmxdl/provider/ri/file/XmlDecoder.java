@@ -23,7 +23,7 @@ import sdmxdl.SdmxManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.xml.*;
-import sdmxdl.provider.file.SdmxFileInfo;
+import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,9 +39,9 @@ public final class XmlDecoder implements SdmxDecoder {
     private final BiConsumer<? super SdmxFileSource, ? super String> eventListener;
 
     @Override
-    public SdmxFileInfo decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
+    public FileInfo decode(SdmxFileSource source, LanguagePriorityList langs) throws IOException {
         MediaType type = probeDataType(source);
-        return SdmxFileInfo.of(type, loadStructure(source, langs, type));
+        return FileInfo.of(type, loadStructure(source, langs, type));
     }
 
     private MediaType probeDataType(SdmxFileSource source) throws IOException {

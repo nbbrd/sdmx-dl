@@ -7,7 +7,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.web.SdmxWebMonitors;
+import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
@@ -32,7 +32,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
 
     @Override
     public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        SdmxWebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+        WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 

@@ -25,12 +25,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Philippe Charles
  */
-public final class SdmxWebProperty {
-
-    private SdmxWebProperty() {
-        // static class
-    }
-
+@lombok.experimental.UtilityClass
+public class WebProperties {
+    
     /**
      * Defines the timeout value (in milliseconds) to be used when opening an
      * URL connection. A timeout of zero is interpreted as an infinite timeout.

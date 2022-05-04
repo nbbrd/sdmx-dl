@@ -8,8 +8,8 @@ import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
-import sdmxdl.provider.web.SdmxValidators;
-import sdmxdl.provider.web.Validator;
+import sdmxdl.provider.web.WebValidators;
+import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -42,7 +42,7 @@ public final class RngDriver implements WebDriver {
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enableRngDriver", false);
 
-    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_RNG);
+    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_RNG);
 
     @Override
     public @NonNull String getName() {

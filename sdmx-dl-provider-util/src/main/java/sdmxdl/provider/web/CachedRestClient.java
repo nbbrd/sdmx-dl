@@ -35,10 +35,10 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-final class CachedRestClient implements SdmxRestClient {
+final class CachedRestClient implements RestClient {
 
-    static @NonNull SdmxRestClient of(
-            @NonNull SdmxRestClient client, @NonNull Cache cache, long ttlInMillis,
+    static @NonNull RestClient of(
+            @NonNull RestClient client, @NonNull Cache cache, long ttlInMillis,
             @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
         return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
@@ -48,7 +48,7 @@ final class CachedRestClient implements SdmxRestClient {
     }
 
     @lombok.NonNull
-    private final SdmxRestClient delegate;
+    private final RestClient delegate;
 
     @lombok.NonNull
     private final Cache cache;
@@ -149,11 +149,6 @@ final class CachedRestClient implements SdmxRestClient {
     @Override
     public boolean isDetailSupported() throws IOException {
         return delegate.isDetailSupported();
-    }
-
-    @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
-        return delegate.peekStructureRef(flowRef);
     }
 
     @Override

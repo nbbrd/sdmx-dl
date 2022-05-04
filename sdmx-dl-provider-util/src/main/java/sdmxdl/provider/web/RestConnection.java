@@ -20,6 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Validator;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -36,7 +37,7 @@ import static sdmxdl.DataSet.toDataSet;
 final class RestConnection implements Connection {
 
     @lombok.NonNull
-    private final SdmxRestClient client;
+    private final RestClient client;
 
     @lombok.NonNull
     private final Validator<DataflowRef> dataflowRefValidator;
@@ -132,6 +133,6 @@ final class RestConnection implements Connection {
     }
 
     private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
-        SdmxValidators.onDataStructure(dsd).checkValidity(key);
+        WebValidators.onDataStructure(dsd).checkValidity(key);
     }
 }

@@ -20,7 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxValidators;
+import sdmxdl.provider.web.WebValidators;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -38,7 +38,7 @@ import static sdmxdl.DataSet.toDataSet;
 public final class FileConnection implements Connection {
 
     @lombok.NonNull
-    private final SdmxFileClient client;
+    private final FileClient client;
 
     @lombok.NonNull
     private final Dataflow dataflow;
@@ -83,7 +83,7 @@ public final class FileConnection implements Connection {
         checkState();
         checkFlowRef(flowRef);
 
-        SdmxFileInfo info = client.decode();
+        FileInfo info = client.decode();
         checkKey(query.getKey(), info);
 
         return client.loadData(info, DataRef.of(flowRef, query));
@@ -109,8 +109,8 @@ public final class FileConnection implements Connection {
         }
     }
 
-    private void checkKey(Key key, SdmxFileInfo info) throws IllegalArgumentException {
-        SdmxValidators.onDataStructure(info.getStructure()).checkValidity(key);
+    private void checkKey(Key key, FileInfo info) throws IllegalArgumentException {
+        WebValidators.onDataStructure(info.getStructure()).checkValidity(key);
     }
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {

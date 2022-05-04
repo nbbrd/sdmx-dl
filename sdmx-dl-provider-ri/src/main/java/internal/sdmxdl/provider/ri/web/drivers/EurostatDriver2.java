@@ -36,7 +36,7 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestDriverSupport;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -92,7 +92,7 @@ public final class EurostatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return new RiRestClient(
                 s.getId(),
                 s.getEndpoint().toURL(),

@@ -17,8 +17,8 @@ import sdmxdl.format.MediaType;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.TypedId;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.SdmxValidators;
-import sdmxdl.provider.web.Validator;
+import sdmxdl.provider.web.WebValidators;
+import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -47,15 +47,15 @@ import static internal.sdmxdl.provider.ri.web.RiHttpUtils.*;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.web.SdmxValidators.dataflowRefOf;
-import static sdmxdl.provider.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
+import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
 public final class StatCanDriver implements WebDriver {
 
     private static final String RI_STATCAN = "ri:statcan";
 
-    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_STATCAN);
+    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_STATCAN);
 
     @Override
     public @NonNull String getName() {

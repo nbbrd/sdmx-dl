@@ -58,8 +58,8 @@ public class CachedRestClientTest {
     private final String noDataId = TypedId.resolveURI(base, "noData", FLOW_REF.toString()).toString();
 
     private CachedRestClient getClient(CachingAssert.Context ctx) {
-        SdmxRestClient original = XRepoRestClient.of(RepoSamples.REPO);
-        SdmxRestClient counting = XCountingRestClient.of(original, ctx.getCount());
+        RestClient original = XRepoRestClient.of(RepoSamples.REPO);
+        RestClient counting = XCountingRestClient.of(original, ctx.getCount());
         return new CachedRestClient(counting, ctx.newCache(), base, ttl);
     }
 

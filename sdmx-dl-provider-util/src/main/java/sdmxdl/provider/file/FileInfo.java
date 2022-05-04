@@ -4,7 +4,7 @@ import sdmxdl.DataStructure;
 import sdmxdl.format.MediaType;
 
 @lombok.Value(staticConstructor = "of")
-public class SdmxFileInfo {
+public class FileInfo {
 
     MediaType dataType;
 

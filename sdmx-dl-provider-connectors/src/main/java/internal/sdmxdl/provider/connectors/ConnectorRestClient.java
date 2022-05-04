@@ -18,7 +18,6 @@ package internal.sdmxdl.provider.connectors;
 
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
-import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import it.bancaditalia.oss.sdmx.event.OpenEvent;
 import it.bancaditalia.oss.sdmx.event.RedirectionEvent;
 import it.bancaditalia.oss.sdmx.event.RestSdmxEvent;
@@ -30,9 +29,9 @@ import nbbrd.io.text.BaseProperty;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
-import sdmxdl.provider.web.SdmxRestClientSupplier;
-import sdmxdl.provider.web.SdmxWebEvents;
+import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestClientSupplier;
+import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
@@ -46,13 +45,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sdmxdl.provider.web.SdmxWebProperty.*;
+import static sdmxdl.provider.web.WebProperties.*;
 
 /**
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements SdmxRestClient {
+public final class ConnectorRestClient implements RestClient {
 
     @FunctionalInterface
     public interface SpecificSupplier {
@@ -68,7 +67,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
         RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
     }
 
-    public static @NonNull SdmxRestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
+    public static @NonNull RestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
@@ -81,7 +80,7 @@ public final class ConnectorRestClient implements SdmxRestClient {
         };
     }
 
-    public static @NonNull SdmxRestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
+    public static @NonNull RestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
@@ -168,11 +167,6 @@ public final class ConnectorRestClient implements SdmxRestClient {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef ref) {
-        return connector instanceof DotStat ? DataStructureRef.of(ref.getAgency(), ref.getId(), ref.getVersion()) : null;
-    }
-
-    @Override
     public void testClient() throws IOException {
         try {
             connector.getDataflows();
@@ -227,10 +221,10 @@ public final class ConnectorRestClient implements SdmxRestClient {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(source, SdmxWebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(source, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(source, SdmxWebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(source, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

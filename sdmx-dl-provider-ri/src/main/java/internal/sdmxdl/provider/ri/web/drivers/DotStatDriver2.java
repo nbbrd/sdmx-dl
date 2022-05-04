@@ -23,7 +23,7 @@ import internal.sdmxdl.provider.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestDriverSupport;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -95,7 +95,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return RiRestClient.of(s, c, new DotStatRestQueries(), new DotStatRestParsers(), false);
     }
 
