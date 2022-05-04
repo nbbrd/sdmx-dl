@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -81,6 +82,7 @@ public class CurlHttpURLConnectionTest {
                         .withStatus(HttpsURLConnection.HTTP_INTERNAL_ERROR)
                         .withStatusMessage(customErrorMessage)
                         .withHeader("key", "value")
+                        .withHeader("camelCaseKey", "a", "B")
                 ));
 
         Path dumpHeader = temp.resolve("dumpHeader.txt");
@@ -101,9 +103,12 @@ public class CurlHttpURLConnectionTest {
         try (BufferedReader reader = new BufferedReader(new StringReader(content))) {
             assertThat(Curl.CurlHead.parseResponse(reader))
                     .satisfies(head -> {
-                        assertThat(head.getCode()).isEqualTo(500);
-                        assertThat(head.getMessage()).isEqualTo(customErrorMessage);
-                        assertThat(head.getHeaders()).containsEntry("key", singletonList("value"));
+                        assertThat(head.getStatus())
+                                .isEqualTo(new Curl.Status(500, customErrorMessage));
+                        assertThat(head.getHeaders())
+                                .containsEntry("key", singletonList("value"))
+                                .containsEntry("camelCaseKey", asList("a", "B"))
+                                .containsKeys("camelCaseKey", "camelcasekey", "CAMELCASEKEY");
                     });
         }
 

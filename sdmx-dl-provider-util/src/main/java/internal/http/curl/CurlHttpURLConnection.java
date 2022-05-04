@@ -62,8 +62,8 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
         Path output = Files.createTempFile("body", ".tmp");
         String[] request = createCurlCommand(output);
         CurlHead responseHead = executeCurlCommand(request);
-        this.responseCode = responseHead.getCode();
-        this.responseMessage = responseHead.getMessage();
+        this.responseCode = responseHead.getStatus().getCode();
+        this.responseMessage = responseHead.getStatus().getMessage();
         this.headerFields = responseHead.getHeaders();
         this.body = output;
     }

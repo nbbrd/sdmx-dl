@@ -2,6 +2,7 @@ package internal.http.curl;
 
 import lombok.NonNull;
 import nbbrd.design.BuilderPattern;
+import nbbrd.design.VisibleForTesting;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,10 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @lombok.experimental.UtilityClass
 class Curl {
@@ -23,61 +21,67 @@ class Curl {
     public static final int CURL_OPERATION_TIMEOUT = 28;
     public static final int CURL_FAILURE_RECEIVING = 56;
 
+    @VisibleForTesting
     @lombok.Value
-    @lombok.Builder
+    public static class Status {
+
+        int code;
+
+        String message;
+    }
+
+    @VisibleForTesting
+    @lombok.Value
     public static class CurlHead {
 
-        @lombok.Builder.Default
-        int code = -1;
+        @lombok.NonNull
+        Status status;
 
-        @lombok.Builder.Default
-        String message = null;
-
-        @lombok.Singular
-        Map<String, List<String>> headers;
+        @lombok.NonNull
+        SortedMap<String, List<String>> headers;
 
         public static CurlHead parseResponse(BufferedReader reader) throws IOException {
-            CurlHead.Builder result = new Builder();
-            parseStatusLine(reader, result);
-            parseHeaders(reader, result);
-            return result.build();
+            return new CurlHead(
+                    parseStatusLine(reader),
+                    parseHeaders(reader)
+            );
         }
 
         private static char SP = 32;
 
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#status_line
-        private static void parseStatusLine(BufferedReader reader, CurlHead.Builder result) throws IOException {
+        private static Status parseStatusLine(BufferedReader reader) throws IOException {
             String statusLine = reader.readLine();
             if (statusLine == null) {
-                return;
+                return new Status(-1, null);
             }
             int codeStart = statusLine.indexOf(SP);
             if (codeStart == -1) {
-                return;
+                return new Status(-1, null);
             }
             int codeEnd = statusLine.indexOf(SP, codeStart + 1);
             if (codeEnd == -1) {
-                result.code(Integer.parseInt(statusLine.substring(codeStart + 1)));
+                return new Status(Integer.parseInt(statusLine.substring(codeStart + 1)), null);
             } else {
-                result.code(Integer.parseInt(statusLine.substring(codeStart + 1, codeEnd))).message(statusLine.substring(codeEnd + 1));
+                return new Status(Integer.parseInt(statusLine.substring(codeStart + 1, codeEnd)), statusLine.substring(codeEnd + 1));
             }
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#headers_2
-        private static void parseHeaders(BufferedReader reader, CurlHead.Builder result) throws IOException {
-            Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        private static SortedMap<String, List<String>> parseHeaders(BufferedReader reader) throws IOException {
+            SortedMap<String, List<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             String line;
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 int index = line.indexOf(":");
                 if (index != -1) {
                     String key = line.substring(0, index);
                     String value = line.substring(index + 1).trim();
-                    if (value != null && !value.isEmpty()) {
-                        headers.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
+                    if (!value.isEmpty()) {
+                        result.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
                     }
                 }
             }
-            result.headers(headers);
+            return Collections.unmodifiableSortedMap(result);
         }
 
         public static final class Builder {
