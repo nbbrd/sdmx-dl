@@ -38,14 +38,14 @@ public class WebRequest {
     DataQuery query;
 
     @lombok.NonNull
-    IntRange minFlowCount;
+    IntRange flowCount;
 
     @lombok.NonNull
     IntRange dimensionCount;
 
     @lombok.NonNull
-    IntRange minSeriesCount;
+    IntRange seriesCount;
 
     @lombok.NonNull
-    IntRange minObsCount;
+    IntRange obsCount;
 }

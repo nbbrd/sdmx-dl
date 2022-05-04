@@ -12,8 +12,8 @@
                   key="M.ISK.EUR+USD.CA.AC.A01" seriesCount="2.." obsCount="694.."/>
         </flow>
     </source>
-    <source name="BIS" flowCount="19..">
-        <flow ref="BISWEB_EERDATAFLOW" dimCount="4">
+    <source name="BIS" flowCount="18..">
+        <flow ref="WS_EER_M" dimCount="4">
             <data digest="BIS"
                   key="M.N.B.AE" seriesCount="1.." obsCount="326.."/>
         </flow>
@@ -40,11 +40,11 @@
     </source>
     <source name="ESTAT" flowCount="6283..">
         <flow ref="teibp051" dimCount="7">
-            <data digest="ESTAT: normal deliveray process"
+            <data digest="ESTAT: normal delivery process"
                   key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" seriesCount="1.." obsCount="12.."/>
         </flow>
         <flow ref="nama_10_gdp" dimCount="4">
-            <data digest="ESTAT: async file delivery process"
+            <data digest="ESTAT: async delivery process"
                   key="..B1GQ." seriesCount="1.." obsCount="12.."/>
         </flow>
     </source>
@@ -117,7 +117,7 @@
         </flow>
     </source>
     <source name="SGR" flowCount="87..">
-        <flow ref="NAMAIN_IDC_N" dimCount="14">
+        <flow ref="ESTAT,NAMAIN_IDC_N,1.9" dimCount="14">
             <data digest="SGR"
                   key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" seriesCount="1.." obsCount="26.."/>
         </flow>

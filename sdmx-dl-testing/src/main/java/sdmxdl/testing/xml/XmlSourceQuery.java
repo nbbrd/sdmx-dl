@@ -64,10 +64,10 @@ public class XmlSourceQuery {
                             .source(source.getName())
                             .flowRef(flow.getRef())
                             .query(DataQuery.of(data.getKey(), DataDetail.FULL))
-                            .minFlowCount(source.getMinFlowCount())
+                            .flowCount(source.getMinFlowCount())
                             .dimensionCount(flow.getDimensionCount())
-                            .minSeriesCount(data.getMinSeriesCount())
-                            .minObsCount(data.getMinObsCount())
+                            .seriesCount(data.getMinSeriesCount())
+                            .obsCount(data.getMinObsCount())
                             .build()
                     );
                 }

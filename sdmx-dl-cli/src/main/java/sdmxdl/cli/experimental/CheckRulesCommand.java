@@ -24,7 +24,7 @@ import sdmxdl.Key;
 import sdmxdl.testing.IntRange;
 import sdmxdl.testing.WebRequest;
 import sdmxdl.testing.WebResponse;
-import sdmxdl.testing.WebRule;
+import sdmxdl.testing.WebRuleLoader;
 import sdmxdl.testing.xml.XmlSourceQuery;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -33,10 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -146,10 +143,10 @@ public final class CheckRulesCommand implements Callable<Void> {
 
         static Expect of(WebRequest request) {
             return new Expect(
-                    request.getMinFlowCount(),
+                    request.getFlowCount(),
                     request.getDimensionCount(),
-                    request.getMinSeriesCount(),
-                    request.getMinObsCount()
+                    request.getSeriesCount(),
+                    request.getObsCount()
             );
         }
     }
@@ -167,7 +164,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                     ofNullable(r.getFlows()).map(Collection::size).orElse(-1),
                     ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1),
                     ofNullable(r.getData()).map(Collection::size).orElse(-1),
-                    ofNullable(r.getData()).map(WebRule::getObsCount).orElse(-1)
+                    ofNullable(r.getData()).map(WebResponse::getObsCount).orElse(-1)
             );
         }
     }
@@ -191,8 +188,16 @@ public final class CheckRulesCommand implements Callable<Void> {
                     Expect.of(r.getRequest()),
                     Actual.of(r),
                     ofNullable(r.getError()).orElse(""),
-                    WebRule.checkAll(r)
+                    checkAll(r)
             );
         }
+    }
+
+    private static List<String> checkAll(WebResponse response) {
+        return WebRuleLoader.get()
+                .stream()
+                .map(rule -> !rule.getValidator().isValid(response) ? rule.getName() : null)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }
