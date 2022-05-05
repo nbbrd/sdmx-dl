@@ -25,6 +25,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![PROVIDER] Fix uptime parsing on multi-thread environment
 - ![PROVIDER] Fix parsing of HTTP response header in curl backend
+- ![PROVIDER] Fix NPE on missing HTTP response message
 - ![PROVIDER] Fix `DataflowRef` validation
 - ![CLI] Fix missing charsets in native image
 - ![CLI] Fix registration of system SSL in native image
