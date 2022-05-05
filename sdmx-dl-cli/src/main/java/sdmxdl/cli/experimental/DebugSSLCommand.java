@@ -16,16 +16,23 @@
  */
 package sdmxdl.cli.experimental;
 
-import internal.sdmxdl.cli.DebugOutputOptions;
+import internal.sdmxdl.cli.SortOptions;
+import internal.sdmxdl.cli.ext.CsvTable;
+import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import nbbrd.io.text.Formatter;
 import nl.altindag.ssl.util.KeyStoreUtils;
 import picocli.CommandLine;
 
-import java.io.BufferedWriter;
+import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.Security;
-import java.util.Arrays;
+import java.util.AbstractMap;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 /**
  * @author Philippe Charles
@@ -34,21 +41,50 @@ import java.util.concurrent.Callable;
 @SuppressWarnings("FieldMayBeFinal")
 public final class DebugSSLCommand implements Callable<Void> {
 
-    @CommandLine.ArgGroup(validate = false, headingKey = "debug")
-    private DebugOutputOptions output = new DebugOutputOptions();
+    @CommandLine.Mixin
+    private final RFC4180OutputOptions csv = new RFC4180OutputOptions();
+
+    @CommandLine.Mixin
+    private SortOptions sort;
 
     @Override
     public Void call() throws Exception {
-        try (BufferedWriter writer = new BufferedWriter(output.newCharWriter())) {
-            writer.write("Providers: ");
-            writer.write(Arrays.toString(Security.getProviders()));
-            writer.newLine();
-            for (KeyStore keyStore : KeyStoreUtils.loadSystemKeyStores()) {
-                writer.write("KeyStore aliases: ");
-                writer.write(Collections.list(keyStore.aliases()).toString());
-                writer.newLine();
-            }
-        }
+        getTable().write(csv, getRows());
         return null;
+    }
+
+    private CsvTable<Map.Entry<String, String>> getTable() {
+        CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
+        result.columnOf("Type", Map.Entry::getKey, Formatter.onString());
+        result.columnOf("Value", Map.Entry::getValue, Formatter.onString());
+        return result.build();
+    }
+
+    private Stream<Map.Entry<String, String>> getRows() {
+        Comparator<Map.Entry<String, String>> first = Map.Entry.comparingByKey();
+        Comparator<Map.Entry<String, String>> second = Map.Entry.comparingByValue();
+        return sort.applySort(Stream.concat(getSecurityProvider(), getKeyStoreAlias()), first.thenComparing(second));
+    }
+
+    private Stream<Map.Entry<String, String>> getSecurityProvider() {
+        return Stream.of(Security.getProviders())
+                .map(provider -> entry("Security provider", provider.toString()));
+    }
+
+    private Stream<Map.Entry<String, String>> getKeyStoreAlias() {
+        return KeyStoreUtils.loadSystemKeyStores().stream()
+                .flatMap(keyStore -> aliases(keyStore).map(alias -> entry("KeyStore alias", alias)));
+    }
+
+    private static Map.Entry<String, String> entry(String key, String value) {
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
+    }
+
+    private static Stream<String> aliases(KeyStore keyStore) {
+        try {
+            return Collections.list(keyStore.aliases()).stream();
+        } catch (KeyStoreException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
