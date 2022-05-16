@@ -1,0 +1,23 @@
+[
+  {
+    "id": "statfin_matk_pxt_117s.px",
+    "path": "/matk",
+    "title": "117s -- Accommodation establishment capacity by municipality, 1995-2022*",
+    "score": 1.0,
+    "published": "0001-01-01T00:00:00"
+  },
+  {
+    "id": "statfin_matk_pxt_11is.px",
+    "path": "/matk",
+    "title": "11is -- Accommodation establishment capacity by region, 1995-2022*",
+    "score": 1.0,
+    "published": "0001-01-01T00:00:00"
+  },
+  {
+    "id": "statfin_ttvi_pxt_13jj.px",
+    "path": "/ttvi",
+    "title": "13jj -- Revisions in these statistics, 2021M01-2022M03",
+    "score": 1.0,
+    "published": "0001-01-01T00:00:00"
+  }
+]

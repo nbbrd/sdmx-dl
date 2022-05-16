@@ -20,6 +20,7 @@ module sdmxdl.provider.ri {
             internal.sdmxdl.provider.ri.web.drivers.FileDriver,
             internal.sdmxdl.provider.ri.web.drivers.InseeDriver2,
             internal.sdmxdl.provider.ri.web.drivers.NbbDriver2,
+            internal.sdmxdl.provider.ri.web.drivers.PxWebDriver,
             internal.sdmxdl.provider.ri.web.drivers.RngDriver,
             internal.sdmxdl.provider.ri.web.drivers.Sdmx21Driver2,
             internal.sdmxdl.provider.ri.web.drivers.StatCanDriver;
