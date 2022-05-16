@@ -49,6 +49,7 @@ public final class ImfDriver implements WebDriver {
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf")
                     .build())
             .build();
 }

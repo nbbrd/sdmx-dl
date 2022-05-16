@@ -49,6 +49,7 @@ public final class OecdDriver implements WebDriver {
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
                     .build())
             .build();
 }

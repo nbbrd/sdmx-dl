@@ -66,6 +66,7 @@ public final class InseeDriver implements WebDriver {
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
                     .build())
             .build();
 

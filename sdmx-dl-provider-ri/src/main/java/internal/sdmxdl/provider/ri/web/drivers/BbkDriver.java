@@ -64,6 +64,7 @@ public final class BbkDriver implements WebDriver {
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bbk")
                     .build())
             .build();
 

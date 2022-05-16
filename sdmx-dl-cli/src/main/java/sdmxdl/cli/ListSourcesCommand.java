@@ -25,7 +25,6 @@ import picocli.CommandLine;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -57,10 +56,11 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.of(URI::toString))
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.of(URI::toString))
+                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.onURI())
+                .columnOf("MonitorWebsite", SdmxWebSource::getMonitorWebsite, Formatter.onURL())
                 .build();
     }
 

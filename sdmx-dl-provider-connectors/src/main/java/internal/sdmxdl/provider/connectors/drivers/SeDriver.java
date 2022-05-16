@@ -53,6 +53,7 @@ public final class SeDriver implements WebDriver {
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/se")
                     .build())
             .build();
 

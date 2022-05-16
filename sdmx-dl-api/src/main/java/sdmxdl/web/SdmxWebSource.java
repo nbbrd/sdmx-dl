@@ -62,6 +62,10 @@ public class SdmxWebSource extends SdmxSource {
     @Nullable
     URI monitor;
 
+    @Nullable
+    @lombok.Builder.Default
+    URL monitorWebsite = null;
+
     @NonNull
     public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
         if (!aliases.contains(name)) {
@@ -102,6 +106,14 @@ public class SdmxWebSource extends SdmxSource {
 
         public @NonNull Builder monitorOf(@NonNull String monitor) {
             return monitor(URI.create(monitor));
+        }
+
+        public @NonNull Builder monitorWebsiteOf(@NonNull String monitorWebsite) throws IllegalArgumentException {
+            try {
+                return monitorWebsite(new URL(monitorWebsite));
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
     }
 }

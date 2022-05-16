@@ -64,7 +64,6 @@ public final class CheckStatusCommand implements Callable<Void> {
                 .columnOf("UptimeRatio", Status::getUptimeRatio, Formatter.onObjectToString())
                 .columnOf("AverageResponseTime", Status::getAverageResponseTime, Formatter.onObjectToString())
                 .columnOf("ErrorMessage", Status::getCause, Formatter.onString())
-                .columnOf("WebReport", Status::getWebReport, Formatter.onObjectToString())
                 .build();
     }
 

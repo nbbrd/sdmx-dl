@@ -104,6 +104,7 @@ public final class StatCanDriver implements WebDriver {
                 .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                 .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
                 .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
+                .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan")
                 .build());
     }
 

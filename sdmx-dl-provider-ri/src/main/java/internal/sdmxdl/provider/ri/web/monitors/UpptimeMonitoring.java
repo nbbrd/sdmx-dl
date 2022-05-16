@@ -16,7 +16,6 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebMonitoring;
 
 import java.io.IOException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.time.Clock;
 import java.time.Duration;
@@ -56,20 +55,19 @@ public final class UpptimeMonitoring implements WebMonitoring {
     private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {
         MonitorReports.Builder result = MonitorReports.builder().uriScheme(getUriScheme());
         for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURL())) {
-            result.report(getReport(summary, base.toBuilder().site(summary.getName()).build().toReportURL()));
+            result.report(getReport(summary));
         }
         return result.ttl(clock.instant(), Duration.ofMinutes(5)).build();
     }
 
     @VisibleForTesting
-    static MonitorReport getReport(UpptimeSummary summary, URL webReport) {
+    static MonitorReport getReport(UpptimeSummary summary) {
         return MonitorReport
                 .builder()
                 .source(summary.getName())
                 .status(parseStatus(summary.getStatus()))
                 .uptimeRatio(parseUptimeRatio(summary.getUptime()))
                 .averageResponseTime(summary.getTime())
-                .webReport(webReport)
                 .build();
     }
 

@@ -55,6 +55,7 @@ public final class UisDriver implements WebDriver {
                     .endpointOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/uis")
                     .build())
             .build();
 

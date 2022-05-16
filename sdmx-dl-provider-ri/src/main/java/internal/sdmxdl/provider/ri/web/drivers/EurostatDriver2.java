@@ -89,6 +89,7 @@ public final class EurostatDriver2 implements WebDriver {
                     .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
             .build();
 

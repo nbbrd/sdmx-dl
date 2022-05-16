@@ -61,6 +61,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -72,6 +73,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/se")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -83,6 +85,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/uis")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -92,6 +95,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ukds")
                     .build())
             .build();
 

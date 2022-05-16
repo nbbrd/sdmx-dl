@@ -61,6 +61,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://explore.data.abs.gov.au")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/abs")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -71,6 +72,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.bis.org/statx/toc/LBS.html")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bis")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -80,6 +82,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .endpointOf("https://nsiws-stable-camstat-live.officialstatistics.org/rest")
                     .websiteOf("http://camstat.nis.gov.kh/?locale=en&start=0")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/camstat")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -92,6 +95,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ecb")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -101,6 +105,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .endpointOf("https://api-dataexplorer.unescap.org/rest/")
                     .websiteOf("https://dataexplorer.unescap.org/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/escap")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -111,6 +116,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://ilostat.ilo.org/data/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ilo")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -122,6 +128,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -131,6 +138,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .endpointOf("https://sdmx.snieg.mx/service/Rest")
                     .websiteOf("https://sdmx.snieg.mx")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/inegi")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -142,6 +150,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.istat.it/en/analysis-and-products")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/istat")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -152,6 +161,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nb")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -162,6 +172,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://registry.sdmx.org/overview.html")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/sgr")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -172,6 +183,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://datasimel.mtps.gob.sv/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/simel")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -182,6 +194,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://stats.pacificdata.org/?locale=en")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/spc")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -194,6 +207,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://lustat.statec.lu")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statec")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -204,6 +218,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.un.org/SdmxBrowser/start")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/undata")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -214,6 +229,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .propertyOf(SUPPORTS_COMPRESSION_PROPERTY, true)
                     .websiteOf("https://data.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wb")
                     .build())
             .source(SdmxWebSource
                     .builder()
@@ -223,6 +239,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .websiteOf("https://wits.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wits")
                     .build())
             .build();
 
