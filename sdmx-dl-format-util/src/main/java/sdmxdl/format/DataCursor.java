@@ -19,13 +19,13 @@ package sdmxdl.format;
 import internal.sdmxdl.format.SeriesIterator;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
+import nbbrd.io.function.IORunnable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Key;
 import sdmxdl.Series;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,12 +70,6 @@ public interface DataCursor extends Closeable {
 
     @NonNull
     default Stream<Series> toCloseableStream() {
-        return toStream().onClose(() -> {
-            try {
-                DataCursor.this.close();
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        });
+        return toStream().onClose(IORunnable.unchecked(DataCursor.this::close));
     }
 }

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import sdmxdl.format.MediaType;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @lombok.Value
@@ -27,4 +28,11 @@ public class HttpRequest {
 
     @lombok.Builder.Default
     byte[] body = null;
+
+    public static final class Builder {
+
+        public Builder bodyOf(String content) {
+            return body(content.getBytes(StandardCharsets.UTF_8));
+        }
+    }
 }

@@ -16,12 +16,8 @@
  */
 package internal.sdmxdl.provider.ri.web;
 
-import internal.util.http.HttpClient;
-import internal.util.http.HttpRequest;
-import internal.util.http.HttpResponse;
-import internal.util.http.HttpResponseException;
+import internal.util.http.*;
 import lombok.NonNull;
-import nbbrd.io.Resource;
 import sdmxdl.*;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
@@ -32,9 +28,7 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Supplier;
@@ -172,7 +166,7 @@ public class RiRestClient implements RestClient {
         HttpResponse response = httpClient.send(request);
         return parsers
                 .getDataParser(response.getContentType(), dsd, obsFactory)
-                .parseStream(() -> DisconnectingInputStream.of(response));
+                .parseStream(response::asDisconnectingInputStream);
     }
 
     @NonNull
@@ -193,24 +187,6 @@ public class RiRestClient implements RestClient {
                 throw CommonSdmxExceptions.missingCodelist(getName(), ref);
             }
             throw ex;
-        }
-    }
-
-    @lombok.RequiredArgsConstructor
-    private static final class DisconnectingInputStream extends InputStream {
-
-        public static DisconnectingInputStream of(HttpResponse response) throws IOException {
-            return new DisconnectingInputStream(response.getBody(), response);
-        }
-
-        @lombok.experimental.Delegate(excludes = Closeable.class)
-        private final InputStream delegate;
-
-        private final Closeable onClose;
-
-        @Override
-        public void close() throws IOException {
-            Resource.closeBoth(delegate, onClose);
         }
     }
 }

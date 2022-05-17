@@ -1,0 +1,26 @@
+{
+  "query": [
+    {
+      "code": "Kon",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "code": "ContentsCode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "BE0101N1"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "sdmx"
+  }
+}

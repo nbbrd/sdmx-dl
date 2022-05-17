@@ -2,13 +2,29 @@ package internal.sdmxdl.provider.ri.web.drivers;
 
 import com.google.gson.*;
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
+import internal.util.CollectionUtil;
+import internal.util.gson.GsonIO;
 import internal.util.http.HttpClient;
+import internal.util.http.HttpMethod;
+import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import lombok.NonNull;
+import nbbrd.design.MightBeGenerated;
+import nbbrd.design.VisibleForTesting;
+import nbbrd.io.FileParser;
 import nbbrd.io.text.BooleanProperty;
+import nbbrd.io.text.TextFormatter;
+import nbbrd.io.text.TextParser;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
+import sdmxdl.ext.Cache;
+import sdmxdl.format.DataCursor;
+import sdmxdl.format.MediaType;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.TypedId;
 import sdmxdl.provider.Validator;
 import sdmxdl.provider.web.WebValidators;
 import sdmxdl.web.SdmxWebSource;
@@ -16,18 +32,23 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.CONNECTION_PROPERTIES;
+import static internal.util.CollectionUtil.indexedStreamOf;
+import static internal.util.CollectionUtil.zip;
+import static internal.util.gson.GsonUtil.asStream;
+import static internal.util.gson.GsonUtil.getAsString;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.format.MediaType.ANY_TYPE;
+import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
 public final class PxWebDriver implements WebDriver {
@@ -57,11 +78,22 @@ public final class PxWebDriver implements WebDriver {
     @Override
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         sourceValidator.checkValidity(source);
-        return new PxWebConnection(
-                source.getName(),
+
+        PxWebClient client = new DefaultPxWebClient(
+                source.getName().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)
         );
+
+        PxWebClient cachedClient = CachedPxWebClient.of(
+                client,
+                context.getCache(),
+                CACHE_TTL_PROPERTY.get(source.getProperties()),
+                source,
+                context.getLanguages()
+        );
+
+        return new PxWebConnection(source.getName(), cachedClient);
     }
 
     @Override
@@ -76,12 +108,16 @@ public final class PxWebDriver implements WebDriver {
                 .driver(RI_PXWEB)
                 .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
                 .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
+                .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
                 .build());
     }
 
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
-        return Collections.emptyList();
+        List<String> result = new ArrayList<>();
+        result.addAll(CONNECTION_PROPERTIES);
+        result.add(CACHE_TTL_PROPERTY.getKey());
+        return result;
     }
 
     @Override
@@ -96,23 +132,16 @@ public final class PxWebDriver implements WebDriver {
         private final String name;
 
         @lombok.NonNull
-        private final URL baseURL;
-
-        @lombok.NonNull
-        private final HttpClient client;
+        private final PxWebClient client;
 
         @Override
         public void testConnection() throws IOException {
-            Config.request(client, new URL(baseURL, "?config"));
+            client.getConfig();
         }
 
         @Override
         public @NonNull Collection<Dataflow> getFlows() throws IOException {
-            String dbName = name.toLowerCase(Locale.ROOT);
-            return Table.request(client, new URL(baseURL, "?query=*&filter=*"))
-                    .stream()
-                    .map(table -> table.toDataflow(dbName))
-                    .collect(toList());
+            return client.getTables();
         }
 
         @Override
@@ -126,31 +155,284 @@ public final class PxWebDriver implements WebDriver {
 
         @Override
         public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
-            Dataflow flow = getFlow(flowRef);
-            return TableMeta.request(client, new URL(baseURL, flow.getStructureRef().getId()))
-                    .toDataStructure(flow.getStructureRef());
+            return client.getMeta(flowRef.getId());
         }
 
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
-            return null;
+            try (Stream<Series> stream = getDataStream(flowRef, query)) {
+                return stream.collect(DataSet.toDataSet(flowRef, query));
+            }
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
-            return getData(flowRef, query).getDataStream(query);
+            DataStructure dsd = client.getMeta(flowRef.getId());
+            DataCursor dataCursor = client.getData(flowRef.getId(), dsd, query.getKey());
+            return query.execute(dataCursor.toCloseableStream());
         }
 
         @Override
-        public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
+        public @NonNull Set<Feature> getSupportedFeatures() {
             return Collections.emptySet();
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
     }
 
+    private interface PxWebClient {
+
+        @NonNull Config getConfig() throws IOException;
+
+        @NonNull List<Dataflow> getTables() throws IOException;
+
+        @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException;
+
+        @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class DefaultPxWebClient implements PxWebClient {
+
+        @lombok.NonNull
+        private final String dbId;
+
+        @lombok.NonNull
+        private final URL baseURL;
+
+        @lombok.NonNull
+        private final HttpClient client;
+
+        @Override
+        public @NonNull Config getConfig() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(new URL(baseURL, "?config"))
+                    .build();
+
+            try (HttpResponse response = client.send(request)) {
+                return getConfigParser(response.getContentType())
+                        .parseReader(response::getBodyAsReader);
+            }
+        }
+
+        private TextParser<Config> getConfigParser(MediaType ignore) {
+            return Config.JSON_PARSER;
+        }
+
+        @Override
+        public @NonNull List<Dataflow> getTables() throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(new URL(baseURL, "?query=*&filter=*"))
+                    .build();
+
+            try (HttpResponse response = client.send(request)) {
+                return getTablesParser(response.getContentType())
+                        .parseReader(response::getBodyAsReader);
+            }
+        }
+
+        private TextParser<List<Dataflow>> getTablesParser(MediaType ignore) {
+            return Table.JSON_PARSER
+                    .andThen(tables -> Stream.of(tables).map(table -> table.toDataflow(dbId)).collect(toList()));
+        }
+
+        @Override
+        public @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(new URL(baseURL, tableId))
+                    .build();
+
+            try (HttpResponse response = client.send(request)) {
+                return getMetaParser(tableId, response.getContentType())
+                        .parseReader(response::getBodyAsReader);
+            }
+        }
+
+        private TextParser<DataStructure> getMetaParser(String tableId, MediaType ignore) {
+            return TableMeta.JSON_PARSER
+                    .andThen(tableMeta -> tableMeta.toDataStructure(DataStructureRef.of(dbId, tableId, null)));
+        }
+
+        @Override
+        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(new URL(baseURL, tableId))
+                    .method(HttpMethod.POST)
+                    .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
+                    .build();
+
+            HttpResponse response = client.send(request);
+            return getDataParser(dsd, response.getContentType())
+                    .parseStream(response::asDisconnectingInputStream);
+        }
+
+        private FileParser<DataCursor> getDataParser(DataStructure dsd, MediaType ignore) {
+            return PxWebSdmxDataCursor.parserOf(dsd);
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class CachedPxWebClient implements PxWebClient {
+
+        static @NonNull CachedPxWebClient of(
+                @NonNull PxWebClient client, @NonNull Cache cache, long ttlInMillis,
+                @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
+            return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
+        }
+
+        private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+        }
+
+        @lombok.NonNull
+        private final PxWebClient delegate;
+
+        @lombok.NonNull
+        private final Cache cache;
+
+        @lombok.NonNull
+        private final URI base;
+
+        @lombok.NonNull
+        private final Duration ttl;
+
+        @lombok.Getter(lazy = true)
+        private final TypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
+
+        @lombok.Getter(lazy = true)
+        private final TypedId<DataStructure> idOfMeta = initIdOfMeta(base);
+
+        private static TypedId<List<Dataflow>> initIdOfTables(URI base) {
+            return TypedId.of(base,
+                    DataRepository::getFlows,
+                    flows -> DataRepository.builder().flows(flows).build()
+            ).with("tables");
+        }
+
+        private static TypedId<DataStructure> initIdOfMeta(URI base) {
+            return TypedId.of(base,
+                    repo -> repo.getStructures().stream().findFirst().orElse(null),
+                    struct -> DataRepository.builder().structure(struct).build()
+            ).with("meta");
+        }
+
+        @Override
+        public @NonNull Config getConfig() throws IOException {
+            return delegate.getConfig();
+        }
+
+        @Override
+        public @NonNull List<Dataflow> getTables() throws IOException {
+            return getIdOfTables().load(cache, delegate::getTables, o -> ttl);
+        }
+
+        @Override
+        public @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
+            return getIdOfMeta().with(tableId).load(cache, () -> delegate.getMeta(tableId), o -> ttl);
+        }
+
+        @Override
+        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+            return delegate.getData(tableId, dsd, key);
+        }
+    }
+
+    @VisibleForTesting
+    @lombok.AllArgsConstructor
+    static final class PxWebSdmxDataCursor implements DataCursor {
+
+        public static @NonNull FileParser<DataCursor> parserOf(@NonNull DataStructure dsd) {
+            return SdmxXmlStreams
+                    .genericData20(fixStructureDimensions(dsd), ObsParser::newDefault)
+                    .andThen(PxWebSdmxDataCursor::new);
+        }
+
+        private final @NonNull DataCursor delegate;
+
+        @Override
+        public boolean nextSeries() throws IOException {
+            return delegate.nextSeries();
+        }
+
+        @Override
+        public @NonNull Key getSeriesKey() throws IOException, IllegalStateException {
+            String keyAsString = delegate.getSeriesKey().toString();
+            return Key.parse(keyAsString.substring(keyAsString.indexOf('.') + 1));
+        }
+
+        @Override
+        @Nullable
+        public String getSeriesAttribute(@NonNull String key) throws IllegalStateException {
+            return null;
+        }
+
+        @Override
+        @NonNull
+        public Map<String, String> getSeriesAttributes() throws IllegalStateException {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public boolean nextObs() throws IOException, IllegalStateException {
+            return delegate.nextObs();
+        }
+
+        @Override
+        public @Nullable LocalDateTime getObsPeriod() throws IOException, IllegalStateException {
+            return delegate.getObsPeriod();
+        }
+
+        @Override
+        public @Nullable Double getObsValue() throws IOException, IllegalStateException {
+            return delegate.getObsValue();
+        }
+
+        @Override
+        @NonNull
+        public Map<String, String> getObsAttributes() throws IllegalStateException {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public void close() throws IOException {
+            delegate.close();
+        }
+
+        private static DataStructure fixStructureDimensions(DataStructure dsd) {
+            return dsd
+                    .toBuilder()
+                    .clearDimensions()
+                    .dimension(FREQ_DIMENSION)
+                    .dimensions(dsd.getDimensionList()
+                            .stream()
+                            .map(PxWebSdmxDataCursor::fixDimensionCode)
+                            .collect(toList()))
+                    .build();
+        }
+
+        private static Dimension fixDimensionCode(Dimension dimension) {
+            return dimension.toBuilder().id(dimension.getLabel().replace(" ", "")).build();
+        }
+
+        private static final Dimension FREQ_DIMENSION = Dimension
+                .builder()
+                .id("FREQ")
+                .label("")
+                .position(0)
+                .codelist(Codelist
+                        .builder()
+                        .ref(CodelistRef.parse("FREQ"))
+                        .build())
+                .build();
+    }
+
+    @VisibleForTesting
     @lombok.Value
     static class Config {
 
@@ -159,23 +441,17 @@ public final class PxWebDriver implements WebDriver {
         int maxCalls;
         int timeWindow;
 
-        static @NonNull Config parse(@NonNull Reader reader) {
-            return GSON.fromJson(reader, Config.class);
-        }
+        static final TextParser<Config> JSON_PARSER = GsonIO.GsonParser
+                .builder(Config.class)
+                .deserializer(Config.class, new ConfigDeserializer())
+                .build();
+    }
 
-        static @NonNull Config request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return parse(reader);
-                }
-            }
-        }
+    @MightBeGenerated
+    private static final class ConfigDeserializer implements JsonDeserializer<Config> {
 
-        private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(Config.class, (JsonDeserializer<Config>) Config::deserialize)
-                .create();
-
-        private static Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        @Override
+        public Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new Config(
                     x.get("maxValues").getAsInt(),
@@ -186,37 +462,7 @@ public final class PxWebDriver implements WebDriver {
         }
     }
 
-    @lombok.Value
-    static class Database {
-
-        String dbid;
-        String text;
-
-        static @NonNull List<Database> parseAll(@NonNull Reader reader) {
-            return Arrays.asList(GSON.fromJson(reader, Database[].class));
-        }
-
-        static @NonNull List<Database> request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return parseAll(reader);
-                }
-            }
-        }
-
-        private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(Database.class, (JsonDeserializer<Database>) Database::deserialize)
-                .create();
-
-        private static Database deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-            JsonObject x = json.getAsJsonObject();
-            return new Database(
-                    x.get("dbid").getAsString(),
-                    x.get("text").getAsString()
-            );
-        }
-    }
-
+    @VisibleForTesting
     @lombok.Value
     static class Table {
 
@@ -224,90 +470,83 @@ public final class PxWebDriver implements WebDriver {
         String path;
         String title;
 
-        Dataflow toDataflow(String dbName) {
+        Dataflow toDataflow(String dbId) {
             return Dataflow.of(
-                    DataflowRef.of(dbName, id, ""),
-                    DataStructureRef.of(dbName, id, ""),
+                    DataflowRef.of(dbId, id, null),
+                    DataStructureRef.of(dbId, id, null),
                     title
             );
         }
 
-        static @NonNull List<Table> parseAll(@NonNull Reader reader) {
-            return Arrays.asList(GSON.fromJson(reader, Table[].class));
-        }
+        static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser
+                .builder(Table[].class)
+                .deserializer(Table.class, new TableDeserializer())
+                .build();
+    }
 
-        static @NonNull List<Table> request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return parseAll(reader);
-                }
-            }
-        }
+    @MightBeGenerated
+    private static final class TableDeserializer implements JsonDeserializer<Table> {
 
-        private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(Table.class, (JsonDeserializer<Table>) Table::deserialize)
-                .create();
-
-        private static Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-            JsonObject x = json.getAsJsonObject();
+        @Override
+        public Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
             return new Table(
-                    x.get("id").getAsString(),
-                    x.get("path").getAsString(),
-                    x.get("title").getAsString()
+                    getAsString(obj, "id"),
+                    getAsString(obj, "path"),
+                    getAsString(obj, "title")
             );
         }
     }
 
+    @VisibleForTesting
     @lombok.Value
     static class TableMeta {
 
         List<TableVariable> variables;
 
         DataStructure toDataStructure(DataStructureRef ref) {
-            DataStructure.Builder dsd = DataStructure
+            return DataStructure
                     .builder()
                     .ref(ref)
-                    .timeDimensionId(getTimeDimensionId().orElseThrow(IllegalArgumentException::new).getCode())
+                    .timeDimensionId(toTimeDimensionId())
                     .primaryMeasureId("")
-                    .label("");
-            for (int i = 0; i < variables.size(); i++) {
-                TableVariable variable = variables.get(i);
-                if (!variable.isTime()) {
-                    dsd.dimension(variable.toDimension(i + 1));
-                }
-            }
-            return dsd.build();
+                    .label("")
+                    .dimensions(toDimensionList())
+                    .build();
         }
 
-        private Optional<TableVariable> getTimeDimensionId() {
-            return variables.stream().filter(TableVariable::isTime).findFirst();
+        List<Dimension> toDimensionList() {
+            return indexedStreamOf(variables)
+                    .filter(item -> !item.getElement().isTime())
+                    .map(item -> item.getElement().toDimension(item.getIndex() + 1))
+                    .collect(Collectors.toList());
         }
 
-        static @NonNull TableMeta parse(@NonNull Reader reader) {
-            return GSON.fromJson(reader, TableMeta.class);
+        private String toTimeDimensionId() {
+            return variables.stream().filter(TableVariable::isTime).findFirst().orElseThrow(IllegalArgumentException::new).getCode();
         }
 
-        static @NonNull TableMeta request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
-                try (Reader reader = response.getBodyAsReader()) {
-                    return parse(reader);
-                }
-            }
-        }
+        static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
+                .builder(TableMeta.class)
+                .deserializer(TableMeta.class, new TableMetaDeserializer())
+                .deserializer(TableVariable.class, new TableVariableDeserializer())
+                .build();
+    }
 
-        private static final Gson GSON = new GsonBuilder()
-                .registerTypeAdapter(TableMeta.class, (JsonDeserializer<TableMeta>) TableMeta::deserialize)
-                .create();
+    @MightBeGenerated
+    private static final class TableMetaDeserializer implements JsonDeserializer<TableMeta> {
 
-        private static TableMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+        @Override
+        public TableMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             JsonArray y = x.getAsJsonArray("variables");
             return new TableMeta(
-                    asStream(y).map(TableVariable::deserialize).collect(toList())
+                    asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
             );
         }
     }
 
+    @VisibleForTesting
     @lombok.Value
     static class TableVariable {
 
@@ -320,26 +559,27 @@ public final class PxWebDriver implements WebDriver {
         Dimension toDimension(int position) {
             return Dimension
                     .builder()
-                    .id(code)
                     .position(position)
+                    .id(code)
                     .label(text)
-                    .codelist(toCodelist())
+                    .codelist(Codelist
+                            .builder()
+                            .ref(CodelistRef.parse(code))
+                            .codes(zip(values, valueTexts))
+                            .build())
                     .build();
         }
+    }
 
-        Codelist toCodelist() {
-            Codelist.Builder builder = Codelist.builder().ref(CodelistRef.parse(code));
-            for (int i = 0; i < values.size(); i++) {
-                builder.code(values.get(i), valueTexts.get(i));
-            }
-            return builder.build();
-        }
+    @MightBeGenerated
+    private static final class TableVariableDeserializer implements JsonDeserializer<TableVariable> {
 
-        private static TableVariable deserialize(JsonElement json) {
+        @Override
+        public TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new TableVariable(
-                    x.get("code").getAsString(),
-                    x.get("text").getAsString(),
+                    getAsString(x, "code"),
+                    getAsString(x, "text"),
                     asStream(x.getAsJsonArray("values")).map(JsonElement::getAsString).collect(toList()),
                     asStream(x.getAsJsonArray("valueTexts")).map(JsonElement::getAsString).collect(toList()),
                     x.has("time") && x.get("time").getAsBoolean()
@@ -347,7 +587,59 @@ public final class PxWebDriver implements WebDriver {
         }
     }
 
-    private static Stream<JsonElement> asStream(JsonArray array) {
-        return StreamSupport.stream(array.spliterator(), false);
+    @VisibleForTesting
+    @lombok.Value
+    static class TableQuery {
+
+        @lombok.Singular
+        Map<String, Collection<String>> itemFilters;
+
+        static TableQuery fromDataStructureAndKey(DataStructure dsd, Key key) {
+            return new TableQuery(indexedStreamOf(dsd.getDimensionList())
+                    .collect(Collectors.toMap(
+                            dimension -> dimension.getElement().getId(),
+                            dimension -> fromDimensionAndKey(dimension, key))
+                    ));
+        }
+
+        static Collection<String> fromDimensionAndKey(CollectionUtil.IndexedElement<Dimension> dimension, Key key) {
+            return Key.ALL.equals(key) || key.isWildcard(dimension.getIndex())
+                    ? dimension.getElement().getCodelist().getCodes().keySet()
+                    : Arrays.asList(key.get(dimension.getIndex()).split("\\+", -1));
+        }
+
+        static final TextFormatter<TableQuery> FORMATTER = GsonIO.GsonFormatter
+                .builder(TableQuery.class)
+                .serializer(TableQuery.class, new TableQuerySerializer())
+                .build();
+    }
+
+    @MightBeGenerated
+    private static final class TableQuerySerializer implements JsonSerializer<TableQuery> {
+
+        @Override
+        public JsonElement serialize(TableQuery src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject result = new JsonObject();
+
+            JsonArray query = new JsonArray();
+            src.getItemFilters().forEach((code, items) -> {
+                JsonObject item = new JsonObject();
+                item.addProperty("code", code);
+                JsonObject selection = new JsonObject();
+                selection.addProperty("filter", "item");
+                JsonArray values = new JsonArray();
+                items.forEach(values::add);
+                selection.add("values", values);
+                item.add("selection", selection);
+                query.add(item);
+            });
+            result.add("query", query);
+
+            JsonObject response = new JsonObject();
+            response.addProperty("format", "sdmx");
+            result.add("response", response);
+
+            return result;
+        }
     }
 }
