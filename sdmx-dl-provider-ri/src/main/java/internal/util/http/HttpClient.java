@@ -6,5 +6,5 @@ import java.io.IOException;
 
 public interface HttpClient {
 
-    @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException;
+    @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException;
 }

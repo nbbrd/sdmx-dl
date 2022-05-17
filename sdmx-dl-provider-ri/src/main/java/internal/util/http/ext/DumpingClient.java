@@ -27,8 +27,8 @@ public final class DumpingClient implements HttpClient {
     private final Consumer<? super Path> onDump;
 
     @Override
-    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
-        return new DumpingResponse(folder, delegate.requestGET(request), onDump);
+    public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
+        return new DumpingResponse(folder, delegate.send(request), onDump);
     }
 
     @lombok.AllArgsConstructor

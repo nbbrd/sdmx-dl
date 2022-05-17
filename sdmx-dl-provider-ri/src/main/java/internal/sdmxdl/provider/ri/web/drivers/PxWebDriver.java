@@ -164,7 +164,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         static @NonNull Config request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
+            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return parse(reader);
                 }
@@ -197,7 +197,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         static @NonNull List<Database> request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
+            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return parseAll(reader);
                 }
@@ -237,7 +237,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         static @NonNull List<Table> request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
+            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return parseAll(reader);
                 }
@@ -288,7 +288,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         static @NonNull TableMeta request(@NonNull HttpClient client, @NonNull URL url) throws IOException {
-            try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
+            try (HttpResponse response = client.send(RiHttpUtils.newRequest(url, singletonList(ANY_TYPE), ANY))) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return parse(reader);
                 }

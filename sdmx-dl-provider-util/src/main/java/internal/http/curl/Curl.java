@@ -3,6 +3,7 @@ package internal.http.curl;
 import lombok.NonNull;
 import nbbrd.design.BuilderPattern;
 import nbbrd.design.VisibleForTesting;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -127,6 +128,10 @@ class Curl {
             return this;
         }
 
+        public CurlCommandBuilder request(String method) {
+            return isDefaultMethod(method) ? this : push("-X").push(method);
+        }
+
         public CurlCommandBuilder url(URL url) {
             return push(url.toString());
         }
@@ -143,8 +148,8 @@ class Curl {
             return push("-o").push(file.toString());
         }
 
-        public CurlCommandBuilder silent() {
-            return push("-s");
+        public CurlCommandBuilder silent(boolean silent) {
+            return silent ? push("-s") : this;
         }
 
         public CurlCommandBuilder dumpHeader(String filename) {
@@ -165,11 +170,7 @@ class Curl {
         }
 
         public CurlCommandBuilder insecure(boolean insecure) {
-            return insecure ? insecure() : this;
-        }
-
-        public CurlCommandBuilder insecure() {
-            return push("-k");
+            return insecure ? push("-k") : this;
         }
 
         public CurlCommandBuilder header(String key, String value) {
@@ -190,6 +191,14 @@ class Curl {
             return push("--http1.1");
         }
 
+        public CurlCommandBuilder dataRaw(@Nullable String data) {
+            return data != null ? push("--data-raw").push(data) : this;
+        }
+
+        public CurlCommandBuilder dataBinary(@Nullable Path data) {
+            return data != null ? push("--data-binary").push("@" + data) : this;
+        }
+
         public String[] build() {
             return items.toArray(new String[0]);
         }
@@ -197,6 +206,10 @@ class Curl {
         // some old versions don't accept decimal values!
         private String fixNumericalParameter(float seconds) {
             return Integer.toString((int) seconds);
+        }
+
+        private boolean isDefaultMethod(String method) {
+            return method.equals("GET");
         }
     }
 

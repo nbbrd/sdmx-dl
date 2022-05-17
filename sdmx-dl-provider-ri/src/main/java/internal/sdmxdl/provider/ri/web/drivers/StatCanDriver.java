@@ -242,7 +242,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.JSON_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return DataTable.parseAll(reader);
                 }
@@ -260,7 +260,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.JSON_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return FullTableDownloadSDMX.parseJson(reader);
                 }
@@ -274,7 +274,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.ZIP_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (InputStream stream = response.getBody()) {
                     Path result = Files.createTempFile("fullTable", ".zip");
                     Files.copy(stream, result, StandardCopyOption.REPLACE_EXISTING);

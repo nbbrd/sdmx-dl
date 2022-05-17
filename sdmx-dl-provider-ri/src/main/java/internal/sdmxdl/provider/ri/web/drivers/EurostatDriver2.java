@@ -161,7 +161,7 @@ public final class EurostatDriver2 implements WebDriver {
         for (int i = 1; i <= retries; i++) {
             sleep(sleepTimeInMillis);
             try {
-                return new AsyncResponse(client.requestGET(request));
+                return new AsyncResponse(client.send(request));
             } catch (HttpResponseException ex) {
                 if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                     throw ex;

@@ -25,6 +25,7 @@ import sdmxdl.web.URLConnectionFactory;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,7 @@ public final class DefaultHttpClient implements HttpClient {
     }
 
     @Override
-    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
+    public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
         return open(request, 0, getPreemptiveAuthScheme());
     }
 
@@ -103,10 +104,17 @@ public final class DefaultHttpClient implements HttpClient {
                 .put(requestScheme.getRequestHeaders(request.getQuery(), context.getAuthenticator()))
                 .build();
 
-        result.setRequestMethod("GET");
+        result.setRequestMethod(request.getMethod().name());
         result.setInstanceFollowRedirects(false);
         HttpHeadersBuilder.keyValues(headers)
                 .forEach(header -> result.setRequestProperty(header.getKey(), header.getValue()));
+
+        if (request.getBody() != null) {
+            result.setDoOutput(true);
+            try (OutputStream stream = result.getOutputStream()) {
+                stream.write(request.getBody());
+            }
+        }
 
         context.getListener().onOpen(request, proxy, requestScheme.authScheme);
 

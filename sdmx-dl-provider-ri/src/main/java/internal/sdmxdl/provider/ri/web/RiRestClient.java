@@ -112,7 +112,7 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected List<Dataflow> getFlows(@NonNull URL url) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowsTypes(), langs);
-        try (HttpResponse response = httpClient.requestGET(request)) {
+        try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getFlowsParser(response.getContentType(), langs)
                     .parseStream(response::getBody);
@@ -127,7 +127,7 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowTypes(), langs);
-        try (HttpResponse response = httpClient.requestGET(request)) {
+        try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getFlowParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
@@ -148,7 +148,7 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getStructureTypes(), langs);
-        try (HttpResponse response = httpClient.requestGET(request)) {
+        try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
@@ -169,7 +169,7 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected DataCursor getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getDataTypes(), langs);
-        HttpResponse response = httpClient.requestGET(request);
+        HttpResponse response = httpClient.send(request);
         return parsers
                 .getDataParser(response.getContentType(), dsd, obsFactory)
                 .parseStream(() -> DisconnectingInputStream.of(response));
@@ -183,7 +183,7 @@ public class RiRestClient implements RestClient {
     @NonNull
     protected Codelist getCodelist(@NonNull URL url, @NonNull CodelistRef ref) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getCodelistTypes(), langs);
-        try (HttpResponse response = httpClient.requestGET(request)) {
+        try (HttpResponse response = httpClient.send(request)) {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)

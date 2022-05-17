@@ -2,15 +2,13 @@ package internal.http.curl;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.function.IOConsumer;
 import nbbrd.io.sys.EndOfProcessException;
 import nbbrd.io.sys.OS;
 import nbbrd.io.sys.ProcessReader;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -18,20 +16,21 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static internal.http.curl.Curl.*;
 
 public final class CurlHttpURLConnection extends HttpURLConnection {
 
-    public static @NonNull CurlHttpURLConnection of(@NonNull URL url, @NonNull Proxy proxy) {
-        return new CurlHttpURLConnection(url, proxy, false);
+    public static @NonNull CurlHttpURLConnection of(@NonNull URL url, @NonNull Proxy proxy) throws IOException {
+        return new CurlHttpURLConnection(url, proxy, false, Files.createTempDirectory("curl"));
     }
 
-    public static @NonNull CurlHttpURLConnection insecureForTestOnly(@NonNull URL url, @NonNull Proxy proxy) {
-        return new CurlHttpURLConnection(url, proxy, true);
+    public static @NonNull CurlHttpURLConnection insecureForTestOnly(@NonNull URL url, @NonNull Proxy proxy) throws IOException {
+        return new CurlHttpURLConnection(url, proxy, true, Files.createTempDirectory("curl"));
     }
 
     @lombok.NonNull
@@ -39,17 +38,15 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
 
     private final boolean insecure;
 
-    private final Consumer<String[]> onExec = command -> {
-    };
+    private final Path tempDir;
 
     private Map<String, List<String>> headerFields = Collections.emptyMap();
 
-    private Path body = null;
-
-    private CurlHttpURLConnection(URL url, Proxy proxy, boolean insecure) {
+    private CurlHttpURLConnection(URL url, Proxy proxy, boolean insecure, Path tempDir) {
         super(url);
         this.proxy = proxy;
         this.insecure = insecure;
+        this.tempDir = tempDir;
     }
 
     @Override
@@ -59,20 +56,20 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
 
     @Override
     public void connect() throws IOException {
-        Path output = Files.createTempFile("body", ".tmp");
-        String[] request = createCurlCommand(output);
+        String[] request = createCurlCommand();
         CurlHead responseHead = executeCurlCommand(request);
         this.responseCode = responseHead.getStatus().getCode();
         this.responseMessage = responseHead.getStatus().getMessage();
         this.headerFields = responseHead.getHeaders();
-        this.body = output;
     }
 
     @Override
     public void disconnect() {
-        if (body != null && Files.exists(body)) {
+        if (Files.exists(tempDir)) {
             try {
-                Files.delete(body);
+                try (Stream<Path> files = Files.walk(tempDir).sorted(Comparator.reverseOrder())) {
+                    files.forEach(IOConsumer.unchecked(Files::delete));
+                }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -91,7 +88,22 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return Files.newInputStream(body);
+        return Files.newInputStream(getInput());
+    }
+
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return Files.newOutputStream(getOutput());
+    }
+
+    @VisibleForTesting
+    Path getInput() {
+        return tempDir.resolve("input.tmp");
+    }
+
+    @VisibleForTesting
+    Path getOutput() {
+        return tempDir.resolve("output.tmp");
     }
 
     @VisibleForTesting
@@ -100,24 +112,25 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
     }
 
     @VisibleForTesting
-    String[] createCurlCommand(Path output) {
+    String[] createCurlCommand() {
         return new CurlCommandBuilder()
+                .request(getRequestMethod())
                 .url(getURL())
                 .http1_1()
-                .silent()
+                .silent(true)
                 .sslRevokeBestEffort(isSchannel())
                 .insecure(insecure)
                 .proxy(proxy)
-                .output(output)
+                .output(getInput())
                 .dumpHeader("-")
                 .connectTimeout(getConnectTimeout() / 1000f)
                 .maxTime(getReadTimeout() / 1000f)
                 .headers(getRequestProperties())
+                .dataBinary(getDoOutput() ? getOutput() : null)
                 .build();
     }
 
     private CurlHead executeCurlCommand(String[] command) throws IOException {
-        onExec.accept(command);
         try (BufferedReader reader = ProcessReader.newReader(command)) {
             return CurlHead.parseResponse(reader);
         } catch (EndOfProcessException ex) {

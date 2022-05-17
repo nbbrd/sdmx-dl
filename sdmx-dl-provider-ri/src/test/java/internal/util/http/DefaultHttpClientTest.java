@@ -63,7 +63,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
         assertThat(sslSocketFactoryCount).hasValue(0);
         assertThat(hostnameVerifierCount).hasValue(0);
 
-        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
+        try (HttpResponse response = x.send(HttpRequest.builder().query(wireURL(SAMPLE_URL)).mediaType(XmlMediaTypes.GENERIC_DATA_21).build())) {
             assertSameSampleContent(response);
         }
 
@@ -87,7 +87,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(ok()));
 
-        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
+        try (HttpResponse response = x.send(HttpRequest.builder().query(wireURL(SAMPLE_URL)).mediaType(XmlMediaTypes.GENERIC_DATA_21).build())) {
             assertThatIOException()
                     .isThrownBy(response::getContentType)
                     .withMessageContaining("Missing content-type in HTTP response header");
@@ -98,7 +98,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okForContentType("/ / /", "body")));
 
-        try (HttpResponse response = x.requestGET(new HttpRequest(wireURL(SAMPLE_URL), singletonList(XmlMediaTypes.GENERIC_DATA_21), ANY_LANG))) {
+        try (HttpResponse response = x.send(HttpRequest.builder().query(wireURL(SAMPLE_URL)).mediaType(XmlMediaTypes.GENERIC_DATA_21).build())) {
             assertThatIOException()
                     .isThrownBy(response::getContentType)
                     .withMessageContaining("Invalid content-type in HTTP response header");

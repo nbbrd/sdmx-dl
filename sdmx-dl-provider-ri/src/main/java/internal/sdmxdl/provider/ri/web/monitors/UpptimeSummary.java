@@ -30,7 +30,7 @@ class UpptimeSummary {
     }
 
     static @NonNull List<UpptimeSummary> request(@NonNull HttpClient client, @NonNull URL summaryURL) throws IOException {
-        try (HttpResponse response = client.requestGET(RiHttpUtils.newRequest(summaryURL, MEDIA_TYPES, ANY))) {
+        try (HttpResponse response = client.send(RiHttpUtils.newRequest(summaryURL, MEDIA_TYPES, ANY))) {
             try (Reader reader = response.getBodyAsReader()) {
                 return parseAll(reader);
             }

@@ -35,7 +35,7 @@ public class DumpingClientTest {
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(null));
+                .isThrownBy(() -> x.send(null));
 
         assertThat(stack).isEmpty();
     }
@@ -47,7 +47,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -70,7 +70,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(nonEmpty), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -95,7 +95,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnGetBody), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -122,7 +122,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnRead), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -156,7 +156,7 @@ public class DumpingClientTest {
         private final IOSupplier<MockedResponse> response;
 
         @Override
-        public @NonNull HttpResponse requestGET(@NonNull HttpRequest httpRequest) throws IOException {
+        public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
             return response.getWithIO();
         }
     }
