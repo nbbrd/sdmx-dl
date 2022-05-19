@@ -64,7 +64,7 @@ public class ConnectorsResource {
                 .dataSet(
                         PortableTimeSeriesCursor
                                 .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
-                                .toStream()
+                                .asStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("NBB")
                 .build();
@@ -87,7 +87,7 @@ public class ConnectorsResource {
                 .dataSet(
                         PortableTimeSeriesCursor
                                 .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
-                                .toStream()
+                                .asStream()
                                 .collect(toDataSet(ref, DataQuery.ALL)))
                 .name("ECB")
                 .build();

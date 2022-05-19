@@ -1,32 +1,31 @@
 package internal.sdmxdl.provider.ri.web;
 
-import sdmxdl.format.MediaType;
 import nbbrd.io.FileParser;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataQuery;
-import sdmxdl.DataSet;
-import sdmxdl.DataStructure;
-import sdmxdl.DataflowRef;
-import sdmxdl.format.ObsParser;
+import sdmxdl.*;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.xml.XmlMediaTypes;
+import sdmxdl.format.MediaType;
+import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
+import sdmxdl.format.xml.XmlMediaTypes;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.*;
-import static sdmxdl.format.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.format.MediaType.ANY_TYPE;
 
 public class Sdmx21RestParsersTest {
 
@@ -80,10 +79,10 @@ public class Sdmx21RestParsersTest {
     }
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {
-        try {
-            return cursor.toStream().collect(DataSet.toDataSet(DataflowRef.parse("abc"), DataQuery.ALL));
-        } finally {
-            cursor.close();
+        try (Stream<Series> stream = cursor.asCloseableStream()) {
+            return stream.collect(DataSet.toDataSet(DataflowRef.parse("abc"), DataQuery.ALL));
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 

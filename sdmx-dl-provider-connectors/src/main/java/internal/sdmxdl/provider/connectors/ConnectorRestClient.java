@@ -138,7 +138,7 @@ public final class ConnectorRestClient implements RestClient {
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
         try {
             List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
-            return PortableTimeSeriesCursor.of(data, dataFactory, dsd).toStream();
+            return PortableTimeSeriesCursor.of(data, dataFactory, dsd).asStream();
         } catch (SdmxException ex) {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return Stream.empty();

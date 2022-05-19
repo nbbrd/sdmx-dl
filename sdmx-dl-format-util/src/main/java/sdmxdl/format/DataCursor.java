@@ -63,13 +63,13 @@ public interface DataCursor extends Closeable {
     Map<String, String> getObsAttributes() throws IOException, IllegalStateException;
 
     @NonNull
-    default Stream<Series> toStream() {
+    default Stream<Series> asStream() {
         Iterator<Series> iterator = new SeriesIterator(this);
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 
     @NonNull
-    default Stream<Series> toCloseableStream() {
-        return toStream().onClose(IORunnable.unchecked(DataCursor.this::close));
+    default Stream<Series> asCloseableStream() {
+        return asStream().onClose(IORunnable.unchecked(DataCursor.this::close));
     }
 }

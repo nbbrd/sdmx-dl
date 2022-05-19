@@ -83,7 +83,7 @@ public class XmlFileClient implements FileClient {
         return dataRef.getQuery().execute(
                 getDataSupplier(info.getDataType(), info.getStructure())
                         .parseFile(source.getData())
-                        .toCloseableStream()
+                        .asCloseableStream()
         );
     }
 

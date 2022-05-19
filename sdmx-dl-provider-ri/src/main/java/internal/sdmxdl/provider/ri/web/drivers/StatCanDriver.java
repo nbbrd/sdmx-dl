@@ -13,17 +13,17 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
+import sdmxdl.format.DataCursor;
 import sdmxdl.format.MediaType;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.TypedId;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.WebValidators;
 import sdmxdl.provider.Validator;
+import sdmxdl.provider.web.WebValidators;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
-import sdmxdl.format.DataCursor;
-import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -43,12 +43,13 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static internal.sdmxdl.provider.ri.web.RiHttpUtils.*;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.CONNECTION_PROPERTIES;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
 @ServiceProvider
 public final class StatCanDriver implements WebDriver {
@@ -492,10 +493,10 @@ public final class StatCanDriver implements WebDriver {
         }
 
         private static List<Series> toSeries(DataCursor cursor) throws IOException {
-            try {
-                return cursor.toStream().collect(Collectors.toList());
-            } finally {
-                cursor.close();
+            try (Stream<Series> stream = cursor.asCloseableStream()) {
+                return stream.collect(Collectors.toList());
+            } catch (UncheckedIOException ex) {
+                throw ex.getCause();
             }
         }
 

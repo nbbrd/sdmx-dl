@@ -169,7 +169,7 @@ public final class PxWebDriver implements WebDriver {
         public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
             DataStructure dsd = client.getMeta(flowRef.getId());
             DataCursor dataCursor = client.getData(flowRef.getId(), dsd, query.getKey());
-            return query.execute(dataCursor.toCloseableStream());
+            return query.execute(dataCursor.asCloseableStream());
         }
 
         @Override

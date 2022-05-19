@@ -80,7 +80,7 @@ public class RiRestClient implements RestClient {
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(ref), dsd).toCloseableStream();
+        return getData(getDataQuery(ref), dsd).asCloseableStream();
     }
 
     @Override
