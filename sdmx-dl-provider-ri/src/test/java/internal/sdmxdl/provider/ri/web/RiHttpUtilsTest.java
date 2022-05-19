@@ -89,16 +89,16 @@ public class RiHttpUtilsTest {
         assertThat(events.pop()).containsExactly(new Event(source, "Parsing '*/*' content-type"));
 
         x.onOpen(request, NO_PROXY, NONE);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost"));
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost"));
 
         x.onOpen(request, NO_PROXY, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with auth 'BASIC'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with auth 'BASIC'"));
 
         x.onOpen(request, customProxy, NONE);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123'"));
 
         x.onOpen(request, customProxy, BASIC);
-        assertThat(events.pop()).containsExactly(new Event(source, "Querying http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
+        assertThat(events.pop()).containsExactly(new Event(source, "HTTP GET http://localhost with proxy 'HTTP @ 0.0.0.0/0.0.0.0:123' with auth 'BASIC'"));
 
         x.onRedirection(source.getEndpoint().toURL(), new URL("http://other"));
         assertThat(events.pop()).containsExactly(new Event(source, "Redirecting to http://other"));

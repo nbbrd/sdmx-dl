@@ -13,6 +13,10 @@ import java.util.List;
 public class HttpRequest {
 
     @lombok.NonNull
+    @lombok.Builder.Default
+    HttpMethod method = HttpMethod.GET;
+
+    @lombok.NonNull
     URL query;
 
     @lombok.Singular
@@ -21,10 +25,6 @@ public class HttpRequest {
     @lombok.NonNull
     @lombok.Builder.Default
     String langs = "";
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    HttpMethod method = HttpMethod.GET;
 
     @lombok.Builder.Default
     byte[] body = null;

@@ -83,12 +83,12 @@ public class RiHttpUtils {
 
     public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
         HttpClient result = new DefaultHttpClient(context);
-        File dumpFile = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
-        return dumpFile != null ? newDumpingClient(context, result, dumpFile) : result;
+        File dumpFolder = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
+        return dumpFolder != null ? newDumpingClient(context, result, dumpFolder) : result;
     }
 
-    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFile) {
-        return new DumpingClient(dumpFile.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
+    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
+        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
     public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull WebContext context) {
@@ -120,7 +120,7 @@ public class RiHttpUtils {
         @Override
         public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                String message = WebEvents.onQuery(request.getQuery(), proxy);
+                String message = WebEvents.onQuery(request.getMethod().name(), request.getQuery(), proxy);
                 if (!HttpAuthScheme.NONE.equals(scheme)) {
                     message += " with auth '" + scheme.name() + "'";
                 }
