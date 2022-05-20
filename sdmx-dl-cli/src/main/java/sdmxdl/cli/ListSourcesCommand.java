@@ -52,7 +52,7 @@ public final class ListSourcesCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(SdmxWebSource.class)
                 .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
-                .columnOf("Description", this::selectDescription, Formatter.onString())
+                .columnOf("Description", this::getDescription, Formatter.onString())
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
@@ -64,8 +64,8 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .build();
     }
 
-    private String selectDescription(SdmxWebSource source) {
-        return web.getLangs().select(source.getDescriptions());
+    private String getDescription(SdmxWebSource source) {
+        return source.getDescription(web.getLangs());
     }
 
     private Stream<SdmxWebSource> getRows() throws IOException {

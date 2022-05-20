@@ -18,6 +18,7 @@ package sdmxdl.web;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxSource;
 
 import java.net.MalformedURLException;
@@ -80,6 +81,10 @@ public class SdmxWebSource extends SdmxSource {
 
     public @NonNull String getId() {
         return getDriver() + ":" + getName();
+    }
+
+    public @Nullable String getDescription(@NonNull LanguagePriorityList langs) {
+        return langs.select(descriptions);
     }
 
     public static class Builder {

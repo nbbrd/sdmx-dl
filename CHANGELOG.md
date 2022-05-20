@@ -10,7 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add URL connection factory in Network 
-- ![API] Add `monitorWebsite` field in `SdmxWebSource`
+- ![API] Add `SdmxWebSource#monitorWebsite` field
+- ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
 - ![CLI] Add `list/availability` command
 - ![CLI] Add `MonitorWebsite` column in `list/sources` command
 
