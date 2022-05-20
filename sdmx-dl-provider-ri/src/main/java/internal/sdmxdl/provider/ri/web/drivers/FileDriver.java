@@ -10,8 +10,7 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.provider.web.WebValidators;
-import sdmxdl.provider.Validator;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -19,9 +18,6 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 
 @ServiceProvider
 public final class FileDriver implements WebDriver {
@@ -31,29 +27,19 @@ public final class FileDriver implements WebDriver {
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enableFileDriver", false);
 
+    @lombok.experimental.Delegate
+    private final WebDriverSupport support = WebDriverSupport
+            .builder()
+            .name(RI_FILE)
+            .rank(NATIVE_RANK)
+            .availability(ENABLE::get)
+            .connector(this::newConnection)
+            .supportedPropertyOf(STRUCTURE_PROPERTY)
+            .build();
+
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
-    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_FILE);
-
-    @Override
-    public @NonNull String getName() {
-        return RI_FILE;
-    }
-
-    @Override
-    public int getRank() {
-        return NATIVE_RANK;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return ENABLE.get(System.getProperties());
-    }
-
-    @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        sourceValidator.checkValidity(source);
-
+    private @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         return fileManager
                 .toBuilder()
                 .languages(context.getLanguages())
@@ -61,21 +47,6 @@ public final class FileDriver implements WebDriver {
                 .cache(context.getCache())
                 .build()
                 .getConnection(toFileSource(source));
-    }
-
-    @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public @NonNull Collection<String> getSupportedProperties() {
-        return Collections.singletonList(STRUCTURE_PROPERTY.getKey());
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        return NO_DEFAULT_DIALECT;
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
@@ -100,5 +71,5 @@ public final class FileDriver implements WebDriver {
     }
 
     private static final Property<URI> STRUCTURE_PROPERTY =
-            Property.of("structureURL", null, Parser.of(text -> URI.create(text.toString())), Formatter.of(Objects::toString));
+            Property.of("structureURL", null, Parser.onURI(), Formatter.onURI());
 }

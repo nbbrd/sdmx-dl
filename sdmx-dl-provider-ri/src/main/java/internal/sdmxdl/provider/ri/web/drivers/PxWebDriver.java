@@ -23,10 +23,10 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.ConnectionSupport;
+import sdmxdl.provider.HasSourceName;
 import sdmxdl.provider.TypedId;
-import sdmxdl.provider.Validator;
-import sdmxdl.provider.web.WebValidators;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -41,12 +41,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static internal.sdmxdl.provider.ri.web.RiHttpUtils.CONNECTION_PROPERTIES;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.util.CollectionUtil.indexedStreamOf;
 import static internal.util.CollectionUtil.zip;
 import static internal.util.gson.GsonUtil.asStream;
 import static internal.util.gson.GsonUtil.getAsString;
-import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 
@@ -58,28 +57,31 @@ public final class PxWebDriver implements WebDriver {
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enablePxWebDriver", false);
 
-    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_PXWEB);
+    @lombok.experimental.Delegate
+    private final WebDriverSupport support = WebDriverSupport
+            .builder()
+            .name(RI_PXWEB)
+            .rank(NATIVE_RANK)
+            .availability(ENABLE::get)
+            .connector(PxWebDriver::newConnection)
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .supportedPropertyOf(CACHE_TTL_PROPERTY)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("STATFIN")
+                    .descriptionOf("Statistics Finland")
+                    .description("en", "Statistics Finland")
+                    .description("sv", "Statistikcentralen")
+                    .description("fi", "Tilastokeskus")
+                    .driver(RI_PXWEB)
+                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
+                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
+                    .build())
+            .build();
 
-    @Override
-    public @NonNull String getName() {
-        return RI_PXWEB;
-    }
-
-    @Override
-    public int getRank() {
-        return NATIVE_RANK;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return ENABLE.get(System.getProperties());
-    }
-
-    @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        sourceValidator.checkValidity(source);
-
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
+                source.getName(),
                 source.getName().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)
@@ -93,43 +95,11 @@ public final class PxWebDriver implements WebDriver {
                 context.getLanguages()
         );
 
-        return new PxWebConnection(source.getName(), cachedClient);
-    }
-
-    @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        return singleton(SdmxWebSource
-                .builder()
-                .name("STATFIN")
-                .descriptionOf("Statistics Finland")
-                .description("en", "Statistics Finland")
-                .description("sv", "Statistikcentralen")
-                .description("fi", "Tilastokeskus")
-                .driver(RI_PXWEB)
-                .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
-                .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
-                .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
-                .build());
-    }
-
-    @Override
-    public @NonNull Collection<String> getSupportedProperties() {
-        List<String> result = new ArrayList<>();
-        result.addAll(CONNECTION_PROPERTIES);
-        result.add(CACHE_TTL_PROPERTY.getKey());
-        return result;
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        return NO_DEFAULT_DIALECT;
+        return new PxWebConnection(cachedClient);
     }
 
     @lombok.AllArgsConstructor
     private static final class PxWebConnection implements Connection {
-
-        @lombok.NonNull
-        private final String name;
 
         @lombok.NonNull
         private final PxWebClient client;
@@ -146,11 +116,7 @@ public final class PxWebDriver implements WebDriver {
 
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
-            return getFlows()
-                    .stream()
-                    .filter(flowRef::containsRef)
-                    .findFirst()
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(name, flowRef));
+            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
         }
 
         @Override
@@ -160,9 +126,7 @@ public final class PxWebDriver implements WebDriver {
 
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
-            try (Stream<Series> stream = getDataStream(flowRef, query)) {
-                return stream.collect(DataSet.toDataSet(flowRef, query));
-            }
+            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
         }
 
         @Override
@@ -182,7 +146,7 @@ public final class PxWebDriver implements WebDriver {
         }
     }
 
-    private interface PxWebClient {
+    private interface PxWebClient extends HasSourceName {
 
         @NonNull Config getConfig() throws IOException;
 
@@ -195,6 +159,10 @@ public final class PxWebDriver implements WebDriver {
 
     @lombok.AllArgsConstructor
     private static final class DefaultPxWebClient implements PxWebClient {
+
+        @lombok.Getter
+        @lombok.NonNull
+        private final String name;
 
         @lombok.NonNull
         private final String dbId;
@@ -320,6 +288,11 @@ public final class PxWebDriver implements WebDriver {
                     repo -> repo.getStructures().stream().findFirst().orElse(null),
                     struct -> DataRepository.builder().structure(struct).build()
             ).with("meta");
+        }
+
+        @Override
+        public @NonNull String getName() {
+            return delegate.getName();
         }
 
         @Override

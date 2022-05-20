@@ -28,23 +28,23 @@ import java.io.IOException;
  */
 public final class CommonSdmxExceptions {
 
-    public static @NonNull IOException connectionClosed(@NonNull String source) {
-        return new IOException(String.format("Connection closed from '%s'", source));
+    public static @NonNull IOException connectionClosed(@NonNull HasSourceName source) {
+        return new IOException(String.format("Connection closed from '%s'", source.getName()));
     }
 
-    public static @NonNull IOException missingFlow(@NonNull String source, @NonNull DataflowRef ref) {
-        return new IOException(String.format("Missing flow '%s' from '%s'", ref, source));
+    public static @NonNull IOException missingFlow(@NonNull HasSourceName source, @NonNull DataflowRef ref) {
+        return new IOException(String.format("Missing flow '%s' from '%s'", ref, source.getName()));
     }
 
-    public static @NonNull IOException missingStructure(@NonNull String source, @NonNull DataStructureRef ref) {
-        return new IOException(String.format("Missing structure '%s' from '%s'", ref, source));
+    public static @NonNull IOException missingStructure(@NonNull HasSourceName source, @NonNull DataStructureRef ref) {
+        return new IOException(String.format("Missing structure '%s' from '%s'", ref, source.getName()));
     }
 
-    public static @NonNull IOException missingData(@NonNull String source, @NonNull DataflowRef ref) {
-        return new IOException(String.format("Missing data '%s' from '%s'", ref, source));
+    public static @NonNull IOException missingData(@NonNull HasSourceName source, @NonNull DataflowRef ref) {
+        return new IOException(String.format("Missing data '%s' from '%s'", ref, source.getName()));
     }
 
-    public static @NonNull IOException missingCodelist(@NonNull String source, @NonNull CodelistRef ref) {
-        return new IOException(String.format("Missing codelist '%s' from '%s'", ref, source));
+    public static @NonNull IOException missingCodelist(@NonNull HasSourceName source, @NonNull CodelistRef ref) {
+        return new IOException(String.format("Missing codelist '%s' from '%s'", ref, source.getName()));
     }
 }

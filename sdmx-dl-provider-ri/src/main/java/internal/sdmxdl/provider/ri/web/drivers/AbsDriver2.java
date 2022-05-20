@@ -26,7 +26,8 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -34,6 +35,7 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 import java.net.URL;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
@@ -47,12 +49,12 @@ public final class AbsDriver2 implements WebDriver {
     private static final String RI_ABS = "ri:abs";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_ABS)
             .rank(NATIVE_RANK)
-            .client(AbsDriver2::newClient)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(AbsDriver2::newClient))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(SDMX20_DIALECT)
             .build();
 

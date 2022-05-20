@@ -16,14 +16,16 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
+
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -34,12 +36,12 @@ public final class OecdDriver implements WebDriver {
     private static final String CONNECTORS_OECD = "connectors:oecd";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_OECD)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(OECD::new, ObsParser::newDefault))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .defaultDialect(Dialect.SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()

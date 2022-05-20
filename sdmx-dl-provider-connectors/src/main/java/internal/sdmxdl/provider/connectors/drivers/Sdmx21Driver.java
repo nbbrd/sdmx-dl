@@ -16,12 +16,12 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import internal.sdmxdl.provider.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
@@ -29,6 +29,7 @@ import java.net.URI;
 import java.util.Map;
 
 import static internal.sdmxdl.provider.connectors.Connectors.*;
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
 
@@ -41,12 +42,12 @@ public final class Sdmx21Driver implements WebDriver {
     private static final String CONNECTORS_SDMX_21 = "connectors:sdmx21";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_SDMX_21)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx21Client::new, ObsParser::newDefault))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx21Client::new)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
             .supportedPropertyOf(NEEDS_URL_ENCODING_PROPERTY)
             .supportedPropertyOf(SUPPORTS_COMPRESSION_PROPERTY)

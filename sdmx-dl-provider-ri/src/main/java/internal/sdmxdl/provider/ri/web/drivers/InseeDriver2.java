@@ -33,7 +33,8 @@ import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.StandardReportingFormat;
 import sdmxdl.format.TimeFormatParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -42,6 +43,7 @@ import sdmxdl.format.DataCursor;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
 
@@ -54,12 +56,12 @@ public final class InseeDriver2 implements WebDriver {
     private static final String RI_INSEE = "ri:insee";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
-            .client(InseeRestClient::new)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(InseeRestClient::new))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()

@@ -17,10 +17,8 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.CommonSdmxExceptions;
-import sdmxdl.provider.TypedId;
-import sdmxdl.provider.Validator;
-import sdmxdl.provider.web.WebValidators;
+import sdmxdl.provider.*;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -43,7 +41,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static internal.sdmxdl.provider.ri.web.RiHttpUtils.CONNECTION_PROPERTIES;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
@@ -56,28 +54,32 @@ public final class StatCanDriver implements WebDriver {
 
     private static final String RI_STATCAN = "ri:statcan";
 
-    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_STATCAN);
+    @lombok.experimental.Delegate
+    private final WebDriverSupport support = WebDriverSupport
+            .builder()
+            .name(RI_STATCAN)
+            .rank(NATIVE_RANK)
+            .connector(StatCanDriver::newConnection)
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .supportedPropertyOf(CACHE_TTL_PROPERTY)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("STATCAN")
+                    .descriptionOf("Statistics Canada")
+                    .description("en", "Statistics Canada")
+                    .description("fr", "Statistique Canada")
+                    .driver(RI_STATCAN)
+                    .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
+                    .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
+                    .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan")
+                    .build())
+            .build();
 
-    @Override
-    public @NonNull String getName() {
-        return RI_STATCAN;
-    }
-
-    @Override
-    public int getRank() {
-        return NATIVE_RANK;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        sourceValidator.checkValidity(source);
-
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
+                source.getName(),
                 source.getEndpoint().toURL(),
                 context.getLanguages(),
                 newClient(source, context)
@@ -89,44 +91,11 @@ public final class StatCanDriver implements WebDriver {
                 source, context.getLanguages()
         );
 
-        return new StatCanConnection(source.getName(), cachedClient);
-    }
-
-    @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        return Collections.singleton(SdmxWebSource
-                .builder()
-                .name("STATCAN")
-                .descriptionOf("Statistics Canada")
-                .description("en", "Statistics Canada")
-                .description("fr", "Statistique Canada")
-                .driver(RI_STATCAN)
-                .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
-                .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
-                .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
-                .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
-                .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan")
-                .build());
-    }
-
-    @Override
-    public @NonNull Collection<String> getSupportedProperties() {
-        List<String> result = new ArrayList<>();
-        result.addAll(CONNECTION_PROPERTIES);
-        result.add(CACHE_TTL_PROPERTY.getKey());
-        return result;
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        return NO_DEFAULT_DIALECT;
+        return new StatCanConnection(cachedClient);
     }
 
     @lombok.AllArgsConstructor
     private static final class StatCanConnection implements Connection {
-
-        @lombok.NonNull
-        private final String source;
 
         @lombok.NonNull
         private final StatCanClient client;
@@ -139,11 +108,7 @@ public final class StatCanDriver implements WebDriver {
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return getFlows()
-                    .stream()
-                    .filter(flowRef::containsRef)
-                    .findFirst()
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(source, flowRef));
+            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
         }
 
         @Override
@@ -152,7 +117,7 @@ public final class StatCanDriver implements WebDriver {
             DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
             return client.getStructAndData(productId)
                     .getStructure(dsdRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(source, dsdRef));
+                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
         }
 
         private Optional<DataSet> getDataSet(DataflowRef ref) throws IOException {
@@ -163,14 +128,14 @@ public final class StatCanDriver implements WebDriver {
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(source, flowRef))
+                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
                     .getData(query);
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(source, flowRef))
+                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
                     .getDataStream(query);
         }
 
@@ -185,12 +150,12 @@ public final class StatCanDriver implements WebDriver {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
     }
 
     @VisibleForTesting
-    interface StatCanClient {
+    interface StatCanClient extends HasSourceName {
 
         @NonNull List<Dataflow> getFlows() throws IOException;
 
@@ -203,6 +168,8 @@ public final class StatCanDriver implements WebDriver {
     @lombok.AllArgsConstructor
     static class DefaultStatCanClient implements StatCanClient {
 
+        @lombok.Getter
+        private final String name;
         private final URL endpoint;
         private final LanguagePriorityList langs;
         private final HttpClient client;
@@ -327,6 +294,11 @@ public final class StatCanDriver implements WebDriver {
         private static TypedId<DataRepository> initIdOfRepo(URI base) {
             return TypedId.of(base, Function.identity(), Function.identity())
                     .with("structAndData");
+        }
+
+        @Override
+        public @NonNull String getName() {
+            return delegate.getName();
         }
 
         @Override

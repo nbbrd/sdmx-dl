@@ -52,7 +52,7 @@ import static sdmxdl.provider.web.WebProperties.*;
 @lombok.experimental.UtilityClass
 public class RiHttpUtils {
 
-    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+    public static final List<String> RI_CONNECTION_PROPERTIES = BaseProperty.keysOf(
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY,

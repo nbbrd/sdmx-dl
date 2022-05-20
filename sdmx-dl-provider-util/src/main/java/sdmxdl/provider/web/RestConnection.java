@@ -19,6 +19,7 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Validator;
 
@@ -27,8 +28,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -66,9 +65,7 @@ final class RestConnection implements Connection {
 
     @Override
     public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-        try (Stream<Series> stream = getDataStream(flowRef, query)) {
-            return stream.collect(toDataSet(flowRef, query));
-        }
+        return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
     }
 
     @Override
@@ -111,7 +108,7 @@ final class RestConnection implements Connection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw CommonSdmxExceptions.connectionClosed(client.getName());
+            throw CommonSdmxExceptions.connectionClosed(client);
         }
     }
 
@@ -121,11 +118,7 @@ final class RestConnection implements Connection {
             return client.getFlow(flowRef);
         }
 
-        return client.getFlows()
-                .stream()
-                .filter(flowRef::containsRef)
-                .findFirst()
-                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(client.getName(), flowRef));
+        return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
     }
 
     private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {

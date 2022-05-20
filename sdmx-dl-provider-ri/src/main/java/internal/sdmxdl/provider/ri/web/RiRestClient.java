@@ -16,7 +16,10 @@
  */
 package internal.sdmxdl.provider.ri.web;
 
-import internal.util.http.*;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.DataCursor;
@@ -125,10 +128,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getFlowParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(name, ref));
+                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
         } catch (HttpResponseException ex) {
             if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingFlow(getName(), ref);
+                throw CommonSdmxExceptions.missingFlow(this, ref);
             }
             throw ex;
         }
@@ -146,10 +149,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(name, ref));
+                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));
         } catch (HttpResponseException ex) {
             if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingStructure(getName(), ref);
+                throw CommonSdmxExceptions.missingStructure(this, ref);
             }
             throw ex;
         }
@@ -181,10 +184,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(name, ref));
+                    .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(this, ref));
         } catch (HttpResponseException ex) {
             if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingCodelist(getName(), ref);
+                throw CommonSdmxExceptions.missingCodelist(this, ref);
             }
             throw ex;
         }

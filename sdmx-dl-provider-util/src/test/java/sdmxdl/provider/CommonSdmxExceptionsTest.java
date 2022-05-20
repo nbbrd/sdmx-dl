@@ -22,7 +22,7 @@ public class CommonSdmxExceptionsTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> connectionClosed(null));
 
-        assertThat(connectionClosed(SOURCE))
+        assertThat(connectionClosed(() -> SOURCE))
                 .hasNoCause()
                 .hasMessageContaining(SOURCE);
     }
@@ -33,9 +33,9 @@ public class CommonSdmxExceptionsTest {
                 .isThrownBy(() -> missingFlow(null, DATAFLOW_REF));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> missingFlow(SOURCE, null));
+                .isThrownBy(() -> missingFlow(() -> SOURCE, null));
 
-        assertThat(missingFlow(SOURCE, DATAFLOW_REF))
+        assertThat(missingFlow(() -> SOURCE, DATAFLOW_REF))
                 .hasNoCause()
                 .hasMessageContaining(SOURCE)
                 .hasMessageContaining(DATAFLOW_REF.getId());
@@ -47,9 +47,9 @@ public class CommonSdmxExceptionsTest {
                 .isThrownBy(() -> missingStructure(null, DATA_STRUCTURE_REF));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> missingStructure(SOURCE, null));
+                .isThrownBy(() -> missingStructure(() -> SOURCE, null));
 
-        assertThat(missingStructure(SOURCE, DATA_STRUCTURE_REF))
+        assertThat(missingStructure(() -> SOURCE, DATA_STRUCTURE_REF))
                 .hasNoCause()
                 .hasMessageContaining(SOURCE)
                 .hasMessageContaining(DATA_STRUCTURE_REF.getId());
@@ -61,9 +61,9 @@ public class CommonSdmxExceptionsTest {
                 .isThrownBy(() -> missingData(null, DATAFLOW_REF));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> missingData(SOURCE, null));
+                .isThrownBy(() -> missingData(() -> SOURCE, null));
 
-        assertThat(missingData(SOURCE, DATAFLOW_REF))
+        assertThat(missingData(() -> SOURCE, DATAFLOW_REF))
                 .hasNoCause()
                 .hasMessageContaining(SOURCE)
                 .hasMessageContaining(DATAFLOW_REF.getId());
@@ -75,9 +75,9 @@ public class CommonSdmxExceptionsTest {
                 .isThrownBy(() -> missingCodelist(null, CODELIST_REF));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> missingCodelist(SOURCE, null));
+                .isThrownBy(() -> missingCodelist(() -> SOURCE, null));
 
-        assertThat(missingCodelist(SOURCE, CODELIST_REF))
+        assertThat(missingCodelist(() -> SOURCE, CODELIST_REF))
                 .hasNoCause()
                 .hasMessageContaining(SOURCE)
                 .hasMessageContaining(CODELIST_REF.getId());

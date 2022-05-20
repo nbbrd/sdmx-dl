@@ -19,7 +19,6 @@ package sdmxdl.provider.web;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
-import sdmxdl.DataflowRef;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -27,25 +26,25 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.Collection;
-
-import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import java.util.Properties;
+import java.util.function.Predicate;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class RestDriverSupport implements WebDriver {
+public final class WebDriverSupport implements WebDriver {
 
     @lombok.Getter
-    @lombok.NonNull
+    @NonNull
     private final String name;
 
     @lombok.Getter
     @lombok.Builder.Default
     private final int rank = UNKNOWN;
 
-    @lombok.NonNull
-    private final RestClientSupplier client;
+    @NonNull
+    private final WebConnector connector;
 
     @lombok.Singular
     private final Collection<SdmxWebSource> sources;
@@ -59,21 +58,21 @@ public final class RestDriverSupport implements WebDriver {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Validator<DataflowRef> dataflowRefValidator = WebValidators.DEFAULT_DATAFLOW_REF_VALIDATOR;
+    private final Predicate<Properties> availability = properties -> true;
 
     @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(name);
+    private final Validator<SdmxWebSource> lazySourceValidator = WebValidators.onDriverName(name);
 
     @Override
     public boolean isAvailable() {
-        return true;
+        return availability.test(System.getProperties());
     }
 
     @Override
     public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
-        getSourceValidator().checkValidity(source);
+        getLazySourceValidator().checkValidity(source);
 
-        return RestConnection.of(getClient(source, context), dataflowRefValidator, false);
+        return connector.connect(source, context);
     }
 
     @Override
@@ -84,15 +83,6 @@ public final class RestDriverSupport implements WebDriver {
     @Override
     public @NonNull Collection<String> getSupportedProperties() {
         return supportedProperties;
-    }
-
-    private RestClient getClient(SdmxWebSource source, WebContext context) throws IOException {
-        return CachedRestClient.of(
-                client.get(source, context),
-                context.getCache(),
-                CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source,
-                context.getLanguages());
     }
 
     public static final class Builder {

@@ -19,6 +19,7 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasSourceName;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,9 +28,7 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-public interface RestClient {
-
-    @NonNull String getName();
+public interface RestClient extends HasSourceName {
 
     @NonNull List<Dataflow> getFlows() throws IOException;
 

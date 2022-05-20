@@ -16,18 +16,19 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.spi.Dialect;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
 
 import static internal.sdmxdl.provider.connectors.Connectors.NEEDS_CREDENTIALS_PROPERTY;
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -38,12 +39,12 @@ public final class Sdmx20Driver implements WebDriver {
     private static final String CONNECTORS_SDMX_20 = "connectors:sdmx20";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_SDMX_20)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(Sdmx20Client::new, ObsParser::newDefault))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx20Client::new)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
             .defaultDialect(Dialect.SDMX20_DIALECT)
             .build();

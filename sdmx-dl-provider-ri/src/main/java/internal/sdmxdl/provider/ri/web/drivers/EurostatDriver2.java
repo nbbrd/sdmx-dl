@@ -35,8 +35,9 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -49,6 +50,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -71,12 +73,12 @@ public final class EurostatDriver2 implements WebDriver {
     private static final String RI_EUROSTAT = "ri:estat";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_EUROSTAT)
             .rank(NATIVE_RANK)
-            .client(EurostatDriver2::newClient)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(EurostatDriver2::newClient))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
             .defaultDialect(SDMX21_DIALECT)

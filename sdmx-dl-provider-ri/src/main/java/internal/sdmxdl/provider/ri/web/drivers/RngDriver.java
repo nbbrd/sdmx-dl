@@ -7,9 +7,9 @@ import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
-import sdmxdl.provider.CommonSdmxExceptions;
-import sdmxdl.provider.web.WebValidators;
-import sdmxdl.provider.Validator;
+import sdmxdl.provider.ConnectionSupport;
+import sdmxdl.provider.HasSourceName;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -30,9 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
-import static sdmxdl.DataSet.toDataSet;
 
 @ServiceProvider
 public final class RngDriver implements WebDriver {
@@ -42,53 +40,26 @@ public final class RngDriver implements WebDriver {
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enableRngDriver", false);
 
-    private final Validator<SdmxWebSource> sourceValidator = WebValidators.onDriverName(RI_RNG);
+    @lombok.experimental.Delegate
+    private final WebDriverSupport support = WebDriverSupport
+            .builder()
+            .name(RI_RNG)
+            .rank(NATIVE_RANK)
+            .availability(ENABLE::get)
+            .connector(RngDriver::newConnection)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("RNG")
+                    .descriptionOf("Random number generator")
+                    .driver(RI_RNG)
+                    .endpointOf("rng:3:4:0:2010-01-01")
+                    .build())
+            .build();
 
-    @Override
-    public @NonNull String getName() {
-        return RI_RNG;
-    }
-
-    @Override
-    public int getRank() {
-        return NATIVE_RANK;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return ENABLE.get(System.getProperties());
-    }
-
-    @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        sourceValidator.checkValidity(source);
-
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(source.getId(), config);
-    }
-
-    @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        return singleton(
-                SdmxWebSource
-                        .builder()
-                        .name("RNG")
-                        .descriptionOf("Random number generator")
-                        .driver(RI_RNG)
-                        .endpointOf("rng:3:4:0:2010-01-01")
-                        .build()
-        );
-    }
-
-    @Override
-    public @NonNull Collection<String> getSupportedProperties() {
-        return emptyList();
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        return NO_DEFAULT_DIALECT;
     }
 
     @RepresentableAs(URI.class)
@@ -126,12 +97,13 @@ public final class RngDriver implements WebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class RngConnection implements Connection {
+    private static final class RngConnection implements Connection, HasSourceName {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";
 
-        private final String sourceId;
+        @lombok.Getter
+        private final String name;
         private final RngDriverId config;
 
         @Override
@@ -145,11 +117,7 @@ public final class RngDriver implements WebDriver {
 
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
-            return getFlows()
-                    .stream()
-                    .filter(flowRef::containsRef)
-                    .findFirst()
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(sourceId, flowRef));
+            return ConnectionSupport.getFlowFromFlows(flowRef, this, this);
         }
 
         @Override
@@ -191,7 +159,7 @@ public final class RngDriver implements WebDriver {
 
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-            return getDataStream(flowRef, query).collect(toDataSet(flowRef, query));
+            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
         }
 
         @Override

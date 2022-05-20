@@ -19,6 +19,7 @@ package sdmxdl.provider.file;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.web.WebValidators;
 
@@ -28,8 +29,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -73,9 +72,7 @@ public final class FileConnection implements Connection {
 
     @Override
     public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
-        try (Stream<Series> stream = getDataStream(flowRef, query)) {
-            return stream.collect(toDataSet(flowRef, query));
-        }
+        return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
     }
 
     @Override
@@ -99,13 +96,9 @@ public final class FileConnection implements Connection {
         closed = true;
     }
 
-    private String getName() {
-        return "fixme";
-    }
-
     private void checkState() throws IOException {
         if (closed) {
-            throw CommonSdmxExceptions.connectionClosed(getName());
+            throw CommonSdmxExceptions.connectionClosed(client);
         }
     }
 
@@ -115,7 +108,7 @@ public final class FileConnection implements Connection {
 
     private void checkFlowRef(DataflowRef flowRef) throws IOException {
         if (!this.dataflow.getRef().contains(flowRef)) {
-            throw CommonSdmxExceptions.missingFlow(getName(), flowRef);
+            throw CommonSdmxExceptions.missingFlow(client, flowRef);
         }
     }
 }

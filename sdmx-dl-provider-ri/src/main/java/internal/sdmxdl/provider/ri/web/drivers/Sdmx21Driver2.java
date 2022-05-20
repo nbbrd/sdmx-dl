@@ -16,19 +16,20 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.provider.web.RestDriverSupport;
 import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.provider.web.WebProperties.TRAILING_SLASH_REQUIRED_PROPERTY;
@@ -42,12 +43,12 @@ public final class Sdmx21Driver2 implements WebDriver {
     private static final String RI_SDMX_21 = "ri:sdmx21";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_SDMX_21)
             .rank(NATIVE_RANK)
-            .client(Sdmx21Driver2::newClient)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(Sdmx21Driver2::newClient))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
             .defaultDialect(SDMX21_DIALECT)

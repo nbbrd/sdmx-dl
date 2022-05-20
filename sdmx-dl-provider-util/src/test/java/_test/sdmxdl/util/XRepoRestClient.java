@@ -48,13 +48,13 @@ public final class XRepoRestClient implements RestClient {
     @Override
     public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         return repository.getFlow(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
     }
 
     @Override
     public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return repository.getStructure(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class XRepoRestClient implements RestClient {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
-                .orElseThrow(() -> CommonSdmxExceptions.missingData(repository.getName(), ref.getFlowRef()));
+                .orElseThrow(() -> CommonSdmxExceptions.missingData(this, ref.getFlowRef()));
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class XRepoRestClient implements RestClient {
                 .map(Component::getCodelist)
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(this, ref));
     }
 
     @Override

@@ -51,7 +51,7 @@ import static sdmxdl.provider.web.WebProperties.*;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConnectorRestClient implements RestClient {
+public final class ConnectorsRestClient implements RestClient {
 
     @FunctionalInterface
     public interface SpecificSupplier {
@@ -67,24 +67,32 @@ public final class ConnectorRestClient implements RestClient {
         RestSdmxClient get(@NonNull URI endpoint, @NonNull Map<String, String> properties);
     }
 
-    public static @NonNull RestClientSupplier of(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
+    public static @NonNull RestClientSupplier ofSpecific(@NonNull SpecificSupplier supplier) {
+        return ofSpecific(supplier, ObsParser::newDefault);
+    }
+
+    public static @NonNull RestClientSupplier ofSpecific(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
-                return new ConnectorRestClient(source.getName(), client, obsFactory);
+                return new ConnectorsRestClient(source.getName(), client, obsFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
         };
     }
 
-    public static @NonNull RestClientSupplier of(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
+    public static @NonNull RestClientSupplier ofGeneric(@NonNull GenericSupplier supplier) {
+        return ofGeneric(supplier, ObsParser::newDefault);
+    }
+
+    public static @NonNull RestClientSupplier ofGeneric(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
         return (source, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
-            return new ConnectorRestClient(source.getName(), client, obsFactory);
+            return new ConnectorsRestClient(source.getName(), client, obsFactory);
         };
     }
 
@@ -175,7 +183,7 @@ public final class ConnectorRestClient implements RestClient {
         }
     }
 
-    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+    public static final List<String> CONNECTORS_CONNECTION_PROPERTIES = BaseProperty.keysOf(
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY

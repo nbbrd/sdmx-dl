@@ -3,11 +3,17 @@ package sdmxdl.provider.file;
 import lombok.NonNull;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasSourceName;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
-public interface FileClient {
+public interface FileClient extends HasSourceName {
+
+    @Override
+    default @NonNull String getName() {
+        return "fixme";
+    }
 
     void testClient() throws IOException;
 
