@@ -34,6 +34,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -449,27 +450,35 @@ public final class StatCanDriver implements WebDriver {
         }
 
         private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
-            FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
-                    .andThen(Converter::toSeries);
+            FileParser<Stream<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
+                    .andThen(DataCursor::asCloseableStream);
 
             try {
                 return file.stream()
-                        .parallel()
                         .filter(entry -> !isDataStructure(entry))
+                        .sorted(Comparator.comparingInt(Converter::getRevisionNumber))
                         .map(entry -> asSource(file, entry))
-                        .map(IOFunction.unchecked(parser::parseStream))
-                        .flatMap(List::stream);
+                        .flatMap(IOFunction.unchecked(parser::parseStream))
+                        .collect(Collectors.groupingBy(Series::getKey))
+                        .values()
+                        .stream()
+                        .map(Converter::combineObservations);
             } catch (UncheckedIOException ex) {
                 throw ex.getCause();
             }
         }
 
-        private static List<Series> toSeries(DataCursor cursor) throws IOException {
-            try (Stream<Series> stream = cursor.asCloseableStream()) {
-                return stream.collect(Collectors.toList());
-            } catch (UncheckedIOException ex) {
-                throw ex.getCause();
+        private static int getRevisionNumber(ZipEntry entry) {
+            String name = entry.getName();
+            return Integer.parseInt(name.substring(name.indexOf('_') + 1, name.indexOf('.')));
+        }
+
+        private static Series combineObservations(List<Series> list) {
+            Map<LocalDateTime, Obs> result = new LinkedHashMap<>();
+            for (Series series : list) {
+                series.getObs().forEach(obs -> result.put(obs.getPeriod(), obs));
             }
+            return list.get(0).toBuilder().clearObs().obs(result.values()).build();
         }
 
         private static boolean isDataStructure(ZipEntry entry) {

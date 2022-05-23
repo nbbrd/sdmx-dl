@@ -1,7 +1,9 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
+import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.TextParser;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -11,13 +13,17 @@ import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.WebDriverAssert;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static internal.sdmxdl.provider.ri.web.drivers.StatCanDriver.Converter.*;
+import static nbbrd.io.Resource.getResourceAsStream;
 import static org.assertj.core.api.Assertions.*;
 
 public class StatCanDriverTest {
@@ -167,5 +173,43 @@ public class StatCanDriverTest {
                         });
             }
         }
+
+        @Test
+        public void testRevisions(@TempDir File tmp) throws IOException {
+            String fileName = "statcan-34100158.zip";
+            File x = new File(tmp, fileName);
+            Files.copy(getResourceAsStream(StatCanDriverTest.class, fileName).orElseThrow(FileNotFoundException::new), x.toPath());
+
+            assertThat(toSdmxRepository(x, 34100158, LanguagePriorityList.ANY).getDataSets().get(0).getData())
+                    .has(uniqueKeys())
+                    .have(uniqueObs())
+                    .filteredOn(Series::getKey, Key.parse("1"))
+                    .singleElement()
+                    .satisfies(
+                            series -> assertThat(series.getObs().stream())
+                                    .hasSize(388)
+                                    .startsWith(obsOf("1990-01-01", 276.428))
+                                    .endsWith(obsOf("2022-04-01", 267.330))
+                                    .filteredOn(Obs::getPeriod, LocalDate.parse("2021-07-01").atStartOfDay())
+                                    .singleElement()
+                                    .isEqualTo(obsOf("2021-07-01", 274.067))
+                    )
+            ;
+        }
+    }
+
+    private static Obs obsOf(String localDate, double value) {
+        return Obs.builder().period(LocalDate.parse(localDate).atStartOfDay()).value(value).build();
+    }
+
+    @MightBePromoted
+    private static Condition<Collection<? extends Series>> uniqueKeys() {
+        return new Condition<>(o -> o.stream().map(Series::getKey).distinct().count() == o.size(), "unique keys");
+    }
+
+    @MightBePromoted
+    private static Condition<Series> uniqueObs() {
+        return new Condition<>(o -> o.getObs().stream().map(Obs::getPeriod).count() == o.getObs().size(), "unique obs");
     }
 }
+

@@ -29,6 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Fix parsing of HTTP response header in curl backend
 - ![PROVIDER] Fix NPE on missing HTTP response message
 - ![PROVIDER] Fix `DataflowRef` validation
+- ![PROVIDER] Fix Statistics Canada revisions [#252](https://github.com/nbbrd/sdmx-dl/issues/252)
 - ![CLI] Fix missing charsets in native image
 - ![CLI] Fix registration of system SSL in native image
 
