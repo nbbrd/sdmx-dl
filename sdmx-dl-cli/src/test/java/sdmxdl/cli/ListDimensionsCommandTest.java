@@ -14,11 +14,11 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class ListConceptsCommandTest {
+public class ListDimensionsCommandTest {
 
     @Test
     public void testHelp() {
-        CommandLine cmd = new CommandLine(new ListConceptsCommand());
+        CommandLine cmd = new CommandLine(new ListDimensionsCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.USAGE);
@@ -29,7 +29,7 @@ public class ListConceptsCommandTest {
     @SetSystemProperty(key = "enableFileDriver", value = "true")
     @Test
     public void testContent(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListConceptsCommand());
+        CommandLine cmd = new CommandLine(new ListDimensionsCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
@@ -43,9 +43,8 @@ public class ListConceptsCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Concept,Label,Type,Coded,Index,Relationship", atIndex(0))
-                .contains("FREQ,Frequency,dimension,true,0,", atIndex(1))
-                .contains("TITLE_COMPL,Title complement,attribute,false,,GROUP", atIndex(18))
-                .hasSize(19);
+                .contains("Name,Label,Coded,Index", atIndex(0))
+                .contains("FREQ,Frequency,true,0", atIndex(1))
+                .hasSize(8);
     }
 }

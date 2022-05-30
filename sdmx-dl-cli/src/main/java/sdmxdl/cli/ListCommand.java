@@ -28,7 +28,8 @@ import java.util.concurrent.Callable;
         subcommands = {
                 ListSourcesCommand.class,
                 ListFlowsCommand.class,
-                ListConceptsCommand.class,
+                ListDimensionsCommand.class,
+                ListAttributesCommand.class,
                 ListCodesCommand.class,
                 ListAvailabilityCommand.class,
                 ListFeaturesCommand.class,
