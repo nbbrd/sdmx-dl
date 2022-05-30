@@ -23,10 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.Attribute;
-import sdmxdl.Component;
-import sdmxdl.DataStructure;
-import sdmxdl.Dimension;
+import sdmxdl.*;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -65,6 +62,7 @@ public final class ListConceptsCommand implements Callable<Void> {
                 .columnOf("Type", IndexedComponent::getTypeName, Formatter.onString())
                 .columnOf("Coded", IndexedComponent::isCoded, Formatter.onBoolean())
                 .columnOf("Index", IndexedComponent::getIndexOrNull, Formatter.onInteger())
+                .columnOf("Relationship", IndexedComponent::getRelationshipOrNull, Formatter.onEnum())
                 .build();
     }
 
@@ -81,10 +79,10 @@ public final class ListConceptsCommand implements Callable<Void> {
     }
 
     private Stream<IndexedComponent> getAttributes(DataStructure dsd) {
-        return sort.applySort(dsd.getAttributes(), BY_ID).map(attribute -> new IndexedComponent(null, attribute));
+        return sort.applySort(dsd.getAttributes(), BY_RELATIONSHIP_AND_ID).map(attribute -> new IndexedComponent(null, attribute));
     }
 
-    private static final Comparator<Attribute> BY_ID = Comparator.comparing(Attribute::getId);
+    private static final Comparator<Attribute> BY_RELATIONSHIP_AND_ID = Comparator.comparing(Attribute::getRelationship).reversed().thenComparing(Attribute::getId);
 
     @lombok.Value
     private static class IndexedComponent {
@@ -98,6 +96,10 @@ public final class ListConceptsCommand implements Callable<Void> {
 
         String getTypeName() {
             return component.getClass().getSimpleName().toLowerCase(Locale.ROOT);
+        }
+
+        AttributeRelationship getRelationshipOrNull() {
+            return component instanceof Attribute ? ((Attribute) component).getRelationship() : null;
         }
     }
 }

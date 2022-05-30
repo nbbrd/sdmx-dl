@@ -56,10 +56,12 @@ public class XMLStreamStructure20Test {
             assertThat(attributes).hasSize(2);
             assertThat(attributes).filteredOn(attr -> attr.getId().equals("TIME_FORMAT")).singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Time Format");
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.SERIES);
                 assertThat(x.getCodes()).isNotEmpty();
             });
             assertThat(attributes).filteredOn(attr -> attr.getId().equals("OBS_STATUS")).singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Observation Status");
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.OBSERVATION);
                 assertThat(x.getCodes()).isNotEmpty();
             });
         });

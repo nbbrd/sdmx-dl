@@ -236,6 +236,7 @@ public final class XMLStreamStructure21 {
             }
         }
         ds.dimension(dimension.build());
+        context.incrementDimensionCount();
     }
 
     private void parseConceptIdentity(XMLStreamReader reader, Component.Builder<?> concept, DsdContext context) throws XMLStreamException {
@@ -309,26 +310,30 @@ public final class XMLStreamStructure21 {
                     parseLocalRepresentation(reader, attribute, context);
                     break;
                 case ATTRIBUTE_RELATIONSHIP_TAG:
-//                    parseAttributeRelationship(reader, attribute);
+                    parseAttributeRelationship(reader, attribute, context);
                     break;
             }
         }
         ds.attribute(attribute.build());
     }
 
-//    private void parseAttributeRelationship(XMLStreamReader reader, Attribute.Builder attribute) throws XMLStreamException {
-//        attribute.relationShip(Attribute.RelationShip.OTHER);
-//        while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_RELATIONSHIP_TAG)) {
-//            switch (reader.getLocalName()) {
-//                case PRIMARY_MEASURE_TAG:
-//                    attribute.relationShip(Attribute.RelationShip.OBS);
-//                    break;
-//                case DIMENSION_TAG:
-//                    attribute.relationShip(Attribute.RelationShip.SERIES);
-//                    break;
-//            }
-//        }
-//    }
+    private void parseAttributeRelationship(XMLStreamReader reader, Attribute.Builder attribute, DsdContext context) throws XMLStreamException {
+        attribute.relationship(AttributeRelationship.DATAFLOW);
+        int dimensionCount = 0;
+        while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_RELATIONSHIP_TAG)) {
+            switch (reader.getLocalName()) {
+                case PRIMARY_MEASURE_TAG:
+                    attribute.relationship(AttributeRelationship.OBSERVATION);
+                    break;
+                case DIMENSION_TAG:
+                    dimensionCount++;
+                    break;
+            }
+        }
+        if (dimensionCount > 0) {
+            attribute.relationship(dimensionCount < context.getDimensionCount() ? AttributeRelationship.GROUP : AttributeRelationship.SERIES);
+        }
+    }
 
     private int parseInt(String value) throws XMLStreamException {
         try {

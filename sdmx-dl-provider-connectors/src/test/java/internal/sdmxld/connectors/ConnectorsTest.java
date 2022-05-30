@@ -17,6 +17,8 @@
 package internal.sdmxld.connectors;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Attribute;
+import sdmxdl.AttributeRelationship;
 import sdmxdl.DataStructure;
 import tests.sdmxdl.api.RepoSamples;
 
@@ -59,8 +61,9 @@ public class ConnectorsTest {
 
     @Test
     public void testAttribute() {
-        assertThat(toAttribute(fromAttribute(RepoSamples.NOT_CODED_ATTRIBUTE)))
-                .isEqualTo(RepoSamples.NOT_CODED_ATTRIBUTE);
+        Attribute notCodedAttributeWithoutRelationship = NOT_CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build();
+        assertThat(toAttribute(fromAttribute(notCodedAttributeWithoutRelationship)))
+                .isEqualTo(notCodedAttributeWithoutRelationship);
     }
 
     @Test
@@ -75,6 +78,9 @@ public class ConnectorsTest {
                 .dimension(DIM1)
                 .dimension(DIM2.toBuilder().position(2).build())
                 .dimension(DIM3.toBuilder().position(3).build())
+                .clearAttributes()
+                .attribute(NOT_CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build())
+                .attribute(CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build())
                 .build();
 
         assertThat(toStructure(fromStructure(contiguousPositions)))

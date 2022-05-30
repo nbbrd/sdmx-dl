@@ -37,12 +37,9 @@ public class Attribute extends Component {
     @Nullable
     Codelist codelist;
 
-//    @lombok.NonNull
-//    RelationShip relationShip;
-//
-//    public enum RelationShip {
-//        DATASET, SERIES, OBS, OTHER;
-//    }
+    @lombok.NonNull
+    @lombok.Builder.Default
+    AttributeRelationship relationship = AttributeRelationship.UNKNOWN;
 
     public static final class Builder extends Component.Builder<Attribute.Builder> {
     }

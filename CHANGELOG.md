@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add URL connection factory in Network 
 - ![API] Add `SdmxWebSource#monitorWebsite` field
 - ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
+- ![API] Add support of attribute relationship [#81](https://github.com/nbbrd/sdmx-dl/issues/81)
 - ![PROVIDER] Add support of POST requests in HTTP backend
 - ![CLI] Add `list/availability` command
 - ![CLI] Add `MonitorWebsite` column in `list/sources` command

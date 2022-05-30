@@ -137,6 +137,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(Obs.class, new ObsSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
+        result.register(AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
         result.register(MonitorReports.class, new SdmxWebMonitorReportsSerializer());
         result.register(MonitorReport.class, new SdmxWebMonitorReportSerializer());
         result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
@@ -439,6 +440,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             output.writeString(t.getId());
             output.writeString(t.getLabel());
             kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
+            kryo.writeObject(output, t.getRelationship());
         }
 
         @SuppressWarnings("unchecked")
@@ -449,6 +451,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .id(input.readString())
                     .label(input.readString())
                     .codelist(kryo.readObjectOrNull(input, Codelist.class))
+                    .relationship(kryo.readObject(input, AttributeRelationship.class))
                     .build();
         }
     }
