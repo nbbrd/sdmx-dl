@@ -16,7 +16,11 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.CloseableExecutorService;
+import internal.sdmxdl.cli.ext.SameThreadExecutorService;
 import internal.sdmxdl.cli.ext.VerboseOptions;
+import nbbrd.design.ReturnNew;
+import nbbrd.io.text.BooleanProperty;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -28,6 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
@@ -78,13 +86,23 @@ public class WebOptions {
     )
     private boolean batch;
 
+    @ReturnNew
     public SdmxWebManager loadManager() throws IOException {
-        return SdmxWebManager.ofServiceLoader()
-                .toBuilder()
-                .languages(langs)
-                .eventListener(getEventListener())
-                .customSources(parseCustomSources())
-                .build();
+        try (CloseableExecutorService executor = new CloseableExecutorService(newResourceExecutor())) {
+
+            Future<SdmxWebManager> defaultWebManager = executor.submit(this::loadDefaultWebManager);
+            Future<List<SdmxWebSource>> customSources = executor.submit(this::loadCustomSources);
+
+            return defaultWebManager.get()
+                    .toBuilder()
+                    .languages(langs)
+                    .eventListener(getEventListener())
+                    .customSources(customSources.get())
+                    .build();
+
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new IOException(ex);
+        }
     }
 
     private BiConsumer<? super SdmxWebSource, ? super String> getEventListener() {
@@ -92,7 +110,13 @@ public class WebOptions {
         return new VerboseListener(original, verboseOptions)::onSourceEvent;
     }
 
-    private List<SdmxWebSource> parseCustomSources() throws IOException {
+    @ReturnNew
+    private SdmxWebManager loadDefaultWebManager() {
+        return SdmxWebManager.ofServiceLoader();
+    }
+
+    @ReturnNew
+    private List<SdmxWebSource> loadCustomSources() throws IOException {
         if (sourcesFile != null) {
             if (verboseOptions.isVerbose()) {
                 verboseOptions.reportToErrorStream("CFG", "Using source file '" + sourcesFile + "'");
@@ -129,5 +153,14 @@ public class WebOptions {
                 verboseOptions.reportToErrorStream("WEB", source.getName() + ": " + message);
             }
         }
+    }
+
+    public static final BooleanProperty PARALLEL_RESOURCE_LOADING_PROPERTY
+            = BooleanProperty.of("parallelResourceLoading", true);
+
+    private static ExecutorService newResourceExecutor() {
+        return PARALLEL_RESOURCE_LOADING_PROPERTY.get(System.getProperties())
+                ? Executors.newFixedThreadPool(2)
+                : new SameThreadExecutorService();
     }
 }
