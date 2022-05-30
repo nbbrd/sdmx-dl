@@ -55,12 +55,12 @@ public final class FailsafeHandler implements BiConsumer<String, RuntimeExceptio
     }
 
     public void assertUnexpectedError(String msg, Class<? extends RuntimeException> ex) {
-        assertThat(messages).hasSize(1).element(0).asString().containsIgnoringCase(msg);
-        assertThat(errors).hasSize(1).element(0).isInstanceOf(ex);
+        assertThat(messages).singleElement().asString().containsIgnoringCase(msg);
+        assertThat(errors).singleElement().isInstanceOf(ex);
     }
 
     public void assertUnexpectedNull(String msg) {
-        assertThat(messages).hasSize(1).element(0).asString().containsIgnoringCase(msg);
+        assertThat(messages).singleElement().asString().containsIgnoringCase(msg);
         assertThat(errors).isEmpty();
     }
 }

@@ -59,8 +59,7 @@ public class XmlFileClientTest {
 
         try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), DataQuery.ALL))) {
             assertThat(o)
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .satisfies(series -> {
                         assertThat(series.getKey()).isEqualTo(key);
 //                        assertThat(series.getFreq()).isEqualTo(Frequency.ANNUAL);

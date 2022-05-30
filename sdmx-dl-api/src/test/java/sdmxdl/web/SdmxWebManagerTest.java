@@ -267,7 +267,7 @@ public class SdmxWebManagerTest {
         SdmxWebSource invalidProp = sampleSource.toBuilder().name("invalidProp").property("boom", "123").build();
         try (Connection ignored = manager.getConnection(invalidProp)) {
         }
-        assertThat(events).hasSize(1).element(0, STRING)
+        assertThat(events).singleElement(as(STRING))
                 .contains(invalidProp.getName())
                 .contains("boom");
     }

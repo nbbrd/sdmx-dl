@@ -63,8 +63,7 @@ public class ParsersTest {
                     .isEqualTo("ECB");
 
             assertThat(repository.getStructures())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
                                 .isEqualTo(DataStructureRef.of("ECB", "ECB_AME1", "1.0"));
@@ -128,8 +127,7 @@ public class ParsersTest {
                     .isEqualTo("NBB");
 
             assertThat(repository.getStructures())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
                                 .isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", "latest"));
@@ -176,8 +174,7 @@ public class ParsersTest {
                     });
 
             assertThat(repository.getFlows())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .extracting(Dataflow::getRef)
                     .isEqualTo(DataflowRef.of("NBB", "TEST_DATASET", "latest"));
 

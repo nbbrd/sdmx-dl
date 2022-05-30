@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.assertj.core.data.Index.atIndex;
@@ -46,7 +47,7 @@ public class CheckAccessCommandTest {
         assertThat(FileSample.readAll(out))
                 .contains("Source,Accessible,DurationInMillis,ErrorMessage", atIndex(0))
                 .hasSize(2)
-                .element(1, STRING)
+                .element(1, as(STRING))
                 .startsWith("sample,YES,");
     }
 }

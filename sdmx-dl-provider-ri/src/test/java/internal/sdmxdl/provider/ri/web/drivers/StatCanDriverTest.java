@@ -149,8 +149,7 @@ public class StatCanDriverTest {
                 assertThat(toSdmxRepository(x, 10100001, label.getKey()))
                         .satisfies(repo -> {
                             assertThat(repo.getStructures())
-                                    .hasSize(1)
-                                    .element(0)
+                                    .singleElement()
                                     .satisfies(dsd -> {
                                         assertThat(dsd.getDimensions())
                                                 .hasSize(2);
@@ -162,8 +161,7 @@ public class StatCanDriverTest {
                                                 .isEqualTo(toDataStructureRef(10100001));
                                     });
                             assertThat(repo.getDataSets())
-                                    .hasSize(1)
-                                    .element(0)
+                                    .singleElement()
                                     .satisfies(dataSet -> {
                                         assertThat(dataSet.getData())
                                                 .hasSize(14);

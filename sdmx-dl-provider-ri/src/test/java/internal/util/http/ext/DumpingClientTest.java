@@ -56,8 +56,7 @@ public class DumpingClientTest {
             }
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .isEmptyFile();
         }
@@ -79,8 +78,7 @@ public class DumpingClientTest {
             }
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .hasContent("hello");
         }
@@ -133,8 +131,7 @@ public class DumpingClientTest {
             });
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .isEmptyFile();
         }

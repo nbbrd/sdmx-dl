@@ -36,7 +36,7 @@ public class DataRepositoryTest {
 
     @Test
     public void testGetData() {
-        Assertions.assertThat(repo.getDataSets()).hasSize(1).contains(dataSet);
+        Assertions.assertThat(repo.getDataSets()).singleElement().isEqualTo(dataSet);
     }
 
     @Test
