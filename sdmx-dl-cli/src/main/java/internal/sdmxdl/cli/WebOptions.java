@@ -20,9 +20,9 @@ import internal.sdmxdl.cli.ext.VerboseOptions;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
+import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.format.xml.XmlWebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,11 +65,18 @@ public class WebOptions {
     private boolean noLog;
 
     @CommandLine.Option(
-            names = {"--debug"},
+            names = {SpecialProperties.DEBUG_OPTION},
             defaultValue = "false",
             hidden = true
     )
     private boolean debug;
+
+    @CommandLine.Option(
+            names = {SpecialProperties.BATCH_OPTION},
+            defaultValue = "false",
+            hidden = true
+    )
+    private boolean batch;
 
     public SdmxWebManager loadManager() throws IOException {
         return SdmxWebManager.ofServiceLoader()

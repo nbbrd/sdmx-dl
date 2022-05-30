@@ -34,6 +34,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * @author Philippe Charles
  */
@@ -43,7 +45,7 @@ public final class FileCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = SystemProperties.DEFAULT.getJavaIoTmpdir().resolve(About.NAME).resolve(About.VERSION);
+    private final Path root = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
 
     @lombok.NonNull
     @lombok.Builder.Default

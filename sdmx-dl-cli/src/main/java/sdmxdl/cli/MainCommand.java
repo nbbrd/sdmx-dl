@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.SpecialProperties;
 import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
 import internal.sdmxdl.cli.ext.PrintAndLogExceptionHandler;
 import nbbrd.console.picocli.ConfigHelper;
@@ -62,11 +63,14 @@ public final class MainCommand implements Callable<Void> {
     }
 
     private static int execMain(Properties properties, String[] args) {
-        try (AnsiConsole ansi = AnsiConsole.windowsInstall()) {
+        SpecialProperties specialProperties = SpecialProperties.parse(args);
+        specialProperties.apply(properties);
+
+        try (AnsiConsole ignore = AnsiConsole.windowsInstall()) {
             CommandLine cmd = new CommandLine(new MainCommand());
             cmd.setCaseInsensitiveEnumValuesAllowed(true);
             cmd.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(properties));
-            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class));
+            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class, specialProperties.isDebugRequired()));
             return cmd.execute(args);
         }
     }
