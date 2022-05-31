@@ -58,7 +58,7 @@ public enum OtherRules {
         boolean isInvalid(WebResponse r) {
             DataStructure dsd = r.getStructure();
             Dataflow flow = r.getFlow();
-            return dsd != null && flow != null && !dsd.getRef().contains(flow.getStructureRef());
+            return dsd != null && flow != null && !flow.getStructureRef().contains(dsd.getRef());
         }
     },
     STRUCT_INVALID_DIMENSION {

@@ -36,7 +36,7 @@ public class DotStatRestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(DATA_RESOURCE)

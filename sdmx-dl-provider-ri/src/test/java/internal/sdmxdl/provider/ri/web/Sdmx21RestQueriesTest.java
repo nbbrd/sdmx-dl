@@ -47,8 +47,9 @@ public class Sdmx21RestQueriesTest {
             assertThatNullPointerException().isThrownBy(() -> x.getFlowQuery(base, null));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(null, specificStruct));
             assertThatNullPointerException().isThrownBy(() -> x.getStructureQuery(base, null));
-            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))));
-            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(base, null));
+            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(null, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY)), ignoreDsdRef));
+            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(base, null, ignoreDsdRef));
+            assertThatNullPointerException().isThrownBy(() -> x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY)), null));
         }
     }
 
@@ -96,23 +97,23 @@ public class Sdmx21RestQueriesTest {
     public void testGetDataQuery() {
         Assertions.assertThat(Sdmx21RestQueries.builder().build())
                 .satisfies(x -> {
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL))))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL)), ignoreDsdRef))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY)), ignoreDsdRef))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY))))
+                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(Key.ALL, SERIES_KEYS_ONLY)), ignoreDsdRef))
                             .hasToString("http://base/data/all%2CEXR%2Clatest/all/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(key, SERIES_KEYS_ONLY))))
+                    assertThat(x.getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(key, SERIES_KEYS_ONLY)), ignoreDsdRef))
                             .hasToString("http://base/data/ECB%2CEXR%2C1.0/D.NOK.EUR.SP00.A/all?detail=serieskeysonly");
 
-                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(key, SERIES_KEYS_ONLY))))
+                    assertThat(x.getDataQuery(base, DataRef.of(genericFlow, DataQuery.of(key, SERIES_KEYS_ONLY)), ignoreDsdRef))
                             .hasToString("http://base/data/all%2CEXR%2Clatest/D.NOK.EUR.SP00.A/all?detail=serieskeysonly");
                 });
 
-        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL))))
+        Assertions.assertThat(Sdmx21RestQueries.builder().trailingSlashRequired(true).build().getDataQuery(base, DataRef.of(specificFlow, DataQuery.of(Key.ALL, FULL)), ignoreDsdRef))
                 .hasToString("http://base/data/ECB%2CEXR%2C1.0/all/all/");
     }
 
@@ -122,4 +123,5 @@ public class Sdmx21RestQueriesTest {
     private final DataStructureRef specificStruct = DataStructureRef.of("ECB", "EXR", "1.0");
     private final DataStructureRef genericStruct = DataStructureRef.of(null, "EXR", null);
     private final Key key = Key.parse("D.NOK.EUR.SP00.A");
+    private final DataStructureRef ignoreDsdRef = DataStructureRef.parse("abc");
 }

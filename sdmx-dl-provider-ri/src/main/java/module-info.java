@@ -18,6 +18,7 @@ module sdmxdl.provider.ri {
             internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.FileDriver,
+            internal.sdmxdl.provider.ri.web.drivers.ImfDriver2,
             internal.sdmxdl.provider.ri.web.drivers.InseeDriver2,
             internal.sdmxdl.provider.ri.web.drivers.NbbDriver2,
             internal.sdmxdl.provider.ri.web.drivers.PxWebDriver,

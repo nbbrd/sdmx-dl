@@ -83,7 +83,7 @@ public class RiRestClient implements RestClient {
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(ref), dsd).asCloseableStream();
+        return getData(getDataQuery(ref, dsd.getRef()), dsd).asCloseableStream();
     }
 
     @Override
@@ -159,8 +159,8 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getDataQuery(@NonNull DataRef ref) throws IOException {
-        return queries.getDataQuery(endpoint, ref).build();
+    protected URL getDataQuery(@NonNull DataRef ref, @NonNull DataStructureRef dsdRef) throws IOException {
+        return queries.getDataQuery(endpoint, ref, dsdRef).build();
     }
 
     @NonNull

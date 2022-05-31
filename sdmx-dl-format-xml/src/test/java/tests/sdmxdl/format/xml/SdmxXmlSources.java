@@ -43,4 +43,5 @@ public class SdmxXmlSources {
     public static final ByteSource OTHER_COMPACT20 = of("other/sdmx-compact20-sample.xml");
     public static final ByteSource OTHER_GENERIC21 = of("other/sdmx-GenericData21.xml");
     public static final ByteSource OTHER_COMPACT21 = of("other/sdmx-compactData21.xml");
+    public static final ByteSource OTHER_FLOWS20 = of("other/sdmx-Dataflows20.xml");
 }

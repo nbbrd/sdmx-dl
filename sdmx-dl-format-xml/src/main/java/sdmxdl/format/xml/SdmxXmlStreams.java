@@ -77,6 +77,13 @@ public class SdmxXmlStreams {
                 .build();
     }
 
+    public Xml.@NonNull Parser<List<Dataflow>> flow20(@NonNull LanguagePriorityList langs) {
+        return Stax.StreamParser.<List<Dataflow>>builder()
+                .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
+                .handler(Stax.FlowHandler.of(new XMLStreamFlow20(langs)::parse))
+                .build();
+    }
+
     public Xml.@NonNull Parser<List<Dataflow>> flow21(@NonNull LanguagePriorityList langs) {
         return Stax.StreamParser.<List<Dataflow>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)

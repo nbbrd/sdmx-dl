@@ -21,6 +21,7 @@ import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.URLQueryBuilder;
+import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
@@ -74,8 +75,8 @@ public final class AbsDriver2 implements WebDriver {
         }
 
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
-            return super.getDataQuery(endpoint, ref).path(AGENCY);
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
+            return super.getDataQuery(endpoint, ref, dsdRef).path(AGENCY);
         }
     }
 }

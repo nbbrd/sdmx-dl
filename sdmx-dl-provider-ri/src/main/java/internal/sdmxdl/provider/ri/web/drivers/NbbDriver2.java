@@ -28,6 +28,7 @@ import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
@@ -114,7 +115,7 @@ public final class NbbDriver2 implements WebDriver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)
