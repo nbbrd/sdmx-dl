@@ -115,12 +115,6 @@
         <!-- runtime only -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-connectors</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
