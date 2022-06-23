@@ -12,8 +12,12 @@
 <meta name="generator" content="Hugo 0.101.0" />
 
 
+  <meta name="description" content="Common file encoding char string locale datetime The date-time format is ISO-8601.
+number A number is a numeric value.
+Format: depends on the locale and number pattern.
+Note: The number format provider has been changed in JDK9 (see JEP252) so the formatting might be different when using an old JDK. For example, NaN value (aka &ldquo;not-a-number&rdquo;) is represented by NaN in JDK9&#43; but was represented by U&#43;FFFD REPLACEMENT CHARACTER in JDK8." />
 
-    <title>Tags | sdmx-dl</title>
+    <title>Data types | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -34,19 +38,61 @@
     
   <meta
     property="og:title"
-    content="Tags"
+    content="Data types"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" />
+  <meta property="og:description" content="Common file encoding char string locale datetime The date-time format is ISO-8601.
+number A number is a numeric value.
+Format: depends on the locale and number pattern.
+Note: The number format provider has been changed in JDK9 (see JEP252) so the formatting might be different when using an old JDK. For example, NaN value (aka “not-a-number”) is represented by NaN in JDK9&#43; but was represented by U&#43;FFFD REPLACEMENT CHARACTER in JDK8." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/" />
 
-
+<meta property="article:section" content="CLI" />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Tags" />
+<meta name="twitter:title" content="Data types" />
+  <meta name="twitter:description" content="Common file encoding char string locale datetime The date-time format is ISO-8601.
+number A number is a numeric value.
+Format: depends on the locale and number pattern.
+Note: The number format provider has been changed in JDK9 (see JEP252) so the formatting might be different when using an old JDK. For example, NaN value (aka “not-a-number”) is represented by NaN in JDK9&#43; but was represented by U&#43;FFFD REPLACEMENT CHARACTER in JDK8." />
 
 
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "TechArticle",
+      "articleSection": "CLI",
+      "name": "Data types",
+      "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/",
+      "headline": "Data types",
+      "description": "Common file encoding char string locale datetime The date-time format is ISO-8601.\nnumber A number is a numeric value.\nFormat: depends on the locale and number pattern.\nNote: The number format provider has been changed in JDK9 (see JEP252) so the formatting might be different when using an old JDK. For example, NaN value (aka “not-a-number”) is represented by NaN in JDK9\u002b but was represented by U\u002bFFFD REPLACEMENT CHARACTER in JDK8.",
+      "wordCount" : "246",
+      "inLanguage": "en",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/"
+      },
+      "copyrightHolder" : "sdmx-dl",
+      "copyrightYear" : "0001",
+      "dateCreated": "0001-01-01T00:00:00.00Z",
+      "datePublished": "0001-01-01T00:00:00.00Z",
+      "dateModified": "0001-01-01T00:00:00.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "sdmx-dl",
+          "url": "http://nbbrd.github.io/sdmx-dl/docs/develop",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http://nbbrd.github.io/sdmx-dl/docs/develop/brand.svg",
+              "width":"32",
+              "height":"32"
+          }
+      }
+  }
+  </script>
 
 
     <script src="/sdmx-dl/docs/develop/js/main-51ef884d.bundle.min.js"></script>
@@ -109,7 +155,7 @@
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" rel="canonical" type="text/html" />
+  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -543,7 +589,7 @@
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/cli/datatypes/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Data types
                   </a>
@@ -721,6 +767,328 @@
         <div class="gdoc-page">
           
   
+
+
+  
+
+
+
+
+
+
+<div
+  class="gdoc-page__header flex flex-wrap
+  
+    justify-between
+  
+  hidden-mobile
+  "
+  itemprop="breadcrumb"
+>
+  
+    <div>
+      <svg class="gdoc-icon gdoc_path hidden-mobile"><use xlink:href="#gdoc_path"></use></svg>
+      <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+        
+        
+        
+        
+  
+  
+    
+    
+    
+    
+  
+  
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/cli/' href='/sdmx-dl/docs/develop/cli/'><span itemprop='name'>Command-line tool</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data types</span><meta itemprop='position' content='6' /></li>
+  
+
+  
+
+  
+
+      </ol>
+    </div>
+  
+  
+</div>
+
+
+
+  <article
+    class="gdoc-markdown gdoc-markdown__align--left"
+  >
+    <h1>Data types</h1>
+    <div class="gdoc-page__anchorwrap">
+    <h2 id="common">
+        Common
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#common" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Common" aria-label="Anchor to: Common" href="#common">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="file">
+        <code>file</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#file" class="gdoc-page__anchor clip flex align-center" title="Anchor to: file" aria-label="Anchor to: file" href="#file">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="encoding">
+        <code>encoding</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#encoding" class="gdoc-page__anchor clip flex align-center" title="Anchor to: encoding" aria-label="Anchor to: encoding" href="#encoding">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="char">
+        <code>char</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#char" class="gdoc-page__anchor clip flex align-center" title="Anchor to: char" aria-label="Anchor to: char" href="#char">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="string">
+        <code>string</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#string" class="gdoc-page__anchor clip flex align-center" title="Anchor to: string" aria-label="Anchor to: string" href="#string">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="locale">
+        <code>locale</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#locale" class="gdoc-page__anchor clip flex align-center" title="Anchor to: locale" aria-label="Anchor to: locale" href="#locale">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="datetime">
+        <code>datetime</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#datetime" class="gdoc-page__anchor clip flex align-center" title="Anchor to: datetime" aria-label="Anchor to: datetime" href="#datetime">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>The date-time format is <a
+  class="gdoc-markdown__link"
+  href="https://en.wikipedia.org/wiki/ISO_8601"
+  
+>ISO-8601</a>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="number">
+        <code>number</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#number" class="gdoc-page__anchor clip flex align-center" title="Anchor to: number" aria-label="Anchor to: number" href="#number">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>A number is a numeric value.</p>
+<p><strong>Format:</strong> depends on the locale and number pattern.</p>
+<p><strong>Note:</strong> The number format provider has been changed in <a
+  class="gdoc-markdown__link"
+  href="https://openjdk.java.net/jeps/252"
+  
+>JDK9 (see JEP252)</a> so the formatting might be different when using an old JDK. For example, NaN value (aka &ldquo;not-a-number&rdquo;) is represented by <code>NaN</code> in JDK9+ but was represented by <code>U+FFFD REPLACEMENT CHARACTER</code> in JDK8. Fortunately, the use of the newer provider (<code>CLDR</code>) can be enforced by setting explicitly the system property <code>java.locale.providers</code>:</p>
+<pre tabindex="0"><code class="language-properties" data-lang="properties">java.locale.providers=CLDR
+</code></pre><div class="gdoc-page__anchorwrap">
+    <h3 id="url">
+        <code>url</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#url" class="gdoc-page__anchor clip flex align-center" title="Anchor to: url" aria-label="Anchor to: url" href="#url">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="bool">
+        <code>bool</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#bool" class="gdoc-page__anchor clip flex align-center" title="Anchor to: bool" aria-label="Anchor to: bool" href="#bool">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="int">
+        <code>int</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#int" class="gdoc-page__anchor clip flex align-center" title="Anchor to: int" aria-label="Anchor to: int" href="#int">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="sdmx">
+        SDMX
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#sdmx" class="gdoc-page__anchor clip flex align-center" title="Anchor to: SDMX" aria-label="Anchor to: SDMX" href="#sdmx">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="source">
+        <code>source</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#source" class="gdoc-page__anchor clip flex align-center" title="Anchor to: source" aria-label="Anchor to: source" href="#source">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>A source is a string that identifies of a data source.</p>
+<p><strong>Format:</strong> nothing specific but usually short and uppercase.</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="e06d1248-0">
+    <span>Examples</span>
+    <span>↕</span>
+  </label>
+  <input id="e06d1248-0" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>source</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ABS</code></td>
+<td>Australian Bureau of Statistics</td>
+</tr>
+<tr>
+<td><code>ECB</code></td>
+<td>European Central Bank</td>
+</tr>
+<tr>
+<td><code>NBB</code></td>
+<td>National Bank of Belgium</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<div class="gdoc-page__anchorwrap">
+    <h3 id="flow">
+        <code>flow</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#flow" class="gdoc-page__anchor clip flex align-center" title="Anchor to: flow" aria-label="Anchor to: flow" href="#flow">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>A flow is a string that identifies a multi-dimensional dataset.</p>
+<p><strong>Format:</strong> <em>TODO</em></p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="95a069ee-1">
+    <span>Examples</span>
+    <span>↕</span>
+  </label>
+  <input id="95a069ee-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>flow</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXR</code></td>
+<td>Exchange Rates</td>
+</tr>
+<tr>
+<td><code>ABS_REGIONAL_ASGS</code></td>
+<td>Regional Statistics, ASGS 2011, 2011-2016</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<div class="gdoc-page__anchorwrap">
+    <h3 id="key">
+        <code>key</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#key" class="gdoc-page__anchor clip flex align-center" title="Anchor to: key" aria-label="Anchor to: key" href="#key">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>A key is a string that identifies a data subset of a dataset
+(<em>In a cube, it would be a slice identifier</em>).<br>
+A key can identify single or multiple time series.</p>
+<p><strong>Format:</strong> either an ordered list of dimension values separated by a dot (<code>.</code>) or the special keyword <code>all</code>.</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="1f0349cf-2">
+    <span>Examples</span>
+    <span>↕</span>
+  </label>
+  <input id="1f0349cf-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>key</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>M.CHF.EUR.SP00.A</code></td>
+<td>single</td>
+<td>Monthly; Swiss franc; …</td>
+</tr>
+<tr>
+<td><code>M+D.CHF.EUR.SP00.A</code></td>
+<td>multiple</td>
+<td>Monthly + Daily; Swiss franc; …</td>
+</tr>
+<tr>
+<td><code>M.CHF+USD.EUR.SP00.A</code></td>
+<td>multiple</td>
+<td>Monthly; Swiss franc + US dollar; …</td>
+</tr>
+<tr>
+<td><code>M..EUR.SP00.A</code></td>
+<td>multiple</td>
+<td>Monthly; all currencies; …</td>
+</tr>
+<tr>
+<td><code>all</code></td>
+<td>multiple</td>
+<td>everything</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<div class="gdoc-page__anchorwrap">
+    <h3 id="langs">
+        <code>langs</code>
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#langs" class="gdoc-page__anchor clip flex align-center" title="Anchor to: langs" aria-label="Anchor to: langs" href="#langs">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+
+  </article>
 
 
 

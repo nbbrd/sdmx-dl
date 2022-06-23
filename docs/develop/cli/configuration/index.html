@@ -12,8 +12,12 @@
 <meta name="generator" content="Hugo 0.101.0" />
 
 
+  <meta name="description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.
+Properties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder." />
 
-    <title>Tags | sdmx-dl</title>
+    <title>Configuration | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -34,19 +38,61 @@
     
   <meta
     property="og:title"
-    content="Tags"
+    content="Configuration"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" />
+  <meta property="og:description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.
+Properties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/" />
 
-
+<meta property="article:section" content="CLI" />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Tags" />
+<meta name="twitter:title" content="Configuration" />
+  <meta name="twitter:description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.
+Properties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
+All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
+SYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder." />
 
 
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "TechArticle",
+      "articleSection": "CLI",
+      "name": "Configuration",
+      "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/",
+      "headline": "Configuration",
+      "description": "sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.\nProperties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.\nAll these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:\nSYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.",
+      "wordCount" : "396",
+      "inLanguage": "en",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/"
+      },
+      "copyrightHolder" : "sdmx-dl",
+      "copyrightYear" : "0001",
+      "dateCreated": "0001-01-01T00:00:00.00Z",
+      "datePublished": "0001-01-01T00:00:00.00Z",
+      "dateModified": "0001-01-01T00:00:00.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "sdmx-dl",
+          "url": "http://nbbrd.github.io/sdmx-dl/docs/develop",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http://nbbrd.github.io/sdmx-dl/docs/develop/brand.svg",
+              "width":"32",
+              "height":"32"
+          }
+      }
+  }
+  </script>
 
 
     <script src="/sdmx-dl/docs/develop/js/main-51ef884d.bundle.min.js"></script>
@@ -109,7 +155,7 @@
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" rel="canonical" type="text/html" />
+  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -411,7 +457,7 @@
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/cli/configuration/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Configuration
                   </a>
@@ -721,6 +767,331 @@
         <div class="gdoc-page">
           
   
+
+
+  
+
+
+
+
+
+
+<div
+  class="gdoc-page__header flex flex-wrap
+  
+    justify-between
+  
+  hidden-mobile
+  "
+  itemprop="breadcrumb"
+>
+  
+    <div>
+      <svg class="gdoc-icon gdoc_path hidden-mobile"><use xlink:href="#gdoc_path"></use></svg>
+      <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+        
+        
+        
+        
+  
+  
+    
+    
+    
+    
+  
+  
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/cli/' href='/sdmx-dl/docs/develop/cli/'><span itemprop='name'>Command-line tool</span></a><meta itemprop='position' content='5' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Configuration</span><meta itemprop='position' content='6' /></li>
+  
+
+  
+
+  
+
+      </ol>
+    </div>
+  
+  
+</div>
+
+
+
+  <article
+    class="gdoc-markdown gdoc-markdown__align--left"
+  >
+    <h1>Configuration</h1>
+    <p><strong>sdmx-dl CLI</strong> is designed to work out-of-the-box but can be configured if needed by using several <a
+  class="gdoc-markdown__link"
+  href="#properties-files"
+  
+>properties files</a>.</p>
+<div class="gdoc-toc gdoc-toc__level--6">
+      <nav id="TableOfContents"><ul>
+        <li><a href="#properties-files">Properties files</a></li>
+        <li><a href="#command-options">Command options</a></li>
+        <li><a href="#execution-properties">Execution properties</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+      </ul></nav>
+      <hr />
+    </div>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="properties-files">
+        Properties files
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/#properties-files" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Properties files" aria-label="Anchor to: Properties files" href="#properties-files">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>The <a
+  class="gdoc-markdown__link"
+  href="https://en.wikipedia.org/wiki/.properties"
+  
+>properties files</a> are just text files that contains a list of key-value pairs.<br>
+All these files are named <code>sdmx-dl.properties</code> and are located in 3 different folders which are parsed in a specific order to define a scope:</p>
+<ol>
+<li><code>SYSTEM</code>: the installation folder (where the binary is located)</li>
+<li><code>GLOBAL</code>: the user profile folder (<code>%userprofile%</code> on Windows)</li>
+<li><code>LOCAL</code>: the execution folder (where the CLI is called)</li>
+</ol>
+<p>Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="command-options">
+        Command options
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/#command-options" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Command options" aria-label="Anchor to: Command options" href="#command-options">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>The default values of <a
+  class="gdoc-markdown__link"
+  href="../options"
+  
+>command options</a> can be overridden in two ways:</p>
+<ul>
+<li><strong>Widely</strong> by targeting any command using their option names.</li>
+</ul>
+<pre tabindex="0"><code class="language-properties" data-lang="properties"># enable verbose mode on all commands
+verbose=true
+# use UNIX new-line type on all commands
+new-line=UNIX
+</code></pre><ul>
+<li><strong>Narrowly</strong> by targeting a specific command using their option names prefixed by the command full path.</li>
+</ul>
+<pre tabindex="0"><code class="language-properties" data-lang="properties"># enable verbose mode on status command
+sdmx-dl.check.status.verbose=true
+# use UNIX new-line type on status command
+sdmx-dl.check.status.new-line=UNIX
+</code></pre><div class="gdoc-page__anchorwrap">
+    <h2 id="execution-properties">
+        Execution properties
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/#execution-properties" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Execution properties" aria-label="Anchor to: Execution properties" href="#execution-properties">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>Execution properties can be customized using <a
+  class="gdoc-markdown__link"
+  href="https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html"
+  
+>Java system property</a>.<br>
+There are several types of system properties: some are defined by the platform, others by the libraries.</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="6eac9d47-1">
+    <span>sdmx-dl properties</span>
+    <span>↕</span>
+  </label>
+  <input id="6eac9d47-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sdmxdl.ri.web.backend</code></td>
+<td>Backend used to perform web requests</td>
+</tr>
+<tr>
+<td><code>sdmxdl.ri.web.dump.folder</code></td>
+<td>Folder used to dump body of web responses</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="b7c85f05-2">
+    <span>Command-line properties</span>
+    <span>↕</span>
+  </label>
+  <input id="b7c85f05-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>picocli.ansi</code></td>
+<td>Disables ANSI colors on output</td>
+</tr>
+<tr>
+<td><code>org.fusesource.jansi.Ansi.disable</code></td>
+<td>Disables ANSI support of Windows</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="c698dd0c-3">
+    <span>Networking properties</span>
+    <span>↕</span>
+  </label>
+  <input id="c698dd0c-3" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https.proxyHost</code></td>
+<td>The hostname, or address, of the proxy server</td>
+</tr>
+<tr>
+<td><code>https.proxyPort</code></td>
+<td>The port number of the proxy server</td>
+</tr>
+<tr>
+<td><code>http.proxyHost</code></td>
+<td>The hostname, or address, of the proxy server</td>
+</tr>
+<tr>
+<td><code>http.proxyPort</code></td>
+<td>The port number of the proxy server</td>
+</tr>
+<tr>
+<td><code>http.nonProxyHosts</code></td>
+<td>Indicates the hosts that should be accessed without going through the proxy</td>
+</tr>
+</tbody>
+</table> </div>
+<p>More on <a
+  class="gdoc-markdown__link"
+  href="https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html"
+  
+>https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-properties.html</a>
+  </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="fe79e99a-4">
+    <span>Security properties</span>
+    <span>↕</span>
+  </label>
+  <input id="fe79e99a-4" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>javax.net.ssl.trustStore</code></td>
+<td>Trust Store Path</td>
+</tr>
+<tr>
+<td><code>javax.net.ssl.trustStorePassword</code></td>
+<td>Trust Store Password</td>
+</tr>
+<tr>
+<td><code>javax.net.ssl.trustStoreType</code></td>
+<td>Trust Store Type</td>
+</tr>
+<tr>
+<td><code>javax.net.ssl.keyStore</code></td>
+<td>Key Store Path</td>
+</tr>
+<tr>
+<td><code>javax.net.ssl.keyStorePassword</code></td>
+<td>Key Store Password</td>
+</tr>
+<tr>
+<td><code>javax.net.ssl.keyStoreType</code></td>
+<td>Key Store Type</td>
+</tr>
+</tbody>
+</table> </div>
+<p>More on <a
+  class="gdoc-markdown__link"
+  href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#InstallationAndCustomization"
+  
+>https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#InstallationAndCustomization</a>
+  </div>
+</div>
+
+<div class="gdoc-page__anchorwrap">
+    <h2 id="troubleshooting">
+        Troubleshooting
+        <a data-clipboard-text="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/#troubleshooting" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Troubleshooting" aria-label="Anchor to: Troubleshooting" href="#troubleshooting">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>Using properties files is usually error prone.<br>
+Fortunately, sdmx-dl CLI includes a <a
+  class="gdoc-markdown__link"
+  href="../usage#check-properties"
+  
+>command to pinpoint the problems</a>: <code>sdmx-dl check properties</code></p>
+<p>Common problems:</p>
+<div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Property is not available in the output</td>
+<td>The property file is either not in the right folder or is misspelled</td>
+</tr>
+<tr>
+<td>Property doesn&rsquo;t have the right type</td>
+<td>The property name is misspelled</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </article>
 
 
 

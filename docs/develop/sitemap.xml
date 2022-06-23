@@ -2,6 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/api/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/formats/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/sources/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</loc>
+  </url><url>
+    <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</loc>
+  </url><url>
     <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/</loc>
   </url><url>
     <loc>http://nbbrd.github.io/sdmx-dl/docs/develop/tags/</loc>

@@ -12,8 +12,12 @@
 <meta name="generator" content="Hugo 0.101.0" />
 
 
+  <meta name="description" content="sdmx-dl CLI is a tool for easily browsing and downloading SDMX data.
+It can be used for data discovery and automation.
+This tool follows the Unix philosophy of &ldquo;Do one thing and do it well&rdquo; by performing a single function and beeing composable.
+Installation Configuration Usage Options Data types Examples " />
 
-    <title>Tags | sdmx-dl</title>
+    <title>Command-line tool | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -34,19 +38,61 @@
     
   <meta
     property="og:title"
-    content="Tags"
+    content="Command-line tool"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" />
+  <meta property="og:description" content="sdmx-dl CLI is a tool for easily browsing and downloading SDMX data.
+It can be used for data discovery and automation.
+This tool follows the Unix philosophy of “Do one thing and do it well” by performing a single function and beeing composable.
+Installation Configuration Usage Options Data types Examples " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/" />
 
-
+<meta property="article:section" content="CLI" />
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Tags" />
+<meta name="twitter:title" content="Command-line tool" />
+  <meta name="twitter:description" content="sdmx-dl CLI is a tool for easily browsing and downloading SDMX data.
+It can be used for data discovery and automation.
+This tool follows the Unix philosophy of “Do one thing and do it well” by performing a single function and beeing composable.
+Installation Configuration Usage Options Data types Examples " />
 
 
+  <script type="application/ld+json">
+  {
+      "@context": "http://schema.org",
+      "@type": "TechArticle",
+      "articleSection": "CLI",
+      "name": "Command-line tool",
+      "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/",
+      "headline": "Command-line tool",
+      "description": "sdmx-dl CLI is a tool for easily browsing and downloading SDMX data.\nIt can be used for data discovery and automation.\nThis tool follows the Unix philosophy of “Do one thing and do it well” by performing a single function and beeing composable.\nInstallation Configuration Usage Options Data types Examples ",
+      "wordCount" : "50",
+      "inLanguage": "en",
+      "isFamilyFriendly": "true",
+      "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/"
+      },
+      "copyrightHolder" : "sdmx-dl",
+      "copyrightYear" : "0001",
+      "dateCreated": "0001-01-01T00:00:00.00Z",
+      "datePublished": "0001-01-01T00:00:00.00Z",
+      "dateModified": "0001-01-01T00:00:00.00Z",
+      "publisher":{
+          "@type":"Organization",
+          "name": "sdmx-dl",
+          "url": "http://nbbrd.github.io/sdmx-dl/docs/develop",
+          "logo": {
+              "@type": "ImageObject",
+              "url": "http://nbbrd.github.io/sdmx-dl/docs/develop/brand.svg",
+              "width":"32",
+              "height":"32"
+          }
+      }
+  }
+  </script>
 
 
     <script src="/sdmx-dl/docs/develop/js/main-51ef884d.bundle.min.js"></script>
@@ -109,7 +155,7 @@
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/tags/" rel="canonical" type="text/html" />
+  <link href="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -320,7 +366,7 @@
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/cli/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Command-line tool
                   </a>
@@ -721,6 +767,117 @@
         <div class="gdoc-page">
           
   
+
+
+  
+
+
+
+
+
+
+<div
+  class="gdoc-page__header flex flex-wrap
+  
+    justify-between
+  
+  hidden-mobile
+  "
+  itemprop="breadcrumb"
+>
+  
+    <div>
+      <svg class="gdoc-icon gdoc_path hidden-mobile"><use xlink:href="#gdoc_path"></use></svg>
+      <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+        
+        
+        
+        
+  
+  
+    
+    
+    
+    
+  
+  
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Command-line tool</span><meta itemprop='position' content='5' /></li>
+  
+
+  
+
+      </ol>
+    </div>
+  
+  
+</div>
+
+
+
+  <article
+    class="gdoc-markdown gdoc-markdown__align--left"
+  >
+    <h1>Command-line tool</h1>
+    <p><strong>sdmx-dl CLI</strong> is a tool for easily browsing and downloading SDMX data.<br>
+It can be used for <strong>data discovery</strong> and <strong>automation</strong>.</p>
+<p>This tool follows the Unix philosophy of <a
+  class="gdoc-markdown__link"
+  href="https://en.wikipedia.org/wiki/Unix_philosophy#Do_One_Thing_and_Do_It_Well"
+  
+><em>&ldquo;Do one thing and do it well&rdquo;</em></a> by performing a single function and beeing composable.</p>
+<p><img
+  src="cli-overview2.png"
+  alt=""
+  
+/></p>
+
+  <div class="gdoc-toc gdoc-toc__level--6">
+    
+  <ul>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/installation/" class="gdoc-toc__entry">Installation
+                </a>
+              </span>
+          </li>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/configuration/" class="gdoc-toc__entry">Configuration
+                </a>
+              </span>
+          </li>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/usage/" class="gdoc-toc__entry">Usage
+                </a>
+              </span>
+          </li>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/options/" class="gdoc-toc__entry">Options
+                </a>
+              </span>
+          </li>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/datatypes/" class="gdoc-toc__entry">Data types
+                </a>
+              </span>
+          </li>
+          <li>
+              <span>
+                <a href="/sdmx-dl/docs/develop/cli/examples/" class="gdoc-toc__entry">Examples
+                </a>
+              </span>
+          </li>
+  </ul>
+  </div>
+
+
+
+
+
+  </article>
 
 
 
