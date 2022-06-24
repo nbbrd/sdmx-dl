@@ -27,6 +27,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![CLI] Split command `list/concepts` into `list/dimensions` and `list/attributes`
 - ![CLI] Improve startup time when using custom sources
 - ![CLI] Remove `sdmx-dl-provider-connectors` dependency
+- ![DOC] Migrate documentation to GitHub Pages [#268](https://github.com/nbbrd/sdmx-dl/issues/268)
 
 ### Fixed
 
@@ -255,3 +256,4 @@ production._
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
+[DOC]: https://img.shields.io/badge/-DOC-e4e669
