@@ -71,7 +71,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit.",
-      "wordCount" : "997",
+      "wordCount" : "1101",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -886,21 +886,40 @@ flowchart TB
     r --- l([list]) --- sources & flows & concepts & codes & features & drivers
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
-    
+
     classDef default fill:#93a1a1,stroke-width:0px 
     linkStyle default stroke:#93a1a1
-    
+ 
     classDef fx fill:#dc322f
     class f,data,meta,keys fx;
-    
+    click f "#fetch" "fetch command"
+    click data "#fetch-data" "fetch data command"
+    click meta "#fetch-meta" "fetch meta command"
+    click keys "#fetch-keys" "fetch keys command"
+   
     classDef lx fill:#859900
     class l,sources,flows,concepts,codes,features,drivers lx;
-    
+    click l "#list" "list command"
+    click sources "#list-sources" "list sources command"
+    click flows "#list-flows" "list flows command"
+    click concepts "#list-concepts" "list concepts command"
+    click codes "#list-codes" "list codes command"
+    click features "#list-features" "list features command"
+    click drivers "#list-drivers" "list drivers command"
+   
     classDef cx fill:#268bd2
     class c,status,access,config cx;
+    click c "#check" "check command"
+    click status "#check-status" "check status command"
+    click access "#check-access" "check access command"
+    click config "#check-config" "check config command"
     
     classDef sx fill:#b58900
-    class s,completion,launcher,ping sx;
+    class s,completion,launcher sx;
+    click s "#setup" "setup command"
+    click completion "#setup-completion" "setup completion command"
+    click launcher "#setup-launcher" "setup launcher command"
+
 </pre>
 
 <p><a id="fetch" href="#fetch"><img
@@ -1083,11 +1102,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="9a1b7378-1">
+  <label class="gdoc-expand__head flex justify-between" for="af109440-1">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="9a1b7378-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="af109440-1" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1203,11 +1222,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="338f8c0d-2">
+  <label class="gdoc-expand__head flex justify-between" for="dfd9617c-2">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="338f8c0d-2" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="dfd9617c-2" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1318,11 +1337,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3265af55-3">
+  <label class="gdoc-expand__head flex justify-between" for="7979c92d-3">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="3265af55-3" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="7979c92d-3" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1420,11 +1439,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="08835089-4">
+  <label class="gdoc-expand__head flex justify-between" for="0fa3318a-4">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="08835089-4" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="0fa3318a-4" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1563,11 +1582,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="a7103601-5">
+  <label class="gdoc-expand__head flex justify-between" for="7a13a7e2-5">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="a7103601-5" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="7a13a7e2-5" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1674,11 +1693,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="5d9e6f47-6">
+  <label class="gdoc-expand__head flex justify-between" for="42e200fe-6">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="5d9e6f47-6" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="42e200fe-6" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1808,11 +1827,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3db7917f-7">
+  <label class="gdoc-expand__head flex justify-between" for="f8add7f3-7">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="3db7917f-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="f8add7f3-7" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1894,11 +1913,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="0dff8d52-8">
+  <label class="gdoc-expand__head flex justify-between" for="85a89837-8">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="0dff8d52-8" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="85a89837-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1947,11 +1966,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="920ba051-9">
+  <label class="gdoc-expand__head flex justify-between" for="3127b2b1-9">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="920ba051-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="3127b2b1-9" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2058,11 +2077,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="9da51e8b-10">
+  <label class="gdoc-expand__head flex justify-between" for="9d0bce4c-10">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="9da51e8b-10" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="9d0bce4c-10" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2162,11 +2181,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="139e096e-11">
+  <label class="gdoc-expand__head flex justify-between" for="d42689a7-11">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="139e096e-11" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="d42689a7-11" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2228,11 +2247,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="765b3605-12">
+  <label class="gdoc-expand__head flex justify-between" for="63fdc4ef-12">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="765b3605-12" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="63fdc4ef-12" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2245,28 +2264,28 @@ flowchart TB
 </thead>
 <tbody>
 <tr>
-<td><code>SYSTEM</code></td>
-<td><code>sources</code></td>
-<td><code>C:\temp\some-sources.xml</code></td>
-<td><code>WIDE_OPTION</code></td>
+<td>SYSTEM</td>
+<td>sources</td>
+<td>C:\temp\some-sources.xml</td>
+<td>WIDE_OPTION</td>
 </tr>
 <tr>
-<td><code>SYSTEM</code></td>
-<td><code>org.fusesource.jansi.Ansi.disable</code></td>
-<td><code>true</code></td>
-<td><code>OTHER</code></td>
+<td>SYSTEM</td>
+<td>org.fusesource.jansi.Ansi.disable</td>
+<td>true</td>
+<td>OTHER</td>
 </tr>
 <tr>
-<td><code>GLOBAL</code></td>
-<td><code>sources</code></td>
-<td><code>C:\Users\ABC\other-sources.xml</code></td>
-<td><code>WIDE_OPTION</code></td>
+<td>GLOBAL</td>
+<td>sources</td>
+<td>C:\Users\ABC\other-sources.xml</td>
+<td>WIDE_OPTION</td>
 </tr>
 <tr>
-<td><code>LOCAL</code></td>
-<td><code>sdmx-dl.check.status.verbose</code></td>
-<td><code>true</code></td>
-<td><code>NARROW_OPTION</code></td>
+<td>LOCAL</td>
+<td>sdmx-dl.check.status.verbose</td>
+<td>true</td>
+<td>NARROW_OPTION</td>
 </tr>
 </tbody>
 </table> </div>

@@ -840,18 +840,18 @@
 <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertfrom-csv">ConvertFrom-Csv</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/select-object">Select-Object -First 3</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/format-table">Format-Table</a></b></pre>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d5cea968-0">
+  <label class="gdoc-expand__head flex justify-between" for="a7f7530c-0">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="d5cea968-0" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="a7f7530c-0" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <pre tabindex="0"><code>Series           ObsAttributes ObsPeriod           ObsValue
-------           ------------- ---------           --------
-M.CHF.EUR.SP00.A OBS_STATUS=A  1999-01-01T00:00:00 1.605495
-M.CHF.EUR.SP00.A OBS_STATUS=A  1999-02-01T00:00:00 1.59785
-M.CHF.EUR.SP00.A OBS_STATUS=A  1999-03-01T00:00:00 1.595430434782609
-</code></pre>
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series           ObsAttributes ObsPeriod           ObsValue
+</span></span><span class="line"><span class="cl">------           ------------- ---------           --------
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A  1999-01-01T00:00:00 1.605495
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A  1999-02-01T00:00:00 1.59785
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A  1999-03-01T00:00:00 1.595430434782609
+</span></span></code></pre></div>
   </div>
 </div>
 </li>
@@ -863,17 +863,17 @@ M.CHF.EUR.SP00.A OBS_STATUS=A  1999-03-01T00:00:00 1.595430434782609
 <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://github.com/BurntSushi/xsv#available-commands">xsv slice -l 3</a> | <a href="https://github.com/BurntSushi/xsv#available-commands">xsv table</a></b></pre>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="ba337355-1">
+  <label class="gdoc-expand__head flex justify-between" for="ccbefdf1-1">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="ba337355-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ccbefdf1-1" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <pre tabindex="0"><code>Series            ObsAttributes  ObsPeriod            ObsValue
-M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-01-01T00:00:00  1.605495
-M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-02-01T00:00:00  1.59785
-M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-03-01T00:00:00  1.595430434782609
-</code></pre>
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series            ObsAttributes  ObsPeriod            ObsValue
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-01-01T00:00:00  1.605495
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-02-01T00:00:00  1.59785
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-03-01T00:00:00  1.595430434782609
+</span></span></code></pre></div>
   </div>
 </div>
 </li>
