@@ -1,0 +1,9 @@
+{{ $label := .Get "label" }}
+{{ $message := .Get "message" }}
+{{ $color := .Get "color" }}
+
+{{ with $message }}
+<a id="{{ $label }}-{{ $message }}" href="#{{ $label }}-{{ $message }}"><img src="https://img.shields.io/badge/{{ $label }}-{{ $message }}-{{ $color }}?style=flat-square"/></a>
+{{ else }}
+<a id="{{ $label }}" href="#{{ $label }}"><img src="https://img.shields.io/badge/{{ $label }}--{{ $color }}?style=flat-square"/></a>
+{{ end }}

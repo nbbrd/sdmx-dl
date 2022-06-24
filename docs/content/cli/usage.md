@@ -66,7 +66,7 @@ flowchart TB
 
 {{< /mermaid >}}
 
-<a id="fetch" href="#fetch">![fetch](https://img.shields.io/badge/fetch--dc322f?style=flat-square)</a>
+{{< shields_io/badge label="fetch" color="dc322f" >}}
 
 Download time series.
 
@@ -75,7 +75,9 @@ Subcommands:
 [meta](#fetch-meta),
 [keys](#fetch-keys)
 
-<a id="list" href="#list">![list](https://img.shields.io/badge/list--859900?style=flat-square)</a>
+[Examples]({{< relref "examples#fetch-examples" >}})
+
+{{< shields_io/badge label="list" color="859900" >}}
 
 List resources and structural metadata.
 
@@ -89,7 +91,9 @@ Subcommands:
 [features](#list-features),
 [drivers](#list-drivers)
 
-<a id="check" href="#check">![check](https://img.shields.io/badge/check--268bd2?style=flat-square)</a>
+[Examples]({{< relref "examples#list-examples" >}})
+
+{{< shields_io/badge label="check" color="268bd2" >}}
 
 Check resources and services.
 
@@ -98,7 +102,7 @@ Subcommands:
 [access](#check-access),
 [config](#check-config)
 
-<a id="setup" href="#setup">![setup](https://img.shields.io/badge/setup--b58900?style=flat-square)</a>
+{{< shields_io/badge label="setup" color="b58900" >}}
 
 Setup sdmx-dl.
 
@@ -108,7 +112,7 @@ Subcommands:
 
 ## Commands details
 
-<a id="fetch-data" href="#fetch-data">![fetch data](https://img.shields.io/badge/fetch-data-dc322f?style=flat-square)</a>
+{{< shields_io/badge label="fetch" message="data" color="dc322f" >}}
 
 Download time series observations.
 
@@ -146,7 +150,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="fetch-meta" href="#fetch-meta">![fetch meta](https://img.shields.io/badge/fetch-meta-dc322f?style=flat-square)</a>
+{{< shields_io/badge label="fetch" message="meta" color="dc322f" >}}
 
 Download time series metadata.  
 
@@ -186,7 +190,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="fetch-keys" href="#fetch-keys">![fetch keys](https://img.shields.io/badge/fetch-keys-dc322f?style=flat-square)</a>
+{{< shields_io/badge label="fetch" message="keys" color="dc322f" >}}
 
 Download time series keys.  
 
@@ -222,7 +226,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-sources" href="#list-sources">![list sources](https://img.shields.io/badge/list-sources-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="sources" color="859900" >}}
 
 List data source names and properties.  
 
@@ -258,7 +262,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-flows" href="#list-flows">![list flows](https://img.shields.io/badge/list-flows-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="flows" color="859900" >}}
 
 List data flows.  
 
@@ -292,7 +296,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-dimensions" href="#list-dimensions">![list dimensions](https://img.shields.io/badge/list-dimensions-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="dimensions" color="859900" >}}
 
 List data flow dimensions.  
 
@@ -331,7 +335,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-attributes" href="#list-attributes">![list attributes](https://img.shields.io/badge/list-attributes-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="attributes" color="859900" >}}
 
 List data flow attributes.
 
@@ -368,7 +372,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-codes" href="#list-codes">![list codes](https://img.shields.io/badge/list-codes-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="codes" color="859900" >}}
 
 List codes from data flow concept.  
 
@@ -404,7 +408,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-availability" href="#list-availability">![list availability](https://img.shields.io/badge/list-availability-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="availability" color="859900" >}}
 
 List available dimension codes.
 
@@ -439,7 +443,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-features" href="#list-features">![list features](https://img.shields.io/badge/list-features-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="features" color="859900" >}}
 
 List supported features of a data source.  
 
@@ -470,7 +474,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-drivers" href="#list-drivers">![list drivers](https://img.shields.io/badge/list-drivers-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="drivers" color="859900" >}}
 
 List driver names and properties.  
 
@@ -497,7 +501,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="check-status" href="#check-status">![check status](https://img.shields.io/badge/check-status-268bd2?style=flat-square)</a>
+{{< shields_io/badge label="check" message="status" color="268bd2" >}}
 
 Check service availability.  
 
@@ -533,7 +537,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="check-access" href="#check-access">![check access](https://img.shields.io/badge/check-access-268bd2?style=flat-square)</a>
+{{< shields_io/badge label="check" message="access" color="268bd2" >}}
 
 Check service accessibility.  
 
@@ -568,7 +572,7 @@ Output format:
 
 {{< /expand >}}
 
-<a id="check-config" href="#check-config">![check config](https://img.shields.io/badge/check-config-268bd2?style=flat-square)</a>
+{{< shields_io/badge label="check" message="config" color="268bd2" >}}
 
 Check sdmx-dl configuration.
 
@@ -596,6 +600,6 @@ Output format:
 
 {{< /expand >}}
 
-<a id="setup-completion" href="#setup-completion">![ping](https://img.shields.io/badge/setup-completion-b58900?style=flat-square)</a>
+{{< shields_io/badge label="setup" message="completion" color="b58900" >}}<br>
 
-<a id="setup-launcher" href="#setup-launcher">![setup launcher](https://img.shields.io/badge/setup-launcher-b58900?style=flat-square)</a>
+{{< shields_io/badge label="setup" message="launcher" color="b58900" >}}<br>

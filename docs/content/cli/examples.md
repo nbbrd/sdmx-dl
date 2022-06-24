@@ -3,7 +3,7 @@ title: "Examples"
 weight: 6
 ---
 
-<a id="fetch" href="#fetch">![fetch](https://img.shields.io/badge/fetch-examples-dc322f?style=flat-square)</a>
+{{< shields_io/badge label="fetch" message="examples" color="dc322f" >}}
 
 1. Download monthly (`M`) exchange rates (`EXR`) of Swiss franc (`CHF`) from the European Central Bank (`ECB`)  
    <pre>sdmx-dl fetch <b>data</b> ECB EXR M.CHF.EUR.SP00.A</pre>  
@@ -39,7 +39,7 @@ weight: 6
 8. Download available series in a dataset  
    <pre>sdmx-dl fetch <b>keys</b> ECB EXR <b>.</b>CHF.EUR.SP00.A</pre>
 
-<a id="list" href="#list">![list](https://img.shields.io/badge/list-examples-859900?style=flat-square)</a>
+{{< shields_io/badge label="list" message="examples" color="859900" >}}
 
 1. List available datasets from the European Central Bank (`ECB`)  
    <pre>sdmx-dl list <b>flows ECB</b></pre>
