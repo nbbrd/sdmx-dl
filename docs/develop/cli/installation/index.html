@@ -1165,17 +1165,17 @@ jbang sdmx-dl@nbbrd &lt;command&gt; [&lt;args&gt;]
 </div>
 <p>The manual installation of the CLI is straighforward:</p>
 <ol>
-<li>Download the latest jar binary (<code>sdmx-dl*-bin.jar</code>) at:<br>
+<li>Download the latest jar binary (<code>sdmx-dl-VERSION-bin.jar</code>) at:<br>
 <a
   class="gdoc-markdown__link"
   href="https://github.com/nbbrd/sdmx-dl/releases/latest"
   
 >https://github.com/nbbrd/sdmx-dl/releases/latest</a></li>
 <li>Copy this jar (i.e. <code>_JAR_</code>) to any folder on your system (i.e. <code>_DIR_</code>)</li>
-<li>Create launchers in the install directory:<br>
-<code>java -jar &quot;_DIR_\_JAR_&quot; setup generate-launcher -t BASH -o &quot;_DIR_\sdmx-dl&quot;</code><br>
-<code>java -jar &quot;_DIR_\_JAR_&quot; setup generate-launcher -t CMD -o &quot;_DIR_\sdmx-dl.bat&quot;</code><br>
-<code>java -jar &quot;_DIR_\_JAR_&quot; setup generate-launcher -t PS1 -o &quot;_DIR_\sdmx-dl.ps1&quot;</code></li>
+<li>Create launchers in the installation directory:<br>
+<code>java -jar &quot;_DIR_\_JAR_&quot; setup launcher -t BASH -o &quot;_DIR_\sdmx-dl&quot;</code><br>
+<code>java -jar &quot;_DIR_\_JAR_&quot; setup launcher -t CMD -o &quot;_DIR_\sdmx-dl.bat&quot;</code><br>
+<code>java -jar &quot;_DIR_\_JAR_&quot; setup launcher -t PS1 -o &quot;_DIR_\sdmx-dl.ps1&quot;</code></li>
 <li>Add launchers directory (<code>_DIR_</code>) in system path:<br>
 <a
   class="gdoc-markdown__link"
@@ -1194,14 +1194,14 @@ jbang sdmx-dl@nbbrd &lt;command&gt; [&lt;args&gt;]
 <p>The CLI is a single executable jar, so it doesn&rsquo;t need to be installed to be used.<br>
 To use the CLI without installing it:</p>
 <ol>
-<li>Download the latest jar binary (<code>sdmx-dl*-bin.jar</code>) at:<br>
+<li>Download the latest jar binary (<code>sdmx-dl-VERSION-bin.jar</code>) at:<br>
 <a
   class="gdoc-markdown__link"
   href="https://github.com/nbbrd/sdmx-dl/releases/latest"
   
 >https://github.com/nbbrd/sdmx-dl/releases/latest</a></li>
 <li>Run this jar by calling:<br>
-<code>java -jar sdmx-dl-X.Y.Z-bin.jar &lt;command&gt; [&lt;args&gt;]</code></li>
+<code>java -jar sdmx-dl-VERSION-bin.jar &lt;command&gt; [&lt;args&gt;]</code></li>
 </ol>
 <div class="gdoc-page__anchorwrap">
     <h2 id="troubleshooting">

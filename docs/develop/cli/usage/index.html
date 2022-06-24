@@ -71,7 +71,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit.",
-      "wordCount" : "1101",
+      "wordCount" : "1257",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -883,7 +883,7 @@ sdmx-dl <u>fetch data</u> <u>ECB EXR M.CHF.EUR.SP00.A</u> <u>-o chf.csv</u>
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
-    r --- l([list]) --- sources & flows & concepts & codes & features & drivers
+    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & drivers
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
 
@@ -898,12 +898,14 @@ flowchart TB
     click keys "#fetch-keys" "fetch keys command"
    
     classDef lx fill:#859900
-    class l,sources,flows,concepts,codes,features,drivers lx;
+    class l,sources,flows,dimensions,attributes,codes,availability,features,drivers lx;
     click l "#list" "list command"
     click sources "#list-sources" "list sources command"
     click flows "#list-flows" "list flows command"
-    click concepts "#list-concepts" "list concepts command"
+    click dimensions "#list-dimensions" "list dimensions command"
+    click attributes "#list-attributes" "list attributes command"
     click codes "#list-codes" "list codes command"
+    click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
     click drivers "#list-drivers" "list drivers command"
    
@@ -963,14 +965,24 @@ flowchart TB
 >flows</a>,
 <a
   class="gdoc-markdown__link"
-  href="#list-concepts"
+  href="#list-dimensions"
   
->concepts</a>,
+>dimensions</a>,
+<a
+  class="gdoc-markdown__link"
+  href="#list-attributes"
+  
+>attributes</a>,
 <a
   class="gdoc-markdown__link"
   href="#list-codes"
   
 >codes</a>,
+<a
+  class="gdoc-markdown__link"
+  href="#list-availability"
+  
+>availability</a>,
 <a
   class="gdoc-markdown__link"
   href="#list-features"
@@ -1418,9 +1430,9 @@ flowchart TB
 ><code>Dialect:string</code></a>,
 <a
   class="gdoc-markdown__link--code"
-  href="../datatypes#url"
+  href="../datatypes#uri"
   
-><code>Endpoint:url</code></a>,
+><code>Endpoint:uri</code></a>,
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
@@ -1433,17 +1445,22 @@ flowchart TB
 ><code>Website:url</code></a>,
 <a
   class="gdoc-markdown__link--code"
-  href="../datatypes#monitor"
+  href="../datatypes#uri"
   
-><code>Monitor:string</code></a>
+><code>Monitor:uri</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#url"
+  
+><code>MonitorWebsite:url</code></a>
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="0fa3318a-4">
+  <label class="gdoc-expand__head flex justify-between" for="2adfc4af-4">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="0fa3318a-4" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="2adfc4af-4" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1457,6 +1474,7 @@ flowchart TB
 <th>Properties</th>
 <th>Website</th>
 <th>Monitor</th>
+<th>MonitorWebsite</th>
 </tr>
 </thead>
 <tbody>
@@ -1477,7 +1495,12 @@ flowchart TB
   href="https://stat.data.abs.gov.au"
   
 >https://stat.data.abs.gov.au</a></td>
-<td>provider=UptimeRobot,id=m783847060-975767bc3a033ea3f3ac8ca2</td>
+<td>upptime:/nbbrd/sdmx-upptime/ABS</td>
+<td><a
+  class="gdoc-markdown__link"
+  href="https://nbbrd.github.io/sdmx-upptime/history/abs"
+  
+>https://nbbrd.github.io/sdmx-upptime/history/abs</a></td>
 </tr>
 <tr>
 <td>ECB</td>
@@ -1496,7 +1519,12 @@ flowchart TB
   href="https://sdw.ecb.europa.eu"
   
 >https://sdw.ecb.europa.eu</a></td>
-<td>provider=UptimeRobot,id=m783846981-b55d7e635c5cdc16e16bac2a</td>
+<td>upptime:/nbbrd/sdmx-upptime/ECB</td>
+<td><a
+  class="gdoc-markdown__link"
+  href="https://nbbrd.github.io/sdmx-upptime/history/ecb"
+  
+>https://nbbrd.github.io/sdmx-upptime/history/ecb</a></td>
 </tr>
 <tr>
 <td>ESTAT</td>
@@ -1515,7 +1543,12 @@ flowchart TB
   href="https://ec.europa.eu/eurostat/data/database"
   
 >https://ec.europa.eu/eurostat/data/database</a></td>
-<td>provider=UptimeRobot,id=m783847077-390f706bd3acf8fb640e48df</td>
+<td>upptime:/nbbrd/sdmx-upptime/ESTAT</td>
+<td><a
+  class="gdoc-markdown__link"
+  href="https://nbbrd.github.io/sdmx-upptime/history/estat"
+  
+>https://nbbrd.github.io/sdmx-upptime/history/estat</a></td>
 </tr>
 </tbody>
 </table> </div>
@@ -1614,13 +1647,13 @@ flowchart TB
   </div>
 </div>
 
-<p><a id="list-concepts" href="#list-concepts"><img
-  src="https://img.shields.io/badge/list-concepts-859900?style=flat-square"
-  alt="list concepts"
+<p><a id="list-dimensions" href="#list-dimensions"><img
+  src="https://img.shields.io/badge/list-dimensions-859900?style=flat-square"
+  alt="list dimensions"
   
 /></a></p>
-<p>List data flow concepts.</p>
-<p>Example: <code>sdmx-dl list concepts ECB EXR</code></p>
+<p>List data flow dimensions.</p>
+<p>Example: <code>sdmx-dl list dimensions ECB EXR</code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1669,17 +1702,12 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
   
-><code>Concept:string</code></a>,
+><code>Name:string</code></a>,
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
   
 ><code>Label:string</code></a>,
-<a
-  class="gdoc-markdown__link--code"
-  href="../datatypes#enum"
-  
-><code>Type:enum</code></a>,
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#bool"
@@ -1689,68 +1717,169 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#int"
   
-><code>Position:int</code></a>
+><code>Index:int</code></a>
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="42e200fe-6">
+  <label class="gdoc-expand__head flex justify-between" for="0e6fa7fd-6">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="42e200fe-6" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="0e6fa7fd-6" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
 <tr>
-<th>Concept</th>
+<th>Name</th>
 <th>Label</th>
-<th>Type</th>
 <th>Coded</th>
-<th>Position</th>
+<th>Index</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>FREQ</td>
 <td>Frequency</td>
-<td>dimension</td>
 <td>true</td>
-<td>1</td>
+<td>0</td>
 </tr>
 <tr>
 <td>CURRENCY</td>
 <td>Currency</td>
-<td>dimension</td>
 <td>true</td>
-<td>2</td>
+<td>1</td>
 </tr>
 <tr>
 <td>CURRENCY_DENOM</td>
 <td>Currency denominator</td>
-<td>dimension</td>
 <td>true</td>
-<td>3</td>
+<td>2</td>
 </tr>
 <tr>
 <td>EXR_TYPE</td>
 <td>Exchange rate type</td>
-<td>dimension</td>
 <td>true</td>
-<td>4</td>
+<td>3</td>
 </tr>
 <tr>
 <td>EXR_SUFFIX</td>
 <td>Series variation - EXR context</td>
-<td>dimension</td>
 <td>true</td>
-<td>5</td>
+<td>4</td>
 </tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<p><a id="list-attributes" href="#list-attributes"><img
+  src="https://img.shields.io/badge/list-attributes-859900?style=flat-square"
+  alt="list attributes"
+  
+/></a></p>
+<p>List data flow attributes.</p>
+<p>Example: <code>sdmx-dl list attributes ECB EXR</code></p>
+<p>Parameters:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#source"
+  
+><code>source</code></a> - Data source name.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#flow"
+  
+><code>flow</code></a> - Data flow reference.</li>
+</ul>
+<p>Main options:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sources"
+  
+><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#languages"
+  
+><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sort"
+  
+><code>--sort</code></a> - Sort output.</li>
+</ul>
+<p>Other options:
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#csv"
+  
+><code>CSV</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#network"
+  
+><code>Network</code></a></p>
+<p>Output format:
+[
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+  
+><code>Name:string</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+  
+><code>Label:string</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#bool"
+  
+><code>Coded:bool</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#enum"
+  
+><code>Relationship:enum</code></a>
+]</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="b05f5a83-7">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="b05f5a83-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Label</th>
+<th>Coded</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td>TIME_FORMAT</td>
 <td>Time format code</td>
-<td>attribute</td>
 <td>false</td>
-<td></td>
+<td>SERIES</td>
+</tr>
+<tr>
+<td>OBS_STATUS</td>
+<td>Observation status</td>
+<td>true</td>
+<td>OBSERVATION</td>
+</tr>
+<tr>
+<td>DECIMALS</td>
+<td>Decimals</td>
+<td>true</td>
+<td>GROUP</td>
 </tr>
 </tbody>
 </table> </div>
@@ -1827,11 +1956,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="f8add7f3-7">
+  <label class="gdoc-expand__head flex justify-between" for="f8add7f3-8">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="f8add7f3-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="f8add7f3-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1852,6 +1981,100 @@ flowchart TB
 <tr>
 <td>B</td>
 <td>Daily - businessweek</td>
+</tr>
+</tbody>
+</table> </div>
+
+  </div>
+</div>
+
+<p><a id="list-availability" href="#list-availability"><img
+  src="https://img.shields.io/badge/list-availability-859900?style=flat-square"
+  alt="list availability"
+  
+/></a></p>
+<p>List available dimension codes.</p>
+<p>Example: <code>sdmx-dl list availability ECB EXR M.CHF... 4</code></p>
+<p>Parameters:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#source"
+  
+><code>source</code></a> - Data source name.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#flow"
+  
+><code>flow</code></a> - Data flow reference.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#key"
+  
+><code>key</code></a> - Data key.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#int"
+  
+><code>index</code></a> - Zero-based index of key dimension.</li>
+</ul>
+<p>Main options:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sources"
+  
+><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#languages"
+  
+><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sort"
+  
+><code>--sort</code></a> - Sort output.</li>
+</ul>
+<p>Other options:
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#csv"
+  
+><code>CSV</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#network"
+  
+><code>Network</code></a></p>
+<p>Output format:
+[
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+  
+><code>Code:string</code></a>
+]</p>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="6bf1eec1-9">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="6bf1eec1-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="table-wrap"> <table>
+<thead>
+<tr>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+</tr>
+<tr>
+<td>E</td>
 </tr>
 </tbody>
 </table> </div>
@@ -1913,11 +2136,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="85a89837-8">
+  <label class="gdoc-expand__head flex justify-between" for="85a89837-10">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="85a89837-8" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="85a89837-10" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -1966,11 +2189,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3127b2b1-9">
+  <label class="gdoc-expand__head flex justify-between" for="3127b2b1-11">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="3127b2b1-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="3127b2b1-11" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2077,11 +2300,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="9d0bce4c-10">
+  <label class="gdoc-expand__head flex justify-between" for="9d0bce4c-12">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="9d0bce4c-10" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="9d0bce4c-12" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2181,11 +2404,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d42689a7-11">
+  <label class="gdoc-expand__head flex justify-between" for="d42689a7-13">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="d42689a7-11" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="d42689a7-13" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -2247,11 +2470,11 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="63fdc4ef-12">
+  <label class="gdoc-expand__head flex justify-between" for="63fdc4ef-14">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="63fdc4ef-12" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="63fdc4ef-14" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
