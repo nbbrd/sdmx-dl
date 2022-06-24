@@ -136,13 +136,13 @@ https://github.com/jbangdev/jbang-gradle-plugin/
 
 The manual installation of the CLI is straighforward:
 
-1. Download the latest jar binary (`sdmx-dl*-bin.jar`) at:  
+1. Download the latest jar binary (`sdmx-dl-VERSION-bin.jar`) at:  
    [https://github.com/nbbrd/sdmx-dl/releases/latest](https://github.com/nbbrd/sdmx-dl/releases/latest)
 2. Copy this jar (i.e. `_JAR_`) to any folder on your system (i.e. `_DIR_`)
-3. Create launchers in the install directory:  
-   `java -jar "_DIR_\_JAR_" setup generate-launcher -t BASH -o "_DIR_\sdmx-dl"`  
-   `java -jar "_DIR_\_JAR_" setup generate-launcher -t CMD -o "_DIR_\sdmx-dl.bat"`  
-   `java -jar "_DIR_\_JAR_" setup generate-launcher -t PS1 -o "_DIR_\sdmx-dl.ps1"`
+3. Create launchers in the installation directory:  
+   `java -jar "_DIR_\_JAR_" setup launcher -t BASH -o "_DIR_\sdmx-dl"`  
+   `java -jar "_DIR_\_JAR_" setup launcher -t CMD -o "_DIR_\sdmx-dl.bat"`  
+   `java -jar "_DIR_\_JAR_" setup launcher -t PS1 -o "_DIR_\sdmx-dl.ps1"`
 4. Add launchers directory (`_DIR_`) in system path:  
    https://gist.github.com/nex3/c395b2f8fd4b02068be37c961301caa7
 
@@ -151,16 +151,16 @@ The manual installation of the CLI is straighforward:
 The CLI is a single executable jar, so it doesn't need to be installed to be used.  
 To use the CLI without installing it:
 
-1. Download the latest jar binary (`sdmx-dl*-bin.jar`) at:  
+1. Download the latest jar binary (`sdmx-dl-VERSION-bin.jar`) at:  
    [https://github.com/nbbrd/sdmx-dl/releases/latest](https://github.com/nbbrd/sdmx-dl/releases/latest)
 2. Run this jar by calling:  
-   `java -jar sdmx-dl-X.Y.Z-bin.jar <command> [<args>]`
+   `java -jar sdmx-dl-VERSION-bin.jar <command> [<args>]`
 
 ## Troubleshooting
 
 If the launching of sdmx-dl fails, you can try the following operations in a terminal:
 
 1. Check if Java is properly installed:  
-`java -version`
+   `java -version`
 2. Check if sdmx-dl is available:  
-`sdmx-dl --version`
+   `sdmx-dl --version`

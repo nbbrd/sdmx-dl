@@ -25,7 +25,7 @@ The commands follow a **verb+noun hierarchy**.
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
-    r --- l([list]) --- sources & flows & concepts & codes & features & drivers
+    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & drivers
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
 
@@ -40,12 +40,14 @@ flowchart TB
     click keys "#fetch-keys" "fetch keys command"
    
     classDef lx fill:#859900
-    class l,sources,flows,concepts,codes,features,drivers lx;
+    class l,sources,flows,dimensions,attributes,codes,availability,features,drivers lx;
     click l "#list" "list command"
     click sources "#list-sources" "list sources command"
     click flows "#list-flows" "list flows command"
-    click concepts "#list-concepts" "list concepts command"
+    click dimensions "#list-dimensions" "list dimensions command"
+    click attributes "#list-attributes" "list attributes command"
     click codes "#list-codes" "list codes command"
+    click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
     click drivers "#list-drivers" "list drivers command"
    
@@ -80,8 +82,10 @@ List resources and structural metadata.
 Subcommands:
 [sources](#list-sources),
 [flows](#list-flows),
-[concepts](#list-concepts),
+[dimensions](#list-dimensions),
+[attributes](#list-attributes),
 [codes](#list-codes),
+[availability](#list-availability),
 [features](#list-features),
 [drivers](#list-drivers)
 
@@ -237,19 +241,20 @@ Output format:
     [`Aliases:list`](../datatypes#list),
     [`Driver:string`](../datatypes#string),
     [`Dialect:string`](../datatypes#string),
-    [`Endpoint:url`](../datatypes#url),
+    [`Endpoint:uri`](../datatypes#uri),
     [`Properties:map`](../datatypes#list),
     [`Website:url`](../datatypes#url),
-    [`Monitor:string`](../datatypes#monitor)
+    [`Monitor:uri`](../datatypes#uri),
+    [`MonitorWebsite:url`](../datatypes#url)
 ]
 
 {{< expand "Output sample" >}}
 
-| Name  | Description                     | Aliases  | Driver              | Dialect | Endpoint                                         | Properties           | Website                                     | Monitor                                                     |
-|-------|---------------------------------|----------|---------------------|---------|--------------------------------------------------|----------------------|---------------------------------------------|-------------------------------------------------------------|
-| ABS   | Australian Bureau of Statistics |          | ri:abs              |         | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | provider=UptimeRobot,id=m783847060-975767bc3a033ea3f3ac8ca2 |
-| ECB   | European Central Bank           |          | ri:sdmx21           | ECB2020 | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | provider=UptimeRobot,id=m783846981-b55d7e635c5cdc16e16bac2a |
-| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat |         | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | provider=UptimeRobot,id=m783847077-390f706bd3acf8fb640e48df |
+| Name  | Description                     | Aliases  | Driver              | Dialect | Endpoint                                         | Properties           | Website                                     | Monitor                           | MonitorWebsite                                     |
+|-------|---------------------------------|----------|---------------------|---------|--------------------------------------------------|----------------------|---------------------------------------------|-----------------------------------|----------------------------------------------------|
+| ABS   | Australian Bureau of Statistics |          | ri:abs              |         | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | upptime:/nbbrd/sdmx-upptime/ABS   | https://nbbrd.github.io/sdmx-upptime/history/abs   |
+| ECB   | European Central Bank           |          | ri:sdmx21           | ECB2020 | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | upptime:/nbbrd/sdmx-upptime/ECB   | https://nbbrd.github.io/sdmx-upptime/history/ecb   |
+| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat |         | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | upptime:/nbbrd/sdmx-upptime/ESTAT | https://nbbrd.github.io/sdmx-upptime/history/estat |
 
 {{< /expand >}}
 
@@ -287,11 +292,11 @@ Output format:
 
 {{< /expand >}}
 
-<a id="list-concepts" href="#list-concepts">![list concepts](https://img.shields.io/badge/list-concepts-859900?style=flat-square)</a>
+<a id="list-dimensions" href="#list-dimensions">![list dimensions](https://img.shields.io/badge/list-dimensions-859900?style=flat-square)</a>
 
-List data flow concepts.  
+List data flow dimensions.  
 
-Example: `sdmx-dl list concepts ECB EXR`  
+Example: `sdmx-dl list dimensions ECB EXR`  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -308,23 +313,58 @@ Other options:
 
 Output format: 
 [
-    [`Concept:string`](../datatypes#string),
+    [`Name:string`](../datatypes#string),
     [`Label:string`](../datatypes#string),
-    [`Type:enum`](../datatypes#enum),
     [`Coded:bool`](../datatypes#bool),
-    [`Position:int`](../datatypes#int)
+    [`Index:int`](../datatypes#int)
 ]
 
 {{< expand "Output sample" >}}
 
-| Concept        | Label                          | Type      | Coded | Position |
-|----------------|--------------------------------|-----------|-------|----------|
-| FREQ           | Frequency                      | dimension | true  | 1        |
-| CURRENCY       | Currency                       | dimension | true  | 2        |
-| CURRENCY_DENOM | Currency denominator           | dimension | true  | 3        |
-| EXR_TYPE       | Exchange rate type             | dimension | true  | 4        |
-| EXR_SUFFIX     | Series variation - EXR context | dimension | true  | 5        |
-| TIME_FORMAT    | Time format code               | attribute | false |          |
+| Name           | Label                          | Coded | Index |
+|----------------|--------------------------------|-------|-------|
+| FREQ           | Frequency                      | true  | 0     |
+| CURRENCY       | Currency                       | true  | 1     |
+| CURRENCY_DENOM | Currency denominator           | true  | 2     |
+| EXR_TYPE       | Exchange rate type             | true  | 3     |
+| EXR_SUFFIX     | Series variation - EXR context | true  | 4     |
+
+{{< /expand >}}
+
+<a id="list-attributes" href="#list-attributes">![list attributes](https://img.shields.io/badge/list-attributes-859900?style=flat-square)</a>
+
+List data flow attributes.
+
+Example: `sdmx-dl list attributes ECB EXR`
+
+Parameters:
+- [`source`](../datatypes#source) - Data source name.
+- [`flow`](../datatypes#flow) - Data flow reference.
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`--sort`](../options#sort) - Sort output.
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+Output format:
+[
+[`Name:string`](../datatypes#string),
+[`Label:string`](../datatypes#string),
+[`Coded:bool`](../datatypes#bool),
+[`Relationship:enum`](../datatypes#enum)
+]
+
+{{< expand "Output sample" >}}
+
+| Concept     | Label              | Coded | Relationship |
+|-------------|--------------------|-------|--------------|
+| TIME_FORMAT | Time format code   | false | SERIES       |
+| OBS_STATUS  | Observation status | true  | OBSERVATION  |
+| DECIMALS    | Decimals           | true  | GROUP        |
 
 {{< /expand >}}
 
@@ -361,6 +401,41 @@ Output format:
 | A    | Annual               |
 | Q    | Quarterly            |
 | B    | Daily - businessweek |
+
+{{< /expand >}}
+
+<a id="list-availability" href="#list-availability">![list availability](https://img.shields.io/badge/list-availability-859900?style=flat-square)</a>
+
+List available dimension codes.
+
+Example: `sdmx-dl list availability ECB EXR M.CHF... 4`
+
+Parameters:
+- [`source`](../datatypes#source) - Data source name.
+- [`flow`](../datatypes#flow) - Data flow reference.
+- [`key`](../datatypes#key) - Data key.
+- [`index`](../datatypes#int) - Zero-based index of key dimension.
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`--sort`](../options#sort) - Sort output.
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+Output format:
+[
+[`Code:string`](../datatypes#string)
+]
+
+{{< expand "Output sample" >}}
+
+| Code |
+|------|
+| A    |
+| E    |
 
 {{< /expand >}}
 

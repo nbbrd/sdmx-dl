@@ -51,8 +51,8 @@ Network-related options used to deal with performance, proxies, security and aut
 
 | Name                                                                 | Shortcut | Parameter                              | Description                                                     |
 |----------------------------------------------------------------------|----------|----------------------------------------|-----------------------------------------------------------------|
+| <a id="curl" href="#curl">`--curl`</a>                               | -        | -                                      | Use curl backend instead of JDK.                                |
 | <a id="no-cache" href="#no-cache">`--no-cache`</a>                   | -        | -                                      | Disable caching.                                                |
-| <a id="cache" href="#cache">`--cache`</a>                            | -        | [`<folder>`](../datatypes#folder)      | Cache folder path.                                              |
 | <a id="auto-proxy" href="#auto-proxy">`--auto-proxy`</a>             | -        | -                                      | Enable automatic proxy detection.                               |
 | <a id="no-default-ssl" href="#no-default-ssl">`--no-default-ssl`</a> | -        | -                                      | Disable default truststore.                                     |
 | <a id="no-system-ssl" href="#no-system-ssl">`--no-system-ssl`</a>    | -        | -                                      | Disable system truststore.                                      |
