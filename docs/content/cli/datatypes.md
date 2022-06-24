@@ -37,11 +37,11 @@ A source is a string that identifies of a data source.
 
 {{< expand "Examples" >}}
 
-| source | description |
-| --- | --- |
-| `ABS` | Australian Bureau of Statistics |
-| `ECB` | European Central Bank |
-| `NBB` | National Bank of Belgium |
+| source | description                     |
+|--------|---------------------------------|
+| `ABS`  | Australian Bureau of Statistics |
+| `ECB`  | European Central Bank           |
+| `NBB`  | National Bank of Belgium        |
 
 {{< /expand >}}
 
@@ -53,9 +53,9 @@ A flow is a string that identifies a multi-dimensional dataset.
 
 {{< expand "Examples" >}}
 
-| flow | description |
-| --- | --- |
-| `EXR` | Exchange Rates |
+| flow                | description                               |
+|---------------------|-------------------------------------------|
+| `EXR`               | Exchange Rates                            |
 | `ABS_REGIONAL_ASGS` | Regional Statistics, ASGS 2011, 2011-2016 |
 
 {{< /expand >}}
@@ -70,13 +70,13 @@ A key can identify single or multiple time series.
 
 {{< expand "Examples" >}}
 
-| key | type | description |
-| --- | --- | --- |
-| `M.CHF.EUR.SP00.A` | single | Monthly; Swiss franc; … |
-| `M+D.CHF.EUR.SP00.A` | multiple | Monthly + Daily; Swiss franc; … |
+| key                    | type     | description                         |
+|------------------------|----------|-------------------------------------|
+| `M.CHF.EUR.SP00.A`     | single   | Monthly; Swiss franc; …             |
+| `M+D.CHF.EUR.SP00.A`   | multiple | Monthly + Daily; Swiss franc; …     |
 | `M.CHF+USD.EUR.SP00.A` | multiple | Monthly; Swiss franc + US dollar; … |
-| `M..EUR.SP00.A` | multiple | Monthly; all currencies; … |
-| `all` | multiple | everything |
+| `M..EUR.SP00.A`        | multiple | Monthly; all currencies; …          |
+| `all`                  | multiple | everything                          |
 
 {{< /expand >}}
 

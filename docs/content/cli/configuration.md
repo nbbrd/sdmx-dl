@@ -22,19 +22,19 @@ Each of these scopes overwrites properties defined in the previous scope; for ex
 The default values of [command options](../options) can be overridden in two ways:
 
 - **Widely** by targeting any command using their option names.  
-```properties
-# enable verbose mode on all commands
-verbose=true
-# use UNIX new-line type on all commands
-new-line=UNIX
-```
+    ```properties
+    # enable verbose mode on all commands
+    verbose=true
+    # use UNIX new-line type on all commands
+    new-line=UNIX
+    ```
 - **Narrowly** by targeting a specific command using their option names prefixed by the command full path.  
-```properties
-# enable verbose mode on status command
-sdmx-dl.check.status.verbose=true
-# use UNIX new-line type on status command
-sdmx-dl.check.status.new-line=UNIX
-```
+    ```properties
+    # enable verbose mode on status command
+    sdmx-dl.check.status.verbose=true
+    # use UNIX new-line type on status command
+    sdmx-dl.check.status.new-line=UNIX
+    ```
 
 ## Execution properties
 

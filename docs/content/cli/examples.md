@@ -14,7 +14,7 @@ weight: 6
 4. Same as 1 with displaying as human-readable table ([PowerShell](https://en.wikipedia.org/wiki/PowerShell) example)  
    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertfrom-csv">ConvertFrom-Csv</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/select-object">Select-Object -First 3</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/format-table">Format-Table</a></b></pre>
    {{< expand "Output sample" >}}
-   ```
+   ```plain
    Series           ObsAttributes ObsPeriod           ObsValue
    ------           ------------- ---------           --------
    M.CHF.EUR.SP00.A OBS_STATUS=A  1999-01-01T00:00:00 1.605495
@@ -25,7 +25,7 @@ weight: 6
 5. Same as 1 with displaying as human-readable table ([xsv](https://github.com/BurntSushi/xsv) example)  
    <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://github.com/BurntSushi/xsv#available-commands">xsv slice -l 3</a> | <a href="https://github.com/BurntSushi/xsv#available-commands">xsv table</a></b></pre>
    {{< expand "Output sample" >}}
-   ```
+   ```plain
    Series            ObsAttributes  ObsPeriod            ObsValue
    M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-01-01T00:00:00  1.605495
    M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-02-01T00:00:00  1.59785

@@ -114,12 +114,12 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-Series | ObsAttributes | ObsPeriod | ObsValue
---- | --- | --- | ---
-M.CHF.EUR.SP00.A | OBS_STATUS=A |1999-01-01T00:00:00 | 1.605495
-M.CHF.EUR.SP00.A | OBS_STATUS=A |1999-02-01T00:00:00 | 1.59785
-M.CHF.EUR.SP00.A | OBS_STATUS=A |1999-03-01T00:00:00 | 1.595430434782609
-M.CHF.EUR.SP00.A | OBS_STATUS=A |1999-04-01T00:00:00 | 1.601531818181818
+| Series           | ObsAttributes | ObsPeriod           | ObsValue          |
+|------------------|---------------|---------------------|-------------------|
+| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-01-01T00:00:00 | 1.605495          |
+| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-02-01T00:00:00 | 1.59785           |
+| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-03-01T00:00:00 | 1.595430434782609 |
+| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-04-01T00:00:00 | 1.601531818181818 |
 
 {{< /expand >}}
 
@@ -152,14 +152,14 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-Series | Concept | Value
---- | --- | ---
-M.CHF.EUR.SP00.A | COLLECTION | A
-M.CHF.EUR.SP00.A | UNIT | CHF
-M.CHF.EUR.SP00.A | DECIMALS | 4
-M.CHF.EUR.SP00.A | SOURCE_AGENCY | 4F0
-M.CHF.EUR.SP00.A | UNIT_MULT | 0
-M.CHF.EUR.SP00.A | TITLE | Swiss franc/Euro
+| Series           | Concept       | Value            |
+|------------------|---------------|------------------|
+| M.CHF.EUR.SP00.A | COLLECTION    | A                |
+| M.CHF.EUR.SP00.A | UNIT          | CHF              |
+| M.CHF.EUR.SP00.A | DECIMALS      | 4                |
+| M.CHF.EUR.SP00.A | SOURCE_AGENCY | 4F0              |
+| M.CHF.EUR.SP00.A | UNIT_MULT     | 0                |
+| M.CHF.EUR.SP00.A | TITLE         | Swiss franc/Euro |
 
 {{< /expand >}}
 
@@ -190,8 +190,8 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-| Series |
-| --- |
+| Series           |
+|------------------|
 | A.CHF.EUR.SP00.A |
 | D.CHF.EUR.SP00.A |
 | H.CHF.EUR.SP00.A |
@@ -226,11 +226,11 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|Name|Description|Aliases|Driver|Dialect|Endpoint|Properties|Website|Monitor|
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|ABS|Australian Bureau of Statistics||ri:abs||https://stat.data.abs.gov.au/restsdmx/sdmx.ashx||https://stat.data.abs.gov.au|provider=UptimeRobot,id=m783847060-975767bc3a033ea3f3ac8ca2|
-|ECB|European Central Bank||ri:sdmx21|ECB2020|https://sdw-wsrest.ecb.europa.eu/service|detailSupported=true|https://sdw.ecb.europa.eu|provider=UptimeRobot,id=m783846981-b55d7e635c5cdc16e16bac2a|
-|ESTAT|Eurostat|EUROSTAT|connectors:eurostat||https://ec.europa.eu/eurostat/SDMX/diss-web/rest||https://ec.europa.eu/eurostat/data/database|provider=UptimeRobot,id=m783847077-390f706bd3acf8fb640e48df|
+| Name  | Description                     | Aliases  | Driver              | Dialect | Endpoint                                         | Properties           | Website                                     | Monitor                                                     |
+|-------|---------------------------------|----------|---------------------|---------|--------------------------------------------------|----------------------|---------------------------------------------|-------------------------------------------------------------|
+| ABS   | Australian Bureau of Statistics |          | ri:abs              |         | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | provider=UptimeRobot,id=m783847060-975767bc3a033ea3f3ac8ca2 |
+| ECB   | European Central Bank           |          | ri:sdmx21           | ECB2020 | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | provider=UptimeRobot,id=m783846981-b55d7e635c5cdc16e16bac2a |
+| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat |         | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | provider=UptimeRobot,id=m783847077-390f706bd3acf8fb640e48df |
 
 {{< /expand >}}
 
@@ -260,11 +260,11 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|Ref         |Label                         |
-|------------|------------------------------|
-|ECB:AME(1.0)|AMECO                         |
-|ECB:BKN(1.0)|Banknotes statistics          |
-|ECB:BLS(1.0)|Bank Lending Survey Statistics|
+| Ref          | Label                          |
+|--------------|--------------------------------|
+| ECB:AME(1.0) | AMECO                          |
+| ECB:BKN(1.0) | Banknotes statistics           |
+| ECB:BLS(1.0) | Bank Lending Survey Statistics |
 
 {{< /expand >}}
 
@@ -298,14 +298,14 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|Concept     |Label                         |Type     |Coded|Position|
-|------------|------------------------------|---------|-----|--------|
-|FREQ        |Frequency                     |dimension|true |1       |
-|CURRENCY    |Currency                      |dimension|true |2       |
-|CURRENCY_DENOM|Currency denominator          |dimension|true |3       |
-|EXR_TYPE    |Exchange rate type            |dimension|true |4       |
-|EXR_SUFFIX  |Series variation - EXR context|dimension|true |5       |
-|TIME_FORMAT |Time format code              |attribute|false|        |
+| Concept        | Label                          | Type      | Coded | Position |
+|----------------|--------------------------------|-----------|-------|----------|
+| FREQ           | Frequency                      | dimension | true  | 1        |
+| CURRENCY       | Currency                       | dimension | true  | 2        |
+| CURRENCY_DENOM | Currency denominator           | dimension | true  | 3        |
+| EXR_TYPE       | Exchange rate type             | dimension | true  | 4        |
+| EXR_SUFFIX     | Series variation - EXR context | dimension | true  | 5        |
+| TIME_FORMAT    | Time format code               | attribute | false |          |
 
 {{< /expand >}}
 
@@ -337,11 +337,11 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|Code        |Label                         |
-|------------|------------------------------|
-|A           |Annual                        |
-|Q           |Quarterly                     |
-|B           |Daily - businessweek          |
+| Code | Label                |
+|------|----------------------|
+| A    | Annual               |
+| Q    | Quarterly            |
+| B    | Daily - businessweek |
 
 {{< /expand >}}
 
@@ -370,9 +370,9 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|SupportedFeature|
-|----------------|
-|SERIES_KEYS_ONLY|
+| SupportedFeature |
+|------------------|
+| SERIES_KEYS_ONLY |
 
 {{< /expand >}}
 
@@ -395,11 +395,11 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-|Name        |SupportedProperties                                                                                   |
-|------------|------------------------------------------------------------------------------------------------------|
-|ri:dotstat  |connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                      |
-|ri:nbb      |connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                      |
-|ri:sdmx21   |connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication,detailSupported,trailingSlashRequired|
+| Name       | SupportedProperties                                                                                    |
+|------------|--------------------------------------------------------------------------------------------------------|
+| ri:dotstat | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
+| ri:nbb     | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
+| ri:sdmx21  | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication,detailSupported,trailingSlashRequired |
 
 {{< /expand >}}
 
@@ -434,8 +434,8 @@ Output format:
 {{< expand "Output sample" >}}
 
 | Source | State | UptimeRatio | AverageResponseTime | ErrorMessage |
-| --- | --- | --- | --- | --- |
-| ECB | UP | 99.691 | | |
+|--------|-------|-------------|---------------------|--------------|
+| ECB    | UP    | 99.691      |                     |              |
 
 {{< /expand >}}
 
@@ -468,9 +468,9 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-| Source | Accessible| DurationInMillis | ErrorMessage |
-| --- | --- | --- | --- |
-| ECB | YES | 726 | |
+| Source | Accessible | DurationInMillis | ErrorMessage |
+|--------|------------|------------------|--------------|
+| ECB    | YES        | 726              |              |
 
 {{< /expand >}}
 
@@ -493,12 +493,12 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-| Scope | PropertyKey | PropertyValue | Category| 
-| --- | --- | --- | --- | 
-| `SYSTEM` | `sources` | `C:\temp\some-sources.xml` | `WIDE_OPTION` | 
-| `SYSTEM` | `org.fusesource.jansi.Ansi.disable` | `true` | `OTHER` | 
-| `GLOBAL` | `sources` | `C:\Users\ABC\other-sources.xml` | `WIDE_OPTION` | 
-| `LOCAL` | `sdmx-dl.check.status.verbose` | `true` | `NARROW_OPTION` | 
+| Scope  | PropertyKey                       | PropertyValue                  | Category      |
+|--------|-----------------------------------|--------------------------------|---------------|
+| SYSTEM | sources                           | C:\temp\some-sources.xml       | WIDE_OPTION   | 
+| SYSTEM | org.fusesource.jansi.Ansi.disable | true                           | OTHER         |
+| GLOBAL | sources                           | C:\Users\ABC\other-sources.xml | WIDE_OPTION   |
+| LOCAL  | sdmx-dl.check.status.verbose      | true                           | NARROW_OPTION |
 
 {{< /expand >}}
 
