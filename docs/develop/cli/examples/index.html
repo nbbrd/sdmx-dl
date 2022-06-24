@@ -12,7 +12,7 @@
 <meta name="generator" content="Hugo 0.101.0" />
 
 
-  <meta name="description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv.gz Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
+  <meta name="description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
 
     <title>Examples | sdmx-dl</title>
 
@@ -38,7 +38,7 @@
     content="Examples"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv.gz Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
+  <meta property="og:description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/" />
 
@@ -47,7 +47,7 @@
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Examples" />
-  <meta name="twitter:description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv.gz Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
+  <meta name="twitter:description" content="Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M." />
 
 
   <script type="application/ld+json">
@@ -58,8 +58,8 @@
       "name": "Examples",
       "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/",
       "headline": "Examples",
-      "description": "Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\\somewhere\\file.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\\somewhere\\file.csv.gz Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.",
-      "wordCount" : "224",
+      "description": "Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.",
+      "wordCount" : "225",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -817,20 +817,23 @@
     class="gdoc-markdown gdoc-markdown__align--left"
   >
     <h1>Examples</h1>
-    <p><a id="fetch" href="#fetch"><img
-  src="https://img.shields.io/badge/fetch-examples-dc322f?style=flat-square"
-  alt="fetch"
-  
-/></a></p>
+    
+
+
+
+
+<a id="fetch-examples" href="#fetch-examples"><img src="https://img.shields.io/badge/fetch-examples-dc322f?style=flat-square"/></a>
+
+
 <ol>
 <li>Download monthly (<code>M</code>) exchange rates (<code>EXR</code>) of Swiss franc (<code>CHF</code>) from the European Central Bank (<code>ECB</code>)
-<pre>sdmx-dl fetch <b>data</b> ECB EXR M.CHF.EUR.SP00.A</pre>  
+<pre>sdmx-dl fetch <b><a href='/sdmx-dl/docs/develop/cli/usage/#fetch-data'>data</a></b> ECB EXR M.CHF.EUR.SP00.A</pre>  
 </li>
 <li>Same as 1 with saving into a file
-<pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>-o C:\somewhere\file.csv</b></pre>
+<pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b><a href='/sdmx-dl/docs/develop/cli/options/#output'>-o filename.csv</a></b></pre>
 </li>
 <li>Same as 1 with saving into a compressed file
-<pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv<b>.gz</b></pre>
+<pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz <b><a href='/sdmx-dl/docs/develop/cli/options/#gzipped'>-z</a></b></pre>
 </li>
 <li>Same as 1 with displaying as human-readable table (<a
   class="gdoc-markdown__link"
@@ -840,11 +843,11 @@
 <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/convertfrom-csv">ConvertFrom-Csv</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/select-object">Select-Object -First 3</a> | <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/format-table">Format-Table</a></b></pre>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="a7f7530c-0">
+  <label class="gdoc-expand__head flex justify-between" for="a7f7530c-4">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="a7f7530c-0" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="a7f7530c-4" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series           ObsAttributes ObsPeriod           ObsValue
 </span></span><span class="line"><span class="cl">------           ------------- ---------           --------
@@ -863,11 +866,11 @@
 <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://github.com/BurntSushi/xsv#available-commands">xsv slice -l 3</a> | <a href="https://github.com/BurntSushi/xsv#available-commands">xsv table</a></b></pre>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="ccbefdf1-1">
+  <label class="gdoc-expand__head flex justify-between" for="ccbefdf1-5">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="ccbefdf1-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ccbefdf1-5" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series            ObsAttributes  ObsPeriod            ObsValue
 </span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-01-01T00:00:00  1.605495
@@ -884,23 +887,26 @@
 <pre>sdmx-dl fetch data ECB EXR M<b>..</b>EUR.SP00.A</pre>
 </li>
 <li>Download available series in a dataset
-<pre>sdmx-dl fetch <b>keys</b> ECB EXR <b>.</b>CHF.EUR.SP00.A</pre>
+<pre>sdmx-dl fetch <b><a href='/sdmx-dl/docs/develop/cli/usage/#fetch-keys'>keys</a></b> ECB EXR <b>.</b>CHF.EUR.SP00.A</pre>
 </li>
 </ol>
-<p><a id="list" href="#list"><img
-  src="https://img.shields.io/badge/list-examples-859900?style=flat-square"
-  alt="list"
-  
-/></a></p>
+
+
+
+
+
+<a id="list-examples" href="#list-examples"><img src="https://img.shields.io/badge/list-examples-859900?style=flat-square"/></a>
+
+
 <ol>
 <li>List available datasets from the European Central Bank (<code>ECB</code>)
-<pre>sdmx-dl list <b>flows ECB</b></pre>
+<pre>sdmx-dl list <b><a href='/sdmx-dl/docs/develop/cli/usage/#list-flows'>flows</a></b> <b>ECB</b></pre>
 </li>
 <li>List dimensions of the exchange rates (<code>EXR</code>)
-<pre>sdmx-dl list <b>concepts</b> ECB <b>EXR</b></pre>
+<pre>sdmx-dl list <b><a href='/sdmx-dl/docs/develop/cli/usage/#list-dimensions'>dimensions</a></b> ECB <b>EXR</b></pre>
 </li>
 <li>List codes of the frequency dimension (<code>FREQ</code>)
-<pre>sdmx-dl list <b>codes</b> ECB EXR <b>FREQ</b></pre>
+<pre>sdmx-dl list <b><a href='/sdmx-dl/docs/develop/cli/usage/#list-codes'>codes</a></b> ECB EXR <b>FREQ</b></pre>
 </li>
 </ol>
 

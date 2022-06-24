@@ -71,7 +71,7 @@ Note: The number format provider has been changed in JDK9 (see JEP252) so the fo
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</guid>
-      <description>Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o C:\somewhere\file.csv.gz Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.</description>
+      <description>Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.</description>
     </item>
     
   </channel>

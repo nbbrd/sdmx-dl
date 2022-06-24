@@ -68,7 +68,7 @@ SYSTEM: the installation folder (where the binary is located) GLOBAL: the user p
       "url" : "http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/",
       "headline": "Configuration",
       "description": "sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.\nProperties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.\nAll these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:\nSYSTEM: the installation folder (where the binary is located) GLOBAL: the user profile folder (%userprofile% on Windows) LOCAL: the execution folder (where the CLI is called) Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.",
-      "wordCount" : "396",
+      "wordCount" : "388",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -903,11 +903,11 @@ sdmx-dl.check.status.new-line=UNIX
 There are several types of system properties: some are defined by the platform, others by the libraries.</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="6eac9d47-1">
+  <label class="gdoc-expand__head flex justify-between" for="d30263ce-1">
     <span>sdmx-dl properties</span>
     <span>↕</span>
   </label>
-  <input id="6eac9d47-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="d30263ce-1" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
@@ -917,10 +917,6 @@ There are several types of system properties: some are defined by the platform, 
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>sdmxdl.ri.web.backend</code></td>
-<td>Backend used to perform web requests</td>
-</tr>
 <tr>
 <td><code>sdmxdl.ri.web.dump.folder</code></td>
 <td>Folder used to dump body of web responses</td>
@@ -1065,7 +1061,7 @@ There are several types of system properties: some are defined by the platform, 
         </a>
     </h2>
 </div>
-<p>Using properties files is usually error prone.<br>
+<p>Using properties files is usually error-prone.<br>
 Fortunately, sdmx-dl CLI includes a <a
   class="gdoc-markdown__link"
   href="../usage#check-properties"
