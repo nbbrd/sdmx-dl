@@ -28,21 +28,40 @@ flowchart TB
     r --- l([list]) --- sources & flows & concepts & codes & features & drivers
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
-    
+
     classDef default fill:#93a1a1,stroke-width:0px 
     linkStyle default stroke:#93a1a1
-    
+ 
     classDef fx fill:#dc322f
     class f,data,meta,keys fx;
-    
+    click f "#fetch" "fetch command"
+    click data "#fetch-data" "fetch data command"
+    click meta "#fetch-meta" "fetch meta command"
+    click keys "#fetch-keys" "fetch keys command"
+   
     classDef lx fill:#859900
     class l,sources,flows,concepts,codes,features,drivers lx;
-    
+    click l "#list" "list command"
+    click sources "#list-sources" "list sources command"
+    click flows "#list-flows" "list flows command"
+    click concepts "#list-concepts" "list concepts command"
+    click codes "#list-codes" "list codes command"
+    click features "#list-features" "list features command"
+    click drivers "#list-drivers" "list drivers command"
+   
     classDef cx fill:#268bd2
     class c,status,access,config cx;
+    click c "#check" "check command"
+    click status "#check-status" "check status command"
+    click access "#check-access" "check access command"
+    click config "#check-config" "check config command"
     
     classDef sx fill:#b58900
-    class s,completion,launcher,ping sx;
+    class s,completion,launcher sx;
+    click s "#setup" "setup command"
+    click completion "#setup-completion" "setup completion command"
+    click launcher "#setup-launcher" "setup launcher command"
+
 {{< /mermaid >}}
 
 <a id="fetch" href="#fetch">![fetch](https://img.shields.io/badge/fetch--dc322f?style=flat-square)</a>
