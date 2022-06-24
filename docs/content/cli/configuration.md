@@ -45,7 +45,6 @@ There are several types of system properties: some are defined by the platform, 
 
 | Property                    | Description                               |
 |-----------------------------|-------------------------------------------|
-| `sdmxdl.ri.web.backend`     | Backend used to perform web requests      |
 | `sdmxdl.ri.web.dump.folder` | Folder used to dump body of web responses |
 
 {{< /expand >}}
@@ -90,7 +89,7 @@ More on https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSS
 
 ## Troubleshooting
 
-Using properties files is usually error prone.  
+Using properties files is usually error-prone.  
 Fortunately, sdmx-dl CLI includes a [command to pinpoint the problems](../usage#check-properties): `sdmx-dl check properties`
 
 Common problems:
