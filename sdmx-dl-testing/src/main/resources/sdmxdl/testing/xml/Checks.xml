@@ -150,6 +150,12 @@
                   key="A03.SL03.A" seriesCount="1.." obsCount="16.."/>
         </flow>
     </source>
+    <source name="TNSO" flowCount="32..">
+        <flow ref="DF_SDG_01" dimCount="15">
+            <data digest="TNSO"
+                  key="A.............." seriesCount="9.." obsCount="49.."/>
+        </flow>
+    </source>
     <source name="UIS" flowCount="9..">
         <flow ref="SCN_DS" dimCount="2">
             <data digest="UIS"

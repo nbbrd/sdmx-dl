@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add `SdmxWebSource#monitorWebsite` field
 - ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
 - ![API] Add support of attribute relationship [#81](https://github.com/nbbrd/sdmx-dl/issues/81)
+- ![SOURCE] Add source from National Statistical Office of Thailand [#262](https://github.com/nbbrd/sdmx-dl/issues/262)
 - ![PROVIDER] Add support of POST requests in HTTP backend
 - ![PROVIDER] Add driver for International Monetary Fund source [#156](https://github.com/nbbrd/sdmx-dl/issues/156)
 - ![CLI] Add `list/availability` command
