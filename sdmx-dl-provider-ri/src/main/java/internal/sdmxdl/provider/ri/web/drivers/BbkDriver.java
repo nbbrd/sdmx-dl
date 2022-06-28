@@ -17,17 +17,17 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -62,6 +62,8 @@ public final class BbkDriver implements WebDriver {
                     .builder()
                     .name("BBK")
                     .descriptionOf("Deutsche Bundesbank")
+                    .description("en", "Deutsche Bundesbank")
+                    .description("de", "Deutsche Bundesbank")
                     .driver(RI_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")

@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -78,7 +77,7 @@ public final class XmlWebSource {
                             break;
                         case DESCRIPTION_TAG:
                             String lang = reader.getAttributeValue(null, LANG_ATTR);
-                            item.description(lang != null ? lang : Locale.ROOT.getLanguage(), reader.getElementText());
+                            item.description(lang != null ? lang : SdmxWebSource.ROOT_LANGUAGE, reader.getElementText());
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());

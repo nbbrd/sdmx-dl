@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Add driver for International Monetary Fund source [#156](https://github.com/nbbrd/sdmx-dl/issues/156)
 - ![CLI] Add `list/availability` command
 - ![CLI] Add `MonitorWebsite` column in `list/sources` command
+- ![CLI] Add `Languages` column in `list/sources` command [#266](https://github.com/nbbrd/sdmx-dl/issues/266)
 
 ### Changed
 

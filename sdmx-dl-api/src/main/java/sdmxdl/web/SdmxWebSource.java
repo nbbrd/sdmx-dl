@@ -87,10 +87,12 @@ public class SdmxWebSource extends SdmxSource {
         return langs.select(descriptions);
     }
 
+    public static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
+
     public static class Builder {
 
         public @NonNull Builder descriptionOf(@NonNull CharSequence description) throws IllegalArgumentException {
-            return description(Locale.ROOT.getLanguage(), description.toString());
+            return description(ROOT_LANGUAGE, description.toString());
         }
 
         public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {

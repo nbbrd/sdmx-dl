@@ -93,6 +93,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .builder()
                     .name("UKDS")
                     .descriptionOf("UK Data Service")
+                    .description("en", "UK Data Service")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")

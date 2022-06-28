@@ -51,6 +51,7 @@ public final class RngDriver implements WebDriver {
                     .builder()
                     .name("RNG")
                     .descriptionOf("Random number generator")
+                    .description("en", "Random number generator")
                     .driver(RI_RNG)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
