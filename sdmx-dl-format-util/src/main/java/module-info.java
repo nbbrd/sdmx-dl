@@ -8,4 +8,5 @@ module sdmxdl.format.util {
     requires transitive nbbrd.io.base;
 
     exports sdmxdl.format;
+    exports sdmxdl.format.time;
 }

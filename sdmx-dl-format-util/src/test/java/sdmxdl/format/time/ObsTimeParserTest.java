@@ -1,8 +1,8 @@
-package sdmxdl.format;
+package sdmxdl.format.time;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.TimeFormatParser;
+import sdmxdl.format.time.ObsTimeParser;
 
 import java.time.MonthDay;
 import java.util.ArrayList;
@@ -10,21 +10,21 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.format.TimeFormatParser.onObservationalTimePeriod;
+import static sdmxdl.format.time.ObsTimeParser.onObservationalTimePeriod;
 
-public class TimeFormatParserTest {
+public class ObsTimeParserTest {
 
     final MonthDay ref = MonthDay.of(7, 1);
 
     @Test
     public void testOnObservationalTimePeriod() {
-        assertThat(onObservationalTimePeriod().parse(null, ref)).isNull();
-        assertThat(onObservationalTimePeriod().parse("null", null)).isNull();
+        assertThat(onObservationalTimePeriod().parseStartTime(null, ref)).isNull();
+        assertThat(onObservationalTimePeriod().parseStartTime("null", null)).isNull();
     }
 
     @Test
     public void testGregorianYear() {
-        assertThat(onObservationalTimePeriod().parse("2001", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2001", null))
                 .describedAs("Gregorian Year")
                 .isEqualTo("2001-01-01T00:00:00");
 
@@ -35,7 +35,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testGregorianYearMonth() {
-        assertThat(onObservationalTimePeriod().parse("2001-02", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2001-02", null))
                 .describedAs("Gregorian Year Month")
                 .isEqualTo("2001-02-01T00:00:00");
 
@@ -46,7 +46,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testGregorianDay() {
-        assertThat(onObservationalTimePeriod().parse("2001-02-03", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2001-02-03", null))
                 .describedAs("Gregorian Day")
                 .isEqualTo("2001-02-03T00:00:00");
 
@@ -61,7 +61,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testDateTime() {
-        assertThat(onObservationalTimePeriod().parse("2001-02-03T04:05:06", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2001-02-03T04:05:06", null))
                 .describedAs("Date Time")
                 .isEqualTo("2001-02-03T04:05:06");
 
@@ -76,7 +76,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testReportingYear() {
-        assertThat(onObservationalTimePeriod().parse("2000-A1", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-A1", null))
                 .describedAs("Reporting Year")
                 .isEqualTo("2000-01-01T00:00:00");
 
@@ -91,7 +91,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testReportingSemester() {
-        assertThat(onObservationalTimePeriod().parse("2000-S2", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-S2", null))
                 .describedAs("Reporting Semester")
                 .isEqualTo("2000-07-01T00:00:00");
 
@@ -106,7 +106,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testReportingTrimester() {
-        assertThat(onObservationalTimePeriod().parse("2000-T3", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-T3", null))
                 .describedAs("Reporting Trimester")
                 .isEqualTo("2000-09-01T00:00:00");
 
@@ -121,7 +121,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testReportingQuarter() {
-        assertThat(onObservationalTimePeriod().parse("2000-Q4", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-Q4", null))
                 .describedAs("Reporting Quarter")
                 .isEqualTo("2000-10-01T00:00:00");
 
@@ -133,14 +133,14 @@ public class TimeFormatParserTest {
                 .describedAs("Reporting Quarter out-of-bounds")
                 .are(notValidWith(onObservationalTimePeriod()));
 
-        assertThat(onObservationalTimePeriod().parse("2010-Q2", ref))
+        assertThat(onObservationalTimePeriod().parseStartTime("2010-Q2", ref))
                 .describedAs("Reporting Quarter with start day")
                 .isEqualTo("2010-10-01T00:00:00");
     }
 
     @Test
     public void testReportingMonth() {
-        assertThat(onObservationalTimePeriod().parse("2000-M12", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-M12", null))
                 .describedAs("Reporting Month")
                 .isEqualTo("2000-12-01T00:00:00");
 
@@ -159,7 +159,7 @@ public class TimeFormatParserTest {
 
     @Test
     public void testReportingWeek() {
-        assertThat(onObservationalTimePeriod().parse("2000-W53", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-W53", null))
                 .describedAs("Reporting Week")
                 .isEqualTo("2001-01-01T00:00:00");
 
@@ -175,14 +175,14 @@ public class TimeFormatParserTest {
                 .describedAs("Reporting Week padding")
                 .are(notValidWith(onObservationalTimePeriod()));
 
-        assertThat(onObservationalTimePeriod().parse("2011-W36", ref))
+        assertThat(onObservationalTimePeriod().parseStartTime("2011-W36", ref))
                 .describedAs("Reporting Week with start day")
                 .isEqualTo("2012-03-05T00:00:00");
     }
 
     @Test
     public void testReportingDay() {
-        assertThat(onObservationalTimePeriod().parse("2000-D366", null))
+        assertThat(onObservationalTimePeriod().parseStartTime("2000-D366", null))
                 .describedAs("Reporting Day")
                 .isEqualTo("2000-12-31T00:00:00");
 
@@ -204,8 +204,8 @@ public class TimeFormatParserTest {
         // TODO
     }
 
-    private static Condition<String> notValidWith(TimeFormatParser parser) {
-        return new Condition<>(text -> parser.parse(text, null) == null, "not valid");
+    private static Condition<String> notValidWith(ObsTimeParser parser) {
+        return new Condition<>(text -> parser.parseStartTime(text, null) == null, "not valid");
     }
 
     private static List<String> generateInvalids(String source) {

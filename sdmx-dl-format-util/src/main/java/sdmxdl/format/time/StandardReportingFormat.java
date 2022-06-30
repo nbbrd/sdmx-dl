@@ -1,10 +1,12 @@
-package sdmxdl.format;
+package sdmxdl.format.time;
 
 import lombok.AccessLevel;
 import nbbrd.design.MightBePromoted;
 import org.checkerframework.checker.index.qual.NonNegative;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.Period;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -15,44 +17,44 @@ import java.util.stream.IntStream;
 @lombok.Builder
 public class StandardReportingFormat {
 
-    public static final StandardReportingFormat YEAR = builder()
+    public static final StandardReportingFormat REPORTING_YEAR = builder()
             .indicator('A')
             .durationOf("P1Y")
             .limitPerYear(1)
             .build();
 
-    public static final StandardReportingFormat SEMESTER = builder()
+    public static final StandardReportingFormat REPORTING_SEMESTER = builder()
             .indicator('S')
             .durationOf("P6M")
             .limitPerYear(2)
             .build();
 
-    public static final StandardReportingFormat TRIMESTER = builder()
+    public static final StandardReportingFormat REPORTING_TRIMESTER = builder()
             .indicator('T')
             .durationOf("P4M")
             .limitPerYear(3)
             .build();
 
-    public static final StandardReportingFormat QUARTER = builder()
+    public static final StandardReportingFormat REPORTING_QUARTER = builder()
             .indicator('Q')
             .durationOf("P3M")
             .limitPerYear(4)
             .build();
 
-    public static final StandardReportingFormat MONTH = builder()
+    public static final StandardReportingFormat REPORTING_MONTH = builder()
             .indicator('M')
             .durationOf("P1M")
             .limitPerYear(12)
             .build();
 
-    public static final StandardReportingFormat WEEK = builder()
+    public static final StandardReportingFormat REPORTING_WEEK = builder()
             .indicator('W')
             .durationOf("P7D")
             .limitPerYear(53)
             .yearBaseFunction(StandardReportingFormat::getReportingWeekYearBase)
             .build();
 
-    public static final StandardReportingFormat DAY = builder()
+    public static final StandardReportingFormat REPORTING_DAY = builder()
             .indicator('D')
             .durationOf("P1D")
             .limitPerYear(366)
@@ -81,7 +83,10 @@ public class StandardReportingFormat {
     }
 
     private List<Period> initAmounts() {
-        return IntStream.range(0, limitPerYear).mapToObj(duration::multipliedBy).collect(Collectors.toList());
+        return IntStream
+                .range(0, limitPerYear)
+                .mapToObj(getDuration()::multipliedBy)
+                .collect(Collectors.toList());
     }
 
     public static final class Builder {
@@ -100,5 +105,14 @@ public class StandardReportingFormat {
     @MightBePromoted
     static int getNumberOfDigits(int number) {
         return (int) (Math.log10(number) + 1);
+    }
+
+    private static final MonthDay FIRST_DAY_OF_YEAR = MonthDay.of(1, 1);
+
+    static LocalDateTime parseStartTime(CharSequence text, MonthDay reportingYearStartDay, StandardReportingFormat format) {
+        StandardReportingPeriod period = StandardReportingPeriod.parseOrNull(text);
+        return period != null && period.isValid(format)
+                ? period.toStartDate(format, reportingYearStartDay != null ? reportingYearStartDay : FIRST_DAY_OF_YEAR).atStartOfDay()
+                : null;
     }
 }

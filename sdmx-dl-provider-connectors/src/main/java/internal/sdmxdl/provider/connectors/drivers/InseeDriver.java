@@ -29,8 +29,8 @@ import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.StandardReportingFormat;
-import sdmxdl.format.TimeFormatParser;
+import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.ObsTimeParser;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -130,16 +130,16 @@ public final class InseeDriver implements WebDriver {
         }
     }
 
-    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
             .durationOf("P2M")
             .limitPerYear(6)
             .build();
 
-    private static final TimeFormatParser EXTENDED_PARSER =
-            TimeFormatParser.onObservationalTimePeriod()
-                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+    private static final ObsTimeParser EXTENDED_TIME_PARSER =
+            ObsTimeParser.onObservationalTimePeriod()
+                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
-    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_PARSER, Parser.onDouble());
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

@@ -20,6 +20,7 @@ import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.format.time.ObsTimeParser;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
@@ -33,10 +34,10 @@ import java.util.function.UnaryOperator;
 public final class ObsParser {
 
     public static @NonNull ObsParser newDefault() {
-        return new ObsParser(TimeFormatParser.onObservationalTimePeriod(), Parser.onDouble());
+        return new ObsParser(ObsTimeParser.onObservationalTimePeriod(), Parser.onDouble());
     }
 
-    private final TimeFormatParser periodParser;
+    private final ObsTimeParser timeParser;
     private final Parser<Double> valueParser;
     private String period = null;
     private String value = null;
@@ -62,7 +63,7 @@ public final class ObsParser {
 
     @Nullable
     public LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes) {
-        return periodParser.parse(period, getReportingYearStartDay(obsAttributes));
+        return timeParser.parseStartTime(period, getReportingYearStartDay(obsAttributes));
     }
 
     @Nullable

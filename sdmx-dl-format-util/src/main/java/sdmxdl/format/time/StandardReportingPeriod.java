@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.time;
 
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
@@ -10,6 +10,24 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.time.LocalDate;
 import java.time.MonthDay;
 
+/**
+ * SDMX technical notes:
+ * <pre>
+ * 590 Standard reporting periods are periods of time in relation to a reporting year. Each of
+ * 591 these standard reporting periods has a duration (based on the ISO 8601 definition)
+ * 592 associated with it. The general format of a reporting period is as follows:
+ * 593
+ * 594   [REPORTING_YEAR]-[PERIOD_INDICATOR][PERIOD_VALUE]
+ * 595
+ * 596   Where:
+ * 597     REPORTING_YEAR represents the reporting year as four digits (YYYY)
+ * 598     PERIOD_INDICATOR identifies the type of period which determines the
+ * 599     duration of the period
+ * 600     PERIOD_VALUE indicates the actual period within the year
+ * </pre>
+ *
+ * @see StandardReportingFormat
+ */
 @RepresentableAsString
 @lombok.Value
 @lombok.Builder
@@ -31,7 +49,7 @@ public class StandardReportingPeriod {
     @NonNegative
     int periodValueDigits;
 
-    public @NonNull LocalDate getStart(@NonNull StandardReportingFormat format, @NonNull MonthDay reportingYearStartDay) {
+    public @NonNull LocalDate toStartDate(@NonNull StandardReportingFormat format, @NonNull MonthDay reportingYearStartDay) {
         LocalDate reportingYearStartDate = reportingYearStartDay.atYear(reportingYear);
         LocalDate reportingYearBase = format.getYearBaseFunction().apply(reportingYearStartDate);
         return reportingYearBase.plus(format.getAmounts().get(periodValue - 1));

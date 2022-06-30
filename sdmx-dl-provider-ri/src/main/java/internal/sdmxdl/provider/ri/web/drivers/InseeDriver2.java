@@ -31,8 +31,8 @@ import sdmxdl.*;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.StandardReportingFormat;
-import sdmxdl.format.TimeFormatParser;
+import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.ObsTimeParser;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -133,7 +133,7 @@ public final class InseeDriver2 implements WebDriver {
         }
     }
 
-    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
             .durationOf("P2M")
@@ -141,9 +141,9 @@ public final class InseeDriver2 implements WebDriver {
             .build();
 
     @VisibleForTesting
-    static final TimeFormatParser EXTENDED_PARSER =
-            TimeFormatParser.onObservationalTimePeriod()
-                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+    static final ObsTimeParser EXTENDED_TIME_PARSER =
+            ObsTimeParser.onObservationalTimePeriod()
+                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
-    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_PARSER, Parser.onDouble());
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

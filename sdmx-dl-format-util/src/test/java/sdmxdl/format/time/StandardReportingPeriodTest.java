@@ -1,7 +1,7 @@
-package sdmxdl.format;
+package sdmxdl.format.time;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.StandardReportingPeriod;
+import sdmxdl.format.time.StandardReportingPeriod;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
