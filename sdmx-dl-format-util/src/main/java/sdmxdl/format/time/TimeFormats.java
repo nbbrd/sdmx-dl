@@ -51,7 +51,9 @@ class TimeFormats {
      * 756 However, the duration can only be postive.
      * </pre>
      */
-    static final ObsTimeParser TIME_RANGE = ObsTimeParser.onNull(); // TODO
+    static final ObsTimeParser TIME_RANGE =
+            ObsTimeParser.onTimeRange(TimeRange.DateRange::parse)
+                    .orElse(ObsTimeParser.onTimeRange(TimeRange.DateTimeRange::parse));
 
     /**
      * <pre>

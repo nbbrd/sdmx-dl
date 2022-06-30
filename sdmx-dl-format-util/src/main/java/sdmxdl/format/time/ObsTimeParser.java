@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.util.List;
+import java.util.function.Function;
 
 @FunctionalInterface
 public interface ObsTimeParser {
@@ -46,5 +47,9 @@ public interface ObsTimeParser {
 
     static @NonNull ObsTimeParser onStandardReporting(@NonNull StandardReportingFormat format) {
         return (t, r) -> StandardReportingFormat.parseStartTime(t, r, format);
+    }
+
+    static @NonNull ObsTimeParser onTimeRange(@NonNull Function<CharSequence, TimeRange<?>> format) {
+        return of(Parser.of(format).andThen(timeRange -> timeRange != null ? timeRange.toStartTime() : null));
     }
 }
