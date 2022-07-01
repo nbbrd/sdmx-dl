@@ -55,16 +55,20 @@ import java.util.concurrent.Callable;
 public final class MainCommand implements Callable<Void> {
 
     public static void main(String[] args) {
-        ConfigHelper.of(About.NAME).loadAll(System.getProperties());
+        SpecialProperties specialProperties = SpecialProperties.parse(args);
+
+        if (!specialProperties.isNoConfig()) {
+            ConfigHelper.of(About.NAME).loadAll(System.getProperties());
+        }
+
         LoggerHelper.disableDefaultConsoleLogger();
         KeychainStoreIgnoredExceptionFix.register();
-
-        System.exit(execMain(System.getProperties(), args));
+        
+        System.exit(execMain(specialProperties, System.getProperties(), args));
     }
 
-    private static int execMain(Properties properties, String[] args) {
-        SpecialProperties specialProperties = SpecialProperties.parse(args);
-        specialProperties.apply(properties);
+    private static int execMain(SpecialProperties specialProperties, Properties properties, String[] args) {
+        specialProperties.apply(System.getProperties());
 
         try (AnsiConsole ignore = AnsiConsole.windowsInstall()) {
             CommandLine cmd = new CommandLine(new MainCommand());

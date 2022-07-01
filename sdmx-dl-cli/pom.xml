@@ -206,6 +206,31 @@
                     <finalName>${project.x.fileName}-${project.version}-bin</finalName>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <!-- Generates data files for documentation -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${project.x.mainClass}</mainClass>
+                            <arguments>
+                                <argument>list</argument>
+                                <argument>sources</argument>
+                                <argument>-o</argument>
+                                <argument>${project.parent.basedir}/docs/tmp/sources.csv</argument>
+                                <argument>--no-config</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

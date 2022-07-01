@@ -86,6 +86,13 @@ public class WebOptions {
     )
     private boolean batch;
 
+    @CommandLine.Option(
+            names = {SpecialProperties.NO_CONFIG_OPTION},
+            defaultValue = "false",
+            hidden = true
+    )
+    private boolean noConfig;
+
     @ReturnNew
     public SdmxWebManager loadManager() throws IOException {
         try (CloseableExecutorService executor = new CloseableExecutorService(newResourceExecutor())) {
