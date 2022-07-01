@@ -5,8 +5,6 @@ import nbbrd.design.MightBePromoted;
 import org.checkerframework.checker.index.qual.NonNegative;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.MonthDay;
 import java.time.Period;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -105,14 +103,5 @@ public class StandardReportingFormat {
     @MightBePromoted
     static int getNumberOfDigits(int number) {
         return (int) (Math.log10(number) + 1);
-    }
-
-    private static final MonthDay FIRST_DAY_OF_YEAR = MonthDay.of(1, 1);
-
-    static LocalDateTime parseStartTime(CharSequence text, MonthDay reportingYearStartDay, StandardReportingFormat format) {
-        StandardReportingPeriod period = StandardReportingPeriod.parseOrNull(text);
-        return period != null && period.isValid(format)
-                ? period.toStartDate(format, reportingYearStartDay != null ? reportingYearStartDay : FIRST_DAY_OF_YEAR).atStartOfDay()
-                : null;
     }
 }

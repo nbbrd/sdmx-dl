@@ -12,11 +12,11 @@ import java.time.format.DateTimeFormatter;
 @lombok.experimental.UtilityClass
 class GregorianTimePeriods {
 
-    static final ObsTimeParser GREGORIAN_YEAR = ObsTimeParser.of(Parser.of(GregorianTimePeriods::parseStrictYear).andThen(GregorianTimePeriods::atStartOfYear));
+    static final ObsTimeParser GREGORIAN_YEAR = ObsTimeParser.onParser(Parser.of(GregorianTimePeriods::parseStrictYear).andThen(GregorianTimePeriods::atStartOfYear));
 
-    static final ObsTimeParser GREGORIAN_YEAR_MONTH = ObsTimeParser.of(Parser.of(YearMonth::parse).andThen(GregorianTimePeriods::atStartOfMonth));
+    static final ObsTimeParser GREGORIAN_YEAR_MONTH = ObsTimeParser.onParser(Parser.of(YearMonth::parse).andThen(GregorianTimePeriods::atStartOfMonth));
 
-    static final ObsTimeParser GREGORIAN_DAY = ObsTimeParser.of(Parser.of(LocalDate::parse).andThen(GregorianTimePeriods::atStartOfDay));
+    static final ObsTimeParser GREGORIAN_DAY = ObsTimeParser.onParser(Parser.of(LocalDate::parse).andThen(GregorianTimePeriods::atStartOfDay));
 
     // JDK > 8 changed parsing behavior of Year#parse(CharSequence) to accept min 1 digit instead of 4
     private static final DateTimeFormatter STRICT_YEAR_PARSER = DateTimeFormatter.ofPattern("uuuu");

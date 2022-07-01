@@ -27,6 +27,7 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.StandardReportingFormat;
@@ -138,7 +139,7 @@ public final class InseeDriver implements WebDriver {
             .build();
 
     private static final ObsTimeParser EXTENDED_TIME_PARSER =
-            ObsTimeParser.onObservationalTimePeriod()
+            TimeFormats.OBSERVATIONAL_TIME_PERIOD
                     .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());

@@ -26,7 +26,7 @@ public abstract class TimeRange<T extends Temporal & Comparable<? super T>> {
 
     abstract public T getStart();
 
-    abstract public LocalDateTime toStartTime();
+    abstract public @NonNull LocalDateTime toStartTime();
 
     @RepresentableAsString
     @lombok.Value(staticConstructor = "of")
@@ -37,7 +37,7 @@ public abstract class TimeRange<T extends Temporal & Comparable<? super T>> {
         @NonNull Period duration;
 
         @Override
-        public LocalDateTime toStartTime() {
+        public @NonNull LocalDateTime toStartTime() {
             return start.atStartOfDay();
         }
 
@@ -56,7 +56,7 @@ public abstract class TimeRange<T extends Temporal & Comparable<? super T>> {
         @NonNull Period duration;
 
         @Override
-        public LocalDateTime toStartTime() {
+        public @NonNull LocalDateTime toStartTime() {
             return start;
         }
 

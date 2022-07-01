@@ -49,13 +49,13 @@ public class StandardReportingPeriod {
     @NonNegative
     int periodValueDigits;
 
-    public @NonNull LocalDate toStartDate(@NonNull StandardReportingFormat format, @NonNull MonthDay reportingYearStartDay) {
-        LocalDate reportingYearStartDate = reportingYearStartDay.atYear(reportingYear);
+    public @NonNull LocalDate toStartDate(@NonNull StandardReportingFormat format, @Nullable MonthDay reportingYearStartDay) {
+        LocalDate reportingYearStartDate = (reportingYearStartDay != null ? reportingYearStartDay : FIRST_DAY_OF_YEAR).atYear(reportingYear);
         LocalDate reportingYearBase = format.getYearBaseFunction().apply(reportingYearStartDate);
         return reportingYearBase.plus(format.getAmounts().get(periodValue - 1));
     }
 
-    public boolean isValid(@NonNull StandardReportingFormat format) {
+    public boolean isCompatibleWith(@NonNull StandardReportingFormat format) {
         return periodIndicator == format.getIndicator()
                 && periodValueDigits == format.getPeriodValueDigits()
                 && isPeriodValueInRange(periodValue, format.getLimitPerYear());
@@ -132,4 +132,6 @@ public class StandardReportingPeriod {
         }
         result.append(value);
     }
+
+    private static final MonthDay FIRST_DAY_OF_YEAR = MonthDay.of(1, 1);
 }

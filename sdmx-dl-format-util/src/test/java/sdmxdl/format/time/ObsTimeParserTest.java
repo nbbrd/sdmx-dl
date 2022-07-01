@@ -1,225 +1,83 @@
 package sdmxdl.format.time;
 
-import org.assertj.core.api.Condition;
+import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.time.ObsTimeParser;
 
+import java.time.LocalDateTime;
 import java.time.MonthDay;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.format.time.ObsTimeParser.onObservationalTimePeriod;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static sdmxdl.format.time.ObsTimeParser.*;
 
 public class ObsTimeParserTest {
 
-    final MonthDay ref = MonthDay.of(7, 1);
+    private final LocalDateTime dateTime = LocalDateTime.parse("2001-01-01T00:00:00");
+    private final MonthDay reportingYearStartDay = MonthDay.of(1, 2);
 
     @Test
-    public void testOnObservationalTimePeriod() {
-        assertThat(onObservationalTimePeriod().parseStartTime(null, ref)).isNull();
-        assertThat(onObservationalTimePeriod().parseStartTime("null", null)).isNull();
-    }
+    public void testOnParser() {
+        assertThatNullPointerException().isThrownBy(() -> onParser(null));
 
-    @Test
-    public void testGregorianYear() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2001", null))
-                .describedAs("Gregorian Year")
-                .isEqualTo("2001-01-01T00:00:00");
+        assertThat(onParser(Parser.onNull())).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isNull();
+            assertThat(x.parseStartTime("abc", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", reportingYearStartDay)).isNull();
+        });
 
-        assertThat(generateInvalids("2001"))
-                .describedAs("Gregorian Year format")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
+        assertThat(onParser(Parser.onConstant(dateTime))).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("abc", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", reportingYearStartDay)).isEqualTo(dateTime);
+        });
 
-    @Test
-    public void testGregorianYearMonth() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2001-02", null))
-                .describedAs("Gregorian Year Month")
-                .isEqualTo("2001-02-01T00:00:00");
-
-        assertThat(generateInvalids("2001-02"))
-                .describedAs("Gregorian Year Month format")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
-
-    @Test
-    public void testGregorianDay() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2001-02-03", null))
-                .describedAs("Gregorian Day")
-                .isEqualTo("2001-02-03T00:00:00");
-
-        assertThat(generateInvalids("2001-02-03"))
-                .describedAs("Gregorian Day format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat("2019-02-29")
-                .describedAs("Gregorian Day strict")
-                .is(notValidWith(onObservationalTimePeriod()));
+        assertThat(onParser(Parser.onDateTimeFormatter(DateTimeFormatter.ISO_LOCAL_DATE_TIME, LocalDateTime::from))).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isNull();
+            assertThat(x.parseStartTime("abc", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00", reportingYearStartDay)).isEqualTo(dateTime);
+        });
     }
 
     @Test
-    public void testDateTime() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2001-02-03T04:05:06", null))
-                .describedAs("Date Time")
-                .isEqualTo("2001-02-03T04:05:06");
+    public void testOnStandardReporting() {
+        assertThatNullPointerException().isThrownBy(() -> onStandardReporting(null));
 
-        assertThat(generateInvalids("2001-02-03T04:05:06"))
-                .describedAs("Date Time format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat("2019-02-29T11:23:56")
-                .describedAs("Date Time strict")
-                .is(notValidWith(onObservationalTimePeriod()));
+        assertThat(onStandardReporting(StandardReportingFormat.REPORTING_DAY)).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isNull();
+            assertThat(x.parseStartTime("abc", null)).isNull();
+            assertThat(x.parseStartTime("2001-D001", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-D001", reportingYearStartDay)).isEqualTo(dateTime.plusDays(1));
+        });
     }
 
     @Test
-    public void testReportingYear() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-A1", null))
-                .describedAs("Reporting Year")
-                .isEqualTo("2000-01-01T00:00:00");
+    public void testOnTimeRange() {
+        assertThatNullPointerException().isThrownBy(() -> onTimeRange(null));
 
-        assertThat(generateInvalids("2000-A1"))
-                .describedAs("Reporting Year format")
-                .are(notValidWith(onObservationalTimePeriod()));
+        assertThat(onTimeRange(o -> null)).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isNull();
+            assertThat(x.parseStartTime("abc", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", reportingYearStartDay)).isNull();
+        });
 
-        assertThat(asList("2000-A0", "2000-A2"))
-                .describedAs("Reporting Year out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
+        assertThat(onTimeRange(o -> TimeRange.DateTimeRange.of(dateTime, Period.parse("P1D")))).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("abc", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", reportingYearStartDay)).isEqualTo(dateTime);
+        });
 
-    @Test
-    public void testReportingSemester() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-S2", null))
-                .describedAs("Reporting Semester")
-                .isEqualTo("2000-07-01T00:00:00");
-
-        assertThat(generateInvalids("2000-S2"))
-                .describedAs("Reporting Semester format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-S0", "2000-S3"))
-                .describedAs("Reporting Semester out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
-
-    @Test
-    public void testReportingTrimester() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-T3", null))
-                .describedAs("Reporting Trimester")
-                .isEqualTo("2000-09-01T00:00:00");
-
-        assertThat(generateInvalids("2000-T3"))
-                .describedAs("Reporting Trimester format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-T0", "2000-T4"))
-                .describedAs("Reporting Trimester out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
-
-    @Test
-    public void testReportingQuarter() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-Q4", null))
-                .describedAs("Reporting Quarter")
-                .isEqualTo("2000-10-01T00:00:00");
-
-        assertThat(generateInvalids("2000-Q4"))
-                .describedAs("Reporting Quarter format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-Q0", "2000-Q5"))
-                .describedAs("Reporting Quarter out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(onObservationalTimePeriod().parseStartTime("2010-Q2", ref))
-                .describedAs("Reporting Quarter with start day")
-                .isEqualTo("2010-10-01T00:00:00");
-    }
-
-    @Test
-    public void testReportingMonth() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-M12", null))
-                .describedAs("Reporting Month")
-                .isEqualTo("2000-12-01T00:00:00");
-
-        assertThat(generateInvalids("2000-M12"))
-                .describedAs("Reporting Month format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-M00", "2000-M13"))
-                .describedAs("Reporting Month out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-M1", "2000-M001"))
-                .describedAs("Reporting Month padding")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
-
-    @Test
-    public void testReportingWeek() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-W53", null))
-                .describedAs("Reporting Week")
-                .isEqualTo("2001-01-01T00:00:00");
-
-        assertThat(generateInvalids("2000-W53"))
-                .describedAs("Reporting Week format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-W00", "2000-W54"))
-                .describedAs("Reporting Week out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-W1", "2000-W001"))
-                .describedAs("Reporting Week padding")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(onObservationalTimePeriod().parseStartTime("2011-W36", ref))
-                .describedAs("Reporting Week with start day")
-                .isEqualTo("2012-03-05T00:00:00");
-    }
-
-    @Test
-    public void testReportingDay() {
-        assertThat(onObservationalTimePeriod().parseStartTime("2000-D366", null))
-                .describedAs("Reporting Day")
-                .isEqualTo("2000-12-31T00:00:00");
-
-        assertThat(generateInvalids("2000-D366"))
-                .describedAs("Reporting Day format")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-D000", "2000-D367"))
-                .describedAs("Reporting Day out-of-bounds")
-                .are(notValidWith(onObservationalTimePeriod()));
-
-        assertThat(asList("2000-D1", "2000-D0001"))
-                .describedAs("Reporting Day padding")
-                .are(notValidWith(onObservationalTimePeriod()));
-    }
-
-    @Test
-    public void testTimeRange() {
-        // TODO
-    }
-
-    private static Condition<String> notValidWith(ObsTimeParser parser) {
-        return new Condition<>(text -> parser.parseStartTime(text, null) == null, "not valid");
-    }
-
-    private static List<String> generateInvalids(String source) {
-        char invalid = 'X';
-        List<String> result = new ArrayList<>();
-        for (int i = 0; i < source.length(); i++) {
-            char[] chars = source.toCharArray();
-            chars[i] = invalid;
-            result.add(String.valueOf(chars));
-        }
-        result.add(invalid + source);
-        result.add(source + invalid);
-        result.add(source.substring(1));
-        result.add(source.substring(0, source.length() - 1));
-        return result;
+        assertThat(onTimeRange(TimeRange.DateTimeRange::parse)).satisfies(x -> {
+            assertThat(x.parseStartTime(null, null)).isNull();
+            assertThat(x.parseStartTime("abc", null)).isNull();
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", null)).isEqualTo(dateTime);
+            assertThat(x.parseStartTime("2001-01-01T00:00:00/P1D", reportingYearStartDay)).isEqualTo(dateTime);
+        });
     }
 }

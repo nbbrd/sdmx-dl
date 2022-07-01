@@ -28,6 +28,7 @@ import nbbrd.io.function.IOFunction;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
@@ -142,7 +143,7 @@ public final class InseeDriver2 implements WebDriver {
 
     @VisibleForTesting
     static final ObsTimeParser EXTENDED_TIME_PARSER =
-            ObsTimeParser.onObservationalTimePeriod()
+            TimeFormats.OBSERVATIONAL_TIME_PERIOD
                     .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());

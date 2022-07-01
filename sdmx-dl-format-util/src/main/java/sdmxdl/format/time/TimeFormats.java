@@ -3,10 +3,8 @@ package sdmxdl.format.time;
 import nbbrd.io.text.Parser;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sdmxdl.format.time.ObsTimeParser.ofAll;
 import static sdmxdl.format.time.StandardReportingFormat.*;
 
 /**
@@ -39,7 +37,7 @@ import static sdmxdl.format.time.StandardReportingFormat.*;
  * </pre>
  */
 @lombok.experimental.UtilityClass
-class TimeFormats {
+public class TimeFormats {
 
     /**
      * <pre>
@@ -51,7 +49,7 @@ class TimeFormats {
      * 756 However, the duration can only be postive.
      * </pre>
      */
-    static final ObsTimeParser TIME_RANGE =
+    public static final ObsTimeParser TIME_RANGE =
             ObsTimeParser.onTimeRange(TimeRange.DateRange::parse)
                     .orElse(ObsTimeParser.onTimeRange(TimeRange.DateTimeRange::parse));
 
@@ -71,11 +69,10 @@ class TimeFormats {
      * 600     PERIOD_VALUE indicates the actual period within the year
      * </pre>
      */
-    static final ObsTimeParser REPORTING_TIME_PERIOD = ofAll(
+    public static final ObsTimeParser REPORTING_TIME_PERIOD =
             Stream.of(REPORTING_YEAR, REPORTING_SEMESTER, REPORTING_TRIMESTER, REPORTING_QUARTER, REPORTING_MONTH, REPORTING_WEEK, REPORTING_DAY)
                     .map(ObsTimeParser::onStandardReporting)
-                    .collect(Collectors.toList())
-    );
+                    .reduce(ObsTimeParser.onNull(), ObsTimeParser::orElse);
 
     /**
      * <pre>
@@ -90,7 +87,7 @@ class TimeFormats {
      *     The seconds can be reported fractionally
      * </pre>
      */
-    static final ObsTimeParser DATE_TIME = ObsTimeParser.of(Parser.of(LocalDateTime::parse));
+    public static final ObsTimeParser DATE_TIME = ObsTimeParser.onParser(Parser.of(LocalDateTime::parse));
 
     /**
      * <pre>
@@ -111,7 +108,7 @@ class TimeFormats {
      * 582     Period: the start of the day (00:00:00) to the end of the day (23:59:59)
      * </pre>
      */
-    static final ObsTimeParser GREGORIAN_TIME_PERIOD =
+    public static final ObsTimeParser GREGORIAN_TIME_PERIOD =
             GregorianTimePeriods.GREGORIAN_YEAR
                     .orElse(GregorianTimePeriods.GREGORIAN_YEAR_MONTH)
                     .orElse(GregorianTimePeriods.GREGORIAN_DAY);
@@ -120,7 +117,7 @@ class TimeFormats {
      * <pre>
      * </pre>
      */
-    static final ObsTimeParser BASIC_TIME_PERIOD = GREGORIAN_TIME_PERIOD.orElse(DATE_TIME);
+    public static final ObsTimeParser BASIC_TIME_PERIOD = GREGORIAN_TIME_PERIOD.orElse(DATE_TIME);
 
     /**
      * <pre>
@@ -132,7 +129,7 @@ class TimeFormats {
      * 567 the end of the end day (i.e. 23:59:59).
      * </pre>
      */
-    static final ObsTimeParser STANDARD_TIME_PERIOD = BASIC_TIME_PERIOD.orElse(REPORTING_TIME_PERIOD);
+    public static final ObsTimeParser STANDARD_TIME_PERIOD = BASIC_TIME_PERIOD.orElse(REPORTING_TIME_PERIOD);
 
     /**
      * <pre>
@@ -141,5 +138,5 @@ class TimeFormats {
      * 561 expressed as any of the allowable formats
      * </pre>
      */
-    static final ObsTimeParser OBSERVATIONAL_TIME_PERIOD = STANDARD_TIME_PERIOD.orElse(TIME_RANGE);
+    public static final ObsTimeParser OBSERVATIONAL_TIME_PERIOD = STANDARD_TIME_PERIOD.orElse(TIME_RANGE);
 }
