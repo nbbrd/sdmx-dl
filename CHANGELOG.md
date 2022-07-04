@@ -30,6 +30,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![CLI] Split command `list/concepts` into `list/dimensions` and `list/attributes`
 - ![CLI] Improve startup time when using custom sources
 - ![CLI] Remove `sdmx-dl-provider-connectors` dependency
+- ![CLI] Remove custom name of shaded binary
 - ![DOC] Migrate documentation to GitHub Pages [#268](https://github.com/nbbrd/sdmx-dl/issues/268)
 
 ### Fixed

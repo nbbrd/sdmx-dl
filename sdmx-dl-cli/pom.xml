@@ -19,7 +19,6 @@
 
     <properties>
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
-        <project.x.fileName>sdmx-dl</project.x.fileName>
     </properties>
 
     <dependencies>
@@ -204,7 +203,6 @@
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>bin</shadedClassifierName>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <finalName>${project.x.fileName}-${project.version}-bin</finalName>
                 </configuration>
             </plugin>
 
@@ -284,13 +282,14 @@
                                         <artifacts>
                                             <artifact>
                                                 <path>
-                                                    ${project.build.directory}/${project.x.fileName}-${project.version}-bin.jar
+                                                    ${project.build.directory}/${project.artifactId}-${project.version}-bin.jar
                                                 </path>
                                             </artifact>
                                         </artifacts>
                                         <java>
                                             <mainClass>${project.x.mainClass}</mainClass>
                                             <artifactId>${project.artifactId}</artifactId>
+                                            <version>8</version>
                                         </java>
                                         <scoop>
                                             <active>RELEASE</active>
@@ -341,7 +340,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <imageName>${project.x.fileName}-${project.version}</imageName>
+                            <imageName>${project.artifactId}-${project.version}</imageName>
                             <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
                             <!-- FIX: sdmx-dl: xml resources such as Checks.xml -->
                             <!-- FIX: sdmx-dl: ps1 resources such as WinPasswordVault.ps1 -->
