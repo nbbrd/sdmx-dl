@@ -22,79 +22,102 @@ Each operating system has its own manager. See the list below for specific instr
 {{< tabs "uniqueid" >}}
 
 {{< tab "Windows" >}}
-#### Scoop
-```bat
+
+#### <a href="https://github.com/nbbrd/scoop-nbbrd">Scoop bucket</a>
+```shell
 scoop bucket add nbbrd https://github.com/nbbrd/scoop-nbbrd.git
 scoop install sdmx-dl
 ```
-https://github.com/nbbrd/scoop-nbbrd
+<br>
 
-#### JBang
-```
-// Download, cache, and run
+#### <a href="https://github.com/nbbrd/jbang-catalog">JBang catalog</a>
+```shell
 jbang sdmx-dl@nbbrd <command> [<args>]
 ```
-https://github.com/nbbrd/jbang-catalog
+<br>
+
+#### <a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">JBang Maven coordinate</a>
+```shell
+jbang com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin <command> [<args>]
+```
+<br>
+
 {{< /tab >}}
 
 {{< tab "macOS" >}} 
-#### Homebrew
-```bash
+
+#### <a href="https://github.com/nbbrd/homebrew-tap">Homebrew tap</a>
+```shell
 brew install nbbrd/tap/sdmx-dl
 ```
-https://github.com/nbbrd/homebrew-tap
+<br>
 
-#### JBang
-```
-// Download, cache, and run
+#### <a href="https://github.com/nbbrd/jbang-catalog">JBang catalog</a>
+```shell
 jbang sdmx-dl@nbbrd <command> [<args>]
 ```
-https://github.com/nbbrd/jbang-catalog
+<br>
+
+#### <a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">JBang Maven coordinate</a>
+```shell
+jbang com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin <command> [<args>]
+```
+<br>
+
 {{< /tab >}}
 
 {{< tab "Linux" >}} 
-#### Homebrew
-```bash
+
+#### <a href="https://github.com/nbbrd/homebrew-tap">Homebrew tap</a>
+```shell
 brew install nbbrd/tap/sdmx-dl
 ```
-https://github.com/nbbrd/homebrew-tap
+<br>
 
-#### JBang
-```
-// Download, cache, and run
+#### <a href="https://github.com/nbbrd/jbang-catalog">JBang catalog</a>
+```shell
 jbang sdmx-dl@nbbrd <command> [<args>]
 ```
-https://github.com/nbbrd/jbang-catalog
+<br>
+
+#### <a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">JBang Maven coordinate</a>
+```shell
+jbang com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin <command> [<args>]
+```
+<br>
+
 {{< /tab >}}
 
 {{< tab "Docker" >}}
-#### docker.io
-```bash
-docker run -v `pwd`:/ws --workdir=/ws jbangdev/jbang-action sdmx-dl@nbbrd --version
+#### <a href="https://hub.docker.com/repository/docker/jbangdev/jbang-action">JBang container on dockerhub</a>
+```shell
+docker run -v `pwd`:/ws --workdir=/ws jbangdev/jbang-action sdmx-dl@nbbrd <command> [<args>]
 ```
-https://hub.docker.com/repository/docker/jbangdev/jbang-action
+<br>
 
-#### quay.io
-```bash
-docker run -v `pwd`:/ws --workdir=/ws quay.io/jbangdev/jbang-action sdmx-dl@nbbrd --version
+#### <a href="https://quay.io/repository/jbangdev/jbang-action">JBang container on quay.io</a>
+```shell
+docker run -v `pwd`:/ws --workdir=/ws quay.io/jbangdev/jbang-action sdmx-dl@nbbrd <command> [<args>]
 ```
-https://quay.io/repository/jbangdev/jbang-action
+<br>
+
 {{< /tab >}}
 
 {{< tab "GitHub Actions" >}}
-#### JBang GitHub Action
+#### <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang GitHub Action</a>
 ```yml
 - name: Print latest stable version of sdmx-dl
-  uses: jbangdev/jbang-action@v0.81.2
+  uses: jbangdev/jbang-action@v0.95.0
   with:
     script: sdmx-dl@nbbrd
-    scriptargs: "--version"
+    scriptargs: "<command> [<args>]"
 ```
-https://github.com/marketplace/actions/java-scripting-w-jbang
+<br>
+
 {{< /tab >}}
 
 {{< tab "Maven" >}}
-#### JBang Maven plugin
+#### <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a>
 ```xml
 <plugin>
   <groupId>dev.jbang</groupId>
@@ -110,24 +133,32 @@ https://github.com/marketplace/actions/java-scripting-w-jbang
       <configuration>
         <script>sdmx-dl@nbbrd</script>
         <args>
-          <arg>--version</arg>
+          <arg>...</arg>
         </args>
       </configuration>
     </execution>
   </executions>
 </plugin>
 ```
-https://github.com/jbangdev/jbang-maven-plugin/
+<br>
+
+#### <a href="">Maven command-line</a>
+```shell
+mvn dependency:copy -Dartifact=com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:jar:bin -DoutputDirectory=. -Dmdep.stripVersion -q
+java -jar sdmx-dl-cli-bin.jar <command> [<args>]
+```
+
 {{< /tab >}}
 
 {{< tab "Gradle" >}}
-#### JBang Gradle plugin
+#### <a href="https://github.com/jbangdev/jbang-gradle-plugin/">JBang Gradle plugin<a>
 ```groovy
 plugins {
   id 'dev.jbang' version '0.2.0'
 }
 ```
-https://github.com/jbangdev/jbang-gradle-plugin/
+<br>
+
 {{< /tab >}}
 
 {{< /tabs >}}
@@ -136,7 +167,7 @@ https://github.com/jbangdev/jbang-gradle-plugin/
 
 The manual installation of the CLI is straighforward:
 
-1. Download the latest jar binary (`sdmx-dl-VERSION-bin.jar`) at:  
+1. Download the latest jar binary (`sdmx-dl-cli-_VERSION_-bin.jar`) at:  
    [https://github.com/nbbrd/sdmx-dl/releases/latest](https://github.com/nbbrd/sdmx-dl/releases/latest)
 2. Copy this jar (i.e. `_JAR_`) to any folder on your system (i.e. `_DIR_`)
 3. Create launchers in the installation directory:  
@@ -151,10 +182,10 @@ The manual installation of the CLI is straighforward:
 The CLI is a single executable jar, so it doesn't need to be installed to be used.  
 To use the CLI without installing it:
 
-1. Download the latest jar binary (`sdmx-dl-VERSION-bin.jar`) at:  
+1. Download the latest jar binary (`sdmx-dl-cli-_VERSION_-bin.jar`) at:  
    [https://github.com/nbbrd/sdmx-dl/releases/latest](https://github.com/nbbrd/sdmx-dl/releases/latest)
 2. Run this jar by calling:  
-   `java -jar sdmx-dl-VERSION-bin.jar <command> [<args>]`
+   `java -jar sdmx-dl-cli-_VERSION_-bin.jar <command> [<args>]`
 
 ## Troubleshooting
 
