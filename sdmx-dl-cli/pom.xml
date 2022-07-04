@@ -215,13 +215,17 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
+                        <id>generate-csv-sources</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>java</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <mainClass>${project.x.mainClass}</mainClass>
+                            <executable>java</executable>
                             <arguments>
+                                <argument>-classpath</argument>
+                                <classpath />
+                                <argument>${project.x.mainClass}</argument>
                                 <argument>list</argument>
                                 <argument>sources</argument>
                                 <argument>-o</argument>
