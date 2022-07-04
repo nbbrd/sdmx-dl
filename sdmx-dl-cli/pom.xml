@@ -203,6 +203,7 @@
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <shadedClassifierName>bin</shadedClassifierName>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                     <finalName>${project.x.fileName}-${project.version}-bin</finalName>
                 </configuration>
             </plugin>
