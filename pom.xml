@@ -99,6 +99,7 @@
         <module>sdmx-dl-format-util</module>
         <module>sdmx-dl-format-csv</module>
         <module>sdmx-dl-format-kryo</module>
+        <module>sdmx-dl-format-protobuf</module>
         <module>sdmx-dl-format-xml</module>
         <module>sdmx-dl-provider-util</module>
         <module>sdmx-dl-provider-ri</module>

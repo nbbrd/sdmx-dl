@@ -4,9 +4,7 @@ import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.MonitorStatus;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +17,7 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class KryoSerializationTest {
+public class KryoFileFormatTest {
 
     @Test
     public void test() throws IOException {
@@ -34,10 +32,8 @@ public class KryoSerializationTest {
                 .isEqualTo(repository)
                 .isNotSameAs(repository);
 
-        MonitorReports reports = MonitorReports
-                .builder()
-                .uriScheme("abc")
-                .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
+        MonitorReports reports = RepoSamples.REPORTS
+                .toBuilder()
                 .ttl(now, Duration.ofMillis(100))
                 .build();
 

@@ -1,0 +1,23 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package sdmxdl.format.protobuf.web;
+
+enum MonitorStatus {
+  UP = 0;
+  DOWN = 1;
+  UNKNOWN = 2;
+}
+
+message MonitorReport {
+  string source = 1;
+  MonitorStatus status = 2;
+  optional double uptimeRatio = 3;
+  optional int64 averageResponseTime = 4;
+}
+
+message MonitorReports {
+  string uriScheme = 1;
+  repeated MonitorReport reports = 2;
+  string creationTime = 3;
+  string expirationTime = 4;
+}

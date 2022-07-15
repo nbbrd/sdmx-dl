@@ -17,7 +17,11 @@
 package tests.sdmxdl.api;
 
 import sdmxdl.*;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.MonitorStatus;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -107,6 +111,12 @@ public class RepoSamples {
             .structure(STRUCT)
             .flow(FLOW)
             .dataSet(DATA_SET)
+            .build();
+
+    public static final MonitorReports REPORTS = MonitorReports
+            .builder()
+            .uriScheme("abc")
+            .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
             .build();
 
     private static LocalDateTime dateTimeOf(int year, int month) {
