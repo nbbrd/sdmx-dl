@@ -1,6 +1,7 @@
 syntax = "proto3";
 option java_multiple_files = true;
 package sdmxdl.format.protobuf.web;
+import "google/protobuf/timestamp.proto";
 
 enum MonitorStatus {
   UP = 0;
@@ -18,6 +19,6 @@ message MonitorReport {
 message MonitorReports {
   string uriScheme = 1;
   repeated MonitorReport reports = 2;
-  string creationTime = 3;
-  string expirationTime = 4;
+  google.protobuf.Timestamp creationTime = 3;
+  google.protobuf.Timestamp expirationTime = 4;
 }

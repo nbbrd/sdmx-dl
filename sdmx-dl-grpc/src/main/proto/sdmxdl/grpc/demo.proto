@@ -1,0 +1,35 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package sdmxdl.grpc;
+import "sdmxdl/format/protobuf/monitor.proto";
+import "sdmxdl/format/protobuf/repository.proto";
+
+service SdmxWebManager {
+
+  rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
+
+  rpc GetFlows(SourceRequest) returns (stream sdmxdl.format.protobuf.Dataflow);
+
+  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Dataflow);
+
+  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.DataStructure);
+
+  rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
+
+  rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+}
+
+message SourceRequest {
+  string source = 1;
+}
+
+message FlowRequest {
+  string source = 1;
+  string flow = 2;
+}
+
+message KeyRequest {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+}

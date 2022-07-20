@@ -91,8 +91,37 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.nbbrd.sdmx-dl</groupId>
+                <artifactId>sdmx-dl-format-protobuf</artifactId>
+                <version>3.0.0-beta.7-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.0</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>0.6.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <modules>
         <module>sdmx-dl-api</module>
@@ -107,6 +136,7 @@
         <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-bom</module>
+        <module>sdmx-dl-grpc</module>
     </modules>
 
     <profiles>

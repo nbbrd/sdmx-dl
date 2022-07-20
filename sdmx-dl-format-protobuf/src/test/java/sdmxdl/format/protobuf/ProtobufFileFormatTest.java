@@ -26,16 +26,16 @@ public class ProtobufFileFormatTest {
                 .ttl(now, Duration.ofMillis(100))
                 .build();
 
-//        assertThat(storeLoad(ProtobufFileFormat.REPOSITORY, ProtobufFileFormat.REPOSITORY, repository))
-//                .isEqualTo(repository)
-//                .isNotSameAs(repository);
+        assertThat(storeLoad(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), repository))
+                .isEqualTo(repository)
+                .isNotSameAs(repository);
 
         sdmxdl.web.MonitorReports reports = RepoSamples.REPORTS
                 .toBuilder()
                 .ttl(now, Duration.ofMillis(100))
                 .build();
 
-        assertThat(storeLoad(ProtobufFileFormat.MONITOR, ProtobufFileFormat.MONITOR, reports))
+        assertThat(storeLoad(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), reports))
                 .isEqualTo(reports)
                 .isNotSameAs(reports);
     }
