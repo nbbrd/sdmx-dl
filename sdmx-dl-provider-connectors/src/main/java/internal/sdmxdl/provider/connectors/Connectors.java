@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
 public class Connectors {
 
     public sdmxdl.Dataflow toFlow(Dataflow o) {
-        return sdmxdl.Dataflow.of(
-                DataflowRef.parse(o.getFullIdentifier()),
-                toStructureRef(o.getDsdIdentifier()),
-                o.getDescription()
-        );
+        return sdmxdl.Dataflow
+                .builder()
+                .ref(DataflowRef.parse(o.getFullIdentifier()))
+                .structureRef(toStructureRef(o.getDsdIdentifier()))
+                .label(o.getDescription())
+                .build();
     }
 
     public DataStructureRef toStructureRef(DSDIdentifier o) {

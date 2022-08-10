@@ -145,11 +145,12 @@ public class ProtobufRepositories {
     }
 
     public static sdmxdl.Dataflow toDataflow(Dataflow value) {
-        return sdmxdl.Dataflow.of(
-                sdmxdl.DataflowRef.parse(value.getRef()),
-                sdmxdl.DataStructureRef.parse(value.getStructureRef()),
-                value.getLabel()
-        );
+        return sdmxdl.Dataflow
+                .builder()
+                .ref(sdmxdl.DataflowRef.parse(value.getRef()))
+                .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
+                .label(value.getLabel())
+                .build();
     }
 
     public static DataSet fromDataSet(sdmxdl.DataSet value) {

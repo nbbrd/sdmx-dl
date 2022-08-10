@@ -76,7 +76,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     public static @NonNull Dataflow getFlowFromStructure(@NonNull DataStructure o) {
-        return Dataflow.of(getFlowRefFromStructureRef(o.getRef()), o.getRef(), o.getLabel());
+        return Dataflow.builder().ref(getFlowRefFromStructureRef(o.getRef())).structureRef(o.getRef()).label(o.getLabel()).build();
     }
 
     public static @NonNull DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {

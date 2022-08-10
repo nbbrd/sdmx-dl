@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+- ![API] Improve code coherence in by replacing `Dataflow#of(...)` with a builder
+- ![DOC] Enforce https in doc URL
+
+### Fixed
+
 ## [3.0.0-beta.7] - 2022-08-10
 
 This is the seventh beta release of **sdmx-dl**.   
@@ -18,7 +27,6 @@ It finalizes the support of SDMX time formats and attribute relationship in the 
 A new source is also added alongside the usual bugfixes.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
-
 
 ### Added
 

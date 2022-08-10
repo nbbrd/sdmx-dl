@@ -269,11 +269,12 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public Dataflow read(Kryo kryo, Input input, Class<? extends Dataflow> type) {
-            return Dataflow.of(
-                    kryo.readObject(input, DataflowRef.class),
-                    kryo.readObject(input, DataStructureRef.class),
-                    input.readString()
-            );
+            return Dataflow
+                    .builder()
+                    .ref(kryo.readObject(input, DataflowRef.class))
+                    .structureRef(kryo.readObject(input, DataStructureRef.class))
+                    .label(input.readString())
+                    .build();
         }
     }
 

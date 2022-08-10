@@ -17,8 +17,8 @@
 package _test.sdmxdl.connectors.samples;
 
 import sdmxdl.*;
-import sdmxdl.format.ObsParser;
 import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -117,6 +117,6 @@ public class FacadeResource {
 
     private Dataflow asDataflow(DataStructure o) {
         DataflowRef ref = DataflowRef.of(o.getRef().getAgency(), o.getRef().getId(), o.getRef().getVersion());
-        return Dataflow.of(ref, o.getRef(), o.getLabel());
+        return Dataflow.builder().ref(ref).structureRef(o.getRef()).label(o.getLabel()).build();
     }
 }

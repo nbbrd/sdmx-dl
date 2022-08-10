@@ -53,6 +53,6 @@ public class XmlReader implements FileReader {
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
 
     private Dataflow getDataflow(SdmxFileSource source) {
-        return Dataflow.of(source.asDataflowRef(), EMPTY, SdmxFileSource.asFlowLabel(source));
+        return Dataflow.builder().ref(source.asDataflowRef()).structureRef(EMPTY).label(SdmxFileSource.asFlowLabel(source)).build();
     }
 }

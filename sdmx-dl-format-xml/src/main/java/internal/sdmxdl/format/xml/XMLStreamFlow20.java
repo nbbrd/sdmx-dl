@@ -111,7 +111,7 @@ public final class XMLStreamFlow20 {
 
         check(structRef != null, reader, "Missing DataStructureRef");
 
-        return Dataflow.of(flowRef, structRef, flowLabel.build(id));
+        return Dataflow.builder().ref(flowRef).structureRef(structRef).label(flowLabel.build(id)).build();
     }
 
     private DataStructureRef parseKeyFamilyRef(XMLStreamReader reader) throws XMLStreamException {

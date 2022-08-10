@@ -413,11 +413,12 @@ public final class StatCanDriver implements WebDriver {
         }
 
         static Dataflow toDataFlow(DataTable dataTable, LanguagePriorityList langs) {
-            return Dataflow.of(
-                    toDataflowRef(dataTable.getProductId()),
-                    toDataStructureRef(dataTable.getProductId()),
-                    "fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn
-            );
+            return Dataflow
+                    .builder()
+                    .ref(toDataflowRef(dataTable.getProductId()))
+                    .structureRef(toDataStructureRef(dataTable.getProductId()))
+                    .label("fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn)
+                    .build();
         }
 
         static DataRepository toSdmxRepository(File fullTable, int productId, LanguagePriorityList langs) throws IOException {

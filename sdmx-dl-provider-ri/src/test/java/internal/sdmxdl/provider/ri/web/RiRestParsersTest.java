@@ -22,10 +22,10 @@ public class RiRestParsersTest {
                 .isThrownBy(() -> RiRestParsers.getResourceSelector(null));
 
         DataflowRef fullRef1 = DataflowRef.of("NBB", "XYZ", "v1.0");
-        Dataflow resource1 = Dataflow.of(fullRef1, STRUCT_REF, "flow1");
+        Dataflow resource1 = Dataflow.builder().ref(fullRef1).structureRef(STRUCT_REF).label("flow1").build();
 
         DataflowRef fullRef2 = DataflowRef.of("NBB", "XYZ", "v2.0");
-        Dataflow resource2 = Dataflow.of(fullRef2, STRUCT_REF, "flow2");
+        Dataflow resource2 = Dataflow.builder().ref(fullRef2).structureRef(STRUCT_REF).label("flow2").build();
 
         Assertions.assertThat(RiRestParsers.getResourceSelector(fullRef1).applyWithIO(emptyList()))
                 .isEmpty();

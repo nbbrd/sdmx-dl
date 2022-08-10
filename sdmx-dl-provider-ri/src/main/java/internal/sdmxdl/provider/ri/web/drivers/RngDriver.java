@@ -113,7 +113,7 @@ public final class RngDriver implements WebDriver {
 
         @Override
         public @NonNull Collection<Dataflow> getFlows() {
-            return singleton(Dataflow.of(DataflowRef.parse("RNG"), DataStructureRef.parse("STRUCT_RNG"), "RNG"));
+            return singleton(Dataflow.builder().ref(DataflowRef.parse("RNG")).structureRef(DataStructureRef.parse("STRUCT_RNG")).label("RNG").build());
         }
 
         @Override

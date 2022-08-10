@@ -444,11 +444,12 @@ public final class PxWebDriver implements WebDriver {
         String title;
 
         Dataflow toDataflow(String dbId) {
-            return Dataflow.of(
-                    DataflowRef.of(dbId, id, null),
-                    DataStructureRef.of(dbId, id, null),
-                    title
-            );
+            return Dataflow
+                    .builder()
+                    .ref(DataflowRef.of(dbId, id, null))
+                    .structureRef(DataStructureRef.of(dbId, id, null))
+                    .label(title)
+                    .build();
         }
 
         static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser
