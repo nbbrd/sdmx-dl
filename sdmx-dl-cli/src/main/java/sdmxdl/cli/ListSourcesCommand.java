@@ -25,7 +25,6 @@ import picocli.CommandLine;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -53,19 +52,25 @@ public final class ListSourcesCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(SdmxWebSource.class)
                 .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
-                .columnOf("Description", this::selectDescription, Formatter.onString())
+                .columnOf("Description", this::getDescription, Formatter.onString())
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
                 .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.of(URI::toString))
+                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.of(URI::toString))
+                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.onURI())
+                .columnOf("MonitorWebsite", SdmxWebSource::getMonitorWebsite, Formatter.onURL())
+                .columnOf("Languages", this::getLanguages, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .build();
     }
 
-    private String selectDescription(SdmxWebSource source) {
-        return web.getLangs().select(source.getDescriptions());
+    private String getDescription(SdmxWebSource source) {
+        return source.getDescription(web.getLangs());
+    }
+
+    private Iterable<String> getLanguages(SdmxWebSource source) {
+        return () -> source.getDescriptions().keySet().stream().filter(lang -> !SdmxWebSource.ROOT_LANGUAGE.equals(lang)).iterator();
     }
 
     private Stream<SdmxWebSource> getRows() throws IOException {

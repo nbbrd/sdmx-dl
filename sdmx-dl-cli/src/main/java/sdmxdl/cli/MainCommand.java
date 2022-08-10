@@ -16,6 +16,7 @@
  */
 package sdmxdl.cli;
 
+import internal.sdmxdl.cli.SpecialProperties;
 import internal.sdmxdl.cli.ext.KeychainStoreIgnoredExceptionFix;
 import internal.sdmxdl.cli.ext.PrintAndLogExceptionHandler;
 import nbbrd.console.picocli.ConfigHelper;
@@ -54,19 +55,26 @@ import java.util.concurrent.Callable;
 public final class MainCommand implements Callable<Void> {
 
     public static void main(String[] args) {
-        ConfigHelper.of(About.NAME).loadAll(System.getProperties());
+        SpecialProperties specialProperties = SpecialProperties.parse(args);
+
+        if (!specialProperties.isNoConfig()) {
+            ConfigHelper.of(About.NAME).loadAll(System.getProperties());
+        }
+
         LoggerHelper.disableDefaultConsoleLogger();
         KeychainStoreIgnoredExceptionFix.register();
-
-        System.exit(execMain(System.getProperties(), args));
+        
+        System.exit(execMain(specialProperties, System.getProperties(), args));
     }
 
-    private static int execMain(Properties properties, String[] args) {
-        try (AnsiConsole ansi = AnsiConsole.windowsInstall()) {
+    private static int execMain(SpecialProperties specialProperties, Properties properties, String[] args) {
+        specialProperties.apply(System.getProperties());
+
+        try (AnsiConsole ignore = AnsiConsole.windowsInstall()) {
             CommandLine cmd = new CommandLine(new MainCommand());
             cmd.setCaseInsensitiveEnumValuesAllowed(true);
             cmd.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(properties));
-            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class));
+            cmd.setExecutionExceptionHandler(new PrintAndLogExceptionHandler(MainCommand.class, specialProperties.isDebugRequired()));
             return cmd.execute(args);
         }
     }

@@ -34,7 +34,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
         URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getQuery().getKey(), DEFAULT_PROVIDER_REF);
         applyFilter(ref.getQuery().getDetail(), result);
         return result.trailingSlash(trailingSlashRequired);

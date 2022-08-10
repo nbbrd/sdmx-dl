@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.sdmx-dl</groupId>
     <artifactId>sdmx-dl-parent</artifactId>
-    <version>3.0.0-beta.6</version>
+    <version>3.0.0-beta.7</version>
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
@@ -45,7 +45,7 @@
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>3.21.4</version>
+                <version>3.23.0</version>
             </dependency>
 
             <!-- test libraries -->
@@ -59,12 +59,12 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.22.0</version>
+                <version>3.23.1</version>
             </dependency>
             <dependency>
                 <groupId>io.github.hakky54</groupId>
                 <artifactId>logcaptor</artifactId>
-                <version>2.7.9</version>
+                <version>2.7.10</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -77,6 +77,11 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8-standalone</artifactId>
+                <version>2.33.2</version>
+            </dependency>
 
             <!-- dependencies  -->
             <dependency>
@@ -86,14 +91,44 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.nbbrd.sdmx-dl</groupId>
+                <artifactId>sdmx-dl-format-protobuf</artifactId>
+                <version>3.0.0-beta.7</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.0</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>0.6.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <modules>
         <module>sdmx-dl-api</module>
         <module>sdmx-dl-format-util</module>
         <module>sdmx-dl-format-csv</module>
         <module>sdmx-dl-format-kryo</module>
+        <module>sdmx-dl-format-protobuf</module>
         <module>sdmx-dl-format-xml</module>
         <module>sdmx-dl-provider-util</module>
         <module>sdmx-dl-provider-ri</module>
@@ -101,6 +136,7 @@
         <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-bom</module>
+        <module>sdmx-dl-grpc</module>
     </modules>
 
     <profiles>
@@ -132,7 +168,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M6</version>
+                        <version>3.0.0-M7</version>
                         <configuration>
                             <useModulePath>false</useModulePath>
                         </configuration>
@@ -320,7 +356,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.1.0</version>
                         <dependencies>
                             <dependency>
                                 <groupId>org.kordamp.maven</groupId>
@@ -330,7 +366,7 @@
                             <dependency>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>extra-enforcer-rules</artifactId>
-                                <version>1.5.1</version>
+                                <version>1.6.0</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -478,7 +514,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.2</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>attach-empty-javadocs</id>
@@ -522,7 +558,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.12</version>
+                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -548,7 +584,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.12</version>
+                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>

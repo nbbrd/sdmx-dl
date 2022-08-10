@@ -18,13 +18,13 @@ package internal.util.http;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.format.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -54,7 +54,7 @@ class HttpImpl {
             }
 
             @Override
-            public void onSuccess(@NonNull MediaType mediaType) {
+            public void onSuccess(@NonNull Supplier<String> contentType) {
             }
 
             @Override

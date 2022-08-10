@@ -16,7 +16,6 @@
  */
 package sdmxdl.testing;
 
-import org.checkerframework.checker.index.qual.NonNegative;
 import sdmxdl.DataQuery;
 import sdmxdl.DataflowRef;
 
@@ -27,6 +26,8 @@ import sdmxdl.DataflowRef;
 @lombok.Builder(toBuilder = true)
 public class WebRequest {
 
+    String digest;
+
     @lombok.NonNull
     String source;
 
@@ -36,15 +37,15 @@ public class WebRequest {
     @lombok.NonNull
     DataQuery query;
 
-    @NonNegative
-    int minFlowCount;
+    @lombok.NonNull
+    IntRange flowCount;
 
-    @NonNegative
-    int dimensionCount;
+    @lombok.NonNull
+    IntRange dimensionCount;
 
-    @NonNegative
-    int minSeriesCount;
+    @lombok.NonNull
+    IntRange seriesCount;
 
-    @NonNegative
-    int minObsCount;
+    @lombok.NonNull
+    IntRange obsCount;
 }

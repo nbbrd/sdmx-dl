@@ -24,11 +24,7 @@ public class SslOptions {
     public SSLFactory getSSLFactory() {
         SSLFactory.Builder result = SSLFactory.builder();
         if (!isNoDefaultSsl()) result.withDefaultTrustMaterial();
-        if (!isNoSystemSsl() && !isNativeImage()) result.withSystemTrustMaterial();
+        if (!isNoSystemSsl()) result.withSystemTrustMaterial();
         return result.build();
-    }
-
-    private static boolean isNativeImage() {
-        return System.getProperties().containsKey("org.graalvm.nativeimage.imagecode");
     }
 }

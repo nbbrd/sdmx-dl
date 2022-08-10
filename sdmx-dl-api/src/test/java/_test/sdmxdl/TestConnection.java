@@ -29,7 +29,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 public enum TestConnection implements Connection {
-    VALID {
+    TEST_VALID {
         @Override
         public void testConnection() {
         }
@@ -68,7 +68,7 @@ public enum TestConnection implements Connection {
         public void close() {
         }
     },
-    FAILING {
+    TEST_FAILING {
         @Override
         public void testConnection() {
             throw new CustomException();
@@ -109,7 +109,7 @@ public enum TestConnection implements Connection {
             throw new CustomException();
         }
     },
-    NULL {
+    TEST_NULL {
         @Override
         public void testConnection() {
         }

@@ -3,13 +3,13 @@ package internal.util.http.ext;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import sdmxdl.format.MediaType;
 import wiremock.com.google.common.io.ByteStreams;
 import wiremock.org.apache.commons.io.input.ReaderInputStream;
 import wiremock.org.apache.hc.core5.http.io.entity.EmptyInputStream;
@@ -35,7 +35,7 @@ public class DumpingClientTest {
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.requestGET(null));
+                .isThrownBy(() -> x.send(null));
 
         assertThat(stack).isEmpty();
     }
@@ -47,7 +47,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(empty), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -56,8 +56,7 @@ public class DumpingClientTest {
             }
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .isEmptyFile();
         }
@@ -70,7 +69,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(nonEmpty), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -79,8 +78,7 @@ public class DumpingClientTest {
             }
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .hasContent("hello");
         }
@@ -95,7 +93,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnGetBody), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -122,7 +120,7 @@ public class DumpingClientTest {
         Deque<Path> stack = new LinkedList<>();
         DumpingClient x = new DumpingClient(temp, MockedClient.ofBody(failingOnRead), stack::add);
 
-        try (HttpResponse r = x.requestGET(request)) {
+        try (HttpResponse r = x.send(request)) {
             assertThat(r.getContentType())
                     .isEqualTo(MediaType.ANY_TYPE);
 
@@ -133,8 +131,7 @@ public class DumpingClientTest {
             });
 
             assertThat(stack)
-                    .hasSize(1)
-                    .element(0, PATH)
+                    .singleElement(as(PATH))
                     .exists()
                     .isEmptyFile();
         }
@@ -156,7 +153,7 @@ public class DumpingClientTest {
         private final IOSupplier<MockedResponse> response;
 
         @Override
-        public @NonNull HttpResponse requestGET(@NonNull HttpRequest httpRequest) throws IOException {
+        public @NonNull HttpResponse send(@NonNull HttpRequest httpRequest) throws IOException {
             return response.getWithIO();
         }
     }

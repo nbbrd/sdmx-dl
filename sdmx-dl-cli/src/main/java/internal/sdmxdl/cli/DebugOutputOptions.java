@@ -27,6 +27,7 @@ import picocli.CommandLine;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
+import sdmxdl.testing.IntRange;
 
 import java.io.IOException;
 import java.net.URL;
@@ -69,6 +70,7 @@ public class DebugOutputOptions extends YamlOutputOptions {
                 this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, data.toString()));
                 this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, data.toString()));
                 this.representers.put(URL.class, data -> representScalar(Tag.STR, data.toString()));
+                this.representers.put(IntRange.class, data -> representScalar(Tag.STR, ((IntRange) data).toShortString()));
             }
         };
         result.addClassTag(rootType, Tag.MAP);

@@ -7,6 +7,56 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.7] - 2022-08-10
+
+This is the seventh beta release of **sdmx-dl**.   
+sdmx-dl follows [semantic versioning](http://semver.org/).
+
+This release reshapes CLI commands, simplifies the network configuration and improves startup time.
+It introduces a new dedicated documentation to replace the wiki.
+It finalizes the support of SDMX time formats and attribute relationship in the API.
+A new source is also added alongside the usual bugfixes.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+
+
+### Added
+
+- ![API] Add URL connection factory in Network 
+- ![API] Add `SdmxWebSource#monitorWebsite` field
+- ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
+- ![API] Add support of attribute relationship [#81](https://github.com/nbbrd/sdmx-dl/issues/81)
+- ![SOURCE] Add source from National Statistical Office of Thailand [#262](https://github.com/nbbrd/sdmx-dl/issues/262)
+- ![FORMAT] Add support of time range in time formats
+- ![PROVIDER] Add support of POST requests in HTTP backend
+- ![PROVIDER] Add driver for International Monetary Fund source [#156](https://github.com/nbbrd/sdmx-dl/issues/156)
+- ![CLI] Add `list/availability` command
+- ![CLI] Add `MonitorWebsite` column in `list/sources` command
+- ![CLI] Add `Languages` column in `list/sources` command [#266](https://github.com/nbbrd/sdmx-dl/issues/266)
+
+### Changed
+
+- ![PROVIDER] Improve error reporting on content-type in HTTP response header
+- ![CLI] Use option instead of property to enable curl backend
+- ![CLI] Remove cache folder option
+- ![CLI] Replace position column with index column in `list/concepts` command
+- ![CLI] Split command `list/concepts` into `list/dimensions` and `list/attributes`
+- ![CLI] Improve startup time when using custom sources
+- ![CLI] Remove `sdmx-dl-provider-connectors` dependency
+- ![CLI] Remove custom name of shaded binary
+- ![DOC] Migrate documentation to GitHub Pages [#268](https://github.com/nbbrd/sdmx-dl/issues/268)
+
+### Fixed
+
+- ![PROVIDER] Fix uptime parsing on multi-thread environment
+- ![PROVIDER] Fix parsing of HTTP response header in curl backend
+- ![PROVIDER] Fix NPE on missing HTTP response message
+- ![PROVIDER] Fix `DataflowRef` validation
+- ![PROVIDER] Fix Statistics Canada revisions [#252](https://github.com/nbbrd/sdmx-dl/issues/252)
+- ![CLI] Fix missing charsets in native image
+- ![CLI] Fix registration of system SSL in native image
+- ![CLI] Fix usage of dependency-reduced pom
+
 ## [3.0.0-beta.6] - 2022-04-21
 
 This is the sixth beta release of **sdmx-dl**.   
@@ -210,7 +260,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...HEAD
+[3.0.0-beta.7]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...v3.0.0-beta.7
 [3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
@@ -224,3 +275,4 @@ production._
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
+[DOC]: https://img.shields.io/badge/-DOC-e4e669

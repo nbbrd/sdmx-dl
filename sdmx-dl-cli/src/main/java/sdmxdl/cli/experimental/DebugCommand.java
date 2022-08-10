@@ -33,7 +33,8 @@ import java.util.concurrent.Callable;
                 DebugDataCommand.class,
                 DebugListCommand.class,
                 DebugStructCommand.class,
-                DebugConsoleCommand.class
+                DebugConsoleCommand.class,
+                DebugSSLCommand.class
         }
 )
 public final class DebugCommand implements Callable<Void> {

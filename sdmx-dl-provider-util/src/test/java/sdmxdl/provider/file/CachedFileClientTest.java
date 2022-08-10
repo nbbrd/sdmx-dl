@@ -32,8 +32,8 @@ public class CachedFileClientTest {
     private final Duration ttl = CachedFileClient.DEFAULT_CACHE_TTL;
 
     private CachedFileClient getClient(CachingAssert.Context ctx) {
-        SdmxFileClient original = new XRepoFileClient(REPO);
-        SdmxFileClient counting = new XCountingFileClient(original, ctx.getCount());
+        FileClient original = new XRepoFileClient(REPO);
+        FileClient counting = new XCountingFileClient(original, ctx.getCount());
         return new CachedFileClient(counting, ctx.newCache(), base);
     }
 
@@ -44,7 +44,7 @@ public class CachedFileClientTest {
     @Test
     public void testDecode() throws IOException {
         String decodeKey = base + "/decode";
-        Method<SdmxFileInfo> x = CachedFileClient::decode;
+        Method<FileInfo> x = CachedFileClient::decode;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(XRepoFileClient.infoOf(REPO))), decodeKey, ttl);
     }
@@ -79,7 +79,7 @@ public class CachedFileClientTest {
         Context ctx = new Context();
         CachedFileClient client = getClient(ctx);
 
-        SdmxFileInfo info = client.decode();
+        FileInfo info = client.decode();
         IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, DataQuery.of(key, DataDetail.SERIES_KEYS_ONLY))).close();
 
         ctx.reset();

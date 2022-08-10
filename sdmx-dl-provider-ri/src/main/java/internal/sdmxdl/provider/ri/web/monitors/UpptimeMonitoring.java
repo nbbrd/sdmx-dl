@@ -7,7 +7,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.web.SdmxWebMonitors;
+import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
@@ -20,7 +20,6 @@ import java.text.NumberFormat;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 @ServiceProvider
 public final class UpptimeMonitoring implements WebMonitoring {
@@ -32,7 +31,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
 
     @Override
     public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        SdmxWebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+        WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 
@@ -53,18 +52,12 @@ public final class UpptimeMonitoring implements WebMonitoring {
                 .orElseThrow(IOException::new);
     }
 
-    private MonitorReports createReports(HttpClient client, UpptimeId id, Clock clock) throws IOException {
-        return MonitorReports
-                .builder()
-                .uriScheme(getUriScheme())
-                .reports(
-                        UpptimeSummary.request(client, id)
-                                .stream()
-                                .map(UpptimeMonitoring::getReport)
-                                .collect(Collectors.toList())
-                )
-                .ttl(clock.instant(), Duration.ofMinutes(5))
-                .build();
+    private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {
+        MonitorReports.Builder result = MonitorReports.builder().uriScheme(getUriScheme());
+        for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURL())) {
+            result.report(getReport(summary));
+        }
+        return result.ttl(clock.instant(), Duration.ofMinutes(5)).build();
     }
 
     @VisibleForTesting
@@ -73,7 +66,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
                 .builder()
                 .source(summary.getName())
                 .status(parseStatus(summary.getStatus()))
-                .uptimeRatio(NUMBER_PARSER.parseValue(summary.getUptime()).map(Number::doubleValue).orElse(null))
+                .uptimeRatio(parseUptimeRatio(summary.getUptime()))
                 .averageResponseTime(summary.getTime())
                 .build();
     }
@@ -89,5 +82,12 @@ public final class UpptimeMonitoring implements WebMonitoring {
         }
     }
 
-    private static final @NonNull Parser<Number> NUMBER_PARSER = Parser.onNumberFormat(NumberFormat.getPercentInstance(Locale.ROOT));
+    private static Double parseUptimeRatio(String uptime) {
+        // onNumberFormat parser is NOT thread-safe!
+        return Parser
+                .onNumberFormat(NumberFormat.getPercentInstance(Locale.ROOT))
+                .parseValue(uptime)
+                .map(Number::doubleValue)
+                .orElse(null);
+    }
 }

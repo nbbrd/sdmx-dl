@@ -18,8 +18,8 @@ public final class InterceptingClient implements HttpClient {
     private final InterceptingClient.Interceptor interceptor;
 
     @Override
-    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
-        HttpResponse result = delegate.requestGET(request);
+    public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
+        HttpResponse result = delegate.send(request);
         try {
             return interceptor.handle(delegate, request, result);
         } catch (Throwable ex) {

@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -61,6 +60,7 @@ public final class XmlWebSource {
     private static final String KEY_ATTR = "key";
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
+    private static final String MONITOR_WEBSITE_TAG = "monitorWebsite";
 
     private static List<SdmxWebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();
@@ -77,7 +77,7 @@ public final class XmlWebSource {
                             break;
                         case DESCRIPTION_TAG:
                             String lang = reader.getAttributeValue(null, LANG_ATTR);
-                            item.description(lang != null ? lang : Locale.ROOT.getLanguage(), reader.getElementText());
+                            item.description(lang != null ? lang : SdmxWebSource.ROOT_LANGUAGE, reader.getElementText());
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());
@@ -99,6 +99,9 @@ public final class XmlWebSource {
                             break;
                         case MONITOR_TAG:
                             item.monitorOf(reader.getElementText());
+                            break;
+                        case MONITOR_WEBSITE_TAG:
+                            item.monitorWebsiteOf(reader.getElementText());
                             break;
                     }
                     break;
@@ -134,6 +137,7 @@ public final class XmlWebSource {
             }
             writeTextElement(writer, WEBSITE_TAG, source.getWebsite());
             writeTextElement(writer, MONITOR_TAG, source.getMonitor());
+            writeTextElement(writer, MONITOR_WEBSITE_TAG, source.getMonitorWebsite());
             writer.writeEndElement();
         }
         writer.writeEndElement();

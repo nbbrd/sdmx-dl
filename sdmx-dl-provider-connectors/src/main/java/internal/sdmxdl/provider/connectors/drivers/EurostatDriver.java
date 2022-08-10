@@ -16,14 +16,15 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 
 /**
@@ -35,22 +36,26 @@ public final class EurostatDriver implements WebDriver {
     private static final String CONNECTORS_EUROSTAT = "connectors:eurostat";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_EUROSTAT)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(EUROSTAT::new, ObsParser::newDefault))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(EUROSTAT::new)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("ESTAT")
                     .alias("EUROSTAT")
                     .descriptionOf("Eurostat")
+                    .description("en", "Eurostat")
+                    .description("de", "Eurostat")
+                    .description("fr", "Eurostat")
                     .driver(CONNECTORS_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
             .build();
 }

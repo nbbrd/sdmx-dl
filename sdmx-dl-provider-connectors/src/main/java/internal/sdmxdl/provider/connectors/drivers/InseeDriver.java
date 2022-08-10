@@ -16,7 +16,7 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import internal.sdmxdl.provider.connectors.Connectors;
 import internal.sdmxdl.provider.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.api.Codelist;
@@ -27,11 +27,13 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.StandardReportingFormat;
-import sdmxdl.format.TimeFormatParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.ObsTimeParser;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
@@ -40,6 +42,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
 /**
@@ -51,13 +54,13 @@ public final class InseeDriver implements WebDriver {
     private static final String CONNECTORS_INSEE = "connectors:insee";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(InseeClient::new, OBS_FACTORY))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
-            .defaultDialect(DIALECT)
+            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .defaultDialect(INSEE_2017)
             .source(SdmxWebSource
                     .builder()
                     .name("INSEE")
@@ -66,11 +69,12 @@ public final class InseeDriver implements WebDriver {
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
                     .build())
             .build();
 
     @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
-    private static final String DIALECT = "INSEE2017";
+    private static final String INSEE_2017 = "INSEE2017";
 
     private final static class InseeClient extends RestSdmxClient implements HasDetailSupported {
 
@@ -127,16 +131,16 @@ public final class InseeDriver implements WebDriver {
         }
     }
 
-    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
             .durationOf("P2M")
             .limitPerYear(6)
             .build();
 
-    private static final TimeFormatParser EXTENDED_PARSER =
-            TimeFormatParser.onObservationalTimePeriod()
-                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+    private static final ObsTimeParser EXTENDED_TIME_PARSER =
+            TimeFormats.OBSERVATIONAL_TIME_PERIOD
+                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
-    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_PARSER, Parser.onDouble());
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

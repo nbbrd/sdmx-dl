@@ -15,4 +15,8 @@ public interface HttpResponse extends Closeable {
     default @NonNull Reader getBodyAsReader() throws IOException {
         return new InputStreamReader(getBody(), getContentType().getCharset().orElse(StandardCharsets.UTF_8));
     }
+
+    default @NonNull InputStream asDisconnectingInputStream() throws IOException {
+        return DisconnectingInputStream.of(this);
+    }
 }

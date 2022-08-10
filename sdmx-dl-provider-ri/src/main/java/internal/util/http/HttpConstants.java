@@ -39,10 +39,6 @@ public class HttpConstants {
         return "http".equalsIgnoreCase(oldUrl.getProtocol());
     }
 
-    public static boolean hasProxy(Proxy proxy) {
-        return !proxy.equals(Proxy.NO_PROXY);
-    }
-
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
     public enum ResponseType {
 

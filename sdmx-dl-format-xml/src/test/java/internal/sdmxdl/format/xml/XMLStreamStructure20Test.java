@@ -39,7 +39,7 @@ public class XMLStreamStructure20Test {
     public void test() throws Exception {
         Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
-        assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
@@ -54,19 +54,21 @@ public class XMLStreamStructure20Test {
 
             Set<Attribute> attributes = o.getAttributes();
             assertThat(attributes).hasSize(2);
-            assertThat(attributes).filteredOn(attr -> attr.getId().equals("TIME_FORMAT")).singleElement().satisfies(x -> {
+            assertThat(attributes).filteredOn(Attribute::getId, "TIME_FORMAT").singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Time Format");
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.SERIES);
                 assertThat(x.getCodes()).isNotEmpty();
             });
-            assertThat(attributes).filteredOn(attr -> attr.getId().equals("OBS_STATUS")).singleElement().satisfies(x -> {
+            assertThat(attributes).filteredOn(Attribute::getId, "OBS_STATUS").singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Observation Status");
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.OBSERVATION);
                 assertThat(x.getCodes()).isNotEmpty();
             });
         });
 
         Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
-        assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).hasSize(1).element(0).satisfies(o -> {
+        assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getLabel()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");

@@ -16,18 +16,19 @@
  */
 package internal.sdmxdl.provider.connectors.drivers;
 
-import internal.sdmxdl.provider.connectors.ConnectorRestClient;
+import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
 import java.net.URI;
 import java.util.Map;
 
+import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 
@@ -40,12 +41,12 @@ public final class UisDriver implements WebDriver {
     private static final String CONNECTORS_UIS = "connectors:uis";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(CONNECTORS_UIS)
             .rank(WRAPPED_RANK)
-            .client(ConnectorRestClient.of(UIS2::new, ObsParser::newDefault))
-            .supportedProperties(ConnectorRestClient.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
+            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
@@ -55,6 +56,7 @@ public final class UisDriver implements WebDriver {
                     .endpointOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/uis")
                     .build())
             .build();
 

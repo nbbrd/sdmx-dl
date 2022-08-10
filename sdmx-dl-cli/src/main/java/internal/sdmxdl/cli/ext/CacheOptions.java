@@ -24,9 +24,10 @@ public class CacheOptions {
     private boolean noCacheCompression;
 
     @CommandLine.Option(
-            names = {"--cache"},
+            names = {"--cache-folder"},
             paramLabel = "<folder>",
-            descriptionKey = "cli.cache"
+            descriptionKey = "cli.cacheFolder",
+            hidden = true
     )
-    private File cache;
+    private File cacheFolder;
 }

@@ -7,8 +7,8 @@ import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.SdmxManager;
-import sdmxdl.provider.web.SdmxWebEvents;
-import sdmxdl.provider.web.SdmxWebMonitors;
+import sdmxdl.provider.web.WebEvents;
+import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorStatus;
 import sdmxdl.web.SdmxWebSource;
@@ -37,7 +37,7 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
 
     @Override
     public MonitorReport getReport(SdmxWebSource source, WebContext context) throws IOException, IllegalArgumentException {
-        SdmxWebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+        WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
 
@@ -96,13 +96,13 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
         Proxy proxy = context.getNetwork().getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getEventListener() != SdmxManager.NO_OP_EVENT_LISTENER) {
-            context.getEventListener().accept(source, SdmxWebEvents.onQuery(url, proxy));
+            context.getEventListener().accept(source, WebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSslSocketFactory());
+            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSSLSocketFactory());
             ((HttpsURLConnection) conn).setHostnameVerifier(context.getNetwork().getHostnameVerifier());
         }
 

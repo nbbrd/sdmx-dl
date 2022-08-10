@@ -17,6 +17,7 @@
 package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import sdmxdl.web.URLConnectionFactory;
 
 /**
  * @author Philippe Charles
@@ -24,8 +25,8 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 public class JdkRestClientTest extends DefaultHttpClientTest {
 
     @Override
-    protected HttpURLConnectionFactory getURLConnectionFactory() {
-        return new DefaultHttpURLConnectionFactory();
+    protected URLConnectionFactory getURLConnectionFactory() {
+        return URLConnectionFactory.getDefault();
     }
 
     @Override

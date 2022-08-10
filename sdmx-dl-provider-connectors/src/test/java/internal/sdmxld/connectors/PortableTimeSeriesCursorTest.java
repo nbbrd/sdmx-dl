@@ -54,7 +54,7 @@ public class PortableTimeSeriesCursorTest {
     @Test
     public void test() throws IOException {
         try (DataCursor c = PortableTimeSeriesCursor.of(DATA, ObsParser::newDefault, Connectors.toStructure(DSD))) {
-            assertThat(c.toStream())
+            assertThat(c.asStream())
                     .hasSize(120)
 //                    .allMatch(o -> o.getFreq().equals(Frequency.ANNUAL))
                     .element(0)

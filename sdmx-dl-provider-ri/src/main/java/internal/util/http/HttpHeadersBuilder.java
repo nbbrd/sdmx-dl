@@ -64,11 +64,6 @@ public final class HttpHeadersBuilder {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
-    public static @Nullable String lastValueOrNull(@NonNull Map<String, List<String>> headers, @NonNull String name) {
-        List<String> header = headers.get(name);
-        return header != null && !header.isEmpty() ? header.get(header.size() - 1) : null;
-    }
-
     public static @NonNull Stream<Map.Entry<String, String>> keyValues(@NonNull Map<String, List<String>> headers) {
         return headers
                 .entrySet()

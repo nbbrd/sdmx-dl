@@ -18,8 +18,10 @@ module sdmxdl.provider.ri {
             internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.FileDriver,
+            internal.sdmxdl.provider.ri.web.drivers.ImfDriver2,
             internal.sdmxdl.provider.ri.web.drivers.InseeDriver2,
             internal.sdmxdl.provider.ri.web.drivers.NbbDriver2,
+            internal.sdmxdl.provider.ri.web.drivers.PxWebDriver,
             internal.sdmxdl.provider.ri.web.drivers.RngDriver,
             internal.sdmxdl.provider.ri.web.drivers.Sdmx21Driver2,
             internal.sdmxdl.provider.ri.web.drivers.StatCanDriver;
@@ -29,11 +31,6 @@ module sdmxdl.provider.ri {
 
     provides sdmxdl.web.spi.WebAuthenticator with
             internal.sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
-
-    provides internal.util.http.HttpURLConnectionFactory with
-            internal.util.http.curl.CurlHttpURLConnectionFactory;
-
-    uses internal.util.http.HttpURLConnectionFactory;
 
     provides sdmxdl.web.spi.WebMonitoring with
             internal.sdmxdl.provider.ri.web.monitors.UpptimeMonitoring,

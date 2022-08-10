@@ -17,13 +17,12 @@
 package _test.sdmxdl.connectors.samples;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.CodelistRef;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
+import sdmxdl.*;
 
 import java.io.IOException;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -33,8 +32,28 @@ public class ParsersTest {
 
     @Test
     public void test() throws Exception {
-        assertThat(ConnectorsResource.nbb()).isEqualTo(FacadeResource.nbb());
-        assertThat(ConnectorsResource.ecb()).isEqualTo(FacadeResource.ecb());
+        assertThat(ConnectorsResource.nbb()).isEqualTo(removeAttributeRelationship(FacadeResource.nbb()));
+        assertThat(ConnectorsResource.ecb()).isEqualTo(removeAttributeRelationship(FacadeResource.ecb()));
+    }
+
+    private DataRepository removeAttributeRelationship(DataRepository repo) {
+        return repo
+                .toBuilder()
+                .clearStructures()
+                .structures(repo.getStructures().stream().map(this::removeAttributeRelationship).collect(toList()))
+                .build();
+    }
+
+    private DataStructure removeAttributeRelationship(DataStructure dsd) {
+        return dsd
+                .toBuilder()
+                .clearAttributes()
+                .attributes(dsd.getAttributes().stream().map(this::removeAttributeRelationship).collect(toSet()))
+                .build();
+    }
+
+    private Attribute removeAttributeRelationship(Attribute attribute) {
+        return attribute.toBuilder().relationship(AttributeRelationship.UNKNOWN).build();
     }
 
     @Test
@@ -44,8 +63,7 @@ public class ParsersTest {
                     .isEqualTo("ECB");
 
             assertThat(repository.getStructures())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
                                 .isEqualTo(DataStructureRef.of("ECB", "ECB_AME1", "1.0"));
@@ -109,8 +127,7 @@ public class ParsersTest {
                     .isEqualTo("NBB");
 
             assertThat(repository.getStructures())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
                                 .isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", "latest"));
@@ -157,8 +174,7 @@ public class ParsersTest {
                     });
 
             assertThat(repository.getFlows())
-                    .hasSize(1)
-                    .element(0)
+                    .singleElement()
                     .extracting(Dataflow::getRef)
                     .isEqualTo(DataflowRef.of("NBB", "TEST_DATASET", "latest"));
 

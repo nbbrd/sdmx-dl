@@ -17,18 +17,19 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.stream.Stream;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
@@ -49,28 +51,31 @@ public final class BbkDriver implements WebDriver {
     private static final String RI_BBK = "ri:bbk";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_BBK)
             .rank(NATIVE_RANK)
-            .client(BbkClient::new)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(BbkRestClient::new))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .name("BBK")
                     .descriptionOf("Deutsche Bundesbank")
+                    .description("en", "Deutsche Bundesbank")
+                    .description("de", "Deutsche Bundesbank")
                     .driver(RI_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bbk")
                     .build())
             .build();
 
     @VisibleForTesting
-    static final class BbkClient extends RiRestClient {
+    static final class BbkRestClient extends RiRestClient {
 
-        BbkClient(SdmxWebSource s, WebContext c) throws IOException {
+        BbkRestClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),

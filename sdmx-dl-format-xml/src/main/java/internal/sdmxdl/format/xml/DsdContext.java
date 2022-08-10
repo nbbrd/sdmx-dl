@@ -16,6 +16,12 @@ final class DsdContext {
 
     private final Map<String, String> concepts = new HashMap<>();
 
+    private int dimensionCount = 0;
+
+    public void incrementDimensionCount() {
+        dimensionCount++;
+    }
+
     public Codelist getCodelist(CodelistRef ref) {
         return codelists
                 .stream()

@@ -54,6 +54,7 @@ public final class XMLStreamStructure20 {
     private static final String VALUE_ATTR = "value";
     private static final String CONCEPT_REF_ATTR = "conceptRef";
     private static final String CODELIST_ATTR = "codelist";
+    private static final String ATTACHMENT_LEVEL_ATTR = "attachmentLevel";
 
     private final TextBuilder structureLabel;
     private final TextBuilder label;
@@ -244,6 +245,23 @@ public final class XMLStreamStructure20 {
     private void parseAttribute(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
         Attribute.Builder result = Attribute.builder();
         parseComponent(reader, result, context);
+        result.relationship(getAttributeRelationship(reader.getAttributeValue(null, ATTACHMENT_LEVEL_ATTR)));
         ds.attribute(result.build());
+    }
+
+    private AttributeRelationship getAttributeRelationship(String attachmentLevel) {
+        if (attachmentLevel != null) {
+            switch (attachmentLevel) {
+                case "DataSet":
+                    return AttributeRelationship.DATAFLOW;
+                case "Group":
+                    return AttributeRelationship.GROUP;
+                case "Series":
+                    return AttributeRelationship.SERIES;
+                case "Observation":
+                    return AttributeRelationship.OBSERVATION;
+            }
+        }
+        return AttributeRelationship.UNKNOWN;
     }
 }

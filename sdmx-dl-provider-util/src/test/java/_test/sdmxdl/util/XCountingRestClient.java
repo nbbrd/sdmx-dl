@@ -19,7 +19,7 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,16 +30,16 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor(staticName = "of")
-public final class XCountingRestClient implements SdmxRestClient {
+public final class XCountingRestClient implements RestClient {
 
     @lombok.NonNull
-    private final SdmxRestClient delegate;
+    private final RestClient delegate;
 
     @lombok.NonNull
     private final AtomicInteger count;
 
     @Override
-    public @NonNull String getName() throws IOException {
+    public @NonNull String getName() {
         return delegate.getName();
     }
 
@@ -76,11 +76,6 @@ public final class XCountingRestClient implements SdmxRestClient {
     @Override
     public boolean isDetailSupported() throws IOException {
         return delegate.isDetailSupported();
-    }
-
-    @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) throws IOException {
-        return delegate.peekStructureRef(flowRef);
     }
 
     @Override

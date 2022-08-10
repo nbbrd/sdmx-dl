@@ -28,12 +28,14 @@ import nbbrd.io.function.IOFunction;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.StandardReportingFormat;
-import sdmxdl.format.TimeFormatParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.ObsTimeParser;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -42,6 +44,7 @@ import sdmxdl.format.DataCursor;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
 
@@ -54,12 +57,12 @@ public final class InseeDriver2 implements WebDriver {
     private static final String RI_INSEE = "ri:insee";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_INSEE)
             .rank(NATIVE_RANK)
-            .client(InseeClient::new)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(InseeRestClient::new))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
@@ -71,6 +74,7 @@ public final class InseeDriver2 implements WebDriver {
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
                     .build())
             .build();
 
@@ -96,9 +100,9 @@ public final class InseeDriver2 implements WebDriver {
     @SdmxFix(id = 5, category = MEDIA_TYPE, cause = "Default media type is compact instead of generic")
     private static final MediaType DATA_TYPE = XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21;
 
-    private final static class InseeClient extends RiRestClient {
+    private final static class InseeRestClient extends RiRestClient {
 
-        InseeClient(SdmxWebSource s, WebContext c) throws IOException {
+        InseeRestClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
                     s.getId(),
                     s.getEndpoint().toURL(),
@@ -130,7 +134,7 @@ public final class InseeDriver2 implements WebDriver {
         }
     }
 
-    private static final StandardReportingFormat TWO_MONTH = StandardReportingFormat
+    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
             .durationOf("P2M")
@@ -138,9 +142,9 @@ public final class InseeDriver2 implements WebDriver {
             .build();
 
     @VisibleForTesting
-    static final TimeFormatParser EXTENDED_PARSER =
-            TimeFormatParser.onObservationalTimePeriod()
-                    .orElse(TimeFormatParser.onStandardReporting(TWO_MONTH));
+    static final ObsTimeParser EXTENDED_TIME_PARSER =
+            TimeFormats.OBSERVATIONAL_TIME_PERIOD
+                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
 
-    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_PARSER, Parser.onDouble());
+    private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

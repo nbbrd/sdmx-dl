@@ -88,4 +88,8 @@ public class WebResponse {
         }
         return sb.toString();
     }
+
+    public static int getObsCount(Collection<Series> data) {
+        return data.stream().mapToInt(series -> series.getObs().size()).sum();
+    }
 }

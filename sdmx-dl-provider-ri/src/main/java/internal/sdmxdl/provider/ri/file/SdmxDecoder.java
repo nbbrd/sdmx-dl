@@ -19,7 +19,7 @@ package internal.sdmxdl.provider.ri.file;
 import lombok.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.provider.file.SdmxFileInfo;
+import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
 
@@ -28,5 +28,5 @@ import java.io.IOException;
  */
 public interface SdmxDecoder {
 
-    @NonNull SdmxFileInfo decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
+    @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
 }

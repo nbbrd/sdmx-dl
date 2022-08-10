@@ -17,9 +17,9 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.util.http.*;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
@@ -31,15 +31,16 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.DataflowRef;
 import sdmxdl.format.MediaType;
 import sdmxdl.format.MessageFooter;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
-import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
@@ -71,12 +73,12 @@ public final class EurostatDriver2 implements WebDriver {
     private static final String RI_EUROSTAT = "ri:estat";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_EUROSTAT)
             .rank(NATIVE_RANK)
-            .client(EurostatDriver2::newClient)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(EurostatDriver2::newClient))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
             .defaultDialect(SDMX21_DIALECT)
@@ -85,14 +87,18 @@ public final class EurostatDriver2 implements WebDriver {
                     .name("ESTAT")
                     .alias("EUROSTAT")
                     .descriptionOf("Eurostat")
+                    .description("en", "Eurostat")
+                    .description("de", "Eurostat")
+                    .description("fr", "Eurostat")
                     .driver(RI_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
             .build();
 
-    private static SdmxRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return new RiRestClient(
                 s.getId(),
                 s.getEndpoint().toURL(),
@@ -160,7 +166,7 @@ public final class EurostatDriver2 implements WebDriver {
         for (int i = 1; i <= retries; i++) {
             sleep(sleepTimeInMillis);
             try {
-                return new AsyncResponse(client.requestGET(request));
+                return new AsyncResponse(client.send(request));
             } catch (HttpResponseException ex) {
                 if (ex.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
                     throw ex;

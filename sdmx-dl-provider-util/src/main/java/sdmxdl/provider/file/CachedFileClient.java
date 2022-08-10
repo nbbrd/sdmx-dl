@@ -35,10 +35,10 @@ import static sdmxdl.DataSet.toDataSet;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public final class CachedFileClient implements SdmxFileClient {
+public final class CachedFileClient implements FileClient {
 
     public static @NonNull CachedFileClient of(
-            @NonNull SdmxFileClient client, @NonNull Cache cache,
+            @NonNull FileClient client, @NonNull Cache cache,
             @NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
@@ -51,7 +51,7 @@ public final class CachedFileClient implements SdmxFileClient {
     public static final Duration DEFAULT_CACHE_TTL = Duration.ofMinutes(5);
 
     @lombok.NonNull
-    private final SdmxFileClient delegate;
+    private final FileClient delegate;
 
     @lombok.NonNull
     private final Cache cache;
@@ -60,14 +60,14 @@ public final class CachedFileClient implements SdmxFileClient {
     private final URI base;
 
     @lombok.Getter(lazy = true)
-    private final TypedId<SdmxFileInfo> idOfDecode = initIdOfDecode(base);
+    private final TypedId<FileInfo> idOfDecode = initIdOfDecode(base);
 
     @lombok.Getter(lazy = true)
     private final TypedId<DataSet> idOfLoadData = initIdOfLoadData(base);
 
-    private static TypedId<SdmxFileInfo> initIdOfDecode(URI base) {
+    private static TypedId<FileInfo> initIdOfDecode(URI base) {
         return TypedId.of(base,
-                repo -> SdmxFileInfo.of(MediaType.parse(repo.getName()), repo.getStructures().stream().findFirst().orElse(null)),
+                repo -> FileInfo.of(MediaType.parse(repo.getName()), repo.getStructures().stream().findFirst().orElse(null)),
                 info -> DataRepository.builder().name(info.getDataType().toString()).structure(info.getStructure()).build()
         ).with("decode");
     }
@@ -85,12 +85,12 @@ public final class CachedFileClient implements SdmxFileClient {
     }
 
     @Override
-    public @NonNull SdmxFileInfo decode() throws IOException {
+    public @NonNull FileInfo decode() throws IOException {
         return getIdOfDecode().load(cache, delegate::decode, this::getTtl);
     }
 
     @Override
-    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull FileInfo entry, @NonNull DataRef dataRef) throws IOException {
         return !dataRef.getQuery().getDetail().isDataRequested()
                 ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, dataRef.getFlowRef()), this::getTtl).getDataStream(dataRef.getQuery())
                 : delegate.loadData(entry, dataRef);
@@ -100,7 +100,7 @@ public final class CachedFileClient implements SdmxFileClient {
         return DEFAULT_CACHE_TTL;
     }
 
-    private DataSet copyAllNoData(SdmxFileInfo entry, DataflowRef flowRef) throws IOException {
+    private DataSet copyAllNoData(FileInfo entry, DataflowRef flowRef) throws IOException {
         DataRef ref = DataRef.of(flowRef, DataQuery.of(Key.ALL, DataDetail.NO_DATA));
         try (Stream<Series> stream = delegate.loadData(entry, ref)) {
             return stream.collect(toDataSet(ref.getFlowRef(), ref.getQuery()));

@@ -18,7 +18,6 @@ package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
-import internal.sdmxdl.cli.ext.SslOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
@@ -27,15 +26,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
+import sdmxdl.format.FileFormat;
 import sdmxdl.format.kryo.KryoFileFormat;
 import sdmxdl.provider.ext.FileCache;
-import sdmxdl.format.FileFormat;
 import sdmxdl.provider.ext.MapCache;
 import sdmxdl.provider.ext.VerboseCache;
-import sdmxdl.web.MonitorReports;
-import sdmxdl.web.Network;
-import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.*;
 import sdmxdl.web.spi.WebAuthenticator;
 
 import javax.net.ssl.HostnameVerifier;
@@ -73,50 +69,12 @@ public class WebNetOptions extends WebOptions {
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
-                .network(getNetworkFactory())
+                .network(new LazyNetwork())
                 .cache(new DryCache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions())))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
                 .build();
-    }
-
-    private Network getNetworkFactory() {
-        return new Network() {
-
-            @lombok.Getter(lazy = true)
-            private final ProxySelector lazyProxySelector = initProxySelector();
-
-            @lombok.Getter(lazy = true)
-            private final SSLFactory lazySslFactory = initSSLFactory();
-
-            private ProxySelector initProxySelector() {
-                return networkOptions.getProxyOptions().getProxySelector();
-            }
-
-            private SSLFactory initSSLFactory() {
-                SslOptions sslOptions = networkOptions.getSslOptions();
-                if (getVerboseOptions().isVerbose()) {
-                    getVerboseOptions().reportToErrorStream("SSL", "Initializing SSL factory");
-                }
-                return sslOptions.getSSLFactory();
-            }
-
-            @Override
-            public @NonNull ProxySelector getProxySelector() {
-                return getLazyProxySelector();
-            }
-
-            @Override
-            public @NonNull SSLSocketFactory getSslSocketFactory() {
-                return getLazySslFactory().getSslSocketFactory();
-            }
-
-            @Override
-            public @NonNull HostnameVerifier getHostnameVerifier() {
-                return getLazySslFactory().getHostnameVerifier();
-            }
-        };
     }
 
     private List<SdmxWebSource> getForcedSslSources(SdmxWebManager manager) {
@@ -151,8 +109,8 @@ public class WebNetOptions extends WebOptions {
                 .builder()
                 .repositoryFormat(getRepositoryFormat(cacheOptions))
                 .monitorFormat(getMonitorFormat(cacheOptions));
-        if (cacheOptions.getCache() != null) {
-            result.root(cacheOptions.getCache().toPath());
+        if (cacheOptions.getCacheFolder() != null) {
+            result.root(cacheOptions.getCacheFolder().toPath());
         }
         if (verboseOptions.isVerbose()) {
             result.onIOException((msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex));
@@ -247,6 +205,53 @@ public class WebNetOptions extends WebOptions {
         public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
             dry.putMonitorReports(key, value);
             delegate.putMonitorReports(key, value);
+        }
+    }
+
+    private final class LazyNetwork implements Network {
+
+        @lombok.Getter(lazy = true)
+        private final ProxySelector lazyProxySelector = initProxySelector();
+
+        @lombok.Getter(lazy = true)
+        private final SSLFactory lazySSLFactory = initSSLFactory();
+
+        @lombok.Getter(lazy = true)
+        private final URLConnectionFactory lazyURLConnectionFactory = initURLConnectionFactory();
+
+        private ProxySelector initProxySelector() {
+            getVerboseOptions().reportToErrorStream("NET", "Initializing proxy selector");
+            return networkOptions.getProxyOptions().getProxySelector();
+        }
+
+        private SSLFactory initSSLFactory() {
+            getVerboseOptions().reportToErrorStream("NET", "Initializing SSL factory");
+            return networkOptions.getSslOptions().getSSLFactory();
+        }
+
+        private URLConnectionFactory initURLConnectionFactory() {
+            getVerboseOptions().reportToErrorStream("NET", "Initializing URL backend");
+            return networkOptions.getURLConnectionFactory();
+        }
+
+        @Override
+        public @NonNull ProxySelector getProxySelector() {
+            return getLazyProxySelector();
+        }
+
+        @Override
+        public @NonNull SSLSocketFactory getSSLSocketFactory() {
+            return getLazySSLFactory().getSslSocketFactory();
+        }
+
+        @Override
+        public @NonNull HostnameVerifier getHostnameVerifier() {
+            return getLazySSLFactory().getHostnameVerifier();
+        }
+
+        @Override
+        public @NonNull URLConnectionFactory getURLConnectionFactory() {
+            return getLazyURLConnectionFactory();
         }
     }
 }

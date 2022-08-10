@@ -20,7 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.web.SdmxRestClient;
+import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(staticName = "of")
-public final class XRepoRestClient implements SdmxRestClient {
+public final class XRepoRestClient implements RestClient {
 
     @lombok.NonNull
     private final DataRepository repository;
@@ -48,13 +48,13 @@ public final class XRepoRestClient implements SdmxRestClient {
     @Override
     public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
         return repository.getFlow(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
     }
 
     @Override
     public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
         return repository.getStructure(ref)
-                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class XRepoRestClient implements SdmxRestClient {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
-                .orElseThrow(() -> CommonSdmxExceptions.missingData(repository.getName(), ref.getFlowRef()));
+                .orElseThrow(() -> CommonSdmxExceptions.missingData(this, ref.getFlowRef()));
     }
 
     @Override
@@ -72,17 +72,12 @@ public final class XRepoRestClient implements SdmxRestClient {
                 .map(Component::getCodelist)
                 .filter(ref::containsRef)
                 .findFirst()
-                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(repository.getName(), ref));
+                .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(this, ref));
     }
 
     @Override
     public boolean isDetailSupported() {
         return true;
-    }
-
-    @Override
-    public DataStructureRef peekStructureRef(@NonNull DataflowRef flowRef) {
-        return null;
     }
 
     @Override

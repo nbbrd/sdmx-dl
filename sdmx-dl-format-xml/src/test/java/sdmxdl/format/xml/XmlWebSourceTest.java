@@ -44,6 +44,7 @@ public class XmlWebSourceTest {
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .monitorOf("ABC:xyz")
+                    .monitorWebsiteOf("https://someaddress")
                     .build(),
             SdmxWebSource
                     .builder()
@@ -67,6 +68,7 @@ public class XmlWebSourceTest {
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
             + "        <monitor>ABC:xyz</monitor>\n"
+            + "        <monitorWebsite>https://someaddress</monitorWebsite>\n"
             + "    </source>\n"
             + "    <source>\n"
             + "        <name>other</name>\n"

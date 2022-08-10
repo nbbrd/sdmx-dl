@@ -18,7 +18,7 @@ public interface RiRestQueries {
 
     @NonNull URLQueryBuilder getStructureQuery(@NonNull URL endpoint, @NonNull DataStructureRef ref);
 
-    @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref);
+    @NonNull URLQueryBuilder getDataQuery(@NonNull URL endpoint, @NonNull DataRef ref, @NonNull DataStructureRef dsdRef);
 
     @NonNull URLQueryBuilder getCodelistQuery(@NonNull URL endpoint, @NonNull CodelistRef ref);
 

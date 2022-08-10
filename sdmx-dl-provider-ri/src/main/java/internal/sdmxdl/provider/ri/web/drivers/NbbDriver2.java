@@ -16,21 +16,26 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
+import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.util.http.*;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
+import internal.util.http.URLQueryBuilder;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.MediaType;
+import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.RestDriverSupport;
+import sdmxdl.provider.web.RestConnector;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -38,6 +43,7 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.IOException;
 import java.net.URL;
 
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
@@ -52,12 +58,12 @@ public final class NbbDriver2 implements WebDriver {
     private static final String RI_NBB = "ri:nbb";
 
     @lombok.experimental.Delegate
-    private final RestDriverSupport support = RestDriverSupport
+    private final WebDriverSupport support = WebDriverSupport
             .builder()
             .name(RI_NBB)
             .rank(NATIVE_RANK)
-            .client(NbbDriver2::newClient)
-            .supportedProperties(RiHttpUtils.CONNECTION_PROPERTIES)
+            .connector(RestConnector.of(NbbDriver2::newClient))
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
@@ -71,6 +77,7 @@ public final class NbbDriver2 implements WebDriver {
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nbb")
                     .build())
             .build();
 
@@ -108,7 +115,7 @@ public final class NbbDriver2 implements WebDriver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)

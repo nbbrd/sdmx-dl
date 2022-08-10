@@ -19,15 +19,15 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
+import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Validator;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import static sdmxdl.DataSet.toDataSet;
 
 /**
  * @author Philippe Charles
@@ -36,10 +36,12 @@ import static sdmxdl.DataSet.toDataSet;
 final class RestConnection implements Connection {
 
     @lombok.NonNull
-    private final SdmxRestClient client;
+    private final RestClient client;
 
     @lombok.NonNull
     private final Validator<DataflowRef> dataflowRefValidator;
+
+    private final boolean noBatchFlow;
 
     private boolean closed = false;
 
@@ -52,46 +54,26 @@ final class RestConnection implements Connection {
     @Override
     public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
         checkState();
-        checkDataflowRef(flowRef);
-        return client.getFlow(flowRef);
+        return lookupFlow(flowRef);
     }
 
     @Override
     public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
         checkState();
-        checkDataflowRef(flowRef);
-
-        DataStructureRef structRef = client.peekStructureRef(flowRef);
-        if (structRef == null) {
-            Dataflow flow = client.getFlow(flowRef);
-            structRef = flow.getStructureRef();
-        }
-
-        return client.getStructure(structRef);
+        return client.getStructure(lookupFlow(flowRef).getStructureRef());
     }
 
     @Override
     public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
-        try (Stream<Series> stream = getDataStream(flowRef, query)) {
-            return stream.collect(toDataSet(flowRef, query));
-        }
+        return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
     }
 
     @Override
     public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
         checkState();
-        checkDataflowRef(flowRef);
 
-        DataflowRef realFlowRef = flowRef;
-        DataStructureRef structRef = client.peekStructureRef(flowRef);
-
-        if (structRef == null) {
-            Dataflow flow = client.getFlow(flowRef);
-            structRef = flow.getStructureRef();
-            realFlowRef = flow.getRef(); // FIXME: all,...,latest fails sometimes
-        }
-
-        DataStructure structure = client.getStructure(structRef);
+        Dataflow dataflow = lookupFlow(flowRef);
+        DataStructure structure = client.getStructure(dataflow.getStructureRef());
         checkKey(query.getKey(), structure);
 
         Set<Feature> features = getSupportedFeatures();
@@ -101,7 +83,7 @@ final class RestConnection implements Connection {
                 features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL
         );
 
-        Stream<Series> result = client.getData(DataRef.of(realFlowRef, realQuery), structure);
+        Stream<Series> result = client.getData(DataRef.of(dataflow.getRef(), realQuery), structure);
 
         return realQuery.equals(query) ? result : query.execute(result);
     }
@@ -126,8 +108,17 @@ final class RestConnection implements Connection {
 
     private void checkState() throws IOException {
         if (closed) {
-            throw CommonSdmxExceptions.connectionClosed(client.getName());
+            throw CommonSdmxExceptions.connectionClosed(client);
         }
+    }
+
+    private Dataflow lookupFlow(DataflowRef flowRef) throws IOException, IllegalArgumentException {
+        if (noBatchFlow) {
+            checkDataflowRef(flowRef);
+            return client.getFlow(flowRef);
+        }
+
+        return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
     }
 
     private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {
@@ -135,6 +126,6 @@ final class RestConnection implements Connection {
     }
 
     private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
-        SdmxValidators.onDataStructure(dsd).checkValidity(key);
+        WebValidators.onDataStructure(dsd).checkValidity(key);
     }
 }

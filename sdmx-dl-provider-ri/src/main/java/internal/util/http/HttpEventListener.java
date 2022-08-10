@@ -5,12 +5,14 @@ import sdmxdl.format.MediaType;
 
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public interface HttpEventListener {
 
     void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme);
 
-    void onSuccess(@NonNull MediaType mediaType);
+    void onSuccess(@NonNull Supplier<String> contentType);
 
     void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl);
 

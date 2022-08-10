@@ -8,10 +8,11 @@ import nbbrd.design.StaticFactoryMethod;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Locale;
 
 @RepresentableAs(URI.class)
 @lombok.Value
-@lombok.Builder
+@lombok.Builder(toBuilder = true)
 class UpptimeId {
 
     public static final String URI_SCHEME = "upptime";
@@ -24,6 +25,10 @@ class UpptimeId {
 
     @lombok.NonNull
     String site;
+
+    private String getNormalizedSite() {
+        return site.toLowerCase(Locale.ROOT).replace('_', '-');
+    }
 
     @Override
     public String toString() {
@@ -38,6 +43,15 @@ class UpptimeId {
                 .path("master")
                 .path("history")
                 .path("summary.json")
+                .build();
+    }
+
+    public @NonNull URL toReportURL() throws MalformedURLException {
+        return URLQueryBuilder
+                .of(new URL("https://" + owner + ".github.io"))
+                .path(repo)
+                .path("history")
+                .path(getNormalizedSite())
                 .build();
     }
 

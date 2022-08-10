@@ -97,7 +97,7 @@ public class FacadeResource {
 
     List<Series> data20(ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData20(dsd, ObsParser::newDefault).parseReader(xml::openReader)) {
-            return c.toStream().collect(Collectors.toList());
+            return c.asStream().collect(Collectors.toList());
         }
     }
 
@@ -111,7 +111,7 @@ public class FacadeResource {
 
     List<Series> data21(ByteSource xml, DataStructure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData21(dsd, ObsParser::newDefault).parseReader(xml::openReader)) {
-            return c.toStream().collect(Collectors.toList());
+            return c.asStream().collect(Collectors.toList());
         }
     }
 

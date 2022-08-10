@@ -17,13 +17,15 @@ public class VerboseOptions {
     private CommandLine.Model.CommandSpec spec;
 
     public void reportToErrorStream(String anchor, String message) {
-        CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
-        reportToErrorStream(colorScheme
-                .text("[")
-                .concat(colorScheme.commandText(anchor))
-                .concat(colorScheme.text("] "))
-                .concat(colorScheme.optionText(message))
-        );
+        if (verbose) {
+            CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+            reportToErrorStream(colorScheme
+                    .text("[")
+                    .concat(colorScheme.commandText(anchor))
+                    .concat(colorScheme.text("] "))
+                    .concat(colorScheme.optionText(message))
+            );
+        }
     }
 
     public void reportToErrorStream(String anchor, String message, Exception ex) {

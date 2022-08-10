@@ -17,7 +17,11 @@
 package tests.sdmxdl.api;
 
 import sdmxdl.*;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.MonitorStatus;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -50,8 +54,8 @@ public class RepoSamples {
     public static final Dimension DIM2 = Dimension.builder().id("REGION").codelist(CL2).label("Region").position(3).build();
     public static final Dimension DIM3 = Dimension.builder().id("SECTOR").codelist(CL3).label("Sector").position(4).build();
 
-    public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").label("Title").build();
-    public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).label("Observation status").build();
+    public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").label("Title").relationship(AttributeRelationship.SERIES).build();
+    public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).label("Observation status").relationship(AttributeRelationship.OBSERVATION).build();
 
     public static final DataStructure STRUCT = DataStructure
             .builder()
@@ -107,6 +111,12 @@ public class RepoSamples {
             .structure(STRUCT)
             .flow(FLOW)
             .dataSet(DATA_SET)
+            .build();
+
+    public static final MonitorReports REPORTS = MonitorReports
+            .builder()
+            .uriScheme("abc")
+            .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
             .build();
 
     private static LocalDateTime dateTimeOf(int year, int month) {

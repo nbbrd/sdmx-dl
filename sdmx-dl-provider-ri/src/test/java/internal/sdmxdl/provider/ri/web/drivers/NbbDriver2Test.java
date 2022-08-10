@@ -19,12 +19,9 @@ package internal.sdmxdl.provider.ri.web.drivers;
 import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
+import sdmxdl.*;
 import sdmxdl.format.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataQuery;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.provider.DataRef;
 import tests.sdmxdl.web.WebDriverAssert;
 
@@ -54,7 +51,7 @@ public class NbbDriver2Test {
 
         NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.of(Key.parse("AUD.M"), FULL))))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.of(Key.parse("AUD.M"), FULL)), DataStructureRef.parse("abc")))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }

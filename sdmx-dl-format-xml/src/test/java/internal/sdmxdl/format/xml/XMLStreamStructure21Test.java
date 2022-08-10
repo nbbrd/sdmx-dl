@@ -54,14 +54,14 @@ public class XMLStreamStructure21Test {
 
             Set<Attribute> attributes = o.getAttributes();
             assertThat(attributes).hasSize(11);
-            assertThat(attributes).filteredOn(attr -> attr.getId().equals("TIME_FORMAT")).singleElement().satisfies(x -> {
+            assertThat(attributes).filteredOn(Attribute::getId, "TIME_FORMAT").singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Time format code");
-//                assertThat(x.getRelationShip()).isEqualTo(Attribute.RelationShip.SERIES);
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.SERIES);
                 assertThat(x.getCodes()).isEmpty();
             });
-            assertThat(attributes).filteredOn(attr -> attr.getId().equals("OBS_STATUS")).singleElement().satisfies(x -> {
+            assertThat(attributes).filteredOn(Attribute::getId, "OBS_STATUS").singleElement().satisfies(x -> {
                 assertThat(x.getLabel()).isEqualTo("Observation status");
-//                assertThat(x.getRelationShip()).isEqualTo(Attribute.RelationShip.OBS);
+                assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.OBSERVATION);
                 assertThat(x.getCodes()).isNotEmpty();
             });
         });

@@ -29,7 +29,7 @@ import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.format.MediaType;
-import sdmxdl.provider.web.SdmxWebEvents;
+import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
@@ -42,8 +42,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
-import static sdmxdl.provider.web.SdmxWebProperty.*;
+import static sdmxdl.provider.web.WebProperties.*;
 
 /**
  * @author Philippe Charles
@@ -51,7 +52,7 @@ import static sdmxdl.provider.web.SdmxWebProperty.*;
 @lombok.experimental.UtilityClass
 public class RiHttpUtils {
 
-    public static final List<String> CONNECTION_PROPERTIES = BaseProperty.keysOf(
+    public static final List<String> RI_CONNECTION_PROPERTIES = BaseProperty.keysOf(
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY,
@@ -81,13 +82,13 @@ public class RiHttpUtils {
     }
 
     public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
-        HttpClient result = new DefaultHttpClient(context, HttpURLConnectionFactoryLoader.get());
-        File dumpFile = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
-        return dumpFile != null ? newDumpingClient(context, result, dumpFile) : result;
+        HttpClient result = new DefaultHttpClient(context);
+        File dumpFolder = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
+        return dumpFolder != null ? newDumpingClient(context, result, dumpFolder) : result;
     }
 
-    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFile) {
-        return new DumpingClient(dumpFile.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
+    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
+        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
     public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull WebContext context) {
@@ -98,8 +99,9 @@ public class RiHttpUtils {
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
                 .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(source.getProperties()))
                 .proxySelector(context.getNetwork()::getProxySelector)
-                .sslSocketFactory(context.getNetwork()::getSslSocketFactory)
+                .sslSocketFactory(context.getNetwork()::getSSLSocketFactory)
                 .hostnameVerifier(context.getNetwork()::getHostnameVerifier)
+                .urlConnectionFactory(context.getNetwork()::getURLConnectionFactory)
                 .listener(new RiHttpEventListener(source, context.getEventListener()))
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getEventListener()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))
@@ -118,7 +120,7 @@ public class RiHttpUtils {
         @Override
         public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                String message = SdmxWebEvents.onQuery(request.getQuery(), proxy);
+                String message = WebEvents.onQuery(request.getMethod().name(), request.getQuery(), proxy);
                 if (!HttpAuthScheme.NONE.equals(scheme)) {
                     message += " with auth '" + scheme.name() + "'";
                 }
@@ -127,16 +129,16 @@ public class RiHttpUtils {
         }
 
         @Override
-        public void onSuccess(@NonNull MediaType mediaType) {
+        public void onSuccess(@NonNull Supplier<String> contentType) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format("Parsing '%s'", mediaType));
+                listener.accept(source, String.format("Parsing '%s' content-type", contentType.get()));
             }
         }
 
         @Override
         public void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, SdmxWebEvents.onRedirection(oldUrl, newUrl));
+                listener.accept(source, WebEvents.onRedirection(oldUrl, newUrl));
             }
         }
 

@@ -11,6 +11,8 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
     @lombok.NonNull
     private final Class<?> logAnchor;
 
+    private final boolean stackTraceRequired;
+
     @Override
     public int handleExecutionException(Exception ex, CommandLine cmd, CommandLine.ParseResult parseResult) {
         reportToLogger(ex, parseResult);
@@ -29,7 +31,7 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
 
     private void reportToConsole(Exception ex, CommandLine cmd) {
         cmd.getErr().println(cmd.getColorScheme().errorText(getErrorMessage(ex)));
-        if (isStackTraceRequired(cmd.getParseResult())) {
+        if (stackTraceRequired) {
             cmd.getErr().println(cmd.getColorScheme().stackTraceText(ex));
         }
     }
@@ -43,9 +45,5 @@ public final class PrintAndLogExceptionHandler implements CommandLine.IExecution
             return "Invalid parameter";
         }
         return ex.getClass().getSimpleName();
-    }
-
-    private boolean isStackTraceRequired(CommandLine.ParseResult parseResult) {
-        return parseResult.hasMatchedOption("--stackTrace");
     }
 }

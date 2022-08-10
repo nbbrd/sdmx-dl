@@ -21,9 +21,10 @@ import internal.sdmxdl.cli.WebSourcesOptions;
 import picocli.CommandLine;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
+import sdmxdl.testing.IntRange;
 import sdmxdl.testing.WebRequest;
 import sdmxdl.testing.WebResponse;
-import sdmxdl.testing.WebRule;
+import sdmxdl.testing.WebRuleLoader;
 import sdmxdl.testing.xml.XmlSourceQuery;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -32,8 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -67,10 +67,15 @@ public final class CheckRulesCommand implements Callable<Void> {
     public Void call() throws Exception {
         SdmxWebManager manager = web.loadManager();
 
-        List<Summary> result = web.applyParallel(getRequests())
+        Map<String, List<WebRequest>> requestsBySource = getRequests()
+                .stream()
                 .filter(getSourceFilter())
-                .map(request -> WebResponse.of(request, manager))
+                .collect(Collectors.groupingBy(WebRequest::getSource));
+
+        List<Summary> result = web.applyParallel(requestsBySource.values().stream())
+                .flatMap(list -> list.stream().map(request -> WebResponse.of(request, manager)))
                 .map(Summary::of)
+                .sorted(Comparator.comparing(o -> o.digest))
                 .collect(Collectors.toList());
 
         output.dumpAll(Summary.class, result);
@@ -129,19 +134,19 @@ public final class CheckRulesCommand implements Callable<Void> {
     }
 
     @lombok.AllArgsConstructor
-    private static class Expected {
+    private static class Expect {
 
-        int flowCount;
-        int dimCount;
-        int seriesCount;
-        int obsCount;
+        IntRange flowCount;
+        IntRange dimCount;
+        IntRange seriesCount;
+        IntRange obsCount;
 
-        static Expected of(WebRequest request) {
-            return new Expected(
-                    request.getMinFlowCount(),
+        static Expect of(WebRequest request) {
+            return new Expect(
+                    request.getFlowCount(),
                     request.getDimensionCount(),
-                    request.getMinSeriesCount(),
-                    request.getMinObsCount()
+                    request.getSeriesCount(),
+                    request.getObsCount()
             );
         }
     }
@@ -159,7 +164,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                     ofNullable(r.getFlows()).map(Collection::size).orElse(-1),
                     ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1),
                     ofNullable(r.getData()).map(Collection::size).orElse(-1),
-                    ofNullable(r.getData()).map(WebRule::getObsCount).orElse(-1)
+                    ofNullable(r.getData()).map(WebResponse::getObsCount).orElse(-1)
             );
         }
     }
@@ -167,22 +172,32 @@ public final class CheckRulesCommand implements Callable<Void> {
     @lombok.AllArgsConstructor
     private static class Summary {
 
+        String digest;
         Target target;
         Config config;
-        Expected expect;
+        Expect expect;
         Actual actual;
-        String error;
-        List<String> problems;
+        String errors;
+        List<String> issues;
 
         static Summary of(WebResponse r) {
             return new Summary(
+                    r.getRequest().getDigest(),
                     Target.of(r.getRequest()),
                     Config.of(r.getSource()),
-                    Expected.of(r.getRequest()),
+                    Expect.of(r.getRequest()),
                     Actual.of(r),
                     ofNullable(r.getError()).orElse(""),
-                    WebRule.checkAll(r)
+                    checkAll(r)
             );
         }
+    }
+
+    private static List<String> checkAll(WebResponse response) {
+        return WebRuleLoader.get()
+                .stream()
+                .map(rule -> !rule.getValidator().isValid(response) ? rule.getName() : null)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

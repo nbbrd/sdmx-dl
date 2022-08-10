@@ -3,9 +3,9 @@ package internal.util.http.ext;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.Resource;
+import sdmxdl.format.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +27,22 @@ public final class DumpingClient implements HttpClient {
     private final Consumer<? super Path> onDump;
 
     @Override
-    public @NonNull HttpResponse requestGET(@NonNull HttpRequest request) throws IOException {
-        return new DumpingResponse(folder, delegate.requestGET(request), onDump);
+    public @NonNull HttpResponse send(@NonNull HttpRequest request) throws IOException {
+        String prefix = "http_" + getUniqueTimeStamp();
+        try {
+            return new DumpingResponse(folder, delegate.send(request), onDump, prefix);
+        } finally {
+            dumpRequestBody(request, prefix);
+        }
+    }
+
+    private void dumpRequestBody(HttpRequest request, String prefix) throws IOException {
+        if (request.getBody() != null) {
+            Files.createDirectories(folder);
+            Path requestDump = folder.resolve(prefix + "_request.tmp");
+            onDump.accept(requestDump);
+            Files.write(requestDump, request.getBody());
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -42,6 +56,9 @@ public final class DumpingClient implements HttpClient {
 
         @lombok.NonNull
         private final Consumer<? super Path> onDump;
+
+        @lombok.NonNull
+        private final String prefix;
 
         @Override
         public @NonNull MediaType getContentType() throws IOException {
@@ -62,14 +79,18 @@ public final class DumpingClient implements HttpClient {
 
         private OutputStream getDumpStream() throws IOException {
             Files.createDirectories(folder);
-            Path dump = Files.createTempFile(folder, "body", ".tmp");
-            onDump.accept(dump);
-            return Files.newOutputStream(dump);
+            Path responseDump = folder.resolve(prefix + "_response.tmp");
+            onDump.accept(responseDump);
+            return Files.newOutputStream(responseDump);
         }
 
         @Override
         public void close() throws IOException {
             delegate.close();
         }
+    }
+
+    private static synchronized String getUniqueTimeStamp() {
+        return String.valueOf(System.nanoTime());
     }
 }

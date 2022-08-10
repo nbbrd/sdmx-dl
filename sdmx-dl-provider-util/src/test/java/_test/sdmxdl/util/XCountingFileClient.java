@@ -3,18 +3,18 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.file.SdmxFileClient;
-import sdmxdl.provider.file.SdmxFileInfo;
+import sdmxdl.provider.file.FileClient;
+import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 @lombok.RequiredArgsConstructor
-public final class XCountingFileClient implements SdmxFileClient {
+public final class XCountingFileClient implements FileClient {
 
     @lombok.NonNull
-    private final SdmxFileClient delegate;
+    private final FileClient delegate;
 
     @lombok.NonNull
     private final AtomicInteger count;
@@ -25,13 +25,13 @@ public final class XCountingFileClient implements SdmxFileClient {
     }
 
     @Override
-    public @NonNull SdmxFileInfo decode() throws IOException {
+    public @NonNull FileInfo decode() throws IOException {
         count.incrementAndGet();
         return delegate.decode();
     }
 
     @Override
-    public @NonNull Stream<Series> loadData(@NonNull SdmxFileInfo entry, @NonNull DataRef dataRef) throws IOException {
+    public @NonNull Stream<Series> loadData(@NonNull FileInfo entry, @NonNull DataRef dataRef) throws IOException {
         count.incrementAndGet();
         return delegate.loadData(entry, dataRef);
     }

@@ -13,17 +13,15 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
+import sdmxdl.format.DataCursor;
 import sdmxdl.format.MediaType;
-import sdmxdl.provider.CommonSdmxExceptions;
-import sdmxdl.provider.TypedId;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.web.SdmxValidators;
-import sdmxdl.provider.web.Validator;
+import sdmxdl.format.xml.SdmxXmlStreams;
+import sdmxdl.provider.*;
+import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
-import sdmxdl.format.DataCursor;
-import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -36,6 +34,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,40 +42,45 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static internal.sdmxdl.provider.ri.web.RiHttpUtils.*;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static internal.sdmxdl.provider.ri.web.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.web.SdmxValidators.dataflowRefOf;
-import static sdmxdl.provider.web.SdmxWebProperty.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
 @ServiceProvider
 public final class StatCanDriver implements WebDriver {
 
     private static final String RI_STATCAN = "ri:statcan";
 
-    private final Validator<SdmxWebSource> sourceValidator = SdmxValidators.onDriverName(RI_STATCAN);
+    @lombok.experimental.Delegate
+    private final WebDriverSupport support = WebDriverSupport
+            .builder()
+            .name(RI_STATCAN)
+            .rank(NATIVE_RANK)
+            .connector(StatCanDriver::newConnection)
+            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .supportedPropertyOf(CACHE_TTL_PROPERTY)
+            .source(SdmxWebSource
+                    .builder()
+                    .name("STATCAN")
+                    .descriptionOf("Statistics Canada")
+                    .description("en", "Statistics Canada")
+                    .description("fr", "Statistique Canada")
+                    .driver(RI_STATCAN)
+                    .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
+                    .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
+                    .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statcan")
+                    .build())
+            .build();
 
-    @Override
-    public @NonNull String getName() {
-        return RI_STATCAN;
-    }
-
-    @Override
-    public int getRank() {
-        return NATIVE_RANK;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        sourceValidator.checkValidity(source);
-
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
+                source.getName(),
                 source.getEndpoint().toURL(),
                 context.getLanguages(),
                 newClient(source, context)
@@ -88,43 +92,11 @@ public final class StatCanDriver implements WebDriver {
                 source, context.getLanguages()
         );
 
-        return new StatCanConnection(source.getName(), cachedClient);
-    }
-
-    @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        return Collections.singleton(SdmxWebSource
-                .builder()
-                .name("STATCAN")
-                .descriptionOf("Statistics Canada")
-                .description("en", "Statistics Canada")
-                .description("fr", "Statistique Canada")
-                .driver(RI_STATCAN)
-                .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
-                .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
-                .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
-                .monitorOf("upptime:/nbbrd/sdmx-upptime/STATCAN")
-                .build());
-    }
-
-    @Override
-    public @NonNull Collection<String> getSupportedProperties() {
-        List<String> result = new ArrayList<>();
-        result.addAll(CONNECTION_PROPERTIES);
-        result.add(CACHE_TTL_PROPERTY.getKey());
-        return result;
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        return NO_DEFAULT_DIALECT;
+        return new StatCanConnection(cachedClient);
     }
 
     @lombok.AllArgsConstructor
     private static final class StatCanConnection implements Connection {
-
-        @lombok.NonNull
-        private final String source;
 
         @lombok.NonNull
         private final StatCanClient client;
@@ -137,11 +109,7 @@ public final class StatCanDriver implements WebDriver {
         @Override
         public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return getFlows()
-                    .stream()
-                    .filter(flowRef::containsRef)
-                    .findFirst()
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(source, flowRef));
+            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
         }
 
         @Override
@@ -150,7 +118,7 @@ public final class StatCanDriver implements WebDriver {
             DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
             return client.getStructAndData(productId)
                     .getStructure(dsdRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(source, dsdRef));
+                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
         }
 
         private Optional<DataSet> getDataSet(DataflowRef ref) throws IOException {
@@ -161,14 +129,14 @@ public final class StatCanDriver implements WebDriver {
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(source, flowRef))
+                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
                     .getData(query);
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(source, flowRef))
+                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
                     .getDataStream(query);
         }
 
@@ -183,12 +151,12 @@ public final class StatCanDriver implements WebDriver {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
     }
 
     @VisibleForTesting
-    interface StatCanClient {
+    interface StatCanClient extends HasSourceName {
 
         @NonNull List<Dataflow> getFlows() throws IOException;
 
@@ -201,6 +169,8 @@ public final class StatCanDriver implements WebDriver {
     @lombok.AllArgsConstructor
     static class DefaultStatCanClient implements StatCanClient {
 
+        @lombok.Getter
+        private final String name;
         private final URL endpoint;
         private final LanguagePriorityList langs;
         private final HttpClient client;
@@ -241,7 +211,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.JSON_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return DataTable.parseAll(reader);
                 }
@@ -259,7 +229,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.JSON_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (Reader reader = response.getBodyAsReader()) {
                     return FullTableDownloadSDMX.parseJson(reader);
                 }
@@ -273,7 +243,7 @@ public final class StatCanDriver implements WebDriver {
                     .mediaType(MediaType.ZIP_TYPE)
                     .build();
 
-            try (HttpResponse response = client.requestGET(request)) {
+            try (HttpResponse response = client.send(request)) {
                 try (InputStream stream = response.getBody()) {
                     Path result = Files.createTempFile("fullTable", ".zip");
                     Files.copy(stream, result, StandardCopyOption.REPLACE_EXISTING);
@@ -325,6 +295,11 @@ public final class StatCanDriver implements WebDriver {
         private static TypedId<DataRepository> initIdOfRepo(URI base) {
             return TypedId.of(base, Function.identity(), Function.identity())
                     .with("structAndData");
+        }
+
+        @Override
+        public @NonNull String getName() {
+            return delegate.getName();
         }
 
         @Override
@@ -475,27 +450,35 @@ public final class StatCanDriver implements WebDriver {
         }
 
         private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
-            FileParser<List<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
-                    .andThen(Converter::toSeries);
+            FileParser<Stream<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
+                    .andThen(DataCursor::asCloseableStream);
 
             try {
                 return file.stream()
-                        .parallel()
                         .filter(entry -> !isDataStructure(entry))
+                        .sorted(Comparator.comparingInt(Converter::getRevisionNumber))
                         .map(entry -> asSource(file, entry))
-                        .map(IOFunction.unchecked(parser::parseStream))
-                        .flatMap(List::stream);
+                        .flatMap(IOFunction.unchecked(parser::parseStream))
+                        .collect(Collectors.groupingBy(Series::getKey))
+                        .values()
+                        .stream()
+                        .map(Converter::combineObservations);
             } catch (UncheckedIOException ex) {
                 throw ex.getCause();
             }
         }
 
-        private static List<Series> toSeries(DataCursor cursor) throws IOException {
-            try {
-                return cursor.toStream().collect(Collectors.toList());
-            } finally {
-                cursor.close();
+        private static int getRevisionNumber(ZipEntry entry) {
+            String name = entry.getName();
+            return Integer.parseInt(name.substring(name.indexOf('_') + 1, name.indexOf('.')));
+        }
+
+        private static Series combineObservations(List<Series> list) {
+            Map<LocalDateTime, Obs> result = new LinkedHashMap<>();
+            for (Series series : list) {
+                series.getObs().forEach(obs -> result.put(obs.getPeriod(), obs));
             }
+            return list.get(0).toBuilder().clearObs().obs(result.values()).build();
         }
 
         private static boolean isDataStructure(ZipEntry entry) {

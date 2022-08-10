@@ -1,6 +1,7 @@
 package internal.util.http;
 
 import org.checkerframework.checker.index.qual.NonNegative;
+import sdmxdl.web.URLConnectionFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -38,6 +39,10 @@ public class HttpContext {
     @lombok.NonNull
     @lombok.Builder.Default
     Supplier<HostnameVerifier> hostnameVerifier = HttpsURLConnection::getDefaultHostnameVerifier;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    Supplier<URLConnectionFactory> urlConnectionFactory = URLConnectionFactory::getDefault;
 
     @lombok.NonNull
     @lombok.Builder.Default
