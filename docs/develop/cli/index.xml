@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Command-line tool on sdmx-dl</title>
-    <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/</link>
+    <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/</link>
     <description>Recent content in Command-line tool on sdmx-dl</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="http://nbbrd.github.io/sdmx-dl/docs/develop/cli/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installation</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</guid>
       <description>Requirements Automatic installation Manual installation Zero installation Troubleshooting Requirements sdmx-dl CLI runs on any operating systems that support the Java VM (Virtual Machine) such as Microsoft Windows, Solaris OS, Apple macOS, Ubuntu and other various Linux distributions.
 It requires a Java SE Runtime Environment (JRE) version 8 or later to run on such as OpenJDK. You can download a free, binary distribution of the OpenJDK at one of the following provider: Zulu JDK, Adoptium, Amazon Corretto.</description>
     </item>
     
     <item>
       <title>Configuration</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/</guid>
       <description>sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.
 Properties files Command options Execution properties Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.
 All these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:
@@ -29,10 +29,10 @@ SYSTEM: the installation folder (where the binary is located) GLOBAL: the user p
     
     <item>
       <title>Usage</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/</guid>
       <description>By default, all commands print the result on the standard output.
 Most commands produce RFC4180 compliant CSV content.
 Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:
@@ -42,10 +42,10 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
     
     <item>
       <title>Options</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/options/</guid>
       <description>An option has the following caracteristics:
 it has a name prefixed by two hyphens (e.g. --version). it may have a shortcut prefixed by one hyphen (e.g. -h is a shortcut of --help). it is case-sensitive Shortcuts can be grouped behind one hyphen (e.g. -vh is equivalent to -v -h).
 The options default values are system-independent.
@@ -55,10 +55,10 @@ Name Shortcut Parameter Description --verbose -v - Enable verbose mode.</descrip
     
     <item>
       <title>Data types</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/</guid>
       <description>Common file encoding char string locale datetime The date-time format is ISO-8601.
 number A number is a numeric value.
 Format: depends on the locale and number pattern.
@@ -67,10 +67,10 @@ Note: The number format provider has been changed in JDK9 (see JEP252) so the fo
     
     <item>
       <title>Examples</title>
-      <link>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</link>
+      <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</guid>
+      <guid>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/</guid>
       <description>Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.</description>
     </item>
     
