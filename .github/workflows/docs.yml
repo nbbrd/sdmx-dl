@@ -44,3 +44,37 @@ jobs:
 
       - name: Create summary
         run: echo "Documentation available at ${{ env.DOC_URL }}" >> $GITHUB_STEP_SUMMARY
+
+  index-dir:
+    needs: deploy
+    name: Index GitHub Pages directory
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout pages
+        uses: actions/checkout@v2
+        with:
+          ref: 'gh-pages'
+
+      - uses: actions/cache@v1
+        with:
+          path: /root/.jbang
+          key: $-jbang-$
+          restore-keys: |
+            $-jbang-
+
+      - name: Create index.html
+        uses: jbangdev/jbang-action@v0.97.0
+        with:
+          trust: https://gist.github.com/charphi/
+          script: https://gist.github.com/charphi/f44a24eb35dbd61b9f1d7759f0e561bd
+          scriptargs: -T Documentation docs -o public/index.html -d
+        env:
+          JBANG_REPO: /root/.jbang/repository
+
+      - name: Deploy index.html
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_dir: ./docs
+          keep_files: true
