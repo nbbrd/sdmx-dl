@@ -55,7 +55,7 @@ public class CachedFileClientTest {
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataDetail detail : DataDetail.values()) {
-                DataRef ref = DataRef.of(FLOW_REF, DataQuery.of(key, detail));
+                DataRef ref = DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(detail).build());
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> stream = client.loadData(client.decode(), ref)) {
@@ -80,7 +80,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         FileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, DataQuery.of(key, DataDetail.SERIES_KEYS_ONLY))).close();
+        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(DataDetail.SERIES_KEYS_ONLY).build())).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

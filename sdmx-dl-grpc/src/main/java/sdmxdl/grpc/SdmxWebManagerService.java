@@ -1,22 +1,14 @@
 package sdmxdl.grpc;
 
-import internal.http.curl.CurlHttpURLConnection;
 import io.grpc.stub.StreamObserver;
-import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
-import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.URLConnectionFactory;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.util.stream.Stream;
 
 import static sdmxdl.format.protobuf.ProtobufRepositories.*;
@@ -97,6 +89,10 @@ class SdmxWebManagerService extends SdmxWebManagerGrpc.SdmxWebManagerImplBase {
     }
 
     private sdmxdl.DataQuery getDataQuery(KeyRequest request) {
-        return sdmxdl.DataQuery.of(Key.parse(request.getKey()), sdmxdl.DataDetail.FULL);
+        return sdmxdl.DataQuery
+                .builder()
+                .key(Key.parse(request.getKey()))
+                .detail(sdmxdl.DataDetail.FULL)
+                .build();
     }
 }

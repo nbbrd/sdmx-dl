@@ -94,7 +94,7 @@ public final class BbkDriver implements WebDriver {
 
         private DataRef fixDataRef(DataRef ref, DataStructure dsd) {
             return ref.getQuery().getKey().equals(Key.ALL)
-                    ? DataRef.of(ref.getFlowRef(), DataQuery.of(alternateAllOf(dsd), ref.getQuery().getDetail()))
+                    ? DataRef.of(ref.getFlowRef(), DataQuery.builder().key(alternateAllOf(dsd)).detail(ref.getQuery().getDetail()).build())
                     : ref;
         }
 

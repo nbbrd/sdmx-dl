@@ -180,10 +180,11 @@ public class ProtobufRepositories {
     }
 
     public static sdmxdl.DataQuery toDataQuery(DataQuery value) {
-        return sdmxdl.DataQuery.of(
-                Key.parse(value.getKey()),
-                toDataDetail(value.getDetail())
-        );
+        return sdmxdl.DataQuery
+                .builder()
+                .key(Key.parse(value.getKey()))
+                .detail(toDataDetail(value.getDetail()))
+                .build();
     }
 
     public static DataDetail fromDataDetail(sdmxdl.DataDetail value) {

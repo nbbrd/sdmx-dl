@@ -11,7 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- ![API] Improve code coherence in by replacing `Dataflow#of(...)` with a builder
+- ![API] Improve code coherence by replacing `Dataflow#of(...)` and `DataQuery#of(...)` with builders
 - ![DOC] Enforce https in doc URL
 
 ### Fixed

@@ -360,7 +360,11 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public DataQuery read(Kryo kryo, Input input, Class<? extends DataQuery> type) {
-            return DataQuery.of(kryo.readObject(input, Key.class), kryo.readObject(input, DataDetail.class));
+            return DataQuery
+                    .builder()
+                    .key(kryo.readObject(input, Key.class))
+                    .detail(kryo.readObject(input, DataDetail.class))
+                    .build();
         }
     }
 

@@ -104,7 +104,7 @@ public class CachedRestClientTest {
     public void testGetData() throws IOException {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
             for (DataDetail filter : DataDetail.values()) {
-                DataRef ref = DataRef.of(FLOW_REF, DataQuery.of(key, filter));
+                DataRef ref = DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(filter).build());
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> cursor = client.getData(ref, STRUCT)) {
@@ -134,7 +134,7 @@ public class CachedRestClientTest {
         CachedRestClient client = getClient(ctx);
 
         for (DataDetail filter : new DataDetail[]{DataDetail.SERIES_KEYS_ONLY, DataDetail.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, DataQuery.of(key, filter)), STRUCT).close();
+            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(filter).build()), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);

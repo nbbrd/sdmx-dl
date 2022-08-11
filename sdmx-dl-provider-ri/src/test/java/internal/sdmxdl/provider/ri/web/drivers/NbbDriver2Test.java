@@ -51,7 +51,7 @@ public class NbbDriver2Test {
 
         NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.of(Key.parse("AUD.M"), FULL)), DataStructureRef.parse("abc")))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.builder().key(Key.parse("AUD.M")).detail(FULL).build()), DataStructureRef.parse("abc")))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }
