@@ -38,7 +38,7 @@ public class Connectors {
                 .builder()
                 .ref(DataflowRef.parse(o.getFullIdentifier()))
                 .structureRef(toStructureRef(o.getDsdIdentifier()))
-                .label(o.getDescription())
+                .name(o.getDescription())
                 .build();
     }
 
@@ -103,7 +103,7 @@ public class Connectors {
         result.setId(flow.getRef().getId());
         result.setVersion(flow.getRef().getVersion());
         result.setDsdIdentifier(fromStructureRef(flow.getStructureRef()));
-        result.setName(flow.getLabel());
+        result.setName(flow.getName());
         return result;
     }
 

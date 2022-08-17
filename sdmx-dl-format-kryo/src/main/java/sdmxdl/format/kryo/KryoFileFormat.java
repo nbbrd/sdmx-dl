@@ -264,7 +264,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public void write(Kryo kryo, Output output, Dataflow t) {
             kryo.writeObject(output, t.getRef());
             kryo.writeObject(output, t.getStructureRef());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
             output.writeString(t.getDescription());
         }
 
@@ -274,7 +274,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .builder()
                     .ref(kryo.readObject(input, DataflowRef.class))
                     .structureRef(kryo.readObject(input, DataStructureRef.class))
-                    .label(input.readString())
+                    .name(input.readString())
                     .description(input.readString())
                     .build();
         }

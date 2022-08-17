@@ -33,7 +33,7 @@ enum DataDetail {
 message Dataflow {
   string ref = 1;
   string structureRef = 2;
-  string label = 3;
+  string name = 3;
   string description = 4;
 }
 

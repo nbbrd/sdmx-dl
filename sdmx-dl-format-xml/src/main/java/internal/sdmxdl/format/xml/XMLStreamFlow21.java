@@ -136,7 +136,7 @@ public final class XMLStreamFlow21 {
                 .builder()
                 .ref(flowRef)
                 .structureRef(structRef)
-                .label(flowName.build(id))
+                .name(flowName.build(id))
                 .description(flowDescription.build(""))
                 .build();
     }

@@ -138,6 +138,6 @@ public class DataflowRefTest {
     }
 
     private Dataflow flowOf(DataflowRef ref) {
-        return Dataflow.builder().ref(ref).structureRef(DataStructureRef.parse("")).label("").build();
+        return Dataflow.builder().ref(ref).structureRef(DataStructureRef.parse("")).name("").build();
     }
 }

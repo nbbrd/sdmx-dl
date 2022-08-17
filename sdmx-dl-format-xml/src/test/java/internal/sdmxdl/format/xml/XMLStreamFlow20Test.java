@@ -45,13 +45,13 @@ public class XMLStreamFlow20Test {
                                 .builder()
                                 .ref(DataflowRef.of("IMF", "DS-BOP_2017M06", "1.0"))
                                 .structureRef(DataStructureRef.of("IMF", "BOP_2017M06", null))
-                                .label("Balance of Payments (BOP), 2017 M06")
+                                .name("Balance of Payments (BOP), 2017 M06")
                                 .build(),
                         Dataflow
                                 .builder()
                                 .ref(DataflowRef.of("IMF", "DS-BOP_2020M3", "1.0"))
                                 .structureRef(DataStructureRef.of("IMF", "BOP_2020M3", null))
-                                .label("Balance of Payments (BOP), 2020 M03")
+                                .name("Balance of Payments (BOP), 2020 M03")
                                 .build()
                 );
     }

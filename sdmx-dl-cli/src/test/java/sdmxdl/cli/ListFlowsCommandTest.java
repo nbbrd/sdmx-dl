@@ -43,7 +43,7 @@ public class ListFlowsCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Ref,Label,Description", atIndex(0))
+                .contains("Ref,Name,Description", atIndex(0))
                 .contains("all:data&struct(latest),data,", atIndex(1))
                 .hasSize(2);
     }

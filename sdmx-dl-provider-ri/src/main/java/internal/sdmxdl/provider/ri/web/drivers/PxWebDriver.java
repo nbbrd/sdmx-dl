@@ -448,7 +448,7 @@ public final class PxWebDriver implements WebDriver {
                     .builder()
                     .ref(DataflowRef.of(dbId, id, null))
                     .structureRef(DataStructureRef.of(dbId, id, null))
-                    .label(title)
+                    .name(title)
                     .build();
         }
 

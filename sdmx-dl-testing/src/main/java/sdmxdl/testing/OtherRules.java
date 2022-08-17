@@ -17,7 +17,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlows())
-                    .map(flows -> flows.stream().anyMatch(flow -> isBlank(flow.getLabel())))
+                    .map(flows -> flows.stream().anyMatch(flow -> isBlank(flow.getName())))
                     .orElse(false);
         }
     },
@@ -49,7 +49,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlow())
-                    .map(flow -> isBlank(flow.getLabel()))
+                    .map(flow -> isBlank(flow.getName()))
                     .orElse(false);
         }
     },

@@ -417,7 +417,7 @@ public final class StatCanDriver implements WebDriver {
                     .builder()
                     .ref(toDataflowRef(dataTable.getProductId()))
                     .structureRef(toDataStructureRef(dataTable.getProductId()))
-                    .label("fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn)
+                    .name("fr".equals(langs.lookupTag(asList("en", "fr"))) ? dataTable.cubeTitleFr : dataTable.cubeTitleEn)
                     .build();
         }
 
