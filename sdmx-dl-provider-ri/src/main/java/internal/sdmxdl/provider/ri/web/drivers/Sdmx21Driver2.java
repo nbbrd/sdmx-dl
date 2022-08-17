@@ -257,6 +257,18 @@ public final class Sdmx21Driver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .name("UNICEF")
+                    .descriptionOf("UN International Children's Emergency Fund")
+                    .description("en", "UN International Children's Emergency Fund")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://sdmx.data.unicef.org/ws/public/sdmxapi/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://data.unicef.org/")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/UNICEF")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/unicef")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .name("WB")
                     .descriptionOf("World Bank")
                     .description("en", "World Bank")
