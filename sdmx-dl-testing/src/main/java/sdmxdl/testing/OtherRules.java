@@ -29,6 +29,14 @@ public enum OtherRules {
                     .orElse(false);
         }
     },
+    FLOWS_NO_DESCRIPTION {
+        @Override
+        boolean isInvalid(WebResponse r) {
+            return ofNullable(r.getFlows())
+                    .map(flows -> flows.stream().allMatch(flow -> flow.getDescription().isEmpty()))
+                    .orElse(false);
+        }
+    },
     FLOW_INVALID_REF {
         @Override
         boolean isInvalid(WebResponse r) {

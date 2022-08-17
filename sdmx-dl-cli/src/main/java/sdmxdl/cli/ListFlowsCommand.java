@@ -55,6 +55,7 @@ public final class ListFlowsCommand implements Callable<Void> {
                 .builderOf(Dataflow.class)
                 .columnOf("Ref", Dataflow::getRef, SdmxCsvFields.getDataflowRefFormatter())
                 .columnOf("Label", Dataflow::getLabel, Formatter.onString())
+                .columnOf("Description", Dataflow::getDescription, Formatter.onString())
                 .build();
     }
 

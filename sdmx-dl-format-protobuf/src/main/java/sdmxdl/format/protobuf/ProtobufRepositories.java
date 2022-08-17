@@ -141,6 +141,7 @@ public class ProtobufRepositories {
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
                 .setLabel(value.getLabel())
+                .setDescription(value.getDescription())
                 .build();
     }
 
@@ -150,6 +151,7 @@ public class ProtobufRepositories {
                 .ref(sdmxdl.DataflowRef.parse(value.getRef()))
                 .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
                 .label(value.getLabel())
+                .description(value.getDescription())
                 .build();
     }
 

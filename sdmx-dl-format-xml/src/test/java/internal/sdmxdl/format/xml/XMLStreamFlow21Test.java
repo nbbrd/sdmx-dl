@@ -61,4 +61,27 @@ public class XMLStreamFlow21Test {
                                 .build()
                 );
     }
+
+    @Test
+    public void testDescription() throws IOException {
+        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(LanguagePriorityList.ANY)::parse);
+
+        assertThat(p.parseResource(XMLStreamMessageFooter21Test.class, "FlowWithDescription.xml"))
+                .containsExactly(
+                        Dataflow
+                                .builder()
+                                .ref(DataflowRef.of("CD2030", "CD2030", "1.0"))
+                                .structureRef(DataStructureRef.of("CD2030", "CD2030", "1.0"))
+                                .label("Coundown 2030")
+                                .description("This dataset is used to support the downolad of the CD2030 data")
+                                .build(),
+                        Dataflow
+                                .builder()
+                                .ref(DataflowRef.of("EAPRO", "DF_EAPRO_CROSS_SECTOR", "1.0"))
+                                .structureRef(DataStructureRef.of("EAPRO", "DSD_EAPRO", "1.0"))
+                                .label("EAPRO Cross Sector Indicators")
+                                .description("A dataflow based on a subset of the global cross-sector indicators.")
+                                .build()
+                );
+    }
 }

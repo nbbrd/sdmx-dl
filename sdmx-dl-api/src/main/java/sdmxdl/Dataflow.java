@@ -16,6 +16,9 @@
  */
 package sdmxdl;
 
+import lombok.Builder;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * @author Philippe Charles
  */
@@ -31,8 +34,15 @@ public class Dataflow extends Resource<DataflowRef> {
     DataStructureRef structureRef;
 
     /**
-     * Localized label for this data flow.
+     * Human-readable name.
      */
     @lombok.NonNull
     String label;
+
+    /**
+     * Optional longer human-readable description.
+     */
+    @lombok.NonNull
+    @lombok.Builder.Default
+    String description = "";
 }

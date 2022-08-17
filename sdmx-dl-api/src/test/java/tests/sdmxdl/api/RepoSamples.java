@@ -38,7 +38,7 @@ public class RepoSamples {
     public static final DataStructureRef STRUCT_REF = DataStructureRef.of("NBB", "goodStruct", "v1.0");
     public static final DataflowRef FLOW_REF = DataflowRef.of("NBB", "XYZ", "v2.0");
 
-    public static final Dataflow FLOW = Dataflow.builder().ref(FLOW_REF).structureRef(STRUCT_REF).label("flow1").build();
+    public static final Dataflow FLOW = Dataflow.builder().ref(FLOW_REF).structureRef(STRUCT_REF).label("flow1 name").description("flow1 description").build();
 
     public static final CodelistRef CL_REF1 = CodelistRef.parse("CL_FREQ");
     public static final CodelistRef CL_REF2 = CodelistRef.parse("CL_REGION");

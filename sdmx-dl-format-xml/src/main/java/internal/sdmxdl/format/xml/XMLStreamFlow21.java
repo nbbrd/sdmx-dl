@@ -41,6 +41,7 @@ public final class XMLStreamFlow21 {
     private static final String DATAFLOWS_TAG = "Dataflows";
     private static final String DATAFLOW_TAG = "Dataflow";
     private static final String NAME_TAG = "Name";
+    private static final String DESCRIPTION_TAG = "Description";
     private static final String STRUCTURE_TAG = "Structure";
     private static final String REF_TAG = "Ref";
 
@@ -50,10 +51,12 @@ public final class XMLStreamFlow21 {
     private static final String LANG_ATTR = "lang";
     private static final String IS_EXTERNAL_REFERENCE_ATTR = "isExternalReference";
 
-    private final TextBuilder flowLabel;
+    private final TextBuilder flowName;
+    private final TextBuilder flowDescription;
 
     public XMLStreamFlow21(LanguagePriorityList languages) {
-        this.flowLabel = new TextBuilder(languages);
+        this.flowName = new TextBuilder(languages);
+        this.flowDescription = new TextBuilder(languages);
     }
 
     @NonNull
@@ -111,11 +114,15 @@ public final class XMLStreamFlow21 {
 
         DataflowRef flowRef = DataflowRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
         DataStructureRef structRef = null;
-        flowLabel.clear();
+        flowName.clear();
+        flowDescription.clear();
         while (nextTags(reader, DATAFLOW_TAG)) {
             switch (reader.getLocalName()) {
                 case NAME_TAG:
-                    parseNameTag(reader, flowLabel);
+                    parseTextWithLangAttr(reader, flowName);
+                    break;
+                case DESCRIPTION_TAG:
+                    parseTextWithLangAttr(reader, flowDescription);
                     break;
                 case STRUCTURE_TAG:
                     structRef = parseStructure(reader);
@@ -125,7 +132,13 @@ public final class XMLStreamFlow21 {
 
         check(structRef != null, reader, "Missing DataStructureRef");
 
-        return Dataflow.builder().ref(flowRef).structureRef(structRef).label(flowLabel.build(id)).build();
+        return Dataflow
+                .builder()
+                .ref(flowRef)
+                .structureRef(structRef)
+                .label(flowName.build(id))
+                .description(flowDescription.build(""))
+                .build();
     }
 
     private DataStructureRef parseStructure(XMLStreamReader reader) throws XMLStreamException {
@@ -142,7 +155,7 @@ public final class XMLStreamFlow21 {
         return DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
     }
 
-    private void parseNameTag(XMLStreamReader reader, TextBuilder langStack) throws XMLStreamException {
+    private void parseTextWithLangAttr(XMLStreamReader reader, TextBuilder langStack) throws XMLStreamException {
         String lang = reader.getAttributeValue(null, LANG_ATTR);
         if (lang != null) {
             langStack.put(lang, reader.getElementText());

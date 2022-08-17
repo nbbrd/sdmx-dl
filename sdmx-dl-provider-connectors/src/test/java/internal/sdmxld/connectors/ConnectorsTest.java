@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
 import sdmxdl.DataStructure;
+import sdmxdl.Dataflow;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.net.HttpURLConnection;
@@ -43,8 +44,10 @@ public class ConnectorsTest {
 
     @Test
     public void testFlow() {
-        assertThat(toFlow(fromFlow(RepoSamples.FLOW)))
-                .isEqualTo(RepoSamples.FLOW);
+        // description field not supported in Connectors
+        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description("").build();
+        assertThat(toFlow(fromFlow(dataflowWithoutDescription)))
+                .isEqualTo(dataflowWithoutDescription);
     }
 
     @Test
@@ -61,6 +64,7 @@ public class ConnectorsTest {
 
     @Test
     public void testAttribute() {
+        // attribute relationship not supported in Connectors
         Attribute notCodedAttributeWithoutRelationship = NOT_CODED_ATTRIBUTE.toBuilder().relationship(AttributeRelationship.UNKNOWN).build();
         assertThat(toAttribute(fromAttribute(notCodedAttributeWithoutRelationship)))
                 .isEqualTo(notCodedAttributeWithoutRelationship);
