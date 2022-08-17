@@ -23,6 +23,24 @@
                 <artifactId>sdmx-dl-api</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-api</artifactId>
@@ -30,16 +48,47 @@
                 <version>${project.version}</version>
                 <classifier>tests</classifier>
                 <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <artifactId>sdmx-dl-cli</artifactId>
-                <groupId>${project.groupId}</groupId>
-                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-util</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-util</artifactId>
@@ -47,26 +96,116 @@
                 <version>${project.version}</version>
                 <classifier>tests</classifier>
                 <type>test-jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-csv</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-kryo</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-protobuf</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-xml</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-format-xml</artifactId>
@@ -74,26 +213,116 @@
                 <version>${project.version}</version>
                 <classifier>tests</classifier>
                 <type>test-jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-provider-connectors</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-provider-ri</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-provider-util</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>sdmx-dl-testing</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-service-util</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.github.nbbrd.java-design-util</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -91,11 +91,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.nbbrd.sdmx-dl</groupId>
-                <artifactId>sdmx-dl-format-protobuf</artifactId>
-                <version>3.0.0-beta.8-SNAPSHOT</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
