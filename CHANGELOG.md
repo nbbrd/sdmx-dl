@@ -21,6 +21,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![BUILD] Fix dependency inheritance in BOM
+
 ## [3.0.0-beta.7] - 2022-08-10
 
 This is the seventh beta release of **sdmx-dl**.   
