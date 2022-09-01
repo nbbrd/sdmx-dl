@@ -10,7 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add field `Dataflow#description` [#287](https://github.com/nbbrd/sdmx-dl/issues/287)
-- ![SOURCE] Add source from UN International Children’s Emergency Fund [#95](https://github.com/nbbrd/sdmx-dl/issues/95)
+- ![SOURCE] Add source from UN International Children's Emergency Fund [#95](https://github.com/nbbrd/sdmx-dl/issues/95)
 
 ### Changed
 
