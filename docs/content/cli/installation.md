@@ -104,12 +104,21 @@ docker run -v `pwd`:/ws --workdir=/ws quay.io/jbangdev/jbang-action sdmx-dl@nbbr
 {{< /tab >}}
 
 {{< tab "GitHub Actions" >}}
-#### <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang GitHub Action</a>
+#### <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang action</a>&nbsp;<a href="https://github.com/nbbrd/jbang-catalog">with catalog</a>
 ```yml
-- name: Print latest stable version of sdmx-dl
-  uses: jbangdev/jbang-action@v0.95.0
+- uses: jbangdev/jbang-action@v0.98.0
   with:
+    trust: https://github.com/nbbrd/jbang-catalog
     script: sdmx-dl@nbbrd
+    scriptargs: "<command> [<args>]"
+```
+<br>
+
+#### <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang action</a>&nbsp;<a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">with Maven coordinate</a>
+```yml
+- uses: jbangdev/jbang-action@v0.98.0
+  with:
+    script: com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin
     scriptargs: "<command> [<args>]"
 ```
 <br>
@@ -117,7 +126,7 @@ docker run -v `pwd`:/ws --workdir=/ws quay.io/jbangdev/jbang-action sdmx-dl@nbbr
 {{< /tab >}}
 
 {{< tab "Maven" >}}
-#### <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a>
+#### <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a>&nbsp;<a href="https://github.com/nbbrd/jbang-catalog">with catalog</a>
 ```xml
 <plugin>
   <groupId>dev.jbang</groupId>
@@ -131,7 +140,35 @@ docker run -v `pwd`:/ws --workdir=/ws quay.io/jbangdev/jbang-action sdmx-dl@nbbr
         <goal>run</goal>
       </goals>
       <configuration>
+        <trusts>
+          <trust>https://github.com/nbbrd/jbang-catalog</trust>
+        </trusts>
         <script>sdmx-dl@nbbrd</script>
+        <args>
+          <arg>...</arg>
+        </args>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+<br>
+
+#### <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a>&nbsp;<a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">with Maven coordinate</a>
+```xml
+<plugin>
+  <groupId>dev.jbang</groupId>
+  <artifactId>jbang-maven-plugin</artifactId>
+  <version>0.0.7</version>
+  <executions>
+    <execution>
+      <id>run</id>
+      <phase>process-resources</phase>
+      <goals>
+        <goal>run</goal>
+      </goals>
+      <configuration>
+        <script>com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin</script>
         <args>
           <arg>...</arg>
         </args>
