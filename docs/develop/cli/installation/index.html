@@ -47,7 +47,7 @@ It requires a Java SE Runtime Environment (JRE) version 8 or later to run on suc
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2022-07-04T14:34:59+02:00"
+      content="2022-09-08T10:04:04+02:00"
     />
 
 
@@ -66,7 +66,7 @@ It requires a Java SE Runtime Environment (JRE) version 8 or later to run on suc
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/",
       "headline": "Installation",
       "description": "Requirements Automatic installation Manual installation Zero installation Troubleshooting Requirements sdmx-dl CLI runs on any operating systems that support the Java VM (Virtual Machine) such as Microsoft Windows, Solaris OS, Apple macOS, Ubuntu and other various Linux distributions.\nIt requires a Java SE Runtime Environment (JRE) version 8 or later to run on such as OpenJDK. You can download a free, binary distribution of the OpenJDK at one of the following provider: Zulu JDK, Adoptium, Amazon Corretto.",
-      "wordCount" : "410",
+      "wordCount" : "451",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ It requires a Java SE Runtime Environment (JRE) version 8 or later to run on suc
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2022-07-04T14:34:59.00Z",
+      "dateModified": "2022-09-08T10:04:04.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1097,17 +1097,30 @@ Each operating system has its own manager. See the list below for specific instr
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
       <div class="gdoc-page__anchorwrap">
-    <h4 id="a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-github-actiona">
-        <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang GitHub Action</a>
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-github-actiona" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang GitHub Action" aria-label="Anchor to: JBang GitHub Action" href="#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-github-actiona">
+    <h4 id="a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga">
+        <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang action</a> <a href="https://github.com/nbbrd/jbang-catalog">with catalog</a>
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang action with catalog" aria-label="Anchor to: JBang action with catalog" href="#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h4>
 </div>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Print latest stable version of sdmx-dl</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">jbangdev/jbang-action@v0.95.0</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl">- <span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">jbangdev/jbang-action@v0.98.0</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">trust</span><span class="p">:</span><span class="w"> </span><span class="l">https://github.com/nbbrd/jbang-catalog</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="l">sdmx-dl@nbbrd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">scriptargs</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&lt;command&gt; [&lt;args&gt;]&#34;</span><span class="w">
+</span></span></span></code></pre></div><br>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea">
+        <a href="https://github.com/marketplace/actions/java-scripting-w-jbang">JBang action</a> <a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">with Maven coordinate</a>
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang action with Maven coordinate" aria-label="Anchor to: JBang action with Maven coordinate" href="#a-hrefhttpsgithubcommarketplaceactionsjava-scripting-w-jbangjbang-actionanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yml" data-lang="yml"><span class="line"><span class="cl">- <span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">jbangdev/jbang-action@v0.98.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="l">com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">scriptargs</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&lt;command&gt; [&lt;args&gt;]&#34;</span><span class="w">
 </span></span></span></code></pre></div><br>
 
@@ -1125,9 +1138,9 @@ Each operating system has its own manager. See the list below for specific instr
     </label>
     <div class="gdoc-markdown--nested gdoc-tabs__content">
       <div class="gdoc-page__anchorwrap">
-    <h4 id="a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-plugina">
-        <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a>
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-plugina" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang Maven plugin" aria-label="Anchor to: JBang Maven plugin" href="#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-plugina">
+    <h4 id="a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga">
+        <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a> <a href="https://github.com/nbbrd/jbang-catalog">with catalog</a>
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang Maven plugin with catalog" aria-label="Anchor to: JBang Maven plugin with catalog" href="#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpsgithubcomnbbrdjbang-catalogwith-cataloga">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h4>
@@ -1144,7 +1157,39 @@ Each operating system has its own manager. See the list below for specific instr
 </span></span><span class="line"><span class="cl">        <span class="nt">&lt;goal&gt;</span>run<span class="nt">&lt;/goal&gt;</span>
 </span></span><span class="line"><span class="cl">      <span class="nt">&lt;/goals&gt;</span>
 </span></span><span class="line"><span class="cl">      <span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;trusts&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;trust&gt;</span>https://github.com/nbbrd/jbang-catalog<span class="nt">&lt;/trust&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/trusts&gt;</span>
 </span></span><span class="line"><span class="cl">        <span class="nt">&lt;script&gt;</span>sdmx-dl@nbbrd<span class="nt">&lt;/script&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;args&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;arg&gt;</span>...<span class="nt">&lt;/arg&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/args&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/configuration&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/execution&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/executions&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/plugin&gt;</span>
+</span></span></code></pre></div><br>
+<div class="gdoc-page__anchorwrap">
+    <h4 id="a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea">
+        <a href="https://github.com/jbangdev/jbang-maven-plugin/">JBang Maven plugin</a> <a href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-cli">with Maven coordinate</a>
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea" class="gdoc-page__anchor clip flex align-center" title="Anchor to: JBang Maven plugin with Maven coordinate" aria-label="Anchor to: JBang Maven plugin with Maven coordinate" href="#a-hrefhttpsgithubcomjbangdevjbang-maven-pluginjbang-maven-pluginanbspa-hrefhttpssearchmavenorgartifactcomgithubnbbrdsdmx-dlsdmx-dl-cliwith-maven-coordinatea">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h4>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;plugin&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;groupId&gt;</span>dev.jbang<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;artifactId&gt;</span>jbang-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;version&gt;</span>0.0.7<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;executions&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;execution&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;id&gt;</span>run<span class="nt">&lt;/id&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;phase&gt;</span>process-resources<span class="nt">&lt;/phase&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;goals&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;goal&gt;</span>run<span class="nt">&lt;/goal&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/goals&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;script&gt;</span>com.github.nbbrd.sdmx-dl:sdmx-dl-cli:RELEASE:bin<span class="nt">&lt;/script&gt;</span>
 </span></span><span class="line"><span class="cl">        <span class="nt">&lt;args&gt;</span>
 </span></span><span class="line"><span class="cl">          <span class="nt">&lt;arg&gt;</span>...<span class="nt">&lt;/arg&gt;</span>
 </span></span><span class="line"><span class="cl">        <span class="nt">&lt;/args&gt;</span>
