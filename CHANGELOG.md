@@ -26,7 +26,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [3.0.0-beta.7] - 2022-08-10
 
 This is the seventh beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 This release reshapes CLI commands, simplifies the network configuration and improves startup time.
 It introduces a new dedicated documentation to replace the wiki.
@@ -75,7 +75,7 @@ A new source is also added alongside the usual bugfixes.
 ## [3.0.0-beta.6] - 2022-04-21
 
 This is the sixth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 This release focuses on API refactoring to allow future improvements.
 It introduces a mechanism that validates the input parameters to give a better feedback in case of error.
@@ -115,7 +115,7 @@ A few sources are also added.
 ## [3.0.0-beta.5] - 2021-11-23
 
 This is the fifth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -160,7 +160,7 @@ that can be used for tests/demos.
 ## [3.0.0-beta.4] - 2021-10-21
 
 This is the fourth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -193,7 +193,7 @@ a [snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapsh
 ## [3.0.0-beta.3] - 2021-09-13
 
 This is the third beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -236,7 +236,7 @@ Finally, sdmx-dl advertises itself on web queries with the user-agent `sdmx-dl/3
 ## [3.0.0-beta.2] - 2021-05-03
 
 This is the second beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -266,7 +266,7 @@ concern [command names, overall structure and output](https://github.com/nbbrd/s
 ## [3.0.0-beta.1] - 2020-09-25
 
 This is the first beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
