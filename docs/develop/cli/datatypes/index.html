@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.103.1" />
+<meta name="generator" content="Hugo 0.104.1" />
 
 
   <meta name="description" content="Common file encoding char string locale datetime The date-time format is ISO-8601.
@@ -948,8 +948,8 @@ Note: The number format provider has been changed in JDK9 (see JEP252) so the fo
   href="https://openjdk.java.net/jeps/252"
   
 >JDK9 (see JEP252)</a> so the formatting might be different when using an old JDK. For example, NaN value (aka &ldquo;not-a-number&rdquo;) is represented by <code>NaN</code> in JDK9+ but was represented by <code>U+FFFD REPLACEMENT CHARACTER</code> in JDK8. Fortunately, the use of the newer provider (<code>CLDR</code>) can be enforced by setting explicitly the system property <code>java.locale.providers</code>:</p>
-<pre tabindex="0"><code class="language-properties" data-lang="properties">java.locale.providers=CLDR
-</code></pre><div class="gdoc-page__anchorwrap">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="na">java.locale.providers</span><span class="o">=</span><span class="s">CLDR</span>
+</span></span></code></pre></div><div class="gdoc-page__anchorwrap">
     <h3 id="url">
         <code>url</code>
         <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/datatypes/#url" class="gdoc-page__anchor clip flex align-center" title="Anchor to: url" aria-label="Anchor to: url" href="#url">

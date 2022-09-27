@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.103.1" />
+<meta name="generator" content="Hugo 0.104.1" />
 
 
   <meta name="description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using several properties files.
@@ -921,17 +921,17 @@ All these files are named <code>sdmx-dl.properties</code> and are located in 3 d
 >command options</a> can be overridden in two ways:</p>
 <ul>
 <li><strong>Widely</strong> by targeting any command using their option names.
-<pre tabindex="0"><code class="language-properties" data-lang="properties"># enable verbose mode on all commands
-verbose=true
-# use UNIX new-line type on all commands
-new-line=UNIX
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># enable verbose mode on all commands</span>
+</span></span><span class="line"><span class="cl"><span class="na">verbose</span><span class="o">=</span><span class="s">true</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># use UNIX new-line type on all commands</span>
+</span></span><span class="line"><span class="cl"><span class="na">new-line</span><span class="o">=</span><span class="s">UNIX</span>
+</span></span></code></pre></div></li>
 <li><strong>Narrowly</strong> by targeting a specific command using their option names prefixed by the command full path.
-<pre tabindex="0"><code class="language-properties" data-lang="properties"># enable verbose mode on status command
-sdmx-dl.check.status.verbose=true
-# use UNIX new-line type on status command
-sdmx-dl.check.status.new-line=UNIX
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># enable verbose mode on status command</span>
+</span></span><span class="line"><span class="cl"><span class="na">sdmx-dl.check.status.verbose</span><span class="o">=</span><span class="s">true</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># use UNIX new-line type on status command</span>
+</span></span><span class="line"><span class="cl"><span class="na">sdmx-dl.check.status.new-line</span><span class="o">=</span><span class="s">UNIX</span>
+</span></span></code></pre></div></li>
 </ul>
 <div class="gdoc-page__anchorwrap">
     <h2 id="execution-properties">
