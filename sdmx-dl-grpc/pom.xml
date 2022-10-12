@@ -20,7 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.grpc.ServiceDemo</project.x.mainClass>
         <protobuf.version>3.21.5</protobuf.version>
-        <grpc.version>1.49.2</grpc.version>
+        <grpc.version>1.50.0</grpc.version>
     </properties>
 
     <dependencyManagement>
