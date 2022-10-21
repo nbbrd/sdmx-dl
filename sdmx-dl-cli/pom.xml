@@ -57,11 +57,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-kryo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -115,6 +110,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-kryo</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-protobuf</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
