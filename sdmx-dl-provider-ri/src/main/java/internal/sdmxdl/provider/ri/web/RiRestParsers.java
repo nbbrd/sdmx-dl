@@ -1,9 +1,9 @@
 package internal.sdmxdl.provider.ri.web;
 
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
+import nbbrd.io.net.MediaType;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.DataCursor;

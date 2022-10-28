@@ -1,15 +1,14 @@
 package internal.sdmxdl.provider.ri.web;
 
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import sdmxdl.*;
-import sdmxdl.format.ObsParser;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.xml.XmlMediaTypes;
+import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.io.IOException;
@@ -22,6 +21,8 @@ import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiRestParsers.getResourceSelector;
 import static java.util.Collections.singletonList;
+import static nbbrd.io.xml.Xml.APPLICATION_XML_UTF_8;
+import static sdmxdl.format.xml.XmlMediaTypes.*;
 
 public class Sdmx21RestParsers implements RiRestParsers {
 
@@ -33,7 +34,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     @Override
     public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs) {
 
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.STRUCTURE_21) || mediaType.isCompatible(MediaType.XML_TYPE)) {
+        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs), mediaType.getCharset());
         }
 
@@ -48,7 +49,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     @Override
     public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataflowRef ref) {
 
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.STRUCTURE_21) || mediaType.isCompatible(MediaType.XML_TYPE)) {
+        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
@@ -63,7 +64,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     @Override
     public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataStructureRef ref) {
 
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.STRUCTURE_21) || mediaType.isCompatible(MediaType.XML_TYPE)) {
+        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
@@ -78,13 +79,13 @@ public class Sdmx21RestParsers implements RiRestParsers {
     @Override
     public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
 
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.GENERIC_DATA_21)) {
+        if (mediaType.isCompatibleWithoutParameters(GENERIC_DATA_21)) {
             return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());
         }
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21)) {
+        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_SPECIFIC_DATA_21)) {
             return withCharset(SdmxXmlStreams.compactData21(dsd, dataFactory), mediaType.getCharset());
         }
-        if (mediaType.isCompatible(MediaType.XML_TYPE)) {
+        if (mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());
         }
 
@@ -99,7 +100,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     @Override
     public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref) {
 
-        if (mediaType.isCompatibleWithoutParameters(XmlMediaTypes.STRUCTURE_21) || mediaType.isCompatible(MediaType.XML_TYPE)) {
+        if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.codelist21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
         }
 
@@ -108,13 +109,13 @@ public class Sdmx21RestParsers implements RiRestParsers {
 
     // NOTE: order matter for GENERIC_XML ! First generic, then compact
     @VisibleForTesting
-    static final List<MediaType> DEFAULT_DATA_TYPES = Arrays.asList(XmlMediaTypes.GENERIC_DATA_21, XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
+    static final List<MediaType> DEFAULT_DATA_TYPES = Arrays.asList(GENERIC_DATA_21, STRUCTURE_SPECIFIC_DATA_21);
 
     @VisibleForTesting
-    static final List<MediaType> DEFAULT_DATAFLOW_TYPES = singletonList(XmlMediaTypes.STRUCTURE_21);
+    static final List<MediaType> DEFAULT_DATAFLOW_TYPES = singletonList(STRUCTURE_21);
 
     @VisibleForTesting
-    static final List<MediaType> DEFAULT_DATASTRUCTURE_TYPES = singletonList(XmlMediaTypes.STRUCTURE_21);
+    static final List<MediaType> DEFAULT_DATASTRUCTURE_TYPES = singletonList(STRUCTURE_21);
 
     @VisibleForTesting
     @lombok.AllArgsConstructor

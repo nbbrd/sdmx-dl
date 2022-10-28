@@ -3,9 +3,9 @@ package internal.sdmxdl.provider.ri.web;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponseException;
 import internal.util.http.ext.DumpingClientTest;
+import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -104,7 +104,7 @@ public class RiRestClientTest {
         return (httpRequest) -> DumpingClientTest.MockedResponse
                 .builder()
                 .body(byteSource::openStream)
-                .mediaType(() -> MediaType.XML_TYPE)
+                .mediaType(() -> Xml.APPLICATION_XML_UTF_8)
                 .build();
     }
 }

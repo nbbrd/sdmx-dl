@@ -10,11 +10,11 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
+import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
@@ -208,7 +208,7 @@ public final class StatCanDriver implements WebDriver {
                             .of(endpoint)
                             .path("getAllCubesListLite")
                             .build())
-                    .mediaType(MediaType.JSON_TYPE)
+                    .mediaType(JSON_TYPE)
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -226,7 +226,7 @@ public final class StatCanDriver implements WebDriver {
                             .path("getFullTableDownloadSDMX")
                             .path(String.valueOf(productId))
                             .build())
-                    .mediaType(MediaType.JSON_TYPE)
+                    .mediaType(JSON_TYPE)
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -240,7 +240,7 @@ public final class StatCanDriver implements WebDriver {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(ref.getObject())
-                    .mediaType(MediaType.ZIP_TYPE)
+                    .mediaType(ZIP_TYPE)
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -490,4 +490,8 @@ public final class StatCanDriver implements WebDriver {
             return () -> file.getInputStream(entry);
         }
     }
+
+    static final MediaType JSON_TYPE = MediaType.builder().type("application").subtype("json").build();
+
+    static final MediaType ZIP_TYPE = MediaType.builder().type("application").subtype("zip").build();
 }

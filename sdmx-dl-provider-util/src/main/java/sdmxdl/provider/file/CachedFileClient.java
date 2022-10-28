@@ -17,10 +17,10 @@
 package sdmxdl.provider.file;
 
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.format.MediaType;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.TypedId;
 

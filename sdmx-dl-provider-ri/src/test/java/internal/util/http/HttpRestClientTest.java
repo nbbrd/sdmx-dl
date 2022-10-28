@@ -22,11 +22,12 @@ import com.github.tomakehurst.wiremock.matching.AbsentPattern;
 import com.github.tomakehurst.wiremock.matching.AnythingPattern;
 import com.github.tomakehurst.wiremock.matching.EqualToPattern;
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
+import nbbrd.io.xml.Xml;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.format.MediaType;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -47,7 +48,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.format.MediaType.XML_TYPE;
 import static sdmxdl.format.xml.XmlMediaTypes.GENERIC_DATA_21;
 import static sdmxdl.format.xml.XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21;
 
@@ -193,7 +193,7 @@ public abstract class HttpRestClientTest {
                 ));
 
         assertThatIOException()
-                .isThrownBy(() -> x.send(HttpRequest.builder().query(wireURL(SAMPLE_URL)).mediaType(XML_TYPE).build()))
+                .isThrownBy(() -> x.send(HttpRequest.builder().query(wireURL(SAMPLE_URL)).mediaType(Xml.APPLICATION_XML_UTF_8).build()))
                 .withMessage("500: " + customErrorMessage)
                 .isInstanceOfSatisfying(HttpResponseException.class, ex -> {
                     assertThat(ex.getResponseCode()).isEqualTo(HttpsURLConnection.HTTP_INTERNAL_ERROR);
@@ -212,7 +212,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("ftp://localhost")).mediaType(XML_TYPE).build()))
+                .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("ftp://localhost")).mediaType(Xml.APPLICATION_XML_UTF_8).build()))
                 .withMessage("Unsupported protocol 'ftp'");
     }
 
@@ -224,7 +224,7 @@ public abstract class HttpRestClientTest {
         HttpClient x = getRestClient(context);
 
         assertThatIOException()
-                .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("http://localhoooooost")).mediaType(XML_TYPE).build()))
+                .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("http://localhoooooost")).mediaType(Xml.APPLICATION_XML_UTF_8).build()))
                 .isInstanceOf(UnknownHostException.class)
                 .withMessage("localhoooooost");
     }
@@ -530,7 +530,7 @@ public abstract class HttpRestClientTest {
     }
 
     protected void assertSameSampleContent(HttpResponse response) throws IOException {
-        assertThat(response.getContentType()).isEqualTo(XML_TYPE);
+        assertThat(response.getContentType()).isEqualTo(Xml.APPLICATION_XML_UTF_8.withoutParameters());
         try (InputStream stream = response.getBody()) {
             assertThat(stream).hasContent(SAMPLE_XML);
         }

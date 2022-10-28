@@ -1,9 +1,9 @@
 package _test.sdmxdl.util;
 
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import sdmxdl.DataRepository;
 import sdmxdl.Series;
-import sdmxdl.format.MediaType;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;

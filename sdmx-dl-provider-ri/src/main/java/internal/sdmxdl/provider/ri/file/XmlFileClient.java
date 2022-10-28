@@ -17,6 +17,7 @@
 package internal.sdmxdl.provider.ri.file;
 
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
@@ -25,7 +26,6 @@ import sdmxdl.SdmxManager;
 import sdmxdl.Series;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.format.xml.SdmxXmlStreams;

@@ -3,8 +3,8 @@ package internal.sdmxdl.provider.ri.web;
 import internal.util.http.HttpEventListener;
 import internal.util.http.HttpRequest;
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.MediaType;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 

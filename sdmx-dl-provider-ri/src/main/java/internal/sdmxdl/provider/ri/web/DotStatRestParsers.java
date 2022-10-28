@@ -1,14 +1,15 @@
 package internal.sdmxdl.provider.ri.web;
 
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
+import nbbrd.io.net.MediaType;
+import nbbrd.io.xml.Xml;
 import sdmxdl.*;
+import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.DataCursor;
-import sdmxdl.format.xml.SdmxXmlStreams;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +21,11 @@ import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
 public class DotStatRestParsers implements RiRestParsers {
 
+    public static final MediaType XML = Xml.APPLICATION_XML_UTF_8.withoutParameters();
+
     @Override
     public @NonNull List<MediaType> getFlowsTypes() {
-        return singletonList(MediaType.XML_TYPE);
+        return singletonList(XML);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class DotStatRestParsers implements RiRestParsers {
 
     @Override
     public @NonNull List<MediaType> getFlowTypes() {
-        return singletonList(MediaType.XML_TYPE);
+        return singletonList(XML);
     }
 
     @Override
