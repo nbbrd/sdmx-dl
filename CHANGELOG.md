@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Improve code coherence by replacing `Dataflow#of(...)` and `DataQuery#of(...)` with builders
 - ![API] Rename field `Dataflow#label` as `Dataflow#name`
+- ![PROVIDER] Modify ISTAT endpoint [#339](https://github.com/nbbrd/sdmx-dl/issues/339)
 - ![CLI] Modify `list/flows` command headers to follow `Dataflow` changes
 - ![DOC] Enforce https in doc URL
 

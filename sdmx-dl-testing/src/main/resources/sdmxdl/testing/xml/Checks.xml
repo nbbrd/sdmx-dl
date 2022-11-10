@@ -87,9 +87,9 @@
         </flow>
     </source>
     <source name="ISTAT" flowCount="388..">
-        <flow ref="12_60" dimCount="3">
+        <flow ref="IT1,92_506_DF_DCCN_PILN_1,1.0" dimCount="6">
             <data digest="ISTAT"
-                  key="A.IT.ACQ_IMM" seriesCount="1.." obsCount="4.."/>
+                  key="A.IT.B1G_B_W2_S1.L_2015.N.2019M9" seriesCount="1.." obsCount="24.."/>
         </flow>
     </source>
     <source name="NB" flowCount="9..">
