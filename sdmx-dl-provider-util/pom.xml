@@ -84,18 +84,5 @@
             <version>2.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.jimfs</groupId>
-            <artifactId>jimfs</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <!-- already included in wiremock-jre8-standalone -->
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 </project>
