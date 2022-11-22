@@ -7,7 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.8] - 2022-11-22
+
 ### Added
+
+This is the eighth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings support of description in data flows. It also updates a few sources alongside the usual bugfixes.
 
 - ![API] Add field `Dataflow#description` [#287](https://github.com/nbbrd/sdmx-dl/issues/287)
 - ![SOURCE] Add source from UN International Children's Emergency Fund [#95](https://github.com/nbbrd/sdmx-dl/issues/95)
@@ -277,7 +284,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...HEAD
+[3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
 [3.0.0-beta.7]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...v3.0.0-beta.7
 [3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
