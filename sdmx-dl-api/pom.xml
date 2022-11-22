@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.8</version>
+        <version>3.0.0-beta.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>sdmx-dl-api</artifactId>
