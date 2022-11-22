@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider;
+package sdmxdl.ext;
 
 import lombok.NonNull;
 import org.checkerframework.checker.index.qual.NonNegative;
