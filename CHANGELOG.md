@@ -9,12 +9,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.0.0-beta.8] - 2022-11-22
 
-### Added
-
 This is the eighth beta release of **sdmx-dl**.  
 sdmx-dl follows [semantic versioning](https://semver.org/).
 
 This release brings support of description in data flows. It also updates a few sources alongside the usual bugfixes.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
+### Added
 
 - ![API] Add field `Dataflow#description` [#287](https://github.com/nbbrd/sdmx-dl/issues/287)
 - ![SOURCE] Add source from UN International Children's Emergency Fund [#95](https://github.com/nbbrd/sdmx-dl/issues/95)
@@ -42,11 +45,12 @@ It introduces a new dedicated documentation to replace the wiki.
 It finalizes the support of SDMX time formats and attribute relationship in the API.
 A new source is also added alongside the usual bugfixes.
 
-> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
 
 ### Added
 
-- ![API] Add URL connection factory in Network 
+- ![API] Add URL connection factory in Network
 - ![API] Add `SdmxWebSource#monitorWebsite` field
 - ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
 - ![API] Add support of attribute relationship [#81](https://github.com/nbbrd/sdmx-dl/issues/81)
@@ -90,13 +94,15 @@ This release focuses on API refactoring to allow future improvements.
 It introduces a mechanism that validates the input parameters to give a better feedback in case of error.
 A few sources are also added.
 
-> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
 
 ### Added
 
 - ![API] Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
 - ![API] Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
-- ![SOURCE] Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
+- ![SOURCE] Add source from El Salvador Labour Market Information
+  System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
 - ![SOURCE] Add source from Statistics Luxembourg [#245](https://github.com/nbbrd/sdmx-dl/issues/245)
 - ![BUILD] Add Maven BOM
 
@@ -285,19 +291,33 @@ production._
 - Initial release
 
 [Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...HEAD
+
 [3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
+
 [3.0.0-beta.7]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...v3.0.0-beta.7
+
 [3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
+
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
+
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
+
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
+
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
+
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
 
 [API]: https://img.shields.io/badge/-API-068C09
+
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
+
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
+
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
+
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
+
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
+
 [DOC]: https://img.shields.io/badge/-DOC-e4e669
