@@ -1,6 +1,6 @@
 package sdmxdl.format.xml;
 
-import sdmxdl.format.MediaType;
+import nbbrd.io.net.MediaType;
 
 /**
  * Represents an SDMX Media Type (also known as a MIME Type or Content Type)

@@ -1,6 +1,5 @@
-package sdmxdl.provider;
+package sdmxdl.ext;
 
-import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
@@ -188,7 +187,7 @@ public class SdmxCubeUtilTest {
         Assertions.assertThat(SdmxCubeUtil.getDimensionIndexById(STRUCT, "SECTOR")).hasValue(2);
     }
 
-    private static List<Series> listOf(IOSupplier<Stream<Series>> supplier) throws IOException {
+    private static List<Series> listOf(SeriesStreamSupplier supplier) throws IOException {
         try (Stream<Series> stream = supplier.getWithIO()) {
             return stream.collect(Collectors.toList());
         }
@@ -200,5 +199,10 @@ public class SdmxCubeUtilTest {
 
     private static Series noMetaNoData(Series series) {
         return series.toBuilder().clearMeta().clearObs().build();
+    }
+
+    @FunctionalInterface
+    private interface SeriesStreamSupplier {
+        Stream<Series> getWithIO() throws IOException;
     }
 }

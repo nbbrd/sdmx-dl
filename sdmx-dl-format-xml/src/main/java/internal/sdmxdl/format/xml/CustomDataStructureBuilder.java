@@ -17,9 +17,9 @@
 package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.xml.XmlMediaTypes;
 
 import java.util.*;

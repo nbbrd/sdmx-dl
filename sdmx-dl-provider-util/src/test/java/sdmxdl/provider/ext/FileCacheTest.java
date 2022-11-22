@@ -16,11 +16,10 @@
  */
 package sdmxdl.provider.ext;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
 import tests.sdmxdl.ext.CacheAssert;
@@ -28,7 +27,7 @@ import tests.sdmxdl.ext.FakeClock;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,71 +47,69 @@ public class FileCacheTest {
     }
 
     @Test
-    public void testGetSet() throws IOException {
-        try (FileSystem fs = Jimfs.newFileSystem(Configuration.unix())) {
-            FakeClock clock = new FakeClock();
-            clock.set(1000);
-            FileFormat<DataRepository> serializer = newFakeFileFormat();
+    public void testGetSet(@TempDir Path temp) throws IOException {
+        FakeClock clock = new FakeClock();
+        clock.set(1000);
+        FileFormat<DataRepository> serializer = newFakeFileFormat();
 
-            FileCache cache = FileCache
-                    .builder()
-                    .root(fs.getPath("/").resolve("testfolder"))
-                    .fileNameGenerator(UnaryOperator.identity())
-                    .repositoryFormat(serializer)
-                    .clock(clock)
-                    .build();
+        FileCache cache = FileCache
+                .builder()
+                .root(temp.resolve("testfolder"))
+                .fileNameGenerator(UnaryOperator.identity())
+                .repositoryFormat(serializer)
+                .clock(clock)
+                .build();
 
-            assertThat(cache.getRoot())
-                    .doesNotExist();
-            assertThat(cache.getRepository("KEY1"))
-                    .as("Empty directory should return null")
-                    .isNull();
+        assertThat(cache.getRoot())
+                .doesNotExist();
+        assertThat(cache.getRepository("KEY1"))
+                .as("Empty directory should return null")
+                .isNull();
 
-            DataRepository r1 = DataRepository
-                    .builder()
-                    .name("r1")
-                    .ttl(clock.instant(), Duration.ofMillis(10))
-                    .build();
-            cache.putRepository("KEY1", r1);
-            assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
-                    .exists()
-                    .hasContent("r1");
+        DataRepository r1 = DataRepository
+                .builder()
+                .name("r1")
+                .ttl(clock.instant(), Duration.ofMillis(10))
+                .build();
+        cache.putRepository("KEY1", r1);
+        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+                .exists()
+                .hasContent("r1");
 
-            assertThat(cache.getRepository("KEY2"))
-                    .as("Non-existing key should return null")
-                    .isNull();
+        assertThat(cache.getRepository("KEY2"))
+                .as("Non-existing key should return null")
+                .isNull();
 
-            clock.plus(9);
-            assertThat(cache.getRepository("KEY1"))
-                    .as("Non-expired key should return value")
-                    .isEqualTo(r1);
+        clock.plus(9);
+        assertThat(cache.getRepository("KEY1"))
+                .as("Non-expired key should return value")
+                .isEqualTo(r1);
 
-            clock.plus(1);
-            assertThat(cache.getRepository("KEY1"))
-                    .as("Expired key should return null")
-                    .isNull();
-            assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
-                    .as("Expired key should be deleted")
-                    .doesNotExist();
+        clock.plus(1);
+        assertThat(cache.getRepository("KEY1"))
+                .as("Expired key should return null")
+                .isNull();
+        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+                .as("Expired key should be deleted")
+                .doesNotExist();
 
-            DataRepository r1b = r1
-                    .toBuilder()
-                    .ttl(clock.instant(), Duration.ofMillis(10))
-                    .build();
-            DataRepository r2 = DataRepository
-                    .builder()
-                    .name("r2")
-                    .ttl(clock.instant(), Duration.ofMillis(10))
-                    .build();
-            cache.putRepository("KEY1", r1b);
-            cache.putRepository("KEY1", r2);
-            assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
-                    .exists()
-                    .hasContent("r2");
-            assertThat(cache.getRepository("KEY1"))
-                    .as("Updated key should return updated value")
-                    .isEqualTo(r2);
-        }
+        DataRepository r1b = r1
+                .toBuilder()
+                .ttl(clock.instant(), Duration.ofMillis(10))
+                .build();
+        DataRepository r2 = DataRepository
+                .builder()
+                .name("r2")
+                .ttl(clock.instant(), Duration.ofMillis(10))
+                .build();
+        cache.putRepository("KEY1", r1b);
+        cache.putRepository("KEY1", r2);
+        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+                .exists()
+                .hasContent("r2");
+        assertThat(cache.getRepository("KEY1"))
+                .as("Updated key should return updated value")
+                .isEqualTo(r2);
     }
 
     private static FileFormat<DataRepository> newFakeFileFormat() {

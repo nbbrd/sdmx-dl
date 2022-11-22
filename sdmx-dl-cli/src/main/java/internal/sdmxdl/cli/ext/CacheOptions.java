@@ -1,8 +1,12 @@
 package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
+import sdmxdl.format.spi.FileFormatProvider;
+import sdmxdl.format.spi.FileFormatProviderLoader;
 
 import java.io.File;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @lombok.Getter
 @lombok.Setter
@@ -30,4 +34,30 @@ public class CacheOptions {
             hidden = true
     )
     private File cacheFolder;
+
+    @CommandLine.Option(
+            names = {"--cache-format"},
+            paramLabel = "<format>",
+            descriptionKey = "cli.cacheFormat",
+            defaultValue = "kryo",
+            converter = FileFormatters.class,
+            hidden = true
+    )
+    private FileFormatProvider cacheFormat = PROVIDERS.stream()
+            .filter(provider -> provider.getName().equals("kryo"))
+            .findFirst()
+            .orElseThrow(NoSuchElementException::new);
+
+    private static final List<FileFormatProvider> PROVIDERS = FileFormatProviderLoader.load();
+
+    private static final class FileFormatters implements CommandLine.ITypeConverter<FileFormatProvider> {
+
+        @Override
+        public FileFormatProvider convert(String value) throws Exception {
+            return PROVIDERS.stream()
+                    .filter(provider -> provider.getName().equals(value))
+                    .findFirst()
+                    .orElseThrow(NoSuchElementException::new);
+        }
+    }
 }

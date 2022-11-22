@@ -63,7 +63,7 @@ public class XmlSourceQuery {
                             .digest(data.getDigest())
                             .source(source.getName())
                             .flowRef(flow.getRef())
-                            .query(DataQuery.of(data.getKey(), DataDetail.FULL))
+                            .query(DataQuery.builder().key(data.getKey()).detail(DataDetail.FULL).build())
                             .flowCount(source.getMinFlowCount())
                             .dimensionCount(flow.getDimensionCount())
                             .seriesCount(data.getMinSeriesCount())

@@ -27,7 +27,6 @@ import picocli.CommandLine;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.kryo.KryoFileFormat;
 import sdmxdl.provider.ext.FileCache;
 import sdmxdl.provider.ext.MapCache;
 import sdmxdl.provider.ext.VerboseCache;
@@ -119,12 +118,12 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static FileFormat<DataRepository> getRepositoryFormat(CacheOptions cacheOptions) {
-        FileFormat<DataRepository> result = FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
+        FileFormat<DataRepository> result = cacheOptions.getCacheFormat().getDataRepositoryFormat();
         return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 
     private static FileFormat<MonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
-        FileFormat<MonitorReports> result = FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
+        FileFormat<MonitorReports> result = cacheOptions.getCacheFormat().getMonitorReportsFormat();
         return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
     }
 

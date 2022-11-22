@@ -78,7 +78,7 @@ public final class FetchExtraCommand implements Callable<Void> {
 
             Function<Series, SeriesMeta> factory = registry.getFactory(manager, web.getSource(), dsd);
 
-            return sort.applySort(conn.getData(web.getFlow(), DataQuery.of(web.getKey(), getDetail())).getData(), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(web.getFlow(), DataQuery.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
                     .map(series -> {
                         SeriesMeta x = factory.apply(series);
                         return new Extra(

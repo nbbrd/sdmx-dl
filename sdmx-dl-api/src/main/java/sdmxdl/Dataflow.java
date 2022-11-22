@@ -19,7 +19,8 @@ package sdmxdl;
 /**
  * @author Philippe Charles
  */
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
 public class Dataflow extends Resource<DataflowRef> {
 
@@ -30,8 +31,15 @@ public class Dataflow extends Resource<DataflowRef> {
     DataStructureRef structureRef;
 
     /**
-     * Localized label for this data flow.
+     * Human-readable name.
      */
     @lombok.NonNull
-    String label;
+    String name;
+
+    /**
+     * Optional longer human-readable description.
+     */
+    @lombok.NonNull
+    @lombok.Builder.Default
+    String description = "";
 }

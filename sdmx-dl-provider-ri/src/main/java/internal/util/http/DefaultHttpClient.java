@@ -19,7 +19,7 @@ package internal.util.http;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
-import sdmxdl.format.MediaType;
+import nbbrd.io.net.MediaType;
 import sdmxdl.web.URLConnectionFactory;
 
 import javax.net.ssl.HttpsURLConnection;

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mes:Structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:mes="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message" xmlns:str="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure" xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common" xsi:schemaLocation="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/message https://registry.sdmx.org/schemas/v2_1/SDMXMessage.xsd">
+    <mes:Header>
+        <mes:ID>IREF920680</mes:ID>
+        <mes:Test>false</mes:Test>
+        <mes:Prepared>2022-08-13T12:01:03Z</mes:Prepared>
+        <mes:Sender id="UNICEF"/>
+        <mes:Receiver id="not_supplied"/>
+    </mes:Header>
+    <mes:Structures>
+        <str:Dataflows>
+            <str:Dataflow urn="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=CD2030:CD2030(1.0)" isExternalReference="false" agencyID="CD2030" id="CD2030" isFinal="false" version="1.0">
+                <com:Name xml:lang="en">Coundown 2030</com:Name>
+                <com:Description xml:lang="en">This dataset is used to support the downolad of the CD2030 data</com:Description>
+                <str:Structure>
+                    <Ref package="datastructure" agencyID="CD2030" id="CD2030" version="1.0" class="DataStructure"/>
+                </str:Structure>
+            </str:Dataflow>
+            <str:Dataflow urn="urn:sdmx:org.sdmx.infomodel.datastructure.Dataflow=EAPRO:DF_EAPRO_CROSS_SECTOR(1.0)" isExternalReference="false" agencyID="EAPRO" id="DF_EAPRO_CROSS_SECTOR" isFinal="false" version="1.0">
+                <com:Name xml:lang="en">EAPRO Cross Sector Indicators</com:Name>
+                <com:Description xml:lang="en">A dataflow based on a subset of the global cross-sector indicators.</com:Description>
+                <str:Structure>
+                    <Ref package="datastructure" agencyID="EAPRO" id="DSD_EAPRO" version="1.0" class="DataStructure"/>
+                </str:Structure>
+            </str:Dataflow>
+        </str:Dataflows>
+    </mes:Structures>
+</mes:Structure>

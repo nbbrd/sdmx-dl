@@ -78,10 +78,11 @@ final class RestConnection implements Connection {
 
         Set<Feature> features = getSupportedFeatures();
 
-        DataQuery realQuery = DataQuery.of(
-                features.contains(Feature.DATA_QUERY_KEY) ? query.getKey() : Key.ALL,
-                features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL
-        );
+        DataQuery realQuery = DataQuery
+                .builder()
+                .key(features.contains(Feature.DATA_QUERY_KEY) ? query.getKey() : Key.ALL)
+                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL)
+                .build();
 
         Stream<Series> result = client.getData(DataRef.of(dataflow.getRef(), realQuery), structure);
 

@@ -4,8 +4,8 @@ import com.google.gson.*;
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponse;
-import sdmxdl.format.MediaType;
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 
 import java.io.IOException;
 import java.io.Reader;

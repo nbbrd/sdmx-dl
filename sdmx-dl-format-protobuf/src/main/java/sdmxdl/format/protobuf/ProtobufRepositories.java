@@ -140,16 +140,19 @@ public class ProtobufRepositories {
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
-                .setLabel(value.getLabel())
+                .setName(value.getName())
+                .setDescription(value.getDescription())
                 .build();
     }
 
     public static sdmxdl.Dataflow toDataflow(Dataflow value) {
-        return sdmxdl.Dataflow.of(
-                sdmxdl.DataflowRef.parse(value.getRef()),
-                sdmxdl.DataStructureRef.parse(value.getStructureRef()),
-                value.getLabel()
-        );
+        return sdmxdl.Dataflow
+                .builder()
+                .ref(sdmxdl.DataflowRef.parse(value.getRef()))
+                .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
+                .name(value.getName())
+                .description(value.getDescription())
+                .build();
     }
 
     public static DataSet fromDataSet(sdmxdl.DataSet value) {
@@ -179,10 +182,11 @@ public class ProtobufRepositories {
     }
 
     public static sdmxdl.DataQuery toDataQuery(DataQuery value) {
-        return sdmxdl.DataQuery.of(
-                Key.parse(value.getKey()),
-                toDataDetail(value.getDetail())
-        );
+        return sdmxdl.DataQuery
+                .builder()
+                .key(Key.parse(value.getKey()))
+                .detail(toDataDetail(value.getDetail()))
+                .build();
     }
 
     public static DataDetail fromDataDetail(sdmxdl.DataDetail value) {

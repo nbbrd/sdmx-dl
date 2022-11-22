@@ -17,9 +17,9 @@
 package sdmxdl.format.xml;
 
 import internal.sdmxdl.format.xml.XMLStreamUtil;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import sdmxdl.format.MediaType;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

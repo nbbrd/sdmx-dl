@@ -96,7 +96,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(Connection conn, WebKeyOptions web) throws IOException {
-        DataQuery query = DataQuery.of(web.getKey(), getDetail());
+        DataQuery query = DataQuery.builder().key(web.getKey()).detail(getDetail()).build();
         try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
             return stream
                     .sorted(WebFlowOptions.SERIES_BY_KEY)

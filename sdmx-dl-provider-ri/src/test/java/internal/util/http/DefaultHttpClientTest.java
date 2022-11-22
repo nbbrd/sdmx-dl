@@ -1,7 +1,7 @@
 package internal.util.http;
 
+import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.web.URLConnectionFactory;
 
@@ -13,7 +13,6 @@ import java.util.function.Supplier;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 

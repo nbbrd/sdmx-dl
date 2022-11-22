@@ -5,7 +5,7 @@ import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.Resource;
-import sdmxdl.format.MediaType;
+import nbbrd.io.net.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;

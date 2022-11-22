@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.7</version>
+        <version>3.0.0-beta.8</version>
     </parent>
 
     <artifactId>sdmx-dl-format-protobuf</artifactId>
@@ -16,6 +16,10 @@
     <name>sdmx-dl-format-protobuf</name>
     <description>Download SDMX data - Protocol Buffers</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
+
+    <properties>
+        <protobuf.version>3.21.9</protobuf.version>
+    </properties>
 
     <dependencies>
         <!-- compile only -->
@@ -34,6 +38,11 @@
             <artifactId>java-design-processor</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-service-util</groupId>
+            <artifactId>java-service-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- compile and runtime -->
         <dependency>
@@ -44,7 +53,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.21.2</version>
+            <version>${protobuf.version}</version>
         </dependency>
 
         <!-- test only -->
@@ -74,15 +83,12 @@
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.19.2:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.47.0:exe:${os.detected.classifier}</pluginArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>compile</goal>
-                            <goal>compile-custom</goal>
                         </goals>
                     </execution>
                 </executions>

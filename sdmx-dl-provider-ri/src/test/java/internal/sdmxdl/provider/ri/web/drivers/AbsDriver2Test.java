@@ -46,7 +46,7 @@ public class AbsDriver2Test {
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetDataStructure/ABS_REGIONAL_ASGS/ABS");
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("ABS_REGIONAL_ASGS"), DataQuery.of(Key.parse("BANKRUPT_2.AUS.0.A"), DataDetail.FULL)), DataStructureRef.parse("abc")))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("ABS_REGIONAL_ASGS"), DataQuery.builder().key(Key.parse("BANKRUPT_2.AUS.0.A")).detail(DataDetail.FULL).build()), DataStructureRef.parse("abc")))
                 .describedAs("SdmxFix#1")
                 .hasToString("http://stat.data.abs.gov.au/restsdmx/sdmx.ashx/GetData/ABS_REGIONAL_ASGS/BANKRUPT_2.AUS.0.A/ABS?format=compact_v2");
     }

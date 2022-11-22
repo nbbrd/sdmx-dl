@@ -17,10 +17,10 @@
 package sdmxdl.provider.file;
 
 import lombok.NonNull;
+import nbbrd.io.net.MediaType;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.format.MediaType;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.TypedId;
 
@@ -101,7 +101,7 @@ public final class CachedFileClient implements FileClient {
     }
 
     private DataSet copyAllNoData(FileInfo entry, DataflowRef flowRef) throws IOException {
-        DataRef ref = DataRef.of(flowRef, DataQuery.of(Key.ALL, DataDetail.NO_DATA));
+        DataRef ref = DataRef.of(flowRef, DataQuery.builder().key(Key.ALL).detail(DataDetail.NO_DATA).build());
         try (Stream<Series> stream = delegate.loadData(entry, ref)) {
             return stream.collect(toDataSet(ref.getFlowRef(), ref.getQuery()));
         }

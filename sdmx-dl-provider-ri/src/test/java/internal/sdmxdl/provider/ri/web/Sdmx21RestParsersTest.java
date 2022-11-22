@@ -1,11 +1,11 @@
 package internal.sdmxdl.provider.ri.web;
 
 import nbbrd.io.FileParser;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
@@ -22,10 +22,10 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.*;
+import static nbbrd.io.net.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.format.MediaType.ANY_TYPE;
 
 public class Sdmx21RestParsersTest {
 

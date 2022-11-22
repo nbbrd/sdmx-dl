@@ -4,10 +4,11 @@ import lombok.NonNull;
 
 import java.util.stream.Stream;
 
-@lombok.Value(staticConstructor = "of")
+@lombok.Value
+@lombok.Builder(toBuilder = true)
 public class DataQuery {
 
-    public static final DataQuery ALL = DataQuery.of(Key.ALL, DataDetail.FULL);
+    public static final DataQuery ALL = DataQuery.builder().key(Key.ALL).detail(DataDetail.FULL).build();
 
     @lombok.NonNull
     Key key;

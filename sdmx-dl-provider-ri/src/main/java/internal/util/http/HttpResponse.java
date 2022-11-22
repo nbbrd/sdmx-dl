@@ -1,7 +1,7 @@
 package internal.util.http;
 
 import lombok.NonNull;
-import sdmxdl.format.MediaType;
+import nbbrd.io.net.MediaType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

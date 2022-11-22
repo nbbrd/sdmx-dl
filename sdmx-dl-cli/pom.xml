@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.7</version>
+        <version>3.0.0-beta.8</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
@@ -57,11 +57,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-kryo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -92,7 +87,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>7.4.5</version>
+            <version>7.4.8</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -103,18 +98,30 @@
         <dependency>
             <groupId>com.github.nbbrd.java-console-properties</groupId>
             <artifactId>java-console-properties</artifactId>
-            <version>1.3.4</version>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.30</version>
+            <version>1.33</version>
         </dependency>
 
         <!-- runtime only -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-kryo</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-protobuf</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
@@ -160,7 +167,7 @@
         <dependency>
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
-            <version>1.7.1</version>
+            <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -241,10 +248,27 @@
             <id>full-release</id>
             <build>
                 <plugins>
+                    <!-- Extract changelog for release -->
+                    <plugin>
+                        <groupId>com.github.nbbrd.heylogs</groupId>
+                        <artifactId>heylogs-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>extract-changelog</id>
+                                <goals>
+                                    <goal>extract</goal>
+                                </goals>
+                                <configuration>
+                                    <inputFile>${project.parent.basedir}/CHANGELOG.md</inputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Release assets -->
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>1.1.0</version>
+                        <version>1.3.1</version>
                         <executions>
                             <execution>
                                 <phase>install</phase>
@@ -258,11 +282,10 @@
                                 <release>
                                     <github>
                                         <skipTag>true</skipTag>
-                                        <draft>true</draft>
                                         <!-- Fix default value -->
                                         <branch>master</branch>
                                         <changelog>
-                                            <external>${project.basedir}/../CHANGELOG.md</external>
+                                            <external>${project.build.directory}/CHANGELOG.md</external>
                                         </changelog>
                                     </github>
                                 </release>

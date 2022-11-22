@@ -4,7 +4,7 @@ import internal.util.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;
-import sdmxdl.format.MediaType;
+import nbbrd.io.net.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;

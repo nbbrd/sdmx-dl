@@ -12,6 +12,7 @@ import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.io.text.TextParser;
@@ -20,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
@@ -444,11 +444,12 @@ public final class PxWebDriver implements WebDriver {
         String title;
 
         Dataflow toDataflow(String dbId) {
-            return Dataflow.of(
-                    DataflowRef.of(dbId, id, null),
-                    DataStructureRef.of(dbId, id, null),
-                    title
-            );
+            return Dataflow
+                    .builder()
+                    .ref(DataflowRef.of(dbId, id, null))
+                    .structureRef(DataStructureRef.of(dbId, id, null))
+                    .name(title)
+                    .build();
         }
 
         static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser

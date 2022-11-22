@@ -96,5 +96,5 @@ public class XmlFileClientTest {
     }
 
     public static final SdmxDecoder DECODER = new XmlDecoder(SdmxManager.NO_OP_EVENT_LISTENER);
-    public static final Dataflow DATAFLOW = Dataflow.of(DataflowRef.parse("data"), DataStructureRef.parse("xyz"), "label");
+    public static final Dataflow DATAFLOW = Dataflow.builder().ref(DataflowRef.parse("data")).structureRef(DataStructureRef.parse("xyz")).name("label").build();
 }

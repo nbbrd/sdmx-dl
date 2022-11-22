@@ -11,11 +11,11 @@ jobs:
     env:
       THEME_VERSION: v0.32.3
       DOC_SLUG: ${{ github.ref_name }}
-      DOC_URL: "http://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/docs/${{ github.ref_name }}"
+      DOC_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/docs/${{ github.ref_name }}"
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
@@ -44,3 +44,37 @@ jobs:
 
       - name: Create summary
         run: echo "Documentation available at ${{ env.DOC_URL }}" >> $GITHUB_STEP_SUMMARY
+
+  index-dir:
+    needs: deploy
+    name: Index GitHub Pages directory
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout pages
+        uses: actions/checkout@v3
+        with:
+          ref: 'gh-pages'
+
+      - uses: actions/cache@v3
+        with:
+          path: /root/.jbang
+          key: $-jbang-$
+          restore-keys: |
+            $-jbang-
+
+      - name: Create index.html
+        uses: jbangdev/jbang-action@v0.100.1
+        with:
+          trust: https://gist.github.com/charphi/
+          script: https://gist.github.com/charphi/f44a24eb35dbd61b9f1d7759f0e561bd
+          scriptargs: -T Documentation docs -o public/index.html -d
+        env:
+          JBANG_REPO: /root/.jbang/repository
+
+      - name: Deploy index.html
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_dir: ./docs
+          keep_files: true

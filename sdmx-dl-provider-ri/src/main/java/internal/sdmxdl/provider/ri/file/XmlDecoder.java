@@ -16,12 +16,12 @@
  */
 package internal.sdmxdl.provider.ri.file;
 
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import sdmxdl.DataStructure;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.format.MediaType;
 import sdmxdl.format.xml.*;
 import sdmxdl.provider.file.FileInfo;
 

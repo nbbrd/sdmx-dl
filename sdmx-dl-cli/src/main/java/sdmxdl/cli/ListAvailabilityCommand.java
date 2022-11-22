@@ -23,7 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Connection;
-import sdmxdl.provider.SdmxCubeUtil;
+import sdmxdl.ext.SdmxCubeUtil;
 
 import java.io.IOException;
 import java.util.Comparator;

@@ -7,22 +7,50 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.8] - 2022-11-22
+
+This is the eighth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings support of description in data flows. It also updates a few sources alongside the usual bugfixes.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
+### Added
+
+- ![API] Add field `Dataflow#description` [#287](https://github.com/nbbrd/sdmx-dl/issues/287)
+- ![SOURCE] Add source from UN International Children's Emergency Fund [#95](https://github.com/nbbrd/sdmx-dl/issues/95)
+
+### Changed
+
+- ![API] Improve code coherence by replacing `Dataflow#of(...)` and `DataQuery#of(...)` with builders
+- ![API] Rename field `Dataflow#label` as `Dataflow#name`
+- ![API] Move `SdmxCubeUtil` from provider util to API
+- ![SOURCE] Modify ISTAT endpoint [#339](https://github.com/nbbrd/sdmx-dl/issues/339)
+- ![CLI] Modify `list/flows` command headers to follow `Dataflow` changes
+- ![DOC] Enforce https in doc URL
+
+### Fixed
+
+- ![BUILD] Fix dependency inheritance in BOM
+
 ## [3.0.0-beta.7] - 2022-08-10
 
 This is the seventh beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 This release reshapes CLI commands, simplifies the network configuration and improves startup time.
 It introduces a new dedicated documentation to replace the wiki.
 It finalizes the support of SDMX time formats and attribute relationship in the API.
 A new source is also added alongside the usual bugfixes.
 
-> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
-
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
 
 ### Added
 
-- ![API] Add URL connection factory in Network 
+- ![API] Add URL connection factory in Network
 - ![API] Add `SdmxWebSource#monitorWebsite` field
 - ![API] Add `SdmxWebSource#getDescription(LanguagePriorityList)` method
 - ![API] Add support of attribute relationship [#81](https://github.com/nbbrd/sdmx-dl/issues/81)
@@ -60,19 +88,21 @@ A new source is also added alongside the usual bugfixes.
 ## [3.0.0-beta.6] - 2022-04-21
 
 This is the sixth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 This release focuses on API refactoring to allow future improvements.
 It introduces a mechanism that validates the input parameters to give a better feedback in case of error.
 A few sources are also added.
 
-> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in production!**
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
 
 ### Added
 
 - ![API] Add parameters validity check [#138](https://github.com/nbbrd/sdmx-dl/issues/138)
 - ![API] Add multi-language descriptions in `SdmxWebSource` [#203](https://github.com/nbbrd/sdmx-dl/issues/203)
-- ![SOURCE] Add source from El Salvador Labour Market Information System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
+- ![SOURCE] Add source from El Salvador Labour Market Information
+  System [#202](https://github.com/nbbrd/sdmx-dl/issues/202)
 - ![SOURCE] Add source from Statistics Luxembourg [#245](https://github.com/nbbrd/sdmx-dl/issues/245)
 - ![BUILD] Add Maven BOM
 
@@ -100,7 +130,7 @@ A few sources are also added.
 ## [3.0.0-beta.5] - 2021-11-23
 
 This is the fifth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -145,7 +175,7 @@ that can be used for tests/demos.
 ## [3.0.0-beta.4] - 2021-10-21
 
 This is the fourth beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -178,7 +208,7 @@ a [snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapsh
 ## [3.0.0-beta.3] - 2021-09-13
 
 This is the third beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -221,7 +251,7 @@ Finally, sdmx-dl advertises itself on web queries with the user-agent `sdmx-dl/3
 ## [3.0.0-beta.2] - 2021-05-03
 
 This is the second beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -251,7 +281,7 @@ concern [command names, overall structure and output](https://github.com/nbbrd/s
 ## [3.0.0-beta.1] - 2020-09-25
 
 This is the first beta release of **sdmx-dl**.   
-sdmx-dl follows [semantic versioning](http://semver.org/).
+sdmx-dl follows [semantic versioning](https://semver.org/).
 
 _Note that sdmx-dl is still in heavy development and might change a lot between versions, so you shouldn't use it in
 production._
@@ -260,19 +290,34 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...HEAD
+
+[3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
+
 [3.0.0-beta.7]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...v3.0.0-beta.7
+
 [3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
+
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
+
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
+
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
+
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
+
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
 
 [API]: https://img.shields.io/badge/-API-068C09
+
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
+
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
+
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
+
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
+
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
+
 [DOC]: https://img.shields.io/badge/-DOC-e4e669

@@ -46,7 +46,7 @@ public class WebFlowOptions extends WebSourceOptions {
 
     public DataSet loadSeries(SdmxWebManager manager, Key key, DataDetail detail) throws IOException {
         try (Connection conn = open(manager)) {
-            return conn.getData(getFlow(), DataQuery.of(key, detail));
+            return conn.getData(getFlow(), DataQuery.builder().key(key).detail(detail).build());
         }
     }
 

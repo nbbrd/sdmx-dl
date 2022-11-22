@@ -1,11 +1,9 @@
 package internal.util.http;
 
 import lombok.NonNull;
-import sdmxdl.format.MediaType;
 
 import java.net.Proxy;
 import java.net.URL;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public interface HttpEventListener {

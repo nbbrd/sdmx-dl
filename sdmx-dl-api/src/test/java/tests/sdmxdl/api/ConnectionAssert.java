@@ -98,7 +98,7 @@ public class ConnectionAssert {
     }
 
     private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, DataDetail filter) {
-        DataQuery invalidQuery = DataQuery.of(sample.invalidKey, filter);
+        DataQuery invalidQuery = DataQuery.builder().key(sample.invalidKey).detail(filter).build();
 
         s.assertThatThrownBy(() -> conn.getData(sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -110,7 +110,7 @@ public class ConnectionAssert {
     }
 
     private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, DataDetail filter) throws IOException {
-        DataQuery validQuery = DataQuery.of(sample.validKey, filter);
+        DataQuery validQuery = DataQuery.builder().key(sample.validKey).detail(filter).build();
 
         s.assertThat(conn.getDataStream(sample.validFlow, validQuery))
                 .containsExactlyElementsOf(conn.getData(sample.validFlow, validQuery).getData());
@@ -118,7 +118,7 @@ public class ConnectionAssert {
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, Connection conn) {
         for (DataDetail filter : DataDetail.values()) {
-            DataQuery validQuery = DataQuery.of(sample.validKey, filter);
+            DataQuery validQuery = DataQuery.builder().key(sample.validKey).detail(filter).build();
 
             s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);

@@ -16,15 +16,15 @@
  */
 package sdmxdl.format;
 
+import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static sdmxdl.format.MediaType.ANY_TYPE;
+import static nbbrd.io.net.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.*;
 
 /**

@@ -264,16 +264,19 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public void write(Kryo kryo, Output output, Dataflow t) {
             kryo.writeObject(output, t.getRef());
             kryo.writeObject(output, t.getStructureRef());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
+            output.writeString(t.getDescription());
         }
 
         @Override
         public Dataflow read(Kryo kryo, Input input, Class<? extends Dataflow> type) {
-            return Dataflow.of(
-                    kryo.readObject(input, DataflowRef.class),
-                    kryo.readObject(input, DataStructureRef.class),
-                    input.readString()
-            );
+            return Dataflow
+                    .builder()
+                    .ref(kryo.readObject(input, DataflowRef.class))
+                    .structureRef(kryo.readObject(input, DataStructureRef.class))
+                    .name(input.readString())
+                    .description(input.readString())
+                    .build();
         }
     }
 
@@ -359,7 +362,11 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public DataQuery read(Kryo kryo, Input input, Class<? extends DataQuery> type) {
-            return DataQuery.of(kryo.readObject(input, Key.class), kryo.readObject(input, DataDetail.class));
+            return DataQuery
+                    .builder()
+                    .key(kryo.readObject(input, Key.class))
+                    .detail(kryo.readObject(input, DataDetail.class))
+                    .build();
         }
     }
 
