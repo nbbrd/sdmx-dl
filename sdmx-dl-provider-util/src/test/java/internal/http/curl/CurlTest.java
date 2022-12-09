@@ -14,14 +14,16 @@ import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.TreeMap;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
+import static nbbrd.io.text.TextResource.getResourceAsBufferedReader;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 
 public class CurlTest {
 
@@ -94,13 +96,23 @@ public class CurlTest {
 
         assertThat(new Curl.CurlCommandBuilder().dataBinary(file).build())
                 .containsExactly("curl", "--data-binary", "@" + file);
+
+        assertThat(new Curl.CurlCommandBuilder().location(false).build())
+                .containsExactly("curl");
+
+        assertThat(new Curl.CurlCommandBuilder().location(true).build())
+                .containsExactly("curl", "-L");
+
+        assertThat(new Curl.CurlCommandBuilder().maxRedirs(15).build())
+                .containsExactly("curl", "--max-redirs", "15");
     }
 
     @Test
     public void testCurlHead() throws IOException {
         try (InputStream stream = Resource.getResourceAsStream(CurlTest.class, "curlhead.txt").orElseThrow(IOException::new)) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
                 assertThat(Curl.CurlHead.parseResponse(reader))
+                        .singleElement()
                         .isEqualTo(new Curl.CurlHead(
                                 new Curl.Status(200, "OK"),
                                 new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER) {
@@ -120,6 +132,13 @@ public class CurlTest {
                                 }
                         ));
             }
+        }
+
+        try (BufferedReader reader = getResourceAsBufferedReader(CurlTest.class, "curlhead2.txt", UTF_8).orElseThrow(IOException::new)) {
+            assertThat(Curl.CurlHead.parseResponse(reader))
+                    .hasSize(2)
+                    .satisfies(head -> assertThat(head.getStatus().getCode()).isEqualTo(301), atIndex(0))
+                    .satisfies(head -> assertThat(head.getStatus().getCode()).isEqualTo(200), atIndex(1));
         }
     }
 

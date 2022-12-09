@@ -1,6 +1,7 @@
 package internal.http.curl;
 
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.sys.EndOfProcessException;
@@ -15,22 +16,27 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static internal.http.curl.Curl.*;
+import static java.util.Collections.emptySortedMap;
 
 public final class CurlHttpURLConnection extends HttpURLConnection {
 
+    @StaticFactoryMethod
     public static @NonNull CurlHttpURLConnection of(@NonNull URL url, @NonNull Proxy proxy) throws IOException {
-        return new CurlHttpURLConnection(url, proxy, false, Files.createTempDirectory("curl"));
+        return init(url, proxy, false);
     }
 
+    @VisibleForTesting
+    @StaticFactoryMethod
     public static @NonNull CurlHttpURLConnection insecureForTestOnly(@NonNull URL url, @NonNull Proxy proxy) throws IOException {
-        return new CurlHttpURLConnection(url, proxy, true, Files.createTempDirectory("curl"));
+        return init(url, proxy, true);
+    }
+
+    private static CurlHttpURLConnection init(URL url, Proxy proxy, boolean insecure) throws IOException {
+        return new CurlHttpURLConnection(url, proxy, insecure, Files.createTempDirectory("curl"));
     }
 
     @lombok.NonNull
@@ -127,12 +133,16 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
                 .maxTime(getReadTimeout() / 1000f)
                 .headers(getRequestProperties())
                 .dataBinary(getDoOutput() ? getOutput() : null)
+                .location(getInstanceFollowRedirects())
                 .build();
     }
 
     private CurlHead executeCurlCommand(String[] command) throws IOException {
         try (BufferedReader reader = ProcessReader.newReader(command)) {
-            return CurlHead.parseResponse(reader);
+            LinkedList<CurlHead> curlHeads = CurlHead.parseResponse(reader);
+            return curlHeads.isEmpty()
+                    ? new CurlHead(new Status(-1, null), emptySortedMap())
+                    : curlHeads.getLast();
         } catch (EndOfProcessException ex) {
             switch (ex.getExitValue()) {
                 case CURL_UNSUPPORTED_PROTOCOL:

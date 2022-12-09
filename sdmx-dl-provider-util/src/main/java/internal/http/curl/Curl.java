@@ -41,18 +41,28 @@ class Curl {
         @lombok.NonNull
         SortedMap<String, List<String>> headers;
 
-        public static CurlHead parseResponse(BufferedReader reader) throws IOException {
-            return new CurlHead(
-                    parseStatusLine(reader),
-                    parseHeaders(reader)
-            );
+        public static LinkedList<CurlHead> parseResponse(BufferedReader reader) throws IOException {
+            LinkedList<CurlHead> result = new LinkedList<>();
+            String line = reader.readLine();
+            while (line != null) {
+                Status status = parseStatusLine(line);
+                SortedMap<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                while ((line = reader.readLine()) != null && !line.isEmpty()) {
+                    parseHeaders(line, headers);
+                }
+                if (line != null) {
+                    // flush empty line
+                    line = reader.readLine();
+                }
+                result.add(new CurlHead(status, Collections.unmodifiableSortedMap(headers)));
+            }
+            return result;
         }
 
         private static char SP = 32;
 
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#status_line
-        private static Status parseStatusLine(BufferedReader reader) throws IOException {
-            String statusLine = reader.readLine();
+        private static Status parseStatusLine(String statusLine) throws IOException {
             if (statusLine == null) {
                 return new Status(-1, null);
             }
@@ -69,20 +79,15 @@ class Curl {
         }
 
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages#headers_2
-        private static SortedMap<String, List<String>> parseHeaders(BufferedReader reader) throws IOException {
-            SortedMap<String, List<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            String line;
-            while ((line = reader.readLine()) != null && !line.isEmpty()) {
-                int index = line.indexOf(":");
-                if (index != -1) {
-                    String key = line.substring(0, index);
-                    String value = line.substring(index + 1).trim();
-                    if (!value.isEmpty()) {
-                        result.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
-                    }
+        private static void parseHeaders(String line, SortedMap<String, List<String>> result) throws IOException {
+            int index = line.indexOf(":");
+            if (index != -1) {
+                String key = line.substring(0, index);
+                String value = line.substring(index + 1).trim();
+                if (!value.isEmpty()) {
+                    result.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
                 }
             }
-            return Collections.unmodifiableSortedMap(result);
         }
 
         public static final class Builder {
@@ -197,6 +202,14 @@ class Curl {
 
         public CurlCommandBuilder dataBinary(@Nullable Path data) {
             return data != null ? push("--data-binary").push("@" + data) : this;
+        }
+
+        public CurlCommandBuilder location(boolean location) {
+            return location ? push("-L") : this;
+        }
+
+        public CurlCommandBuilder maxRedirs(int maxRedirs) {
+            return push("--max-redirs").push(Integer.toString(maxRedirs));
         }
 
         public String[] build() {

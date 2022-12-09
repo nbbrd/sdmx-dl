@@ -9,16 +9,17 @@ import nbbrd.io.sys.ProcessReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import wiremock.com.google.common.io.ByteSink;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.net.HttpURLConnection.*;
 import static java.net.Proxy.NO_PROXY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
@@ -47,6 +48,7 @@ public class CurlHttpURLConnectionTest {
         conn.setReadTimeout(3000);
         conn.setRequestProperty("Content-Type", "text/html; charset=ISO-8859-1");
         conn.setRequestProperty("P3P", "CP=\"This is not a P3P policy! See g.co/p3phelp for more info.");
+        conn.setInstanceFollowRedirects(false);
         String[] command = conn.createCurlCommand();
         if (conn.isSchannel()) {
             assertThat(command)
@@ -103,6 +105,7 @@ public class CurlHttpURLConnectionTest {
 
         try (BufferedReader reader = new BufferedReader(new StringReader(content))) {
             assertThat(Curl.CurlHead.parseResponse(reader))
+                    .singleElement()
                     .satisfies(head -> {
                         assertThat(head.getStatus())
                                 .isEqualTo(new Curl.Status(500, customErrorMessage));
@@ -166,6 +169,32 @@ public class CurlHttpURLConnectionTest {
                 .doesNotThrowAnyException();
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {HTTP_MOVED_PERM, HTTP_MOVED_TEMP, HTTP_SEE_OTHER, 307, 308})
+    public void testSetInstanceFollowRedirects(int redirection) throws IOException {
+        String absoluteSecondURL = wireURL(SECOND_URL).toString();
+
+        for (String location : asList(absoluteSecondURL, SECOND_URL)) {
+            for (boolean followRedirects : new boolean[]{true, false}) {
+                wire.resetAll();
+                wire.stubFor(get(SAMPLE_URL).willReturn(aResponse().withStatus(redirection).withHeader(HTTP_LOCATION_HEADER, location)));
+                wire.stubFor(get(SECOND_URL).willReturn(okXml(SAMPLE_XML)));
+
+                HttpURLConnection x = CurlHttpURLConnection.insecureForTestOnly(wireURL(SAMPLE_URL), NO_PROXY);
+                x.setInstanceFollowRedirects(followRedirects);
+                x.setRequestProperty(HTTP_CONTENT_TYPE_HEADER, "application/xml");
+                x.connect();
+                if (followRedirects) {
+                    assertSameSampleContent(x);
+                }
+                x.disconnect();
+
+                wire.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(SAMPLE_URL)));
+                wire.verify(followRedirects ? 1 : 0, WireMock.getRequestedFor(WireMock.urlEqualTo(SECOND_URL)));
+            }
+        }
+    }
+
     private URL wireURL(String path) throws MalformedURLException {
         if (!path.startsWith("/")) {
             path = "/" + path;
@@ -174,6 +203,17 @@ public class CurlHttpURLConnectionTest {
     }
 
     private static final String SAMPLE_URL = "/first.xml";
+    protected static final String SECOND_URL = "/second.xml";
+    protected static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";
+    private static final String HTTP_LOCATION_HEADER = "Location";
+    private static final String HTTP_CONTENT_TYPE_HEADER = "Content-Type";
+
+    protected void assertSameSampleContent(HttpURLConnection response) throws IOException {
+        assertThat(response.getContentType()).isEqualTo("application/xml");
+        try (InputStream stream = response.getInputStream()) {
+            assertThat(stream).hasContent(SAMPLE_XML);
+        }
+    }
 
     private static ByteSink asByteSink(IOSupplier<OutputStream> target) {
         return new ByteSink() {
