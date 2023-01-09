@@ -23,7 +23,6 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
-import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
@@ -37,6 +36,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.DataSet.toDataSet;
@@ -49,7 +49,7 @@ public class ConnectorsResource {
 
     @NonNull
     public DataRepository nbb() throws IOException {
-        LanguagePriorityList l = LanguagePriorityList.parse("fr");
+        List<Locale.LanguageRange> l = Locale.LanguageRange.parse("fr");
 
         List<DataFlowStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
         List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
@@ -72,7 +72,7 @@ public class ConnectorsResource {
 
     @NonNull
     public DataRepository ecb() throws IOException {
-        LanguagePriorityList l = LanguagePriorityList.parse("fr");
+        List<Locale.LanguageRange> l = Locale.LanguageRange.parse("fr");
 
         List<DataFlowStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
         List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
@@ -97,17 +97,17 @@ public class ConnectorsResource {
         return flows.stream().map(o -> Connectors.toFlow(o).getRef()).findFirst().orElseThrow(RuntimeException::new);
     }
 
-    private List<DataFlowStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<DataFlowStructure> struct20(ByteSource xml, List<Locale.LanguageRange> l) throws IOException {
         return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v20.DataStructureParser());
     }
 
-    private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow20(ByteSource xml, List<Locale.LanguageRange> l) throws IOException {
         return struct20(xml, l).stream()
                 .map(ConnectorsResource::asDataflow)
                 .collect(toList());
     }
 
-    private List<PortableTimeSeries<Double>> data20(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    private List<PortableTimeSeries<Double>> data20(ByteSource xml, DataFlowStructure dsd, List<Locale.LanguageRange> l) throws IOException {
         // No connectors impl
         return FacadeResource.data20(xml, Connectors.toStructure(dsd))
                 .stream()
@@ -115,15 +115,15 @@ public class ConnectorsResource {
                 .collect(toList());
     }
 
-    public List<DataFlowStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    public List<DataFlowStructure> struct21(ByteSource xml, List<Locale.LanguageRange> l) throws IOException {
         return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataStructureParser());
     }
 
-    private List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow21(ByteSource xml, List<Locale.LanguageRange> l) throws IOException {
         return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.DataflowParser());
     }
 
-    public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, LanguagePriorityList l) throws IOException {
+    public List<PortableTimeSeries<Double>> data21(ByteSource xml, DataFlowStructure dsd, List<Locale.LanguageRange> l) throws IOException {
         return parseXml(xml, l, new it.bancaditalia.oss.sdmx.parser.v21.GenericDataParser(dsd, null, true));
     }
 
@@ -152,16 +152,16 @@ public class ConnectorsResource {
     }
 
     private Dataflow asDataflow(DataFlowStructure o) {
-        Dataflow result = new Dataflow();
-        result.setAgency(o.getAgency());
-        result.setDsdIdentifier(new DSDIdentifier(o.getId(), o.getAgency(), o.getVersion()));
-        result.setId(o.getId());
+        Dataflow result = new Dataflow(
+                o.getId(),
+                o.getAgency(),
+                o.getVersion());
+        result.setDsdIdentifier(new SDMXReference(o.getId(), o.getAgency(), o.getVersion()));
         result.setName(o.getName());
-        result.setVersion(o.getVersion());
         return result;
     }
 
-    private <T> T parseXml(ByteSource xml, LanguagePriorityList l, Parser<T> parser) throws IOException {
+    private <T> T parseXml(ByteSource xml, List<Locale.LanguageRange> l, Parser<T> parser) throws IOException {
         XMLEventReader r = null;
         try {
             r = XIF.createXMLEventReader(xml.openReader());

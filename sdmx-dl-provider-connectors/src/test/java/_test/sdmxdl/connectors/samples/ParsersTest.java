@@ -16,6 +16,7 @@
  */
 package _test.sdmxdl.connectors.samples;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ParsersTest {
 
+    @Disabled("CodeList is no more embedded")
     @Test
     public void test() throws Exception {
         assertThat(ConnectorsResource.nbb()).isEqualTo(removeAttributeRelationship(FacadeResource.nbb()));

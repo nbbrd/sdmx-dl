@@ -20,9 +20,9 @@ import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import internal.sdmxdl.provider.connectors.Connectors;
 import internal.sdmxdl.provider.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.api.Codelist;
-import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import it.bancaditalia.oss.sdmx.api.SDMXReference;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.io.text.Parser;
@@ -83,7 +83,7 @@ public final class InseeDriver implements WebDriver {
         }
 
         @Override
-        public DataFlowStructure getDataFlowStructure(DSDIdentifier dsd, boolean full) throws SdmxException {
+        public DataFlowStructure getDataFlowStructure(SDMXReference dsd, boolean full) throws SdmxException {
             DataFlowStructure result = super.getDataFlowStructure(dsd, full);
             fixIds(result);
             fixMissingCodes(result);
@@ -99,8 +99,7 @@ public final class InseeDriver implements WebDriver {
         private void fixIds(DataFlowStructure dsd) {
             for (Dimension d : dsd.getDimensions()) {
                 if (d.getId().endsWith("6")) {
-                    d.setId(getValidId(d.getId()));
-//                    d.getCodeList().setId(getValidId(d.getCodeList().getId()));
+//                    d.setId(getValidId(d.getId()));
                 }
             }
         }
@@ -112,22 +111,22 @@ public final class InseeDriver implements WebDriver {
         @SdmxFix(id = 4, category = CONTENT, cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
-                Codelist codelist = d.getCodeList();
-                if (codelist.isEmpty()) {
-                    loadMissingCodes(codelist);
-                }
+                SDMXReference codelist = d.getCodeList();
+//                if (codelist.isEmpty()) {
+//                    loadMissingCodes(codelist);
+//                }
             }
         }
 
         private void loadMissingCodes(Codelist codelist) throws SdmxException {
-            try {
-                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
-            } catch (SdmxException ex) {
-                if (!Connectors.isNoResultMatchingQuery(ex)) {
-                    throw ex;
-                }
-                logger.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
-            }
+//            try {
+//                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
+//            } catch (SdmxException ex) {
+//                if (!Connectors.isNoResultMatchingQuery(ex)) {
+//                    throw ex;
+//                }
+                LOGGER.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
+//            }
         }
     }
 

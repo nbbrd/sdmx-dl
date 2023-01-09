@@ -12,7 +12,6 @@ module sdmxdl.provider.connectors {
     requires transitive sdmxdl.api;
 
     provides sdmxdl.web.spi.WebDriver with
-            internal.sdmxdl.provider.connectors.drivers.AbsDriver,
             internal.sdmxdl.provider.connectors.drivers.EurostatDriver,
             internal.sdmxdl.provider.connectors.drivers.ImfDriver,
             internal.sdmxdl.provider.connectors.drivers.InseeDriver,

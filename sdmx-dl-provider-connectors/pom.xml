@@ -16,21 +16,6 @@
     <description>Download SDMX data - Connectors</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
-    <properties>
-        <!-- dependencies -->
-        <sdmx-connectors.version>cd3d352ff5fb3712cbde9775adf9d153d7fac3c9</sdmx-connectors.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.github.amattioc</groupId>
-                <artifactId>SDMX</artifactId>
-                <version>${sdmx-connectors.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -61,8 +46,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.amattioc</groupId>
-            <artifactId>SDMX</artifactId>
+            <groupId>it.bancaditalia.oss</groupId>
+            <artifactId>sdmx</artifactId>
+            <version>3.0.3</version>
         </dependency>
 
         <!-- test only -->
@@ -93,25 +79,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!-- Custom repositories: order matters! -->
-    <repositories>
-        <!-- 1. Main -->
-        <repository>
-            <id>central</id>
-            <name>Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <!-- 2. Connectors artifact for a specific commit -->
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

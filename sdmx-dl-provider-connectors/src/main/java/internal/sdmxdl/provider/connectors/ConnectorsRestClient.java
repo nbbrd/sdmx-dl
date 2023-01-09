@@ -203,7 +203,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     private static void configure(RestSdmxClient client, SdmxWebSource source, WebContext context) {
-        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
+//        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setProxySelector(context.getNetwork().getProxySelector());

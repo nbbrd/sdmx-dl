@@ -21,7 +21,6 @@ import internal.sdmxdl.provider.connectors.Connectors;
 import internal.sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
-import it.bancaditalia.oss.sdmx.util.LanguagePriorityList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Key;
@@ -33,6 +32,7 @@ import tests.sdmxdl.format.xml.SdmxXmlSources;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,7 +46,7 @@ public class PortableTimeSeriesCursorTest {
 
     @BeforeAll
     public static void beforeClass() throws IOException {
-        LanguagePriorityList l = LanguagePriorityList.parse("en");
+        List<Locale.LanguageRange> l = Locale.LanguageRange.parse("en");
         DSD = ConnectorsResource.struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l).get(0);
         DATA = ConnectorsResource.data21(SdmxXmlSources.ECB_DATA, DSD, l);
     }
