@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      THEME_VERSION: v0.37.1
       DOC_SLUG: ${{ github.ref_name }}
       DOC_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/docs/${{ github.ref_name }}"
 
@@ -20,15 +19,20 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Setup docs with Maven
+        run: mvn -B -ntp install -DskipTests -P setup-docs
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
-
-      - name: Download theme
-        run: |
-          mkdir -p docs/themes/hugo-geekdoc/
-          curl -sSL https://github.com/thegeeklab/hugo-geekdoc/releases/download/${{ env.THEME_VERSION }}/hugo-geekdoc.tar.gz | tar -xz -C docs/themes/hugo-geekdoc/ --strip-components=1
 
       - name: Build pages
         run: |
