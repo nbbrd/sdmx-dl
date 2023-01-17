@@ -201,7 +201,7 @@ public final class RngDriver implements WebDriver {
         }
 
         private double getValue(int series, long startTimeMillis, Random random) {
-            return Math.round(Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(random.nextDouble()) + Math.tan(random.nextDouble())))) - 50);
+            return (Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(random.nextDouble()) + Math.tan(random.nextDouble())))) - 50);
         }
 
         @lombok.AllArgsConstructor
