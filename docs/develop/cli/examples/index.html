@@ -45,7 +45,7 @@
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2022-06-24T15:47:34+02:00"
+      content="2023-01-17T10:26:50+01:00"
     />
 
 
@@ -63,7 +63,7 @@
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/examples/",
       "headline": "Examples",
       "description": "Download monthly (M) exchange rates (EXR) of Swiss franc (CHF) from the European Central Bank (ECB) sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A Same as 1 with saving into a file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv Same as 1 with saving into a compressed file sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o filename.csv.gz -z Same as 1 with displaying as human-readable table (PowerShell example) sdmx-dl fetch data ECB EXR M.",
-      "wordCount" : "225",
+      "wordCount" : "266",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -74,7 +74,7 @@
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2022-06-24T15:47:34.00Z",
+      "dateModified": "2023-01-17T10:26:50.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -922,6 +922,28 @@
 </span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-01-01T00:00:00  1.605495
 </span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-02-01T00:00:00  1.59785
 </span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-03-01T00:00:00  1.595430434782609
+</span></span></code></pre></div>
+  </div>
+</div>
+</li>
+<li>Same as 1 with displaying as human-readable table (<a
+  class="gdoc-markdown__link"
+  href="https://miller.readthedocs.io/en/latest/"
+  
+>Miller</a> example)
+<pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://miller.readthedocs.io/en/latest/10min/">mlr --c2p head -n 3</a> </b></pre>
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="799ed7f3-6">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="799ed7f3-6" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">Series           ObsAttributes           ObsPeriod           ObsValue
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-01-01T00:00:00 1.605495
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-02-01T00:00:00 1.59785
+</span></span><span class="line"><span class="cl">M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-03-01T00:00:00 1.5954304347826
 </span></span></code></pre></div>
   </div>
 </div>
