@@ -228,7 +228,7 @@
                             <executable>java</executable>
                             <arguments>
                                 <argument>-classpath</argument>
-                                <classpath />
+                                <classpath/>
                                 <argument>${project.x.mainClass}</argument>
                                 <argument>list</argument>
                                 <argument>sources</argument>
@@ -244,6 +244,60 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>setup-docs</id>
+            <build>
+                <plugins>
+                    <!-- Clean Hugo theme for documentation -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean-hugo-theme</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.parent.basedir}/docs/themes/hugo-geekdoc</directory>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Download Hugo theme for documentation -->
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <executions>
+                            <execution>
+                                <id>download-hugo-theme</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <url>
+                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/v0.37.1/hugo-geekdoc.tar.gz
+                            </url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
+                            <sha256>c73105401b063c38cfed359f5ee0b4230c3686d4797a67d7b8e80dfb7b2492f1</sha256>
+                            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>full-release</id>
             <build>

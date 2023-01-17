@@ -7,7 +7,7 @@ _work-in-progress_
 
 ## Dependency graph
 
-{{< mermaid class="text-center">}}
+```mermaid
 flowchart BT
     api
     subgraph formats
@@ -28,4 +28,4 @@ flowchart BT
     providers --> formats
     testing ---> api
     cli --> providers & testing
-{{< /mermaid >}}
+```

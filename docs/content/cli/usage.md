@@ -20,7 +20,7 @@ All commands share the following options:
 
 The commands follow a **verb+noun hierarchy**.
 
-{{< mermaid class="text-center" >}}
+```mermaid
 %%{init:{'themeVariables': {'textColor': '#fdf6e3', 'fontSize': '12px'},'flowchart':{'nodeSpacing': 5, 'rankSpacing': 30}}}%%
 flowchart TB
     r{{sdmx-dl}}
@@ -63,8 +63,7 @@ flowchart TB
     click s "#setup" "setup command"
     click completion "#setup-completion" "setup completion command"
     click launcher "#setup-launcher" "setup launcher command"
-
-{{< /mermaid >}}
+```
 
 {{< shields_io/badge label="fetch" color="dc322f" >}}
 
