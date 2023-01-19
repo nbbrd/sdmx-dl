@@ -1,7 +1,6 @@
 package sdmxdl.format.time;
 
 import lombok.NonNull;
-import nbbrd.design.MightBePromoted;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.index.qual.NonNegative;
@@ -9,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
+import java.time.format.DateTimeParseException;
 
 /**
  * SDMX technical notes:
@@ -72,7 +72,7 @@ public class StandardReportingPeriod {
     }
 
     @StaticFactoryMethod
-    public static @NonNull StandardReportingPeriod parse(@NonNull CharSequence text) {
+    public static @NonNull StandardReportingPeriod parse(@NonNull CharSequence text) throws DateTimeParseException {
         StandardReportingPeriod result = parseOrNull(text);
         if (result == null) {
             throw new IllegalArgumentException(text.toString());
@@ -84,45 +84,27 @@ public class StandardReportingPeriod {
         if (!isValidGeneralFormat(text)) {
             return null;
         }
-        int reportingYear = parseNumeric(text, 0, 4);
+        int reportingYear = TimeFormats.parseNumeric(text, 0, 4);
         if (reportingYear == -1) {
             return null;
         }
-        int periodValue = parseNumeric(text, MIN_SIZE, text.length());
+        int periodValue = TimeFormats.parseNumeric(text, MIN_SIZE, text.length());
         if (periodValue == -1) {
             return null;
         }
         return new StandardReportingPeriod(reportingYear, text.charAt(PERIOD_INDICATOR_INDEX), periodValue, text.length() - MIN_SIZE);
     }
 
-    private static boolean isValidGeneralFormat(CharSequence input) {
-        return input != null
-                && input.length() > MIN_SIZE
-                && input.charAt(SEPARATOR_INDEX) == SEPARATOR_CHAR
-                && Character.isLetter(input.charAt(PERIOD_INDICATOR_INDEX))
-                && Character.isUpperCase(input.charAt(PERIOD_INDICATOR_INDEX));
+    static boolean isValidGeneralFormat(CharSequence text) {
+        return text != null
+                && text.length() > MIN_SIZE
+                && text.charAt(SEPARATOR_INDEX) == SEPARATOR_CHAR
+                && Character.isLetter(text.charAt(PERIOD_INDICATOR_INDEX))
+                && Character.isUpperCase(text.charAt(PERIOD_INDICATOR_INDEX));
     }
 
     private static boolean isPeriodValueInRange(int periodValue, int limitPerYear) {
-        return isInRange(periodValue, 1, limitPerYear + 1);
-    }
-
-    @MightBePromoted
-    private static int parseNumeric(CharSequence text, int start, int end) {
-        int result = 0;
-        for (int i = start; i < end; i++) {
-            int c = text.charAt(i) - '0';
-            if (c < 0 || c > 9) {
-                return -1;
-            }
-            result = result * 10 + c;
-        }
-        return result;
-    }
-
-    @MightBePromoted
-    private static boolean isInRange(int value, int startInclusive, int endExclusive) {
-        return startInclusive <= value && value < endExclusive;
+        return TimeFormats.isInRange(periodValue, 1, limitPerYear + 1);
     }
 
     private static void pad(StringBuilder result, int value, int digits) {

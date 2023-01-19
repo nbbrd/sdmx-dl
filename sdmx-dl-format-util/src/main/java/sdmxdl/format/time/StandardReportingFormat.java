@@ -6,6 +6,8 @@ import org.checkerframework.checker.index.qual.NonNegative;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -57,6 +59,15 @@ public class StandardReportingFormat {
             .durationOf("P1D")
             .limitPerYear(366)
             .build();
+    public static final List<StandardReportingFormat> VALUES = Collections.unmodifiableList(Arrays.asList(
+            REPORTING_YEAR,
+            REPORTING_SEMESTER,
+            REPORTING_TRIMESTER,
+            REPORTING_QUARTER,
+            REPORTING_MONTH,
+            REPORTING_WEEK,
+            REPORTING_DAY
+    ));
 
     char indicator;
 

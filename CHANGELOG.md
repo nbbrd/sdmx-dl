@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![PROVIDER] Add support of redirections in curl backend [#363](https://github.com/nbbrd/sdmx-dl/issues/363)
+- ![FORMAT] Improve parsing of time formats
 
 ## [3.0.0-beta.8] - 2022-11-22
 

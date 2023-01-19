@@ -17,9 +17,9 @@
 package internal.sdmxdl.provider.ri.web.drivers;
 
 import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
+import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -28,23 +28,23 @@ import nbbrd.io.net.MediaType;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
-import sdmxdl.format.time.TimeFormats;
+import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.ObsTimeParser;
+import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.format.time.StandardReportingFormat;
-import sdmxdl.format.time.ObsTimeParser;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
-import sdmxdl.format.DataCursor;
 
 import java.io.IOException;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
 
@@ -134,7 +134,8 @@ public final class InseeDriver2 implements WebDriver {
         }
     }
 
-    private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
+    @VisibleForTesting
+    static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
             .durationOf("P2M")
@@ -143,8 +144,8 @@ public final class InseeDriver2 implements WebDriver {
 
     @VisibleForTesting
     static final ObsTimeParser EXTENDED_TIME_PARSER =
-            TimeFormats.OBSERVATIONAL_TIME_PERIOD
-                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
+            ObsTimeParser.getObservationalTimePeriod(IGNORE_ERROR)
+                    .orElse(ObsTimeParser.onStandardReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

@@ -20,12 +20,13 @@ import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.format.time.ObsTimeParser;
-import sdmxdl.format.time.TimeFormats;
+import sdmxdl.format.time.ObservationalTimePeriod;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.util.function.UnaryOperator;
+
+import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
 
 /**
  * @author Philippe Charles
@@ -35,7 +36,7 @@ import java.util.function.UnaryOperator;
 public final class ObsParser {
 
     public static @NonNull ObsParser newDefault() {
-        return new ObsParser(TimeFormats.OBSERVATIONAL_TIME_PERIOD, Parser.onDouble());
+        return new ObsParser(ObsTimeParser.getObservationalTimePeriod(IGNORE_ERROR), Parser.onDouble());
     }
 
     private final ObsTimeParser timeParser;
@@ -64,7 +65,8 @@ public final class ObsParser {
 
     @Nullable
     public LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes) {
-        return timeParser.parseStartTime(period, getReportingYearStartDay(obsAttributes));
+        ObservationalTimePeriod period = timeParser.parse(this.period);
+        return period != null ? period.toStartTime(getReportingYearStartDay(obsAttributes)) : null;
     }
 
     @Nullable
