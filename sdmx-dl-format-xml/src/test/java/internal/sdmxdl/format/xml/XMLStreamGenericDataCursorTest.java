@@ -19,8 +19,9 @@ package internal.sdmxdl.format.xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataDetail;
 import sdmxdl.Key;
-import sdmxdl.format.ObsParser;
 import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.GregorianTimePeriod;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.DataCursorAssert;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -70,15 +71,15 @@ public class XMLStreamGenericDataCursorTest {
                         while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1966-02-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.YearMonth.parse("1966-02"));
                                     assertThat(o.getObsValue()).isEqualTo(98.68823);
                                     break;
                                 case 188:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.YearMonth.parse("1970-08"));
                                     assertThat(o.getObsValue()).isEqualTo(101.1945);
                                     break;
                                 case 199:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1970-08-17T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Day.parse("1970-08-17"));
                                     assertThat(o.getObsValue()).isEqualTo(93.7211);
                                     break;
                             }
@@ -122,11 +123,11 @@ public class XMLStreamGenericDataCursorTest {
             while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01T00:00:00");
+                        assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("1960"));
                         assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01T00:00:00");
+                        assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("2016"));
                         assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }
@@ -163,11 +164,11 @@ public class XMLStreamGenericDataCursorTest {
                         while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertThat(o.getObsPeriod()).isEqualTo("1991-01-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("1991"));
                                     assertThat(o.getObsValue()).isEqualTo(-2.8574221);
                                     break;
                                 case 24:
-                                    assertThat(o.getObsPeriod()).isEqualTo("2015-01-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("2015"));
                                     assertThat(o.getObsValue()).isEqualTo(-0.1420473);
                                     break;
                             }

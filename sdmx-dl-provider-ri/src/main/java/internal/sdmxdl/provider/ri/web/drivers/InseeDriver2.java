@@ -30,8 +30,9 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.ObsTimeParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestConnector;
@@ -44,7 +45,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
 
@@ -143,9 +144,9 @@ public final class InseeDriver2 implements WebDriver {
             .build();
 
     @VisibleForTesting
-    static final ObsTimeParser EXTENDED_TIME_PARSER =
-            ObsTimeParser.getObservationalTimePeriod(IGNORE_ERROR)
-                    .orElse(ObsTimeParser.onStandardReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
+    static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER =
+            TimeFormats.getObservationalTimePeriod(IGNORE_ERROR)
+                    .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

@@ -1,6 +1,15 @@
 package sdmxdl.format.time;
 
+import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
+import nbbrd.io.text.Parser;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.time.MonthDay;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Time formats as described in the <a href="https://sdmx.org/wp-content/uploads/SDMX_2-1_SECTION_6_TechnicalNotes_2020-07.pdf">SDMX21 technical notes</a>
@@ -31,10 +40,15 @@ import nbbrd.design.MightBePromoted;
  * 558 them up are detailed in the sections to follow.
  * </pre>
  */
-abstract class TimeFormats {
+public final class TimeFormats {
 
     private TimeFormats() {
     }
+
+    public static final Consumer<? super Throwable> IGNORE_ERROR = ignore -> {
+    };
+
+    public static final Predicate<? super CharSequence> IGNORE_FILTER = ignore -> true;
 
     @MightBePromoted
     static int indexOf(CharSequence text, char c) {
@@ -65,5 +79,83 @@ abstract class TimeFormats {
     @MightBePromoted
     static boolean isInRange(int value, int startInclusive, int endExclusive) {
         return startInclusive <= value && value < endExclusive;
+    }
+
+    @MightBePromoted
+    static <T> @NonNull Parser<T> parserOf(
+            @NonNull Predicate<? super CharSequence> filter,
+            @NonNull Function<? super CharSequence, ? extends T> parser,
+            @NonNull Consumer<? super Throwable> onError
+    ) {
+        return text -> {
+            try {
+                if (filter.test(text)) {
+                    return parser.apply(text);
+                }
+            } catch (Throwable ex) {
+                onError.accept(ex);
+            }
+            return null;
+        };
+    }
+
+    // https://sis-cc.gitlab.io/dotstatsuite-documentation/using-api/typical-use-cases/#non-calendar-reporting-periods
+    public static @Nullable MonthDay getReportingYearStartDay(@NonNull UnaryOperator<String> obsAttributes) {
+        String reportingYearStartDay = obsAttributes.apply("REPORTING_YEAR_START_DAY");
+        if (reportingYearStartDay == null) {
+            reportingYearStartDay = obsAttributes.apply("REPYEARSTART");
+        }
+        if (reportingYearStartDay == null) {
+            return null;
+        }
+        return MONTH_DAY_PARSER.parse(reportingYearStartDay);
+    }
+
+    private static final Parser<MonthDay> MONTH_DAY_PARSER = Parser.of(MonthDay::parse);
+
+    public static @NonNull Parser<ObservationalTimePeriod> onReportingFormat(
+            @NonNull StandardReportingFormat format,
+            @NonNull Consumer<? super Throwable> onError
+    ) {
+        return onParser(t -> ReportingTimePeriod.isParsableWith(t, format), t -> ReportingTimePeriod.parseWith(t, format), onError);
+    }
+
+    public static @NonNull Parser<ObservationalTimePeriod> onParser(
+            @NonNull Predicate<? super CharSequence> filter,
+            @NonNull Function<? super CharSequence, ? extends ObservationalTimePeriod> parser,
+            @NonNull Consumer<? super Throwable> onError
+    ) {
+        return parserOf(filter, parser, onError);
+    }
+
+    public static Parser<ObservationalTimePeriod> getObservationalTimePeriod(Consumer<? super Throwable> onError) {
+        return getStandardTimePeriod(onError).orElse(getTimeRange(onError));
+    }
+
+    public static Parser<ObservationalTimePeriod> getStandardTimePeriod(Consumer<? super Throwable> onError) {
+        return getBasicTimePeriod(onError).orElse(getReportingTimePeriod(onError));
+    }
+
+    public static Parser<ObservationalTimePeriod> getBasicTimePeriod(Consumer<? super Throwable> onError) {
+        return getGregorianTimePeriod(onError).orElse(getDateTime(onError));
+    }
+
+    public static Parser<ObservationalTimePeriod> getGregorianTimePeriod(Consumer<? super Throwable> onError) {
+        return onParser(GregorianTimePeriod.Year::isParsable, GregorianTimePeriod.Year::parse, onError)
+                .orElse(onParser(GregorianTimePeriod.YearMonth::isParsable, GregorianTimePeriod.YearMonth::parse, onError))
+                .orElse(onParser(GregorianTimePeriod.Day::isParsable, GregorianTimePeriod.Day::parse, onError));
+    }
+
+    public static Parser<ObservationalTimePeriod> getDateTime(Consumer<? super Throwable> onError) {
+        return onParser(DateTime::isParsable, DateTime::parse, onError);
+    }
+
+    public static Parser<ObservationalTimePeriod> getReportingTimePeriod(Consumer<? super Throwable> onError) {
+        return onParser(ReportingTimePeriod::isParsable, ReportingTimePeriod::parse, onError);
+    }
+
+    public static Parser<ObservationalTimePeriod> getTimeRange(Consumer<? super Throwable> onError) {
+        return onParser(TimeRange.DateRange::isParsable, TimeRange.DateRange::parse, onError)
+                .orElse(onParser(TimeRange.DateTimeRange::isParsable, TimeRange.DateTimeRange::parse, onError));
     }
 }

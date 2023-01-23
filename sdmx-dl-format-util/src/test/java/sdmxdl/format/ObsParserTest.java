@@ -18,14 +18,16 @@ package sdmxdl.format;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.Key;
-import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ReportingTimePeriod;
+import sdmxdl.format.time.StandardReportingPeriod;
 import tests.sdmxdl.format.ObsParserAssert;
 
 import java.util.function.UnaryOperator;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static sdmxdl.format.time.StandardReportingFormat.REPORTING_QUARTER;
+import static sdmxdl.format.time.StandardReportingFormat.REPORTING_WEEK;
 
 /**
  * @author Philippe Charles
@@ -52,17 +54,8 @@ public class ObsParserTest {
     public void testPeriod() {
         ObsParser x = ObsParser.newDefault();
 
-        UnaryOperator<String> none = o -> null;
-        UnaryOperator<String> id1 = singletonMap("REPORTING_YEAR_START_DAY", "--07-01")::get;
-        UnaryOperator<String> id2 = singletonMap("REPYEARSTART", "--07-01")::get;
-
-        assertThat(x.period("2010-Q2").parsePeriod(none)).isEqualTo("2010-04-01T00:00:00");
-        assertThat(x.period("2010-Q2").parsePeriod(id1)).isEqualTo("2010-10-01T00:00:00");
-        assertThat(x.period("2010-Q2").parsePeriod(id2)).isEqualTo("2010-10-01T00:00:00");
-
-        assertThat(x.period("2000-W53").parsePeriod(none)).isEqualTo("2001-01-01T00:00:00");
-        assertThat(x.period("2011-W36").parsePeriod(none)).isEqualTo("2011-09-05T00:00:00");
-        assertThat(x.period("2011-W36").parsePeriod(id1)).isEqualTo("2012-03-05T00:00:00");
-        assertThat(x.period("2011-W36").parsePeriod(id2)).isEqualTo("2012-03-05T00:00:00");
+        assertThat(x.period("2010-Q2").parsePeriod()).isEqualTo(ReportingTimePeriod.of(REPORTING_QUARTER, StandardReportingPeriod.parse("2010-Q2")));
+        assertThat(x.period("2000-W53").parsePeriod()).isEqualTo(ReportingTimePeriod.of(REPORTING_WEEK, StandardReportingPeriod.parse("2000-W53")));
+        assertThat(x.period("2011-W36").parsePeriod()).isEqualTo(ReportingTimePeriod.of(REPORTING_WEEK, StandardReportingPeriod.parse("2011-W36")));
     }
 }

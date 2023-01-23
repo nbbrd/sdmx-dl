@@ -73,34 +73,32 @@ public class StandardReportingPeriod {
 
     @StaticFactoryMethod
     public static @NonNull StandardReportingPeriod parse(@NonNull CharSequence text) throws DateTimeParseException {
-        StandardReportingPeriod result = parseOrNull(text);
-        if (result == null) {
-            throw new IllegalArgumentException(text.toString());
-        }
-        return result;
-    }
-
-    static @Nullable StandardReportingPeriod parseOrNull(@Nullable CharSequence text) {
-        if (!isValidGeneralFormat(text)) {
-            return null;
+        if (!isParsable(text)) {
+            throw new DateTimeParseException("Invalid format", text, 0);
         }
         int reportingYear = TimeFormats.parseNumeric(text, 0, 4);
         if (reportingYear == -1) {
-            return null;
+            throw new DateTimeParseException("Cannot parse reporting year", text, 0);
         }
         int periodValue = TimeFormats.parseNumeric(text, MIN_SIZE, text.length());
         if (periodValue == -1) {
-            return null;
+            throw new DateTimeParseException("Cannot parse period value", text, MIN_SIZE);
         }
         return new StandardReportingPeriod(reportingYear, text.charAt(PERIOD_INDICATOR_INDEX), periodValue, text.length() - MIN_SIZE);
     }
 
-    static boolean isValidGeneralFormat(CharSequence text) {
+    public static boolean isParsable(CharSequence text) {
         return text != null
                 && text.length() > MIN_SIZE
                 && text.charAt(SEPARATOR_INDEX) == SEPARATOR_CHAR
                 && Character.isLetter(text.charAt(PERIOD_INDICATOR_INDEX))
                 && Character.isUpperCase(text.charAt(PERIOD_INDICATOR_INDEX));
+    }
+
+    static boolean isValidIndicator(CharSequence text, char indicator) {
+        return text != null
+                && text.length() > MIN_SIZE
+                && indicator == text.charAt(PERIOD_INDICATOR_INDEX);
     }
 
     private static boolean isPeriodValueInRange(int periodValue, int limitPerYear) {

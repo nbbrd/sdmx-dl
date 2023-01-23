@@ -21,12 +21,9 @@ import nbbrd.design.NotThreadSafe;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.format.time.ObservationalTimePeriod;
+import sdmxdl.format.time.TimeFormats;
 
-import java.time.LocalDateTime;
-import java.time.MonthDay;
-import java.util.function.UnaryOperator;
-
-import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 
 /**
  * @author Philippe Charles
@@ -36,10 +33,10 @@ import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
 public final class ObsParser {
 
     public static @NonNull ObsParser newDefault() {
-        return new ObsParser(ObsTimeParser.getObservationalTimePeriod(IGNORE_ERROR), Parser.onDouble());
+        return new ObsParser(TimeFormats.getObservationalTimePeriod(IGNORE_ERROR), Parser.onDouble());
     }
 
-    private final ObsTimeParser timeParser;
+    private final Parser<ObservationalTimePeriod> timeParser;
     private final Parser<Double> valueParser;
     private String period = null;
     private String value = null;
@@ -64,27 +61,12 @@ public final class ObsParser {
     }
 
     @Nullable
-    public LocalDateTime parsePeriod(@NonNull UnaryOperator<String> obsAttributes) {
-        ObservationalTimePeriod period = timeParser.parse(this.period);
-        return period != null ? period.toStartTime(getReportingYearStartDay(obsAttributes)) : null;
+    public ObservationalTimePeriod parsePeriod() {
+        return timeParser.parse(this.period);
     }
 
     @Nullable
     public Double parseValue() {
         return valueParser.parse(value);
     }
-
-    // https://sis-cc.gitlab.io/dotstatsuite-documentation/using-api/typical-use-cases/#non-calendar-reporting-periods
-    private static MonthDay getReportingYearStartDay(UnaryOperator<String> obsAttributes) {
-        String reportingYearStartDay = obsAttributes.apply("REPORTING_YEAR_START_DAY");
-        if (reportingYearStartDay == null) {
-            reportingYearStartDay = obsAttributes.apply("REPYEARSTART");
-        }
-        if (reportingYearStartDay == null) {
-            return null;
-        }
-        return MONTH_DAY_PARSER.parse(reportingYearStartDay);
-    }
-
-    private static final Parser<MonthDay> MONTH_DAY_PARSER = Parser.of(MonthDay::parse);
 }

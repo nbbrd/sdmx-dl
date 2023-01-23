@@ -1,7 +1,5 @@
 package sdmxdl.format.time;
 
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.ThrowableTypeAssert;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import sdmxdl.format.time.TimeRange.DateRange;
@@ -10,12 +8,11 @@ import sdmxdl.format.time.TimeRange.DateTimeRange;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.format.DateTimeParseException;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.format.ObsTimeParserTest.*;
+import static sdmxdl.format.time.TimeFormatsTest.*;
 
 @SuppressWarnings("DataFlowIssue")
 public class TimeRangeTest {
@@ -51,15 +48,26 @@ public class TimeRangeTest {
                     .isEqualTo(DateRange.of(START_DATE, P2D));
 
             assertThat(generateInvalids("2010-02-15/P2D"))
+                    .describedAs("Invalid format")
                     .are(throwingDateTimeParseExceptionOn(DateRange::parse));
+
+            assertThat(asList("2010-02-29/P2D"))
+                    .describedAs("Out-of-bounds")
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
 
             assertThat(DateRange.parse("2010-02-15/P2M"))
                     .isEqualTo(DateRange.of(START_DATE, P2M));
 
             assertThat(generateInvalids("2010-02-15/P2M"))
+                    .describedAs("Invalid format")
                     .are(throwingDateTimeParseExceptionOn(DateRange::parse));
 
+            assertThat(asList("2010-02-29/P2M"))
+                    .describedAs("Out-of-bounds")
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
+
             assertThat(asList("2010-02-15T00:00/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
+                    .describedAs("Invalid format")
                     .are(throwingDateTimeParseExceptionOn(DateRange::parse));
         }
 
@@ -69,16 +77,19 @@ public class TimeRangeTest {
 
             assertThat(DateRange.isParsable("2010-02-15/P2D")).isTrue();
 
-//            assertThat(generateInvalids("2010-02-15/P2D"))
-//                    .areNot(parsableUsing(DateRange::isParsable));
+            assertThat(generateInvalids("2010-02-15/P2D"))
+                    .filteredOn(not(DateRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateRange::parse));
 
             assertThat(DateRange.isParsable("2010-02-15/P2M")).isTrue();
 
-//            assertThat(generateInvalids("2010-02-15/P2M"))
-//                    .areNot(parsableUsing(DateRange::isParsable));
+            assertThat(generateInvalids("2010-02-15/P2M"))
+                    .filteredOn(not(DateRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateRange::parse));
 
-//            assertThat(asList("2010-02-15T00:00/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
-//                    .areNot(parsableUsing(DateRange::isParsable));
+            assertThat(asList("2010-02-15T00:00/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
+                    .filteredOn(not(DateRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateRange::parse));
         }
 
         @Test
@@ -131,15 +142,26 @@ public class TimeRangeTest {
                     .isEqualTo(DateTimeRange.of(START_DATE_TIME, P2D));
 
             assertThat(generateInvalids("2010-02-15T00:00/P2D"))
+                    .describedAs("Invalid format")
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
+
+            assertThat(asList("2010-02-29T00:00/P2D"))
+                    .describedAs("Out-of-bounds")
                     .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
 
             assertThat(DateTimeRange.parse("2010-02-15T00:00/P2M"))
                     .isEqualTo(DateTimeRange.of(START_DATE_TIME, P2M));
 
             assertThat(generateInvalids("2010-02-15T00:00/P2M"))
+                    .describedAs("Invalid format")
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
+
+            assertThat(asList("2010-02-29T00:00/P2M"))
+                    .describedAs("Out-of-bounds")
                     .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
 
             assertThat(asList("2010-02-15/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
+                    .describedAs("Invalid format")
                     .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
         }
 
@@ -149,16 +171,19 @@ public class TimeRangeTest {
 
             assertThat(DateTimeRange.isParsable("2010-02-15T00:00/P2D")).isTrue();
 
-//            assertThat(generateInvalids("2010-02-15T00:00/P2D"))
-//                    .areNot(parsableUsing(DateTimeRange::isParsable));
+            assertThat(generateInvalids("2010-02-15T00:00/P2D"))
+                    .filteredOn(not(DateTimeRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
 
             assertThat(DateTimeRange.isParsable("2010-02-15T00:00/P2M")).isTrue();
 
-//            assertThat(generateInvalids("2010-02-15T00:00/P2M"))
-//                    .areNot(parsableUsing(DateTimeRange::isParsable));
+            assertThat(generateInvalids("2010-02-15T00:00/P2M"))
+                    .filteredOn(not(DateTimeRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
 
-//            assertThat(asList("2010-02-15/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
-//                    .areNot(parsableUsing(DateRange::isParsable));
+            assertThat(asList("2010-02-15/P2D", "20100215/P2D", "2010-046/P2D", "2010-W07-1/P2D"))
+                    .filteredOn(not(DateTimeRange::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(DateTimeRange::parse));
         }
 
         @Test
@@ -178,10 +203,6 @@ public class TimeRangeTest {
             assertThat(DateTimeRange.of(START_DATE_TIME, P2M).toStartTime(null))
                     .isEqualTo(LocalDateTime.of(2010, 2, 15, 0, 0));
         }
-    }
-
-    private static ThrowableTypeAssert<DateTimeParseException> assertThatParseException() {
-        return Assertions.assertThatExceptionOfType(DateTimeParseException.class);
     }
 
     private static final Period P2D = Period.ofDays(2);

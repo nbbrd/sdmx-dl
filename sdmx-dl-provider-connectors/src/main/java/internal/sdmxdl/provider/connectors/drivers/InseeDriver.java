@@ -27,8 +27,9 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.ObsTimeParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -41,7 +42,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
-import static sdmxdl.format.ObsTimeParser.IGNORE_ERROR;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
 /**
@@ -136,9 +137,9 @@ public final class InseeDriver implements WebDriver {
             .limitPerYear(6)
             .build();
 
-    private static final ObsTimeParser EXTENDED_TIME_PARSER =
-            ObsTimeParser.getObservationalTimePeriod(IGNORE_ERROR)
-                    .orElse(ObsTimeParser.onStandardReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
+    private static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER =
+            TimeFormats.getObservationalTimePeriod(IGNORE_ERROR)
+                    .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

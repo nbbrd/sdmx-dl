@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.format.ObsTimeParserTest.*;
+import static sdmxdl.format.time.TimeFormatsTest.*;
 
 public class DateTimeTest {
 
@@ -30,13 +30,23 @@ public class DateTimeTest {
                 .isEqualTo(DateTime.of(LDT_WITH_SECONDS));
 
         assertThat(generateInvalids("2001-02-03T04:05:06"))
+                .describedAs("Invalid format")
                 .are(throwingDateTimeParseExceptionOn(DateTime::parse));
+
+        assertThat("2019-02-29T11:23:56")
+                .describedAs("Out-of-bounds")
+                .is(throwingDateTimeParseExceptionOn(DateTime::parse));
 
         assertThat(DateTime.parse("2001-02-03T04:05"))
                 .isEqualTo(DateTime.of(LDT_WITHOUT_SECONDS));
 
         assertThat(generateInvalids("2001-02-03T04:05"))
+                .describedAs("Invalid format")
                 .are(throwingDateTimeParseExceptionOn(DateTime::parse));
+
+        assertThat("2019-02-29T11:23")
+                .describedAs("Out-of-bounds")
+                .is(throwingDateTimeParseExceptionOn(DateTime::parse));
     }
 
     @Test
@@ -45,13 +55,15 @@ public class DateTimeTest {
 
         assertThat(DateTime.isParsable("2001-02-03T04:05:06")).isTrue();
 
-//        assertThat(generateInvalids("2001-02-03T04:05:06"))
-//                .areNot(parsableUsing(DateTime::isParsable));
+        assertThat(generateInvalids("2001-02-03T04:05:06"))
+                .filteredOn(not(DateTime::isParsable))
+                .are(throwingDateTimeParseExceptionOn(DateTime::parse));
 
         assertThat(DateTime.isParsable("2001-02-03T04:05")).isTrue();
 
-//        assertThat(generateInvalids("2001-02-03T04:05"))
-//                .areNot(parsableUsing(DateTime::isParsable));
+        assertThat(generateInvalids("2001-02-03T04:05"))
+                .filteredOn(not(DateTime::isParsable))
+                .are(throwingDateTimeParseExceptionOn(DateTime::parse));
     }
 
     @Test

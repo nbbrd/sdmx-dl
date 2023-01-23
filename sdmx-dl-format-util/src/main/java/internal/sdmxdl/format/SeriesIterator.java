@@ -16,12 +16,16 @@
  */
 package internal.sdmxdl.format;
 
+import nbbrd.io.function.IOUnaryOperator;
 import sdmxdl.Obs;
 import sdmxdl.Series;
 import sdmxdl.format.DataCursor;
+import sdmxdl.format.time.ObservationalTimePeriod;
+import sdmxdl.format.time.TimeFormats;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -79,11 +83,19 @@ public final class SeriesIterator implements Iterator<Series> {
         while (cursor.nextObs()) {
             builder.obs(obs
                     .clearMeta()
-                    .period(cursor.getObsPeriod())
+                    .period(toStartTime(cursor.getObsPeriod(), cursor::getObsAttribute))
                     .value(cursor.getObsValue())
                     .meta(cursor.getObsAttributes())
                     .build()
             );
+        }
+    }
+
+    private static LocalDateTime toStartTime(ObservationalTimePeriod obsPeriod, IOUnaryOperator<String> obsAttributes) throws IOException {
+        try {
+            return obsPeriod != null ? obsPeriod.toStartTime(TimeFormats.getReportingYearStartDay(obsAttributes.asUnchecked())) : null;
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 }

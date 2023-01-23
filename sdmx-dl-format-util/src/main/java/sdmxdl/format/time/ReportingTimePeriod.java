@@ -46,11 +46,15 @@ public class ReportingTimePeriod implements StandardTimePeriod {
         if (period.isCompatibleWith(format)) {
             return new ReportingTimePeriod(format, period);
         }
-        throw new IllegalArgumentException("Cannot parse reporting time period '" + text + "'");
+        throw new DateTimeParseException("Cannot parse", text, -1);
     }
 
     public static boolean isParsable(@Nullable CharSequence text) {
-        return StandardReportingPeriod.isValidGeneralFormat(text);
+        return StandardReportingPeriod.isParsable(text);
+    }
+
+    public static boolean isParsableWith(@Nullable CharSequence text, @NonNull StandardReportingFormat format) {
+        return StandardReportingPeriod.isParsable(text) && StandardReportingPeriod.isValidIndicator(text, format.getIndicator());
     }
 
     @NonNull StandardReportingFormat format;

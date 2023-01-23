@@ -23,10 +23,10 @@ import nbbrd.io.function.IORunnable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Key;
 import sdmxdl.Series;
+import sdmxdl.format.time.ObservationalTimePeriod;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Spliterator;
@@ -54,13 +54,16 @@ public interface DataCursor extends Closeable {
     boolean nextObs() throws IOException, IllegalStateException;
 
     @Nullable
-    LocalDateTime getObsPeriod() throws IOException, IllegalStateException;
+    ObservationalTimePeriod getObsPeriod() throws IOException, IllegalStateException;
 
     @Nullable
     Double getObsValue() throws IOException, IllegalStateException;
 
     @NonNull
     Map<String, String> getObsAttributes() throws IOException, IllegalStateException;
+
+    @Nullable
+    String getObsAttribute(@NonNull String key) throws IOException, IllegalStateException;
 
     @NonNull
     default Stream<Series> asStream() {

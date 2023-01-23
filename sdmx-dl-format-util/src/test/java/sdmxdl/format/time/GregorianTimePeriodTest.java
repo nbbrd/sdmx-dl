@@ -6,9 +6,10 @@ import sdmxdl.format.time.GregorianTimePeriod.Day;
 import sdmxdl.format.time.GregorianTimePeriod.Year;
 import sdmxdl.format.time.GregorianTimePeriod.YearMonth;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.format.ObsTimeParserTest.*;
+import static sdmxdl.format.time.TimeFormatsTest.*;
 
 public class GregorianTimePeriodTest {
 
@@ -35,6 +36,11 @@ public class GregorianTimePeriodTest {
                     .isEqualTo(Year.of(JT_2001));
 
             assertThat(generateInvalids("2001"))
+                    .describedAs("Invalid format")
+                    .are(throwingDateTimeParseExceptionOn(Year::parse));
+
+            assertThat(asList("001", "20010"))
+                    .describedAs("Out-of-bounds")
                     .are(throwingDateTimeParseExceptionOn(Year::parse));
         }
 
@@ -44,8 +50,9 @@ public class GregorianTimePeriodTest {
 
             assertThat(Year.isParsable("2001")).isTrue();
 
-//            assertThat(generateInvalids("2001"))
-//                    .areNot(parsableUsing(Year::isParsable));
+            assertThat(generateInvalids("2001"))
+                    .filteredOn(not(Year::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(Year::parse));
         }
 
         @Test
@@ -84,6 +91,11 @@ public class GregorianTimePeriodTest {
                     .isEqualTo(YearMonth.of(JT_2001_02));
 
             assertThat(generateInvalids("2001-02"))
+                    .describedAs("Invalid format")
+                    .are(throwingDateTimeParseExceptionOn(YearMonth::parse));
+
+            assertThat(asList("2001-00", "2001-13"))
+                    .describedAs("Out-of-bounds")
                     .are(throwingDateTimeParseExceptionOn(YearMonth::parse));
         }
 
@@ -93,8 +105,9 @@ public class GregorianTimePeriodTest {
 
             assertThat(YearMonth.isParsable("2001-02")).isTrue();
 
-//            assertThat(generateInvalids("2001-02"))
-//                    .areNot(parsableUsing(YearMonth::isParsable));
+            assertThat(generateInvalids("2001-02"))
+                    .filteredOn(not(YearMonth::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(YearMonth::parse));
         }
 
         @Test
@@ -133,6 +146,11 @@ public class GregorianTimePeriodTest {
                     .isEqualTo(Day.of(JT_2001_02_03));
 
             assertThat(generateInvalids("2001-02-03"))
+                    .describedAs("Invalid format")
+                    .are(throwingDateTimeParseExceptionOn(Day::parse));
+
+            assertThat(asList("2001-02-29", "2001-00-01", "2001-13-01"))
+                    .describedAs("Out-of-bounds")
                     .are(throwingDateTimeParseExceptionOn(Day::parse));
         }
 
@@ -142,8 +160,9 @@ public class GregorianTimePeriodTest {
 
             assertThat(Day.isParsable("2001-02-03")).isTrue();
 
-//            assertThat(generateInvalids("2001-02-03"))
-//                    .areNot(parsableUsing(Day::isParsable));
+            assertThat(generateInvalids("2001-02-03"))
+                    .filteredOn(not(Day::isParsable))
+                    .are(throwingDateTimeParseExceptionOn(Day::parse));
         }
 
         @Test

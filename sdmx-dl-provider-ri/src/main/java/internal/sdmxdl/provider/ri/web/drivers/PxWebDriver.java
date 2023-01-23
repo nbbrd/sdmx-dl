@@ -22,6 +22,7 @@ import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasSourceName;
@@ -36,7 +37,6 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -357,7 +357,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         @Override
-        public @Nullable LocalDateTime getObsPeriod() throws IOException, IllegalStateException {
+        public @Nullable ObservationalTimePeriod getObsPeriod() throws IOException, IllegalStateException {
             return delegate.getObsPeriod();
         }
 
@@ -370,6 +370,11 @@ public final class PxWebDriver implements WebDriver {
         @NonNull
         public Map<String, String> getObsAttributes() throws IllegalStateException {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public @Nullable String getObsAttribute(@NonNull String key) throws IllegalStateException {
+            return null;
         }
 
         @Override

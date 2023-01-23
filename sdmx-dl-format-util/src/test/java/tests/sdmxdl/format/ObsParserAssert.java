@@ -43,17 +43,14 @@ public class ObsParserAssert {
     }
 
     private static void checkPeriod(SoftAssertions s, ObsParser parser, Sample sample) {
-        s.assertThatThrownBy(() -> parser.parsePeriod(null))
-                .isInstanceOf(NullPointerException.class);
-
         s.assertThat(parser.period(null)).isEqualTo(parser);
-        s.assertThat(parser.parsePeriod(o -> null)).isNull();
+        s.assertThat(parser.parsePeriod()).isNull();
 
         s.assertThat(parser.period(sample.validPeriod)).isEqualTo(parser);
-        s.assertThat(parser.parsePeriod(o -> null)).isNotNull();
+        s.assertThat(parser.parsePeriod()).isNotNull();
 
         s.assertThat(parser.period(sample.invalidPeriod)).isEqualTo(parser);
-        s.assertThat(parser.parsePeriod(o -> null)).isNull();
+        s.assertThat(parser.parsePeriod()).isNull();
     }
 
     private static void checkClear(SoftAssertions s, ObsParser parser) {
