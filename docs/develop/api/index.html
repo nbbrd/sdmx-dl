@@ -13,7 +13,7 @@
 
 
   <meta name="description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kryo end subgraph providers provider-util[util] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
 
     <title>Java library | sdmx-dl</title>
 
@@ -40,21 +40,21 @@ Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kry
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kryo end subgraph providers provider-util[util] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/api/" />
 
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2023-01-17T12:13:37+01:00"
+      content="2023-01-24T13:05:46+01:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Java library" />
   <meta name="twitter:description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kryo end subgraph providers provider-util[util] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
 
 
   <script type="application/ld+json">
@@ -65,8 +65,8 @@ Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kry
       "name": "Java library",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "work-in-progress\nDependency graph flowchart BT api subgraph formats format-util[util] csv xml kryo end subgraph providers provider-util[util] connectors ri end testing cli formats --\u003e api providers --\u003e formats testing ---\u003e api cli --\u003e providers \u0026 testing ",
-      "wordCount" : "35",
+      "description": "work-in-progress\nDependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri end testing cli formats --\u003e api providers --\u003e formats testing ---\u003e api cli --\u003e providers \u0026 testing ",
+      "wordCount" : "36",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kry
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2023-01-17T12:13:37.00Z",
+      "dateModified": "2023-01-24T13:05:46.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -879,13 +879,14 @@ Dependency graph flowchart BT api subgraph formats format-util[util] csv xml kry
 <pre class="gdoc-mermaid mermaid text-center">flowchart BT
     api
     subgraph formats
-        format-util[util]
+        format-base[base]
         csv
-        xml
         kryo
+        protobuf
+        xml
     end
     subgraph providers
-        provider-util[util]
+        provider-base[base]
         connectors
         ri
     end
