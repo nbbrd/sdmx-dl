@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![PROVIDER] Add support of redirections in curl backend [#363](https://github.com/nbbrd/sdmx-dl/issues/363)
+- ![DESKTOP] Add basic desktop module
 
 ### Changed
 
@@ -323,6 +324,8 @@ production._
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
 
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
+
+[DESKTOP]: https://img.shields.io/badge/-DESKTOP-F813F7
 
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
 
