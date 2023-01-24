@@ -11,13 +11,14 @@ _work-in-progress_
 flowchart BT
     api
     subgraph formats
-        format-util[util]
+        format-base[base]
         csv
-        xml
         kryo
+        protobuf
+        xml
     end
     subgraph providers
-        provider-util[util]
+        provider-base[base]
         connectors
         ri
     end

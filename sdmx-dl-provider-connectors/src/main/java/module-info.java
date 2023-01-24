@@ -5,7 +5,7 @@ module sdmxdl.provider.connectors {
     requires static org.checkerframework.checker.qual;
 
     requires sdmxdl.format.xml;
-    requires sdmxdl.provider.util;
+    requires sdmxdl.provider.base;
     requires it.bancaditalia.oss.sdmx;
     requires java.logging;
 

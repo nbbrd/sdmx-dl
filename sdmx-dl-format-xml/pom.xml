@@ -37,7 +37,7 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-util</artifactId>
+            <artifactId>sdmx-dl-format-base</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-util</artifactId>
+            <artifactId>sdmx-dl-format-base</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
             <type>test-jar</type>

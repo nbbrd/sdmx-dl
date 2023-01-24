@@ -7,7 +7,7 @@ module sdmxdl.provider.ri {
 
     requires sdmxdl.format.csv;
     requires sdmxdl.format.xml;
-    requires sdmxdl.provider.util;
+    requires sdmxdl.provider.base;
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;
     requires java.logging;

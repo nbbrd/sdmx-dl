@@ -4,7 +4,7 @@ module sdmxdl.format.xml {
     requires static nbbrd.design;
     requires static org.checkerframework.checker.qual;
 
-    requires transitive sdmxdl.format.util;
+    requires transitive sdmxdl.format.base;
     requires transitive nbbrd.io.xml;
 
     exports sdmxdl.format.xml;

@@ -37,7 +37,7 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-util</artifactId>
+            <artifactId>sdmx-dl-provider-base</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

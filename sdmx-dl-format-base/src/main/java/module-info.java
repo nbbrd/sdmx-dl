@@ -1,4 +1,4 @@
-module sdmxdl.format.util {
+module sdmxdl.format.base {
 
     requires static lombok;
     requires static nbbrd.design;

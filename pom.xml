@@ -197,12 +197,12 @@
 
     <modules>
         <module>sdmx-dl-api</module>
-        <module>sdmx-dl-format-util</module>
+        <module>sdmx-dl-format-base</module>
         <module>sdmx-dl-format-csv</module>
         <module>sdmx-dl-format-kryo</module>
         <module>sdmx-dl-format-protobuf</module>
         <module>sdmx-dl-format-xml</module>
-        <module>sdmx-dl-provider-util</module>
+        <module>sdmx-dl-provider-base</module>
         <module>sdmx-dl-provider-ri</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-testing</module>
