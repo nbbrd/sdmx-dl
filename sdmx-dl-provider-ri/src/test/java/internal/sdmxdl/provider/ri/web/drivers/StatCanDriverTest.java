@@ -184,7 +184,7 @@ public class StatCanDriverTest {
                     .filteredOn(Series::getKey, Key.parse("1"))
                     .singleElement()
                     .satisfies(
-                            series -> assertThat(series.getObs().stream())
+                            series -> assertThat(series.getObs())
                                     .hasSize(388)
                                     .startsWith(obsOf("1990-01-01", 276.428))
                                     .endsWith(obsOf("2022-04-01", 267.330))

@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- ![API] Sort observations chronologically
 - ![FORMAT] Improve parsing of time formats
 - ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`
 - ![FORMAT] Rename module `sdmx-dl-provider-util ` as `smdx-dl-provider-base`

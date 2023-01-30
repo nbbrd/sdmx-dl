@@ -79,12 +79,21 @@ public final class SeriesIterator implements Iterator<Series> {
                 .clearObs()
                 .key(cursor.getSeriesKey())
                 .meta(cursor.getSeriesAttributes());
+
         Obs.Builder obs = Obs.builder();
         while (cursor.nextObs()) {
+            LocalDateTime nullablePeriod = toStartTime(cursor.getObsPeriod(), cursor::getObsAttribute);
+            if (nullablePeriod == null) {
+                continue;
+            }
+            Double nullableValue = cursor.getObsValue();
+            if (nullableValue == null) {
+                continue;
+            }
             builder.obs(obs
                     .clearMeta()
-                    .period(toStartTime(cursor.getObsPeriod(), cursor::getObsAttribute))
-                    .value(cursor.getObsValue())
+                    .period(nullablePeriod)
+                    .value(nullableValue)
                     .meta(cursor.getObsAttributes())
                     .build()
             );

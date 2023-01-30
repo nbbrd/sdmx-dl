@@ -19,6 +19,7 @@ package sdmxdl;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class Obs {
+public class Obs implements Comparable<Obs> {
 
     @Nullable
     LocalDateTime period;
@@ -37,4 +38,11 @@ public class Obs {
     @lombok.NonNull
     @lombok.Singular("meta")
     Map<String, String> meta;
+
+    @Override
+    public int compareTo(Obs that) {
+        return COMPARATOR.compare(this, that);
+    }
+
+    private static final Comparator<Obs> COMPARATOR = Comparator.comparing(Obs::getPeriod).thenComparing(Obs::getValue);
 }

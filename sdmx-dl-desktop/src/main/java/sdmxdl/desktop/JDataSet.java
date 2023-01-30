@@ -30,7 +30,6 @@ import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -141,12 +140,12 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     }
 
     private GridModel asGridModel(SingleSeries item) {
-        Obs[] data = item.getSeries().getObs().toArray(new Obs[0]);
+        List<Obs> data = item.getSeries().getObsList();
         DateTimeFormatter dateTimeFormatter = SeriesMetaFormats.getDateTimeFormatter(item.getMeta());
         return new AbstractGridModel() {
             @Override
             public int getRowCount() {
-                return data.length;
+                return data.size();
             }
 
             @Override
@@ -156,7 +155,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
-                return data[rowIndex];
+                return data.get(rowIndex);
             }
 
             @Override
@@ -166,7 +165,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
             @Override
             public String getRowName(int rowIndex) {
-                LocalDateTime period = data[rowIndex].getPeriod();
+                LocalDateTime period = data.get(rowIndex).getPeriod();
                 return period != null ? dateTimeFormatter.format(period) : "null";
             }
         };
@@ -210,7 +209,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     }
 
     private static ObsFunction<String> asObsFunction(SingleSeries item) {
-        List<Obs> data = new ArrayList<>(item.getSeries().getObs());
+        List<Obs> data = item.getSeries().getObsList();
         Formatter<Obs> obsFormatter = ObsFormats.getHtmlTooltipFormatter(item.getDsd());
         return new ObsFunction<String>() {
             @Override
@@ -283,7 +282,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
             Color color = chart.getColorSchemeSupport().getLineColor(o.getSeries());
 //            setText("<html><b>" + serie + "</b><br>" + period + ": " + value);
             SingleSeries fixmeItem = (SingleSeries) chart.getClientProperty("fixme_item");
-            setText(ObsFormats.getHtmlTooltipFormatter(fixmeItem.getDsd()).formatAsString(fixmeItem.getSeries().getObs().toArray(new Obs[0])[o.getObs()]));
+            setText(ObsFormats.getHtmlTooltipFormatter(fixmeItem.getDsd()).formatAsString(fixmeItem.getSeries().getObsList().get(o.getObs())));
             return this;
         }
     }
