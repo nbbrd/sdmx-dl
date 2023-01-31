@@ -216,13 +216,10 @@ public class ProtobufRepositories {
     }
 
     public static Obs fromObs(sdmxdl.Obs value) {
-        Obs.Builder result = Obs
-                .newBuilder();
-        if (value.getPeriod() != null)
-            result.setPeriod(value.getPeriod().toString());
-        if (value.getValue() != null)
-            result.setValue(value.getValue());
-        return result
+        return Obs
+                .newBuilder()
+                .setPeriod(value.getPeriod().toString())
+                .setValue(value.getValue())
                 .putAllMeta(value.getMeta())
                 .build();
     }
@@ -230,8 +227,8 @@ public class ProtobufRepositories {
     public static sdmxdl.Obs toObs(Obs value) {
         return sdmxdl.Obs
                 .builder()
-                .period(value.hasPeriod() ? LocalDateTime.parse(value.getPeriod()) : null)
-                .value(value.hasValue() ? value.getValue() : null)
+                .period(LocalDateTime.parse(value.getPeriod()))
+                .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();
     }

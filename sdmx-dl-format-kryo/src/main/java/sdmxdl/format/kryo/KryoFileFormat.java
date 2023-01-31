@@ -400,8 +400,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public void write(Kryo kryo, Output output, Obs t) {
-            kryo.writeObjectOrNull(output, t.getPeriod(), LocalDateTime.class);
-            kryo.writeObjectOrNull(output, t.getValue(), Double.class);
+            kryo.writeObject(output, t.getPeriod());
+            output.writeDouble(t.getValue());
             kryo.writeObject(output, t.getMeta(), obsMeta);
         }
 
@@ -410,8 +410,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
             return Obs
                     .builder()
-                    .period(kryo.readObjectOrNull(input, LocalDateTime.class))
-                    .value(kryo.readObjectOrNull(input, Double.class))
+                    .period(kryo.readObject(input, LocalDateTime.class))
+                    .value(input.readDouble())
                     .meta(kryo.readObject(input, HashMap.class, obsMeta))
                     .build();
         }

@@ -140,15 +140,11 @@ public class ConnectorsResource {
     }
 
     private static DoubleObservation toObservation(Obs obs) {
-        return new DoubleObservation(toTimeslot(obs.getPeriod()), toValue(obs.getValue()), obs.getMeta());
+        return new DoubleObservation(toTimeslot(obs.getPeriod()), obs.getValue(), obs.getMeta());
     }
 
     private static String toTimeslot(LocalDateTime o) {
-        return o == null ? "NULL" : o.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    }
-
-    private static double toValue(Double nullableValue) {
-        return nullableValue == null ? Double.NaN : nullableValue;
+        return o.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private Dataflow asDataflow(DataFlowStructure o) {

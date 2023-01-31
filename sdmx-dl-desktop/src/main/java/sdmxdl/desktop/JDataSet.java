@@ -165,8 +165,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
             @Override
             public String getRowName(int rowIndex) {
-                LocalDateTime period = data.get(rowIndex).getPeriod();
-                return period != null ? dateTimeFormatter.format(period) : "null";
+                return dateTimeFormatter.format(data.get(rowIndex).getPeriod());
             }
         };
     }

@@ -141,16 +141,6 @@ public enum OtherRules {
                     .map(dsd -> dsd.getDimensions().stream().anyMatch(dimension -> dimension.getCodes().isEmpty()))
                     .orElse(false);
         }
-    },
-    DATA_NULL_PERIOD {
-        @Override
-        boolean isInvalid(WebResponse r) {
-            return ofNullable(r.getData())
-                    .map(data -> data.stream()
-                            .flatMap(series -> series.getObs().stream())
-                            .anyMatch(obs -> obs.getPeriod() == null))
-                    .orElse(false);
-        }
     };
 
     abstract boolean isInvalid(WebResponse r);

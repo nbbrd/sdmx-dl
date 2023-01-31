@@ -29,11 +29,10 @@ import java.util.Map;
 @lombok.Builder(toBuilder = true)
 public class Obs implements Comparable<Obs> {
 
-    @Nullable
+    @lombok.NonNull
     LocalDateTime period;
 
-    @Nullable
-    Double value;
+    double value;
 
     @lombok.NonNull
     @lombok.Singular("meta")
@@ -44,5 +43,5 @@ public class Obs implements Comparable<Obs> {
         return COMPARATOR.compare(this, that);
     }
 
-    private static final Comparator<Obs> COMPARATOR = Comparator.comparing(Obs::getPeriod).thenComparing(Obs::getValue);
+    private static final Comparator<Obs> COMPARATOR = Comparator.comparing(Obs::getPeriod).thenComparingDouble(Obs::getValue);
 }
