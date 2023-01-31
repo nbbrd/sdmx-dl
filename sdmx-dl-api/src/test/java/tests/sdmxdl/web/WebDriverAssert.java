@@ -9,6 +9,10 @@ import static org.assertj.core.api.Assertions.*;
 @lombok.experimental.UtilityClass
 public class WebDriverAssert {
 
+    public WebContext noOpWebContext() {
+        return WebContext.builder().build();
+    }
+
     @SuppressWarnings("null")
     public void assertCompliance(WebDriver d) {
         SdmxWebSource validSource = SdmxWebSource
@@ -21,7 +25,7 @@ public class WebDriverAssert {
 
         SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
 
-        WebContext context = WebContext.builder().build();
+        WebContext context = WebDriverAssert.noOpWebContext();
 
         assertThat(d.getName()).isNotBlank();
 

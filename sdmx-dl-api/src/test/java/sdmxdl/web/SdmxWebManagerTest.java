@@ -69,7 +69,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getSources()).isEmpty();
         });
 
-        assertThat(SdmxWebManager.builder().build()).satisfies(o -> {
+        assertThat(SdmxWebManager.noOp()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);

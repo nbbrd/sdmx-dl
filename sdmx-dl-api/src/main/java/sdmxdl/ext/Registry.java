@@ -2,6 +2,7 @@ package sdmxdl.ext;
 
 import internal.util.DialectLoader;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.DataStructure;
 import sdmxdl.SdmxManager;
 import sdmxdl.SdmxSource;
@@ -20,12 +21,18 @@ import java.util.function.Function;
 @lombok.Builder(toBuilder = true)
 public class Registry {
 
-    @NonNull
-    public static Registry ofServiceLoader() {
+    @StaticFactoryMethod
+    public static @NonNull Registry ofServiceLoader() {
         return Registry
                 .builder()
                 .dialects(DialectLoader.load())
                 .build();
+    }
+
+
+    @StaticFactoryMethod
+    public static @NonNull Registry noOp() {
+        return Registry.builder().build();
     }
 
     @lombok.NonNull

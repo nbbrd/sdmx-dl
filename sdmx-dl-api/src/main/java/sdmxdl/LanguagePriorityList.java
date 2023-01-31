@@ -59,8 +59,7 @@ public final class LanguagePriorityList {
      *                                  the given {@code ranges} is ill-formed
      */
     @StaticFactoryMethod
-    @NonNull
-    public static LanguagePriorityList parse(@NonNull CharSequence ranges) throws IllegalArgumentException {
+    public static @NonNull LanguagePriorityList parse(@NonNull CharSequence ranges) throws IllegalArgumentException {
         return new LanguagePriorityList(Locale.LanguageRange.parse(ranges.toString()));
     }
 

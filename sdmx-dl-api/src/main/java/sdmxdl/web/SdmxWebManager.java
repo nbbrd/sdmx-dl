@@ -21,6 +21,7 @@ import internal.util.WebDriverLoader;
 import internal.util.WebMonitoringLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -49,14 +50,19 @@ import java.util.stream.Stream;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
-    @NonNull
-    public static SdmxWebManager ofServiceLoader() {
+    @StaticFactoryMethod
+    public static @NonNull SdmxWebManager ofServiceLoader() {
         return SdmxWebManager
                 .builder()
                 .drivers(WebDriverLoader.load())
                 .monitorings(WebMonitoringLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
+    }
+
+    @StaticFactoryMethod
+    public static @NonNull SdmxWebManager noOp() {
+        return SdmxWebManager.builder().build();
     }
 
     @lombok.NonNull

@@ -155,8 +155,7 @@ public final class Key {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static Key parse(@NonNull CharSequence input) {
+    public static @NonNull Key parse(@NonNull CharSequence input) {
         if (ALL_KEYWORD.contentEquals(input)) {
             return ALL;
         }
@@ -168,8 +167,7 @@ public final class Key {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static Key of(@NonNull List<String> input) {
+    public static @NonNull Key of(@NonNull List<String> input) {
         if (input.isEmpty()) {
             return ALL;
         }
@@ -181,8 +179,7 @@ public final class Key {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static Key of(@NonNull String... input) {
+    public static @NonNull Key of(@NonNull String... input) {
         if (input.length == 0) {
             return ALL;
         }

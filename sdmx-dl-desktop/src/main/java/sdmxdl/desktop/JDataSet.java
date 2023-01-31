@@ -28,7 +28,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -38,7 +37,7 @@ import static javax.swing.BorderFactory.*;
 public final class JDataSet extends JComponent implements HasSdmxProperties<SdmxWebManager> {
 
     @lombok.Getter
-    private SdmxWebManager sdmxManager = NO_OP_SDMX_WEB_MANAGER;
+    private SdmxWebManager sdmxManager = SdmxWebManager.noOp();
 
     public void setSdmxManager(@NonNull SdmxWebManager sdmxManager) {
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);

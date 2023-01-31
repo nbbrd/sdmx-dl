@@ -19,6 +19,7 @@ package sdmxdl.file;
 import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -39,11 +40,16 @@ import java.util.function.BiConsumer;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
-    @NonNull
-    public static SdmxFileManager ofServiceLoader() {
+    @StaticFactoryMethod
+    public static @NonNull SdmxFileManager ofServiceLoader() {
         return builder()
                 .readers(FileReaderLoader.load())
                 .build();
+    }
+
+    @StaticFactoryMethod
+    public static @NonNull SdmxFileManager noOp() {
+        return builder().build();
     }
 
     @lombok.NonNull

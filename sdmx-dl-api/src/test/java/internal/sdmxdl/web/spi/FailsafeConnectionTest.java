@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
 import sdmxdl.Feature;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.web.MockedDriver;
+import tests.sdmxdl.web.WebDriverAssert;
 
 import java.util.EnumSet;
 
@@ -43,10 +43,9 @@ public class FailsafeConnectionTest {
     public void testCompliance() {
         MockedDriver driver = MockedDriver.builder().repo(RepoSamples.REPO, EnumSet.allOf(Feature.class)).build();
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
-        WebContext context = WebContext.builder().build();
 
         ConnectionAssert.assertCompliance(
-                () -> FailsafeConnection.wrap(driver.connect(source, context)),
+                () -> FailsafeConnection.wrap(driver.connect(source, WebDriverAssert.noOpWebContext())),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
