@@ -19,7 +19,7 @@
 
     <properties>
         <project.x.mainClass>sdmxdl.desktop.MainCommand</project.x.mainClass>
-        <ikonli.version>2.6.0</ikonli.version>
+        <ikonli.version>12.3.1</ikonli.version>
     </properties>
 
     <dependencyManagement>
