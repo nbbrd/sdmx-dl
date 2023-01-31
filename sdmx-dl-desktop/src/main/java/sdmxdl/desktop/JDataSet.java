@@ -1,8 +1,6 @@
 package sdmxdl.desktop;
 
-import ec.util.chart.ColorSchemeSupport;
 import ec.util.chart.ObsFunction;
-import ec.util.chart.ObsIndex;
 import ec.util.chart.TimeSeriesChart;
 import ec.util.chart.swing.JTimeSeriesChart;
 import ec.util.chart.swing.SwingColorSchemeSupport;
@@ -32,8 +30,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static javax.swing.BorderFactory.*;
-
 public final class JDataSet extends JComponent implements HasSdmxProperties<SdmxWebManager> {
 
     @lombok.Getter
@@ -44,7 +40,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     }
 
     @lombok.Getter
-    private Registry registry = NO_OP_REGISTRY;
+    private Registry registry = Registry.noOp();
 
     public void setRegistry(@NonNull Registry registry) {
         firePropertyChange(REGISTRY_PROPERTY, this.registry, this.registry = registry);
@@ -65,7 +61,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     private final JTimeSeriesChart chart = new JTimeSeriesChart();
 
-    private final CustomTooltip customTooltip = new CustomTooltip();
+//    private final CustomTooltip customTooltip = new CustomTooltip();
 
     public JDataSet() {
         initComponents();
@@ -79,13 +75,13 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         chart.setPreferredSize(new Dimension(350, 10));
         chart.setElementVisible(TimeSeriesChart.Element.LEGEND, false);
         chart.setElementVisible(TimeSeriesChart.Element.CROSSHAIR, true);
-        chart.setElementVisible(TimeSeriesChart.Element.TOOLTIP, false);
+        chart.setElementVisible(TimeSeriesChart.Element.TOOLTIP, true);
         chart.setCrosshairOrientation(TimeSeriesChart.CrosshairOrientation.BOTH);
         chart.setCrosshairTrigger(TimeSeriesChart.DisplayTrigger.SELECTION);
         chart.setLineThickness(2);
 
-        customTooltip.enable(chart);
-        customTooltip.setEnabled(true);
+//        customTooltip.enable(chart);
+//        customTooltip.setEnabled(true);
 
         chart.setColorSchemeSupport(SwingColorSchemeSupport.from(new SystemLafColorScheme()));
 
@@ -199,7 +195,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
             Component result = delegate.getTableCellRendererComponent(table, formattedValue, isSelected, hasFocus, row, column);
             if (result instanceof JLabel) {
                 JLabel label = (JLabel) result;
-//                label.setToolTipText(toolTipFormatter.formatAsString(obs));
+                label.setToolTipText(toolTipFormatter.formatAsString(obs));
                 label.setHorizontalAlignment(JLabel.TRAILING);
             }
             return result;
@@ -208,7 +204,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     private static ObsFunction<String> asObsFunction(SingleSeries item) {
         List<Obs> data = item.getSeries().getObsList();
-        Formatter<Obs> obsFormatter = ObsFormats.getHtmlTooltipFormatter(item.getDsd());
+        Formatter<Obs> obsFormatter = ObsFormats.getChartTooltipFormatter(item.getDsd());
         return new ObsFunction<String>() {
             @Override
             public @Nullable String apply(int series, int obs) {
@@ -217,72 +213,72 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         };
     }
 
-    private static final class CustomTooltip extends JLabel {
-
-        private Popup popup;
-
-        public CustomTooltip() {
-            this.popup = null;
-            setEnabled(false);
-        }
-
-        public void enable(final JTimeSeriesChart chart) {
-            updateColors(chart);
-            chart.addPropertyChangeListener(evt -> {
-                switch (evt.getPropertyName()) {
-                    case JTimeSeriesChart.TOOLTIP_TRIGGER_PROPERTY:
-                        if (popup != null) {
-                            popup.hide();
-                        }
-                        break;
-                    case JTimeSeriesChart.HOVERED_OBS_PROPERTY:
-                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.SELECTION) {
-                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getHoveredObs()));
-                        }
-                        break;
-                    case JTimeSeriesChart.SELECTED_OBS_PROPERTY:
-                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.HOVERING) {
-                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getSelectedObs()));
-                        }
-                        break;
-                    case JTimeSeriesChart.COLOR_SCHEME_SUPPORT_PROPERTY:
-                        updateColors(chart);
-                        break;
-                }
-            });
-        }
-
-        private void updateColors(JTimeSeriesChart chart) {
-            ColorSchemeSupport<? extends Color> csc = chart.getColorSchemeSupport();
-            setOpaque(true);
-            setBackground(csc.getBackColor());
-            setForeground(csc.getTextColor());
-            setBorder(createCompoundBorder(createLineBorder(csc.getGridColor(), 1), createEmptyBorder(5, 5, 5, 5)));
-        }
-
-        private void updateCustomTooltip(JTimeSeriesChart chart, boolean visible) {
-            if (popup != null) {
-                popup.hide();
-            }
-            if (visible) {
-                Point p = MouseInfo.getPointerInfo().getLocation();
-                popup = PopupFactory.getSharedInstance().getPopup(chart, getCustomTooltip(chart), p.x + 5, p.y + 5);
-                popup.show();
-            }
-        }
-
-        private Component getCustomTooltip(JTimeSeriesChart chart) {
-            ObsIndex o = chart.getHoveredObs();
-            String serie = chart.getSeriesFormatter().apply(o.getSeries());
-            String value = chart.getValueFormatter().apply(o);
-            String period = chart.getPeriodFormatter().apply(o);
-            boolean forecast = chart.getDashPredicate().apply(o);
-            Color color = chart.getColorSchemeSupport().getLineColor(o.getSeries());
-//            setText("<html><b>" + serie + "</b><br>" + period + ": " + value);
-            SingleSeries fixmeItem = (SingleSeries) chart.getClientProperty("fixme_item");
-            setText(ObsFormats.getHtmlTooltipFormatter(fixmeItem.getDsd()).formatAsString(fixmeItem.getSeries().getObsList().get(o.getObs())));
-            return this;
-        }
-    }
+//    private static final class CustomTooltip extends JLabel {
+//
+//        private Popup popup;
+//
+//        public CustomTooltip() {
+//            this.popup = null;
+//            setEnabled(false);
+//        }
+//
+//        public void enable(final JTimeSeriesChart chart) {
+//            updateColors(chart);
+//            chart.addPropertyChangeListener(evt -> {
+//                switch (evt.getPropertyName()) {
+//                    case JTimeSeriesChart.TOOLTIP_TRIGGER_PROPERTY:
+//                        if (popup != null) {
+//                            popup.hide();
+//                        }
+//                        break;
+//                    case JTimeSeriesChart.HOVERED_OBS_PROPERTY:
+//                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.SELECTION) {
+//                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getHoveredObs()));
+//                        }
+//                        break;
+//                    case JTimeSeriesChart.SELECTED_OBS_PROPERTY:
+//                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.HOVERING) {
+//                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getSelectedObs()));
+//                        }
+//                        break;
+//                    case JTimeSeriesChart.COLOR_SCHEME_SUPPORT_PROPERTY:
+//                        updateColors(chart);
+//                        break;
+//                }
+//            });
+//        }
+//
+//        private void updateColors(JTimeSeriesChart chart) {
+//            ColorSchemeSupport<? extends Color> csc = chart.getColorSchemeSupport();
+//            setOpaque(true);
+//            setBackground(csc.getBackColor());
+//            setForeground(csc.getTextColor());
+//            setBorder(createCompoundBorder(createLineBorder(csc.getGridColor(), 1), createEmptyBorder(5, 5, 5, 5)));
+//        }
+//
+//        private void updateCustomTooltip(JTimeSeriesChart chart, boolean visible) {
+//            if (popup != null) {
+//                popup.hide();
+//            }
+//            if (visible) {
+//                Point p = MouseInfo.getPointerInfo().getLocation();
+//                popup = PopupFactory.getSharedInstance().getPopup(chart, getCustomTooltip(chart), p.x + 5, p.y + 5);
+//                popup.show();
+//            }
+//        }
+//
+//        private Component getCustomTooltip(JTimeSeriesChart chart) {
+//            ObsIndex o = chart.getHoveredObs();
+//            String serie = chart.getSeriesFormatter().apply(o.getSeries());
+//            String value = chart.getValueFormatter().apply(o);
+//            String period = chart.getPeriodFormatter().apply(o);
+//            boolean forecast = chart.getDashPredicate().apply(o);
+//            Color color = chart.getColorSchemeSupport().getLineColor(o.getSeries());
+////            setText("<html><b>" + serie + "</b><br>" + period + ": " + value);
+//            SingleSeries fixmeItem = (SingleSeries) chart.getClientProperty("fixme_item");
+//            setText(ObsFormats.getHtmlTooltipFormatter(fixmeItem.getDsd()).formatAsString(fixmeItem.getSeries().getObsList().get(o.getObs())));
+//            return this;
+//        }
+//    }
 
 }

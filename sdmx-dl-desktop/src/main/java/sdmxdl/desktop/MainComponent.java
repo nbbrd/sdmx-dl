@@ -3,6 +3,8 @@ package sdmxdl.desktop;
 import com.formdev.flatlaf.FlatClientProperties;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
+import internal.sdmxdl.desktop.DataSetRefFormats;
+import internal.sdmxdl.desktop.DataSourceRefFormats;
 import internal.sdmxdl.desktop.DynamicTree;
 import lombok.NonNull;
 import nbbrd.desktop.favicon.DomainName;
@@ -48,7 +50,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     @lombok.Getter
-    private Registry registry = NO_OP_REGISTRY;
+    private Registry registry = Registry.noOp();
 
     public void setRegistry(@NonNull Registry registry) {
         firePropertyChange(REGISTRY_PROPERTY, this.registry, this.registry = registry);
@@ -98,6 +100,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     private void initComponent() {
         dataSets.setRootVisible(false);
         dataSets.setShowsRootHandles(true);
+        ToolTipManager.sharedInstance().registerComponent(dataSets);
         dataSets.setCellRenderer(new DefaultTreeCellRenderer() {
 
             @Override
@@ -106,17 +109,17 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                 if (value instanceof DefaultMutableTreeNode) {
                     Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
                     if (userObject instanceof DataSourceRef) {
-                        DataSourceRef dataSourceRef = (DataSourceRef) userObject;
-                        FlowStruct fs = getFlowStruct(dataSourceRef);
-                        label.setText(fs != null ? fs.getDataflow().getName() : dataSourceRef.getFlow().toString());
-                        label.setToolTipText(null);
-                        label.setIcon(getDataSourceIcon(dataSourceRef, tree::repaint));
+                        DataSourceRef ref = (DataSourceRef) userObject;
+                        FlowStruct fs = getFlowStruct(ref);
+                        label.setText(DataSourceRefFormats.toText(ref, fs));
+                        label.setToolTipText(DataSourceRefFormats.toTooltipText(ref, fs));
+                        label.setIcon(getDataSourceIcon(ref, tree::repaint));
                     } else if (userObject instanceof DataSetRef) {
-                        DataSetRef dataSetRef = (DataSetRef) userObject;
-                        FlowStruct fs = getFlowStruct(dataSetRef.getDataSourceRef());
-                        label.setText(fs != null ? fs.getDataStructure().getDimensionList().get(dataSetRef.getDimensionIndex()).getCodelist().getCodes().get(dataSetRef.getKey().get(dataSetRef.getDimensionIndex())) : dataSetRef.getKey().toString());
-                        label.setToolTipText(null);
-                        if (dataSetRef.getKey().isSeries()) {
+                        DataSetRef ref = (DataSetRef) userObject;
+                        FlowStruct fs = getFlowStruct(ref.getDataSourceRef());
+                        label.setText(DataSetRefFormats.toText(ref, fs));
+                        label.setToolTipText(DataSetRefFormats.toTooltipText(ref, fs));
+                        if (ref.getKey().isSeries()) {
                             label.setIcon(FontIcon.of(MaterialDesign.MDI_CHART_LINE, 16, UIManager.getColor("Tree.icon.leafColor")));
                         } else {
                             label.setIcon(UIManager.getIcon(expanded ? "Tree.openIcon" : "Tree.closedIcon"));

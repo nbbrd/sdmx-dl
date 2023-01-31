@@ -12,6 +12,18 @@ import java.util.stream.Collectors;
 
 public final class ObsFormats {
 
+
+    public static Formatter<Obs> getChartTooltipFormatter(DataStructure dsd) {
+        Map<String, Attribute> attributes = dsd.getAttributes().stream()
+                .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))
+                .collect(Collectors.toMap(Attribute::getId, Function.identity()));
+        return obs -> getChartToolTipText(obs, attributes);
+    }
+
+    private static String getChartToolTipText(Obs obs, Map<String, Attribute> attributes) {
+        return obs.getPeriod() + ": " + obs.getValue();
+    }
+
     public static Formatter<Obs> getHtmlTooltipFormatter(DataStructure dsd) {
         Map<String, Attribute> attributes = dsd.getAttributes().stream()
                 .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))

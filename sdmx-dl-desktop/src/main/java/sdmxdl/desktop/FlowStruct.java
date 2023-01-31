@@ -9,7 +9,7 @@ import sdmxdl.web.SdmxWebManager;
 import java.io.IOException;
 
 @lombok.Value
-class FlowStruct {
+public class FlowStruct {
 
     @NonNull Dataflow dataflow;
 

@@ -17,6 +17,4 @@ public interface HasSdmxProperties<M extends SdmxManager<?>> {
     @NonNull Registry getRegistry();
 
     void setRegistry(@NonNull Registry registry);
-
-    Registry NO_OP_REGISTRY = Registry.builder().build();
 }
