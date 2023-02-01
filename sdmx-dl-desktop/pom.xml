@@ -121,6 +121,11 @@
             <artifactId>ikonli-materialdesign-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.j2html</groupId>
+            <artifactId>j2html</artifactId>
+            <version>1.6.0</version>
+        </dependency>
 
         <!-- runtime only -->
         <dependency>

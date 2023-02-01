@@ -1,21 +1,24 @@
 package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatIconColors;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
-import internal.sdmxdl.desktop.DataSetRefFormats;
-import internal.sdmxdl.desktop.DataSourceRefFormats;
-import internal.sdmxdl.desktop.DynamicTree;
+import internal.sdmxdl.desktop.*;
 import lombok.NonNull;
 import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.io.Resource;
+import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.DataflowRef;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.Registry;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.WebDriver;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -39,6 +42,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntConsumer;
+
+import static internal.sdmxdl.desktop.Html4Swing.nameDescription;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
 
 public final class MainComponent extends JComponent implements HasSdmxProperties<SdmxWebManager> {
 
@@ -65,9 +73,15 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         firePropertyChange(DATA_SOURCES_PROPERTY, this.dataSources, this.dataSources = dataSources);
     }
 
-    private final JTree dataSets = new JTree();
+    private final JTree datasetsTree = new JTree();
+
+    private final JList<SdmxWebSource> sourcesList = new JList<>();
+
+    private final JList<WebDriver> driversList = new JList<>();
 
     private final JTabbedPane main = new JTabbedPane();
+
+    private final JSplitPane splitPane = new JSplitPane();
 
     private final ListDataListener dataSourcesListener = JLists.dataListenerOf(this::contentsChanged);
 
@@ -93,15 +107,19 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     private Icon getDataSourceIcon(DataSourceRef dataSourceRef, Runnable onUpdate) {
-        URL website = getSdmxManager().getSources().get(dataSourceRef.getSource()).getWebsite();
-        return website != null ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), 16), onUpdate, sdmxIcon) : sdmxIcon;
+        return getDataSourceIcon(dataSourceRef.getSource(), 16, onUpdate);
+    }
+
+    private Icon getDataSourceIcon(String source, int size, Runnable onUpdate) {
+        URL website = getSdmxManager().getSources().get(source).getWebsite();
+        return website != null ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, sdmxIcon) : sdmxIcon;
     }
 
     private void initComponent() {
-        dataSets.setRootVisible(false);
-        dataSets.setShowsRootHandles(true);
-        ToolTipManager.sharedInstance().registerComponent(dataSets);
-        dataSets.setCellRenderer(new DefaultTreeCellRenderer() {
+        datasetsTree.setRootVisible(false);
+        datasetsTree.setShowsRootHandles(true);
+        ToolTipManager.sharedInstance().registerComponent(datasetsTree);
+        datasetsTree.setCellRenderer(new DefaultTreeCellRenderer() {
 
             @Override
             public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
@@ -146,8 +164,8 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                         .orElse(null);
             }
         });
-        DynamicTree.enable(dataSets, new DataNodeFactory(this::getSdmxManager), new DefaultMutableTreeNode("root"));
-        dataSets.addMouseListener(new MouseAdapter() {
+        DynamicTree.enable(datasetsTree, new DataNodeFactory(this::getSdmxManager), new DefaultMutableTreeNode("root"));
+        datasetsTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -157,44 +175,40 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         });
 
         KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        dataSets.getInputMap().put(enterKeyStroke, "SELECT_ACTION");
-        dataSets.getActionMap().put("SELECT_ACTION", new AbstractAction() {
+        datasetsTree.getInputMap().put(enterKeyStroke, "SELECT_ACTION");
+        datasetsTree.getActionMap().put("SELECT_ACTION", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 openCurrentDataSetRef();
             }
         });
 
-
         main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_CLOSABLE, true);
         main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_CLOSE_CALLBACK, (IntConsumer) main::removeTabAt);
+        main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_TYPE, FlatClientProperties.TABBED_PANE_TAB_TYPE_CARD);
 
-        JTabbedPane side = new JTabbedPane();
-        JToolBar sideToolBar = new JToolBar();
-        sideToolBar.add(Box.createHorizontalGlue());
+        sourcesList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
+            label.setText(nameDescription(value.getName(), value.getDescription(LanguagePriorityList.ANY)).render());
+            label.setIcon(getDataSourceIcon(value.getName(), 24, sourcesList::repaint));
+            label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        }));
 
-        JButton expandButton = sideToolBar.add(new ExpandAllCommand().toAction(dataSets));
-        expandButton.setIcon(FontIcon.of(MaterialDesign.MDI_UNFOLD_MORE, 16, UIManager.getColor("Button.disabledText")));
-        expandButton.setRolloverIcon(FontIcon.of(MaterialDesign.MDI_UNFOLD_MORE, 16, UIManager.getColor("Button.foreground")));
-        expandButton.setToolTipText("Expand All");
+        driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
+            label.setText(nameDescription(value.getName(), value.getDefaultDialect()).render());
+            label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        }));
 
-        JButton collapseButton = sideToolBar.add(new CollapseAllCommand().toAction(dataSets));
-        collapseButton.setIcon(FontIcon.of(MaterialDesign.MDI_UNFOLD_LESS, 16, UIManager.getColor("Button.disabledText")));
-        collapseButton.setRolloverIcon(FontIcon.of(MaterialDesign.MDI_UNFOLD_LESS, 16, UIManager.getColor("Button.foreground")));
-        collapseButton.setToolTipText("Collapse All");
+        splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setRightComponent(main);
+        splitPane.setResizeWeight(.3);
 
-        JButton optionsButton = sideToolBar.add(new OptionsCommand().toAction(dataSets));
-        optionsButton.setIcon(FontIcon.of(MaterialDesign.MDI_MENU, 16, UIManager.getColor("Button.disabledText")));
-        optionsButton.setRolloverIcon(FontIcon.of(MaterialDesign.MDI_MENU, 16, UIManager.getColor("Button.foreground")));
-        optionsButton.setToolTipText("Options");
-
-        side.addTab("Datasets", new JScrollPane(dataSets));
-        side.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, sideToolBar);
-
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, side, main);
-        splitPane.setResizeWeight(.25);
+        JToolWindowBar toolWindowBar = new JToolWindowBar(splitPane);
+        addTool(toolWindowBar, "Datasets", MDI_FILE_TREE, new JScrollPane(datasetsTree), newDatasetsToolBar());
+        addTool(toolWindowBar, "Sources", MDI_SERVER_NETWORK, new JScrollPane(sourcesList), new JToolBar());
+        addTool(toolWindowBar, "Drivers", MDI_CHIP, new JScrollPane(driversList), new JToolBar());
 
         setLayout(new BorderLayout());
+        add(toolWindowBar, BorderLayout.WEST);
         add(splitPane, BorderLayout.CENTER);
 
         dataSources.addListDataListener(dataSourcesListener);
@@ -203,8 +217,52 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         addPropertyChangeListener(SDMX_MANAGER_PROPERTY, this::onSdmxWebManagerChange);
     }
 
+    private void addTool(JToolWindowBar toolToolBar, String name, Ikon ikon, Component component, JToolBar toolBar) {
+        JTabbedPane tool = new JTabbedPane();
+        tool.addTab(name, component);
+        tool.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
+        toolToolBar.addToolWindow(name, FontIcon.of(ikon, 16, UIManager.getColor(FlatIconColors.ACTIONS_GREYINLINE.key)), tool);
+    }
+
+    private JToolBar newDatasetsToolBar() {
+        JToolBar result = new JToolBar();
+        result.add(Box.createHorizontalGlue());
+
+        result.add(new ButtonBuilder()
+                .action(new DemoCommand().toAction(this))
+                .ikon(MDI_AUTO_FIX)
+                .toolTipText("Add demo datasets")
+                .buildButton());
+
+        result.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .ikon(MDI_DATABASE_PLUS)
+                .toolTipText("Add dataset")
+                .buildButton());
+
+        result.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .ikon(MDI_UNFOLD_MORE)
+                .toolTipText("Expand All")
+                .buildButton());
+
+        result.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .ikon(MDI_UNFOLD_LESS)
+                .toolTipText("Collapse All")
+                .buildButton());
+
+        result.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .ikon(MDI_MENU)
+                .toolTipText("Options")
+                .buildButton());
+
+        return result;
+    }
+
     private void openCurrentDataSetRef() {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) dataSets.getLastSelectedPathComponent();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) datasetsTree.getLastSelectedPathComponent();
         if (node != null) {
             Object userObject = node.getUserObject();
             if (userObject instanceof DataSetRef) {
@@ -228,7 +286,8 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     private void onSdmxWebManagerChange(PropertyChangeEvent evt) {
-
+        sourcesList.setModel(JLists.modelOf(getSdmxManager().getSources().values().stream().filter(o -> !o.isAlias()).collect(toList())));
+        driversList.setModel(JLists.modelOf(getSdmxManager().getDrivers()));
     }
 
     private void onDataSourcesChange(PropertyChangeEvent evt) {
@@ -244,10 +303,10 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     private void contentsChanged(ListDataEvent e) {
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) dataSets.getModel().getRoot();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) datasetsTree.getModel().getRoot();
         root.removeAllChildren();
         JLists.stream(dataSources).forEach(dataSourceRef -> root.add(new DynamicTree.CustomNode(dataSourceRef, false)));
-        dataSets.setModel(new DefaultTreeModel(root));
+        datasetsTree.setModel(new DefaultTreeModel(root));
         flowStructs.clear();
         new SwingWorker<Void, FlowStruct>() {
             @Override
@@ -261,29 +320,16 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
             @Override
             protected void process(List<FlowStruct> chunks) {
                 chunks.forEach(chunk -> flowStructs.put(chunk.getDataflow().getRef(), chunk));
-                dataSets.repaint();
+                datasetsTree.repaint();
             }
         }.execute();
     }
 
-    private static final class ExpandAllCommand extends JCommand<JTree> {
-
+    private static final class DemoCommand extends JCommand<MainComponent> {
         @Override
-        public void execute(@NonNull JTree component) {
-        }
-    }
-
-    private static final class CollapseAllCommand extends JCommand<JTree> {
-
-        @Override
-        public void execute(@NonNull JTree component) {
-        }
-    }
-
-    private static final class OptionsCommand extends JCommand<JTree> {
-
-        @Override
-        public void execute(@NonNull JTree component) {
+        public void execute(@NonNull MainComponent c) {
+            c.getDataSources().addElement(new DataSourceRef("ECB", DataflowRef.parse("EXR"), emptyList()));
+            c.getDataSources().addElement(new DataSourceRef("RNG", DataflowRef.parse("RNG"), emptyList()));
         }
     }
 }

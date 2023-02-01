@@ -33,7 +33,7 @@ class SingleSeries {
         try {
             return registry.getFactory(manager, ref.getDataSourceRef().getSource(), dsd).apply(series);
         } catch (IOException ex) {
-            System.out.println("Not found");
+            System.out.println("Series meta not found");
             return SeriesMeta.EMPTY;
         }
     }

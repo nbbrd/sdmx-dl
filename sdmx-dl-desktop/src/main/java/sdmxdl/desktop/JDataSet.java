@@ -1,5 +1,6 @@
 package sdmxdl.desktop;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import ec.util.chart.ObsFunction;
 import ec.util.chart.TimeSeriesChart;
 import ec.util.chart.swing.JTimeSeriesChart;
@@ -7,28 +8,33 @@ import ec.util.chart.swing.SwingColorSchemeSupport;
 import ec.util.grid.swing.AbstractGridModel;
 import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
-import internal.sdmxdl.desktop.GridChart;
-import internal.sdmxdl.desktop.ObsFormats;
-import internal.sdmxdl.desktop.SeriesMetaFormats;
-import internal.sdmxdl.desktop.SystemLafColorScheme;
+import internal.sdmxdl.desktop.*;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
+import sdmxdl.Attribute;
 import sdmxdl.Obs;
 import sdmxdl.ext.Registry;
 import sdmxdl.web.SdmxWebManager;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
 
 public final class JDataSet extends JComponent implements HasSdmxProperties<SdmxWebManager> {
 
@@ -55,11 +61,13 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         firePropertyChange(MODEL_PROPERTY, this.model, this.model = model);
     }
 
-    private final JTextArea textArea = new JTextArea();
-
     private final JGrid grid = new JGrid();
 
     private final JTimeSeriesChart chart = new JTimeSeriesChart();
+
+    private final JTable metaTable = new JTable();
+
+    private final JTable idTable = new JTable();
 
 //    private final CustomTooltip customTooltip = new CustomTooltip();
 
@@ -87,11 +95,42 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
         GridChart.enableSync(grid, chart);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, grid, chart);
-        splitPane.setResizeWeight(.3);
+        JSplitPane dataPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, grid, chart);
+        dataPane.setResizeWeight(.3);
+
+        JScrollPane metaPane = new JScrollPane(metaTable);
+
+        JScrollPane idPane = new JScrollPane(idTable);
+
+        JToolBar contentToolBar = new JToolBar();
+        contentToolBar.add(Box.createHorizontalGlue());
+
+        contentToolBar.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(this))
+                .ikon(MDI_WEB)
+                .toolTipText("Open in web browser")
+                .buildButton());
+
+        contentToolBar.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(this))
+                .ikon(MDI_EXPORT)
+                .toolTipText("Export")
+                .buildButton());
+
+        contentToolBar.add(new ButtonBuilder()
+                .action(NoOpCommand.INSTANCE.toAction(this))
+                .ikon(MDI_REFRESH)
+                .toolTipText("Refresh")
+                .buildButton());
+
+        JTabbedPane content = new JTabbedPane();
+        content.addTab("Data", dataPane);
+        content.addTab("Meta", metaPane);
+        content.addTab("ID", idPane);
+        content.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, contentToolBar);
 
         setLayout(new BorderLayout());
-        add(BorderLayout.CENTER, splitPane);
+        add(BorderLayout.CENTER, content);
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
     }
@@ -116,7 +155,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     }
 
     private void reportLoading() {
-        textArea.setText("Loading");
+        // TODO
     }
 
     private void displayData(SingleSeries item) {
@@ -127,11 +166,13 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         chart.setObsFormatter(asObsFunction(item));
         chart.setPeriodFormat(SeriesMetaFormats.getDateFormat(item.getMeta()));
         chart.putClientProperty("fixme_item", item);
+        metaTable.setModel(asMetaTableModel(item));
+        idTable.setModel(asIdTableModel(item));
     }
 
     private void reportError(Exception ex) {
         ex.printStackTrace();
-        textArea.setText(ex.getMessage());
+        // TODO
     }
 
     private GridModel asGridModel(SingleSeries item) {
@@ -173,6 +214,30 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
             ts.add(new TimeSeriesDataItem(new FixedMillisecond(Timestamp.valueOf(obs.getPeriod())), obs.getValue()));
         }
         result.addSeries(ts);
+        return result;
+    }
+
+    private TableModel asMetaTableModel(SingleSeries item) {
+        DefaultTableModel result = new DefaultTableModel();
+        result.addColumn("Name");
+        result.addColumn("Value");
+        Map<String, Attribute> attributeById = item.getDsd().getAttributes().stream().collect(toMap(Attribute::getId, identity()));
+        item.getSeries().getMeta().forEach((k, v) -> {
+            Attribute attribute = attributeById.get(k);
+            result.addRow(attribute != null
+                    ? new Object[]{attribute.getLabel(), attribute.isCoded() ? attribute.getCodelist().getCodes().getOrDefault(v, v) : v}
+                    : new Object[]{k, v});
+        });
+        return result;
+    }
+
+    private TableModel asIdTableModel(SingleSeries item) {
+        DefaultTableModel result = new DefaultTableModel();
+        result.addColumn("Name");
+        result.addColumn("Value");
+        result.addRow(new Object[]{"Source", getModel().getDataSourceRef().getSource()});
+        result.addRow(new Object[]{"Flow", getModel().getDataSourceRef().getFlow()});
+        result.addRow(new Object[]{"Key", item.getSeries().getKey()});
         return result;
     }
 
