@@ -22,7 +22,7 @@ package sdmxdl;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class Dataflow extends Resource<DataflowRef> {
+public class Dataflow extends Resource<DataflowRef> implements HasName, HasDescription {
 
     @lombok.NonNull
     DataflowRef ref;
@@ -30,15 +30,9 @@ public class Dataflow extends Resource<DataflowRef> {
     @lombok.NonNull
     DataStructureRef structureRef;
 
-    /**
-     * Human-readable name.
-     */
     @lombok.NonNull
     String name;
 
-    /**
-     * Optional longer human-readable description.
-     */
     @lombok.NonNull
     @lombok.Builder.Default
     String description = "";

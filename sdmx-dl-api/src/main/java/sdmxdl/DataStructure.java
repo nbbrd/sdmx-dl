@@ -33,7 +33,7 @@ import java.util.SortedSet;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataStructure extends Resource<DataStructureRef> {
+public class DataStructure extends Resource<DataStructureRef> implements HasName {
 
     /**
      * Non-null unique reference to this data structure.
@@ -62,11 +62,8 @@ public class DataStructure extends Resource<DataStructureRef> {
     @lombok.NonNull
     String primaryMeasureId;
 
-    /**
-     * Localized label for this data structure.
-     */
     @lombok.NonNull
-    String label;
+    String name;
 
     @lombok.Getter(lazy = true)
     List<Dimension> dimensionList = new ArrayList<>(getDimensions());

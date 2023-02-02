@@ -395,13 +395,13 @@ public final class PxWebDriver implements WebDriver {
         }
 
         private static Dimension fixDimensionCode(Dimension dimension) {
-            return dimension.toBuilder().id(dimension.getLabel().replace(" ", "")).build();
+            return dimension.toBuilder().id(dimension.getName().replace(" ", "")).build();
         }
 
         private static final Dimension FREQ_DIMENSION = Dimension
                 .builder()
                 .id("FREQ")
-                .label("")
+                .name("")
                 .position(0)
                 .codelist(Codelist
                         .builder()
@@ -489,7 +489,7 @@ public final class PxWebDriver implements WebDriver {
                     .ref(ref)
                     .timeDimensionId(toTimeDimensionId())
                     .primaryMeasureId("")
-                    .label("")
+                    .name("")
                     .dimensions(toDimensionList())
                     .build();
         }
@@ -540,7 +540,7 @@ public final class PxWebDriver implements WebDriver {
                     .builder()
                     .position(position)
                     .id(code)
-                    .label(text)
+                    .name(text)
                     .codelist(Codelist
                             .builder()
                             .ref(CodelistRef.parse(code))

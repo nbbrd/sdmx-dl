@@ -225,7 +225,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         item.getSeries().getMeta().forEach((k, v) -> {
             Attribute attribute = attributeById.get(k);
             result.addRow(attribute != null
-                    ? new Object[]{attribute.getLabel(), attribute.isCoded() ? attribute.getCodelist().getCodes().getOrDefault(v, v) : v}
+                    ? new Object[]{attribute.getName(), attribute.isCoded() ? attribute.getCodelist().getCodes().getOrDefault(v, v) : v}
                     : new Object[]{k, v});
         });
         return result;

@@ -53,7 +53,7 @@ public class ProtobufRepositories {
                 .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute))
                 .setTimeDimensionId(value.getTimeDimensionId())
                 .setPrimaryMeasureId(value.getPrimaryMeasureId())
-                .setLabel(value.getLabel())
+                .setLabel(value.getName())
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class ProtobufRepositories {
                 .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
                 .timeDimensionId(value.getTimeDimensionId())
                 .primaryMeasureId(value.getPrimaryMeasureId())
-                .label(value.getLabel())
+                .name(value.getLabel())
                 .build();
     }
 
@@ -73,7 +73,7 @@ public class ProtobufRepositories {
         return Dimension
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getLabel())
+                .setLabel(value.getName())
                 .setCodelist(fromCodelist(value.getCodelist()))
                 .setPosition(value.getPosition())
                 .build();
@@ -83,7 +83,7 @@ public class ProtobufRepositories {
         return sdmxdl.Dimension
                 .builder()
                 .id(value.getId())
-                .label(value.getLabel())
+                .name(value.getLabel())
                 .codelist(toCodelist(value.getCodelist()))
                 .position(value.getPosition())
                 .build();
@@ -109,7 +109,7 @@ public class ProtobufRepositories {
         Attribute.Builder result = Attribute
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getLabel());
+                .setLabel(value.getName());
         if (value.getCodelist() != null)
             result.setCodelist(fromCodelist(value.getCodelist()));
         return result
@@ -121,7 +121,7 @@ public class ProtobufRepositories {
         return sdmxdl.Attribute
                 .builder()
                 .id(value.getId())
-                .label(value.getLabel())
+                .name(value.getLabel())
                 .codelist(value.hasCodelist() ? toCodelist(value.getCodelist()) : null)
                 .relationship(toAttributeRelationship(value.getRelationship()))
                 .build();

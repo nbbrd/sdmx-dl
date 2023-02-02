@@ -16,6 +16,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Sort observations chronologically
 - ![API] Enforce non-null observations fields
+- ![API] Rename field `Dimension#label` as `Dimension#name`
+- ![API] Rename field `Attribute#label` as `Attribute#name`
+- ![API] Rename field `DataStructure#label` as `DataStructure#name`
 - ![FORMAT] Improve parsing of time formats
 - ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`
 - ![FORMAT] Rename module `sdmx-dl-provider-util ` as `smdx-dl-provider-base`

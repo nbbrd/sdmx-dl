@@ -130,7 +130,7 @@ public final class RngDriver implements WebDriver {
                     .dimension(Dimension
                             .builder()
                             .id(FREQ)
-                            .label("Frequency")
+                            .name("Frequency")
                             .position(1)
                             .codelist(Codelist
                                     .builder()
@@ -141,7 +141,7 @@ public final class RngDriver implements WebDriver {
                     .dimension(Dimension
                             .builder()
                             .id(INDEX)
-                            .label("Index")
+                            .name("Index")
                             .position(2)
                             .codelist(Codelist
                                     .builder()
@@ -154,7 +154,7 @@ public final class RngDriver implements WebDriver {
                             .build())
                     .timeDimensionId("TIME_PERIOD")
                     .primaryMeasureId("OBS_VALUE")
-                    .label("RNG")
+                    .name("RNG")
                     .build();
         }
 

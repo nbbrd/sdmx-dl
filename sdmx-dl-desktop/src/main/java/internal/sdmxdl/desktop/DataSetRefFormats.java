@@ -40,7 +40,7 @@ public class DataSetRefFormats {
     }
 
     private static DomContent htmlDimension(Dimension dimension) {
-        return each(text(dimension.getId()), br(), text(dimension.getLabel()));
+        return each(text(dimension.getId()), br(), text(dimension.getName()));
     }
 
     private static Text htmlDimension(DataSetRef ref) {

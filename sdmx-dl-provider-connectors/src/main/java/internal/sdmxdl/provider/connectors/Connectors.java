@@ -67,7 +67,7 @@ public class Connectors {
         return result
                 .id(o.getId())
                 .codelist(toCodelist(o.getCodeList()))
-                .label(toLabel(o));
+                .name(toLabel(o));
     }
 
     private sdmxdl.Codelist toCodelist(SDMXReference o) {
@@ -82,7 +82,7 @@ public class Connectors {
     public DataStructure toStructure(DataFlowStructure dsd) {
         return DataStructure.builder()
                 .ref(DataStructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
-                .label(dsd.getName())
+                .name(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure())
                 .dimensions(dsd.getDimensions().stream().map(Connectors::toDimension).collect(Collectors.toSet()))
@@ -126,7 +126,7 @@ public class Connectors {
     }
 
     private void fromComponent(SdmxMetaElement result, Component o) {
-        result.setName(o.getLabel());
+        result.setName(o.getName());
         Codelist codeList = fromCodelist(o.getCodelist());
         if (codeList != null) {
             result.setCodeList(codeList);
@@ -150,7 +150,7 @@ public class Connectors {
                 dsd.getRef().getId(),
                 dsd.getRef().getAgency(),
                 dsd.getRef().getVersion());
-        result.setName(dsd.getLabel());
+        result.setName(dsd.getName());
         result.setTimeDimension(dsd.getTimeDimensionId());
         result.setMeasure(dsd.getPrimaryMeasureId());
         dsd.getDimensions().forEach(o -> result.setDimension(fromDimension(o)));

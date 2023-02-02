@@ -154,7 +154,7 @@ public class StatCanDriverTest {
                                                 .hasSize(2);
                                         assertThat(dsd.getAttributes())
                                                 .hasSize(8);
-                                        assertThat(dsd.getLabel())
+                                        assertThat(dsd.getName())
                                                 .startsWith(label.getValue());
                                         assertThat(dsd.getRef())
                                                 .isEqualTo(toDataStructureRef(10100001));

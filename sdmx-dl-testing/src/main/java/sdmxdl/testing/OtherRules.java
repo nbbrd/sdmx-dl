@@ -57,7 +57,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getStructure())
-                    .map(dsd -> isBlank(dsd.getLabel()))
+                    .map(dsd -> isBlank(dsd.getName()))
                     .orElse(false);
         }
     },
@@ -151,7 +151,7 @@ public enum OtherRules {
 
     private static String checkDimension(String checkName, Dimension dimension) {
         return isBlank(dimension.getId())
-                || isBlank(dimension.getLabel())
+                || isBlank(dimension.getName())
                 || dimension.getPosition() <= 0
                 || dimension.getCodes().isEmpty()
                 ? checkName

@@ -57,7 +57,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(IndexedComponent.class)
                 .columnOf("Name", IndexedComponent::getId, Formatter.onString())
-                .columnOf("Label", IndexedComponent::getLabel, Formatter.onString())
+                .columnOf("Label", IndexedComponent::getName, Formatter.onString())
                 .columnOf("Coded", IndexedComponent::isCoded, Formatter.onBoolean())
                 .columnOf("Index", IndexedComponent::getIndexOrNull, Formatter.onInteger())
                 .build();

@@ -232,7 +232,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getAttributes(), attributes);
             output.writeString(t.getTimeDimensionId());
             output.writeString(t.getPrimaryMeasureId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
         }
 
         @SuppressWarnings("unchecked")
@@ -245,7 +245,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .attributes(kryo.readObject(input, ArrayList.class, attributes))
                     .timeDimensionId(input.readString())
                     .primaryMeasureId(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .build();
         }
     }
@@ -422,7 +422,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, Dimension t) {
             output.writeString(t.getId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
             kryo.writeObject(output, t.getCodelist());
             output.writeInt(t.getPosition(), true);
         }
@@ -433,7 +433,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Dimension
                     .builder()
                     .id(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .codelist(kryo.readObject(input, Codelist.class))
                     .position(input.readInt(true))
                     .build();
@@ -445,7 +445,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, Attribute t) {
             output.writeString(t.getId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
             kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
             kryo.writeObject(output, t.getRelationship());
         }
@@ -456,7 +456,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Attribute
                     .builder()
                     .id(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .codelist(kryo.readObjectOrNull(input, Codelist.class))
                     .relationship(kryo.readObject(input, AttributeRelationship.class))
                     .build();

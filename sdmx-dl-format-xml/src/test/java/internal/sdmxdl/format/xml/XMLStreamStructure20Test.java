@@ -40,13 +40,13 @@ public class XMLStreamStructure20Test {
         Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
 
         assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
-            assertThat(o.getLabel()).isEqualTo("My first dataset");
+            assertThat(o.getName()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
             assertThat(o.getRef()).isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", null));
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
-                assertThat(x.getLabel()).isEqualTo("Subject");
+                assertThat(x.getName()).isEqualTo("Subject");
                 assertThat(x.getPosition()).isEqualTo(1);
                 assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("NBB", "CL_TEST_DATASET_SUBJECT", "latest"));
                 assertThat(x.getCodelist().getCodes()).hasSize(1).containsEntry("LOCSTL04", "Amplitude adjusted (CLI)");
@@ -55,12 +55,12 @@ public class XMLStreamStructure20Test {
             Set<Attribute> attributes = o.getAttributes();
             assertThat(attributes).hasSize(2);
             assertThat(attributes).filteredOn(Attribute::getId, "TIME_FORMAT").singleElement().satisfies(x -> {
-                assertThat(x.getLabel()).isEqualTo("Time Format");
+                assertThat(x.getName()).isEqualTo("Time Format");
                 assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.SERIES);
                 assertThat(x.getCodes()).isNotEmpty();
             });
             assertThat(attributes).filteredOn(Attribute::getId, "OBS_STATUS").singleElement().satisfies(x -> {
-                assertThat(x.getLabel()).isEqualTo("Observation Status");
+                assertThat(x.getName()).isEqualTo("Observation Status");
                 assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.OBSERVATION);
                 assertThat(x.getCodes()).isNotEmpty();
             });
@@ -69,13 +69,13 @@ public class XMLStreamStructure20Test {
         Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
 
         assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
-            assertThat(o.getLabel()).isEqualTo("Mon premier dataset");
+            assertThat(o.getName()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
             assertThat(o.getRef()).isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", null));
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
-                assertThat(x.getLabel()).isEqualTo("Sujet");
+                assertThat(x.getName()).isEqualTo("Sujet");
                 assertThat(x.getPosition()).isEqualTo(1);
             });
         });

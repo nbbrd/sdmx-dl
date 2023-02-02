@@ -51,7 +51,7 @@ public final class ObsFormats {
         Attribute attribute = attributes.get(entry.getKey());
         return attribute != null
                 ? tr(
-                td(attribute.getLabel()).withStyle("text-align=right"),
+                td(attribute.getName()).withStyle("text-align=right"),
                 td(attribute.isCoded() ? attribute.getCodelist().getCodes().get(entry.getValue()) : entry.getValue())
         )
                 : tr(td(entry.getKey()).withStyle("text-align=right"), td(entry.getValue()));

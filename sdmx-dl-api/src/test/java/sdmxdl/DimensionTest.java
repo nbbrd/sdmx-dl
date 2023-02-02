@@ -35,29 +35,29 @@ public class DimensionTest {
     public void testBuilder() {
         assertThatNullPointerException().isThrownBy(() -> Dimension.builder().build()).withMessageContaining("id");
         assertThatNullPointerException().isThrownBy(() -> Dimension.builder().id(null).build()).withMessageContaining("id");
-        assertThatNullPointerException().isThrownBy(() -> Dimension.builder().id(someId).label(null).build()).withMessageContaining("label");
+        assertThatNullPointerException().isThrownBy(() -> Dimension.builder().id(someId).name(null).build()).withMessageContaining("name");
 
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> Dimension.builder().id(someId).label(someLabel).codelist(someCodelist).build().getCodes().put("hello", "world"));
+                .isThrownBy(() -> Dimension.builder().id(someId).name(someLabel).codelist(someCodelist).build().getCodes().put("hello", "world"));
 
-        assertThat(Dimension.builder().id(someId).label(someLabel).codelist(someCodelist).build())
+        assertThat(Dimension.builder().id(someId).name(someLabel).codelist(someCodelist).build())
                 .hasFieldOrPropertyWithValue("id", someId)
                 .hasFieldOrPropertyWithValue("codelist", someCodelist)
-                .hasFieldOrPropertyWithValue("label", someLabel)
+                .hasFieldOrPropertyWithValue("name", someLabel)
                 .hasFieldOrPropertyWithValue("position", 0);
     }
 
     @Test
     public void testEquals() {
-        assertThat(Dimension.builder().id("id").label("label").position(1).codelist(someCodelist).build())
-                .isEqualTo(Dimension.builder().id("id").label("label").position(1).codelist(someCodelist).build());
+        assertThat(Dimension.builder().id("id").name("label").position(1).codelist(someCodelist).build())
+                .isEqualTo(Dimension.builder().id("id").name("label").position(1).codelist(someCodelist).build());
     }
 
     @Test
     public void testComparable() {
-        Dimension d1a = Dimension.builder().id("id1a").label("label1").position(1).codelist(someCodelist).build();
-        Dimension d1b = Dimension.builder().id("id1b").label("label1").position(1).codelist(someCodelist).build();
-        Dimension d2 = Dimension.builder().id("id2").label("label2").position(2).codelist(someCodelist).build();
+        Dimension d1a = Dimension.builder().id("id1a").name("label1").position(1).codelist(someCodelist).build();
+        Dimension d1b = Dimension.builder().id("id1b").name("label1").position(1).codelist(someCodelist).build();
+        Dimension d2 = Dimension.builder().id("id2").name("label2").position(2).codelist(someCodelist).build();
 
         assertThat(d1a).isEqualByComparingTo(d1a);
         assertThat(d1a).isLessThan(d2);

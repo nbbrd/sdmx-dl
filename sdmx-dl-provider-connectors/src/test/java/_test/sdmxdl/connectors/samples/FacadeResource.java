@@ -117,6 +117,6 @@ public class FacadeResource {
 
     private Dataflow asDataflow(DataStructure o) {
         DataflowRef ref = DataflowRef.of(o.getRef().getAgency(), o.getRef().getId(), o.getRef().getVersion());
-        return Dataflow.builder().ref(ref).structureRef(o.getRef()).name(o.getLabel()).build();
+        return Dataflow.builder().ref(ref).structureRef(o.getRef()).name(o.getName()).build();
     }
 }
