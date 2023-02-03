@@ -133,12 +133,12 @@ final class CachedRestClient implements RestClient {
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-        if (ref.getQuery().getDetail().isDataRequested()) {
+        if (!ref.getQuery().getDetail().isIgnoreData()) {
             return delegate.getData(ref, dsd);
         }
-        DataSet result = ref.getQuery().getDetail().isMetaRequested()
-                ? loadNoDataWithCache(ref, dsd)
-                : loadSeriesKeysOnlyWithCache(ref, dsd);
+        DataSet result = ref.getQuery().getDetail().isIgnoreMeta()
+                ? loadSeriesKeysOnlyWithCache(ref, dsd)
+                : loadNoDataWithCache(ref, dsd);
         return result.getDataStream(ref.getQuery());
     }
 

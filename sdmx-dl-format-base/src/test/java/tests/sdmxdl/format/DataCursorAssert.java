@@ -41,14 +41,14 @@ public class DataCursorAssert {
                 // header
                 s.assertThat(c.getSeriesKey()).isNotNull().isEqualTo(c.getSeriesKey()).matches(key::contains);
                 // attributes
-                if (!detail.isMetaRequested()) {
+                if (detail.isIgnoreMeta()) {
                     s.assertThat(c.getSeriesAttributes()).isEmpty();
                 } else {
                     s.assertThat(c.getSeriesAttributes()).isNotNull().isEqualTo(c.getSeriesAttributes());
                     s.assertThat(c.getSeriesAttribute("hello")).isEqualTo(c.getSeriesAttribute("hello"));
                 }
                 // values
-                if (!detail.isDataRequested()) {
+                if (detail.isIgnoreData()) {
                     s.assertThat(c.nextObs()).isFalse();
                 } else {
                     while (c.nextObs()) {

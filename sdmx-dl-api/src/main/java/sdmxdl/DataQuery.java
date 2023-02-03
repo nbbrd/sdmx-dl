@@ -23,17 +23,17 @@ public class DataQuery {
     }
 
     private Series map(Series series) {
-        if (detail.isDataRequested()) {
-            if (detail.isMetaRequested()) {
-                return series;
+        if (detail.isIgnoreData()) {
+            if (detail.isIgnoreMeta()) {
+                return series.toBuilder().clearObs().clearMeta().build();
             } else {
-                return series.toBuilder().clearMeta().build();
+                return series.toBuilder().clearObs().build();
             }
         } else {
-            if (detail.isMetaRequested()) {
-                return series.toBuilder().clearObs().build();
+            if (detail.isIgnoreMeta()) {
+                return series.toBuilder().clearMeta().build();
             } else {
-                return series.toBuilder().clearObs().clearMeta().build();
+                return series;
             }
         }
     }

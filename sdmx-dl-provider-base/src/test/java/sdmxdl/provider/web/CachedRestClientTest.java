@@ -114,15 +114,15 @@ public class CachedRestClientTest {
 
                 HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref.getQuery()).collect(toList())));
 
-                if (filter.isDataRequested()) {
+                if (filter.isIgnoreData()) {
+                    if (filter.isIgnoreMeta()) {
+                        checkCacheHit(this::getClient, x, validator, seriesKeysOnlyId, ttl);
+                    } else {
+                        checkCacheHit(this::getClient, x, validator, noDataId, ttl);
+                    }
+                } else {
                     checkCacheMiss(this::getClient, x, validator, noDataId, ttl);
                     checkCacheMiss(this::getClient, x, validator, seriesKeysOnlyId, ttl);
-                } else {
-                    if (filter.isMetaRequested()) {
-                        checkCacheHit(this::getClient, x, validator, noDataId, ttl);
-                    } else {
-                        checkCacheHit(this::getClient, x, validator, seriesKeysOnlyId, ttl);
-                    }
                 }
             }
         }

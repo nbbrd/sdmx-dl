@@ -97,7 +97,7 @@ public final class CachedFileClient implements FileClient {
 
     @Override
     public @NonNull Stream<Series> loadData(@NonNull FileInfo entry, @NonNull DataRef dataRef) throws IOException {
-        return !dataRef.getQuery().getDetail().isDataRequested()
+        return dataRef.getQuery().getDetail().isIgnoreData()
                 ? getIdOfLoadData().load(cache, () -> copyAllNoData(entry, dataRef.getFlowRef()), this::getTtl).getDataStream(dataRef.getQuery())
                 : delegate.loadData(entry, dataRef);
     }

@@ -65,10 +65,10 @@ public class CachedFileClientTest {
 
                 HamcrestCondition<Collection<Series>> validator = new HamcrestCondition<>(equalTo(DATA_SET.getDataStream(ref.getQuery()).collect(toList())));
 
-                if (detail.isDataRequested()) {
-                    checkCacheMiss(this::getClient, x, validator, loadDataKey, ttl);
-                } else {
+                if (detail.isIgnoreData()) {
                     checkCacheHit(this::getClient, x, validator, loadDataKey, ttl);
+                } else {
+                    checkCacheMiss(this::getClient, x, validator, loadDataKey, ttl);
                 }
             }
         }

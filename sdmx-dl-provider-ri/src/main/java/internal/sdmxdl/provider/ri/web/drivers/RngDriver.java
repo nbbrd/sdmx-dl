@@ -179,7 +179,7 @@ public final class RngDriver implements WebDriver {
 
         private Series newSeries(Key key, Freq freq, DataDetail detail) {
             Series.Builder result = Series.builder().key(key);
-            if (detail.isDataRequested()) {
+            if (!detail.isIgnoreData()) {
                 int series = Integer.parseInt(key.get(1));
                 int obsCount = (int) freq.getUnit().between(config.getStart(), config.getStart().plusYears(config.getYearCount()));
                 long startTimeMillis = config.getStart().toInstant(ZoneOffset.UTC).toEpochMilli();
