@@ -8,13 +8,15 @@ import java.util.stream.Stream;
 @lombok.Builder(toBuilder = true)
 public class DataQuery {
 
-    public static final DataQuery ALL = DataQuery.builder().key(Key.ALL).detail(DataDetail.FULL).build();
+    public static final DataQuery ALL = DataQuery.builder().build();
 
     @lombok.NonNull
-    Key key;
+    @lombok.Builder.Default
+    Key key = Key.ALL;
 
     @lombok.NonNull
-    DataDetail detail;
+    @lombok.Builder.Default
+    DataDetail detail = DataDetail.FULL;
 
     public @NonNull Stream<Series> execute(@NonNull Stream<Series> data) {
         return data
