@@ -3,6 +3,7 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
@@ -18,6 +19,11 @@ public final class XCountingFileClient implements FileClient {
 
     @lombok.NonNull
     private final AtomicInteger count;
+
+    @Override
+    public @NonNull Marker getMarker() {
+        return delegate.getMarker();
+    }
 
     @Override
     public void testClient() throws IOException {

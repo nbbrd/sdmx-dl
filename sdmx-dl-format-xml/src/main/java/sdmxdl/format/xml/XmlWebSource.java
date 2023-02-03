@@ -73,7 +73,7 @@ public final class XmlWebSource {
                             item = SdmxWebSource.builder();
                             break;
                         case NAME_TAG:
-                            item.name(reader.getElementText());
+                            item.id(reader.getElementText());
                             break;
                         case DESCRIPTION_TAG:
                             String lang = reader.getAttributeValue(null, LANG_ATTR);
@@ -122,7 +122,7 @@ public final class XmlWebSource {
         writer.writeStartElement(SOURCES_TAG);
         for (SdmxWebSource source : list) {
             writer.writeStartElement(SOURCE_TAG);
-            writeTextElement(writer, NAME_TAG, source.getName());
+            writeTextElement(writer, NAME_TAG, source.getId());
             for (Map.Entry<String, String> description : source.getDescriptions().entrySet()) {
                 writeDescription(writer, description);
             }

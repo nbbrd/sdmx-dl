@@ -45,7 +45,7 @@ public final class EurostatDriver implements WebDriver {
             .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("ESTAT")
+                    .id("ESTAT")
                     .alias("EUROSTAT")
                     .descriptionOf("Eurostat")
                     .description("en", "Eurostat")

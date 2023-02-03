@@ -135,7 +135,7 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(SYNC)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(SdmxWebSource::getName)
+                    .valueToString(SdmxWebSource::getId)
                     .build();
         }
 
@@ -144,7 +144,7 @@ public abstract class SdmxAutoCompletion {
             return new CustomListCellRenderer<SdmxWebSource>() {
                 @Override
                 protected String getValueAsString(SdmxWebSource value) {
-                    return value.getName() + ": " + manager.getLanguages().select(value.getDescriptions());
+                    return value.getId() + ": " + manager.getLanguages().select(value.getDescriptions());
                 }
 
                 @Override
@@ -171,7 +171,7 @@ public abstract class SdmxAutoCompletion {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             LanguagePriorityList langs = manager.getLanguages();
             return value -> filter.test(langs.select(value.getDescriptions()))
-                    || filter.test(value.getName())
+                    || filter.test(value.getId())
                     || value.getAliases().stream().anyMatch(filter);
         }
     }

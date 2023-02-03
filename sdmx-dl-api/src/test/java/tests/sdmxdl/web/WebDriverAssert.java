@@ -17,7 +17,7 @@ public class WebDriverAssert {
     public void assertCompliance(WebDriver d) {
         SdmxWebSource validSource = SdmxWebSource
                 .builder()
-                .name("valid")
+                .id("valid")
                 .driver(d.getName())
                 .dialect("azerty")
                 .endpointOf("http://localhost")
@@ -40,7 +40,7 @@ public class WebDriverAssert {
     }
 
     private void checkSource(SdmxWebSource o, WebDriver d) {
-        assertThat(o.getName()).isNotBlank();
+        assertThat(o.getId()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getDriver()).isEqualTo(d.getName());
         assertThat(o.getProperties().keySet()).isSubsetOf(d.getSupportedProperties());

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @lombok.experimental.UtilityClass
 public class ConnectionSupport {
 
-    public static @NonNull Dataflow getFlowFromFlows(@NonNull DataflowRef flowRef, @NonNull Connection connection, @NonNull HasSourceName source) throws IOException, IllegalArgumentException {
+    public static @NonNull Dataflow getFlowFromFlows(@NonNull DataflowRef flowRef, @NonNull Connection connection, @NonNull HasMarker source) throws IOException, IllegalArgumentException {
         return connection
                 .getFlows()
                 .stream()

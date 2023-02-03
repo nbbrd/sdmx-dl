@@ -7,6 +7,7 @@ import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
+import sdmxdl.provider.Marker;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -83,7 +84,7 @@ public class RiRestClientTest {
 
     private static RiRestClient of(HttpClient executor) throws MalformedURLException {
         return new RiRestClient(
-                "abc",
+                Marker.of("abc"),
                 new URL("http://localhost"),
                 LanguagePriorityList.ANY,
                 ObsParser::newDefault,

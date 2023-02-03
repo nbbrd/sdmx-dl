@@ -45,7 +45,7 @@ final class ConsoleAuthenticator implements WebAuthenticator {
     }
 
     private PasswordAuthentication readPasswordAuthentication(SdmxWebSource source) throws IOError {
-        console.format("Enter your credentials for %s\n", source.getName());
+        console.format("Enter your credentials for %s\n", source.getId());
         String username = console.readLine("Enter username: ");
         char[] password = console.readPassword("Enter password: ");
         return new PasswordAuthentication(username, password);

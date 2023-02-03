@@ -199,14 +199,14 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
-                .filter(distinctByKey(SdmxWebSource::getName))
+                .filter(distinctByKey(SdmxWebSource::getId))
                 .collect(Collectors.toList());
     }
 
     private static SortedMap<String, SdmxWebSource> initSourceMap(List<SdmxWebSource> customSources, List<SdmxWebSource> defaultSources) {
         return Stream.concat(customSources.stream(), defaultSources.stream())
                 .flatMap(SdmxWebManager::expandAliases)
-                .collect(Collectors.groupingBy(SdmxWebSource::getName, TreeMap::new, reducingByFirst()));
+                .collect(Collectors.groupingBy(SdmxWebSource::getId, TreeMap::new, reducingByFirst()));
     }
 
     private static Stream<SdmxWebSource> expandAliases(SdmxWebSource source) {

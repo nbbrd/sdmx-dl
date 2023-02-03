@@ -34,6 +34,7 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -67,7 +68,7 @@ public final class InseeDriver2 implements WebDriver {
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("INSEE")
+                    .id("INSEE")
                     .descriptionOf("National Institute of Statistics and Economic Studies")
                     .description("en", "National Institute of Statistics and Economic Studies")
                     .description("fr", "Institut national de la statistique et des études économiques")
@@ -105,7 +106,7 @@ public final class InseeDriver2 implements WebDriver {
 
         InseeRestClient(SdmxWebSource s, WebContext c) throws IOException {
             super(
-                    s.getId(),
+                    Marker.of(s),
                     s.getEndpoint().toURL(),
                     c.getLanguages(),
                     OBS_FACTORY,

@@ -20,9 +20,10 @@ import _test.sdmxdl.ri.RestClientResponseMock;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import nbbrd.io.net.MediaType;
-import sdmxdl.*;
 import org.junit.jupiter.api.Test;
+import sdmxdl.*;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import tests.sdmxdl.web.WebDriverAssert;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -103,7 +104,7 @@ public class NbbDriver2Test {
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
         return NbbDriver2.newClient(
-                "NBBFIX2",
+                Marker.of("NBBFIX2"),
                 new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"),
                 LanguagePriorityList.ANY,
                 (httpRequest) -> response);

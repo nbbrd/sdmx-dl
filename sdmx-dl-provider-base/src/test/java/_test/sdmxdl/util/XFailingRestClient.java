@@ -19,6 +19,7 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
@@ -32,8 +33,8 @@ public enum XFailingRestClient implements RestClient {
 
     TEST_EXPECTED {
         @Override
-        public @NonNull String getName() {
-            return "";
+        public @NonNull Marker getMarker() {
+            return Marker.of("");
         }
 
         @Override
@@ -73,7 +74,7 @@ public enum XFailingRestClient implements RestClient {
     },
     TEST_UNEXPECTED {
         @Override
-        public @NonNull String getName() {
+        public @NonNull Marker getMarker() {
             throw new CustomRuntimeException();
         }
 
@@ -114,7 +115,7 @@ public enum XFailingRestClient implements RestClient {
     },
     TEST_NULL {
         @Override
-        public @NonNull String getName() {
+        public @NonNull Marker getMarker() {
             return null;
         }
 

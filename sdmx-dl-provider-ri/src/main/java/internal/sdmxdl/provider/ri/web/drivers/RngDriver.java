@@ -8,7 +8,8 @@ import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasSourceName;
+import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -49,7 +50,7 @@ public final class RngDriver implements WebDriver {
             .connector(RngDriver::newConnection)
             .source(SdmxWebSource
                     .builder()
-                    .name("RNG")
+                    .id("RNG")
                     .descriptionOf("Random number generator")
                     .description("en", "Random number generator")
                     .driver(RI_RNG)
@@ -60,7 +61,7 @@ public final class RngDriver implements WebDriver {
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
-        return new RngConnection(source.getId(), config);
+        return new RngConnection(Marker.of(source), config);
     }
 
     @RepresentableAs(URI.class)
@@ -98,13 +99,13 @@ public final class RngDriver implements WebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class RngConnection implements Connection, HasSourceName {
+    private static final class RngConnection implements Connection, HasMarker {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";
 
         @lombok.Getter
-        private final String name;
+        private final Marker marker;
         private final RngDriverId config;
 
         @Override

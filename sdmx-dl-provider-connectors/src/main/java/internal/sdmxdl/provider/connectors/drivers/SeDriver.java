@@ -48,7 +48,7 @@ public final class SeDriver implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("SE")
+                    .id("SE")
                     .descriptionOf("Statistics Estonia")
                     .driver(CONNECTORS_SE)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")

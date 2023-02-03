@@ -55,7 +55,7 @@ public final class Sdmx21Driver implements WebDriver {
             .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("ABS")
+                    .id("ABS")
                     .descriptionOf("Australian Bureau of Statistics")
                     .description("en", "Australian Bureau of Statistics")
                     .driver(CONNECTORS_SDMX_21)
@@ -67,7 +67,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("BIS")
+                    .id("BIS")
                     .descriptionOf("Bank for International Settlements")
                     .description("en", "Bank for International Settlements")
                     .driver(CONNECTORS_SDMX_21)
@@ -79,7 +79,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("CAMSTAT")
+                    .id("CAMSTAT")
                     .descriptionOf("National Institute of Statistics of Cambodia")
                     .description("en", "National Institute of Statistics of Cambodia")
                     .description("km", " វិទ្យាស្ថានជាតិស្ថិតិ")
@@ -91,7 +91,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("ECB")
+                    .id("ECB")
                     .descriptionOf("European Central Bank")
                     .driver(CONNECTORS_SDMX_21)
                     .dialect("ECB2020")
@@ -104,7 +104,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("ESCAP")
+                    .id("ESCAP")
                     .descriptionOf("Economic and Social Commission for Asia and the Pacific")
                     .description("en", "Economic and Social Commission for Asia and the Pacific")
                     .driver(CONNECTORS_SDMX_21)
@@ -115,7 +115,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("ILO")
+                    .id("ILO")
                     .descriptionOf("International Labour Organization")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://www.ilo.org/sdmx/rest")
@@ -126,7 +126,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("IMF_SDMX_CENTRAL")
+                    .id("IMF_SDMX_CENTRAL")
                     .descriptionOf("International Monetary Fund (SDMX Central)")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://sdmxcentral.imf.org/ws/public/sdmxapi/rest")
@@ -138,7 +138,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("INEGI")
+                    .id("INEGI")
                     .descriptionOf("Instituto Nacional de Estadistica y Geografia")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://sdmx.snieg.mx/service/Rest")
@@ -148,7 +148,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("ISTAT")
+                    .id("ISTAT")
                     .descriptionOf("Istituto Nazionale di Statistica")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://esploradati.istat.it/SDMXWS/rest")
@@ -160,7 +160,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("NB")
+                    .id("NB")
                     .descriptionOf("Norges Bank")
                     .description("en", "Norges Bank")
                     .description("no", "Norges Bank")
@@ -173,7 +173,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("SGR")
+                    .id("SGR")
                     .descriptionOf("SDMX Global Registry")
                     .description("en", "SDMX Global Registry")
                     .driver(CONNECTORS_SDMX_21)
@@ -185,7 +185,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("SIMEL")
+                    .id("SIMEL")
                     .descriptionOf("El Salvador Labour Market Information System")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://disseminatesimel.mtps.gob.sv/rest")
@@ -196,7 +196,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("SPC")
+                    .id("SPC")
                     .descriptionOf("Pacific Data Hub")
                     .description("en", "Pacific Data Hub")
                     .description("fr", "Pacific Data Hub")
@@ -209,7 +209,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("STATEC")
+                    .id("STATEC")
                     .descriptionOf("National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
                     .description("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
                     .description("fr", "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
@@ -222,7 +222,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("UNDATA")
+                    .id("UNDATA")
                     .descriptionOf("Data access system to UN databases")
                     .description("en", "Data access system to UN databases")
                     .driver(CONNECTORS_SDMX_21)
@@ -234,7 +234,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("WB")
+                    .id("WB")
                     .descriptionOf("World Bank")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
@@ -245,7 +245,7 @@ public final class Sdmx21Driver implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("WITS")
+                    .id("WITS")
                     .descriptionOf("World Integrated Trade Solutions")
                     .driver(CONNECTORS_SDMX_21)
                     .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")

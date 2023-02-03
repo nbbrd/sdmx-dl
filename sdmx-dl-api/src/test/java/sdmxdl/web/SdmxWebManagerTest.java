@@ -97,9 +97,9 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetSources() {
-        SdmxWebSource nbb = SdmxWebSource.builder().name("nbb").alias("bnb").driver("sdmx21").endpointOf("http://nbb").build();
-        SdmxWebSource ecb = SdmxWebSource.builder().name("ecb").driver("sdmx21").endpointOf("http://ecb").build();
-        SdmxWebSource abs = SdmxWebSource.builder().name("abs").driver("sdmx21").endpointOf("http://abs").build();
+        SdmxWebSource nbb = SdmxWebSource.builder().id("nbb").alias("bnb").driver("sdmx21").endpointOf("http://nbb").build();
+        SdmxWebSource ecb = SdmxWebSource.builder().id("ecb").driver("sdmx21").endpointOf("http://ecb").build();
+        SdmxWebSource abs = SdmxWebSource.builder().id("abs").driver("sdmx21").endpointOf("http://abs").build();
 
         SdmxWebSource nbbAlias = nbb.alias("bnb");
         SdmxWebSource nbbDialect = nbb.toBuilder().dialect("custom").clearAliases().build();
@@ -172,12 +172,12 @@ public class SdmxWebManagerTest {
 
     @Test
     public void testGetDefaultSources() {
-        SdmxWebSource source1a = SdmxWebSource.builder().name("s1").driver("dX").endpointOf("http://abc").build();
-        SdmxWebSource source2 = SdmxWebSource.builder().name("s2").driver("dX").endpointOf("http://abc").build();
+        SdmxWebSource source1a = SdmxWebSource.builder().id("s1").driver("dX").endpointOf("http://abc").build();
+        SdmxWebSource source2 = SdmxWebSource.builder().id("s2").driver("dX").endpointOf("http://abc").build();
         WebDriver driverX = MockedDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).customSource(source1a).customSource(source2).build();
 
-        SdmxWebSource source1b = SdmxWebSource.builder().name("s1").driver("dY").endpointOf("http://xyz").build();
-        SdmxWebSource source3 = SdmxWebSource.builder().name("s3").driver("dY").endpointOf("http://xyz").build();
+        SdmxWebSource source1b = SdmxWebSource.builder().id("s1").driver("dY").endpointOf("http://xyz").build();
+        SdmxWebSource source3 = SdmxWebSource.builder().id("s3").driver("dY").endpointOf("http://xyz").build();
         WebDriver driverY = MockedDriver.builder().name("dY").rank(NATIVE_RANK).available(true).customSource(source1b).customSource(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
@@ -198,7 +198,7 @@ public class SdmxWebManagerTest {
                 .isThrownBy(() -> manager.getConnection("ko"))
                 .as("Invalid source name");
 
-        assertThatCode(() -> manager.getConnection(sampleSource.getName()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.getId()).close()).doesNotThrowAnyException();
 
         WebDriver driver1 = MockedDriver
                 .builder()
@@ -206,7 +206,7 @@ public class SdmxWebManagerTest {
                 .rank(WRAPPED_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(SdmxWebSource.builder().name("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
+                .customSource(SdmxWebSource.builder().id("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
         WebDriver driver2 = MockedDriver
@@ -215,7 +215,7 @@ public class SdmxWebManagerTest {
                 .rank(NATIVE_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(SdmxWebSource.builder().name("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
+                .customSource(SdmxWebSource.builder().id("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
                 .build();
 
         try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source")) {
@@ -240,7 +240,7 @@ public class SdmxWebManagerTest {
                 .as("Invalid source driver");
 
         assertThatCode(() -> manager.getConnection(sampleSource).close()).doesNotThrowAnyException();
-        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().name("other").build()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build()).close()).doesNotThrowAnyException();
     }
 
     @SuppressWarnings("EmptyTryBlock")
@@ -251,31 +251,31 @@ public class SdmxWebManagerTest {
         SdmxWebManager manager = SdmxWebManager
                 .builder()
                 .driver(sampleDriver)
-                .eventListener((source, event) -> events.add(source.getName() + ":" + event))
+                .eventListener((source, event) -> events.add(source.getId() + ":" + event))
                 .build();
 
-        SdmxWebSource noProp = sampleSource.toBuilder().name("noProp").clearProperties().build();
+        SdmxWebSource noProp = sampleSource.toBuilder().id("noProp").clearProperties().build();
         try (Connection ignored = manager.getConnection(noProp)) {
         }
         assertThat(events).isEmpty();
 
-        SdmxWebSource validProp = sampleSource.toBuilder().name("validProp").build();
+        SdmxWebSource validProp = sampleSource.toBuilder().id("validProp").build();
         try (Connection ignored = manager.getConnection(validProp)) {
         }
         assertThat(events).isEmpty();
 
-        SdmxWebSource invalidProp = sampleSource.toBuilder().name("invalidProp").property("boom", "123").build();
+        SdmxWebSource invalidProp = sampleSource.toBuilder().id("invalidProp").property("boom", "123").build();
         try (Connection ignored = manager.getConnection(invalidProp)) {
         }
         assertThat(events).singleElement(as(STRING))
-                .contains(invalidProp.getName())
+                .contains(invalidProp.getId())
                 .contains("boom");
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();
     private final SdmxWebSource sampleSource = SdmxWebSource
             .builder()
-            .name("repoSource")
+            .id("repoSource")
             .driver("repoDriver")
             .dialect("azerty")
             .endpointOf(sample.getName())

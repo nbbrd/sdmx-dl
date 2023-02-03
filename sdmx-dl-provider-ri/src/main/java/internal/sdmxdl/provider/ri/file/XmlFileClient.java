@@ -27,9 +27,10 @@ import sdmxdl.Series;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
-import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.format.xml.SdmxXmlStreams;
+import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
@@ -59,6 +60,11 @@ public class XmlFileClient implements FileClient {
 
     @lombok.NonNull
     BiConsumer<? super SdmxFileSource, ? super String> eventListener;
+
+    @Override
+    public @NonNull Marker getMarker() {
+        return Marker.of(source);
+    }
 
     @Override
     public void testClient() throws IOException {

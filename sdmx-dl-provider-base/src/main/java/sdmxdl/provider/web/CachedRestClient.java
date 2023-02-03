@@ -20,6 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
 import sdmxdl.web.SdmxWebSource;
 
@@ -110,8 +111,8 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull String getName() {
-        return delegate.getName();
+    public @NonNull Marker getMarker() {
+        return delegate.getMarker();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class WebOptionsTest {
 
     private File newValidFile(Path temp) throws IOException {
         File result = Files.createFile(temp.resolve("validFile")).toFile();
-        SdmxWebSource source = SdmxWebSource.builder().name("xyz").driver("dummy").endpointOf("http://localhost").build();
+        SdmxWebSource source = SdmxWebSource.builder().id("xyz").driver("dummy").endpointOf("http://localhost").build();
         XmlWebSource.getFormatter().formatFile(singletonList(source), result);
         return result;
     }

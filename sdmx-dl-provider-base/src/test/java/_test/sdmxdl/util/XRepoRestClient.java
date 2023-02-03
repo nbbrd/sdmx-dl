@@ -20,6 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
@@ -36,8 +37,8 @@ public final class XRepoRestClient implements RestClient {
     private final DataRepository repository;
 
     @Override
-    public @NonNull String getName() {
-        return repository.getName();
+    public @NonNull Marker getMarker() {
+        return Marker.of(repository);
     }
 
     @Override

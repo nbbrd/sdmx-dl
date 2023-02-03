@@ -25,7 +25,8 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasSourceName;
+import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -68,7 +69,7 @@ public final class PxWebDriver implements WebDriver {
             .supportedPropertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
-                    .name("STATFIN")
+                    .id("STATFIN")
                     .descriptionOf("Statistics Finland")
                     .description("en", "Statistics Finland")
                     .description("sv", "Statistikcentralen")
@@ -81,8 +82,8 @@ public final class PxWebDriver implements WebDriver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
-                source.getName(),
-                source.getName().toLowerCase(Locale.ROOT),
+                Marker.of(source),
+                source.getId().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)
         );
@@ -146,7 +147,7 @@ public final class PxWebDriver implements WebDriver {
         }
     }
 
-    private interface PxWebClient extends HasSourceName {
+    private interface PxWebClient extends HasMarker {
 
         @NonNull Config getConfig() throws IOException;
 
@@ -162,7 +163,7 @@ public final class PxWebDriver implements WebDriver {
 
         @lombok.Getter
         @lombok.NonNull
-        private final String name;
+        private final Marker marker;
 
         @lombok.NonNull
         private final String dbId;
@@ -291,8 +292,8 @@ public final class PxWebDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull String getName() {
-            return delegate.getName();
+        public @NonNull Marker getMarker() {
+            return delegate.getMarker();
         }
 
         @Override

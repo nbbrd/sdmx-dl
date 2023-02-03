@@ -51,7 +51,7 @@ public final class ListSourcesCommand implements Callable<Void> {
     private CsvTable<SdmxWebSource> getTable() {
         return CsvTable
                 .builderOf(SdmxWebSource.class)
-                .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
+                .columnOf("Name", SdmxWebSource::getId, Formatter.onString())
                 .columnOf("Description", this::getDescription, Formatter.onString())
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
                 .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())

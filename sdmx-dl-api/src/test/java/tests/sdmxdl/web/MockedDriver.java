@@ -78,7 +78,7 @@ public final class MockedDriver implements WebDriver {
     public static SdmxWebSource sourceOf(String name, String driverName, DataRepository repo) {
         return SdmxWebSource
                 .builder()
-                .name(name)
+                .id(name)
                 .driver(driverName)
                 .endpointOf(repo.getName())
                 .build();

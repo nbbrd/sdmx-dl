@@ -157,7 +157,7 @@ public class WebOptions {
                 main.accept(source, message);
             }
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream("WEB", source.getName() + ": " + message);
+                verboseOptions.reportToErrorStream("WEB", source.getId() + ": " + message);
             }
         }
     }

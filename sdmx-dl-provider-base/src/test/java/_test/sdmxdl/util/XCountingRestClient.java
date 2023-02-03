@@ -19,6 +19,7 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
@@ -39,8 +40,8 @@ public final class XCountingRestClient implements RestClient {
     private final AtomicInteger count;
 
     @Override
-    public @NonNull String getName() {
-        return delegate.getName();
+    public @NonNull Marker getMarker() {
+        return delegate.getMarker();
     }
 
     @Override

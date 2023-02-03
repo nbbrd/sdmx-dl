@@ -63,7 +63,7 @@ public final class InseeDriver implements WebDriver {
             .defaultDialect(INSEE_2017)
             .source(SdmxWebSource
                     .builder()
-                    .name("INSEE")
+                    .id("INSEE")
                     .descriptionOf("Institut national de la statistique et des études économiques")
                     .driver(CONNECTORS_INSEE)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")

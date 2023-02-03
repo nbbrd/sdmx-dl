@@ -12,7 +12,7 @@ import static sdmxdl.provider.CommonSdmxExceptions.*;
 @SuppressWarnings({"ConstantConditions", "ThrowableNotThrown"})
 public class CommonSdmxExceptionsTest {
 
-    private static final String SOURCE = "abc";
+    private static final Marker SOURCE = Marker.of("abc");
     private static final DataflowRef DATAFLOW_REF = DataflowRef.parse("df");
     private static final DataStructureRef DATA_STRUCTURE_REF = DataStructureRef.parse("ds");
     private static final CodelistRef CODELIST_REF = CodelistRef.parse("cl");
@@ -24,7 +24,7 @@ public class CommonSdmxExceptionsTest {
 
         assertThat(connectionClosed(() -> SOURCE))
                 .hasNoCause()
-                .hasMessageContaining(SOURCE);
+                .hasMessageContainingAll(SOURCE);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CommonSdmxExceptionsTest {
 
         assertThat(missingFlow(() -> SOURCE, DATAFLOW_REF))
                 .hasNoCause()
-                .hasMessageContaining(SOURCE)
+                .hasMessageContainingAll(SOURCE)
                 .hasMessageContaining(DATAFLOW_REF.getId());
     }
 
@@ -51,7 +51,7 @@ public class CommonSdmxExceptionsTest {
 
         assertThat(missingStructure(() -> SOURCE, DATA_STRUCTURE_REF))
                 .hasNoCause()
-                .hasMessageContaining(SOURCE)
+                .hasMessageContainingAll(SOURCE)
                 .hasMessageContaining(DATA_STRUCTURE_REF.getId());
     }
 
@@ -65,7 +65,7 @@ public class CommonSdmxExceptionsTest {
 
         assertThat(missingData(() -> SOURCE, DATAFLOW_REF))
                 .hasNoCause()
-                .hasMessageContaining(SOURCE)
+                .hasMessageContainingAll(SOURCE)
                 .hasMessageContaining(DATAFLOW_REF.getId());
     }
 
@@ -79,7 +79,7 @@ public class CommonSdmxExceptionsTest {
 
         assertThat(missingCodelist(() -> SOURCE, CODELIST_REF))
                 .hasNoCause()
-                .hasMessageContaining(SOURCE)
+                .hasMessageContainingAll(SOURCE)
                 .hasMessageContaining(CODELIST_REF.getId());
     }
 }

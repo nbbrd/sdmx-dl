@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Rename field `Dimension#label` as `Dimension#name`
 - ![API] Rename field `Attribute#label` as `Attribute#name`
 - ![API] Rename field `DataStructure#label` as `DataStructure#name`
+- ![API] Rename field `SdmxWebSource#name` as `SdmxWebSource#id`
 - ![API] Set field `Dataflow#description` as optional
 - ![FORMAT] Improve parsing of time formats
 - ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`

@@ -188,8 +188,8 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_TYPE, FlatClientProperties.TABBED_PANE_TAB_TYPE_CARD);
 
         sourcesList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getName(), value.getDescription(LanguagePriorityList.ANY)).render());
-            label.setIcon(getDataSourceIcon(value.getName(), 24, sourcesList::repaint));
+            label.setText(nameDescription(value.getId(), value.getDescription(LanguagePriorityList.ANY)).render());
+            label.setIcon(getDataSourceIcon(value.getId(), 24, sourcesList::repaint));
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 

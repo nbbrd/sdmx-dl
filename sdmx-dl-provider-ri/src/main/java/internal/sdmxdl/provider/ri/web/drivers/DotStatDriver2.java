@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
@@ -53,7 +52,7 @@ public final class DotStatDriver2 implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("OECD")
+                    .id("OECD")
                     .descriptionOf("The Organisation for Economic Co-operation and Development")
                     .description("en", "The Organisation for Economic Co-operation and Development")
                     .description("es", "Organización para la Cooperación y el Desarrollo Económicos")
@@ -67,7 +66,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("SE")
+                    .id("SE")
                     .descriptionOf("Statistics Estonia")
                     .description("en", "Statistics Estonia")
                     .description("et", "Statistikaameti")
@@ -79,7 +78,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("UIS")
+                    .id("UIS")
                     .descriptionOf("Unesco Institute for Statistics")
                     .description("en", "Unesco Institute for Statistics")
                     .description("fr", "Unesco Institut de statistique")
@@ -91,7 +90,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("UKDS")
+                    .id("UKDS")
                     .descriptionOf("UK Data Service")
                     .description("en", "UK Data Service")
                     .driver(RI_DOTSTAT)

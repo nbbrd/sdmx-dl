@@ -22,6 +22,7 @@ import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
 
 import java.io.IOException;
@@ -77,6 +78,11 @@ public final class CachedFileClient implements FileClient {
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 data -> DataRepository.builder().dataSet(data).build()
         ).with("loadData");
+    }
+
+    @Override
+    public @NonNull Marker getMarker() {
+        return delegate.getMarker();
     }
 
     @Override

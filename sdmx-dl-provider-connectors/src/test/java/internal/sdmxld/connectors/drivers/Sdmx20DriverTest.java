@@ -36,7 +36,7 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testConnect() {
-        SdmxWebSource x = SdmxWebSource.builder().name("localhost").driver("connectors:sdmx20").dialect(SDMX20_DIALECT).endpointOf("http://localhost").build();
+        SdmxWebSource x = SdmxWebSource.builder().id("localhost").driver("connectors:sdmx20").dialect(SDMX20_DIALECT).endpointOf("http://localhost").build();
 
         assertThatCode(() -> new Sdmx20Driver().connect(x, WebDriverAssert.noOpWebContext()).close()).doesNotThrowAnyException();
     }

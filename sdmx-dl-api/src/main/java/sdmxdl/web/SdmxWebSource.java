@@ -37,7 +37,7 @@ import java.util.Set;
 public class SdmxWebSource extends SdmxSource {
 
     @lombok.NonNull
-    String name;
+    String id;
 
     @lombok.Singular
     Map<String, String> descriptions;
@@ -68,19 +68,15 @@ public class SdmxWebSource extends SdmxSource {
     URL monitorWebsite = null;
 
     @NonNull
-    public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
-        if (!aliases.contains(name)) {
-            throw new IllegalArgumentException(name);
+    public SdmxWebSource alias(@NonNull String id) throws IllegalArgumentException {
+        if (!aliases.contains(id)) {
+            throw new IllegalArgumentException(id);
         }
-        return toBuilder().name(name).build();
+        return toBuilder().id(id).build();
     }
 
     public boolean isAlias() {
-        return aliases.contains(name);
-    }
-
-    public @NonNull String getId() {
-        return getDriver() + ":" + getName();
+        return aliases.contains(id);
     }
 
     public @Nullable String getDescription(@NonNull LanguagePriorityList langs) {

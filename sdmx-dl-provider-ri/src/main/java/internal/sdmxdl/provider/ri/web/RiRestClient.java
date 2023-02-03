@@ -26,6 +26,7 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -46,7 +47,7 @@ public class RiRestClient implements RestClient {
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
         return new RiRestClient(
-                s.getId(),
+                Marker.of(s),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
                 ObsParser::newDefault,
@@ -57,7 +58,7 @@ public class RiRestClient implements RestClient {
     }
 
     @lombok.Getter
-    protected final String name;
+    protected final Marker marker;
     protected final URL endpoint;
     protected final LanguagePriorityList langs;
     protected final Supplier<ObsParser> obsFactory;

@@ -45,7 +45,7 @@ public final class ImfDriver implements WebDriver {
             .defaultDialect(Dialect.SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("IMF")
+                    .id("IMF")
                     .descriptionOf("International Monetary Fund")
                     .description("en", "International Monetary Fund")
                     .driver(CONNECTORS_IMF)

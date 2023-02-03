@@ -65,7 +65,7 @@ public final class StatCanDriver implements WebDriver {
             .supportedPropertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
-                    .name("STATCAN")
+                    .id("STATCAN")
                     .descriptionOf("Statistics Canada")
                     .description("en", "Statistics Canada")
                     .description("fr", "Statistique Canada")
@@ -80,7 +80,7 @@ public final class StatCanDriver implements WebDriver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
-                source.getName(),
+                Marker.of(source),
                 source.getEndpoint().toURL(),
                 context.getLanguages(),
                 newClient(source, context)
@@ -156,7 +156,7 @@ public final class StatCanDriver implements WebDriver {
     }
 
     @VisibleForTesting
-    interface StatCanClient extends HasSourceName {
+    interface StatCanClient extends HasMarker {
 
         @NonNull List<Dataflow> getFlows() throws IOException;
 
@@ -170,7 +170,7 @@ public final class StatCanDriver implements WebDriver {
     static class DefaultStatCanClient implements StatCanClient {
 
         @lombok.Getter
-        private final String name;
+        private final Marker marker;
         private final URL endpoint;
         private final LanguagePriorityList langs;
         private final HttpClient client;
@@ -298,8 +298,8 @@ public final class StatCanDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull String getName() {
-            return delegate.getName();
+        public @NonNull Marker getMarker() {
+            return delegate.getMarker();
         }
 
         @Override

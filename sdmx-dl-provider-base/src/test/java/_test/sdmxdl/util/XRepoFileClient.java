@@ -5,6 +5,7 @@ import nbbrd.io.net.MediaType;
 import sdmxdl.DataRepository;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
@@ -16,6 +17,11 @@ public final class XRepoFileClient implements FileClient {
 
     @lombok.NonNull
     private final DataRepository repository;
+
+    @Override
+    public @NonNull Marker getMarker() {
+        return Marker.of(repository);
+    }
 
     @Override
     public void testClient() {

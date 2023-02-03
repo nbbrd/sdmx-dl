@@ -29,7 +29,7 @@ public class RiHttpUtilsTest {
 
     SdmxWebSource source = SdmxWebSource
             .builder()
-            .name("abc")
+            .id("abc")
             .driver("xyz")
             .endpointOf("http://localhost")
             .build();
