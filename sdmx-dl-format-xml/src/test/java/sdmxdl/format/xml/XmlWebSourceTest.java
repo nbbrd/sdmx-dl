@@ -36,7 +36,7 @@ public class XmlWebSourceTest {
             SdmxWebSource
                     .builder()
                     .id("ECB")
-                    .description("en", "European Central Bank")
+                    .name("en", "European Central Bank")
                     .driver("ri:sdmx21")
                     .dialect(SDMX21_DIALECT)
                     .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
@@ -49,7 +49,7 @@ public class XmlWebSourceTest {
             SdmxWebSource
                     .builder()
                     .id("other")
-                    .descriptionOf("some description")
+                    .nameOf("some description")
                     .driver("dummy")
                     .endpointOf("http://localhost")
                     .build()

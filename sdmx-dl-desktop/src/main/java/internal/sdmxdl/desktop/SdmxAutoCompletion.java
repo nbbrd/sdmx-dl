@@ -144,7 +144,7 @@ public abstract class SdmxAutoCompletion {
             return new CustomListCellRenderer<SdmxWebSource>() {
                 @Override
                 protected String getValueAsString(SdmxWebSource value) {
-                    return value.getId() + ": " + manager.getLanguages().select(value.getDescriptions());
+                    return value.getId() + ": " + manager.getLanguages().select(value.getNames());
                 }
 
                 @Override
@@ -170,7 +170,7 @@ public abstract class SdmxAutoCompletion {
         private Predicate<SdmxWebSource> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             LanguagePriorityList langs = manager.getLanguages();
-            return value -> filter.test(langs.select(value.getDescriptions()))
+            return value -> filter.test(langs.select(value.getNames()))
                     || filter.test(value.getId())
                     || value.getAliases().stream().anyMatch(filter);
         }

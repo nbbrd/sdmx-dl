@@ -46,7 +46,7 @@ public final class NbbDriver implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("NBB")
-                    .descriptionOf("National Bank of Belgium")
+                    .nameOf("National Bank of Belgium")
                     .driver(CONNECTORS_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")

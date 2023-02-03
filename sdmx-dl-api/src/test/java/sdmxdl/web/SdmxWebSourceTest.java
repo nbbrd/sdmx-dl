@@ -48,25 +48,25 @@ public class SdmxWebSourceTest {
         assertThat(
                 base
                         .toBuilder()
-                        .description("en", "European Central Bank")
-                        .description("fr", "Banque Centrale Européenne")
+                        .name("en", "European Central Bank")
+                        .name("fr", "Banque Centrale Européenne")
                         .build()
-                        .getDescriptions()
+                        .getNames()
                         .keySet())
                 .containsExactly("en", "fr");
 
         assertThat(
                 base
                         .toBuilder()
-                        .description("fr", "Banque Centrale Européenne")
-                        .description("en", "European Central Bank")
+                        .name("fr", "Banque Centrale Européenne")
+                        .name("en", "European Central Bank")
                         .build()
-                        .getDescriptions()
+                        .getNames()
                         .keySet())
                 .containsExactly("fr", "en");
 
         assertThatNullPointerException()
-                .isThrownBy(() -> base.toBuilder().descriptionOf(null));
+                .isThrownBy(() -> base.toBuilder().nameOf(null));
     }
 
     @Test

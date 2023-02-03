@@ -66,11 +66,11 @@ public final class ListSourcesCommand implements Callable<Void> {
     }
 
     private String getDescription(SdmxWebSource source) {
-        return source.getDescription(web.getLangs());
+        return source.getName(web.getLangs());
     }
 
     private Iterable<String> getLanguages(SdmxWebSource source) {
-        return () -> source.getDescriptions().keySet().stream().filter(lang -> !SdmxWebSource.ROOT_LANGUAGE.equals(lang)).iterator();
+        return () -> source.getNames().keySet().stream().filter(lang -> !SdmxWebSource.ROOT_LANGUAGE.equals(lang)).iterator();
     }
 
     private Stream<SdmxWebSource> getRows() throws IOException {

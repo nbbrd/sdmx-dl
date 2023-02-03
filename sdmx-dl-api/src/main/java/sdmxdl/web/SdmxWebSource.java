@@ -40,7 +40,7 @@ public class SdmxWebSource extends SdmxSource {
     String id;
 
     @lombok.Singular
-    Map<String, String> descriptions;
+    Map<String, String> names;
 
     @lombok.NonNull
     String driver;
@@ -79,16 +79,16 @@ public class SdmxWebSource extends SdmxSource {
         return aliases.contains(id);
     }
 
-    public @Nullable String getDescription(@NonNull LanguagePriorityList langs) {
-        return langs.select(descriptions);
+    public @Nullable String getName(@NonNull LanguagePriorityList langs) {
+        return langs.select(names);
     }
 
     public static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
     public static class Builder {
 
-        public @NonNull Builder descriptionOf(@NonNull CharSequence description) throws IllegalArgumentException {
-            return description(ROOT_LANGUAGE, description.toString());
+        public @NonNull Builder nameOf(@NonNull CharSequence name) throws IllegalArgumentException {
+            return name(ROOT_LANGUAGE, name.toString());
         }
 
         public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {

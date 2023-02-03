@@ -66,9 +66,9 @@ public final class StatCanDriver implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("STATCAN")
-                    .descriptionOf("Statistics Canada")
-                    .description("en", "Statistics Canada")
-                    .description("fr", "Statistique Canada")
+                    .nameOf("Statistics Canada")
+                    .name("en", "Statistics Canada")
+                    .name("fr", "Statistique Canada")
                     .driver(RI_STATCAN)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
