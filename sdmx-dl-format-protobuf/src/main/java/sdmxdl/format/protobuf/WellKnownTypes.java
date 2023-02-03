@@ -3,6 +3,8 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.Timestamp;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,6 +23,18 @@ class WellKnownTypes {
 
     public static Instant toInstant(Timestamp value) {
         return Instant.ofEpochSecond(value.getSeconds(), value.getNanos());
+    }
+
+    public static Timestamp fromLocalDateTime(LocalDateTime value) {
+        return Timestamp
+                .newBuilder()
+                .setSeconds(value.toEpochSecond(ZoneOffset.UTC))
+                .setNanos(value.getNano())
+                .build();
+    }
+
+    public static LocalDateTime toLocalDateTime(Timestamp value) {
+        return LocalDateTime.ofEpochSecond(value.getSeconds(), value.getNanos(), ZoneOffset.UTC);
     }
 
     public static <X, Y> Iterable<? extends Y> fromCollection(Collection<X> collection, Function<X, Y> converter) {

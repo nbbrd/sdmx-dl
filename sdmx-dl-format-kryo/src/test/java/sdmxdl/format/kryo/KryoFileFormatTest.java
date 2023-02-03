@@ -12,7 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,26 +19,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KryoFileFormatTest {
 
     @Test
-    public void test() throws IOException {
-        Instant now = Clock.systemDefaultZone().instant();
+    public void testDataRepository() throws IOException {
+        assertValid(KryoFileFormat.REPOSITORY, RepoSamples.EMPTY_REPO);
 
-        DataRepository repository = RepoSamples.REPO
+        DataRepository normal = RepoSamples.REPO
                 .toBuilder()
-                .ttl(now, Duration.ofMillis(100))
+                .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
                 .build();
+        assertValid(KryoFileFormat.REPOSITORY, normal);
+    }
 
-        assertThat(storeLoad(KryoFileFormat.REPOSITORY, KryoFileFormat.REPOSITORY, repository))
-                .isEqualTo(repository)
-                .isNotSameAs(repository);
+    @Test
+    public void testMonitorReports() throws IOException {
+        assertValid(KryoFileFormat.MONITOR, RepoSamples.EMPTY_REPORTS);
 
-        MonitorReports reports = RepoSamples.REPORTS
+        MonitorReports normal = RepoSamples.REPORTS
                 .toBuilder()
-                .ttl(now, Duration.ofMillis(100))
+                .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
                 .build();
+        assertValid(KryoFileFormat.MONITOR, normal);
+    }
 
-        assertThat(storeLoad(KryoFileFormat.MONITOR, KryoFileFormat.MONITOR, reports))
-                .isEqualTo(reports)
-                .isNotSameAs(reports);
+    private static <T> void assertValid(KryoFileFormat<T> format, T data) throws IOException {
+        assertThat(storeLoad(format, format, data))
+                .isEqualTo(data)
+                .isNotSameAs(data);
     }
 
     private static <T> T storeLoad(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {

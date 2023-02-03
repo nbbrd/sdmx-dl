@@ -201,8 +201,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
-            kryo.writeObjectOrNull(output, t.getCreationTime(), Instant.class);
-            kryo.writeObjectOrNull(output, t.getExpirationTime(), Instant.class);
+            kryo.writeObject(output, t.getCreationTime());
+            kryo.writeObject(output, t.getExpirationTime());
         }
 
         @SuppressWarnings("unchecked")
@@ -214,8 +214,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
-                    .creationTime(kryo.readObjectOrNull(input, Instant.class))
-                    .expirationTime(kryo.readObjectOrNull(input, Instant.class))
+                    .creationTime(kryo.readObject(input, Instant.class))
+                    .expirationTime(kryo.readObject(input, Instant.class))
                     .build();
         }
     }

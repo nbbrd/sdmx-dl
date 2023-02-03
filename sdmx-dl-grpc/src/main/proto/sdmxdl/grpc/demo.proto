@@ -1,6 +1,8 @@
 syntax = "proto3";
 option java_multiple_files = true;
+
 package sdmxdl.grpc;
+
 import "sdmxdl/format/protobuf/monitor.proto";
 import "sdmxdl/format/protobuf/repository.proto";
 

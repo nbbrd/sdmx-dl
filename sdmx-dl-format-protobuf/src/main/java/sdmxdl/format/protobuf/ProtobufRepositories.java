@@ -6,8 +6,6 @@ import sdmxdl.CodelistRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 
-import java.time.LocalDateTime;
-
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
 @lombok.experimental.UtilityClass
@@ -53,7 +51,7 @@ public class ProtobufRepositories {
                 .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute))
                 .setTimeDimensionId(value.getTimeDimensionId())
                 .setPrimaryMeasureId(value.getPrimaryMeasureId())
-                .setLabel(value.getName())
+                .setName(value.getName())
                 .build();
     }
 
@@ -65,7 +63,7 @@ public class ProtobufRepositories {
                 .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
                 .timeDimensionId(value.getTimeDimensionId())
                 .primaryMeasureId(value.getPrimaryMeasureId())
-                .name(value.getLabel())
+                .name(value.getName())
                 .build();
     }
 
@@ -73,7 +71,7 @@ public class ProtobufRepositories {
         return Dimension
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getName())
+                .setName(value.getName())
                 .setCodelist(fromCodelist(value.getCodelist()))
                 .setPosition(value.getPosition())
                 .build();
@@ -83,7 +81,7 @@ public class ProtobufRepositories {
         return sdmxdl.Dimension
                 .builder()
                 .id(value.getId())
-                .name(value.getLabel())
+                .name(value.getName())
                 .codelist(toCodelist(value.getCodelist()))
                 .position(value.getPosition())
                 .build();
@@ -109,7 +107,7 @@ public class ProtobufRepositories {
         Attribute.Builder result = Attribute
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getName());
+                .setName(value.getName());
         if (value.getCodelist() != null)
             result.setCodelist(fromCodelist(value.getCodelist()));
         return result
@@ -121,7 +119,7 @@ public class ProtobufRepositories {
         return sdmxdl.Attribute
                 .builder()
                 .id(value.getId())
-                .name(value.getLabel())
+                .name(value.getName())
                 .codelist(value.hasCodelist() ? toCodelist(value.getCodelist()) : null)
                 .relationship(toAttributeRelationship(value.getRelationship()))
                 .build();
@@ -218,7 +216,7 @@ public class ProtobufRepositories {
     public static Obs fromObs(sdmxdl.Obs value) {
         return Obs
                 .newBuilder()
-                .setPeriod(value.getPeriod().toString())
+                .setPeriod(fromLocalDateTime(value.getPeriod()))
                 .setValue(value.getValue())
                 .putAllMeta(value.getMeta())
                 .build();
@@ -227,7 +225,7 @@ public class ProtobufRepositories {
     public static sdmxdl.Obs toObs(Obs value) {
         return sdmxdl.Obs
                 .builder()
-                .period(LocalDateTime.parse(value.getPeriod()))
+                .period(toLocalDateTime(value.getPeriod()))
                 .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();

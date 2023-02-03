@@ -18,7 +18,7 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
-        <project.x.mainClass>sdmxdl.desktop.MainCommand</project.x.mainClass>
+        <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
     </properties>
 

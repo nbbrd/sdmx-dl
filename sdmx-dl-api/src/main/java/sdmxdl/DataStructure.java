@@ -57,6 +57,7 @@ public class DataStructure extends Resource<DataStructureRef> implements HasName
     @lombok.Singular
     Set<Attribute> attributes;
 
+    // FIXME: nullable or nonnull ?
     String timeDimensionId;
 
     @lombok.NonNull

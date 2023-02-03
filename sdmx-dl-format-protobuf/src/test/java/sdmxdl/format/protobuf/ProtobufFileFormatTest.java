@@ -11,33 +11,37 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProtobufFileFormatTest {
 
     @Test
-    public void test() throws IOException {
-        Instant now = Clock.systemDefaultZone().instant();
+    public void testDataRepository() throws IOException {
+        assertValid(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), RepoSamples.EMPTY_REPO);
 
-        DataRepository repository = RepoSamples.REPO
+        DataRepository normal = RepoSamples.REPO
                 .toBuilder()
-                .ttl(now, Duration.ofMillis(100))
+                .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
                 .build();
+        assertValid(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), normal);
+    }
 
-        assertThat(storeLoad(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), repository))
-                .isEqualTo(repository)
-                .isNotSameAs(repository);
+    @Test
+    public void testMonitorReports() throws IOException {
+        assertValid(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), RepoSamples.EMPTY_REPORTS);
 
-        sdmxdl.web.MonitorReports reports = RepoSamples.REPORTS
+        sdmxdl.web.MonitorReports normal = RepoSamples.REPORTS
                 .toBuilder()
-                .ttl(now, Duration.ofMillis(100))
+                .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
                 .build();
+        assertValid(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), normal);
+    }
 
-        assertThat(storeLoad(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), reports))
-                .isEqualTo(reports)
-                .isNotSameAs(reports);
+    private static <T> void assertValid(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {
+        assertThat(storeLoad(parser, formatter, data))
+                .isEqualTo(data)
+                .isNotSameAs(data);
     }
 
     private static <T> T storeLoad(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {

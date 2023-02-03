@@ -104,6 +104,8 @@ public class RepoSamples {
             .series(S3)
             .build();
 
+    public static final DataRepository EMPTY_REPO = DataRepository.builder().build();
+
     public static final DataRepository REPO = DataRepository
             .builder()
             .name("repoName")
@@ -111,6 +113,8 @@ public class RepoSamples {
             .flow(FLOW)
             .dataSet(DATA_SET)
             .build();
+
+    public static final MonitorReports EMPTY_REPORTS = MonitorReports.builder().uriScheme("abc").build();
 
     public static final MonitorReports REPORTS = MonitorReports
             .builder()
