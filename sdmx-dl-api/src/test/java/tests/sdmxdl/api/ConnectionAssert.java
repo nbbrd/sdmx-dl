@@ -21,6 +21,7 @@ import sdmxdl.*;
 
 import java.io.IOException;
 
+import static tests.sdmxdl.api.SdmxConditions.*;
 import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
 
 /**
@@ -92,9 +93,18 @@ public class ConnectionAssert {
             checkValidKey(s, sample, conn, filter);
             checkInvalidKey(s, sample, conn, filter);
         }
-        s.assertThat(conn.getFlows()).isNotEmpty().filteredOn(sample.validFlow::containsRef).isNotEmpty();
-        s.assertThat(conn.getFlow(sample.validFlow)).isNotNull();
-        s.assertThat(conn.getStructure(sample.validFlow)).isNotNull();
+
+        s.assertThat(conn.getFlows())
+                .are(validDataflow())
+                .anyMatch(sample.validFlow::containsRef);
+
+        s.assertThat(conn.getFlow(sample.validFlow))
+                .is(validDataflow());
+
+        DataStructure dsd = conn.getStructure(sample.validFlow);
+        s.assertThat(dsd).has(validName());
+        s.assertThat(dsd.getAttributes()).are(validAttribute());
+        s.assertThat(dsd.getDimensions()).are(validDimension());
     }
 
     private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, DataDetail filter) {

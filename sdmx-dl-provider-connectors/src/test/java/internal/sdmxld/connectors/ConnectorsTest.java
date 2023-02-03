@@ -46,7 +46,7 @@ public class ConnectorsTest {
     @Test
     public void testFlow() {
         // description field not supported in Connectors
-        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description("").build();
+        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description(null).build();
         assertThat(toFlow(fromFlow(dataflowWithoutDescription)))
                 .isEqualTo(dataflowWithoutDescription);
     }

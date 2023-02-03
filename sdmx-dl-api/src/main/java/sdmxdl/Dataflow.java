@@ -16,6 +16,8 @@
  */
 package sdmxdl;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * @author Philippe Charles
  */
@@ -33,7 +35,6 @@ public class Dataflow extends Resource<DataflowRef> implements HasName, HasDescr
     @lombok.NonNull
     String name;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    String description = "";
+    @Nullable
+    String description;
 }

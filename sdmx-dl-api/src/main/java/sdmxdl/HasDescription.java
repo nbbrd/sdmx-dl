@@ -1,13 +1,16 @@
 package sdmxdl;
 
-import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * Defines the ability to have a human-readable description.
+ */
 public interface HasDescription {
 
     /**
-     * Gets a human-readable (best-language-match) description.
+     * Gets an optional human-readable (best-language-match) description.
      *
-     * @return a non-null description
+     * @return a nullable description
      */
-    @NonNull String getDescription();
+    @Nullable String getDescription();
 }

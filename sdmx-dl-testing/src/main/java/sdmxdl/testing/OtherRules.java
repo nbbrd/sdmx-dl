@@ -33,7 +33,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlows())
-                    .map(flows -> flows.stream().allMatch(flow -> flow.getDescription().isEmpty()))
+                    .map(flows -> flows.stream().allMatch(flow -> flow.getDescription() == null))
                     .orElse(false);
         }
     },
