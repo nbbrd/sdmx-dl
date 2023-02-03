@@ -44,12 +44,15 @@ public class ProtobufRepositories {
     }
 
     public static DataStructure fromDataStructure(sdmxdl.DataStructure value) {
-        return DataStructure
+        DataStructure.Builder result = DataStructure
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .addAllDimensions(fromCollection(value.getDimensions(), ProtobufRepositories::fromDimension))
-                .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute))
-                .setTimeDimensionId(value.getTimeDimensionId())
+                .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute));
+        if (value.getTimeDimensionId() != null) {
+            result.setTimeDimensionId(value.getTimeDimensionId());
+        }
+        return result
                 .setPrimaryMeasureId(value.getPrimaryMeasureId())
                 .setName(value.getName())
                 .build();
@@ -61,7 +64,7 @@ public class ProtobufRepositories {
                 .ref(sdmxdl.DataStructureRef.parse(value.getRef()))
                 .dimensions(toCollection(value.getDimensionsList(), ProtobufRepositories::toDimension))
                 .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
-                .timeDimensionId(value.getTimeDimensionId())
+                .timeDimensionId(value.hasTimeDimensionId() ? value.getTimeDimensionId() : null)
                 .primaryMeasureId(value.getPrimaryMeasureId())
                 .name(value.getName())
                 .build();
@@ -134,13 +137,15 @@ public class ProtobufRepositories {
     }
 
     public static Dataflow fromDataflow(sdmxdl.Dataflow value) {
-        return Dataflow
+        Dataflow.Builder result = Dataflow
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
-                .setName(value.getName())
-                .setDescription(value.getDescription())
-                .build();
+                .setName(value.getName());
+        if (value.getDescription() != null) {
+            result.setDescription(value.getDescription());
+        }
+        return result.build();
     }
 
     public static sdmxdl.Dataflow toDataflow(Dataflow value) {
@@ -149,7 +154,7 @@ public class ProtobufRepositories {
                 .ref(sdmxdl.DataflowRef.parse(value.getRef()))
                 .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
                 .name(value.getName())
-                .description(value.getDescription())
+                .description(value.hasDescription() ? value.getDescription() : null)
                 .build();
     }
 

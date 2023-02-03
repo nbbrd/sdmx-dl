@@ -20,6 +20,18 @@ public class ProtobufFileFormatTest {
     public void testDataRepository() throws IOException {
         assertValid(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), RepoSamples.EMPTY_REPO);
 
+        DataRepository nullFlowDescription = RepoSamples.EMPTY_REPO
+                .toBuilder()
+                .flow(RepoSamples.FLOW.toBuilder().description(null).build())
+                .build();
+        assertValid(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), nullFlowDescription);
+
+        DataRepository nullTimeDimensionId = RepoSamples.EMPTY_REPO
+                .toBuilder()
+                .structure(RepoSamples.STRUCT.toBuilder().timeDimensionId(null).build())
+                .build();
+        assertValid(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), nullTimeDimensionId);
+
         DataRepository normal = RepoSamples.REPO
                 .toBuilder()
                 .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
