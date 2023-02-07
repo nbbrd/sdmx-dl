@@ -5,6 +5,7 @@ import nbbrd.design.RepresentableAsString;
 import nbbrd.design.SealedType;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Duration;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
@@ -79,6 +80,13 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
             return LocalDateTime.of(date.getValue(), 1, 1, 0, 0);
         }
 
+        @Override
+        public @NonNull Duration getDuration() {
+            return P1Y;
+        }
+
+        private static final Duration P1Y = Duration.parse("P1Y");
+
         // JDK > 8 changed parsing behavior of Year#parse(CharSequence) to accept min 1 digit instead of 4
         private static final DateTimeFormatter STRICT_YEAR = DateTimeFormatter.ofPattern("uuuu");
     }
@@ -111,6 +119,13 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
         public @NonNull LocalDateTime toStartTime() {
             return LocalDateTime.of(date.getYear(), date.getMonth(), 1, 0, 0);
         }
+
+        @Override
+        public @NonNull Duration getDuration() {
+            return P1M;
+        }
+
+        private static final Duration P1M = Duration.parse("P1M");
     }
 
     @RepresentableAsString
@@ -141,5 +156,12 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
         public @NonNull LocalDateTime toStartTime() {
             return date.atStartOfDay();
         }
+
+        @Override
+        public @NonNull Duration getDuration() {
+            return P1D;
+        }
+
+        private static final Duration P1D = Duration.parse("P1D");
     }
 }

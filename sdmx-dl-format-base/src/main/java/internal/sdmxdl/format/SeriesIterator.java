@@ -16,16 +16,17 @@
  */
 package internal.sdmxdl.format;
 
-import nbbrd.io.function.IOUnaryOperator;
+import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Obs;
 import sdmxdl.Series;
+import sdmxdl.TimeInterval;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.TimeFormats;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -82,7 +83,7 @@ public final class SeriesIterator implements Iterator<Series> {
 
         Obs.Builder obs = Obs.builder();
         while (cursor.nextObs()) {
-            LocalDateTime nullablePeriod = toStartTime(cursor.getObsPeriod(), cursor::getObsAttribute);
+            TimeInterval nullablePeriod = getObsPeriod2(cursor);
             if (nullablePeriod == null) {
                 continue;
             }
@@ -100,11 +101,8 @@ public final class SeriesIterator implements Iterator<Series> {
         }
     }
 
-    private static LocalDateTime toStartTime(ObservationalTimePeriod obsPeriod, IOUnaryOperator<String> obsAttributes) throws IOException {
-        try {
-            return obsPeriod != null ? obsPeriod.toStartTime(TimeFormats.getReportingYearStartDay(obsAttributes.asUnchecked())) : null;
-        } catch (UncheckedIOException ex) {
-            throw ex.getCause();
-        }
+    private static @Nullable TimeInterval getObsPeriod2(@NonNull DataCursor cursor) throws IOException, IllegalStateException {
+        ObservationalTimePeriod result = cursor.getObsPeriod();
+        return result != null ? result.toTimeInterval(TimeFormats.getReportingYearStartDay(cursor::getObsAttribute)) : null;
     }
 }

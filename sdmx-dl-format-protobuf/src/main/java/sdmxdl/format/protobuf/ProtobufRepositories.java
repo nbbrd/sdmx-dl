@@ -5,6 +5,7 @@ import nbbrd.io.FileParser;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
+import sdmxdl.TimeInterval;
 
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
@@ -221,7 +222,7 @@ public class ProtobufRepositories {
     public static Obs fromObs(sdmxdl.Obs value) {
         return Obs
                 .newBuilder()
-                .setPeriod(fromLocalDateTime(value.getPeriod()))
+                .setPeriod(value.getPeriod().toString())
                 .setValue(value.getValue())
                 .putAllMeta(value.getMeta())
                 .build();
@@ -230,7 +231,7 @@ public class ProtobufRepositories {
     public static sdmxdl.Obs toObs(Obs value) {
         return sdmxdl.Obs
                 .builder()
-                .period(toLocalDateTime(value.getPeriod()))
+                .period(TimeInterval.parse(value.getPeriod()))
                 .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();

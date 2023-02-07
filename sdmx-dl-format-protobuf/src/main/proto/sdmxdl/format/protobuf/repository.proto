@@ -81,7 +81,7 @@ enum Feature {
 }
 
 message Obs {
-  google.protobuf.Timestamp period = 1;
+  string period = 1;
   double value = 2;
   map<string, string> meta = 3;
 }

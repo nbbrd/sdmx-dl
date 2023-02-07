@@ -1,9 +1,13 @@
 package _test;
 
 import lombok.NonNull;
+import sdmxdl.Duration;
 import sdmxdl.format.time.*;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -68,15 +72,15 @@ public class PeriodSource implements CharSequence {
     public static final PeriodSource _2000_D366 = new PeriodSource(T_2000_D366, P_2000_D366, LocalDateTime.of(2000, 12, 31, 0, 0));
 
     public static final String T_2001_02_03_P2D = "2001-02-03/P2D";
-    public static final TimeRange.DateRange P_2001_02_03_P2D = TimeRange.DateRange.of(LocalDate.of(2001, 2, 3), Period.ofDays(2));
+    public static final TimeRange.DateRange P_2001_02_03_P2D = TimeRange.DateRange.of(LocalDate.of(2001, 2, 3), Duration.parse("P2D"));
     public static final PeriodSource _2001_02_03_P2D = new PeriodSource(T_2001_02_03_P2D, P_2001_02_03_P2D, LocalDateTime.of(2001, 2, 3, 0, 0));
 
     public static final String T_2001_02_03T04_05_P2D = "2001-02-03T04:05/P2D";
-    public static final TimeRange.DateTimeRange P_2001_02_03T04_05_P2D = TimeRange.DateTimeRange.of(LocalDateTime.of(2001, 2, 3, 4, 5), Period.ofDays(2));
+    public static final TimeRange.DateTimeRange P_2001_02_03T04_05_P2D = TimeRange.DateTimeRange.of(LocalDateTime.of(2001, 2, 3, 4, 5), Duration.parse("P2D"));
     public static final PeriodSource _2001_02_03T04_05_P2D = new PeriodSource(T_2001_02_03T04_05_P2D, P_2001_02_03T04_05_P2D, LocalDateTime.of(2001, 2, 3, 4, 5));
 
     public static final String T_2001_02_03T04_05_06_P2D = "2001-02-03T04:05:06/P2D";
-    public static final TimeRange.DateTimeRange P_2001_02_03T04_05_06_P2D = TimeRange.DateTimeRange.of(LocalDateTime.of(2001, 2, 3, 4, 5, 6), Period.ofDays(2));
+    public static final TimeRange.DateTimeRange P_2001_02_03T04_05_06_P2D = TimeRange.DateTimeRange.of(LocalDateTime.of(2001, 2, 3, 4, 5, 6), Duration.parse("P2D"));
     public static final PeriodSource _2001_02_03T04_05_06_P2D = new PeriodSource(T_2001_02_03T04_05_06_P2D, P_2001_02_03T04_05_06_P2D, LocalDateTime.of(2001, 2, 3, 4, 5, 6));
 
     public static List<PeriodSource> getAll() {

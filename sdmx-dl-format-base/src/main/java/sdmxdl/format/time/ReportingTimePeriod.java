@@ -4,6 +4,7 @@ import lombok.NonNull;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Duration;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
@@ -69,5 +70,10 @@ public class ReportingTimePeriod implements StandardTimePeriod {
     @Override
     public @NonNull LocalDateTime toStartTime(@Nullable MonthDay reportingYearStartDay) {
         return period.toStartDate(format, reportingYearStartDay).atStartOfDay();
+    }
+
+    @Override
+    public @NonNull Duration getDuration() {
+        return format.getDuration();
     }
 }

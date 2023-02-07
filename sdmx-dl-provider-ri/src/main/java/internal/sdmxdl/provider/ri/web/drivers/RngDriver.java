@@ -186,7 +186,7 @@ public final class RngDriver implements WebDriver {
                 Random random = new Random(config.getSeed());
                 IntStream
                         .range(0, obsCount)
-                        .mapToObj(j -> Obs.builder().period(config.getStart().plus(j, freq.getUnit())).value(getValue(series, startTimeMillis, random)).build())
+                        .mapToObj(j -> Obs.builder().period(TimeInterval.of(config.getStart().plus(j, freq.getUnit()), Duration.ZERO)).value(getValue(series, startTimeMillis, random)).build())
                         .forEach(result::obs);
             }
             return result.build();

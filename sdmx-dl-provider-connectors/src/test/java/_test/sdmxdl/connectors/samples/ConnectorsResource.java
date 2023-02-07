@@ -33,7 +33,6 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -143,8 +142,8 @@ public class ConnectorsResource {
         return new DoubleObservation(toTimeslot(obs.getPeriod()), obs.getValue(), obs.getMeta());
     }
 
-    private static String toTimeslot(LocalDateTime o) {
-        return o.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    private static String toTimeslot(TimeInterval o) {
+        return o.getStart().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private Dataflow asDataflow(DataFlowStructure o) {

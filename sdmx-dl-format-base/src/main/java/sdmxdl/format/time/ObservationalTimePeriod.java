@@ -2,6 +2,8 @@ package sdmxdl.format.time;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Duration;
+import sdmxdl.TimeInterval;
 
 import java.time.LocalDateTime;
 import java.time.MonthDay;
@@ -16,4 +18,10 @@ import java.time.MonthDay;
 public interface ObservationalTimePeriod {
 
     @NonNull LocalDateTime toStartTime(@Nullable MonthDay reportingYearStartDay);
+
+    @NonNull Duration getDuration();
+
+    default @NonNull TimeInterval toTimeInterval(@Nullable MonthDay reportingYearStartDay) {
+        return TimeInterval.of(toStartTime(reportingYearStartDay), getDuration());
+    }
 }

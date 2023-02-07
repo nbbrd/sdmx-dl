@@ -22,7 +22,6 @@ import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * @author Philippe Charles
@@ -69,8 +68,8 @@ public class RepoSamples {
             .name("structName")
             .build();
 
-    public static final Obs OBS1 = Obs.builder().period(dateTimeOf(2010, 1)).value(Math.PI).build();
-    public static final Obs OBS2 = Obs.builder().period(dateTimeOf(2010, 2)).value(Math.E).build();
+    public static final Obs OBS1 = Obs.builder().period(periodOf(2010, 1)).value(Math.PI).build();
+    public static final Obs OBS2 = Obs.builder().period(periodOf(2010, 2)).value(Math.E).build();
 
     public static final Key K1 = Key.of("M", "BE", "INDUSTRY");
     public static final Key K2 = Key.of("M", "BE", "XXX");
@@ -122,7 +121,7 @@ public class RepoSamples {
             .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
             .build();
 
-    private static LocalDateTime dateTimeOf(int year, int month) {
-        return LocalDate.of(year, month, 1).atStartOfDay();
+    private static TimeInterval periodOf(int year, int month) {
+        return TimeInterval.of(LocalDate.of(year, month, 1).atStartOfDay(), Duration.parse("P1M"));
     }
 }

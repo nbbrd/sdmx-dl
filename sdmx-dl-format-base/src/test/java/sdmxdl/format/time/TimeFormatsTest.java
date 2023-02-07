@@ -1,19 +1,20 @@
 package sdmxdl.format.time;
 
 import _test.PeriodSource;
+import nbbrd.io.function.IOUnaryOperator;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.time.MonthDay;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 import static _test.PeriodSource.*;
 import static java.util.Collections.singletonMap;
@@ -27,10 +28,10 @@ import static sdmxdl.format.time.TimeFormats.*;
 public class TimeFormatsTest {
 
     @Test
-    public void testGetReportingYearStartDay() {
-        UnaryOperator<String> none = o -> null;
-        UnaryOperator<String> id1 = singletonMap("REPORTING_YEAR_START_DAY", "--07-01")::get;
-        UnaryOperator<String> id2 = singletonMap("REPYEARSTART", "--07-01")::get;
+    public void testGetReportingYearStartDay() throws IOException {
+        IOUnaryOperator<String> none = o -> null;
+        IOUnaryOperator<String> id1 = singletonMap("REPORTING_YEAR_START_DAY", "--07-01")::get;
+        IOUnaryOperator<String> id2 = singletonMap("REPYEARSTART", "--07-01")::get;
 
         assertThat(getReportingYearStartDay(none)).isNull();
         assertThat(getReportingYearStartDay(id1)).isEqualTo(MonthDay.of(7, 1));

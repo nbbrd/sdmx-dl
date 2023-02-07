@@ -3,9 +3,9 @@ package sdmxdl.format.time;
 import lombok.AccessLevel;
 import nbbrd.design.MightBePromoted;
 import org.checkerframework.checker.index.qual.NonNegative;
+import sdmxdl.Duration;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -72,7 +72,7 @@ public class StandardReportingFormat {
     char indicator;
 
     @lombok.NonNull
-    Period duration;
+    Duration duration;
 
     @NonNegative
     int limitPerYear;
@@ -85,13 +85,13 @@ public class StandardReportingFormat {
     int periodValueDigits = initPeriodValueDigits();
 
     @lombok.Getter(lazy = true, value = AccessLevel.PACKAGE)
-    List<Period> amounts = initAmounts();
+    List<Duration> amounts = initAmounts();
 
     private int initPeriodValueDigits() {
         return getNumberOfDigits(limitPerYear);
     }
 
-    private List<Period> initAmounts() {
+    private List<Duration> initAmounts() {
         return IntStream
                 .range(0, limitPerYear)
                 .mapToObj(getDuration()::multipliedBy)
@@ -101,7 +101,7 @@ public class StandardReportingFormat {
     public static final class Builder {
 
         public Builder durationOf(CharSequence duration) {
-            return duration(Period.parse(duration));
+            return duration(Duration.parse(duration));
         }
     }
 

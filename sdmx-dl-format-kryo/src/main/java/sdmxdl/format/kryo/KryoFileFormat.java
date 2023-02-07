@@ -135,6 +135,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
+        result.register(TimeInterval.class, new TimeIntervalSerializer());
+        result.register(Duration.class, new DurationSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
         result.register(AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
@@ -410,10 +412,39 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
             return Obs
                     .builder()
-                    .period(kryo.readObject(input, LocalDateTime.class))
+                    .period(kryo.readObject(input, TimeInterval.class))
                     .value(input.readDouble())
                     .meta(kryo.readObject(input, HashMap.class, obsMeta))
                     .build();
+        }
+    }
+
+    private static final class TimeIntervalSerializer extends ImmutableSerializer<TimeInterval> {
+
+        @Override
+        public void write(Kryo kryo, Output output, TimeInterval t) {
+            kryo.writeObject(output, t.getStart());
+            kryo.writeObject(output, t.getDuration());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public TimeInterval read(Kryo kryo, Input input, Class<? extends TimeInterval> type) {
+            return TimeInterval.of(kryo.readObject(input, LocalDateTime.class), kryo.readObject(input, Duration.class));
+        }
+    }
+
+    private static final class DurationSerializer extends ImmutableSerializer<Duration> {
+
+        @Override
+        public void write(Kryo kryo, Output output, Duration t) {
+            output.writeString(t.toString());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Duration read(Kryo kryo, Input input, Class<? extends Duration> type) {
+            return Duration.parse(input.readString());
         }
     }
 

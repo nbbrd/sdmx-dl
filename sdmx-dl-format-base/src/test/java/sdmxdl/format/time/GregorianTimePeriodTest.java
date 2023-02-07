@@ -2,6 +2,7 @@ package sdmxdl.format.time;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 import sdmxdl.format.time.GregorianTimePeriod.Day;
 import sdmxdl.format.time.GregorianTimePeriod.Year;
 import sdmxdl.format.time.GregorianTimePeriod.YearMonth;
@@ -66,6 +67,12 @@ public class GregorianTimePeriodTest {
             assertThat(Year.of(JT_2001).toStartTime(null))
                     .isEqualTo(JT_2001.atDay(1).atStartOfDay());
         }
+
+        @Test
+        public void testGetDuration() {
+            assertThat(Year.of(JT_2001).getDuration())
+                    .isEqualTo(Duration.parse("P1Y"));
+        }
     }
 
     @Nested
@@ -121,6 +128,12 @@ public class GregorianTimePeriodTest {
             assertThat(YearMonth.of(JT_2001_02).toStartTime(null))
                     .isEqualTo(JT_2001_02.atDay(1).atStartOfDay());
         }
+
+        @Test
+        public void testGetDuration() {
+            assertThat(YearMonth.of(JT_2001_02).getDuration())
+                    .isEqualTo(Duration.parse("P1M"));
+        }
     }
 
     @Nested
@@ -175,6 +188,12 @@ public class GregorianTimePeriodTest {
         public void testToStartTime() {
             assertThat(Day.of(JT_2001_02_03).toStartTime(null))
                     .isEqualTo(JT_2001_02_03.atStartOfDay());
+        }
+
+        @Test
+        public void testGetDuration() {
+            assertThat(Day.of(JT_2001_02_03).getDuration())
+                    .isEqualTo(Duration.parse("P1D"));
         }
     }
 

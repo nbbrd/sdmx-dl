@@ -1,6 +1,7 @@
 package sdmxdl.format.time;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 
 import java.time.LocalDateTime;
 
@@ -106,5 +107,11 @@ public class ReportingTimePeriodTest {
     public void testToStartTime() {
         assertThat(ReportingTimePeriod.of(REPORTING_MONTH, M2).toStartTime(null))
                 .isEqualTo(LocalDateTime.of(2010, 3, 1, 0, 0));
+    }
+
+    @Test
+    public void testGetDuration() {
+        assertThat(ReportingTimePeriod.of(REPORTING_MONTH, M2).getDuration())
+                .isEqualTo(Duration.parse("P1M"));
     }
 }

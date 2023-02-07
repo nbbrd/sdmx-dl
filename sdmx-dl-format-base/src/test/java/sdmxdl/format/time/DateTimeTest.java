@@ -1,6 +1,7 @@
 package sdmxdl.format.time;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 
 import java.time.LocalDateTime;
 
@@ -82,6 +83,15 @@ public class DateTimeTest {
 
         assertThat(DateTime.of(LDT_WITHOUT_SECONDS).toStartTime(null))
                 .isEqualTo(LDT_WITHOUT_SECONDS);
+    }
+
+    @Test
+    public void testGetDuration() {
+        assertThat(DateTime.of(LDT_WITH_SECONDS).getDuration())
+                .isEqualTo(Duration.ZERO);
+
+        assertThat(DateTime.of(LDT_WITHOUT_SECONDS).getDuration())
+                .isEqualTo(Duration.ZERO);
     }
 
     private static final LocalDateTime LDT_WITH_SECONDS = LocalDateTime.parse("2001-02-03T04:05:06");

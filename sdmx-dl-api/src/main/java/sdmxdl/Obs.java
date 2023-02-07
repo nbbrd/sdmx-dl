@@ -16,8 +16,6 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
@@ -30,7 +28,7 @@ import java.util.Map;
 public class Obs implements Comparable<Obs> {
 
     @lombok.NonNull
-    LocalDateTime period;
+    TimeInterval period;
 
     double value;
 
@@ -43,5 +41,9 @@ public class Obs implements Comparable<Obs> {
         return COMPARATOR.compare(this, that);
     }
 
-    private static final Comparator<Obs> COMPARATOR = Comparator.comparing(Obs::getPeriod).thenComparingDouble(Obs::getValue);
+    private LocalDateTime getStartTime() {
+        return period.getStart();
+    }
+
+    private static final Comparator<Obs> COMPARATOR = Comparator.comparing(Obs::getStartTime).thenComparingDouble(Obs::getValue);
 }

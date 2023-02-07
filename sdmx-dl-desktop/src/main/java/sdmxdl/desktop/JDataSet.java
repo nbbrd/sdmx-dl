@@ -201,7 +201,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
             @Override
             public String getRowName(int rowIndex) {
-                return dateTimeFormatter.format(data.get(rowIndex).getPeriod());
+                return dateTimeFormatter.format(data.get(rowIndex).getPeriod().getStart());
             }
         };
     }
@@ -211,7 +211,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         result.setXPosition(TimePeriodAnchor.MIDDLE);
         TimeSeries ts = new TimeSeries(item.getSeries().getKey().toString());
         for (Obs obs : item.getSeries().getObs()) {
-            ts.add(new TimeSeriesDataItem(new FixedMillisecond(Timestamp.valueOf(obs.getPeriod())), obs.getValue()));
+            ts.add(new TimeSeriesDataItem(new FixedMillisecond(Timestamp.valueOf(obs.getPeriod().getStart())), obs.getValue()));
         }
         result.addSeries(ts);
         return result;

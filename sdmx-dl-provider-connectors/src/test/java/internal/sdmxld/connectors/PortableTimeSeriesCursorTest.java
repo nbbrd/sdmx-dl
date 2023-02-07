@@ -23,10 +23,12 @@ import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 import sdmxdl.Key;
 import sdmxdl.Obs;
-import sdmxdl.format.ObsParser;
+import sdmxdl.TimeInterval;
 import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.IOException;
@@ -53,6 +55,7 @@ public class PortableTimeSeriesCursorTest {
 
     @Test
     public void test() throws IOException {
+        Duration P1Y = Duration.parse("P1Y");
         try (DataCursor c = PortableTimeSeriesCursor.of(DATA, ObsParser::newDefault, Connectors.toStructure(DSD))) {
             assertThat(c.asStream())
                     .hasSize(120)
@@ -66,8 +69,8 @@ public class PortableTimeSeriesCursorTest {
                                 .isNotEmpty();
                         assertThat(o.getObs())
                                 .hasSize(25)
-                                .startsWith(Obs.builder().period(LocalDate.of(1991, 1, 1).atStartOfDay()).value(-2.8574221).meta("OBS_STATUS", "A").build())
-                                .endsWith(Obs.builder().period(LocalDate.of(2015, 1, 1).atStartOfDay()).value(-0.1420473).meta("OBS_STATUS", "A").build());
+                                .startsWith(Obs.builder().period(TimeInterval.of(LocalDate.of(1991, 1, 1).atStartOfDay(), P1Y)).value(-2.8574221).meta("OBS_STATUS", "A").build())
+                                .endsWith(Obs.builder().period(TimeInterval.of(LocalDate.of(2015, 1, 1).atStartOfDay(), P1Y)).value(-0.1420473).meta("OBS_STATUS", "A").build());
                     });
         }
     }

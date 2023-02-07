@@ -2,12 +2,12 @@ package sdmxdl.format.time;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Duration;
 import sdmxdl.format.time.TimeRange.DateRange;
 import sdmxdl.format.time.TimeRange.DateTimeRange;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -109,6 +109,15 @@ public class TimeRangeTest {
             assertThat(DateRange.of(START_DATE, P2M).toStartTime(null))
                     .isEqualTo(LocalDateTime.of(2010, 2, 15, 0, 0));
         }
+
+        @Test
+        public void testGetDuration() {
+            assertThat(DateRange.of(START_DATE, P2D).getDuration())
+                    .isEqualTo(Duration.parse("P2D"));
+
+            assertThat(DateRange.of(START_DATE, P2M).getDuration())
+                    .isEqualTo(Duration.parse("P2M"));
+        }
     }
 
     @Nested
@@ -203,10 +212,19 @@ public class TimeRangeTest {
             assertThat(DateTimeRange.of(START_DATE_TIME, P2M).toStartTime(null))
                     .isEqualTo(LocalDateTime.of(2010, 2, 15, 0, 0));
         }
+
+        @Test
+        public void testGetDuration() {
+            assertThat(DateTimeRange.of(START_DATE_TIME, P2D).getDuration())
+                    .isEqualTo(Duration.parse("P2D"));
+
+            assertThat(DateTimeRange.of(START_DATE_TIME, P2M).getDuration())
+                    .isEqualTo(Duration.parse("P2M"));
+        }
     }
 
-    private static final Period P2D = Period.ofDays(2);
-    private static final Period P2M = Period.ofMonths(2);
+    private static final Duration P2D = Duration.parse("P2D");
+    private static final Duration P2M = Duration.parse("P2M");
     private static final LocalDate START_DATE = LocalDate.of(2010, 2, 15);
     private static final LocalDateTime START_DATE_TIME = LocalDate.of(2010, 2, 15).atStartOfDay();
 }

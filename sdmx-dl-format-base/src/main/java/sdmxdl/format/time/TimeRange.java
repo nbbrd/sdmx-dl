@@ -5,15 +5,14 @@ import nbbrd.design.RepresentableAsString;
 import nbbrd.design.SealedType;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Duration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalQuery;
 import java.util.function.BiFunction;
 
@@ -34,14 +33,14 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         TimeRange.DateRange.class,
         TimeRange.DateTimeRange.class
 })
-public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D extends TemporalAmount> implements ObservationalTimePeriod {
+public abstract class TimeRange<S extends Temporal & Comparable<? super S>> implements ObservationalTimePeriod {
 
     private TimeRange() {
     }
 
     abstract public @NonNull S getStart();
 
-    abstract public @NonNull D getDuration();
+    abstract public @NonNull Duration getDuration();
 
     abstract public @NonNull LocalDateTime toStartTime();
 
@@ -53,7 +52,7 @@ public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D ex
     @RepresentableAsString
     @lombok.Value(staticConstructor = "of")
     @lombok.EqualsAndHashCode(callSuper = false)
-    public static class DateRange extends TimeRange<LocalDate, Period> {
+    public static class DateRange extends TimeRange<LocalDate> {
 
         @StaticFactoryMethod
         public static @NonNull DateRange parse(@NonNull CharSequence text) throws DateTimeParseException {
@@ -70,7 +69,7 @@ public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D ex
 
         @NonNull LocalDate start;
 
-        @NonNull Period duration;
+        @NonNull Duration duration;
 
         @Override
         public String toString() {
@@ -86,7 +85,7 @@ public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D ex
     @RepresentableAsString
     @lombok.Value(staticConstructor = "of")
     @lombok.EqualsAndHashCode(callSuper = false)
-    public static class DateTimeRange extends TimeRange<LocalDateTime, Period> {
+    public static class DateTimeRange extends TimeRange<LocalDateTime> {
 
         @StaticFactoryMethod
         public static @NonNull DateTimeRange parse(@NonNull CharSequence text) throws DateTimeParseException {
@@ -104,7 +103,7 @@ public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D ex
 
         @NonNull LocalDateTime start;
 
-        @NonNull Period duration;
+        @NonNull Duration duration;
 
         @Override
         public String toString() {
@@ -117,16 +116,16 @@ public abstract class TimeRange<S extends Temporal & Comparable<? super S>, D ex
         }
     }
 
-    private static <T extends Temporal & Comparable<? super T>, R extends TimeRange<T, Period>> R doParse(
+    private static <T extends Temporal & Comparable<? super T>, R extends TimeRange<T>> R doParse(
             CharSequence text,
             DateTimeFormatter formatter,
             TemporalQuery<T> query,
-            BiFunction<T, Period, R> factory
+            BiFunction<T, Duration, R> factory
     ) {
         int intervalDesignatorIdx = getIntervalDesignatorIndex(text);
         CharSequence left = text.subSequence(0, intervalDesignatorIdx);
         CharSequence right = text.subSequence(intervalDesignatorIdx + 1, text.length());
-        return factory.apply(formatter.parse(left, query), Period.parse(right));
+        return factory.apply(formatter.parse(left, query), Duration.parse(right));
     }
 
     private static int getIntervalDesignatorIndex(CharSequence text) throws DateTimeParseException {

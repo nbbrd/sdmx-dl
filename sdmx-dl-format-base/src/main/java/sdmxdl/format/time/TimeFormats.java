@@ -2,9 +2,11 @@ package sdmxdl.format.time;
 
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
+import nbbrd.io.function.IOUnaryOperator;
 import nbbrd.io.text.Parser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.io.IOException;
 import java.time.MonthDay;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -100,10 +102,10 @@ public final class TimeFormats {
     }
 
     // https://sis-cc.gitlab.io/dotstatsuite-documentation/using-api/typical-use-cases/#non-calendar-reporting-periods
-    public static @Nullable MonthDay getReportingYearStartDay(@NonNull UnaryOperator<String> obsAttributes) {
-        String reportingYearStartDay = obsAttributes.apply("REPORTING_YEAR_START_DAY");
+    public static @Nullable MonthDay getReportingYearStartDay(@NonNull IOUnaryOperator<String> obsAttributes) throws IOException {
+        String reportingYearStartDay = obsAttributes.applyWithIO("REPORTING_YEAR_START_DAY");
         if (reportingYearStartDay == null) {
-            reportingYearStartDay = obsAttributes.apply("REPYEARSTART");
+            reportingYearStartDay = obsAttributes.applyWithIO("REPYEARSTART");
         }
         if (reportingYearStartDay == null) {
             return null;

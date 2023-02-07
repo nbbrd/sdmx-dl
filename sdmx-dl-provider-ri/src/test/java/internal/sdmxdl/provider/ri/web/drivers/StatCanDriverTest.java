@@ -185,18 +185,26 @@ public class StatCanDriverTest {
                     .satisfies(
                             series -> assertThat(series.getObs())
                                     .hasSize(388)
-                                    .startsWith(obsOf("1990-01-01", 276.428))
-                                    .endsWith(obsOf("2022-04-01", 267.330))
-                                    .filteredOn(Obs::getPeriod, LocalDate.parse("2021-07-01").atStartOfDay())
+                                    .startsWith(obsOf("1990-01-01", "P1M", 276.428))
+                                    .endsWith(obsOf("2022-04-01", "P1M", 267.330))
+                                    .filteredOn(Obs::getPeriod, periodOf("2021-07-01", "P1M"))
                                     .singleElement()
-                                    .isEqualTo(obsOf("2021-07-01", 274.067))
+                                    .isEqualTo(obsOf("2021-07-01", "P1M", 274.067))
                     )
             ;
         }
     }
 
-    private static Obs obsOf(String localDate, double value) {
-        return Obs.builder().period(LocalDate.parse(localDate).atStartOfDay()).value(value).build();
+    private static TimeInterval periodOf(String localDate, String duration) {
+        return TimeInterval.of(LocalDate.parse(localDate).atStartOfDay(), Duration.parse(duration));
+    }
+
+    private static Obs obsOf(String localDate, String duration, double value) {
+        return Obs
+                .builder()
+                .period(periodOf(localDate, duration))
+                .value(value)
+                .build();
     }
 
     @MightBePromoted
@@ -206,7 +214,7 @@ public class StatCanDriverTest {
 
     @MightBePromoted
     private static Condition<Series> uniqueObs() {
-        return new Condition<>(o -> o.getObs().stream().map(Obs::getPeriod).count() == o.getObs().size(), "unique obs");
+        return new Condition<>(o -> o.getObs().stream().map(Obs::getPeriod).distinct().count() == o.getObs().size(), "unique obs");
     }
 }
 
