@@ -283,16 +283,17 @@ Other options:
 Output format: 
 [
     [`Ref:flow`](../datatypes#flow),
-    [`Label:string`](../datatypes#string)
+    [`Name:string`](../datatypes#string),
+    [`Description:string`](../datatypes#string)
 ]
 
 {{< expand "Output sample" >}}
 
-| Ref          | Label                          |
-|--------------|--------------------------------|
-| ECB:AME(1.0) | AMECO                          |
-| ECB:BKN(1.0) | Banknotes statistics           |
-| ECB:BLS(1.0) | Bank Lending Survey Statistics |
+| Ref          | Name                           | Description |
+|--------------|--------------------------------|-------------|
+| ECB:AME(1.0) | AMECO                          |             |
+| ECB:BKN(1.0) | Banknotes statistics           |             |
+| ECB:BLS(1.0) | Bank Lending Survey Statistics |             |
 
 {{< /expand >}}
 
@@ -523,7 +524,7 @@ Other options:
 Output format: 
 [
     [`Source:source`](../datatypes#source),
-    [`State:enum`](../datatypes#enum),
+    [`Status:enum`](../datatypes#enum),
     [`UptimeRatio:double`](../datatypes#double),
     [`AverageResponseTime:double`](../datatypes#double),
     [`ErrorMessage:string`](../datatypes#string)
@@ -531,9 +532,9 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-| Source | State | UptimeRatio | AverageResponseTime | ErrorMessage |
-|--------|-------|-------------|---------------------|--------------|
-| ECB    | UP    | 99.691      |                     |              |
+| Source | Status | UptimeRatio | AverageResponseTime | ErrorMessage |
+|--------|--------|-------------|---------------------|--------------|
+| ECB    | UP     | 99.691      |                     |              |
 
 {{< /expand >}}
 
