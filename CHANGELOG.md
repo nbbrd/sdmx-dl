@@ -32,6 +32,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![FORMAT] Fix language consistency in names and descriptions [#397](https://github.com/nbbrd/sdmx-dl/issues/397)
 - ![PROVIDER] Fix Eurostat endpoint [#346](https://github.com/nbbrd/sdmx-dl/issues/346)
 
 ## [3.0.0-beta.8] - 2022-11-22

@@ -16,8 +16,12 @@
  */
 package internal.sdmxdl.format.xml;
 
-import internal.sdmxdl.format.xml.TextBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -37,7 +41,8 @@ public class TextBuilderTest {
         assertThat(new TextBuilder(ANY).put("en", "hello").clear().build()).isNull();
         assertThat(new TextBuilder(ANY).put("en", "hello").build()).isEqualTo("hello");
         assertThat(new TextBuilder(ANY).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("hello");
-        assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("bonjour");
+        assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("hello");
+        assertThat(new TextBuilder(ANY).put("zz", "hello").put("fr", "bonjour").build()).isEqualTo("bonjour");
 
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(null));
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put(null, "hello"));
@@ -56,5 +61,30 @@ public class TextBuilderTest {
         assertThat(new TextBuilder(parse("en")).put("en", "").put("de", "Gewinn- und Verlustrechnung").build())
                 .describedAs("Specified language priority should return any text even if blank")
                 .isEqualTo("");
+    }
+
+    @Test
+    public void testGetComparatorWithFixedValueFirst() {
+        Comparator<String> x = TextBuilder.getComparatorWithFixedValueFirst("b");
+
+        assertThat(sortedSetOf(x, "a", "b", "c")).containsExactly("b", "a", "c");
+        assertThat(sortedSetOf(x, "c", "b", "a")).containsExactly("b", "a", "c");
+
+        assertThat(sortedSetOf(x, "b", "a", "c")).containsExactly("b", "a", "c");
+        assertThat(sortedSetOf(x, "b", "c", "a")).containsExactly("b", "a", "c");
+
+        assertThat(sortedSetOf(x, "a", "c", "b")).containsExactly("b", "a", "c");
+        assertThat(sortedSetOf(x, "c", "a", "b")).containsExactly("b", "a", "c");
+
+        assertThat(sortedSetOf(x, "a", "c")).containsExactly("a", "c");
+        assertThat(sortedSetOf(x, "c", "a")).containsExactly("a", "c");
+
+        assertThat(sortedSetOf(x, "a", "b", "c", "b")).containsExactly("b", "a", "c");
+    }
+
+    private static <T> SortedSet<T> sortedSetOf(Comparator<T> comparator, T... values) {
+        TreeSet<T> result = new TreeSet<>(comparator);
+        Collections.addAll(result, values);
+        return result;
     }
 }

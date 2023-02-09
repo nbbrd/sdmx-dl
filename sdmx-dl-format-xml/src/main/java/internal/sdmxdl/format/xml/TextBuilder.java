@@ -17,11 +17,14 @@
 package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
+import nbbrd.design.VisibleForTesting;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.LanguagePriorityList;
 
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Philippe Charles
@@ -31,7 +34,7 @@ final class TextBuilder {
 
     @lombok.NonNull
     private final LanguagePriorityList ranges;
-    private final Map<String, String> data = new LinkedHashMap<>();
+    private final Map<String, String> data = new TreeMap<>(ENGLISH_FIRST_THEN_LEXICOGRAPHICALLY);
 
     @NonNull
     public TextBuilder clear() {
@@ -56,5 +59,17 @@ final class TextBuilder {
     public String build(@NonNull String defaultValue) {
         String result = build();
         return result != null ? result : defaultValue;
+    }
+
+    private static final Comparator<String> ENGLISH_FIRST_THEN_LEXICOGRAPHICALLY = getComparatorWithFixedValueFirst("en");
+
+    @MightBePromoted
+    @VisibleForTesting
+    static Comparator<String> getComparatorWithFixedValueFirst(String fixedValue) {
+        return (l, r) -> {
+            boolean bl = l.compareTo(fixedValue) == 0;
+            boolean br = r.compareTo(fixedValue) == 0;
+            return bl ? (br ? 0 : -1) : (br ? 1 : l.compareTo(r));
+        };
     }
 }
