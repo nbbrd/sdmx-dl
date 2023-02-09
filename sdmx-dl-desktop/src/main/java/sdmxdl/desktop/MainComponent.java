@@ -2,6 +2,7 @@ package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
+import ec.util.completion.swing.JAutoCompletion;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.*;
@@ -10,6 +11,7 @@ import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.io.Resource;
+import net.miginfocom.swing.MigLayout;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
@@ -41,6 +43,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.IntConsumer;
 
 import static internal.sdmxdl.desktop.Html4Swing.nameDescription;
@@ -229,13 +232,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         result.add(Box.createHorizontalGlue());
 
         result.add(new ButtonBuilder()
-                .action(new DemoCommand().toAction(this))
-                .ikon(MDI_AUTO_FIX)
-                .toolTipText("Add demo datasets")
-                .buildButton());
-
-        result.add(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .action(new AddDatasetCommand().toAction(this))
                 .ikon(MDI_DATABASE_PLUS)
                 .toolTipText("Add dataset")
                 .buildButton());
@@ -325,11 +322,56 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         }.execute();
     }
 
-    private static final class DemoCommand extends JCommand<MainComponent> {
+    private static final class AddDatasetCommand extends JCommand<MainComponent> {
         @Override
         public void execute(@NonNull MainComponent c) {
-            c.getDataSources().addElement(new DataSourceRef("ECB", DataflowRef.parse("EXR"), emptyList()));
-            c.getDataSources().addElement(new DataSourceRef("RNG", DataflowRef.parse("RNG"), emptyList()));
+
+            JTextField sourceField = new JTextField("");
+            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(c.getSdmxManager());
+            JAutoCompletion sourceAutoCompletion = new JAutoCompletion(sourceField);
+            sourceAutoCompletion.setSource(sourceCompletion.getSource());
+            sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
+
+            JTextField flowField = new JTextField("");
+            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(c.getSdmxManager(), () -> c.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
+            JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
+            flowAutoCompletion.setSource(flowCompletion.getSource());
+            flowAutoCompletion.getList().setCellRenderer(flowCompletion.getRenderer());
+
+            JTextField dimensionsField = new JTextField("");
+            dimensionsField.setEnabled(false);
+
+            JPanel panel = new JPanel(new MigLayout("ins 20", "[para]0[][100lp, fill][60lp][95lp, fill]", ""));
+
+            addSeparator(panel, "Source");
+
+            panel.add(new JLabel("Provider"), "skip");
+            panel.add(sourceField, "span, growx");
+
+            panel.add(new JLabel("Dataflow"), "skip");
+            panel.add(flowField, "span, growx");
+
+            addSeparator(panel, "Options");
+
+            panel.add(new JLabel("Dimensions"), "skip");
+            panel.add(dimensionsField, "span, growx");
+
+            if (JOptionPane.showOptionDialog(c, panel, "Add dataset",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                    new Object[]{"Add", "Cancel"}, "Add") == 0) {
+
+                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), DataflowRef.parse(flowField.getText()), emptyList()));
+            }
+        }
+
+        static final Color LABEL_COLOR = new Color(0, 70, 213);
+
+        private void addSeparator(JPanel panel, String text) {
+            JLabel l = new JLabel(text);
+            l.setForeground(LABEL_COLOR);
+
+            panel.add(l, "gapbottom 1, span, split 2, aligny center");
+            panel.add(new JSeparator(), "gapleft rel, growx");
         }
     }
 }

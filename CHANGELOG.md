@@ -11,7 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add support of time intervals in observations [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
 - ![PROVIDER] Add support of redirections in curl backend [#363](https://github.com/nbbrd/sdmx-dl/issues/363)
-- ![DESKTOP] Add basic desktop module
+- ![DESKTOP] Add desktop application proof of concept [#401](https://github.com/nbbrd/sdmx-dl/issues/401)
 
 ### Changed
 
