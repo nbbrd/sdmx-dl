@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2023-01-17T12:13:37+01:00"
+      content="2023-02-09T11:36:43+01:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit.",
-      "wordCount" : "1264",
+      "wordCount" : "1266",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2023-01-17T12:13:37.00Z",
+      "dateModified": "2023-02-09T11:36:43.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1616,35 +1616,43 @@ flowchart TB
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Label:string</code></a>
+><code>Name:string</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Description:string</code></a>
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="7a13a7e2-15">
+  <label class="gdoc-expand__head flex justify-between" for="e0bda5e9-15">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="7a13a7e2-15" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="e0bda5e9-15" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Ref</th>
-<th>Label</th>
+<th>Name</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>ECB:AME(1.0)</td>
 <td>AMECO</td>
+<td></td>
 </tr>
 <tr>
 <td>ECB:BKN(1.0)</td>
 <td>Banknotes statistics</td>
+<td></td>
 </tr>
 <tr>
 <td>ECB:BLS(1.0)</td>
 <td>Bank Lending Survey Statistics</td>
+<td></td>
 </tr>
 </tbody>
 </table> </div>
@@ -2246,7 +2254,7 @@ flowchart TB
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>State:enum</code></a>,
+><code>Status:enum</code></a>,
 <a
   class="gdoc-markdown__link--code"
   href="../datatypes#double"
@@ -2262,17 +2270,17 @@ flowchart TB
 ]</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="9d0bce4c-29">
+  <label class="gdoc-expand__head flex justify-between" for="32baf9d5-29">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="9d0bce4c-29" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="32baf9d5-29" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Source</th>
-<th>State</th>
+<th>Status</th>
 <th>UptimeRatio</th>
 <th>AverageResponseTime</th>
 <th>ErrorMessage</th>
