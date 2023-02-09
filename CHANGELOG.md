@@ -9,24 +9,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- ![API] Add support of time intervals in observations
+- ![API] Add support of time intervals in observations [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
 - ![PROVIDER] Add support of redirections in curl backend [#363](https://github.com/nbbrd/sdmx-dl/issues/363)
 - ![DESKTOP] Add basic desktop module
 
 ### Changed
 
-- ![API] Sort observations chronologically
-- ![API] Enforce non-null observations fields
-- ![API] Rename field `Dimension#label` as `Dimension#name`
-- ![API] Rename field `Attribute#label` as `Attribute#name`
-- ![API] Rename field `DataStructure#label` as `DataStructure#name`
-- ![API] Rename field `SdmxWebSource#name` as `SdmxWebSource#id`
-- ![API] Rename field `SdmxWebSource#description` as `SdmxWebSource#name`
-- ![API] Invert fields in `DataDetail`
-- ![API] Set field `Dataflow#description` as optional
-- ![API] Set default values to `DataQuery`
-- ![API] Set field `Obs#getPeriod` as `TimeInterval`
-- ![FORMAT] Improve parsing of time formats
+- ![API] Sort observations chronologically [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Enforce non-null observations fields [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Invert fields in `DataDetail` [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Set default values to `DataQuery` [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Rename field `Dimension#label` as `Dimension#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `Attribute#label` as `Attribute#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `DataStructure#label` as `DataStructure#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `SdmxWebSource#name` as `SdmxWebSource#id` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `SdmxWebSource#description` as `SdmxWebSource#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Set field `Dataflow#description` as optional [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Set field `Obs#getPeriod` as `TimeInterval` [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
+- ![FORMAT] Improve parsing of time formats [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
 - ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`
 - ![FORMAT] Rename module `sdmx-dl-provider-util ` as `smdx-dl-provider-base`
 
