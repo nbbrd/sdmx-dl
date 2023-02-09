@@ -39,11 +39,11 @@
         </flow>
     </source>
     <source name="ESTAT" flowCount="6283..">
-        <flow ref="teibp051" dimCount="7">
+        <flow ref="TEIBP051" dimCount="7">
             <data digest="ESTAT: normal delivery process"
                   key="Q.PC_GDP.NSA.WRL_REST.BAL.CA.PT" seriesCount="1.." obsCount="12.."/>
         </flow>
-        <flow ref="nama_10_gdp" dimCount="4">
+        <flow ref="NAMA_10_GDP" dimCount="4">
             <data digest="ESTAT: async delivery process"
                   key="..B1GQ." seriesCount="1.." obsCount="12.."/>
         </flow>

@@ -52,7 +52,7 @@ public final class EurostatDriver implements WebDriver {
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")
                     .driver(CONNECTORS_EUROSTAT)
-                    .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+                    .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")

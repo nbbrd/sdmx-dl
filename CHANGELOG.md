@@ -30,6 +30,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`
 - ![FORMAT] Rename module `sdmx-dl-provider-util ` as `smdx-dl-provider-base`
 
+### Fixed
+
+- ![PROVIDER] Fix Eurostat endpoint [#346](https://github.com/nbbrd/sdmx-dl/issues/346)
+
 ## [3.0.0-beta.8] - 2022-11-22
 
 This is the eighth beta release of **sdmx-dl**.  
