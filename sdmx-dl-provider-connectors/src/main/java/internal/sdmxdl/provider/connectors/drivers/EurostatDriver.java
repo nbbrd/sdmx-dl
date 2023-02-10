@@ -47,7 +47,6 @@ public final class EurostatDriver implements WebDriver {
                     .builder()
                     .id("ESTAT")
                     .alias("EUROSTAT")
-                    .nameOf("Eurostat")
                     .name("en", "Eurostat")
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")

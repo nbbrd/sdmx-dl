@@ -18,6 +18,7 @@ package sdmxdl;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -89,15 +90,29 @@ public final class LanguagePriorityList {
             return null;
         }
         String lang = lookupTag(data.keySet());
-        return lang != null ? data.get(lang) : getFirstNonBlankValue(data);
+        return lang != null ? data.get(lang) : getFallbackValue(data);
+    }
+
+    private static String getFallbackValue(Map<String, String> data) {
+        if (!(data instanceof SortedMap)) {
+            String result = data.get(FALLBACK_LANG);
+            if (isNonBlank(result)) return result;
+        }
+        return getFirstNonBlankValue(data);
+    }
+
+    private static final String FALLBACK_LANG = "en";
+
+    @MightBePromoted
+    private static boolean isNonBlank(@Nullable String value) {
+        return value != null && !value.isEmpty();
     }
 
     private static String getFirstNonBlankValue(Map<String, String> data) {
         return data
                 .values()
                 .stream()
-                .filter(Objects::nonNull)
-                .filter(text -> !text.isEmpty())
+                .filter(LanguagePriorityList::isNonBlank)
                 .findFirst()
                 .orElse(null);
     }

@@ -69,7 +69,6 @@ public final class NbbDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("NBB")
-                    .nameOf("National Bank of Belgium")
                     .name("en", "National Bank of Belgium")
                     .name("de", "Belgische National Bank")
                     .name("fr", "Banque Nationale de Belgique")

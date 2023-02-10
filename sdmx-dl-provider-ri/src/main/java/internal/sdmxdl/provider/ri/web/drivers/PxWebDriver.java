@@ -70,7 +70,6 @@ public final class PxWebDriver implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("STATFIN")
-                    .nameOf("Statistics Finland")
                     .name("en", "Statistics Finland")
                     .name("sv", "Statistikcentralen")
                     .name("fi", "Tilastokeskus")

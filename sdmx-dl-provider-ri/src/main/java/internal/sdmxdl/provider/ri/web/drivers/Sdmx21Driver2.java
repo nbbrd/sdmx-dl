@@ -55,7 +55,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("ABS")
-                    .nameOf("Australian Bureau of Statistics")
                     .name("en", "Australian Bureau of Statistics")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://api.data.abs.gov.au")
@@ -67,7 +66,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("BIS")
-                    .nameOf("Bank for International Settlements")
                     .name("en", "Bank for International Settlements")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://stats.bis.org/api/v1")
@@ -79,7 +77,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("CAMSTAT")
-                    .nameOf("National Institute of Statistics of Cambodia")
                     .name("en", "National Institute of Statistics of Cambodia")
                     .name("km", " វិទ្យាស្ថានជាតិស្ថិតិ")
                     .driver(RI_SDMX_21)
@@ -91,7 +88,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("ECB")
-                    .nameOf("European Central Bank")
                     .name("en", "European Central Bank")
                     .driver(RI_SDMX_21)
                     .dialect("ECB2020")
@@ -104,7 +100,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("ESCAP")
-                    .nameOf("Economic and Social Commission for Asia and the Pacific")
                     .name("en", "Economic and Social Commission for Asia and the Pacific")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://api-dataexplorer.unescap.org/rest/")
@@ -115,7 +110,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("ILO")
-                    .nameOf("International Labour Organization")
                     .name("en", "International Labour Organization")
                     .name("es", "Organzación Internacional de Trabajo")
                     .name("fr", "Organisation Internationale du Travail")
@@ -129,7 +123,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("IMF_SDMX_CENTRAL")
-                    .nameOf("International Monetary Fund (SDMX Central)")
                     .name("en", "International Monetary Fund (SDMX Central)")
                     .name("fr", "Fonds monétaire international (SDMX Central)")
                     .driver(RI_SDMX_21)
@@ -142,7 +135,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("INEGI")
-                    .nameOf("National Institute of Statistics, Geography and Informatics")
                     .name("en", "National Institute of Statistics, Geography and Informatics")
                     .name("es", "Instituto Nacional de Estadística, Geografía e Informática")
                     .driver(RI_SDMX_21)
@@ -156,7 +148,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("ISTAT")
-                    .nameOf("Italian National Institute of Statistics")
                     .name("en", "Italian National Institute of Statistics")
                     .name("it", "Istituto Nazionale di Statistica")
                     .driver(RI_SDMX_21)
@@ -169,7 +160,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("NB")
-                    .nameOf("Norges Bank")
                     .name("en", "Norges Bank")
                     .name("no", "Norges Bank")
                     .driver(RI_SDMX_21)
@@ -182,7 +172,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("SGR")
-                    .nameOf("SDMX Global Registry")
                     .name("en", "SDMX Global Registry")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://registry.sdmx.org/ws/rest")
@@ -194,7 +183,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("SIMEL")
-                    .nameOf("El Salvador Labor Market Information System")
                     .name("en", "El Salvador Labor Market Information System")
                     .name("es", "Sistema de Información del Mercado Laboral")
                     .driver(RI_SDMX_21)
@@ -207,7 +195,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("SPC")
-                    .nameOf("Pacific Data Hub")
                     .name("en", "Pacific Data Hub")
                     .name("fr", "Pacific Data Hub")
                     .driver(RI_SDMX_21)
@@ -220,7 +207,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("STATEC")
-                    .nameOf("National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
                     .name("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
                     .name("fr", "Institut national de la statistique et des études économiques du Grand-Duché de Luxembourg")
                     .driver(RI_SDMX_21)
@@ -233,7 +219,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("TNSO")
-                    .nameOf("National Statistical Office of Thailand")
                     .name("en", "National Statistical Office of Thailand")
                     .name("th", "สำนักงานสถิติแห่งชาติ")
                     .driver(RI_SDMX_21)
@@ -246,7 +231,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("UNDATA")
-                    .nameOf("Data access system to UN databases")
                     .name("en", "Data access system to UN databases")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://data.un.org/WS/rest")
@@ -258,7 +242,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("UNICEF")
-                    .nameOf("UN International Children's Emergency Fund")
                     .name("en", "UN International Children's Emergency Fund")
                     .driver(RI_SDMX_21)
                     .endpointOf("https://sdmx.data.unicef.org/ws/public/sdmxapi/rest")
@@ -270,7 +253,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("WB")
-                    .nameOf("World Bank")
                     .name("en", "World Bank")
                     .name("es", "Banco Mundial")
                     .name("fr", "Banque Mondiale")
@@ -285,7 +267,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("WITS")
-                    .nameOf("World Integrated Trade Solutions")
                     .name("en", "World Integrated Trade Solution")
                     .name("es", "Solución Comercial Integrada Mundial")
                     .driver(RI_SDMX_21)

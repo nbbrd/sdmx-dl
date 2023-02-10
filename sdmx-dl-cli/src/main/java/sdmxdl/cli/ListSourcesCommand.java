@@ -70,7 +70,7 @@ public final class ListSourcesCommand implements Callable<Void> {
     }
 
     private Iterable<String> getLanguages(SdmxWebSource source) {
-        return () -> source.getNames().keySet().stream().filter(lang -> !SdmxWebSource.ROOT_LANGUAGE.equals(lang)).iterator();
+        return source.getNames().keySet();
     }
 
     private Stream<SdmxWebSource> getRows() throws IOException {

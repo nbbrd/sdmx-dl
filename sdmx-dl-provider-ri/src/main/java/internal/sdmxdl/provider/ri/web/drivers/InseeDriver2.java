@@ -69,7 +69,6 @@ public final class InseeDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("INSEE")
-                    .nameOf("National Institute of Statistics and Economic Studies")
                     .name("en", "National Institute of Statistics and Economic Studies")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(RI_INSEE)

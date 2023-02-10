@@ -53,7 +53,6 @@ public final class DotStatDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("OECD")
-                    .nameOf("The Organisation for Economic Co-operation and Development")
                     .name("en", "The Organisation for Economic Co-operation and Development")
                     .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
                     .name("fr", "Organisation de coopération et de développement économiques")
@@ -67,7 +66,6 @@ public final class DotStatDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("SE")
-                    .nameOf("Statistics Estonia")
                     .name("en", "Statistics Estonia")
                     .name("et", "Statistikaameti")
                     .driver(RI_DOTSTAT)
@@ -79,7 +77,6 @@ public final class DotStatDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("UIS")
-                    .nameOf("Unesco Institute for Statistics")
                     .name("en", "Unesco Institute for Statistics")
                     .name("fr", "Unesco Institut de statistique")
                     .driver(RI_DOTSTAT)
@@ -91,7 +88,6 @@ public final class DotStatDriver2 implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("UKDS")
-                    .nameOf("UK Data Service")
                     .name("en", "UK Data Service")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")

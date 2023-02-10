@@ -49,7 +49,7 @@ public class XmlWebSourceTest {
             SdmxWebSource
                     .builder()
                     .id("other")
-                    .nameOf("some description")
+                    .name("en", "some description")
                     .driver("dummy")
                     .endpointOf("http://localhost")
                     .build()
@@ -72,7 +72,7 @@ public class XmlWebSourceTest {
             + "    </source>\n"
             + "    <source>\n"
             + "        <name>other</name>\n"
-            + "        <description>some description</description>"
+            + "        <description lang=\"en\">some description</description>\n"
             + "        <driver>dummy</driver>\n"
             + "        <endpoint>http://localhost</endpoint>\n"
             + "    </source>\n"

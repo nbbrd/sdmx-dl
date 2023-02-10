@@ -62,7 +62,6 @@ public final class BbkDriver implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("BBK")
-                    .nameOf("Deutsche Bundesbank")
                     .name("en", "Deutsche Bundesbank")
                     .name("de", "Deutsche Bundesbank")
                     .driver(RI_BBK)

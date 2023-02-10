@@ -49,7 +49,7 @@ public final class SeDriver implements WebDriver {
             .source(SdmxWebSource
                     .builder()
                     .id("SE")
-                    .nameOf("Statistics Estonia")
+                    .name("en", "Statistics Estonia")
                     .driver(CONNECTORS_SE)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")

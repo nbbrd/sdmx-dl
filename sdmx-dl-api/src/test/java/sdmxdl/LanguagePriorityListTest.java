@@ -19,10 +19,7 @@ package sdmxdl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -69,12 +66,15 @@ public class LanguagePriorityListTest {
     }
 
     @Test
-    public void test() {
+    public void testSelect() {
         assertThat(ANY.select(emptyMap())).isNull();
         assertThat(ANY.select(singletonMap("en", null))).isNull();
         assertThat(ANY.select(singletonMap("en", "hello"))).isEqualTo("hello");
         assertThat(ANY.select(mapOf("en", "hello", "fr", "bonjour"))).isEqualTo("hello");
-        assertThat(ANY.select(mapOf("fr", "bonjour", "en", "hello"))).isEqualTo("bonjour");
+        assertThat(ANY.select(mapOf("fr", "bonjour", "en", "hello"))).isEqualTo("hello");
+        assertThat(ANY.select(mapOf("fr", "bonjour", "aa", "hello"))).isEqualTo("bonjour");
+        assertThat(ANY.select(mapOf("bb", "bonjour", "aa", "hello"))).isEqualTo("bonjour");
+        assertThat(ANY.select(new TreeMap<>(mapOf("bb", "bonjour", "aa", "hello")))).isEqualTo("hello");
 
         assertThatNullPointerException().isThrownBy(() -> ANY.select(null));
 

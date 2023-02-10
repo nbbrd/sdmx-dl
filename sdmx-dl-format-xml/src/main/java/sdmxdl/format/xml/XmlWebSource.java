@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -61,6 +62,7 @@ public final class XmlWebSource {
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
     private static final String MONITOR_WEBSITE_TAG = "monitorWebsite";
+    private static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
     private static List<SdmxWebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();
@@ -77,7 +79,7 @@ public final class XmlWebSource {
                             break;
                         case DESCRIPTION_TAG:
                             String lang = reader.getAttributeValue(null, LANG_ATTR);
-                            item.name(lang != null ? lang : SdmxWebSource.ROOT_LANGUAGE, reader.getElementText());
+                            item.name(lang != null ? lang : ROOT_LANGUAGE, reader.getElementText());
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());

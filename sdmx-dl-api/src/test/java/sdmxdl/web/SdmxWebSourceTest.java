@@ -63,9 +63,6 @@ public class SdmxWebSourceTest {
                         .getNames()
                         .keySet())
                 .containsExactly("fr", "en");
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> base.toBuilder().nameOf(null));
     }
 
     @Test

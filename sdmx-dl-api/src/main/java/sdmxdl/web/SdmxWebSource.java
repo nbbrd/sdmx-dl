@@ -24,7 +24,6 @@ import sdmxdl.SdmxSource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,13 +82,7 @@ public class SdmxWebSource extends SdmxSource {
         return langs.select(names);
     }
 
-    public static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
-
     public static class Builder {
-
-        public @NonNull Builder nameOf(@NonNull CharSequence name) throws IllegalArgumentException {
-            return name(ROOT_LANGUAGE, name.toString());
-        }
 
         public @NonNull Builder endpointOf(@NonNull CharSequence endpoint) throws IllegalArgumentException {
             return endpoint(URI.create(endpoint.toString()));
