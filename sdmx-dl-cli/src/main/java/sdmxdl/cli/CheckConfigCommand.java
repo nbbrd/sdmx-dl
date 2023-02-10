@@ -56,8 +56,8 @@ public final class CheckConfigCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(ScopedProperty.class)
                 .columnOf("Scope", ScopedProperty::getScope, Formatter.onEnum())
-                .columnOf("PropertyKey", ScopedProperty::getKey, Formatter.onString())
-                .columnOf("PropertyValue", ScopedProperty::getValue, Formatter.onString())
+                .columnOf("PropertyKey", ScopedProperty::getKey)
+                .columnOf("PropertyValue", ScopedProperty::getValue)
                 .columnOf("Category", ScopedProperty::getCategory, Formatter.onEnum())
                 .build();
     }

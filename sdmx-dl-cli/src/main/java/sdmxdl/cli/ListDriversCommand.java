@@ -20,7 +20,6 @@ import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.web.spi.WebDriver;
 
@@ -49,8 +48,8 @@ public final class ListDriversCommand implements Callable<Void> {
     private CsvTable<WebDriver> getTable() {
         return CsvTable
                 .builderOf(WebDriver.class)
-                .columnOf("Name", WebDriver::getName, Formatter.onString())
-                .columnOf("SupportedProperties", WebDriver::getSupportedProperties, CsvUtil.fromIterable(Formatter.onString(), ','))
+                .columnOf("Name", WebDriver::getName)
+                .columnOf("SupportedProperties", WebDriver::getSupportedProperties, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }
 

@@ -14,6 +14,10 @@ import java.util.Map;
 @lombok.experimental.UtilityClass
 public class CsvUtil {
 
+    public static final Formatter<Iterable<String>> DEFAULT_LIST_FORMATTER = fromIterable(Formatter.onString(), ',');
+
+    public static final Formatter<Map<String, String>> DEFAULT_MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
+
     public static void write(CsvOutput csv, IOConsumer<Csv.Writer> head, IOConsumer<Csv.Writer> body) throws IOException {
         try (Csv.Writer w = csv.newCsvWriter()) {
             if (!csv.isAppending()) head.acceptWithIO(w);
@@ -36,8 +40,6 @@ public class CsvUtil {
                 .asFormatter()
                 .compose(map -> map.entrySet().iterator());
     }
-
-    public static final Formatter<Map<String, String>> DEFAULT_MAP_FORMATTER = CsvUtil.fromMap(Formatter.onString(), Formatter.onString(), ',', '=');
 
     @MightBePromoted
     private static <T> Picocsv.Formatter.Builder<Iterator<T>> elementsFormatter(Formatter<T> element) {

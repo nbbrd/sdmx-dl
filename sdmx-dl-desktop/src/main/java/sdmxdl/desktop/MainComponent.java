@@ -150,7 +150,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                         label.setToolTipText(null);
                         label.setIcon(FontIcon.of(MaterialDesign.MDI_CLOUD_DOWNLOAD, 16, UIManager.getColor("Tree.icon.leafColor")));
                     } else if (userObject instanceof Exception) {
-                        label.setText("Error of type " + userObject.getClass());
+                        label.setText("Error " + userObject.getClass().getSimpleName());
                         label.setToolTipText(((Exception) userObject).getMessage());
                         label.setIcon(FontIcon.of(MaterialDesign.MDI_CLOSE_NETWORK, 16, UIManager.getColor("Tree.icon.leafColor")));
                     }

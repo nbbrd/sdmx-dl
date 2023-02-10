@@ -62,10 +62,10 @@ public final class FetchExtraCommand implements Callable<Void> {
                 .builderOf(Extra.class)
                 .columnOf("Series", Extra::getKey, Formatter.onObjectToString())
                 .columnOf("TimeUnit", Extra::getTimeUnit, Formatter.onObjectToString())
-                .columnOf("ValueUnit", Extra::getValueUnit, Formatter.onString())
-                .columnOf("Decimals", Extra::getDecimals, Formatter.onString())
-                .columnOf("Name", Extra::getName, Formatter.onString())
-                .columnOf("Description", Extra::getDescription, Formatter.onString())
+                .columnOf("ValueUnit", Extra::getValueUnit)
+                .columnOf("Decimals", Extra::getDecimals)
+                .columnOf("Name", Extra::getName)
+                .columnOf("Description", Extra::getDescription)
                 .build();
     }
 

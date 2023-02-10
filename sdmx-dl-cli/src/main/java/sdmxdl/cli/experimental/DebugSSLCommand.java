@@ -55,8 +55,8 @@ public final class DebugSSLCommand implements Callable<Void> {
 
     private CsvTable<Map.Entry<String, String>> getTable() {
         CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
-        result.columnOf("Type", Map.Entry::getKey, Formatter.onString());
-        result.columnOf("Value", Map.Entry::getValue, Formatter.onString());
+        result.columnOf("Type", Map.Entry::getKey);
+        result.columnOf("Value", Map.Entry::getValue);
         return result.build();
     }
 

@@ -51,17 +51,17 @@ public final class ListSourcesCommand implements Callable<Void> {
     private CsvTable<SdmxWebSource> getTable() {
         return CsvTable
                 .builderOf(SdmxWebSource.class)
-                .columnOf("Name", SdmxWebSource::getId, Formatter.onString())
-                .columnOf("Description", this::getDescription, Formatter.onString())
-                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
-                .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
-                .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
+                .columnOf("Name", SdmxWebSource::getId)
+                .columnOf("Description", this::getDescription)
+                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
+                .columnOf("Driver", SdmxWebSource::getDriver)
+                .columnOf("Dialect", SdmxWebSource::getDialect)
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
                 .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.onURI())
                 .columnOf("MonitorWebsite", SdmxWebSource::getMonitorWebsite, Formatter.onURL())
-                .columnOf("Languages", this::getLanguages, CsvUtil.fromIterable(Formatter.onString(), ','))
+                .columnOf("Languages", this::getLanguages, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }
 

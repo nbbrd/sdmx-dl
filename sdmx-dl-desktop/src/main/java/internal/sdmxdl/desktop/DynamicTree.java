@@ -30,7 +30,7 @@ public class DynamicTree {
                             try {
                                 get().forEach(o -> node.add(new CustomNode(o, nodeFactory.isLeaf(o))));
                             } catch (InterruptedException | ExecutionException ex) {
-                                node.add(new DefaultMutableTreeNode(ex));
+                                node.add(new DefaultMutableTreeNode(ex.getCause()));
                             }
                             ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
                         }

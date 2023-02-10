@@ -53,7 +53,7 @@ public final class ListFeaturesCommand implements Callable<Void> {
     private CsvTable<Feature> getTable() {
         return CsvTable
                 .builderOf(Feature.class)
-                .columnOf("SupportedFeature", Feature::name, Formatter.onString())
+                .columnOf("SupportedFeature", Feature::name)
                 .build();
     }
 

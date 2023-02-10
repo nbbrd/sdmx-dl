@@ -59,11 +59,11 @@ public final class CheckStatusCommand implements Callable<Void> {
     private CsvTable<Status> getTable() {
         return CsvTable
                 .builderOf(Status.class)
-                .columnOf("Source", Status::getSource, Formatter.onString())
+                .columnOf("Source", Status::getSource)
                 .columnOf("Status", Status::getStatus, Formatter.onObjectToString())
                 .columnOf("UptimeRatio", Status::getUptimeRatio, Formatter.onObjectToString())
                 .columnOf("AverageResponseTime", Status::getAverageResponseTime, Formatter.onObjectToString())
-                .columnOf("ErrorMessage", Status::getCause, Formatter.onString())
+                .columnOf("ErrorMessage", Status::getCause)
                 .build();
     }
 

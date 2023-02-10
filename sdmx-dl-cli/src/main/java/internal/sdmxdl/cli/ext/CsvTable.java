@@ -23,6 +23,10 @@ public class CsvTable<T> {
 
     public static class Builder<T> {
 
+        public Builder<T> columnOf(String name, Function<? super T, ? extends CharSequence> extractor) {
+            return column(new CsvColumn<>(name, extractor::apply));
+        }
+
         public <C> Builder<T> columnOf(String name, Function<? super T, ? extends C> extractor, Formatter<C> formatter) {
             return column(new CsvColumn<>(name, formatter.compose(extractor)));
         }

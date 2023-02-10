@@ -51,8 +51,8 @@ public final class ListCodesCommand implements Callable<Void> {
 
     private CsvTable<Map.Entry<String, String>> getTable() {
         CsvTable.Builder<Map.Entry<String, String>> result = CsvTable.builder();
-        result.columnOf("Code", Map.Entry::getKey, Formatter.onString());
-        result.columnOf("Label", Map.Entry::getValue, Formatter.onString());
+        result.columnOf("Code", Map.Entry::getKey);
+        result.columnOf("Label", Map.Entry::getValue);
         return result.build();
     }
 
