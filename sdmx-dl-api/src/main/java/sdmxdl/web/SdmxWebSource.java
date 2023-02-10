@@ -91,29 +91,29 @@ public class SdmxWebSource extends SdmxSource {
             return name(ROOT_LANGUAGE, name.toString());
         }
 
-        public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
-            return endpoint(URI.create(endpoint));
+        public @NonNull Builder endpointOf(@NonNull CharSequence endpoint) throws IllegalArgumentException {
+            return endpoint(URI.create(endpoint.toString()));
         }
 
         public @NonNull Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             return property(key.toString(), value.toString());
         }
 
-        public @NonNull Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
+        public @NonNull Builder websiteOf(@Nullable CharSequence website) throws IllegalArgumentException {
             try {
-                return website(new URL(website));
+                return website(website != null ? new URL(website.toString()) : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }
         }
 
-        public @NonNull Builder monitorOf(@NonNull String monitor) {
-            return monitor(URI.create(monitor));
+        public @NonNull Builder monitorOf(@Nullable CharSequence monitor) {
+            return monitor(monitor != null ? URI.create(monitor.toString()) : null);
         }
 
-        public @NonNull Builder monitorWebsiteOf(@NonNull String monitorWebsite) throws IllegalArgumentException {
+        public @NonNull Builder monitorWebsiteOf(@Nullable CharSequence monitorWebsite) throws IllegalArgumentException {
             try {
-                return monitorWebsite(new URL(monitorWebsite));
+                return monitorWebsite(monitorWebsite != null ? new URL(monitorWebsite.toString()) : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }

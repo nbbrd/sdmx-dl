@@ -1,0 +1,17 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package sdmxdl.format.protobuf.web;
+
+message SdmxWebSource {
+  string id = 1;
+  map<string, string> names = 2;
+  string driver = 3;
+  optional string dialect = 4;
+  string endpoint = 5;
+  map<string, string> properties = 6;
+  repeated string aliases = 7;
+  optional string website = 8;
+  optional string monitor = 9;
+  optional string monitorWebsite = 10;
+}

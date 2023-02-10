@@ -1,11 +1,13 @@
 package sdmxdl.grpc;
 
+import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
+import sdmxdl.format.protobuf.web.SdmxWebSource;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -18,6 +20,16 @@ class SdmxWebManagerService extends SdmxWebManagerGrpc.SdmxWebManagerImplBase {
 
     @lombok.NonNull
     private final SdmxWebManager manager;
+
+    @Override
+    public void getSources(Empty request, StreamObserver<SdmxWebSource> response) {
+        manager.getSources()
+                .values()
+                .stream()
+                .map(ProtobufSources::fromWebSource)
+                .forEach(response::onNext);
+        response.onCompleted();
+    }
 
     @Override
     public void getMonitorReport(SourceRequest request, StreamObserver<MonitorReport> response) {

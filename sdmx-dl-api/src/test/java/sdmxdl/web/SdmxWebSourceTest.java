@@ -18,7 +18,6 @@ package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,7 +29,7 @@ import static org.assertj.core.api.Assertions.*;
 public class SdmxWebSourceTest {
 
     @Test
-    public void testBuilderEndpointOf() throws MalformedURLException {
+    public void testBuilderEndpointOf() {
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxWebSource.builder().endpointOf(null));
 
@@ -79,6 +78,48 @@ public class SdmxWebSourceTest {
 
         assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").id("").driver("").build().getProperties())
                 .containsEntry("hello", "world");
+    }
+
+    @Test
+    public void testBuilderWebsiteOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().websiteOf(null).build().getWebsite())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().websiteOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().websiteOf("http://localhost").id("").driver("").build().getWebsite())
+                .hasToString("http://localhost");
+    }
+
+    @Test
+    public void testBuilderMonitorOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().monitorOf(null).build().getMonitor())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().monitorOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().monitorOf("http://localhost").id("").driver("").build().getMonitor())
+                .hasToString("http://localhost");
+    }
+
+    @Test
+    public void testBuilderMonitorWebsiteOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().monitorWebsiteOf(null).build().getMonitorWebsite())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().monitorWebsiteOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().monitorWebsiteOf("http://localhost").id("").driver("").build().getMonitorWebsite())
+                .hasToString("http://localhost");
     }
 
     @Test

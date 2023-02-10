@@ -4,6 +4,7 @@ import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
+import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.ByteArrayInputStream;
@@ -48,6 +49,33 @@ public class ProtobufFileFormatTest {
                 .ttl(Clock.systemDefaultZone().instant(), Duration.ofMillis(100))
                 .build();
         assertValid(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), normal);
+    }
+
+    @Test
+    public void testSources() {
+        SdmxWebSource min = SdmxWebSource
+                .builder()
+                .id("ESTAT")
+                .driver("abc")
+                .endpointOf("http://endpoint")
+                .build();
+        assertThat(ProtobufSources.fromWebSource(min))
+                .extracting(ProtobufSources::toWebSource)
+                .isEqualTo(min);
+
+        SdmxWebSource max = min
+                .toBuilder()
+                .name("en", "hello")
+                .dialect("OTHER")
+                .property("key", "value")
+                .alias("EUROSTAT")
+                .websiteOf("http://website")
+                .monitorOf("monitor:ESTAT")
+                .monitorWebsiteOf("http://monitorwebsite")
+                .build();
+        assertThat(ProtobufSources.fromWebSource(max))
+                .extracting(ProtobufSources::toWebSource)
+                .isEqualTo(max);
     }
 
     private static <T> void assertValid(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {
