@@ -24,7 +24,6 @@ import sdmxdl.SdmxSource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,10 +36,10 @@ import java.util.Set;
 public class SdmxWebSource extends SdmxSource {
 
     @lombok.NonNull
-    String name;
+    String id;
 
     @lombok.Singular
-    Map<String, String> descriptions;
+    Map<String, String> names;
 
     @lombok.NonNull
     String driver;
@@ -68,56 +67,46 @@ public class SdmxWebSource extends SdmxSource {
     URL monitorWebsite = null;
 
     @NonNull
-    public SdmxWebSource alias(@NonNull String name) throws IllegalArgumentException {
-        if (!aliases.contains(name)) {
-            throw new IllegalArgumentException(name);
+    public SdmxWebSource alias(@NonNull String id) throws IllegalArgumentException {
+        if (!aliases.contains(id)) {
+            throw new IllegalArgumentException(id);
         }
-        return toBuilder().name(name).build();
+        return toBuilder().id(id).build();
     }
 
     public boolean isAlias() {
-        return aliases.contains(name);
+        return aliases.contains(id);
     }
 
-    public @NonNull String getId() {
-        return getDriver() + ":" + getName();
+    public @Nullable String getName(@NonNull LanguagePriorityList langs) {
+        return langs.select(names);
     }
-
-    public @Nullable String getDescription(@NonNull LanguagePriorityList langs) {
-        return langs.select(descriptions);
-    }
-
-    public static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
     public static class Builder {
 
-        public @NonNull Builder descriptionOf(@NonNull CharSequence description) throws IllegalArgumentException {
-            return description(ROOT_LANGUAGE, description.toString());
-        }
-
-        public @NonNull Builder endpointOf(@NonNull String endpoint) throws IllegalArgumentException {
-            return endpoint(URI.create(endpoint));
+        public @NonNull Builder endpointOf(@NonNull CharSequence endpoint) throws IllegalArgumentException {
+            return endpoint(URI.create(endpoint.toString()));
         }
 
         public @NonNull Builder propertyOf(@NonNull CharSequence key, @NonNull Object value) {
             return property(key.toString(), value.toString());
         }
 
-        public @NonNull Builder websiteOf(@Nullable String website) throws IllegalArgumentException {
+        public @NonNull Builder websiteOf(@Nullable CharSequence website) throws IllegalArgumentException {
             try {
-                return website(new URL(website));
+                return website(website != null ? new URL(website.toString()) : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }
         }
 
-        public @NonNull Builder monitorOf(@NonNull String monitor) {
-            return monitor(URI.create(monitor));
+        public @NonNull Builder monitorOf(@Nullable CharSequence monitor) {
+            return monitor(monitor != null ? URI.create(monitor.toString()) : null);
         }
 
-        public @NonNull Builder monitorWebsiteOf(@NonNull String monitorWebsite) throws IllegalArgumentException {
+        public @NonNull Builder monitorWebsiteOf(@Nullable CharSequence monitorWebsite) throws IllegalArgumentException {
             try {
-                return monitorWebsite(new URL(monitorWebsite));
+                return monitorWebsite(monitorWebsite != null ? new URL(monitorWebsite.toString()) : null);
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException(ex);
             }

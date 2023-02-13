@@ -123,7 +123,7 @@ public final class XMLStreamFlow20 {
                 .ref(flowRef)
                 .structureRef(structRef)
                 .name(flowName.build(id))
-                .description(flowDescription.build(""))
+                .description(flowDescription.build())
                 .build();
     }
 

@@ -51,26 +51,26 @@ public final class ListSourcesCommand implements Callable<Void> {
     private CsvTable<SdmxWebSource> getTable() {
         return CsvTable
                 .builderOf(SdmxWebSource.class)
-                .columnOf("Name", SdmxWebSource::getName, Formatter.onString())
-                .columnOf("Description", this::getDescription, Formatter.onString())
-                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.fromIterable(Formatter.onString(), ','))
-                .columnOf("Driver", SdmxWebSource::getDriver, Formatter.onString())
-                .columnOf("Dialect", SdmxWebSource::getDialect, Formatter.onString())
+                .columnOf("Name", SdmxWebSource::getId)
+                .columnOf("Description", this::getDescription)
+                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
+                .columnOf("Driver", SdmxWebSource::getDriver)
+                .columnOf("Dialect", SdmxWebSource::getDialect)
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
                 .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.onURI())
                 .columnOf("MonitorWebsite", SdmxWebSource::getMonitorWebsite, Formatter.onURL())
-                .columnOf("Languages", this::getLanguages, CsvUtil.fromIterable(Formatter.onString(), ','))
+                .columnOf("Languages", this::getLanguages, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }
 
     private String getDescription(SdmxWebSource source) {
-        return source.getDescription(web.getLangs());
+        return source.getName(web.getLangs());
     }
 
     private Iterable<String> getLanguages(SdmxWebSource source) {
-        return () -> source.getDescriptions().keySet().stream().filter(lang -> !SdmxWebSource.ROOT_LANGUAGE.equals(lang)).iterator();
+        return source.getNames().keySet();
     }
 
     private Stream<SdmxWebSource> getRows() throws IOException {

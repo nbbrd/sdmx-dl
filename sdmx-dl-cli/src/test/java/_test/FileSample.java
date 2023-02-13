@@ -36,7 +36,7 @@ public class FileSample {
     private static SdmxWebSource sourceOf(String name, File data, File struct) throws MalformedURLException {
         return SdmxWebSource
                 .builder()
-                .name(name)
+                .id(name)
                 .driver("ri:file")
                 .endpoint(data.toURI())
                 .property("structureURL", struct.toURI().toURL().toString())

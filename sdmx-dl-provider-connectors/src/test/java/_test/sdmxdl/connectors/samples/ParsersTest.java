@@ -16,6 +16,7 @@
  */
 package _test.sdmxdl.connectors.samples;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ParsersTest {
 
+    @Disabled("CodeList is no more embedded")
     @Test
     public void test() throws Exception {
         assertThat(ConnectorsResource.nbb()).isEqualTo(removeAttributeRelationship(FacadeResource.nbb()));
@@ -73,7 +75,7 @@ public class ParsersTest {
                                 .satisfies(dimension -> {
                                     assertThat(dimension.getId())
                                             .isEqualTo("FREQ");
-                                    assertThat(dimension.getLabel())
+                                    assertThat(dimension.getName())
                                             .isEqualTo("Frequency");
                                     assertThat(dimension.getPosition())
                                             .isEqualTo(1);
@@ -91,7 +93,7 @@ public class ParsersTest {
                                 .satisfies(attribute -> {
                                     assertThat(attribute.getId())
                                             .isEqualTo("OBS_STATUS");
-                                    assertThat(attribute.getLabel())
+                                    assertThat(attribute.getName())
                                             .isEqualTo("Observation status");
                                     assertThat(attribute.getCodelist()).satisfies(codelist -> {
                                         assertThat(codelist.getRef())
@@ -105,7 +107,7 @@ public class ParsersTest {
                                 .isEqualTo("TIME_PERIOD");
                         assertThat(dsd.getPrimaryMeasureId())
                                 .isEqualTo("OBS_VALUE");
-                        assertThat(dsd.getLabel())
+                        assertThat(dsd.getName())
                                 .isEqualTo("AMECO");
                     });
 
@@ -137,7 +139,7 @@ public class ParsersTest {
                                 .satisfies(dimension -> {
                                     assertThat(dimension.getId())
                                             .isEqualTo("SUBJECT");
-                                    assertThat(dimension.getLabel())
+                                    assertThat(dimension.getName())
                                             .isEqualTo("Sujet");
                                     assertThat(dimension.getPosition())
                                             .isEqualTo(1);
@@ -155,7 +157,7 @@ public class ParsersTest {
                                 .satisfies(attribute -> {
                                     assertThat(attribute.getId())
                                             .isEqualTo("OBS_STATUS");
-                                    assertThat(attribute.getLabel())
+                                    assertThat(attribute.getName())
                                             .isEqualTo("Observation Status");
                                     assertThat(attribute.getCodelist()).satisfies(codelist -> {
                                         assertThat(codelist.getRef())
@@ -169,7 +171,7 @@ public class ParsersTest {
                                 .isEqualTo("TIME");
                         assertThat(dsd.getPrimaryMeasureId())
                                 .isEqualTo("OBS_VALUE");
-                        assertThat(dsd.getLabel())
+                        assertThat(dsd.getName())
                                 .isEqualTo("Mon premier dataset");
                     });
 

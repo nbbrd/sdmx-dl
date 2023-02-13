@@ -8,13 +8,15 @@ import java.util.stream.Stream;
 @lombok.Builder(toBuilder = true)
 public class DataQuery {
 
-    public static final DataQuery ALL = DataQuery.builder().key(Key.ALL).detail(DataDetail.FULL).build();
+    public static final DataQuery ALL = DataQuery.builder().build();
 
     @lombok.NonNull
-    Key key;
+    @lombok.Builder.Default
+    Key key = Key.ALL;
 
     @lombok.NonNull
-    DataDetail detail;
+    @lombok.Builder.Default
+    DataDetail detail = DataDetail.FULL;
 
     public @NonNull Stream<Series> execute(@NonNull Stream<Series> data) {
         return data
@@ -23,17 +25,17 @@ public class DataQuery {
     }
 
     private Series map(Series series) {
-        if (detail.isDataRequested()) {
-            if (detail.isMetaRequested()) {
-                return series;
+        if (detail.isIgnoreData()) {
+            if (detail.isIgnoreMeta()) {
+                return series.toBuilder().clearObs().clearMeta().build();
             } else {
-                return series.toBuilder().clearMeta().build();
+                return series.toBuilder().clearObs().build();
             }
         } else {
-            if (detail.isMetaRequested()) {
-                return series.toBuilder().clearObs().build();
+            if (detail.isIgnoreMeta()) {
+                return series.toBuilder().clearMeta().build();
             } else {
-                return series.toBuilder().clearObs().clearMeta().build();
+                return series;
             }
         }
     }

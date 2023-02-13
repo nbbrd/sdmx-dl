@@ -7,6 +7,7 @@ import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
+import tests.sdmxdl.web.WebDriverAssert;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -28,23 +29,19 @@ public class RiHttpUtilsTest {
 
     SdmxWebSource source = SdmxWebSource
             .builder()
-            .name("abc")
+            .id("abc")
             .driver("xyz")
             .endpointOf("http://localhost")
             .build();
 
     @Test
     public void testUserAgent() {
-        WebContext webContext = WebContext
-                .builder()
-                .build();
-
-        assertThat(RiHttpUtils.newContext(source, webContext).getUserAgent())
+        assertThat(RiHttpUtils.newContext(source, WebDriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
         String previous = System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), "hello world");
         try {
-            assertThat(RiHttpUtils.newContext(source, webContext).getUserAgent())
+            assertThat(RiHttpUtils.newContext(source, WebDriverAssert.noOpWebContext()).getUserAgent())
                     .startsWith("hello world");
         } finally {
             if (previous != null)

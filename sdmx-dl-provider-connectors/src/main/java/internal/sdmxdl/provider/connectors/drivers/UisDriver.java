@@ -50,8 +50,8 @@ public final class UisDriver implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("UIS")
-                    .descriptionOf("Unesco Institute for Statistics")
+                    .id("UIS")
+                    .name("en", "Unesco Institute for Statistics")
                     .driver(CONNECTORS_UIS)
                     .endpointOf(FALLBACK_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")

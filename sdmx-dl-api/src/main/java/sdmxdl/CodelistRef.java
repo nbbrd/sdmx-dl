@@ -27,14 +27,12 @@ public class CodelistRef extends ResourceRef<CodelistRef> {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static CodelistRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+    public static @NonNull CodelistRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
         return create(input, CodelistRef::new);
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static CodelistRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
+    public static @NonNull CodelistRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return of(agency, id, version, CodelistRef::new);
     }
 }

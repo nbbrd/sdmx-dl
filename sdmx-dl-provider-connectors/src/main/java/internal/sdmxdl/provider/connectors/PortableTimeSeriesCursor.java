@@ -16,16 +16,16 @@
  */
 package internal.sdmxdl.provider.connectors;
 
-import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.Key;
-import sdmxdl.format.ObsParser;
 import sdmxdl.format.DataCursor;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -95,12 +95,11 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     }
 
     @Override
-    public LocalDateTime getObsPeriod() throws IOException {
+    public ObservationalTimePeriod getObsPeriod() throws IOException {
         checkObsState();
-        BaseObservation<? extends Double> obs = current.get(index);
         return obsParser
-                .period(obs.getTimeslot())
-                .parsePeriod(obs::getAttributeValue);
+                .period(current.get(index).getTimeslot())
+                .parsePeriod();
     }
 
     @Override
@@ -113,6 +112,12 @@ public final class PortableTimeSeriesCursor implements DataCursor {
     public @NonNull Map<String, String> getObsAttributes() throws IOException, IllegalStateException {
         checkObsState();
         return current.get(index).getAttributes();
+    }
+
+    @Override
+    public @Nullable String getObsAttribute(@NonNull String key) throws IOException, IllegalStateException {
+        checkObsState();
+        return current.get(index).getAttributeValue(key);
     }
 
     @Override

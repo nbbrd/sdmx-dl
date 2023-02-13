@@ -31,6 +31,8 @@ final class TextBuilder {
 
     @lombok.NonNull
     private final LanguagePriorityList ranges;
+
+    // this map preserves insertion order but is not sortable !
     private final Map<String, String> data = new LinkedHashMap<>();
 
     @NonNull

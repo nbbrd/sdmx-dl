@@ -14,16 +14,9 @@ import java.util.Map;
         Dimension.class,
         Attribute.class
 })
-public abstract class Component {
+public abstract class Component implements HasName {
 
-    @NonNull
-    public abstract String getId();
-
-    /**
-     * Localized label for this concept.
-     */
-    @NonNull
-    public abstract String getLabel();
+    public abstract @NonNull String getId();
 
     public abstract @Nullable Codelist getCodelist();
 
@@ -49,6 +42,6 @@ public abstract class Component {
         public abstract @NonNull B codelist(@NonNull Codelist codelist);
 
         @NonNull
-        public abstract B label(@NonNull String label);
+        public abstract B name(@NonNull String name);
     }
 }

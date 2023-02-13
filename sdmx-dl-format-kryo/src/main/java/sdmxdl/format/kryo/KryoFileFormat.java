@@ -135,6 +135,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
+        result.register(TimeInterval.class, new TimeIntervalSerializer());
+        result.register(Duration.class, new DurationSerializer());
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
         result.register(AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
@@ -201,8 +203,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
-            kryo.writeObjectOrNull(output, t.getCreationTime(), Instant.class);
-            kryo.writeObjectOrNull(output, t.getExpirationTime(), Instant.class);
+            kryo.writeObject(output, t.getCreationTime());
+            kryo.writeObject(output, t.getExpirationTime());
         }
 
         @SuppressWarnings("unchecked")
@@ -214,8 +216,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
-                    .creationTime(kryo.readObjectOrNull(input, Instant.class))
-                    .expirationTime(kryo.readObjectOrNull(input, Instant.class))
+                    .creationTime(kryo.readObject(input, Instant.class))
+                    .expirationTime(kryo.readObject(input, Instant.class))
                     .build();
         }
     }
@@ -232,7 +234,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             kryo.writeObject(output, t.getAttributes(), attributes);
             output.writeString(t.getTimeDimensionId());
             output.writeString(t.getPrimaryMeasureId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
         }
 
         @SuppressWarnings("unchecked")
@@ -245,7 +247,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
                     .attributes(kryo.readObject(input, ArrayList.class, attributes))
                     .timeDimensionId(input.readString())
                     .primaryMeasureId(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .build();
         }
     }
@@ -400,8 +402,8 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
 
         @Override
         public void write(Kryo kryo, Output output, Obs t) {
-            kryo.writeObjectOrNull(output, t.getPeriod(), LocalDateTime.class);
-            kryo.writeObjectOrNull(output, t.getValue(), Double.class);
+            kryo.writeObject(output, t.getPeriod());
+            output.writeDouble(t.getValue());
             kryo.writeObject(output, t.getMeta(), obsMeta);
         }
 
@@ -410,10 +412,39 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         public Obs read(Kryo kryo, Input input, Class<? extends Obs> type) {
             return Obs
                     .builder()
-                    .period(kryo.readObjectOrNull(input, LocalDateTime.class))
-                    .value(kryo.readObjectOrNull(input, Double.class))
+                    .period(kryo.readObject(input, TimeInterval.class))
+                    .value(input.readDouble())
                     .meta(kryo.readObject(input, HashMap.class, obsMeta))
                     .build();
+        }
+    }
+
+    private static final class TimeIntervalSerializer extends ImmutableSerializer<TimeInterval> {
+
+        @Override
+        public void write(Kryo kryo, Output output, TimeInterval t) {
+            kryo.writeObject(output, t.getStart());
+            kryo.writeObject(output, t.getDuration());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public TimeInterval read(Kryo kryo, Input input, Class<? extends TimeInterval> type) {
+            return TimeInterval.of(kryo.readObject(input, LocalDateTime.class), kryo.readObject(input, Duration.class));
+        }
+    }
+
+    private static final class DurationSerializer extends ImmutableSerializer<Duration> {
+
+        @Override
+        public void write(Kryo kryo, Output output, Duration t) {
+            output.writeString(t.toString());
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Duration read(Kryo kryo, Input input, Class<? extends Duration> type) {
+            return Duration.parse(input.readString());
         }
     }
 
@@ -422,7 +453,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, Dimension t) {
             output.writeString(t.getId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
             kryo.writeObject(output, t.getCodelist());
             output.writeInt(t.getPosition(), true);
         }
@@ -433,7 +464,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Dimension
                     .builder()
                     .id(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .codelist(kryo.readObject(input, Codelist.class))
                     .position(input.readInt(true))
                     .build();
@@ -445,7 +476,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
         @Override
         public void write(Kryo kryo, Output output, Attribute t) {
             output.writeString(t.getId());
-            output.writeString(t.getLabel());
+            output.writeString(t.getName());
             kryo.writeObjectOrNull(output, t.getCodelist(), Codelist.class);
             kryo.writeObject(output, t.getRelationship());
         }
@@ -456,7 +487,7 @@ public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> 
             return Attribute
                     .builder()
                     .id(input.readString())
-                    .label(input.readString())
+                    .name(input.readString())
                     .codelist(kryo.readObjectOrNull(input, Codelist.class))
                     .relationship(kryo.readObject(input, AttributeRelationship.class))
                     .build();

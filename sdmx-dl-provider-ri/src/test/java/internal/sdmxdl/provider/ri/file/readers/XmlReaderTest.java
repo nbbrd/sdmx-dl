@@ -3,7 +3,6 @@ package internal.sdmxdl.provider.ri.file.readers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.file.spi.FileContext;
 import sdmxdl.format.xml.XmlFileSource;
 import tests.sdmxdl.file.FileReaderAssert;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -28,7 +27,7 @@ public class XmlReaderTest {
                 new XmlReader(),
                 FileReaderAssert.Sample
                         .builder()
-                        .context(FileContext.builder().build())
+                        .context(FileReaderAssert.noOpFileContext())
                         .validSource(validSource)
                         .validName(validName)
                         .invalidSource(invalidSource)

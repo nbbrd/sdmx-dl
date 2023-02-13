@@ -57,14 +57,12 @@ public class DataflowRef extends ResourceRef<DataflowRef> {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static DataflowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+    public static @NonNull DataflowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
         return create(input, DataflowRef::new);
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static DataflowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
+    public static @NonNull DataflowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return of(agency, id, version, DataflowRef::new);
     }
 }

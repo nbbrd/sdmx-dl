@@ -56,8 +56,8 @@ public final class FetchMetaCommand implements Callable<Void> {
         return CsvTable
                 .builderOf(MetaResult.class)
                 .columnOf("Series", MetaResult::getKey, Formatter.onObjectToString())
-                .columnOf("Concept", MetaResult::getConcept, Formatter.onString())
-                .columnOf("Value", MetaResult::getValue, Formatter.onString())
+                .columnOf("Concept", MetaResult::getConcept)
+                .columnOf("Value", MetaResult::getValue)
                 .build();
     }
 

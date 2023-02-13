@@ -48,14 +48,12 @@ public class DataStructureRef extends ResourceRef<DataStructureRef> {
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static DataStructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+    public static @NonNull DataStructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
         return create(input, DataStructureRef::new);
     }
 
     @StaticFactoryMethod
-    @NonNull
-    public static DataStructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
+    public static @NonNull DataStructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
         return of(agency, id, version, DataStructureRef::new);
     }
 }

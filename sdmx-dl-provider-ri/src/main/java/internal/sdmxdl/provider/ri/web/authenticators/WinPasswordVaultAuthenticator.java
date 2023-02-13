@@ -20,7 +20,7 @@ public final class WinPasswordVaultAuthenticator implements WebAuthenticator {
     @Override
     public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) throws IOException {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
-            String message = "Enter your credentials for " + source.getName();
+            String message = "Enter your credentials for " + source.getId();
             return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
         }
     }

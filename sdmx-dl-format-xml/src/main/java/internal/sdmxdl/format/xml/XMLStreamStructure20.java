@@ -174,7 +174,7 @@ public final class XMLStreamStructure20 {
                     break;
             }
         }
-        ds.label(structureLabel.build(id));
+        ds.name(structureLabel.build(id));
         result.add(ds.build());
     }
 
@@ -208,7 +208,7 @@ public final class XMLStreamStructure20 {
         component.id(id);
 
         String conceptName = context.getConcepts().get(id);
-        component.label(conceptName != null ? conceptName : id);
+        component.name(conceptName != null ? conceptName : id);
 
         CodelistRef ref = CodelistRef.of(null, codelist, null);
 

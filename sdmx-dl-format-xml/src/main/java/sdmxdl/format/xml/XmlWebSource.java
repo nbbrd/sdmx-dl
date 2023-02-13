@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -61,6 +62,7 @@ public final class XmlWebSource {
     private static final String VALUE_ATTR = "value";
     private static final String MONITOR_TAG = "monitor";
     private static final String MONITOR_WEBSITE_TAG = "monitorWebsite";
+    private static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
     private static List<SdmxWebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
         List<SdmxWebSource> result = new ArrayList<>();
@@ -73,11 +75,11 @@ public final class XmlWebSource {
                             item = SdmxWebSource.builder();
                             break;
                         case NAME_TAG:
-                            item.name(reader.getElementText());
+                            item.id(reader.getElementText());
                             break;
                         case DESCRIPTION_TAG:
                             String lang = reader.getAttributeValue(null, LANG_ATTR);
-                            item.description(lang != null ? lang : SdmxWebSource.ROOT_LANGUAGE, reader.getElementText());
+                            item.name(lang != null ? lang : ROOT_LANGUAGE, reader.getElementText());
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());
@@ -122,8 +124,8 @@ public final class XmlWebSource {
         writer.writeStartElement(SOURCES_TAG);
         for (SdmxWebSource source : list) {
             writer.writeStartElement(SOURCE_TAG);
-            writeTextElement(writer, NAME_TAG, source.getName());
-            for (Map.Entry<String, String> description : source.getDescriptions().entrySet()) {
+            writeTextElement(writer, NAME_TAG, source.getId());
+            for (Map.Entry<String, String> description : source.getNames().entrySet()) {
                 writeDescription(writer, description);
             }
             writeTextElement(writer, DRIVER_TAG, source.getDriver());

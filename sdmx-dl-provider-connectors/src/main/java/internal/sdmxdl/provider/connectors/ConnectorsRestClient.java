@@ -29,6 +29,7 @@ import nbbrd.io.text.BaseProperty;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
@@ -77,7 +78,7 @@ public final class ConnectorsRestClient implements RestClient {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
-                return new ConnectorsRestClient(source.getName(), client, obsFactory);
+                return new ConnectorsRestClient(Marker.of(source), client, obsFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
@@ -92,12 +93,12 @@ public final class ConnectorsRestClient implements RestClient {
         return (source, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
-            return new ConnectorsRestClient(source.getName(), client, obsFactory);
+            return new ConnectorsRestClient(Marker.of(source), client, obsFactory);
         };
     }
 
     @lombok.NonNull
-    private final String name;
+    private final Marker marker;
 
     @lombok.NonNull
     private final RestSdmxClient connector;
@@ -106,8 +107,8 @@ public final class ConnectorsRestClient implements RestClient {
     private final Supplier<ObsParser> dataFactory;
 
     @Override
-    public @NonNull String getName() {
-        return name;
+    public @NonNull Marker getMarker() {
+        return marker;
     }
 
     @Override
@@ -120,7 +121,7 @@ public final class ConnectorsRestClient implements RestClient {
                     .map(Connectors::toFlow)
                     .collect(Collectors.toList());
         } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get dataflows from '%s'", name);
+            throw wrap(ex, "Failed to get dataflows from '%s'", marker);
         }
     }
 
@@ -129,7 +130,7 @@ public final class ConnectorsRestClient implements RestClient {
         try {
             return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get dataflow '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get dataflow '%s' from '%s'", ref, marker);
         }
     }
 
@@ -138,7 +139,7 @@ public final class ConnectorsRestClient implements RestClient {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get datastructure '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get datastructure '%s' from '%s'", ref, marker);
         }
     }
 
@@ -151,7 +152,7 @@ public final class ConnectorsRestClient implements RestClient {
             if (Connectors.isNoResultMatchingQuery(ex)) {
                 return Stream.empty();
             }
-            throw wrap(ex, "Failed to get data '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get data '%s' from '%s'", ref, marker);
         }
     }
 
@@ -164,7 +165,7 @@ public final class ConnectorsRestClient implements RestClient {
                     .codes(connector.getCodes(ref.getId(), ref.getAgency(), ref.getVersion()))
                     .build();
         } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to get codelist '%s' from '%s'", ref, name);
+            throw wrap(ex, "Failed to get codelist '%s' from '%s'", ref, marker);
         }
     }
 
@@ -179,7 +180,7 @@ public final class ConnectorsRestClient implements RestClient {
         try {
             connector.getDataflows();
         } catch (SdmxException ex) {
-            throw wrap(ex, "Failed to ping '%s' : '%s'", name, ex.getMessage());
+            throw wrap(ex, "Failed to ping '%s' : '%s'", marker, ex.getMessage());
         }
     }
 
@@ -203,7 +204,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     private static void configure(RestSdmxClient client, SdmxWebSource source, WebContext context) {
-        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
+//        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setProxySelector(context.getNetwork().getProxySelector());

@@ -34,9 +34,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -45,7 +43,9 @@ import java.util.zip.ZipFile;
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
+import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;
+import static java.util.stream.Collectors.toMap;
 import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
@@ -65,10 +65,9 @@ public final class StatCanDriver implements WebDriver {
             .supportedPropertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
-                    .name("STATCAN")
-                    .descriptionOf("Statistics Canada")
-                    .description("en", "Statistics Canada")
-                    .description("fr", "Statistique Canada")
+                    .id("STATCAN")
+                    .name("en", "Statistics Canada")
+                    .name("fr", "Statistique Canada")
                     .driver(RI_STATCAN)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
@@ -80,7 +79,7 @@ public final class StatCanDriver implements WebDriver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
-                source.getName(),
+                Marker.of(source),
                 source.getEndpoint().toURL(),
                 context.getLanguages(),
                 newClient(source, context)
@@ -156,7 +155,7 @@ public final class StatCanDriver implements WebDriver {
     }
 
     @VisibleForTesting
-    interface StatCanClient extends HasSourceName {
+    interface StatCanClient extends HasMarker {
 
         @NonNull List<Dataflow> getFlows() throws IOException;
 
@@ -170,7 +169,7 @@ public final class StatCanDriver implements WebDriver {
     static class DefaultStatCanClient implements StatCanClient {
 
         @lombok.Getter
-        private final String name;
+        private final Marker marker;
         private final URL endpoint;
         private final LanguagePriorityList langs;
         private final HttpClient client;
@@ -293,13 +292,13 @@ public final class StatCanDriver implements WebDriver {
         }
 
         private static TypedId<DataRepository> initIdOfRepo(URI base) {
-            return TypedId.of(base, Function.identity(), Function.identity())
+            return TypedId.of(base, identity(), identity())
                     .with("structAndData");
         }
 
         @Override
-        public @NonNull String getName() {
-            return delegate.getName();
+        public @NonNull Marker getMarker() {
+            return delegate.getMarker();
         }
 
         @Override
@@ -463,7 +462,7 @@ public final class StatCanDriver implements WebDriver {
                         .collect(Collectors.groupingBy(Series::getKey))
                         .values()
                         .stream()
-                        .map(Converter::combineObservations);
+                        .map(Converter::combineObservationsByPeriod);
             } catch (UncheckedIOException ex) {
                 throw ex.getCause();
             }
@@ -474,11 +473,10 @@ public final class StatCanDriver implements WebDriver {
             return Integer.parseInt(name.substring(name.indexOf('_') + 1, name.indexOf('.')));
         }
 
-        private static Series combineObservations(List<Series> list) {
-            Map<LocalDateTime, Obs> result = new LinkedHashMap<>();
-            for (Series series : list) {
-                series.getObs().forEach(obs -> result.put(obs.getPeriod(), obs));
-            }
+        private static Series combineObservationsByPeriod(List<Series> list) {
+            Map<TimeInterval, Obs> result = list.stream()
+                    .flatMap(series -> series.getObs().stream())
+                    .collect(toMap(Obs::getPeriod, identity(), (ignore, latest) -> latest, LinkedHashMap::new));
             return list.get(0).toBuilder().clearObs().obs(result.values()).build();
         }
 

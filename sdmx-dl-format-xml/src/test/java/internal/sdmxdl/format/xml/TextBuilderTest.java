@@ -37,7 +37,8 @@ public class TextBuilderTest {
         assertThat(new TextBuilder(ANY).put("en", "hello").clear().build()).isNull();
         assertThat(new TextBuilder(ANY).put("en", "hello").build()).isEqualTo("hello");
         assertThat(new TextBuilder(ANY).put("en", "hello").put("fr", "bonjour").build()).isEqualTo("hello");
-        assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("bonjour");
+        assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("en", "hello").build()).isEqualTo("hello");
+        assertThat(new TextBuilder(ANY).put("fr", "bonjour").put("aa", "hello").build()).isEqualTo("bonjour");
 
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(null));
         assertThatNullPointerException().isThrownBy(() -> new TextBuilder(ANY).put(null, "hello"));

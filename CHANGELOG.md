@@ -7,6 +7,47 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.9] - 2023-02-13
+
+This is the ninth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings the API closer to the SDMX standard. It fixes an important problem with Eurostat. It also adds two
+proof of concept for future use.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
+### Added
+
+- ![API] Add support of time intervals in observations [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
+- ![PROVIDER] Add support of redirections in curl backend [#363](https://github.com/nbbrd/sdmx-dl/issues/363)
+- ![DESKTOP] Add desktop application proof of concept [#401](https://github.com/nbbrd/sdmx-dl/issues/401)
+- ![GRPC] Add gRPC service proof of concept [#402](https://github.com/nbbrd/sdmx-dl/issues/402)
+
+### Changed
+
+- ![API] Sort observations chronologically [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Enforce non-null observations fields [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Invert fields in `DataDetail` [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Set default values to `DataQuery` [#396](https://github.com/nbbrd/sdmx-dl/issues/396)
+- ![API] Rename field `Dimension#label` as `Dimension#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `Attribute#label` as `Attribute#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `DataStructure#label` as `DataStructure#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `SdmxWebSource#name` as `SdmxWebSource#id` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `SdmxWebSource#description`
+  as `SdmxWebSource#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Set field `Dataflow#description` as optional [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Set field `Obs#getPeriod` as `TimeInterval` [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
+- ![FORMAT] Improve parsing of time formats [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
+- ![FORMAT] Rename module `sdmx-dl-format-util ` as `smdx-dl-format-base`
+- ![FORMAT] Rename module `sdmx-dl-provider-util ` as `smdx-dl-provider-base`
+
+### Fixed
+
+- ![FORMAT] Fix language consistency in names and descriptions [#397](https://github.com/nbbrd/sdmx-dl/issues/397)
+- ![PROVIDER] Fix Eurostat endpoint [#346](https://github.com/nbbrd/sdmx-dl/issues/346)
+
 ## [3.0.0-beta.8] - 2022-11-22
 
 This is the eighth beta release of **sdmx-dl**.  
@@ -290,7 +331,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...HEAD
+
+[3.0.0-beta.9]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...v3.0.0-beta.9
 
 [3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
 
@@ -313,6 +356,10 @@ production._
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
 
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
+
+[DESKTOP]: https://img.shields.io/badge/-DESKTOP-F813F7
+
+[GRPC]: https://img.shields.io/badge/-GRPC-F813F7
 
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
 

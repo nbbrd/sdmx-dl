@@ -8,7 +8,8 @@ import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasSourceName;
+import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -49,9 +50,8 @@ public final class RngDriver implements WebDriver {
             .connector(RngDriver::newConnection)
             .source(SdmxWebSource
                     .builder()
-                    .name("RNG")
-                    .descriptionOf("Random number generator")
-                    .description("en", "Random number generator")
+                    .id("RNG")
+                    .name("en", "Random number generator")
                     .driver(RI_RNG)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
@@ -60,7 +60,7 @@ public final class RngDriver implements WebDriver {
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
-        return new RngConnection(source.getId(), config);
+        return new RngConnection(Marker.of(source), config);
     }
 
     @RepresentableAs(URI.class)
@@ -98,13 +98,13 @@ public final class RngDriver implements WebDriver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class RngConnection implements Connection, HasSourceName {
+    private static final class RngConnection implements Connection, HasMarker {
 
         private static final String FREQ = "FREQ";
         private static final String INDEX = "INDEX";
 
         @lombok.Getter
-        private final String name;
+        private final Marker marker;
         private final RngDriverId config;
 
         @Override
@@ -130,7 +130,7 @@ public final class RngDriver implements WebDriver {
                     .dimension(Dimension
                             .builder()
                             .id(FREQ)
-                            .label("Frequency")
+                            .name("Frequency")
                             .position(1)
                             .codelist(Codelist
                                     .builder()
@@ -141,7 +141,7 @@ public final class RngDriver implements WebDriver {
                     .dimension(Dimension
                             .builder()
                             .id(INDEX)
-                            .label("Index")
+                            .name("Index")
                             .position(2)
                             .codelist(Codelist
                                     .builder()
@@ -154,7 +154,7 @@ public final class RngDriver implements WebDriver {
                             .build())
                     .timeDimensionId("TIME_PERIOD")
                     .primaryMeasureId("OBS_VALUE")
-                    .label("RNG")
+                    .name("RNG")
                     .build();
         }
 
@@ -178,14 +178,14 @@ public final class RngDriver implements WebDriver {
 
         private Series newSeries(Key key, Freq freq, DataDetail detail) {
             Series.Builder result = Series.builder().key(key);
-            if (detail.isDataRequested()) {
+            if (!detail.isIgnoreData()) {
                 int series = Integer.parseInt(key.get(1));
                 int obsCount = (int) freq.getUnit().between(config.getStart(), config.getStart().plusYears(config.getYearCount()));
                 long startTimeMillis = config.getStart().toInstant(ZoneOffset.UTC).toEpochMilli();
                 Random random = new Random(config.getSeed());
                 IntStream
                         .range(0, obsCount)
-                        .mapToObj(j -> Obs.builder().period(config.getStart().plus(j, freq.getUnit())).value(getValue(series, startTimeMillis, random)).build())
+                        .mapToObj(j -> Obs.builder().period(TimeInterval.of(config.getStart().plus(j, freq.getUnit()), Duration.ZERO)).value(getValue(series, startTimeMillis, random)).build())
                         .forEach(result::obs);
             }
             return result.build();
@@ -201,7 +201,7 @@ public final class RngDriver implements WebDriver {
         }
 
         private double getValue(int series, long startTimeMillis, Random random) {
-            return Math.round(Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(random.nextDouble()) + Math.tan(random.nextDouble())))) - 50);
+            return (Math.abs((100 * (Math.cos(startTimeMillis * series))) + (100 * (Math.sin(startTimeMillis) - Math.cos(random.nextDouble()) + Math.tan(random.nextDouble())))) - 50);
         }
 
         @lombok.AllArgsConstructor

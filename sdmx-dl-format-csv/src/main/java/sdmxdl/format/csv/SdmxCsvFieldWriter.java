@@ -85,7 +85,7 @@ public interface SdmxCsvFieldWriter {
     }
 
     static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull String label, @NonNull Formatter<LocalDateTime> formatter) {
-        return single(label, (series, obs) -> formatter.format(obs.getPeriod()));
+        return single(label, (series, obs) -> formatter.format(obs.getPeriod().getStart()));
     }
 
     static @NonNull SdmxCsvFieldWriter onObsValue(@NonNull String label, @NonNull Formatter<Number> formatter) {

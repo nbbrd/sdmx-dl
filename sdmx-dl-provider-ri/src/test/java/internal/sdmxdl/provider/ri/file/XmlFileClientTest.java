@@ -67,13 +67,13 @@ public class XmlFileClientTest {
                                 .hasSize(57)
                                 .element(0)
                                 .satisfies(obs -> {
-                                    assertThat(obs.getPeriod()).isEqualTo("1960-01-01T00:00:00");
+                                    assertThat(obs.getPeriod()).hasToString("1960-01-01T00:00/P1Y");
                                     assertThat(obs.getValue()).isEqualTo(92.0142);
                                 });
                         assertThat(series.getObs())
                                 .element(56)
                                 .satisfies(obs -> {
-                                    assertThat(obs.getPeriod()).isEqualTo("2016-01-01T00:00:00");
+                                    assertThat(obs.getPeriod()).hasToString("2016-01-01T00:00/P1Y");
                                     assertThat(obs.getValue()).isEqualTo(386.5655);
                                 });
                     });

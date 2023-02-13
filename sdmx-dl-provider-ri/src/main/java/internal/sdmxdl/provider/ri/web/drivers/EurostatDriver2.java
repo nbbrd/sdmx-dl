@@ -34,9 +34,10 @@ import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -84,14 +85,13 @@ public final class EurostatDriver2 implements WebDriver {
             .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("ESTAT")
+                    .id("ESTAT")
                     .alias("EUROSTAT")
-                    .descriptionOf("Eurostat")
-                    .description("en", "Eurostat")
-                    .description("de", "Eurostat")
-                    .description("fr", "Eurostat")
+                    .name("en", "Eurostat")
+                    .name("de", "Eurostat")
+                    .name("fr", "Eurostat")
                     .driver(RI_EUROSTAT)
-                    .endpointOf("https://ec.europa.eu/eurostat/SDMX/diss-web/rest")
+                    .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
@@ -100,7 +100,7 @@ public final class EurostatDriver2 implements WebDriver {
 
     private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return new RiRestClient(
-                s.getId(),
+                Marker.of(s),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
                 ObsParser::newDefault,

@@ -32,11 +32,21 @@ weight: 6
    M.CHF.EUR.SP00.A  OBS_STATUS=A   1999-03-01T00:00:00  1.595430434782609
    ```
    {{< /expand >}}
-6. Same as 1 with US dollar (`USD`) alongside Swiss franc  
+6. Same as 1 with displaying as human-readable table ([Miller](https://miller.readthedocs.io/en/latest/) example)
+   <pre>sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A <b>| <a href="https://miller.readthedocs.io/en/latest/10min/">mlr --c2p head -n 3</a> </b></pre>
+   {{< expand "Output sample" >}}
+   ```plain
+   Series           ObsAttributes           ObsPeriod           ObsValue
+   M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-01-01T00:00:00 1.605495
+   M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-02-01T00:00:00 1.59785
+   M.CHF.EUR.SP00.A OBS_STATUS=A,OBS_CONF=F 1999-03-01T00:00:00 1.5954304347826
+   ```
+   {{< /expand >}}
+7. Same as 1 with US dollar (`USD`) alongside Swiss franc  
    <pre>sdmx-dl fetch data ECB EXR M.<b>CHF+USD</b>.EUR.SP00.A</pre>
-7. Same as 1 for every available currencies  
+8. Same as 1 for every available currencies  
    <pre>sdmx-dl fetch data ECB EXR M<b>..</b>EUR.SP00.A</pre>
-8. Download available series in a dataset  
+9. Download available series in a dataset  
    <pre>sdmx-dl fetch <b><a href='{{< relref "usage#fetch-keys" >}}'>keys</a></b> ECB EXR <b>.</b>CHF.EUR.SP00.A</pre>
 
 {{< shields_io/badge label="list" message="examples" color="859900" >}}

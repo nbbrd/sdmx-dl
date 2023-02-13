@@ -20,7 +20,6 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.web.MockedDriver;
 import tests.sdmxdl.web.WebDriverAssert;
@@ -83,20 +82,20 @@ public class FailsafeDriverTest {
     @Test
     public void testConnect() throws IOException {
         failsafe.reset();
-        assertThat(valid.connect(TestDriver.SOURCE, context))
+        assertThat(valid.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
                 .isNotNull()
                 .isInstanceOf(FailsafeConnection.class);
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, context))
+                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, context))
+                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -136,6 +135,4 @@ public class FailsafeDriverTest {
     private final FailsafeDriver valid = new FailsafeDriver(TestDriver.VALID, failsafe, failsafe);
     private final FailsafeDriver failing = new FailsafeDriver(TestDriver.FAILING, failsafe, failsafe);
     private final FailsafeDriver nul = new FailsafeDriver(TestDriver.NULL, failsafe, failsafe);
-
-    private final WebContext context = WebContext.builder().build();
 }

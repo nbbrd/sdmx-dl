@@ -54,8 +54,8 @@ public final class ListAttributesCommand implements Callable<Void> {
     private CsvTable<Attribute> getTable() {
         return CsvTable
                 .builderOf(Attribute.class)
-                .columnOf("Name", Attribute::getId, Formatter.onString())
-                .columnOf("Label", Attribute::getLabel, Formatter.onString())
+                .columnOf("Name", Attribute::getId)
+                .columnOf("Label", Attribute::getName)
                 .columnOf("Coded", Attribute::isCoded, Formatter.onBoolean())
                 .columnOf("Relationship", Attribute::getRelationship, Formatter.onEnum())
                 .build();

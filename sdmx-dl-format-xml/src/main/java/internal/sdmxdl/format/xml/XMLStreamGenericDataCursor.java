@@ -18,15 +18,16 @@ package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
 import nbbrd.io.WrappedIOException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -133,9 +134,9 @@ public final class XMLStreamGenericDataCursor implements DataCursor {
     }
 
     @Override
-    public LocalDateTime getObsPeriod() throws IOException {
+    public ObservationalTimePeriod getObsPeriod() throws IOException {
         checkObsState();
-        return obsParser.parsePeriod(obsAttributes::getAttribute);
+        return obsParser.parsePeriod();
     }
 
     @Override
@@ -148,6 +149,12 @@ public final class XMLStreamGenericDataCursor implements DataCursor {
     public @NonNull Map<String, String> getObsAttributes() throws IOException {
         checkObsState();
         return obsAttributes.build();
+    }
+
+    @Override
+    public @Nullable String getObsAttribute(@NonNull String key) throws IOException, IllegalStateException {
+        checkObsState();
+        return obsAttributes.getAttribute(key);
     }
 
     @Override

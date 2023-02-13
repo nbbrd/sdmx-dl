@@ -7,6 +7,7 @@ import nbbrd.io.text.Parser;
 import nbbrd.picocsv.Csv;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 
 import java.io.IOException;
 import java.util.*;
@@ -94,10 +95,21 @@ public final class SdmxPicocsvParser {
             obsParser.value(reader.toString());
 
             Series.Builder series = data.computeIfAbsent(keyBuilder.build(), z -> Series.builder().key(z));
+            ObservationalTimePeriod observationalTimePeriod = obsParser.parsePeriod();
+            TimeInterval nullablePeriod = observationalTimePeriod != null
+                    ? TimeInterval.of(observationalTimePeriod.toStartTime(null), observationalTimePeriod.getDuration())
+                    : null;
+            if (nullablePeriod == null) {
+                continue;
+            }
+            Double nullableValue = obsParser.parseValue();
+            if (nullableValue == null) {
+                continue;
+            }
             series.obs(obs
                     .clearMeta()
-                    .period(obsParser.parsePeriod(o -> null))
-                    .value(obsParser.parseValue())
+                    .period(nullablePeriod)
+                    .value(nullableValue)
                     .build()
             );
         }

@@ -18,7 +18,6 @@ package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,43 +29,40 @@ import static org.assertj.core.api.Assertions.*;
 public class SdmxWebSourceTest {
 
     @Test
-    public void testBuilderEndpointOf() throws MalformedURLException {
+    public void testBuilderEndpointOf() {
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxWebSource.builder().endpointOf(null));
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> SdmxWebSource.builder().endpointOf("h ttp://localhost"));
 
-        assertThat(SdmxWebSource.builder().endpointOf("http://localhost").name("").driver("").build().getEndpoint())
+        assertThat(SdmxWebSource.builder().endpointOf("http://localhost").id("").driver("").build().getEndpoint())
                 .isEqualTo(URI.create("http://localhost"));
     }
 
     @Test
     public void testBuilderDescription() {
-        SdmxWebSource base = SdmxWebSource.builder().endpointOf("http://localhost").name("").driver("").build();
+        SdmxWebSource base = SdmxWebSource.builder().endpointOf("http://localhost").id("").driver("").build();
 
         assertThat(
                 base
                         .toBuilder()
-                        .description("en", "European Central Bank")
-                        .description("fr", "Banque Centrale Européenne")
+                        .name("en", "European Central Bank")
+                        .name("fr", "Banque Centrale Européenne")
                         .build()
-                        .getDescriptions()
+                        .getNames()
                         .keySet())
                 .containsExactly("en", "fr");
 
         assertThat(
                 base
                         .toBuilder()
-                        .description("fr", "Banque Centrale Européenne")
-                        .description("en", "European Central Bank")
+                        .name("fr", "Banque Centrale Européenne")
+                        .name("en", "European Central Bank")
                         .build()
-                        .getDescriptions()
+                        .getNames()
                         .keySet())
                 .containsExactly("fr", "en");
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> base.toBuilder().descriptionOf(null));
     }
 
     @Test
@@ -77,16 +73,58 @@ public class SdmxWebSourceTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> SdmxWebSource.builder().propertyOf("", null));
 
-        assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").name("").driver("").build().getProperties())
+        assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").id("").driver("").build().getProperties())
                 .containsEntry("hello", "world");
     }
 
     @Test
+    public void testBuilderWebsiteOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().websiteOf(null).build().getWebsite())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().websiteOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().websiteOf("http://localhost").id("").driver("").build().getWebsite())
+                .hasToString("http://localhost");
+    }
+
+    @Test
+    public void testBuilderMonitorOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().monitorOf(null).build().getMonitor())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().monitorOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().monitorOf("http://localhost").id("").driver("").build().getMonitor())
+                .hasToString("http://localhost");
+    }
+
+    @Test
+    public void testBuilderMonitorWebsiteOf() {
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+
+        assertThat(base.toBuilder().monitorWebsiteOf(null).build().getMonitorWebsite())
+                .isNull();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> base.toBuilder().monitorWebsiteOf("h ttp://localhost"));
+
+        assertThat(base.toBuilder().monitorWebsiteOf("http://localhost").id("").driver("").build().getMonitorWebsite())
+                .hasToString("http://localhost");
+    }
+
+    @Test
     public void testAlias() {
-        SdmxWebSource estat = SdmxWebSource.builder().name("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
+        SdmxWebSource estat = SdmxWebSource.builder().id("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
 
         assertThat(estat.alias("EUROSTAT"))
-                .isEqualTo(estat.toBuilder().name("EUROSTAT").build());
+                .isEqualTo(estat.toBuilder().id("EUROSTAT").build());
 
         assertThatNullPointerException()
                 .isThrownBy(() -> estat.alias(null));
@@ -97,15 +135,15 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testIsAlias() {
-        SdmxWebSource base = SdmxWebSource.builder().name("ESTAT").driver("").endpointOf("http://localhost").build();
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
         assertThat(base.isAlias()).isFalse();
         assertThat(base.toBuilder().alias("EUROSTAT").build().isAlias()).isFalse();
-        assertThat(base.toBuilder().name("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
+        assertThat(base.toBuilder().id("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
     }
 
     @Test
     public void testWebsite() {
-        SdmxWebSource base = SdmxWebSource.builder().name("ESTAT").driver("").endpointOf("http://localhost").build();
+        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
         assertThat(base.getWebsite()).isNull();
         assertThat(base.toBuilder().websiteOf("http://somewhere").build().getWebsite())
                 .asString()

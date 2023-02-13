@@ -65,9 +65,8 @@ public final class ImfDriver2 implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("IMF")
-                    .descriptionOf("International Monetary Fund")
-                    .description("en", "International Monetary Fund")
+                    .id("IMF")
+                    .name("en", "International Monetary Fund")
                     .driver(RI_IMF)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")

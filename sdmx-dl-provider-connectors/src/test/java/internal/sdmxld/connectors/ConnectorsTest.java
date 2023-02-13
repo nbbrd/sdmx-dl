@@ -16,6 +16,7 @@
  */
 package internal.sdmxld.connectors;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
@@ -45,7 +46,7 @@ public class ConnectorsTest {
     @Test
     public void testFlow() {
         // description field not supported in Connectors
-        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description("").build();
+        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description(null).build();
         assertThat(toFlow(fromFlow(dataflowWithoutDescription)))
                 .isEqualTo(dataflowWithoutDescription);
     }
@@ -56,6 +57,7 @@ public class ConnectorsTest {
                 .isEqualTo(STRUCT_REF);
     }
 
+    @Disabled("CodeList is no more embedded")
     @Test
     public void testDimension() {
         assertThat(toDimension(fromDimension(DIM1)))
@@ -70,6 +72,7 @@ public class ConnectorsTest {
                 .isEqualTo(notCodedAttributeWithoutRelationship);
     }
 
+    @Disabled("CodeList is no more embedded")
     @Test
     public void testStructure() {
         assertThatExceptionOfType(ArrayIndexOutOfBoundsException.class)

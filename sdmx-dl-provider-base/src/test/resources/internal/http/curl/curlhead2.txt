@@ -1,0 +1,35 @@
+HTTP/1.1 301 Moved Permanently
+Date: Fri, 09 Dec 2022 16:39:01 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 330
+Connection: keep-alive
+Location: https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://google.com&size=64
+X-Content-Type-Options: nosniff
+Server: sffe
+X-XSS-Protection: 0
+Expires: Fri, 09 Dec 2022 16:52:05 GMT
+Cache-Control: public, max-age=1800
+Age: 1016
+Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
+Via: HTTP/1.1 m_proxy_ams
+Via: HTTP/1.1 s_proxy_ams
+
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Location: https://www.google.com/favicon.ico
+Content-Security-Policy-Report-Only: require-trusted-types-for 'script'; report-uri https://csp.withgoogle.com/csp/media-favicon
+Cross-Origin-Resource-Policy: cross-origin
+Cross-Origin-Opener-Policy: same-origin; report-to="media-favicon"
+Report-To: {"group":"media-favicon","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/media-favicon"}]}
+Content-Length: 1339
+X-Content-Type-Options: nosniff
+Server: sffe
+X-XSS-Protection: 0
+Date: Thu, 08 Dec 2022 17:20:59 GMT
+Expires: Thu, 15 Dec 2022 17:20:59 GMT
+Cache-Control: public, max-age=604800
+Age: 83882
+Last-Modified: Tue, 17 Mar 2020 10:46:56 GMT
+Content-Type: image/png
+Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
+

@@ -34,7 +34,7 @@ public class Dimension extends Component implements Comparable<Dimension> {
     String id;
 
     @lombok.NonNull
-    String label;
+    String name;
 
     @lombok.NonNull
     Codelist codelist;

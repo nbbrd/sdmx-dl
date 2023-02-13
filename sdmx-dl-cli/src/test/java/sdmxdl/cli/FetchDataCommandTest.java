@@ -47,4 +47,25 @@ public class FetchDataCommandTest {
                 .contains("A.DEU.1.0.319.0.UBLGE,OBS_STATUS=A,2015-01-01T00:00:00,-.1420473", atIndex(25))
                 .hasSize(26);
     }
+
+    @SetSystemProperty(key = "enableRngDriver", value = "true")
+    @Test
+    public void testDoublePrecisionFormatting(@TempDir Path temp) throws IOException {
+        CommandLine cmd = new CommandLine(new FetchDataCommand());
+        CommandWatcher watcher = CommandWatcher.on(cmd);
+
+        File out = temp.resolve("out.csv").toFile();
+
+        assertThat(cmd.execute("RNG", "RNG", "all", "--no-log", "-o", out.getPath()))
+                .isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(watcher.getOut())
+                .isEmpty();
+        assertThat(watcher.getErr())
+                .isEmpty();
+
+        assertThat(FileSample.readAll(out))
+                .contains("Series,ObsAttributes,ObsPeriod,ObsValue", atIndex(0))
+                .contains("D.0,,2010-01-13T00:00:00,4.710274297101627", atIndex(25))
+                .hasSize(4540);
+    }
 }

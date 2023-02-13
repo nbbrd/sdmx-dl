@@ -33,7 +33,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getFlows())
-                    .map(flows -> flows.stream().allMatch(flow -> flow.getDescription().isEmpty()))
+                    .map(flows -> flows.stream().allMatch(flow -> flow.getDescription() == null))
                     .orElse(false);
         }
     },
@@ -57,7 +57,7 @@ public enum OtherRules {
         @Override
         boolean isInvalid(WebResponse r) {
             return ofNullable(r.getStructure())
-                    .map(dsd -> isBlank(dsd.getLabel()))
+                    .map(dsd -> isBlank(dsd.getName()))
                     .orElse(false);
         }
     },
@@ -141,16 +141,6 @@ public enum OtherRules {
                     .map(dsd -> dsd.getDimensions().stream().anyMatch(dimension -> dimension.getCodes().isEmpty()))
                     .orElse(false);
         }
-    },
-    DATA_NULL_PERIOD {
-        @Override
-        boolean isInvalid(WebResponse r) {
-            return ofNullable(r.getData())
-                    .map(data -> data.stream()
-                            .flatMap(series -> series.getObs().stream())
-                            .anyMatch(obs -> obs.getPeriod() == null))
-                    .orElse(false);
-        }
     };
 
     abstract boolean isInvalid(WebResponse r);
@@ -161,7 +151,7 @@ public enum OtherRules {
 
     private static String checkDimension(String checkName, Dimension dimension) {
         return isBlank(dimension.getId())
-                || isBlank(dimension.getLabel())
+                || isBlank(dimension.getName())
                 || dimension.getPosition() <= 0
                 || dimension.getCodes().isEmpty()
                 ? checkName

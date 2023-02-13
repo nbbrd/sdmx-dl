@@ -22,6 +22,7 @@ import sdmxdl.DataDetail;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.GregorianTimePeriod;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.DataCursorAssert;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -72,11 +73,11 @@ public class XMLStreamCompactDataCursorTest {
                         while (o.nextObs()) {
                             switch (++indexObs) {
                                 case 0:
-                                    assertThat(o.getObsPeriod()).isEqualTo("2000-01-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.YearMonth.parse("2000-01"));
                                     assertThat(o.getObsValue()).isEqualTo(3.14);
                                     break;
                                 case 11:
-                                    assertThat(o.getObsPeriod()).isEqualTo("2000-12-01T00:00:00");
+                                    assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.YearMonth.parse("2000-12"));
                                     assertThat(o.getObsValue()).isEqualTo(1.21);
                                     break;
                             }
@@ -120,11 +121,11 @@ public class XMLStreamCompactDataCursorTest {
             while (o.nextObs()) {
                 switch (++indexObs) {
                     case 0:
-                        assertThat(o.getObsPeriod()).isEqualTo("1960-01-01T00:00:00");
+                        assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("1960"));
                         assertThat(o.getObsValue()).isEqualTo(92.0142);
                         break;
                     case 56:
-                        assertThat(o.getObsPeriod()).isEqualTo("2016-01-01T00:00:00");
+                        assertThat(o.getObsPeriod()).isEqualTo(GregorianTimePeriod.Year.parse("2016"));
                         assertThat(o.getObsValue()).isEqualTo(386.5655);
                         break;
                 }

@@ -7,17 +7,18 @@ _work-in-progress_
 
 ## Dependency graph
 
-{{< mermaid class="text-center">}}
+```mermaid
 flowchart BT
     api
     subgraph formats
-        format-util[util]
+        format-base[base]
         csv
-        xml
         kryo
+        protobuf
+        xml
     end
     subgraph providers
-        provider-util[util]
+        provider-base[base]
         connectors
         ri
     end
@@ -28,4 +29,4 @@ flowchart BT
     providers --> formats
     testing ---> api
     cli --> providers & testing
-{{< /mermaid >}}
+```

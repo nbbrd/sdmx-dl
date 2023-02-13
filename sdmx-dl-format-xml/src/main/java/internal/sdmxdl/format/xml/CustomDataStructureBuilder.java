@@ -84,7 +84,7 @@ public final class CustomDataStructureBuilder {
         return DataStructure.builder()
                 .ref(ref)
                 .dimensions(guessDimensions())
-                .label(ref.getId())
+                .name(ref.getId())
                 .timeDimensionId(timeDimensionId != null ? timeDimensionId : "TIME_PERIOD")
                 .primaryMeasureId(primaryMeasureId != null ? primaryMeasureId : "OBS_VALUE")
                 .build();
@@ -127,7 +127,7 @@ public final class CustomDataStructureBuilder {
         return Dimension.builder()
                 .id(name)
                 .position(pos)
-                .label(name)
+                .name(name)
                 .codelist(codelist.build())
                 .build();
     }

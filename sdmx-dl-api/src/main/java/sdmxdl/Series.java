@@ -16,8 +16,10 @@
  */
 package sdmxdl;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * @author Philippe Charles
@@ -33,9 +35,15 @@ public class Series {
     @lombok.Singular("meta")
     Map<String, String> meta;
 
+    /**
+     * Non-null list of observations sorted chronologically.
+     */
     @lombok.NonNull
     @lombok.Singular("obs")
-    Collection<Obs> obs;
+    SortedSet<Obs> obs;
+
+    @lombok.Getter(lazy = true)
+    List<Obs> obsList = new ArrayList<>(getObs());
 
     public static final class Builder {
     }

@@ -10,6 +10,10 @@ import tests.sdmxdl.api.TckUtil;
 @lombok.experimental.UtilityClass
 public class FileReaderAssert {
 
+    public FileContext noOpFileContext() {
+        return FileContext.builder().build();
+    }
+
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Sample {

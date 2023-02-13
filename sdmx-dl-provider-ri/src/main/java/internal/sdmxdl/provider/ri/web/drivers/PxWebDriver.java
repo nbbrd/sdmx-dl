@@ -22,9 +22,11 @@ import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
-import sdmxdl.provider.HasSourceName;
+import sdmxdl.provider.HasMarker;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -36,7 +38,6 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,11 +69,10 @@ public final class PxWebDriver implements WebDriver {
             .supportedPropertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
-                    .name("STATFIN")
-                    .descriptionOf("Statistics Finland")
-                    .description("en", "Statistics Finland")
-                    .description("sv", "Statistikcentralen")
-                    .description("fi", "Tilastokeskus")
+                    .id("STATFIN")
+                    .name("en", "Statistics Finland")
+                    .name("sv", "Statistikcentralen")
+                    .name("fi", "Tilastokeskus")
                     .driver(RI_PXWEB)
                     .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
                     .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
@@ -81,8 +81,8 @@ public final class PxWebDriver implements WebDriver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
-                source.getName(),
-                source.getName().toLowerCase(Locale.ROOT),
+                Marker.of(source),
+                source.getId().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)
         );
@@ -146,7 +146,7 @@ public final class PxWebDriver implements WebDriver {
         }
     }
 
-    private interface PxWebClient extends HasSourceName {
+    private interface PxWebClient extends HasMarker {
 
         @NonNull Config getConfig() throws IOException;
 
@@ -162,7 +162,7 @@ public final class PxWebDriver implements WebDriver {
 
         @lombok.Getter
         @lombok.NonNull
-        private final String name;
+        private final Marker marker;
 
         @lombok.NonNull
         private final String dbId;
@@ -291,8 +291,8 @@ public final class PxWebDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull String getName() {
-            return delegate.getName();
+        public @NonNull Marker getMarker() {
+            return delegate.getMarker();
         }
 
         @Override
@@ -357,7 +357,7 @@ public final class PxWebDriver implements WebDriver {
         }
 
         @Override
-        public @Nullable LocalDateTime getObsPeriod() throws IOException, IllegalStateException {
+        public @Nullable ObservationalTimePeriod getObsPeriod() throws IOException, IllegalStateException {
             return delegate.getObsPeriod();
         }
 
@@ -370,6 +370,11 @@ public final class PxWebDriver implements WebDriver {
         @NonNull
         public Map<String, String> getObsAttributes() throws IllegalStateException {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public @Nullable String getObsAttribute(@NonNull String key) throws IllegalStateException {
+            return null;
         }
 
         @Override
@@ -390,13 +395,13 @@ public final class PxWebDriver implements WebDriver {
         }
 
         private static Dimension fixDimensionCode(Dimension dimension) {
-            return dimension.toBuilder().id(dimension.getLabel().replace(" ", "")).build();
+            return dimension.toBuilder().id(dimension.getName().replace(" ", "")).build();
         }
 
         private static final Dimension FREQ_DIMENSION = Dimension
                 .builder()
                 .id("FREQ")
-                .label("")
+                .name("")
                 .position(0)
                 .codelist(Codelist
                         .builder()
@@ -484,7 +489,7 @@ public final class PxWebDriver implements WebDriver {
                     .ref(ref)
                     .timeDimensionId(toTimeDimensionId())
                     .primaryMeasureId("")
-                    .label("")
+                    .name("")
                     .dimensions(toDimensionList())
                     .build();
         }
@@ -535,7 +540,7 @@ public final class PxWebDriver implements WebDriver {
                     .builder()
                     .position(position)
                     .id(code)
-                    .label(text)
+                    .name(text)
                     .codelist(Codelist
                             .builder()
                             .ref(CodelistRef.parse(code))

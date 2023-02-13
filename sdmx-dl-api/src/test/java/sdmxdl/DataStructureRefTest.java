@@ -139,6 +139,6 @@ public class DataStructureRefTest {
     }
 
     private DataStructure structOf(DataStructureRef ref) {
-        return DataStructure.builder().ref(ref).primaryMeasureId("").label("").build();
+        return DataStructure.builder().ref(ref).primaryMeasureId("").name("").build();
     }
 }

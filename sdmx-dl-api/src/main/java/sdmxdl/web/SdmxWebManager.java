@@ -21,6 +21,7 @@ import internal.util.WebDriverLoader;
 import internal.util.WebMonitoringLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
@@ -49,14 +50,19 @@ import java.util.stream.Stream;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
-    @NonNull
-    public static SdmxWebManager ofServiceLoader() {
+    @StaticFactoryMethod
+    public static @NonNull SdmxWebManager ofServiceLoader() {
         return SdmxWebManager
                 .builder()
                 .drivers(WebDriverLoader.load())
                 .monitorings(WebMonitoringLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
+    }
+
+    @StaticFactoryMethod
+    public static @NonNull SdmxWebManager noOp() {
+        return SdmxWebManager.builder().build();
     }
 
     @lombok.NonNull
@@ -193,14 +199,14 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
-                .filter(distinctByKey(SdmxWebSource::getName))
+                .filter(distinctByKey(SdmxWebSource::getId))
                 .collect(Collectors.toList());
     }
 
     private static SortedMap<String, SdmxWebSource> initSourceMap(List<SdmxWebSource> customSources, List<SdmxWebSource> defaultSources) {
         return Stream.concat(customSources.stream(), defaultSources.stream())
                 .flatMap(SdmxWebManager::expandAliases)
-                .collect(Collectors.groupingBy(SdmxWebSource::getName, TreeMap::new, reducingByFirst()));
+                .collect(Collectors.groupingBy(SdmxWebSource::getId, TreeMap::new, reducingByFirst()));
     }
 
     private static Stream<SdmxWebSource> expandAliases(SdmxWebSource source) {

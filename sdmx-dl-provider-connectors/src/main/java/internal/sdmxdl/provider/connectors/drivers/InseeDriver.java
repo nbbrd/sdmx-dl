@@ -17,21 +17,20 @@
 package internal.sdmxdl.provider.connectors.drivers;
 
 import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
-import internal.sdmxdl.provider.connectors.Connectors;
 import internal.sdmxdl.provider.connectors.HasDetailSupported;
 import it.bancaditalia.oss.sdmx.api.Codelist;
-import it.bancaditalia.oss.sdmx.api.DSDIdentifier;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
+import it.bancaditalia.oss.sdmx.api.SDMXReference;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.format.ObsParser;
+import sdmxdl.format.time.ObservationalTimePeriod;
+import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.format.ObsParser;
-import sdmxdl.format.time.StandardReportingFormat;
-import sdmxdl.format.time.ObsTimeParser;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -43,6 +42,7 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
 /**
@@ -63,8 +63,8 @@ public final class InseeDriver implements WebDriver {
             .defaultDialect(INSEE_2017)
             .source(SdmxWebSource
                     .builder()
-                    .name("INSEE")
-                    .descriptionOf("Institut national de la statistique et des études économiques")
+                    .id("INSEE")
+                    .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(CONNECTORS_INSEE)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
@@ -83,7 +83,7 @@ public final class InseeDriver implements WebDriver {
         }
 
         @Override
-        public DataFlowStructure getDataFlowStructure(DSDIdentifier dsd, boolean full) throws SdmxException {
+        public DataFlowStructure getDataFlowStructure(SDMXReference dsd, boolean full) throws SdmxException {
             DataFlowStructure result = super.getDataFlowStructure(dsd, full);
             fixIds(result);
             fixMissingCodes(result);
@@ -99,8 +99,7 @@ public final class InseeDriver implements WebDriver {
         private void fixIds(DataFlowStructure dsd) {
             for (Dimension d : dsd.getDimensions()) {
                 if (d.getId().endsWith("6")) {
-                    d.setId(getValidId(d.getId()));
-//                    d.getCodeList().setId(getValidId(d.getCodeList().getId()));
+//                    d.setId(getValidId(d.getId()));
                 }
             }
         }
@@ -112,22 +111,22 @@ public final class InseeDriver implements WebDriver {
         @SdmxFix(id = 4, category = CONTENT, cause = "Some codes are missing in dsd even when requested with 'references=children'")
         private void fixMissingCodes(DataFlowStructure dsd) throws SdmxException {
             for (Dimension d : dsd.getDimensions()) {
-                Codelist codelist = d.getCodeList();
-                if (codelist.isEmpty()) {
-                    loadMissingCodes(codelist);
-                }
+                SDMXReference codelist = d.getCodeList();
+//                if (codelist.isEmpty()) {
+//                    loadMissingCodes(codelist);
+//                }
             }
         }
 
         private void loadMissingCodes(Codelist codelist) throws SdmxException {
-            try {
-                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
-            } catch (SdmxException ex) {
-                if (!Connectors.isNoResultMatchingQuery(ex)) {
-                    throw ex;
-                }
-                logger.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
-            }
+//            try {
+//                codelist.setCodes(super.getCodes(codelist.getId(), codelist.getAgency(), codelist.getVersion()));
+//            } catch (SdmxException ex) {
+//                if (!Connectors.isNoResultMatchingQuery(ex)) {
+//                    throw ex;
+//                }
+            LOGGER.log(Level.WARNING, "Cannot retrieve codes for ''{0}''", codelist.getFullIdentifier());
+//            }
         }
     }
 
@@ -138,9 +137,9 @@ public final class InseeDriver implements WebDriver {
             .limitPerYear(6)
             .build();
 
-    private static final ObsTimeParser EXTENDED_TIME_PARSER =
-            TimeFormats.OBSERVATIONAL_TIME_PERIOD
-                    .orElse(ObsTimeParser.onStandardReporting(REPORTING_TWO_MONTH));
+    private static final Parser<ObservationalTimePeriod> EXTENDED_TIME_PARSER =
+            TimeFormats.getObservationalTimePeriod(IGNORE_ERROR)
+                    .orElse(TimeFormats.onReportingFormat(REPORTING_TWO_MONTH, IGNORE_ERROR));
 
     private static final Supplier<ObsParser> OBS_FACTORY = () -> new ObsParser(EXTENDED_TIME_PARSER, Parser.onDouble());
 }

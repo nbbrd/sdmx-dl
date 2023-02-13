@@ -33,6 +33,7 @@ import sdmxdl.DataStructureRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -67,12 +68,11 @@ public final class NbbDriver2 implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("NBB")
-                    .descriptionOf("National Bank of Belgium")
-                    .description("en", "National Bank of Belgium")
-                    .description("de", "Belgische National Bank")
-                    .description("fr", "Banque Nationale de Belgique")
-                    .description("nl", "Nationale Bank van België")
+                    .id("NBB")
+                    .name("en", "National Bank of Belgium")
+                    .name("de", "Belgische National Bank")
+                    .name("fr", "Banque Nationale de Belgique")
+                    .name("nl", "Nationale Bank van België")
                     .driver(RI_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
@@ -83,7 +83,7 @@ public final class NbbDriver2 implements WebDriver {
 
     private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
         return newClient(
-                s.getId(),
+                Marker.of(s),
                 s.getEndpoint().toURL(),
                 c.getLanguages(),
                 RiHttpUtils.newClient(s, c)
@@ -91,8 +91,8 @@ public final class NbbDriver2 implements WebDriver {
     }
 
     @VisibleForTesting
-    static @NonNull RiRestClient newClient(@NonNull String name, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull HttpClient executor) {
-        return new RiRestClient(name, endpoint, langs, ObsParser::newDefault,
+    static @NonNull RiRestClient newClient(@NonNull Marker marker, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull HttpClient executor) {
+        return new RiRestClient(marker, endpoint, langs, ObsParser::newDefault,
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),
                 new DotStatRestParsers(),

@@ -39,7 +39,7 @@ public class DataStructureDecoderTest {
                 .dimension(dimension("JD_TYPE", 2, "P"))
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
                 .dimension(dimension("VIS_CTY", 4, "MX"))
-                .label("BIS_JOINT_DEBT")
+                .name("BIS_JOINT_DEBT")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -56,7 +56,7 @@ public class DataStructureDecoderTest {
                 .dimension(dimension("VIS_CTY", 3, "MX"))
                 .dimension(dimension("JD_TYPE", 4, "P"))
                 .dimension(dimension("JD_CATEGORY", 5, "A", "B"))
-                .label("UNKNOWN")
+                .name("UNKNOWN")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -75,7 +75,7 @@ public class DataStructureDecoderTest {
                 .dimension(dimension("AME_UNIT", 5, "0"))
                 .dimension(dimension("AME_REFERENCE", 6, "0"))
                 .dimension(dimension("AME_ITEM", 7, "OVGD"))
-                .label("ECB_AME1")
+                .name("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();
@@ -94,7 +94,7 @@ public class DataStructureDecoderTest {
                 .dimension(dimension("AME_UNIT", 5, "0"))
                 .dimension(dimension("AME_REFERENCE", 6, "0"))
                 .dimension(dimension("AME_ITEM", 7, "OVGD"))
-                .label("ECB_AME1")
+                .name("ECB_AME1")
                 .timeDimensionId("TIME_PERIOD")
                 .primaryMeasureId("OBS_VALUE")
                 .build();

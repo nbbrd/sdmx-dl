@@ -58,10 +58,10 @@ public class InseeDialectTest {
     // https://bdm.insee.fr/series/sdmx/datastructure/FR1/IPI-2010/1.0?references=children
     private final DataStructure dsd = DataStructure
             .builder()
-            .dimension(Dimension.builder().id("FREQ").position(1).label("Périodicité").codelist(cl_periodicite).build())
+            .dimension(Dimension.builder().id("FREQ").position(1).name("Périodicité").codelist(cl_periodicite).build())
             .ref(DataStructureRef.of("FR1", "IPI-2010", "1.0"))
             .timeDimensionId("TIME_PERIOD")
             .primaryMeasureId("OBS_VALUE")
-            .label("Indices de la production industrielle - Résultats par secteur d'activité détaillé et regroupements MIG")
+            .name("Indices de la production industrielle - Résultats par secteur d'activité détaillé et regroupements MIG")
             .build();
 }

@@ -1,12 +1,14 @@
 syntax = "proto3";
 option java_multiple_files = true;
+
 package sdmxdl.format.protobuf.web;
+
 import "google/protobuf/timestamp.proto";
 
 enum MonitorStatus {
-  UP = 0;
-  DOWN = 1;
-  UNKNOWN = 2;
+  UNKNOWN = 0;
+  UP = 1;
+  DOWN = 2;
 }
 
 message MonitorReport {

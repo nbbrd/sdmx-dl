@@ -16,7 +16,6 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
@@ -53,12 +52,11 @@ public final class DotStatDriver2 implements WebDriver {
             .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
-                    .name("OECD")
-                    .descriptionOf("The Organisation for Economic Co-operation and Development")
-                    .description("en", "The Organisation for Economic Co-operation and Development")
-                    .description("es", "Organización para la Cooperación y el Desarrollo Económicos")
-                    .description("fr", "Organisation de coopération et de développement économiques")
-                    .description("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
+                    .id("OECD")
+                    .name("en", "The Organisation for Economic Co-operation and Development")
+                    .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
+                    .name("fr", "Organisation de coopération et de développement économiques")
+                    .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
@@ -67,10 +65,9 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("SE")
-                    .descriptionOf("Statistics Estonia")
-                    .description("en", "Statistics Estonia")
-                    .description("et", "Statistikaameti")
+                    .id("SE")
+                    .name("en", "Statistics Estonia")
+                    .name("et", "Statistikaameti")
                     .driver(RI_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
@@ -79,10 +76,9 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("UIS")
-                    .descriptionOf("Unesco Institute for Statistics")
-                    .description("en", "Unesco Institute for Statistics")
-                    .description("fr", "Unesco Institut de statistique")
+                    .id("UIS")
+                    .name("en", "Unesco Institute for Statistics")
+                    .name("fr", "Unesco Institut de statistique")
                     .driver(RI_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
@@ -91,9 +87,8 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
-                    .name("UKDS")
-                    .descriptionOf("UK Data Service")
-                    .description("en", "UK Data Service")
+                    .id("UKDS")
+                    .name("en", "UK Data Service")
                     .driver(RI_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")

@@ -25,6 +25,8 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +44,7 @@ public class Connectors {
                 .build();
     }
 
-    public DataStructureRef toStructureRef(DSDIdentifier o) {
+    public DataStructureRef toStructureRef(SDMXReference o) {
         return DataStructureRef.of(
                 o.getAgency(),
                 o.getId(),
@@ -65,11 +67,11 @@ public class Connectors {
         return result
                 .id(o.getId())
                 .codelist(toCodelist(o.getCodeList()))
-                .label(toLabel(o));
+                .name(toLabel(o));
     }
 
-    private sdmxdl.Codelist toCodelist(Codelist o) {
-        return o != null ? sdmxdl.Codelist.builder().ref(CodelistRef.of(o.getAgency(), o.getId(), o.getVersion())).codes(o).build() : null;
+    private sdmxdl.Codelist toCodelist(SDMXReference o) {
+        return o != null ? sdmxdl.Codelist.builder().ref(CodelistRef.of(o.getAgency(), o.getId(), o.getVersion())).build() : null;
     }
 
     private String toLabel(SdmxMetaElement o) {
@@ -80,7 +82,7 @@ public class Connectors {
     public DataStructure toStructure(DataFlowStructure dsd) {
         return DataStructure.builder()
                 .ref(DataStructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
-                .label(dsd.getName())
+                .name(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure())
                 .dimensions(dsd.getDimensions().stream().map(Connectors::toDimension).collect(Collectors.toSet()))
@@ -89,65 +91,66 @@ public class Connectors {
     }
 
     public Dataflow fromFlowQuery(DataflowRef flowRef, DataStructureRef structRef) {
-        Dataflow result = new Dataflow();
-        result.setAgency(flowRef.getAgency());
-        result.setId(flowRef.getId());
-        result.setVersion(flowRef.getVersion());
+        Dataflow result = new Dataflow(
+                flowRef.getId(),
+                flowRef.getAgency(),
+                flowRef.getVersion());
         result.setDsdIdentifier(fromStructureRef(structRef));
         return result;
     }
 
     public Dataflow fromFlow(sdmxdl.Dataflow flow) {
-        Dataflow result = new Dataflow();
-        result.setAgency(flow.getRef().getAgency());
-        result.setId(flow.getRef().getId());
-        result.setVersion(flow.getRef().getVersion());
+        Dataflow result = new Dataflow(
+                flow.getRef().getId(),
+                flow.getRef().getAgency(),
+                flow.getRef().getVersion());
         result.setDsdIdentifier(fromStructureRef(flow.getStructureRef()));
         result.setName(flow.getName());
         return result;
     }
 
-    public DSDIdentifier fromStructureRef(DataStructureRef ref) {
-        return new DSDIdentifier(ref.getId(), ref.getAgency(), ref.getVersion());
+    public SDMXReference fromStructureRef(DataStructureRef ref) {
+        return new SDMXReference(ref.getId(), ref.getAgency(), ref.getVersion());
     }
 
     public Dimension fromDimension(sdmxdl.Dimension o) {
-        Dimension result = new Dimension();
+        Dimension result = new Dimension(o.getId(), o.getPosition());
         fromComponent(result, o);
-        result.setPosition(o.getPosition());
         return result;
     }
 
     public SdmxAttribute fromAttribute(Attribute o) {
-        SdmxAttribute result = new SdmxAttribute();
+        SdmxAttribute result = new SdmxAttribute(o.getId());
         fromComponent(result, o);
         return result;
     }
 
     private void fromComponent(SdmxMetaElement result, Component o) {
-        result.setId(o.getId());
-        result.setName(o.getLabel());
-        result.setCodeList(fromCodelist(o.getCodelist()));
+        result.setName(o.getName());
+        Codelist codeList = fromCodelist(o.getCodelist());
+        if (codeList != null) {
+            result.setCodeList(codeList);
+        }
     }
 
     private Codelist fromCodelist(sdmxdl.Codelist o) {
         if (o == null) {
             return null;
         }
-        Codelist result = new Codelist();
-        result.setAgency(o.getRef().getAgency());
-        result.setId(o.getRef().getId());
-        result.setVersion(o.getRef().getVersion());
-        result.setCodes(o.getCodes());
+        Codelist result = new Codelist(
+                o.getRef().getId(),
+                o.getRef().getAgency(),
+                o.getRef().getVersion());
+        result.putAll(o.getCodes());
         return result;
     }
 
     public DataFlowStructure fromStructure(DataStructure dsd) {
-        DataFlowStructure result = new DataFlowStructure();
-        result.setAgency(dsd.getRef().getAgency());
-        result.setId(dsd.getRef().getId());
-        result.setVersion(dsd.getRef().getVersion());
-        result.setName(dsd.getLabel());
+        DataFlowStructure result = new DataFlowStructure(
+                dsd.getRef().getId(),
+                dsd.getRef().getAgency(),
+                dsd.getRef().getVersion());
+        result.setName(dsd.getName());
         result.setTimeDimension(dsd.getTimeDimensionId());
         result.setMeasure(dsd.getPrimaryMeasureId());
         dsd.getDimensions().forEach(o -> result.setDimension(fromDimension(o)));
@@ -155,8 +158,8 @@ public class Connectors {
         return result;
     }
 
-    public it.bancaditalia.oss.sdmx.util.LanguagePriorityList fromLanguages(LanguagePriorityList l) {
-        return it.bancaditalia.oss.sdmx.util.LanguagePriorityList.parse(l.toString());
+    public List<Locale.LanguageRange> fromLanguages(LanguagePriorityList l) {
+        return Locale.LanguageRange.parse(l.toString());
     }
 
     public boolean isNoResultMatchingQuery(SdmxException ex) {

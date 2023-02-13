@@ -184,7 +184,7 @@ public final class XMLStreamStructure21 {
                     break;
             }
         }
-        ds.label(structureLabel.build(id));
+        ds.name(structureLabel.build(id));
         result.add(ds.build());
     }
 
@@ -224,7 +224,7 @@ public final class XMLStreamStructure21 {
         String position = reader.getAttributeValue(null, POSITION_ATTR);
         XMLStreamUtil.check(position != null, reader, "Missing Dimension position");
 
-        Dimension.Builder dimension = Dimension.builder().id(id).position(parseInt(position)).label(id);
+        Dimension.Builder dimension = Dimension.builder().id(id).position(parseInt(position)).name(id);
         while (XMLStreamUtil.nextTags(reader, DIMENSION_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:
@@ -245,7 +245,7 @@ public final class XMLStreamStructure21 {
             XMLStreamUtil.check(id != null, reader, "Missing Ref id");
 
             String conceptName = context.getConcepts().get(id);
-            concept.label(conceptName != null ? conceptName : id);
+            concept.name(conceptName != null ? conceptName : id);
         }
     }
 
@@ -300,7 +300,7 @@ public final class XMLStreamStructure21 {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 
-        Attribute.Builder attribute = Attribute.builder().id(id).label(id);
+        Attribute.Builder attribute = Attribute.builder().id(id).name(id);
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_TAG)) {
             switch (reader.getLocalName()) {
                 case CONCEPT_IDENTITY_TAG:

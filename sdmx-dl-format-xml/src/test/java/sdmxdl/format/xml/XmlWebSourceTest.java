@@ -35,8 +35,8 @@ public class XmlWebSourceTest {
     private final List<SdmxWebSource> sample = Arrays.asList(
             SdmxWebSource
                     .builder()
-                    .name("ECB")
-                    .description("en", "European Central Bank")
+                    .id("ECB")
+                    .name("en", "European Central Bank")
                     .driver("ri:sdmx21")
                     .dialect(SDMX21_DIALECT)
                     .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
@@ -48,8 +48,8 @@ public class XmlWebSourceTest {
                     .build(),
             SdmxWebSource
                     .builder()
-                    .name("other")
-                    .descriptionOf("some description")
+                    .id("other")
+                    .name("en", "some description")
                     .driver("dummy")
                     .endpointOf("http://localhost")
                     .build()
@@ -72,7 +72,7 @@ public class XmlWebSourceTest {
             + "    </source>\n"
             + "    <source>\n"
             + "        <name>other</name>\n"
-            + "        <description>some description</description>"
+            + "        <description lang=\"en\">some description</description>\n"
             + "        <driver>dummy</driver>\n"
             + "        <endpoint>http://localhost</endpoint>\n"
             + "    </source>\n"

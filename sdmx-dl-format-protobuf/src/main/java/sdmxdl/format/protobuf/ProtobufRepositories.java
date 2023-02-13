@@ -5,8 +5,7 @@ import nbbrd.io.FileParser;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
-
-import java.time.LocalDateTime;
+import sdmxdl.TimeInterval;
 
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
@@ -46,14 +45,17 @@ public class ProtobufRepositories {
     }
 
     public static DataStructure fromDataStructure(sdmxdl.DataStructure value) {
-        return DataStructure
+        DataStructure.Builder result = DataStructure
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .addAllDimensions(fromCollection(value.getDimensions(), ProtobufRepositories::fromDimension))
-                .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute))
-                .setTimeDimensionId(value.getTimeDimensionId())
+                .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute));
+        if (value.getTimeDimensionId() != null) {
+            result.setTimeDimensionId(value.getTimeDimensionId());
+        }
+        return result
                 .setPrimaryMeasureId(value.getPrimaryMeasureId())
-                .setLabel(value.getLabel())
+                .setName(value.getName())
                 .build();
     }
 
@@ -63,9 +65,9 @@ public class ProtobufRepositories {
                 .ref(sdmxdl.DataStructureRef.parse(value.getRef()))
                 .dimensions(toCollection(value.getDimensionsList(), ProtobufRepositories::toDimension))
                 .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
-                .timeDimensionId(value.getTimeDimensionId())
+                .timeDimensionId(value.hasTimeDimensionId() ? value.getTimeDimensionId() : null)
                 .primaryMeasureId(value.getPrimaryMeasureId())
-                .label(value.getLabel())
+                .name(value.getName())
                 .build();
     }
 
@@ -73,7 +75,7 @@ public class ProtobufRepositories {
         return Dimension
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getLabel())
+                .setName(value.getName())
                 .setCodelist(fromCodelist(value.getCodelist()))
                 .setPosition(value.getPosition())
                 .build();
@@ -83,7 +85,7 @@ public class ProtobufRepositories {
         return sdmxdl.Dimension
                 .builder()
                 .id(value.getId())
-                .label(value.getLabel())
+                .name(value.getName())
                 .codelist(toCodelist(value.getCodelist()))
                 .position(value.getPosition())
                 .build();
@@ -109,7 +111,7 @@ public class ProtobufRepositories {
         Attribute.Builder result = Attribute
                 .newBuilder()
                 .setId(value.getId())
-                .setLabel(value.getLabel());
+                .setName(value.getName());
         if (value.getCodelist() != null)
             result.setCodelist(fromCodelist(value.getCodelist()));
         return result
@@ -121,7 +123,7 @@ public class ProtobufRepositories {
         return sdmxdl.Attribute
                 .builder()
                 .id(value.getId())
-                .label(value.getLabel())
+                .name(value.getName())
                 .codelist(value.hasCodelist() ? toCodelist(value.getCodelist()) : null)
                 .relationship(toAttributeRelationship(value.getRelationship()))
                 .build();
@@ -136,13 +138,15 @@ public class ProtobufRepositories {
     }
 
     public static Dataflow fromDataflow(sdmxdl.Dataflow value) {
-        return Dataflow
+        Dataflow.Builder result = Dataflow
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
-                .setName(value.getName())
-                .setDescription(value.getDescription())
-                .build();
+                .setName(value.getName());
+        if (value.getDescription() != null) {
+            result.setDescription(value.getDescription());
+        }
+        return result.build();
     }
 
     public static sdmxdl.Dataflow toDataflow(Dataflow value) {
@@ -151,7 +155,7 @@ public class ProtobufRepositories {
                 .ref(sdmxdl.DataflowRef.parse(value.getRef()))
                 .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
                 .name(value.getName())
-                .description(value.getDescription())
+                .description(value.hasDescription() ? value.getDescription() : null)
                 .build();
     }
 
@@ -216,13 +220,10 @@ public class ProtobufRepositories {
     }
 
     public static Obs fromObs(sdmxdl.Obs value) {
-        Obs.Builder result = Obs
-                .newBuilder();
-        if (value.getPeriod() != null)
-            result.setPeriod(value.getPeriod().toString());
-        if (value.getValue() != null)
-            result.setValue(value.getValue());
-        return result
+        return Obs
+                .newBuilder()
+                .setPeriod(value.getPeriod().toString())
+                .setValue(value.getValue())
                 .putAllMeta(value.getMeta())
                 .build();
     }
@@ -230,8 +231,8 @@ public class ProtobufRepositories {
     public static sdmxdl.Obs toObs(Obs value) {
         return sdmxdl.Obs
                 .builder()
-                .period(value.hasPeriod() ? LocalDateTime.parse(value.getPeriod()) : null)
-                .value(value.hasValue() ? value.getValue() : null)
+                .period(TimeInterval.parse(value.getPeriod()))
+                .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();
     }

@@ -11,25 +11,25 @@ public enum DataDetail {
     /**
      * All data and documentation, including annotations
      */
-    FULL(true, true),
+    FULL(false, false),
     /**
      * Attributes are excluded
      */
-    DATA_ONLY(true, false),
+    DATA_ONLY(false, true),
     /**
      * Only the series elements and the dimensions that make up the series
      * keys
      */
-    SERIES_KEYS_ONLY(false, false),
+    SERIES_KEYS_ONLY(true, true),
     /**
      * Groups and series, including attributes and annotations, without
      * observations
      */
-    NO_DATA(false, true);
+    NO_DATA(true, false);
 
     @lombok.Getter
-    private final boolean dataRequested;
+    private final boolean ignoreData;
 
     @lombok.Getter
-    private final boolean metaRequested;
+    private final boolean ignoreMeta;
 }

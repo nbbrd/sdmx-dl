@@ -32,7 +32,7 @@ public class Attribute extends Component {
     String id;
 
     @lombok.NonNull
-    String label;
+    String name;
 
     @Nullable
     Codelist codelist;

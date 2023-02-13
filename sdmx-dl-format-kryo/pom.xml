@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.8</version>
+        <version>3.0.0-beta.9</version>
     </parent>
 
     <artifactId>sdmx-dl-format-kryo</artifactId>
@@ -43,13 +43,13 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-util</artifactId>
+            <artifactId>sdmx-dl-format-base</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware.kryo</groupId>
             <artifactId>kryo5</artifactId>
-            <version>5.3.0</version>
+            <version>5.4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.esotericsoftware</groupId>

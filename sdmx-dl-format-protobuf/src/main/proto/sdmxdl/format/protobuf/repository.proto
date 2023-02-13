@@ -1,11 +1,13 @@
 syntax = "proto3";
 option java_multiple_files = true;
+
 package sdmxdl.format.protobuf;
+
 import "google/protobuf/timestamp.proto";
 
 message Attribute {
   string id = 1;
-  string label = 2;
+  string name = 2;
   optional Codelist codelist = 3;
   AttributeRelationship relationship = 4;
 }
@@ -34,7 +36,7 @@ message Dataflow {
   string ref = 1;
   string structureRef = 2;
   string name = 3;
-  string description = 4;
+  optional string description = 4;
 }
 
 message DataQuery {
@@ -63,12 +65,12 @@ message DataStructure {
   repeated Attribute attributes = 3;
   optional string timeDimensionId = 4;
   string primaryMeasureId = 5;
-  string label = 6;
+  string name = 6;
 }
 
 message Dimension {
   string id = 1;
-  string label = 2;
+  string name = 2;
   Codelist codelist = 3;
   int32 position = 4;
 }
@@ -79,8 +81,8 @@ enum Feature {
 }
 
 message Obs {
-  optional string period = 1;
-  optional double value = 2;
+  string period = 1;
+  double value = 2;
   map<string, string> meta = 3;
 }
 

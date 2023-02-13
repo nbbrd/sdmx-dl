@@ -22,7 +22,6 @@ import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * @author Philippe Charles
@@ -49,12 +48,12 @@ public class RepoSamples {
     public static final Codelist CL3 = Codelist.builder().ref(CL_REF3).code("INDUSTRY", "Industry").code("XXX", "Other").build();
     public static final Codelist CL4 = Codelist.builder().ref(CL_REF4).code("A", "Normal value").build();
 
-    public static final Dimension DIM1 = Dimension.builder().id("FREQ").codelist(CL1).label("Frequency").position(1).build();
-    public static final Dimension DIM2 = Dimension.builder().id("REGION").codelist(CL2).label("Region").position(3).build();
-    public static final Dimension DIM3 = Dimension.builder().id("SECTOR").codelist(CL3).label("Sector").position(4).build();
+    public static final Dimension DIM1 = Dimension.builder().id("FREQ").codelist(CL1).name("Frequency").position(1).build();
+    public static final Dimension DIM2 = Dimension.builder().id("REGION").codelist(CL2).name("Region").position(3).build();
+    public static final Dimension DIM3 = Dimension.builder().id("SECTOR").codelist(CL3).name("Sector").position(4).build();
 
-    public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").label("Title").relationship(AttributeRelationship.SERIES).build();
-    public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).label("Observation status").relationship(AttributeRelationship.OBSERVATION).build();
+    public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").name("Title").relationship(AttributeRelationship.SERIES).build();
+    public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).name("Observation status").relationship(AttributeRelationship.OBSERVATION).build();
 
     public static final DataStructure STRUCT = DataStructure
             .builder()
@@ -66,11 +65,11 @@ public class RepoSamples {
             .attribute(CODED_ATTRIBUTE)
             .timeDimensionId("TIME")
             .primaryMeasureId("OBS_VALUE")
-            .label("structName")
+            .name("structName")
             .build();
 
-    public static final Obs OBS1 = Obs.builder().period(dateTimeOf(2010, 1)).value(Math.PI).build();
-    public static final Obs OBS2 = Obs.builder().period(dateTimeOf(2010, 2)).value(Math.E).build();
+    public static final Obs OBS1 = Obs.builder().period(periodOf(2010, 1)).value(Math.PI).build();
+    public static final Obs OBS2 = Obs.builder().period(periodOf(2010, 2)).value(Math.E).build();
 
     public static final Key K1 = Key.of("M", "BE", "INDUSTRY");
     public static final Key K2 = Key.of("M", "BE", "XXX");
@@ -104,6 +103,8 @@ public class RepoSamples {
             .series(S3)
             .build();
 
+    public static final DataRepository EMPTY_REPO = DataRepository.builder().build();
+
     public static final DataRepository REPO = DataRepository
             .builder()
             .name("repoName")
@@ -112,13 +113,15 @@ public class RepoSamples {
             .dataSet(DATA_SET)
             .build();
 
+    public static final MonitorReports EMPTY_REPORTS = MonitorReports.builder().uriScheme("abc").build();
+
     public static final MonitorReports REPORTS = MonitorReports
             .builder()
             .uriScheme("abc")
             .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
             .build();
 
-    private static LocalDateTime dateTimeOf(int year, int month) {
-        return LocalDate.of(year, month, 1).atStartOfDay();
+    private static TimeInterval periodOf(int year, int month) {
+        return TimeInterval.of(LocalDate.of(year, month, 1).atStartOfDay(), Duration.parse("P1M"));
     }
 }

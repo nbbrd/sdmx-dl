@@ -40,13 +40,13 @@ public class XMLStreamStructure21Test {
         Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
 
         assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
-            assertThat(o.getLabel()).isEqualTo("AMECO");
+            assertThat(o.getName()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
             assertThat(o.getRef()).isEqualTo(DataStructureRef.of("ECB", "ECB_AME1", "1.0"));
             assertThat(o.getDimensions()).hasSize(7).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("FREQ");
-                assertThat(x.getLabel()).isEqualTo("Frequency");
+                assertThat(x.getName()).isEqualTo("Frequency");
                 assertThat(x.getPosition()).isEqualTo(1);
                 assertThat(x.getCodelist().getRef()).isEqualTo(CodelistRef.of("ECB", "CL_FREQ", "1.0"));
                 assertThat(x.getCodelist().getCodes()).hasSize(10).containsEntry("M", "Monthly");
@@ -55,12 +55,12 @@ public class XMLStreamStructure21Test {
             Set<Attribute> attributes = o.getAttributes();
             assertThat(attributes).hasSize(11);
             assertThat(attributes).filteredOn(Attribute::getId, "TIME_FORMAT").singleElement().satisfies(x -> {
-                assertThat(x.getLabel()).isEqualTo("Time format code");
+                assertThat(x.getName()).isEqualTo("Time format code");
                 assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.SERIES);
                 assertThat(x.getCodes()).isEmpty();
             });
             assertThat(attributes).filteredOn(Attribute::getId, "OBS_STATUS").singleElement().satisfies(x -> {
-                assertThat(x.getLabel()).isEqualTo("Observation status");
+                assertThat(x.getName()).isEqualTo("Observation status");
                 assertThat(x.getRelationship()).isEqualTo(AttributeRelationship.OBSERVATION);
                 assertThat(x.getCodes()).isNotEmpty();
             });

@@ -7,13 +7,12 @@ module sdmxdl.provider.ri {
 
     requires sdmxdl.format.csv;
     requires sdmxdl.format.xml;
-    requires sdmxdl.provider.util;
+    requires sdmxdl.provider.base;
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;
     requires java.logging;
 
     provides sdmxdl.web.spi.WebDriver with
-            internal.sdmxdl.provider.ri.web.drivers.AbsDriver2,
             internal.sdmxdl.provider.ri.web.drivers.BbkDriver,
             internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
