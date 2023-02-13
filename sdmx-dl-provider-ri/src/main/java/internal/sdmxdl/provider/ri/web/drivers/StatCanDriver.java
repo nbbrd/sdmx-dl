@@ -58,7 +58,7 @@ public final class StatCanDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_STATCAN)
+            .id(RI_STATCAN)
             .rank(NATIVE_RANK)
             .connector(StatCanDriver::newConnection)
             .supportedProperties(RI_CONNECTION_PROPERTIES)

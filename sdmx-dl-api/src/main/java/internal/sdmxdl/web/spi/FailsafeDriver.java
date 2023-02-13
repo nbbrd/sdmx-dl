@@ -51,18 +51,18 @@ public final class FailsafeDriver implements WebDriver {
     private final Consumer<? super String> onUnexpectedNull;
 
     @Override
-    public @NonNull String getName() {
+    public @NonNull String getId() {
         String result;
 
         try {
-            result = delegate.getName();
+            result = delegate.getId();
         } catch (RuntimeException ex) {
-            unexpectedError("while getting name", ex);
+            unexpectedError("while getting id", ex);
             return delegate.getClass().getName();
         }
 
         if (result == null) {
-            unexpectedNull("null name");
+            unexpectedNull("null id");
             return delegate.getClass().getName();
         }
 

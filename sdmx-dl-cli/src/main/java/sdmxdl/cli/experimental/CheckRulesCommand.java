@@ -196,7 +196,7 @@ public final class CheckRulesCommand implements Callable<Void> {
     private static List<String> checkAll(WebResponse response) {
         return WebRuleLoader.get()
                 .stream()
-                .map(rule -> !rule.getValidator().isValid(response) ? rule.getName() : null)
+                .map(rule -> !rule.getValidator().isValid(response) ? rule.getId() : null)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

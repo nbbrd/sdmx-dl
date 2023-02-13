@@ -54,7 +54,7 @@ public final class BbkDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_BBK)
+            .id(RI_BBK)
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(BbkRestClient::new))
             .supportedProperties(RI_CONNECTION_PROPERTIES)

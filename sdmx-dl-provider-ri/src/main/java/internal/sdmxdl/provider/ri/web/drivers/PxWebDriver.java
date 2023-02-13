@@ -61,7 +61,7 @@ public final class PxWebDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_PXWEB)
+            .id(RI_PXWEB)
             .rank(NATIVE_RANK)
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)

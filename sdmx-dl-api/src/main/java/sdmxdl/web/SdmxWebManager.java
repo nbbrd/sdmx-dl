@@ -118,7 +118,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @Override
     public @NonNull Connection getConnection(@NonNull SdmxWebSource source) throws IOException {
-        WebDriver driver = lookupDriver(source.getDriver())
+        WebDriver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
         checkSourceProperties(source, driver);
@@ -152,7 +152,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     public @NonNull Optional<String> getDialect(@NonNull SdmxWebSource source) {
         return source.getDialect() != null
                 ? Optional.of(source.getDialect())
-                : lookupDriver(source.getDriver()).map(WebDriver::getDefaultDialect);
+                : lookupDriverById(source.getDriver()).map(WebDriver::getDefaultDialect);
     }
 
     private void checkSourceProperties(SdmxWebSource source, WebDriver driver) {
@@ -170,10 +170,10 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return Optional.ofNullable(getSources().get(name));
     }
 
-    private Optional<WebDriver> lookupDriver(String name) {
+    private Optional<WebDriver> lookupDriverById(String id) {
         return drivers
                 .stream()
-                .filter(driver -> name.equals(driver.getName()))
+                .filter(driver -> id.equals(driver.getId()))
                 .findFirst();
     }
 

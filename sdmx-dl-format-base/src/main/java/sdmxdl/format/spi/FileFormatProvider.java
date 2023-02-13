@@ -12,7 +12,8 @@ import sdmxdl.web.MonitorReports;
 )
 public interface FileFormatProvider {
 
-    @NonNull String getName();
+    //    @ServiceId
+    @NonNull String getId();
 
     @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException;
 

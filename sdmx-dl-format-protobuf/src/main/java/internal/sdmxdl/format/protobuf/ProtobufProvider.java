@@ -13,8 +13,8 @@ import sdmxdl.web.MonitorReports;
 public final class ProtobufProvider implements FileFormatProvider {
 
     @Override
-    public @NonNull String getName() {
-        return "protobuf";
+    public @NonNull String getId() {
+        return "PROTOBUF";
     }
 
     @Override

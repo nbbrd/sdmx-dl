@@ -44,7 +44,7 @@ public final class RngDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_RNG)
+            .id(RI_RNG)
             .rank(NATIVE_RANK)
             .availability(ENABLE::get)
             .connector(RngDriver::newConnection)

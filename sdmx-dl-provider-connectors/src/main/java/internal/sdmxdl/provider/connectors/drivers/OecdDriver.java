@@ -38,7 +38,7 @@ public final class OecdDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_OECD)
+            .id(CONNECTORS_OECD)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

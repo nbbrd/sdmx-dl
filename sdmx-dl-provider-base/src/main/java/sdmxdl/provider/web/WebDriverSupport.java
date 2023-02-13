@@ -37,7 +37,7 @@ public final class WebDriverSupport implements WebDriver {
 
     @lombok.Getter
     @NonNull
-    private final String name;
+    private final String id;
 
     @lombok.Getter
     @lombok.Builder.Default
@@ -61,7 +61,7 @@ public final class WebDriverSupport implements WebDriver {
     private final Predicate<Properties> availability = properties -> true;
 
     @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final Validator<SdmxWebSource> lazySourceValidator = WebValidators.onDriverName(name);
+    private final Validator<SdmxWebSource> lazySourceValidator = WebValidators.onDriverId(id);
 
     @Override
     public boolean isAvailable() {

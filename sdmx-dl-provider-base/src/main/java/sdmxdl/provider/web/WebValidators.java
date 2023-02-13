@@ -29,9 +29,9 @@ public class WebValidators {
         ));
     }
 
-    public static @NonNull Validator<SdmxWebSource> onDriverName(@NonNull String driverName) {
-        return source -> source == null || !source.getDriver().equals(driverName)
-                ? String.format("Expecting driver name '%s' to be '%s'", source.getDriver(), driverName)
+    public static @NonNull Validator<SdmxWebSource> onDriverId(@NonNull String driverId) {
+        return source -> source != null && !source.getDriver().equals(driverId)
+                ? String.format("Expecting driver name '%s' to be '%s'", source.getDriver(), driverId)
                 : null;
     }
 

@@ -12,8 +12,8 @@ import sdmxdl.web.MonitorReports;
 public final class KryoProvider implements FileFormatProvider {
 
     @Override
-    public @NonNull String getName() {
-        return "kryo";
+    public @NonNull String getId() {
+        return "KRYO";
     }
 
     @Override

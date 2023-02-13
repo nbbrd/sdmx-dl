@@ -41,7 +41,7 @@ public final class Sdmx20Driver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_SDMX_20)
+            .id(CONNECTORS_SDMX_20)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx20Client::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

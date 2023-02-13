@@ -33,7 +33,7 @@ import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 public enum TestDriver implements WebDriver {
     VALID {
         @Override
-        public @NonNull String getName() {
+        public @NonNull String getId() {
             return "valid";
         }
 
@@ -68,7 +68,7 @@ public enum TestDriver implements WebDriver {
         }
     }, FAILING {
         @Override
-        public @NonNull String getName() {
+        public @NonNull String getId() {
             throw new CustomException();
         }
 
@@ -103,7 +103,7 @@ public enum TestDriver implements WebDriver {
         }
     }, NULL {
         @Override
-        public @NonNull String getName() {
+        public @NonNull String getId() {
             return null;
         }
 

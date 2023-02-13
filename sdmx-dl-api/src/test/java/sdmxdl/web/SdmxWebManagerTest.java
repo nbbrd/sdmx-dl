@@ -106,7 +106,7 @@ public class SdmxWebManagerTest {
 
         WebDriver sdmx21 = MockedDriver
                 .builder()
-                .name("sdmx21")
+                .id("sdmx21")
                 .rank(WRAPPED_RANK)
                 .available(true)
                 .customSource(nbb)
@@ -174,11 +174,11 @@ public class SdmxWebManagerTest {
     public void testGetDefaultSources() {
         SdmxWebSource source1a = SdmxWebSource.builder().id("s1").driver("dX").endpointOf("http://abc").build();
         SdmxWebSource source2 = SdmxWebSource.builder().id("s2").driver("dX").endpointOf("http://abc").build();
-        WebDriver driverX = MockedDriver.builder().name("dX").rank(WRAPPED_RANK).available(true).customSource(source1a).customSource(source2).build();
+        WebDriver driverX = MockedDriver.builder().id("dX").rank(WRAPPED_RANK).available(true).customSource(source1a).customSource(source2).build();
 
         SdmxWebSource source1b = SdmxWebSource.builder().id("s1").driver("dY").endpointOf("http://xyz").build();
         SdmxWebSource source3 = SdmxWebSource.builder().id("s3").driver("dY").endpointOf("http://xyz").build();
-        WebDriver driverY = MockedDriver.builder().name("dY").rank(NATIVE_RANK).available(true).customSource(source1b).customSource(source3).build();
+        WebDriver driverY = MockedDriver.builder().id("dY").rank(NATIVE_RANK).available(true).customSource(source1b).customSource(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
                 .containsExactly(source1a, source2, source3);
@@ -202,7 +202,7 @@ public class SdmxWebManagerTest {
 
         WebDriver driver1 = MockedDriver
                 .builder()
-                .name("d1")
+                .id("d1")
                 .rank(WRAPPED_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
@@ -211,7 +211,7 @@ public class SdmxWebManagerTest {
 
         WebDriver driver2 = MockedDriver
                 .builder()
-                .name("d2")
+                .id("d2")
                 .rank(NATIVE_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
@@ -282,7 +282,7 @@ public class SdmxWebManagerTest {
             .build();
     private final WebDriver sampleDriver = MockedDriver
             .builder()
-            .name("repoDriver")
+            .id("repoDriver")
             .rank(0)
             .available(true)
             .repo(sample, EnumSet.allOf(Feature.class))

@@ -19,7 +19,7 @@ public final class MockedDriver implements WebDriver {
 
     @lombok.Getter
     @lombok.Builder.Default
-    private final String name = "mockedDriver";
+    private final String id = "mockedDriver";
 
     @lombok.Getter
     @lombok.Builder.Default
@@ -63,7 +63,7 @@ public final class MockedDriver implements WebDriver {
     }
 
     private void checkSource(SdmxWebSource source) throws IllegalArgumentException {
-        if (!source.getDriver().equals(name)) {
+        if (!source.getDriver().equals(id)) {
             throw new IllegalArgumentException(source.getDriver());
         }
     }
@@ -72,14 +72,14 @@ public final class MockedDriver implements WebDriver {
         return repos
                 .keySet()
                 .stream()
-                .map(repo -> sourceOf(repo.getName(), getName(), repo));
+                .map(repo -> sourceOf(repo.getName(), getId(), repo));
     }
 
-    public static SdmxWebSource sourceOf(String name, String driverName, DataRepository repo) {
+    public static SdmxWebSource sourceOf(String name, String driverId, DataRepository repo) {
         return SdmxWebSource
                 .builder()
                 .id(name)
-                .driver(driverName)
+                .driver(driverId)
                 .endpointOf(repo.getName())
                 .build();
     }

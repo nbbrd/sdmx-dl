@@ -45,7 +45,7 @@ public final class DotStatDriver2 implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_DOTSTAT)
+            .id(RI_DOTSTAT)
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(DotStatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)

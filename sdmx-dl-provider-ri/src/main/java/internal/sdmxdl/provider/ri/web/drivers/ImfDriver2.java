@@ -58,7 +58,7 @@ public final class ImfDriver2 implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_IMF)
+            .id(RI_IMF)
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(ImfDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)

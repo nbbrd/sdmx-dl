@@ -13,6 +13,11 @@ final class ConstantAuthenticator implements WebAuthenticator {
     private final PasswordAuthentication user;
 
     @Override
+    public @NonNull String getId() {
+        return "CONSTANT";
+    }
+
+    @Override
     public boolean isAvailable() {
         return true;
     }
