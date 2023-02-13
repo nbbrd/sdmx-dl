@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.9] - 2023-02-13
+
+This is the ninth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings the API closer to the SDMX standard. It fixes an important problem with Eurostat. It also adds two
+proof of concept for future use.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
 ### Added
 
 - ![API] Add support of time intervals in observations [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
@@ -24,7 +35,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Rename field `Attribute#label` as `Attribute#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
 - ![API] Rename field `DataStructure#label` as `DataStructure#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
 - ![API] Rename field `SdmxWebSource#name` as `SdmxWebSource#id` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
-- ![API] Rename field `SdmxWebSource#description` as `SdmxWebSource#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
+- ![API] Rename field `SdmxWebSource#description`
+  as `SdmxWebSource#name` [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
 - ![API] Set field `Dataflow#description` as optional [#395](https://github.com/nbbrd/sdmx-dl/issues/395)
 - ![API] Set field `Obs#getPeriod` as `TimeInterval` [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
 - ![FORMAT] Improve parsing of time formats [#394](https://github.com/nbbrd/sdmx-dl/issues/394)
@@ -319,7 +331,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...HEAD
+
+[3.0.0-beta.9]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...v3.0.0-beta.9
 
 [3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
 
