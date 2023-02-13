@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.10] - 2023-02-13
+
+This is a bugfix release for the deployment of v3.0.0-beta.9.  
+See v3.0.0-beta.9 for complete changelog.
+
+### Fixed
+
+- Fix missing javadoc resource
+
 ## [3.0.0-beta.9] - 2023-02-13
 
 This is the ninth beta release of **sdmx-dl**.  
@@ -331,7 +340,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...HEAD
+
+[3.0.0-beta.10]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...v3.0.0-beta.10
 
 [3.0.0-beta.9]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...v3.0.0-beta.9
 
