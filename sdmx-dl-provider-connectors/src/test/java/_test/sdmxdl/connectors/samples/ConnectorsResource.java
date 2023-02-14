@@ -23,6 +23,7 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.client.Parser;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import it.bancaditalia.oss.sdmx.util.LocalizedText;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
@@ -150,9 +151,9 @@ public class ConnectorsResource {
         Dataflow result = new Dataflow(
                 o.getId(),
                 o.getAgency(),
-                o.getVersion());
+                o.getVersion(),
+                new LocalizedText(o.getName()));
         result.setDsdIdentifier(new SDMXReference(o.getId(), o.getAgency(), o.getVersion()));
-        result.setName(o.getName());
         return result;
     }
 
