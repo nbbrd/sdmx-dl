@@ -20,7 +20,10 @@ import internal.sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
-import internal.util.http.*;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.io.Resource;
@@ -29,7 +32,6 @@ import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataflowRef;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -57,7 +59,6 @@ import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
-import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
  * @author Philippe Charles
@@ -105,30 +106,19 @@ public final class EurostatDriver2 implements WebDriver {
                 c.getLanguages(),
                 ObsParser::newDefault,
                 getHttpClient(s, c),
-                new EurostatRestQueries(),
+                new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
                 false
         );
     }
 
-    private static InterceptingClient getHttpClient(SdmxWebSource s, WebContext c) {
+    private static HttpClient getHttpClient(SdmxWebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
         long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
-        return new InterceptingClient(RiHttpUtils.newClient(getContext(s, c)), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries));
-    }
-
-    private static HttpContext getContext(SdmxWebSource s, WebContext c) {
-        return fixCompression(RiHttpUtils.newContext(s, c));
-    }
-
-    @SdmxFix(id = 1, category = QUERY, cause = "Agency id must be ESTAT instead of 'all'")
-    private static DataflowRef fixAgencyId(DataflowRef ref) {
-        return DataflowRef.of("ESTAT", ref.getId(), ref.getVersion());
-    }
-
-    @SdmxFix(id = 2, category = PROTOCOL, cause = "SSL exception if backend is schannel and compression requested")
-    private static HttpContext fixCompression(HttpContext context) {
-        return context.toBuilder().clearDecoders().build();
+        return new InterceptingClient(
+                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
+                (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)
+        );
     }
 
     @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
@@ -181,23 +171,6 @@ public final class EurostatDriver2 implements WebDriver {
             Thread.sleep(timeInMillis);
         } catch (InterruptedException ex) {
             throw new IOException(ex);
-        }
-    }
-
-    private static final class EurostatRestQueries extends Sdmx21RestQueries {
-
-        public EurostatRestQueries() {
-            super(false);
-        }
-
-        @Override
-        public URLQueryBuilder getFlowsQuery(URL endpoint) {
-            return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, fixAgencyId(FLOWS));
-        }
-
-        @Override
-        public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
-            return super.getFlowQuery(endpoint, fixAgencyId(ref));
         }
     }
 

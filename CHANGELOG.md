@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- ![PROVIDER] Improve Eurostat driver [#416](https://github.com/nbbrd/sdmx-dl/issues/416)
+
 ## [3.0.0-beta.10] - 2023-02-13
 
 This is a bugfix release for the deployment of v3.0.0-beta.9.  
