@@ -27,6 +27,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static sdmxdl.DataDetail.*;
+
 /**
  * Utility class used by JDemetra+ plugin.
  *
@@ -39,8 +41,8 @@ public class SdmxCubeUtil {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
-        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
-                ? request(conn, flow, node)
+        return isDataQueryDetailSupported(conn)
+                ? request(conn, flow, node, NO_DATA)
                 : computeKeys(conn, flow, node);
     }
 
@@ -48,8 +50,8 @@ public class SdmxCubeUtil {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
-        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
-                ? requestWithData(conn, flow, node)
+        return isDataQueryDetailSupported(conn)
+                ? request(conn, flow, node, FULL)
                 : computeKeysAndRequestData(conn, flow, node);
     }
 
@@ -57,7 +59,7 @@ public class SdmxCubeUtil {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
-        try (Stream<Series> stream = request(conn, flow, leaf)) {
+        try (Stream<Series> stream = request(conn, flow, leaf, NO_DATA)) {
             return stream.findFirst();
         }
     }
@@ -66,7 +68,7 @@ public class SdmxCubeUtil {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
-        try (Stream<Series> stream = requestWithData(conn, flow, leaf)) {
+        try (Stream<Series> stream = request(conn, flow, leaf, FULL)) {
             return stream.findFirst();
         }
     }
@@ -81,11 +83,10 @@ public class SdmxCubeUtil {
         if (!node.equals(Key.ALL) && !node.isWildcard(dimensionIndex)) {
             throw new IllegalArgumentException("Expecting wildcard on dimensionIndex");
         }
-        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)
-                ? request(conn, flow, node).map(series -> series.getKey().get(dimensionIndex)).distinct()
+        return isDataQueryDetailSupported(conn)
+                ? request(conn, flow, node, SERIES_KEYS_ONLY).map(series -> series.getKey().get(dimensionIndex)).distinct()
                 : computeAllPossibleChildren(conn.getStructure(flow).getDimensionList(), dimensionIndex);
     }
-
 
     public @NonNull Optional<Dimension> getDimensionById(@NonNull DataStructure dsd, @NonNull String id) {
         return dsd.getDimensions().stream().filter(dimension -> dimension.getId().equals(id)).findFirst();
@@ -101,12 +102,8 @@ public class SdmxCubeUtil {
         return OptionalInt.empty();
     }
 
-    private Stream<Series> request(Connection conn, DataflowRef flow, Key key) throws IOException {
-        return conn.getDataStream(flow, DataQuery.builder().key(key).detail(DataDetail.NO_DATA).build());
-    }
-
-    private Stream<Series> requestWithData(Connection conn, DataflowRef flow, Key key) throws IOException {
-        return conn.getDataStream(flow, DataQuery.builder().key(key).detail(DataDetail.FULL).build());
+    private Stream<Series> request(Connection conn, DataflowRef flow, Key key, DataDetail detail) throws IOException {
+        return conn.getDataStream(flow, DataQuery.builder().key(key).detail(detail).build());
     }
 
     private Stream<Series> computeKeys(Connection conn, DataflowRef flow, Key key) throws IOException {
@@ -121,7 +118,7 @@ public class SdmxCubeUtil {
     }
 
     private Map<Key, Series> dataByKey(Connection conn, DataflowRef flow, Key key) throws IOException {
-        try (Stream<Series> cursor = requestWithData(conn, flow, key)) {
+        try (Stream<Series> cursor = request(conn, flow, key, FULL)) {
             return cursor.collect(Collectors.toMap(Series::getKey, Function.identity()));
         }
     }
@@ -160,5 +157,9 @@ public class SdmxCubeUtil {
 
     private Series emptySeriesOf(Key key) {
         return Series.builder().key(key).build();
+    }
+
+    private static boolean isDataQueryDetailSupported(Connection conn) throws IOException {
+        return conn.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL);
     }
 }
