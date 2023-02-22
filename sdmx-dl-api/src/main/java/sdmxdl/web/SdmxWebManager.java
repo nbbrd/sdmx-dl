@@ -217,7 +217,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     private static IOException newMissingSource(String name) {
-        return new IOException("Missing " + SdmxWebManager.class.getSimpleName() + " '" + name + "'");
+        return new IOException("Missing source '" + name + "'");
     }
 
     private static <T> Collector<T, ?, T> reducingByFirst() {
