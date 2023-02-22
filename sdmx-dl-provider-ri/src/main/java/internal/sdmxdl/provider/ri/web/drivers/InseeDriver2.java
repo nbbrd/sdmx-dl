@@ -43,6 +43,7 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -112,7 +113,7 @@ public final class InseeDriver2 implements WebDriver {
                     RiHttpUtils.newClient(s, c),
                     new Sdmx21RestQueries(false),
                     new InseeRestParsers(),
-                    true
+                    EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
             );
         }
 

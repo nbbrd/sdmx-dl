@@ -35,6 +35,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -45,7 +46,7 @@ import java.util.stream.Stream;
 public class RiRestClient implements RestClient {
 
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull WebContext c,
-                                           @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, boolean detailSupported) throws IOException {
+                                           @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
         return new RiRestClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),
@@ -54,7 +55,7 @@ public class RiRestClient implements RestClient {
                 RiHttpUtils.newClient(s, c),
                 queries,
                 parsers,
-                detailSupported);
+                supportedFeatures);
     }
 
     @lombok.Getter
@@ -65,7 +66,7 @@ public class RiRestClient implements RestClient {
     protected final HttpClient httpClient;
     protected final RiRestQueries queries;
     protected final RiRestParsers parsers;
-    protected final boolean detailSupported;
+    protected final Set<Feature> supportedFeatures;
 
     @Override
     public @NonNull List<Dataflow> getFlows() throws IOException {
@@ -93,8 +94,8 @@ public class RiRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() {
-        return detailSupported;
+    public Set<Feature> getSupportedFeatures() {
+        return supportedFeatures;
     }
 
     @Override

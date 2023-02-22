@@ -39,8 +39,10 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -170,9 +172,11 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() {
+    public Set<Feature> getSupportedFeatures() {
         return connector instanceof HasDetailSupported
-                && ((HasDetailSupported) connector).isDetailSupported();
+                && ((HasDetailSupported) connector).isDetailSupported()
+                ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
+                : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
     }
 
     @Override

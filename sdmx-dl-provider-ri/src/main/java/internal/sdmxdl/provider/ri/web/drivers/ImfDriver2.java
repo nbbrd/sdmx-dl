@@ -24,14 +24,12 @@ import lombok.NonNull;
 import nbbrd.io.FileParser;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.*;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -41,11 +39,14 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
  * @author Philippe Charles
@@ -76,8 +77,11 @@ public final class ImfDriver2 implements WebDriver {
             .build();
 
     private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(s, c, new ImfQueries(), new ImfParsers(), false);
+        return RiRestClient.of(s, c, new ImfQueries(), new ImfParsers(), IMF_FEATURES);
     }
+
+    @SdmxFix(id = 1, category = QUERY, cause = "Data detail parameter not supported")
+    private static final Set<Feature> IMF_FEATURES = EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
 
     private static final class ImfQueries extends DotStatRestQueries {
 

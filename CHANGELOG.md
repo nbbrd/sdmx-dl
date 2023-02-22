@@ -7,9 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
+
 ### Changed
 
 - ![PROVIDER] Improve Eurostat driver [#416](https://github.com/nbbrd/sdmx-dl/issues/416)
+- ![PROVIDER] Add support of `DATA_QUERY_ALL_KEYWORD` feature in RI
+
+### Removed
+
+- ![API] Remove feature descriptor `DATA_QUERY_KEY`
 
 ## [3.0.0-beta.10] - 2023-02-13
 

@@ -14,6 +14,7 @@ import tests.sdmxdl.format.xml.SdmxXmlSources;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.EnumSet;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
@@ -91,7 +92,7 @@ public class RiRestClientTest {
                 executor,
                 new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
-                true
+                EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
         );
     }
 

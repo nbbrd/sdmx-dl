@@ -28,6 +28,7 @@ public class Config {
                 .toBuilder()
                 .network(getNetwork())
                 .cache(getCache())
+                .eventListener((source, msg) -> System.out.println(source.getId() + ": " + msg))
                 .build();
     }
 

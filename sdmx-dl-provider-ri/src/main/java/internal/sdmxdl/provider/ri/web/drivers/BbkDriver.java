@@ -21,12 +21,10 @@ import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import internal.util.http.URLQueryBuilder;
-import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestConnector;
@@ -37,7 +35,8 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.stream.Stream;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
@@ -56,7 +55,7 @@ public final class BbkDriver implements WebDriver {
             .builder()
             .id(RI_BBK)
             .rank(NATIVE_RANK)
-            .connector(RestConnector.of(BbkRestClient::new))
+            .connector(RestConnector.of(BbkDriver::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .defaultDialect(DIALECT)
             .source(SdmxWebSource
@@ -72,37 +71,21 @@ public final class BbkDriver implements WebDriver {
                     .build())
             .build();
 
-    @VisibleForTesting
-    static final class BbkRestClient extends RiRestClient {
-
-        BbkRestClient(SdmxWebSource s, WebContext c) throws IOException {
-            super(
-                    Marker.of(s),
-                    s.getEndpoint().toURL(),
-                    c.getLanguages(),
-                    ObsParser::newDefault,
-                    RiHttpUtils.newClient(s, c),
-                    new BbkQueries(),
-                    new Sdmx21RestParsers(),
-                    true);
-        }
-
-        @Override
-        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-            return super.getData(fixDataRef(ref, dsd), dsd);
-        }
-
-        private DataRef fixDataRef(DataRef ref, DataStructure dsd) {
-            return ref.getQuery().getKey().equals(Key.ALL)
-                    ? DataRef.of(ref.getFlowRef(), DataQuery.builder().key(alternateAllOf(dsd)).detail(ref.getQuery().getDetail()).build())
-                    : ref;
-        }
-
-        @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
-        private Key alternateAllOf(DataStructure dsd) {
-            return Key.of(new String[dsd.getDimensions().size()]);
-        }
+    private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+        return new RiRestClient(
+                Marker.of(s),
+                s.getEndpoint().toURL(),
+                c.getLanguages(),
+                ObsParser::newDefault,
+                RiHttpUtils.newClient(s, c),
+                new BbkQueries(),
+                new Sdmx21RestParsers(),
+                BBK_FEATURES
+        );
     }
+
+    @SdmxFix(id = 6, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
+    private static final Set<Feature> BBK_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
     @VisibleForTesting
     static final class BbkQueries extends Sdmx21RestQueries {

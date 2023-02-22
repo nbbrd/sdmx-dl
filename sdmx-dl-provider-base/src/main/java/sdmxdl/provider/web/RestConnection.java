@@ -25,7 +25,6 @@ import sdmxdl.provider.Validator;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -73,27 +72,31 @@ final class RestConnection implements Connection {
         checkState();
 
         Dataflow dataflow = lookupFlow(flowRef);
-        DataStructure structure = client.getStructure(dataflow.getStructureRef());
-        checkKey(query.getKey(), structure);
+        DataStructure dsd = client.getStructure(dataflow.getStructureRef());
+        checkKey(query.getKey(), dsd);
 
-        Set<Feature> features = getSupportedFeatures();
+        DataQuery realQuery = deriveDataQuery(query, getSupportedFeatures(), dsd);
 
-        DataQuery realQuery = DataQuery
-                .builder()
-                .key(features.contains(Feature.DATA_QUERY_KEY) ? query.getKey() : Key.ALL)
-                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL)
-                .build();
-
-        Stream<Series> result = client.getData(DataRef.of(dataflow.getRef(), realQuery), structure);
+        Stream<Series> result = client.getData(DataRef.of(dataflow.getRef(), realQuery), dsd);
 
         return realQuery.equals(query) ? result : query.execute(result);
     }
 
+    private static DataQuery deriveDataQuery(DataQuery query, Set<Feature> features, DataStructure dsd) {
+        return DataQuery
+                .builder()
+                .key(features.contains(Feature.DATA_QUERY_ALL_KEYWORD) || !Key.ALL.equals(query.getKey()) ? query.getKey() : alternateAllOf(dsd))
+                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL)
+                .build();
+    }
+
+    private static Key alternateAllOf(DataStructure dsd) {
+        return Key.of(new String[dsd.getDimensions().size()]);
+    }
+
     @Override
     public @NonNull Set<Feature> getSupportedFeatures() throws IOException {
-        return client.isDetailSupported()
-                ? EnumSet.of(Feature.DATA_QUERY_KEY, Feature.DATA_QUERY_DETAIL)
-                : EnumSet.of(Feature.DATA_QUERY_KEY);
+        return client.getSupportedFeatures();
     }
 
     @Override

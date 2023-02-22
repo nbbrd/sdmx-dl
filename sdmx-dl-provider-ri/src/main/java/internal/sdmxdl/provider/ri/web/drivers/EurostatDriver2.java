@@ -32,6 +32,7 @@ import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Feature;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -49,8 +50,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -59,6 +62,7 @@ import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
  * @author Philippe Charles
@@ -108,9 +112,12 @@ public final class EurostatDriver2 implements WebDriver {
                 getHttpClient(s, c),
                 new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
-                false
+                ESTAT_FEATURES
         );
     }
+
+    @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
+    private static final Set<Feature> ESTAT_FEATURES = Collections.emptySet(); //EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
     private static HttpClient getHttpClient(SdmxWebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());

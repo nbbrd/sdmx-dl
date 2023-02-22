@@ -20,6 +20,7 @@ import internal.sdmxdl.provider.ri.web.RiRestClient;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Feature;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -28,6 +29,8 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
@@ -279,14 +282,23 @@ public final class Sdmx21Driver2 implements WebDriver {
             .build();
 
     private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(
-                s, c,
-                Sdmx21RestQueries
-                        .builder()
-                        .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()))
-                        .build(),
-                new Sdmx21RestParsers(),
-                DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
-        );
+        return RiRestClient.of(s, c, getQueries(s), getParsers(s), getSupportedFeatures(s));
+    }
+
+    private static Sdmx21RestQueries getQueries(SdmxWebSource s) {
+        return Sdmx21RestQueries
+                .builder()
+                .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()))
+                .build();
+    }
+
+    private static Sdmx21RestParsers getParsers(SdmxWebSource s) {
+        return new Sdmx21RestParsers();
+    }
+
+    private static Set<Feature> getSupportedFeatures(SdmxWebSource s) {
+        return DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
+                ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
+                : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
     }
 }

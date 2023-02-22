@@ -21,7 +21,14 @@ package sdmxdl;
  */
 public enum Feature {
 
-    DATA_QUERY_KEY,
+    /**
+     * Describe the ability to query data using the 'all' keyword as key
+     */
+    DATA_QUERY_ALL_KEYWORD,
+
+    /**
+     * Describe the ability to query data with a specified detail
+     */
     DATA_QUERY_DETAIL
 
 }

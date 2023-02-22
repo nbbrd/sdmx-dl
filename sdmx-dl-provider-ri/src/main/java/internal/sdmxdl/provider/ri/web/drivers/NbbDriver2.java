@@ -30,6 +30,7 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
+import sdmxdl.Feature;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
@@ -43,6 +44,7 @@ import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.EnumSet;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
@@ -96,7 +98,7 @@ public final class NbbDriver2 implements WebDriver {
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),
                 new DotStatRestParsers(),
-                false);
+                EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD));
     }
 
     @SdmxFix(id = 2, category = PROTOCOL, cause = "Some internal errors redirect to an HTML page")

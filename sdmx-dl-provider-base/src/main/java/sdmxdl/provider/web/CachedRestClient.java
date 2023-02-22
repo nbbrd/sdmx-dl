@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -148,8 +149,8 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() throws IOException {
-        return delegate.isDetailSupported();
+    public Set<Feature> getSupportedFeatures() throws IOException {
+        return delegate.getSupportedFeatures();
     }
 
     @Override
