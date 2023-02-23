@@ -50,7 +50,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -97,6 +100,36 @@ public final class EurostatDriver2 implements WebDriver {
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_COMP")
+                    .name("en", "European Commission - Directorate General for Competition")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_EMPL")
+                    .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_GROW")
+                    .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow")
                     .build())
             .build();
 

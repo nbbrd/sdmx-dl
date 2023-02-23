@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
+- ![SOURCE] Add sources from Directorates General of the European Commission [#414](https://github.com/nbbrd/sdmx-dl/issues/414)
 
 ### Fixed
 
