@@ -33,9 +33,9 @@
         </flow>
     </source>
     <source name="ESCAP" flowCount="2..">
-        <flow ref="DF_ESCAP_SDG_Dataflow" dimCount="4">
+        <flow ref="SDG_Dataflow" dimCount="4">
             <data digest="ESCAP"
-                  key="..G01_01_01.A" seriesCount="523.." obsCount="3841.."/>
+                  key="Europe.G01_01_01..A" seriesCount="6.." obsCount="88.."/>
         </flow>
     </source>
     <source name="ESTAT" flowCount="6283..">

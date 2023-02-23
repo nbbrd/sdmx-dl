@@ -11,6 +11,11 @@ public class Marker implements CharSequence {
     @lombok.experimental.Delegate(types = CharSequence.class)
     @NonNull String content;
 
+    @Override
+    public String toString() {
+        return content;
+    }
+
     public static @NonNull Marker of(@NonNull SdmxWebSource s) {
         return new Marker(s.getDriver() + ":" + s.getId());
     }
