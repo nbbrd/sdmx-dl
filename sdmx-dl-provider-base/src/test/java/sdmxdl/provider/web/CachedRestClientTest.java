@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.TypedId;
+import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
@@ -40,6 +41,8 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.provider.web.CachedRestClient.getBase;
 import static tests.sdmxdl.api.KeyAssert.keys;
 import static tests.sdmxdl.api.RepoSamples.*;
 
@@ -176,5 +179,26 @@ public class CachedRestClientTest {
             method.acceptWithIO(Key.parse("M..INDUSTRY"));
             assertThat(ctx.getCount()).hasValue(2);
         }
+    }
+
+    @Test
+    public void testGetBase() {
+        SdmxWebSource s1 = SdmxWebSource
+                .builder()
+                .id("id1")
+                .driver("driver1")
+                .endpointOf("http://localhost/rest")
+                .build();
+
+        assertThat(getBase(s1, ANY))
+                .hasToString("cache:rest/id1/-1698165431/*")
+                .isEqualTo(getBase(s1, ANY))
+                .isNotEqualTo(getBase(s1, LanguagePriorityList.parse("fr")))
+                .isNotEqualTo(getBase(s1.toBuilder().id("id2").build(), ANY))
+                .isNotEqualTo(getBase(s1.toBuilder().driver("driver2").build(), ANY))
+                .isNotEqualTo(getBase(s1.toBuilder().endpointOf("http://localhost/stuff").build(), ANY))
+                .isNotEqualTo(getBase(s1.toBuilder().endpointOf("http://nbb.be/rest").build(), ANY))
+                .isNotEqualTo(getBase(s1.toBuilder().property("k", "v").build(), ANY))
+        ;
     }
 }

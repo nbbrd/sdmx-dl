@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![PROVIDER] Fix URL squashing in curl backend [#417](https://github.com/nbbrd/sdmx-dl/issues/417)
+- ![PROVIDER] Fix cache when two sources share the same host [#413](https://github.com/nbbrd/sdmx-dl/issues/413)
 
 ### Changed
 
