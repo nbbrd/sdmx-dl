@@ -105,6 +105,9 @@ public class CurlTest {
 
         assertThat(new Curl.CurlCommandBuilder().maxRedirs(15).build())
                 .containsExactly("curl", "--max-redirs", "15");
+
+        assertThat(new Curl.CurlCommandBuilder().pathAsIs().build())
+                .containsExactly("curl", "--path-as-is");
     }
 
     @Test

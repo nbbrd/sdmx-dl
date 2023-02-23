@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
 
+### Fixed
+
+- ![PROVIDER] Fix URL squashing in curl backend [#417](https://github.com/nbbrd/sdmx-dl/issues/417)
+
 ### Changed
 
 - ![API] Improve request for available key codes

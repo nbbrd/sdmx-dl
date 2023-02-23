@@ -121,6 +121,7 @@ public final class CurlHttpURLConnection extends HttpURLConnection {
     String[] createCurlCommand() {
         return new CurlCommandBuilder()
                 .request(getRequestMethod())
+                .pathAsIs()
                 .url(getURL())
                 .http1_1()
                 .silent(true)

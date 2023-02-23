@@ -212,6 +212,11 @@ class Curl {
             return push("--max-redirs").push(Integer.toString(maxRedirs));
         }
 
+        @CurlMinVersion("7.42.0")
+        public CurlCommandBuilder pathAsIs() {
+            return push("--path-as-is");
+        }
+
         public String[] build() {
             return items.toArray(new String[0]);
         }
