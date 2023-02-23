@@ -50,10 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -117,7 +114,7 @@ public final class EurostatDriver2 implements WebDriver {
     }
 
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
-    private static final Set<Feature> ESTAT_FEATURES = Collections.emptySet(); //EnumSet.of(Feature.DATA_QUERY_DETAIL);
+    private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
     private static HttpClient getHttpClient(SdmxWebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
