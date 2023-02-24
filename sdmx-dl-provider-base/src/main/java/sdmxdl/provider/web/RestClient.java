@@ -41,7 +41,7 @@ public interface RestClient extends HasMarker {
 
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
-    Set<Feature> getSupportedFeatures() throws IOException;
+    @NonNull Set<Feature> getSupportedFeatures() throws IOException;
 
     void testClient() throws IOException;
 }

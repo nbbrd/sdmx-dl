@@ -65,7 +65,7 @@ public final class XRepoRestClient implements RestClient {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
-                .orElseThrow(() -> CommonSdmxExceptions.missingData(this, ref.getFlowRef()));
+                .orElseGet(Stream::empty);
     }
 
     @Override

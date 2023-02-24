@@ -26,6 +26,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Pacific [#418](https://github.com/nbbrd/sdmx-dl/issues/418)
 - ![PROVIDER] Improve Eurostat driver [#416](https://github.com/nbbrd/sdmx-dl/issues/416)
 - ![PROVIDER] Add support of `DATA_QUERY_ALL_KEYWORD` feature in RI
+- ![PROVIDER] Replace error by empty stream when no data is available
 
 ### Removed
 

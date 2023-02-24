@@ -145,6 +145,10 @@
             <data digest="SGR"
                   key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" seriesCount="1.." obsCount="26.."/>
         </flow>
+        <flow ref="ESTAT,NAMAIN_IDC_N,1.10" dimCount="14">
+            <data digest="SGR: no data available should return empty stream"
+                  key="............." seriesCount="0" obsCount="0"/>
+        </flow>
     </source>
     <source name="SIMEL" flowCount="77..">
         <flow ref="DF_AUS_TAS_SEX_EDA" dimCount="7">

@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
+import internal.sdmxdl.provider.ri.web.*;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
@@ -152,6 +149,7 @@ public final class EurostatDriver2 implements WebDriver {
                 getHttpClient(s, c),
                 new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
+                Sdmx21RestErrors.DEFAULT,
                 ESTAT_FEATURES
         );
     }

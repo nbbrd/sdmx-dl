@@ -56,20 +56,6 @@ public class CommonSdmxExceptionsTest {
     }
 
     @Test
-    public void testMissingData() {
-        assertThatNullPointerException()
-                .isThrownBy(() -> missingData(null, DATAFLOW_REF));
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> missingData(() -> SOURCE, null));
-
-        assertThat(missingData(() -> SOURCE, DATAFLOW_REF))
-                .hasNoCause()
-                .hasMessageContainingAll(SOURCE)
-                .hasMessageContaining(DATAFLOW_REF.getId());
-    }
-
-    @Test
     public void testMissingCodelist() {
         assertThatNullPointerException()
                 .isThrownBy(() -> missingCodelist(null, CODELIST_REF));

@@ -22,22 +22,23 @@ import internal.util.http.HttpResponse;
 import internal.util.http.HttpResponseException;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static sdmxdl.provider.CommonSdmxExceptions.*;
+import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 
 /**
  * @author Philippe Charles
@@ -55,6 +56,7 @@ public class RiRestClient implements RestClient {
                 RiHttpUtils.newClient(s, c),
                 queries,
                 parsers,
+                Sdmx21RestErrors.DEFAULT,
                 supportedFeatures);
     }
 
@@ -66,6 +68,7 @@ public class RiRestClient implements RestClient {
     protected final HttpClient httpClient;
     protected final RiRestQueries queries;
     protected final RiRestParsers parsers;
+    protected final RiRestErrors errors;
     protected final Set<Feature> supportedFeatures;
 
     @Override
@@ -85,7 +88,7 @@ public class RiRestClient implements RestClient {
 
     @Override
     public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
-        return getData(getDataQuery(ref, dsd.getRef()), dsd).asCloseableStream();
+        return getData(getDataQuery(ref, dsd.getRef()), dsd);
     }
 
     @Override
@@ -94,7 +97,7 @@ public class RiRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() {
+    public @NonNull Set<Feature> getSupportedFeatures() {
         return supportedFeatures;
     }
 
@@ -115,6 +118,11 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getFlowsParser(response.getContentType(), langs)
                     .parseStream(response::getBody);
+        } catch (HttpResponseException ex) {
+            if (errors.getFlowsError(ex) == CLIENT_NO_RESULTS_FOUND) {
+                return Collections.emptyList();
+            }
+            throw ex;
         }
     }
 
@@ -130,10 +138,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getFlowParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
+                    .orElseThrow(() -> missingFlow(this, ref));
         } catch (HttpResponseException ex) {
-            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingFlow(this, ref);
+            if (errors.getFlowError(ex) == CLIENT_NO_RESULTS_FOUND) {
+                throw missingFlow(this, ref);
             }
             throw ex;
         }
@@ -151,10 +159,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getStructureParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));
+                    .orElseThrow(() -> missingStructure(this, ref));
         } catch (HttpResponseException ex) {
-            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingStructure(this, ref);
+            if (errors.getStructureError(ex) == CLIENT_NO_RESULTS_FOUND) {
+                throw missingStructure(this, ref);
             }
             throw ex;
         }
@@ -166,12 +174,20 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected DataCursor getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
+    protected Stream<Series> getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getDataTypes(), langs);
-        HttpResponse response = httpClient.send(request);
-        return parsers
-                .getDataParser(response.getContentType(), dsd, obsFactory)
-                .parseStream(response::asDisconnectingInputStream);
+        try {
+            HttpResponse response = httpClient.send(request);
+            return parsers
+                    .getDataParser(response.getContentType(), dsd, obsFactory)
+                    .parseStream(response::asDisconnectingInputStream)
+                    .asCloseableStream();
+        } catch (HttpResponseException ex) {
+            if (errors.getDataError(ex) == CLIENT_NO_RESULTS_FOUND) {
+                return Stream.empty();
+            }
+            throw ex;
+        }
     }
 
     @NonNull
@@ -186,10 +202,10 @@ public class RiRestClient implements RestClient {
             return parsers
                     .getCodelistParser(response.getContentType(), langs, ref)
                     .parseStream(response::getBody)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingCodelist(this, ref));
+                    .orElseThrow(() -> missingCodelist(this, ref));
         } catch (HttpResponseException ex) {
-            if (ex.getResponseCode() == HttpsURLConnection.HTTP_NOT_FOUND) {
-                throw CommonSdmxExceptions.missingCodelist(this, ref);
+            if (errors.getCodelistError(ex) == CLIENT_NO_RESULTS_FOUND) {
+                throw missingCodelist(this, ref);
             }
             throw ex;
         }

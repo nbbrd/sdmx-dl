@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
+import internal.sdmxdl.provider.ri.web.*;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -113,6 +110,7 @@ public final class InseeDriver2 implements WebDriver {
                     RiHttpUtils.newClient(s, c),
                     new Sdmx21RestQueries(false),
                     new InseeRestParsers(),
+                    Sdmx21RestErrors.DEFAULT,
                     EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
             );
         }

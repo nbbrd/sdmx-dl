@@ -92,6 +92,7 @@ public class RiRestClientTest {
                 executor,
                 new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
+                Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
         );
     }

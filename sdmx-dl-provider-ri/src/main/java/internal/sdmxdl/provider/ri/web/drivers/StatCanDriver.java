@@ -6,6 +6,7 @@ import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
@@ -125,18 +126,23 @@ public final class StatCanDriver implements WebDriver {
             return client.getStructAndData(productId).getDataSet(ref);
         }
 
+        @MightBePromoted
+        private static DataSet emptyDataSet(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+            return DataSet.builder().ref(flowRef).query(query).build();
+        }
+
         @Override
         public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
-                    .getData(query);
+                    .map(dataSet -> dataSet.getData(query))
+                    .orElseGet(() -> emptyDataSet(flowRef, query));
         }
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
             return getDataSet(flowRef)
-                    .orElseThrow(() -> CommonSdmxExceptions.missingData(client, flowRef))
-                    .getDataStream(query);
+                    .map(dataSet -> dataSet.getDataStream(query))
+                    .orElseGet(Stream::empty);
         }
 
         @Override

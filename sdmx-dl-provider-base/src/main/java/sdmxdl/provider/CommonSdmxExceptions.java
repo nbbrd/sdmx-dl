@@ -40,10 +40,6 @@ public final class CommonSdmxExceptions {
         return new IOException(String.format("Missing structure '%s' from '%s'", ref, source.getMarker()));
     }
 
-    public static @NonNull IOException missingData(@NonNull HasMarker source, @NonNull DataflowRef ref) {
-        return new IOException(String.format("Missing data '%s' from '%s'", ref, source.getMarker()));
-    }
-
     public static @NonNull IOException missingCodelist(@NonNull HasMarker source, @NonNull CodelistRef ref) {
         return new IOException(String.format("Missing codelist '%s' from '%s'", ref, source.getMarker()));
     }

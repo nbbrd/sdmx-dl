@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
-import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.RiRestClient;
+import internal.sdmxdl.provider.ri.web.*;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponse;
 import internal.util.http.HttpResponseException;
@@ -98,6 +95,7 @@ public final class NbbDriver2 implements WebDriver {
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),
                 new DotStatRestParsers(),
+                Sdmx21RestErrors.DEFAULT,
                 EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD));
     }
 

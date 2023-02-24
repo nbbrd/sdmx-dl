@@ -16,10 +16,7 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
+import internal.sdmxdl.provider.ri.web.*;
 import internal.util.http.URLQueryBuilder;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
@@ -80,6 +77,7 @@ public final class BbkDriver implements WebDriver {
                 RiHttpUtils.newClient(s, c),
                 new BbkQueries(),
                 new Sdmx21RestParsers(),
+                Sdmx21RestErrors.DEFAULT,
                 BBK_FEATURES
         );
     }
