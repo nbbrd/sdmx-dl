@@ -66,6 +66,12 @@
                   key="..B1GQ." seriesCount="1.." obsCount="12.."/>
         </flow>
     </source>
+    <source name="ESTAT_COMEXT" flowCount="18..">
+        <flow ref="DS-045409" dimCount="6">
+            <data digest="ESTAT_COMEXT"
+                  key=".AT.EU27_2020_EXTRA.TOTAL.." seriesCount="12.." obsCount="1500.."/>
+        </flow>
+    </source>
     <source name="ILO" flowCount="522..">
         <flow ref="DF_SDG_0852_SEX_AGE_RT" dimCount="5">
             <data digest="ILO"

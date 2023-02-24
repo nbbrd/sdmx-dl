@@ -10,7 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
-- ![SOURCE] Add sources from Directorates General of the European Commission [#414](https://github.com/nbbrd/sdmx-dl/issues/414)
+- ![SOURCE] Add sources from Directorates General of the European
+  Commission [#414](https://github.com/nbbrd/sdmx-dl/issues/414)
+- ![SOURCE] Add source from Eurostat International trade in goods [#415](https://github.com/nbbrd/sdmx-dl/issues/415)
 
 ### Fixed
 
@@ -20,7 +22,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - ![API] Improve request for available key codes
-- ![SOURCE] Improve source from Economic and Social Commission for Asia and the Pacific [#418](https://github.com/nbbrd/sdmx-dl/issues/418)
+- ![SOURCE] Improve source from Economic and Social Commission for Asia and the
+  Pacific [#418](https://github.com/nbbrd/sdmx-dl/issues/418)
 - ![PROVIDER] Improve Eurostat driver [#416](https://github.com/nbbrd/sdmx-dl/issues/416)
 - ![PROVIDER] Add support of `DATA_QUERY_ALL_KEYWORD` feature in RI
 

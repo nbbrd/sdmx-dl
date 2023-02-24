@@ -103,6 +103,16 @@ public final class EurostatDriver2 implements WebDriver {
                     .build())
             .source(SdmxWebSource
                     .builder()
+                    .id("ESTAT_COMEXT")
+                    .name("en", "Eurostat - International trade in goods statistics (ITGS)")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
+                    .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat_comext")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
                     .driver(RI_EUROSTAT)
