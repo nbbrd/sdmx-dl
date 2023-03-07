@@ -63,7 +63,7 @@ public class DebugOutputOptions extends YamlOutputOptions {
     }
 
     private static Representer getRepresenter(Class<?> rootType) {
-        Representer result = new Representer() {
+        Representer result = new Representer(new DumperOptions()) {
             {
                 this.representers.put(LocalDateTime.class, data -> representScalar(Tag.STR, ((LocalDateTime) data).toString()));
                 this.representers.put(Key.class, data -> representScalar(Tag.STR, data.toString()));
