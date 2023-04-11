@@ -39,10 +39,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -204,7 +201,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     private static IOException wrap(SdmxException ex, String format, Object... args) {
-        return new IOException(String.format(format, args), ex);
+        return new IOException(String.format(Locale.ROOT, format, args), ex);
     }
 
     private static void configure(RestSdmxClient client, SdmxWebSource source, WebContext context) {

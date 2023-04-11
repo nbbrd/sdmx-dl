@@ -17,6 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
+import java.util.Locale;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.net.HttpURLConnection.*;
@@ -199,7 +200,7 @@ public class CurlHttpURLConnectionTest {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        return new URL(String.format("%s%s", wire.baseUrl(), path));
+        return new URL(String.format(Locale.ROOT, "%s%s", wire.baseUrl(), path));
     }
 
     private static final String SAMPLE_URL = "/first.xml";

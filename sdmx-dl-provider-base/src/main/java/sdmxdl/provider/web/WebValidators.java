@@ -8,6 +8,7 @@ import sdmxdl.provider.SdmxPatterns;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
@@ -31,7 +32,7 @@ public class WebValidators {
 
     public static @NonNull Validator<SdmxWebSource> onDriverId(@NonNull String driverId) {
         return source -> source != null && !source.getDriver().equals(driverId)
-                ? String.format("Expecting driver name '%s' to be '%s'", source.getDriver(), driverId)
+                ? String.format(Locale.ROOT, "Expecting driver name '%s' to be '%s'", source.getDriver(), driverId)
                 : null;
     }
 

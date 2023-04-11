@@ -12,6 +12,7 @@ import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
+import java.util.Locale;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -88,7 +89,7 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
         private static final Duration P1Y = Duration.parse("P1Y");
 
         // JDK > 8 changed parsing behavior of Year#parse(CharSequence) to accept min 1 digit instead of 4
-        private static final DateTimeFormatter STRICT_YEAR = DateTimeFormatter.ofPattern("uuuu");
+        private static final DateTimeFormatter STRICT_YEAR = DateTimeFormatter.ofPattern("uuuu", Locale.ROOT);
     }
 
     @RepresentableAsString

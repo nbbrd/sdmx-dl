@@ -200,5 +200,5 @@ public class ConnectorsResource {
 //        }
 //    }
 
-    private final XMLInputFactory XIF = XMLInputFactory.newFactory();
+    private final XMLInputFactory XIF = XMLInputFactory.newInstance();
 }

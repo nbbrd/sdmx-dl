@@ -72,7 +72,7 @@ public class DataRepositoryTest {
     private final DataflowRef badFlowRef = DataflowRef.parse("other");
     private final Dataflow flow = Dataflow.builder().ref(goodFlowRef).structureRef(goodStructRef).name("flow1").build();
     private final DataStructure struct = DataStructure.builder().ref(goodStructRef).primaryMeasureId("").name("struct1").build();
-    private final Obs obs1 = Obs.builder().period(TimeInterval.of(LocalDateTime.now(), Duration.parse("P1M"))).value(Math.PI).build();
+    private final Obs obs1 = Obs.builder().period(TimeInterval.of(LocalDateTime.of(2010, 1, 2, 3, 4), Duration.parse("P1M"))).value(Math.PI).build();
     private final Series series = Series.builder().key(Key.of("BE")).obs(obs1).meta("hello", "world").build();
     private final DataSet dataSet = DataSet.builder().ref(goodFlowRef).series(series).build();
     private final DataRepository repo = DataRepository
