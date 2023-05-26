@@ -3,8 +3,6 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf;
 
-import "google/protobuf/timestamp.proto";
-
 message Attribute {
   string id = 1;
   string name = 2;
@@ -49,8 +47,8 @@ message DataRepository {
   repeated DataStructure structures = 2;
   repeated Dataflow flows = 3;
   repeated DataSet dataSets = 4;
-  google.protobuf.Timestamp creationTime = 5;
-  google.protobuf.Timestamp expirationTime = 6;
+  string creationTime = 5;
+  string expirationTime = 6;
 }
 
 message DataSet {

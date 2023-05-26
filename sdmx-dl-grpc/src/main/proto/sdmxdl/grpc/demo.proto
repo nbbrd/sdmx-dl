@@ -6,11 +6,10 @@ package sdmxdl.grpc;
 import "sdmxdl/format/protobuf/monitor.proto";
 import "sdmxdl/format/protobuf/repository.proto";
 import "sdmxdl/format/protobuf/source.proto";
-import "google/protobuf/empty.proto";
 
 service SdmxWebManager {
 
-  rpc GetSources(google.protobuf.Empty) returns (stream sdmxdl.format.protobuf.web.SdmxWebSource);
+  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.SdmxWebSource);
 
   rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
 
@@ -23,6 +22,9 @@ service SdmxWebManager {
   rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
 
   rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+}
+
+message Empty {
 }
 
 message SourceRequest {

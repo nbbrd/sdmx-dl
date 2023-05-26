@@ -1,7 +1,5 @@
 package sdmxdl.format.protobuf;
 
-import com.google.protobuf.Timestamp;
-
 import java.time.Instant;
 import java.util.Collection;
 import java.util.function.Function;
@@ -11,16 +9,12 @@ import java.util.stream.StreamSupport;
 @lombok.experimental.UtilityClass
 class WellKnownTypes {
 
-    public static Timestamp fromInstant(Instant value) {
-        return Timestamp
-                .newBuilder()
-                .setSeconds(value.getEpochSecond())
-                .setNanos(value.getNano())
-                .build();
+    public static String fromInstant(Instant value) {
+        return value.toString();
     }
 
-    public static Instant toInstant(Timestamp value) {
-        return Instant.ofEpochSecond(value.getSeconds(), value.getNanos());
+    public static Instant toInstant(String value) {
+        return Instant.parse(value);
     }
 
     public static <X, Y> Iterable<? extends Y> fromCollection(Collection<X> collection, Function<X, Y> converter) {

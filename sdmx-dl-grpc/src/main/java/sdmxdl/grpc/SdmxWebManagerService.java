@@ -1,6 +1,5 @@
 package sdmxdl.grpc;
 
-import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
