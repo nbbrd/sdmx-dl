@@ -4,7 +4,8 @@
     <title>sdmx-dl</title>
     <link>https://nbbrd.github.io/sdmx-dl/docs/develop/</link>
     <description>Recent content on sdmx-dl</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://nbbrd.github.io/sdmx-dl/docs/develop/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language><atom:link href="https://nbbrd.github.io/sdmx-dl/docs/develop/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installation</title>
       <link>https://nbbrd.github.io/sdmx-dl/docs/develop/cli/installation/</link>
