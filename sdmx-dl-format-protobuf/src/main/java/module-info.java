@@ -10,5 +10,5 @@ module sdmxdl.format.protobuf {
     exports sdmxdl.format.protobuf;
     exports sdmxdl.format.protobuf.web;
 
-    provides sdmxdl.format.spi.FileFormatProvider with internal.sdmxdl.format.protobuf.ProtobufProvider;
+    provides sdmxdl.format.spi.FileFormatProvider with sdmxdl.format.protobuf.ProtobufProvider;
 }

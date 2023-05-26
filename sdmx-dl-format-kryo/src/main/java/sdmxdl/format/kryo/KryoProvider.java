@@ -1,29 +1,27 @@
-package internal.sdmxdl.format.protobuf;
+package sdmxdl.format.kryo;
 
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.protobuf.ProtobufMonitors;
-import sdmxdl.format.protobuf.ProtobufRepositories;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.web.MonitorReports;
 
 @ServiceProvider
-public final class ProtobufProvider implements FileFormatProvider {
+public final class KryoProvider implements FileFormatProvider {
 
     @Override
     public @NonNull String getId() {
-        return "PROTOBUF";
+        return "KRYO";
     }
 
     @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
-        return new FileFormat<>(ProtobufMonitors.getFileParser(), ProtobufMonitors.getFileFormatter(), ".protobuf");
+        return FileFormat.of(new KryoFileFormat<>(MonitorReports.class), ".kryo");
     }
 
     @Override
     public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
-        return new FileFormat<>(ProtobufRepositories.getFileParser(), ProtobufRepositories.getFileFormatter(), ".protobuf");
+        return FileFormat.of(new KryoFileFormat<>(DataRepository.class), ".kryo");
     }
 }

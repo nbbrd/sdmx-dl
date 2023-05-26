@@ -41,11 +41,8 @@ import java.util.*;
 /**
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
-
-    public static final KryoFileFormat<DataRepository> REPOSITORY = new KryoFileFormat<>(DataRepository.class);
-    public static final KryoFileFormat<MonitorReports> MONITOR = new KryoFileFormat<>(MonitorReports.class);
+@lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
+final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
 
     @lombok.NonNull
     private final Class<T> type;
