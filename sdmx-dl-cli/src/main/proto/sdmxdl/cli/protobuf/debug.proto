@@ -7,8 +7,8 @@ import "sdmxdl/format/protobuf/source.proto";
 package sdmxdl.cli.protobuf;
 
 message ConsoleInfo {
-  string stdInEncoding = 1;
-  string stdOutEncoding = 2;
+  string std_in_encoding = 1;
+  string std_out_encoding = 2;
   int32 columns = 3;
   int32 rows = 4;
 }
@@ -39,17 +39,17 @@ message RulesConfig {
 }
 
 message RulesExpect {
-  string flowCount = 1;
-  string dimCount = 2;
-  string seriesCount = 3;
-  string obsCount = 4;
+  string flow_count = 1;
+  string dim_count = 2;
+  string series_count = 3;
+  string obs_count = 4;
 }
 
 message RulesActual {
-  int32 flowCount = 1;
-  int32 dimCount = 2;
-  int32 seriesCount = 3;
-  int32 obsCount = 4;
+  int32 flow_count = 1;
+  int32 dim_count = 2;
+  int32 series_count = 3;
+  int32 obs_count = 4;
 }
 
 message RulesSummary {

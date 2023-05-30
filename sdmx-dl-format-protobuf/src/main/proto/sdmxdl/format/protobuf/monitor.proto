@@ -12,13 +12,13 @@ enum MonitorStatus {
 message MonitorReport {
   string source = 1;
   MonitorStatus status = 2;
-  optional double uptimeRatio = 3;
-  optional int64 averageResponseTime = 4;
+  optional double uptime_ratio = 3;
+  optional int64 average_response_time = 4;
 }
 
 message MonitorReports {
-  string uriScheme = 1;
+  string uri_scheme = 1;
   repeated MonitorReport reports = 2;
-  string creationTime = 3;
-  string expirationTime = 4;
+  string creation_time = 3;
+  string expiration_time = 4;
 }
