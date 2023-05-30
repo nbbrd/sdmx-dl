@@ -230,7 +230,7 @@ public class ProtobufRepositories {
     public static Feature fromFeature(sdmxdl.Feature value) {
         switch (value) {
             case DATA_QUERY_ALL_KEYWORD:
-                return Feature.DATA_QUERY_KEY;
+                return Feature.DATA_QUERY_ALL_KEYWORD;
             case DATA_QUERY_DETAIL:
                 return Feature.DATA_QUERY_DETAIL;
             default:
@@ -240,7 +240,7 @@ public class ProtobufRepositories {
 
     public static sdmxdl.Feature toFeature(Feature value) {
         switch (value) {
-            case DATA_QUERY_KEY:
+            case DATA_QUERY_ALL_KEYWORD:
                 return sdmxdl.Feature.DATA_QUERY_ALL_KEYWORD;
             case DATA_QUERY_DETAIL:
                 return sdmxdl.Feature.DATA_QUERY_DETAIL;

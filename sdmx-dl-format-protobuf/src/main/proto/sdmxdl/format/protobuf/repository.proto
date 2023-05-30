@@ -74,7 +74,7 @@ message Dimension {
 }
 
 enum Feature {
-  DATA_QUERY_KEY = 0;
+  DATA_QUERY_ALL_KEYWORD = 0;
   DATA_QUERY_DETAIL = 1;
 }
 
