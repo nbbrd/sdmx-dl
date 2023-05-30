@@ -16,6 +16,11 @@ public final class KryoProvider implements FileFormatProvider {
     }
 
     @Override
+    public int getRank() {
+        return 400;
+    }
+
+    @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
         return FileFormat.of(new KryoFileFormat<>(MonitorReports.class), ".kryo");
     }

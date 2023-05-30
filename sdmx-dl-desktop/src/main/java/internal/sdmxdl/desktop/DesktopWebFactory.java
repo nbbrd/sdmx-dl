@@ -2,12 +2,11 @@ package internal.sdmxdl.desktop;
 
 import internal.http.curl.CurlHttpURLConnection;
 import lombok.NonNull;
-import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
+import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.format.spi.FileFormatProviderLoader;
 import sdmxdl.provider.ext.FileCache;
-import sdmxdl.web.MonitorReports;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.URLConnectionFactory;
@@ -17,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
 
-public class Config {
+public class DesktopWebFactory {
 
     static {
         System.setProperty("enableRngDriver", "true");
@@ -57,17 +56,11 @@ public class Config {
     }
 
     private static Cache getCache() {
+        FileFormatProvider fileFormatProvider = FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new);
         return FileCache
                 .builder()
-                .repositoryFormat(getRepositoryFormat())
-                .monitorFormat(getMonitorFormat()).build();
-    }
-
-    private static FileFormat<DataRepository> getRepositoryFormat() {
-        return FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new).getDataRepositoryFormat();
-    }
-
-    private static FileFormat<MonitorReports> getMonitorFormat() {
-        return FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new).getMonitorReportsFormat();
+                .repositoryFormat(FileFormat.gzip(fileFormatProvider.getDataRepositoryFormat()))
+                .monitorFormat(FileFormat.gzip(fileFormatProvider.getMonitorReportsFormat()))
+                .build();
     }
 }

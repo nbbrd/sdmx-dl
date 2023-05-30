@@ -15,7 +15,7 @@ public class ServiceDemo {
 
         Server server = ServerBuilder
                 .forPort(port)
-                .addService(new SdmxWebManagerService(SdmxWebFactory.create()))
+                .addService(new SdmxWebManagerService(GrpcWebFactory.loadManager()))
                 .intercept(new LocalhostOnly())
                 .build();
         server.start();

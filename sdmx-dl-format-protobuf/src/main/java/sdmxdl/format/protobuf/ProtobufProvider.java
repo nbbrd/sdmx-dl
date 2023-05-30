@@ -23,6 +23,11 @@ public final class ProtobufProvider implements FileFormatProvider {
     }
 
     @Override
+    public int getRank() {
+        return 300;
+    }
+
+    @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
         return new FileFormat<>(
                 onParsingStream(sdmxdl.format.protobuf.web.MonitorReports::parseFrom).andThen(ProtobufMonitors::toMonitorReports),

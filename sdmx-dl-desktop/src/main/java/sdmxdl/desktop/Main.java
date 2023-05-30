@@ -2,7 +2,7 @@ package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import ec.util.various.swing.BasicSwingLauncher;
-import internal.sdmxdl.desktop.Config;
+import internal.sdmxdl.desktop.DesktopWebFactory;
 import sdmxdl.ext.Registry;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class Main {
 
     static JComponent create() {
         MainComponent mainComponent = new MainComponent();
-        mainComponent.setSdmxManager(Config.loadManager());
+        mainComponent.setSdmxManager(DesktopWebFactory.loadManager());
         mainComponent.setRegistry(Registry.ofServiceLoader());
         return mainComponent;
     }

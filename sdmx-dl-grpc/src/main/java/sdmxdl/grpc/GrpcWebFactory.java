@@ -4,8 +4,8 @@ import internal.http.curl.CurlHttpURLConnection;
 import lombok.NonNull;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.protobuf.ProtobufProvider;
 import sdmxdl.format.spi.FileFormatProvider;
+import sdmxdl.format.spi.FileFormatProviderLoader;
 import sdmxdl.provider.ext.FileCache;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
@@ -17,9 +17,9 @@ import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
 
 @lombok.experimental.UtilityClass
-class SdmxWebFactory {
+class GrpcWebFactory {
 
-    public static SdmxWebManager create() {
+    public static SdmxWebManager loadManager() {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .network(getNetwork())
@@ -52,7 +52,7 @@ class SdmxWebFactory {
     }
 
     private static Cache getCache() {
-        FileFormatProvider fileFormatProvider = new ProtobufProvider();
+        FileFormatProvider fileFormatProvider = FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new);;
         return FileCache
                 .builder()
                 .repositoryFormat(FileFormat.gzip(fileFormatProvider.getDataRepositoryFormat()))

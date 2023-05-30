@@ -37,7 +37,7 @@ public class ServiceDemo implements Callable<Void> {
     public Void call() throws Exception {
         Server server = ServerBuilder
                 .forPort(port)
-                .addService(new SdmxWebManagerService(SdmxWebFactory.create()))
+                .addService(new SdmxWebManagerService(GrpcWebFactory.loadManager()))
                 .addService(ProtoReflectionService.newInstance())
                 .intercept(new LocalhostOnly())
                 .build();

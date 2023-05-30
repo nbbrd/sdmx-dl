@@ -27,6 +27,11 @@ public final class JsonProvider implements FileFormatProvider {
     }
 
     @Override
+    public int getRank() {
+        return 200;
+    }
+
+    @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
         return new FileFormat<>(
                 onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8),
