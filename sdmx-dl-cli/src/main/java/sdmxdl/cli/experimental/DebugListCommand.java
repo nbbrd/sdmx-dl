@@ -25,10 +25,20 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.*;
+import sdmxdl.DataDetail;
+import sdmxdl.Dataflow;
+import sdmxdl.Feature;
+import sdmxdl.Key;
+import sdmxdl.cli.protobuf.Features;
+import sdmxdl.cli.protobuf.Flows;
+import sdmxdl.cli.protobuf.Sources;
+import sdmxdl.format.protobuf.ProtobufRepositories;
+import sdmxdl.format.protobuf.ProtobufSources;
 import sdmxdl.web.SdmxWebSource;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * @author Philippe Charles
@@ -47,22 +57,43 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void sources(@Mixin WebOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(SdmxWebSource.class, web.loadManager().getSources().values());
+        nonNull(out).dumpAll(fromWebSources(web.loadManager().getSources().values()));
+    }
+
+    private static Sources fromWebSources(Collection<SdmxWebSource> value) {
+        return Sources
+                .newBuilder()
+                .addAllSources(value.stream().map(ProtobufSources::fromWebSource).collect(Collectors.toList()))
+                .build();
     }
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Dataflow.class, web.loadFlows(web.loadManager()));
+        nonNull(out).dumpAll(fromDataflows(web.loadFlows(web.loadManager())));
+    }
+
+    private static Flows fromDataflows(Collection<Dataflow> value) {
+        return Flows
+                .newBuilder()
+                .addAllFlows(value.stream().map(ProtobufRepositories::fromDataflow).collect(Collectors.toList()))
+                .build();
     }
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Series.class, web.loadSeries(web.loadManager(), Key.ALL, DataDetail.SERIES_KEYS_ONLY).getData());
+        nonNull(out).dumpAll(ProtobufRepositories.fromDataSet(web.loadSeries(web.loadManager(), Key.ALL, DataDetail.SERIES_KEYS_ONLY)));
     }
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(Feature.class, web.loadFeatures(web.loadManager()));
+        nonNull(out).dumpAll(fromFeatures(web.loadFeatures(web.loadManager())));
+    }
+
+    private static Features fromFeatures(Collection<Feature> value) {
+        return Features
+                .newBuilder()
+                .addAllFeatures(value.stream().map(ProtobufRepositories::fromFeature).collect(Collectors.toList()))
+                .build();
     }
 
     private DebugOutputOptions nonNull(DebugOutputOptions options) {

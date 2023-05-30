@@ -226,4 +226,26 @@ public class ProtobufRepositories {
                 .meta(value.getMetaMap())
                 .build();
     }
+
+    public static Feature fromFeature(sdmxdl.Feature value) {
+        switch (value) {
+            case DATA_QUERY_ALL_KEYWORD:
+                return Feature.DATA_QUERY_KEY;
+            case DATA_QUERY_DETAIL:
+                return Feature.DATA_QUERY_DETAIL;
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    public static sdmxdl.Feature toFeature(Feature value) {
+        switch (value) {
+            case DATA_QUERY_KEY:
+                return sdmxdl.Feature.DATA_QUERY_ALL_KEYWORD;
+            case DATA_QUERY_DETAIL:
+                return sdmxdl.Feature.DATA_QUERY_DETAIL;
+            default:
+                throw new RuntimeException();
+        }
+    }
 }

@@ -19,7 +19,7 @@ package sdmxdl.cli.experimental;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebFlowOptions;
 import picocli.CommandLine;
-import sdmxdl.DataStructure;
+import sdmxdl.format.protobuf.ProtobufRepositories;
 
 import java.util.concurrent.Callable;
 
@@ -38,7 +38,7 @@ public final class DebugStructCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dump(DataStructure.class, web.loadStructure(web.loadManager()));
+        output.dumpAll(ProtobufRepositories.fromDataStructure(web.loadStructure(web.loadManager())));
         return null;
     }
 }

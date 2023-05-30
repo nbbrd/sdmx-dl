@@ -1,0 +1,71 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+import "sdmxdl/format/protobuf/repository.proto";
+import "sdmxdl/format/protobuf/source.proto";
+
+package sdmxdl.cli.protobuf;
+
+message ConsoleInfo {
+  string stdInEncoding = 1;
+  string stdOutEncoding = 2;
+  int32 columns = 3;
+  int32 rows = 4;
+}
+
+message Sources {
+  repeated sdmxdl.format.protobuf.web.SdmxWebSource sources = 1;
+}
+
+message Flows {
+  repeated sdmxdl.format.protobuf.Dataflow flows = 1;
+}
+
+message Features {
+  repeated sdmxdl.format.protobuf.Feature features = 1;
+}
+
+message RulesTarget {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+}
+
+message RulesConfig {
+  string driver = 1;
+  string dialect = 2;
+  string protocol = 3;
+  string properties = 4;
+}
+
+message RulesExpect {
+  string flowCount = 1;
+  string dimCount = 2;
+  string seriesCount = 3;
+  string obsCount = 4;
+}
+
+message RulesActual {
+  int32 flowCount = 1;
+  int32 dimCount = 2;
+  int32 seriesCount = 3;
+  int32 obsCount = 4;
+}
+
+message RulesSummary {
+  string digest = 1;
+  RulesTarget target = 2;
+  RulesConfig config = 3;
+  RulesExpect expect = 4;
+  RulesActual actual = 5;
+  string errors = 6;
+  repeated string issues = 7;
+}
+
+message RulesSummaries {
+  repeated RulesSummary summaries = 1;
+}
+
+message Context {
+  map<string, string> items = 1;
+}
