@@ -1,5 +1,6 @@
 package sdmxdl.format.protobuf;
 
+import com.google.protobuf.MessageLite;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
@@ -7,12 +8,11 @@ import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.web.MonitorReports;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
-import static sdmxdl.format.protobuf.ProtobufMonitors.fromMonitorReports;
-import static sdmxdl.format.protobuf.ProtobufMonitors.toMonitorReports;
-import static sdmxdl.format.protobuf.ProtobufRepositories.fromDataRepository;
-import static sdmxdl.format.protobuf.ProtobufRepositories.toDataRepository;
 
 @ServiceProvider
 public final class ProtobufProvider implements FileFormatProvider {
@@ -25,8 +25,8 @@ public final class ProtobufProvider implements FileFormatProvider {
     @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
         return new FileFormat<>(
-                onParsingStream(resource -> toMonitorReports(sdmxdl.format.protobuf.web.MonitorReports.parseFrom(resource))),
-                onFormattingStream((value, resource) -> fromMonitorReports(value).writeTo(resource)),
+                onParsingStream(sdmxdl.format.protobuf.web.MonitorReports::parseFrom).andThen(ProtobufMonitors::toMonitorReports),
+                onFormattingStream(this::writeProtobuf).compose(ProtobufMonitors::fromMonitorReports),
                 ".protobuf"
         );
     }
@@ -34,8 +34,12 @@ public final class ProtobufProvider implements FileFormatProvider {
     @Override
     public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
         return new FileFormat<>(
-                onParsingStream(resource -> toDataRepository(sdmxdl.format.protobuf.DataRepository.parseFrom(resource))),
-                onFormattingStream((value, resource) -> fromDataRepository(value).writeTo(resource)),
+                onParsingStream(sdmxdl.format.protobuf.DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository),
+                onFormattingStream(this::writeProtobuf).compose(ProtobufRepositories::fromDataRepository),
                 ".protobuf");
+    }
+
+    private void writeProtobuf(MessageLite message, OutputStream outputStream) throws IOException {
+        message.writeTo(outputStream);
     }
 }
