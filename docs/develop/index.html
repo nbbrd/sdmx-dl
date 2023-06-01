@@ -823,7 +823,7 @@
 </blockquote>
 
 <p><img src="SDMX_logo.svg" alt="logo" width="200px" /><br>
-sdmx-dl - <strong>download SDMX data</strong><br></p>
+sdmx-dl - <strong>Easily download official statistics</strong><br></p>
 <p><a
   class="gdoc-markdown__link--raw"
   href="https://github.com/nbbrd/sdmx-dl/releases/latest"
@@ -833,20 +833,21 @@ sdmx-dl - <strong>download SDMX data</strong><br></p>
   
 /></a></p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="what-is-sdmx-dl">
-        What is sdmx-dl?
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#what-is-sdmx-dl" class="gdoc-page__anchor clip flex align-center" title="Anchor to: What is sdmx-dl?" aria-label="Anchor to: What is sdmx-dl?" href="#what-is-sdmx-dl">
+    <h2 id="about">
+        About
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#about" class="gdoc-page__anchor clip flex align-center" title="Anchor to: About" aria-label="Anchor to: About" href="#about">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
 </div>
-<p><a
-  class="gdoc-markdown__link"
-  href="https://sdmx.org/?page_id=3425"
->SDMX</a> is a standard for exchanging statistical data and <a
+<p><strong><a
   class="gdoc-markdown__link"
   href="https://github.com/nbbrd/sdmx-dl"
->sdmx-dl</a> is a tool to download that data.</p>
+>sdmx-dl</a> is a tool designed to easily download official statistics.</strong><br>
+It is mainly based on the <a
+  class="gdoc-markdown__link"
+  href="https://sdmx.org/?page_id=3425"
+>SDMX standard</a> but can be extended with other APIs as well.</p>
 <p>This project has two parts:</p>
 <ul>
 <li><a
@@ -858,69 +859,103 @@ sdmx-dl - <strong>download SDMX data</strong><br></p>
   href="cli"
 >a command-line tool</a> that allows to easily browse and download data</li>
 </ul>
+<p>Its <strong>documentation</strong> is available at <a
+  class="gdoc-markdown__link"
+  href="https://nbbrd.github.io/sdmx-dl/docs/"
+>https://nbbrd.github.io/sdmx-dl/docs/</a>.</p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="why-sdmx-dl">
-        Why sdmx-dl?
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#why-sdmx-dl" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Why sdmx-dl?" aria-label="Anchor to: Why sdmx-dl?" href="#why-sdmx-dl">
+    <h3 id="why">
+        Why?
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#why" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Why?" aria-label="Anchor to: Why?" href="#why">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
-    </h2>
+    </h3>
 </div>
-<p>SDMX is a standard but has the following issues:</p>
+<p>While being in the information age, it is surprisingly difficult to get free quality statistics, even from official sources.</p>
+<p>There are many reasons to that situation:</p>
 <ul>
-<li>Slightly different interpretation from each provider</li>
-<li>Incomplete; doesn&rsquo;t&rsquo; cover some technical details</li>
-<li>No native support in mainstream applications (Excel, RStudio, …)</li>
+<li><strong>Big tech:</strong> the huge data collected by big tech companies are locked behind paywalls and the only bits freely available are often redacted to the point of being useless.</li>
+<li><strong>APIs:</strong> NGOs and governmental agencies that adhere to the open data principles don&rsquo;t necessarily share a common design for their APIs and therefore require a separate development for each one.</li>
+<li><strong>Handling:</strong> data retrieval often implies tedious and error-prone manual steps.</li>
+<li><strong>Native support:</strong> there are several open standards available but few-to-none are natively supported by mainstream applications.</li>
+<li><strong>Catalog:</strong> there are no central catalog to discover data sources.</li>
 </ul>
+<p>sdmx-dl is a SDMX-focused attempt to tackle these problems.</p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="goals--features">
+    <h3 id="goals--features">
         Goals &amp; features
         <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#goals--features" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Goals &amp; features" aria-label="Anchor to: Goals &amp; features" href="#goals--features">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
-    </h2>
+    </h3>
 </div>
 <ul>
-<li>Provides easy and reliable <strong>data retrieval</strong></li>
+<li>Provides an <strong>easy</strong>, <strong>consistent</strong> and <strong>reliable</strong> data retrieval</li>
 <li>Allows <strong>data discovery</strong> and <strong>automation</strong></li>
-<li>Corrects deviations from the standard</li>
-<li>Takes care of technical difficulties</li>
-<li>Is designed to be integrated into other applications</li>
+<li>Takes care of technical difficulties and data handling</li>
+<li>Is designed to be used by other applications</li>
+<li>Is bundled with a <a
+  class="gdoc-markdown__link"
+  href="sources"
+>pre-configured set of data sources</a></li>
 </ul>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="acknowledgement--licence">
-        Acknowledgement &amp; licence
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#acknowledgement--licence" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Acknowledgement &amp; licence" aria-label="Anchor to: Acknowledgement &amp; licence" href="#acknowledgement--licence">
+    <h2 id="installing">
+        Installing
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#installing" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Installing" aria-label="Anchor to: Installing" href="#installing">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
 </div>
-<p>This project is licenced as <a
+<p><strong>sdmx-dl CLI</strong> runs on any desktop operating system such as Microsoft <strong>Windows</strong>, <strong>Solaris OS</strong>, Apple <strong>macOS</strong>, <strong>Ubuntu</strong> and other various <strong>Linux</strong> distributions.
+See <a
+  class="gdoc-markdown__link"
+  href="cli/installation"
+>CLI installation</a> for more details.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="developing">
+        Developing
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#developing" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Developing" aria-label="Anchor to: Developing" href="#developing">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>This project is written in Java and uses <a
+  class="gdoc-markdown__link"
+  href="https://maven.apache.org/"
+>Apache Maven</a> as a build tool.<br>
+It requires <a
+  class="gdoc-markdown__link"
+  href="https://whichjdk.com/"
+>Java 8 as minimum version</a> and all its dependencies are hosted on <a
+  class="gdoc-markdown__link"
+  href="https://search.maven.org/"
+>Maven Central</a>.</p>
+<p>The code can be build using any IDE or by just type-in the following commands in a terminal:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/nbbrd/sdmx-dl.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> sdmx-dl
+</span></span><span class="line"><span class="cl">mvn clean install
+</span></span></code></pre></div><div class="gdoc-page__anchorwrap">
+    <h2 id="contributing">
+        Contributing
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#contributing" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Contributing" aria-label="Anchor to: Contributing" href="#contributing">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>Any contribution is welcome and should be done through pull requests and/or issues.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="licensing">
+        Licensing
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/#licensing" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Licensing" aria-label="Anchor to: Licensing" href="#licensing">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>The code of this project is licensed under the <a
   class="gdoc-markdown__link"
   href="https://joinup.ec.europa.eu/page/eupl-text-11-12"
->EUPL-1.2</a> and uses the following open-source libraries:</p>
-<ul>
-<li><a
-  class="gdoc-markdown__link"
-  href="https://github.com/amattioc/SDMX"
->https://github.com/amattioc/SDMX</a> (EUPL-1.2)</li>
-<li><a
-  class="gdoc-markdown__link"
-  href="https://github.com/remkop/picocli"
->https://github.com/remkop/picocli</a> (Apache-2.0)</li>
-<li><a
-  class="gdoc-markdown__link"
-  href="https://github.com/Hakky54/sslcontext-kickstart"
->https://github.com/Hakky54/sslcontext-kickstart</a> (Apache-2.0)</li>
-<li><a
-  class="gdoc-markdown__link"
-  href="https://github.com/EsotericSoftware/kryo"
->https://github.com/EsotericSoftware/kryo</a> (BSD-3-Clause)</li>
-<li><a
-  class="gdoc-markdown__link"
-  href="https://github.com/Tuupertunut/PowerShellLibJava"
->https://github.com/Tuupertunut/PowerShellLibJava</a> (MIT)</li>
-</ul>
+>European Union Public Licence (EUPL)</a>.</p>
 
   </article>
 
