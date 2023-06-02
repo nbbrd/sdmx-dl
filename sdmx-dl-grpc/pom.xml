@@ -193,6 +193,8 @@
                                 <exclude>META-INF/MANIFEST.MF</exclude>
                                 <exclude>META-INF/NOTICE</exclude>
                                 <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>META-INF/io.netty.versions.properties</exclude>
                             </excludes>
                         </filter>
                     </filters>
