@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.11] - 2023-06-02
+
+This is the eleventh beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release adds new sources from Eurostat and the European Commission.
+It also improves performance of several drivers alongside the usual bug fixes.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
 ### Added
 
 - ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
@@ -366,7 +377,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...HEAD
+
+[3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11
 
 [3.0.0-beta.10]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...v3.0.0-beta.10
 
