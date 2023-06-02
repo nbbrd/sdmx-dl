@@ -5,10 +5,13 @@ module sdmxdl.format.protobuf {
     requires static org.checkerframework.checker.qual;
 
     requires transitive sdmxdl.format.base;
-    requires transitive com.google.protobuf;
+    requires transitive protobuf.java;
+    requires transitive protobuf.java.util;
 
     exports sdmxdl.format.protobuf;
     exports sdmxdl.format.protobuf.web;
 
-    provides sdmxdl.format.spi.FileFormatProvider with internal.sdmxdl.format.protobuf.ProtobufProvider;
+    provides sdmxdl.format.spi.FileFormatProvider with
+            sdmxdl.format.protobuf.JsonProvider,
+            sdmxdl.format.protobuf.ProtobufProvider;
 }

@@ -1,7 +1,5 @@
 package sdmxdl.format.protobuf;
 
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.MonitorReports;
 import sdmxdl.format.protobuf.web.MonitorStatus;
@@ -12,14 +10,6 @@ import static sdmxdl.format.protobuf.WellKnownTypes.fromInstant;
 
 @lombok.experimental.UtilityClass
 public class ProtobufMonitors {
-
-    public static FileParser<sdmxdl.web.MonitorReports> getFileParser() {
-        return FileParser.onParsingStream(resource -> toMonitorReports(MonitorReports.parseFrom(resource)));
-    }
-
-    public static FileFormatter<sdmxdl.web.MonitorReports> getFileFormatter() {
-        return FileFormatter.onFormattingStream((value, resource) -> fromMonitorReports(value).writeTo(resource));
-    }
 
     public static MonitorReports fromMonitorReports(sdmxdl.web.MonitorReports value) {
         return MonitorReports

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -159,9 +160,14 @@ public final class FileCache implements Cache {
         return root.resolve(fileNamePrefix + fileType.name().charAt(0) + fileNameGenerator.apply(key) + fileNameSuffix + fileFormat.getFileExtension());
     }
 
-    private static final UnaryOperator<String> DEFAULT_GENERATOR = key -> String.valueOf(Math.abs(key.hashCode()));
+    private static final UnaryOperator<String> DEFAULT_GENERATOR = FileCache::generateFileNameFromHashCode;
     private static final BiConsumer<String, IOException> DO_NOT_REPORT = (msg, ex) -> {
     };
+
+    private static String generateFileNameFromHashCode(String key) {
+        int hashCode = key.hashCode();
+        return String.format(Locale.ROOT, hashCode >= 0 ? "0%010d" : "1%010d", Math.abs(hashCode));
+    }
 
     @VisibleForTesting
     enum FileType {

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -93,7 +94,7 @@ class HttpImpl {
 
         @Override
         public @NonNull String getName() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ROOT);
         }
     }
 }

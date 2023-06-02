@@ -12,15 +12,16 @@ import sdmxdl.provider.Validator;
 )
 public interface WebRule {
 
-    @NonNull String getName();
+    //    @ServiceId
+    @NonNull String getId();
 
     @NonNull Validator<WebResponse> getValidator();
 
-    static @NonNull WebRule of(@NonNull String name, @NonNull Validator<WebResponse> validator) {
+    static @NonNull WebRule of(@NonNull String id, @NonNull Validator<WebResponse> validator) {
         return new WebRule() {
             @Override
-            public @NonNull String getName() {
-                return name;
+            public @NonNull String getId() {
+                return id;
             }
 
             @Override

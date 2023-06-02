@@ -38,7 +38,7 @@ public final class NbbDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_NBB)
+            .id(CONNECTORS_NBB)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(NBB::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

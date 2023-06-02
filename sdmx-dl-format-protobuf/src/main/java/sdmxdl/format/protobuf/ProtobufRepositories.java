@@ -1,7 +1,5 @@
 package sdmxdl.format.protobuf;
 
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
 import sdmxdl.CodelistRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
@@ -11,14 +9,6 @@ import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
 @lombok.experimental.UtilityClass
 public class ProtobufRepositories {
-
-    public static FileParser<sdmxdl.DataRepository> getFileParser() {
-        return FileParser.onParsingStream(resource -> toDataRepository(sdmxdl.format.protobuf.DataRepository.parseFrom(resource)));
-    }
-
-    public static FileFormatter<sdmxdl.DataRepository> getFileFormatter() {
-        return FileFormatter.onFormattingStream((value, resource) -> fromDataRepository(value).writeTo(resource));
-    }
 
     public static DataRepository fromDataRepository(sdmxdl.DataRepository value) {
         return DataRepository
@@ -32,7 +22,7 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    private static sdmxdl.DataRepository toDataRepository(DataRepository value) {
+    public static sdmxdl.DataRepository toDataRepository(DataRepository value) {
         return sdmxdl.DataRepository
                 .builder()
                 .name(value.getName())
@@ -235,5 +225,27 @@ public class ProtobufRepositories {
                 .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();
+    }
+
+    public static Feature fromFeature(sdmxdl.Feature value) {
+        switch (value) {
+            case DATA_QUERY_ALL_KEYWORD:
+                return Feature.DATA_QUERY_ALL_KEYWORD;
+            case DATA_QUERY_DETAIL:
+                return Feature.DATA_QUERY_DETAIL;
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    public static sdmxdl.Feature toFeature(Feature value) {
+        switch (value) {
+            case DATA_QUERY_ALL_KEYWORD:
+                return sdmxdl.Feature.DATA_QUERY_ALL_KEYWORD;
+            case DATA_QUERY_DETAIL:
+                return sdmxdl.Feature.DATA_QUERY_DETAIL;
+            default:
+                throw new RuntimeException();
+        }
     }
 }

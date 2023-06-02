@@ -40,6 +40,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static internal.util.http.HttpConstants.*;
@@ -495,6 +496,32 @@ public abstract class HttpRestClientTest {
         }
     }
 
+    @Test
+    public void testDoubleDotInURL() throws IOException {
+        HttpContext context = HttpContext
+                .builder()
+                .sslSocketFactory(this::wireSSLSocketFactory)
+                .hostnameVerifier(this::wireHostnameVerifier)
+                .build();
+        HttpClient x = getRestClient(context);
+
+        wire.resetAll();
+        wire.stubFor(get("/abc/../first.xml").willReturn(okXml(SAMPLE_XML)));
+
+        HttpRequest request = HttpRequest
+                .builder()
+                .query(wireURL("/abc/../first.xml"))
+                .mediaType(GENERIC_DATA_21)
+                .langs(ANY_LANG)
+                .build();
+
+        try (HttpResponse response = x.send(request)) {
+            assertSameSampleContent(response);
+        }
+
+        wire.verify(1, getRequestedFor(urlEqualTo("/abc/../first.xml")));
+    }
+
     protected SSLSocketFactory wireSSLSocketFactory() {
         try {
             SSLContext result = SSLContext.getInstance("TLS");
@@ -519,7 +546,7 @@ public abstract class HttpRestClientTest {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        return new URL(String.format("%s%s", wire.baseUrl(), path));
+        return new URL(String.format(Locale.ROOT, "%s%s", wire.baseUrl(), path));
     }
 
     private String wireHttpUrl(String url) throws MalformedURLException {
@@ -561,6 +588,6 @@ public abstract class HttpRestClientTest {
 
     protected static boolean isOSX() {
         String osName = System.getProperty("os.name");
-        return osName != null && osName.toLowerCase().startsWith("mac os x");
+        return osName != null && osName.toLowerCase(Locale.ROOT).startsWith("mac os x");
     }
 }

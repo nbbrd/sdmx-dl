@@ -25,6 +25,11 @@ import java.util.Locale;
 public final class UpptimeMonitoring implements WebMonitoring {
 
     @Override
+    public @NonNull String getId() {
+        return "UPPPTIME";
+    }
+
+    @Override
     public @NonNull String getUriScheme() {
         return UpptimeId.URI_SCHEME;
     }

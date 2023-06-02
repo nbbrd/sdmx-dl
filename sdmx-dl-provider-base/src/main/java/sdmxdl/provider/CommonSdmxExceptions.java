@@ -22,6 +22,7 @@ import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * @author Philippe Charles
@@ -29,22 +30,18 @@ import java.io.IOException;
 public final class CommonSdmxExceptions {
 
     public static @NonNull IOException connectionClosed(@NonNull HasMarker source) {
-        return new IOException(String.format("Connection closed from '%s'", source.getMarker()));
+        return new IOException(String.format(Locale.ROOT, "Connection closed from '%s'", source.getMarker()));
     }
 
     public static @NonNull IOException missingFlow(@NonNull HasMarker source, @NonNull DataflowRef ref) {
-        return new IOException(String.format("Missing flow '%s' from '%s'", ref, source.getMarker()));
+        return new IOException(String.format(Locale.ROOT, "Missing flow '%s' from '%s'", ref, source.getMarker()));
     }
 
     public static @NonNull IOException missingStructure(@NonNull HasMarker source, @NonNull DataStructureRef ref) {
-        return new IOException(String.format("Missing structure '%s' from '%s'", ref, source.getMarker()));
-    }
-
-    public static @NonNull IOException missingData(@NonNull HasMarker source, @NonNull DataflowRef ref) {
-        return new IOException(String.format("Missing data '%s' from '%s'", ref, source.getMarker()));
+        return new IOException(String.format(Locale.ROOT, "Missing structure '%s' from '%s'", ref, source.getMarker()));
     }
 
     public static @NonNull IOException missingCodelist(@NonNull HasMarker source, @NonNull CodelistRef ref) {
-        return new IOException(String.format("Missing codelist '%s' from '%s'", ref, source.getMarker()));
+        return new IOException(String.format(Locale.ROOT, "Missing codelist '%s' from '%s'", ref, source.getMarker()));
     }
 }

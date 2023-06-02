@@ -32,10 +32,28 @@
                   key="H.CHF.EUR.SP00.A" seriesCount="1.." obsCount="45.."/>
         </flow>
     </source>
+    <source name="EC_DG_COMP" flowCount="9..">
+        <flow ref="AID_RAIL" dimCount="4">
+            <data digest="EC_DG_COMP"
+                  key="A.AT.MIO_EUR.OBJ01" seriesCount="1.." obsCount="12.."/>
+        </flow>
+    </source>
+    <source name="EC_DG_EMPL" flowCount="74..">
+        <flow ref="LMP_IND_EXP" dimCount="5">
+            <data digest="EC_DG_EMPL"
+                  key="A.AT.PC_GDP.1.XTOT" seriesCount="1.." obsCount="23.."/>
+        </flow>
+    </source>
+    <source name="EC_DG_GROW" flowCount="18..">
+        <flow ref="POST_CUBE_HIST_X" dimCount="4">
+            <data digest="EC_DG_GROW"
+                  key="A.EUR.PRI901.BE" seriesCount="1.." obsCount="7.."/>
+        </flow>
+    </source>
     <source name="ESCAP" flowCount="2..">
-        <flow ref="DF_ESCAP_SDG_Dataflow" dimCount="4">
+        <flow ref="SDG_Dataflow" dimCount="4">
             <data digest="ESCAP"
-                  key="..G01_01_01.A" seriesCount="523.." obsCount="3841.."/>
+                  key="Europe.G01_01_01..A" seriesCount="6.." obsCount="88.."/>
         </flow>
     </source>
     <source name="ESTAT" flowCount="6283..">
@@ -46,6 +64,12 @@
         <flow ref="NAMA_10_GDP" dimCount="4">
             <data digest="ESTAT: async delivery process"
                   key="..B1GQ." seriesCount="1.." obsCount="12.."/>
+        </flow>
+    </source>
+    <source name="ESTAT_COMEXT" flowCount="18..">
+        <flow ref="DS-045409" dimCount="6">
+            <data digest="ESTAT_COMEXT"
+                  key=".AT.EU27_2020_EXTRA.TOTAL.." seriesCount="12.." obsCount="1500.."/>
         </flow>
     </source>
     <source name="ILO" flowCount="522..">
@@ -120,6 +144,10 @@
         <flow ref="ESTAT,NAMAIN_IDC_N,1.9" dimCount="14">
             <data digest="SGR"
                   key="A.N.AL.W0.S1.S1.D.P3._Z._Z._T.XDC.LR.N" seriesCount="1.." obsCount="26.."/>
+        </flow>
+        <flow ref="ESTAT,NAMAIN_IDC_N,1.10" dimCount="14">
+            <data digest="SGR: no data available should return empty stream"
+                  key="............." seriesCount="0" obsCount="0"/>
         </flow>
     </source>
     <source name="SIMEL" flowCount="77..">

@@ -13,5 +13,5 @@ message SdmxWebSource {
   repeated string aliases = 7;
   optional string website = 8;
   optional string monitor = 9;
-  optional string monitorWebsite = 10;
+  optional string monitor_website = 10;
 }

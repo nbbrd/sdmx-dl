@@ -22,6 +22,7 @@ import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
+import it.bancaditalia.oss.sdmx.util.LocalizedText;
 import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
 
@@ -94,7 +95,8 @@ public class Connectors {
         Dataflow result = new Dataflow(
                 flowRef.getId(),
                 flowRef.getAgency(),
-                flowRef.getVersion());
+                flowRef.getVersion(),
+                new LocalizedText("name"));
         result.setDsdIdentifier(fromStructureRef(structRef));
         return result;
     }
@@ -103,9 +105,9 @@ public class Connectors {
         Dataflow result = new Dataflow(
                 flow.getRef().getId(),
                 flow.getRef().getAgency(),
-                flow.getRef().getVersion());
+                flow.getRef().getVersion(),
+                new LocalizedText(flow.getName()));
         result.setDsdIdentifier(fromStructureRef(flow.getStructureRef()));
-        result.setName(flow.getName());
         return result;
     }
 

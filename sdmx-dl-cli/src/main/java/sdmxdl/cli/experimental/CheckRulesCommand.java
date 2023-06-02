@@ -19,9 +19,7 @@ package sdmxdl.cli.experimental;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import internal.sdmxdl.cli.WebSourcesOptions;
 import picocli.CommandLine;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.testing.IntRange;
+import sdmxdl.cli.protobuf.*;
 import sdmxdl.testing.WebRequest;
 import sdmxdl.testing.WebResponse;
 import sdmxdl.testing.WebRuleLoader;
@@ -72,13 +70,17 @@ public final class CheckRulesCommand implements Callable<Void> {
                 .filter(getSourceFilter())
                 .collect(Collectors.groupingBy(WebRequest::getSource));
 
-        List<Summary> result = web.applyParallel(requestsBySource.values().stream())
-                .flatMap(list -> list.stream().map(request -> WebResponse.of(request, manager)))
-                .map(Summary::of)
-                .sorted(Comparator.comparing(o -> o.digest))
-                .collect(Collectors.toList());
+        RulesSummaries result = RulesSummaries
+                .newBuilder()
+                .addAllSummaries(
+                        web.applyParallel(requestsBySource.values().stream())
+                                .flatMap(list -> list.stream().map(request -> WebResponse.of(request, manager)))
+                                .map(CheckRulesCommand::summaryOf)
+                                .sorted(Comparator.comparing(RulesSummary::getDigest))
+                                .collect(Collectors.toList()))
+                .build();
 
-        output.dumpAll(Summary.class, result);
+        output.dumpAll(result);
 
         return null;
     }
@@ -95,108 +97,67 @@ public final class CheckRulesCommand implements Callable<Void> {
                 : request -> web.getSources().contains(request.getSource());
     }
 
-    @lombok.AllArgsConstructor
-    private static class Target {
 
-        String source;
-        DataflowRef flow;
-        Key key;
+    private static RulesTarget targetOf(WebRequest request) {
+        return RulesTarget
+                .newBuilder()
+                .setSource(request.getSource())
+                .setFlow(request.getFlowRef().toString())
+                .setKey(request.getQuery().getKey().toString())
+                .build();
+    }
 
-        static Target of(WebRequest request) {
-            return new Target(
-                    request.getSource(),
-                    request.getFlowRef(),
-                    request.getQuery().getKey()
-            );
+    private static RulesConfig configOf(SdmxWebSource source) {
+        try {
+            return RulesConfig
+                    .newBuilder()
+                    .setDriver(source.getDriver())
+                    .setDialect(source.getDialect())
+                    .setProtocol(source.getEndpoint().toURL().getProtocol())
+                    .setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()))
+                    .build();
+        } catch (MalformedURLException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 
-    @lombok.AllArgsConstructor
-    private static class Config {
-
-        String driver;
-        String dialect;
-        String protocol;
-        String properties;
-
-        static Config of(SdmxWebSource source) {
-            try {
-                return new Config(
-                        source.getDriver(),
-                        source.getDialect(),
-                        source.getEndpoint().toURL().getProtocol(),
-                        DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties())
-                );
-            } catch (MalformedURLException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
+    private static RulesExpect expectOf(WebRequest request) {
+        return RulesExpect
+                .newBuilder()
+                .setFlowCount(request.getFlowCount().toString())
+                .setDimCount(request.getDimensionCount().toString())
+                .setSeriesCount(request.getSeriesCount().toString())
+                .setObsCount(request.getObsCount().toString())
+                .build();
     }
 
-    @lombok.AllArgsConstructor
-    private static class Expect {
-
-        IntRange flowCount;
-        IntRange dimCount;
-        IntRange seriesCount;
-        IntRange obsCount;
-
-        static Expect of(WebRequest request) {
-            return new Expect(
-                    request.getFlowCount(),
-                    request.getDimensionCount(),
-                    request.getSeriesCount(),
-                    request.getObsCount()
-            );
-        }
+    private static RulesActual actualOf(WebResponse r) {
+        return RulesActual
+                .newBuilder()
+                .setFlowCount(ofNullable(r.getFlows()).map(Collection::size).orElse(-1))
+                .setDimCount(ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1))
+                .setSeriesCount(ofNullable(r.getData()).map(Collection::size).orElse(-1))
+                .setObsCount(ofNullable(r.getData()).map(WebResponse::getObsCount).orElse(-1))
+                .build();
     }
 
-    @lombok.AllArgsConstructor
-    private static class Actual {
-
-        int flowCount;
-        int dimCount;
-        int seriesCount;
-        int obsCount;
-
-        static Actual of(WebResponse r) {
-            return new Actual(
-                    ofNullable(r.getFlows()).map(Collection::size).orElse(-1),
-                    ofNullable(r.getStructure()).map(dsd -> dsd.getDimensions().size()).orElse(-1),
-                    ofNullable(r.getData()).map(Collection::size).orElse(-1),
-                    ofNullable(r.getData()).map(WebResponse::getObsCount).orElse(-1)
-            );
-        }
-    }
-
-    @lombok.AllArgsConstructor
-    private static class Summary {
-
-        String digest;
-        Target target;
-        Config config;
-        Expect expect;
-        Actual actual;
-        String errors;
-        List<String> issues;
-
-        static Summary of(WebResponse r) {
-            return new Summary(
-                    r.getRequest().getDigest(),
-                    Target.of(r.getRequest()),
-                    Config.of(r.getSource()),
-                    Expect.of(r.getRequest()),
-                    Actual.of(r),
-                    ofNullable(r.getError()).orElse(""),
-                    checkAll(r)
-            );
-        }
+    private static RulesSummary summaryOf(WebResponse r) {
+        return RulesSummary
+                .newBuilder()
+                .setDigest(r.getRequest().getDigest())
+                .setTarget(targetOf(r.getRequest()))
+                .setConfig(configOf(r.getSource()))
+                .setExpect(expectOf(r.getRequest()))
+                .setActual(actualOf(r))
+                .setErrors(ofNullable(r.getError()).orElse(""))
+                .addAllIssues(checkAll(r))
+                .build();
     }
 
     private static List<String> checkAll(WebResponse response) {
         return WebRuleLoader.get()
                 .stream()
-                .map(rule -> !rule.getValidator().isValid(response) ? rule.getName() : null)
+                .map(rule -> !rule.getValidator().isValid(response) ? rule.getId() : null)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

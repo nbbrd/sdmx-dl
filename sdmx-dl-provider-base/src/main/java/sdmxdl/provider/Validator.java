@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -66,19 +67,19 @@ public interface Validator<T> {
 
     static @NonNull Validator<String> onRegex(@NonNull String name, @NonNull Pattern regex) {
         return value -> value == null || !regex.matcher(value).matches()
-                ? String.format("Expecting %s '%s' to match pattern '%s'", name, value, regex.pattern())
+                ? String.format(Locale.ROOT, "Expecting %s '%s' to match pattern '%s'", name, value, regex.pattern())
                 : null;
     }
 
     static @NonNull <T> Validator<T> onNull() {
         return value -> value != null
-                ? String.format("Expecting '%s' to be null", value)
+                ? String.format(Locale.ROOT, "Expecting '%s' to be null", value)
                 : null;
     }
 
     static @NonNull <T> Validator<T> onNotNull(@NonNull String name) {
         return value -> value == null
-                ? String.format("Expecting '%s' to be non-null", name)
+                ? String.format(Locale.ROOT, "Expecting '%s' to be non-null", name)
                 : null;
     }
 

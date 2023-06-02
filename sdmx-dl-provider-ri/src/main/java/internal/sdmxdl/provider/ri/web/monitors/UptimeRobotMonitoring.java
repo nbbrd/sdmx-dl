@@ -1,5 +1,6 @@
 package internal.sdmxdl.provider.ri.web.monitors;
 
+import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.text.Parser;
@@ -31,12 +32,17 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
     private final URL url = Parser.onURL().parseValue("https://api.uptimerobot.com/v2/getMonitors").orElseThrow(RuntimeException::new);
 
     @Override
-    public String getUriScheme() {
+    public @NonNull String getId() {
+        return "UPTIME_ROBOT";
+    }
+
+    @Override
+    public @NonNull String getUriScheme() {
         return UptimeRobotId.URI_SCHEME;
     }
 
     @Override
-    public MonitorReport getReport(SdmxWebSource source, WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());

@@ -56,7 +56,7 @@ public final class InseeDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_INSEE)
+            .id(CONNECTORS_INSEE)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

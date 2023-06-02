@@ -16,11 +16,11 @@
  */
 package internal.sdmxdl.provider.ri.web.drivers;
 
-import internal.sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.sdmxdl.provider.ri.web.RiRestClient;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
-import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
-import internal.util.http.*;
+import internal.sdmxdl.provider.ri.web.*;
+import internal.util.http.HttpClient;
+import internal.util.http.HttpRequest;
+import internal.util.http.HttpResponse;
+import internal.util.http.HttpResponseException;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.io.Resource;
@@ -29,7 +29,7 @@ import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataflowRef;
+import sdmxdl.Feature;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -47,8 +47,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
@@ -76,7 +78,7 @@ public final class EurostatDriver2 implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_EUROSTAT)
+            .id(RI_EUROSTAT)
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(EurostatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
@@ -96,6 +98,46 @@ public final class EurostatDriver2 implements WebDriver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("ESTAT_COMEXT")
+                    .name("en", "Eurostat - International trade in goods statistics (ITGS)")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
+                    .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat_comext")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_COMP")
+                    .name("en", "European Commission - Directorate General for Competition")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_EMPL")
+                    .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl")
+                    .build())
+            .source(SdmxWebSource
+                    .builder()
+                    .id("EC_DG_GROW")
+                    .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
+                    .driver(RI_EUROSTAT)
+                    .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
+                    .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow")
+                    .build())
             .build();
 
     private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
@@ -105,30 +147,23 @@ public final class EurostatDriver2 implements WebDriver {
                 c.getLanguages(),
                 ObsParser::newDefault,
                 getHttpClient(s, c),
-                new EurostatRestQueries(),
+                new Sdmx21RestQueries(false),
                 new Sdmx21RestParsers(),
-                false
+                Sdmx21RestErrors.DEFAULT,
+                ESTAT_FEATURES
         );
     }
 
-    private static InterceptingClient getHttpClient(SdmxWebSource s, WebContext c) {
+    @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
+    private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
+
+    private static HttpClient getHttpClient(SdmxWebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
         long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
-        return new InterceptingClient(RiHttpUtils.newClient(getContext(s, c)), (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries));
-    }
-
-    private static HttpContext getContext(SdmxWebSource s, WebContext c) {
-        return fixCompression(RiHttpUtils.newContext(s, c));
-    }
-
-    @SdmxFix(id = 1, category = QUERY, cause = "Agency id must be ESTAT instead of 'all'")
-    private static DataflowRef fixAgencyId(DataflowRef ref) {
-        return DataflowRef.of("ESTAT", ref.getId(), ref.getVersion());
-    }
-
-    @SdmxFix(id = 2, category = PROTOCOL, cause = "SSL exception if backend is schannel and compression requested")
-    private static HttpContext fixCompression(HttpContext context) {
-        return context.toBuilder().clearDecoders().build();
+        return new InterceptingClient(
+                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
+                (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)
+        );
     }
 
     @SdmxFix(id = 3, category = PROTOCOL, cause = "Some response codes are located in the message footer")
@@ -181,23 +216,6 @@ public final class EurostatDriver2 implements WebDriver {
             Thread.sleep(timeInMillis);
         } catch (InterruptedException ex) {
             throw new IOException(ex);
-        }
-    }
-
-    private static final class EurostatRestQueries extends Sdmx21RestQueries {
-
-        public EurostatRestQueries() {
-            super(false);
-        }
-
-        @Override
-        public URLQueryBuilder getFlowsQuery(URL endpoint) {
-            return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, fixAgencyId(FLOWS));
-        }
-
-        @Override
-        public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
-            return super.getFlowQuery(endpoint, fixAgencyId(ref));
         }
     }
 

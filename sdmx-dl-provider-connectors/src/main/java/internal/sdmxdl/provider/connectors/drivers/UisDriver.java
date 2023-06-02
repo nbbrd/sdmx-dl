@@ -43,7 +43,7 @@ public final class UisDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_UIS)
+            .id(CONNECTORS_UIS)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

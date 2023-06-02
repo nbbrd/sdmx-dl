@@ -7,6 +7,7 @@ import sdmxdl.Series;
 import sdmxdl.provider.Validator;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -68,7 +69,7 @@ public enum RangeRules {
     abstract String validateRange(WebResponse r);
 
     private static Validator<Integer> onRange(IntRange range) {
-        return value -> !range.contains(value) ? String.format("Expecting range '%s' to contain value ", range.toShortString(), value) : null;
+        return value -> !range.contains(value) ? String.format(Locale.ROOT, "Expecting range '%s' to contain value %s", range.toShortString(), value) : null;
     }
 
     @ServiceProvider

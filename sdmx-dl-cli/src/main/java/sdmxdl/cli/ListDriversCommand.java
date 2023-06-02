@@ -48,7 +48,7 @@ public final class ListDriversCommand implements Callable<Void> {
     private CsvTable<WebDriver> getTable() {
         return CsvTable
                 .builderOf(WebDriver.class)
-                .columnOf("Name", WebDriver::getName)
+                .columnOf("Name", WebDriver::getId)
                 .columnOf("SupportedProperties", WebDriver::getSupportedProperties, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }

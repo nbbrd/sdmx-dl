@@ -1,5 +1,6 @@
 package internal.sdmxdl.cli;
 
+import lombok.NonNull;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebAuthenticator;
 
@@ -14,6 +15,11 @@ final class ConsoleAuthenticator implements WebAuthenticator {
     private final Console console = System.console();
 
     private final ConcurrentHashMap<SdmxWebSource, PasswordAuthentication> cache = new ConcurrentHashMap<>();
+
+    @Override
+    public @NonNull String getId() {
+        return "CONSOLE";
+    }
 
     @Override
     public boolean isAvailable() {

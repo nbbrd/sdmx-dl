@@ -3,8 +3,6 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf;
 
-import "google/protobuf/timestamp.proto";
-
 message Attribute {
   string id = 1;
   string name = 2;
@@ -34,7 +32,7 @@ enum DataDetail {
 
 message Dataflow {
   string ref = 1;
-  string structureRef = 2;
+  string structure_ref = 2;
   string name = 3;
   optional string description = 4;
 }
@@ -49,8 +47,8 @@ message DataRepository {
   repeated DataStructure structures = 2;
   repeated Dataflow flows = 3;
   repeated DataSet dataSets = 4;
-  google.protobuf.Timestamp creationTime = 5;
-  google.protobuf.Timestamp expirationTime = 6;
+  string creation_time = 5;
+  string expiration_time = 6;
 }
 
 message DataSet {
@@ -63,8 +61,8 @@ message DataStructure {
   string ref = 1;
   repeated Dimension dimensions = 2;
   repeated Attribute attributes = 3;
-  optional string timeDimensionId = 4;
-  string primaryMeasureId = 5;
+  optional string time_dimension_id = 4;
+  string primary_measure_id = 5;
   string name = 6;
 }
 
@@ -76,7 +74,7 @@ message Dimension {
 }
 
 enum Feature {
-  DATA_QUERY_KEY = 0;
+  DATA_QUERY_ALL_KEYWORD = 0;
   DATA_QUERY_DETAIL = 1;
 }
 

@@ -23,7 +23,9 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -63,7 +65,7 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public boolean isDetailSupported() throws IOException {
+        public Set<Feature> getSupportedFeatures() throws IOException {
             throw new CustomIOException();
         }
 
@@ -104,7 +106,7 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public boolean isDetailSupported() {
+        public Set<Feature> getSupportedFeatures() throws IOException {
             throw new CustomRuntimeException();
         }
 
@@ -145,8 +147,8 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public boolean isDetailSupported() {
-            return false;
+        public Set<Feature> getSupportedFeatures() {
+            return Collections.emptySet();
         }
 
         @Override

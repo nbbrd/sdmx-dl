@@ -17,6 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
+import java.util.Locale;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.net.HttpURLConnection.*;
@@ -52,7 +53,7 @@ public class CurlHttpURLConnectionTest {
         String[] command = conn.createCurlCommand();
         if (conn.isSchannel()) {
             assertThat(command)
-                    .containsExactly("curl", "http://localhost", "--http1.1", "-s", "--ssl-revoke-best-effort",
+                    .containsExactly("curl", "--path-as-is", "http://localhost", "--http1.1", "-s", "--ssl-revoke-best-effort",
                             "-x", "http://localhost:123",
                             "-o", conn.getInput().toString(),
                             "-D", "-",
@@ -63,7 +64,7 @@ public class CurlHttpURLConnectionTest {
                     );
         } else {
             assertThat(command)
-                    .containsExactly("curl", "http://localhost", "--http1.1", "-s",
+                    .containsExactly("curl", "--path-as-is", "http://localhost", "--http1.1", "-s",
                             "-x", "http://localhost:123",
                             "-o", conn.getInput().toString(),
                             "-D", "-",
@@ -199,7 +200,7 @@ public class CurlHttpURLConnectionTest {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        return new URL(String.format("%s%s", wire.baseUrl(), path));
+        return new URL(String.format(Locale.ROOT, "%s%s", wire.baseUrl(), path));
     }
 
     private static final String SAMPLE_URL = "/first.xml";

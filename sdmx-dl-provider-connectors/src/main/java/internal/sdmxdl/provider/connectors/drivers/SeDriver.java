@@ -41,7 +41,7 @@ public final class SeDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_SE)
+            .id(CONNECTORS_SE)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(SeClient::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)

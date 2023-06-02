@@ -1,5 +1,6 @@
 package sdmxdl.web.spi;
 
+import internal.sdmxdl.ServiceId;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
@@ -15,6 +16,9 @@ import java.io.IOException;
 )
 @ThreadSafe
 public interface WebMonitoring {
+
+    @ServiceId
+    @NonNull String getId();
 
     @NonNull
     String getUriScheme();

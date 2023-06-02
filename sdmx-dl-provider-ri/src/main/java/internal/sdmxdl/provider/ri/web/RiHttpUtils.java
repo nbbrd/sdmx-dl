@@ -40,6 +40,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -131,7 +132,7 @@ public class RiHttpUtils {
         @Override
         public void onSuccess(@NonNull Supplier<String> contentType) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format("Parsing '%s' content-type", contentType.get()));
+                listener.accept(source, String.format(Locale.ROOT, "Parsing '%s' content-type", contentType.get()));
             }
         }
 
@@ -145,7 +146,7 @@ public class RiHttpUtils {
         @Override
         public void onUnauthorized(@NonNull URL url, @NonNull HttpAuthScheme oldScheme, @NonNull HttpAuthScheme newScheme) {
             if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format("Authenticating %s with '%s'", url, newScheme.name()));
+                listener.accept(source, String.format(Locale.ROOT, "Authenticating %s with '%s'", url, newScheme.name()));
             }
         }
 

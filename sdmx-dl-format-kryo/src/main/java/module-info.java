@@ -9,5 +9,5 @@ module sdmxdl.format.kryo {
 
     exports sdmxdl.format.kryo;
 
-    provides sdmxdl.format.spi.FileFormatProvider with internal.sdmxdl.format.kryo.KryoProvider;
+    provides sdmxdl.format.spi.FileFormatProvider with sdmxdl.format.kryo.KryoProvider;
 }

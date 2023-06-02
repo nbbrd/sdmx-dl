@@ -39,12 +39,12 @@ public class CacheOptions {
             names = {"--cache-format"},
             paramLabel = "<format>",
             descriptionKey = "cli.cacheFormat",
-            defaultValue = "kryo",
+            defaultValue = "PROTOBUF",
             converter = FileFormatters.class,
             hidden = true
     )
     private FileFormatProvider cacheFormat = PROVIDERS.stream()
-            .filter(provider -> provider.getName().equals("kryo"))
+            .filter(provider -> provider.getId().equals("PROTOBUF"))
             .findFirst()
             .orElseThrow(NoSuchElementException::new);
 
@@ -55,7 +55,7 @@ public class CacheOptions {
         @Override
         public FileFormatProvider convert(String value) throws Exception {
             return PROVIDERS.stream()
-                    .filter(provider -> provider.getName().equals(value))
+                    .filter(provider -> provider.getId().equals(value))
                     .findFirst()
                     .orElseThrow(NoSuchElementException::new);
         }

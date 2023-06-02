@@ -24,6 +24,7 @@ import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -75,8 +76,8 @@ public final class XCountingRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() throws IOException {
-        return delegate.isDetailSupported();
+    public Set<Feature> getSupportedFeatures() throws IOException {
+        return delegate.getSupportedFeatures();
     }
 
     @Override

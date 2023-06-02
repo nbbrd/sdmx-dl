@@ -18,7 +18,7 @@ public class WebDriverAssert {
         SdmxWebSource validSource = SdmxWebSource
                 .builder()
                 .id("valid")
-                .driver(d.getName())
+                .driver(d.getId())
                 .dialect("azerty")
                 .endpointOf("http://localhost")
                 .build();
@@ -27,7 +27,7 @@ public class WebDriverAssert {
 
         WebContext context = WebDriverAssert.noOpWebContext();
 
-        assertThat(d.getName()).isNotBlank();
+        assertThat(d.getId()).isNotBlank();
 
         assertThatNullPointerException().isThrownBy(() -> d.connect(null, context));
         assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null));
@@ -42,7 +42,7 @@ public class WebDriverAssert {
     private void checkSource(SdmxWebSource o, WebDriver d) {
         assertThat(o.getId()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
-        assertThat(o.getDriver()).isEqualTo(d.getName());
+        assertThat(o.getDriver()).isEqualTo(d.getId());
         assertThat(o.getProperties().keySet()).isSubsetOf(d.getSupportedProperties());
     }
 }

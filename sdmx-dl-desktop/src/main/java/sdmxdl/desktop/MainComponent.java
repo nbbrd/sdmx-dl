@@ -197,7 +197,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         }));
 
         driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getName(), value.getDefaultDialect()).render());
+            label.setText(nameDescription(value.getId(), value.getDefaultDialect()).render());
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 

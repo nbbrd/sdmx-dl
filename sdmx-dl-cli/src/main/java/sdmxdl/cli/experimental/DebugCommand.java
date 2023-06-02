@@ -16,7 +16,6 @@
  */
 package sdmxdl.cli.experimental;
 
-import nbbrd.console.picocli.PrintContext;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
@@ -29,7 +28,7 @@ import java.util.concurrent.Callable;
         description = "Experimental debug tools.",
         hidden = true,
         subcommands = {
-                PrintContext.class,
+                DebugContextCommand.class,
                 DebugDataCommand.class,
                 DebugListCommand.class,
                 DebugStructCommand.class,

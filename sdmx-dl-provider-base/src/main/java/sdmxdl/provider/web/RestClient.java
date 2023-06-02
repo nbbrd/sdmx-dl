@@ -23,6 +23,7 @@ import sdmxdl.provider.HasMarker;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -40,7 +41,7 @@ public interface RestClient extends HasMarker {
 
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 
-    boolean isDetailSupported() throws IOException;
+    @NonNull Set<Feature> getSupportedFeatures() throws IOException;
 
     void testClient() throws IOException;
 }

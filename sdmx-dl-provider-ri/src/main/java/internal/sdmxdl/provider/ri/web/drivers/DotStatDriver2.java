@@ -20,19 +20,23 @@ import internal.sdmxdl.provider.ri.web.DotStatRestParsers;
 import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Feature;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.RestClient;
+import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
+import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
  * @author Philippe Charles
@@ -45,7 +49,7 @@ public final class DotStatDriver2 implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_DOTSTAT)
+            .id(RI_DOTSTAT)
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(DotStatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
@@ -98,9 +102,12 @@ public final class DotStatDriver2 implements WebDriver {
             .build();
 
     private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(s, c, new DotStatRestQueries(), new DotStatRestParsers(), false);
+        return RiRestClient.of(s, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")
     private final static String UIS_ENDPOINT = "http://data.uis.unesco.org/RestSDMX/sdmx.ashx";
+
+    @SdmxFix(id = 2, category = QUERY, cause = "Data detail parameter not supported")
+    private static final Set<Feature> DOTSTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);
 }

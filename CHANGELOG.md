@@ -7,6 +7,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.11] - 2023-06-02
+
+This is the eleventh beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release adds new sources from Eurostat and the European Commission.
+It also improves performance of several drivers alongside the usual bug fixes.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
+### Added
+
+- ![API] Add feature descriptor `DATA_QUERY_ALL_KEYWORD`
+- ![SOURCE] Add sources from Directorates General of the European
+  Commission [#414](https://github.com/nbbrd/sdmx-dl/issues/414)
+- ![SOURCE] Add source from Eurostat International trade in goods [#415](https://github.com/nbbrd/sdmx-dl/issues/415)
+
+### Fixed
+
+- ![PROVIDER] Fix URL squashing in curl backend [#417](https://github.com/nbbrd/sdmx-dl/issues/417)
+- ![PROVIDER] Fix cache when two sources share the same host [#413](https://github.com/nbbrd/sdmx-dl/issues/413)
+
+### Changed
+
+- ![API] Improve request for available key codes
+- ![SOURCE] Improve source from Economic and Social Commission for Asia and the
+  Pacific [#418](https://github.com/nbbrd/sdmx-dl/issues/418)
+- ![FORMAT] Use protobuf as default cache format
+- ![PROVIDER] Improve Eurostat driver [#416](https://github.com/nbbrd/sdmx-dl/issues/416)
+- ![PROVIDER] Add support of `DATA_QUERY_ALL_KEYWORD` feature in RI
+- ![PROVIDER] Replace error by empty stream when no data is available
+
+### Removed
+
+- ![API] Remove feature descriptor `DATA_QUERY_KEY`
+
 ## [3.0.0-beta.10] - 2023-02-13
 
 This is a bugfix release for the deployment of v3.0.0-beta.9.  
@@ -340,7 +377,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...HEAD
+
+[3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11
 
 [3.0.0-beta.10]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...v3.0.0-beta.10
 

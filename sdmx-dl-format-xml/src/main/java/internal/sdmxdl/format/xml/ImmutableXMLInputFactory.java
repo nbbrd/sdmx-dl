@@ -25,7 +25,7 @@ public final class ImmutableXMLInputFactory extends XMLInputFactory {
     private final @NonNull XMLInputFactory delegate;
 
     private ImmutableXMLInputFactory(boolean namespaceAware) {
-        this.delegate = XMLInputFactory.newFactory();
+        this.delegate = XMLInputFactory.newInstance();
         if (!namespaceAware && delegate.isPropertySupported(XMLInputFactory.IS_NAMESPACE_AWARE)) {
             delegate.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
         }

@@ -1,10 +1,9 @@
-package internal.sdmxdl.format.kryo;
+package sdmxdl.format.kryo;
 
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.kryo.KryoFileFormat;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.web.MonitorReports;
 
@@ -12,17 +11,22 @@ import sdmxdl.web.MonitorReports;
 public final class KryoProvider implements FileFormatProvider {
 
     @Override
-    public @NonNull String getName() {
-        return "kryo";
+    public @NonNull String getId() {
+        return "KRYO";
+    }
+
+    @Override
+    public int getRank() {
+        return 400;
     }
 
     @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
-        return FileFormat.of(KryoFileFormat.MONITOR, ".kryo");
+        return FileFormat.of(new KryoFileFormat<>(MonitorReports.class), ".kryo");
     }
 
     @Override
     public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
-        return FileFormat.of(KryoFileFormat.REPOSITORY, ".kryo");
+        return FileFormat.of(new KryoFileFormat<>(DataRepository.class), ".kryo");
     }
 }

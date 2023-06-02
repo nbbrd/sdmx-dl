@@ -16,6 +16,7 @@
  */
 package sdmxdl.web.spi;
 
+import internal.sdmxdl.ServiceId;
 import internal.sdmxdl.web.spi.FailsafeDriver;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
@@ -40,8 +41,8 @@ import java.util.Collection;
 @ThreadSafe
 public interface WebDriver {
 
-    @NonNull
-    String getName();
+    @ServiceId
+    @NonNull String getId();
 
     @ServiceSorter(reverse = true)
     int getRank();

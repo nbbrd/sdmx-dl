@@ -24,7 +24,9 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -63,7 +65,7 @@ public final class XRepoRestClient implements RestClient {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))
-                .orElseThrow(() -> CommonSdmxExceptions.missingData(this, ref.getFlowRef()));
+                .orElseGet(Stream::empty);
     }
 
     @Override
@@ -77,8 +79,8 @@ public final class XRepoRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() {
-        return true;
+    public Set<Feature> getSupportedFeatures() {
+        return EnumSet.allOf(Feature.class);
     }
 
     @Override

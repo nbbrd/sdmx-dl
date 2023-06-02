@@ -16,30 +16,20 @@
  */
 package internal.sdmxdl.cli;
 
-import nbbrd.console.picocli.yaml.YamlOutput;
-import nbbrd.console.picocli.yaml.YamlOutputOptions;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.BeanAccess;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
+import nbbrd.console.picocli.text.TextOutputOptions;
 import picocli.CommandLine;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.testing.IntRange;
 
 import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.io.Writer;
 
 /**
  * @author Philippe Charles
  */
 @lombok.Getter
 @lombok.Setter
-public class DebugOutputOptions extends YamlOutputOptions {
+public class DebugOutputOptions extends TextOutputOptions {
 
     @CommandLine.Option(
             names = "--dummy-debug-option",
@@ -48,34 +38,9 @@ public class DebugOutputOptions extends YamlOutputOptions {
     )
     private boolean dummyDebugOption;
 
-    public void dump(Class<?> rootType, Object item) throws IOException {
-        dump(toYaml(rootType), item);
-    }
-
-    public void dumpAll(Class<?> rootType, Collection<?> items) throws IOException {
-        dumpAll(toYaml(rootType), items);
-    }
-
-    private static Yaml toYaml(Class<?> rootType) {
-        DumperOptions opts = new DumperOptions();
-        opts.setAllowReadOnlyProperties(true);
-        return new Yaml(getRepresenter(rootType), opts);
-    }
-
-    private static Representer getRepresenter(Class<?> rootType) {
-        Representer result = new Representer() {
-            {
-                this.representers.put(LocalDateTime.class, data -> representScalar(Tag.STR, ((LocalDateTime) data).toString()));
-                this.representers.put(Key.class, data -> representScalar(Tag.STR, data.toString()));
-                this.representers.put(DataflowRef.class, data -> representScalar(Tag.STR, data.toString()));
-                this.representers.put(DataStructureRef.class, data -> representScalar(Tag.STR, data.toString()));
-                this.representers.put(URL.class, data -> representScalar(Tag.STR, data.toString()));
-                this.representers.put(IntRange.class, data -> representScalar(Tag.STR, ((IntRange) data).toShortString()));
-            }
-        };
-        result.addClassTag(rootType, Tag.MAP);
-        result.setPropertyUtils(YamlOutput.newLinkedPropertyUtils());
-        result.getPropertyUtils().setBeanAccess(BeanAccess.FIELD);
-        return result;
+    public void dumpAll(MessageOrBuilder message) throws IOException {
+        try (Writer writer = newCharWriter()) {
+            JsonFormat.printer().appendTo(message, writer);
+        }
     }
 }

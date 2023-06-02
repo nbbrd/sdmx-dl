@@ -2,7 +2,10 @@ package internal.sdmxdl.cli.ext;
 
 import nbbrd.io.sys.OS;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 public final class KeychainStoreIgnoredExceptionFix extends PrintStream {
@@ -10,8 +13,9 @@ public final class KeychainStoreIgnoredExceptionFix extends PrintStream {
     public static void register() {
         if (OS.NAME.equals(OS.Name.MACOS)) {
             PrintStream err = System.err;
-            if (!(err instanceof KeychainStoreIgnoredExceptionFix))
-                System.setErr(new KeychainStoreIgnoredExceptionFix(err));
+            if (!(err instanceof KeychainStoreIgnoredExceptionFix)) {
+                System.setErr(wrap(err));
+            }
         }
     }
 
@@ -24,8 +28,16 @@ public final class KeychainStoreIgnoredExceptionFix extends PrintStream {
         }
     }
 
-    private KeychainStoreIgnoredExceptionFix(PrintStream original) {
-        super(original);
+    private static KeychainStoreIgnoredExceptionFix wrap(OutputStream original) {
+        try {
+            return new KeychainStoreIgnoredExceptionFix(original);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private KeychainStoreIgnoredExceptionFix(OutputStream original) throws UnsupportedEncodingException {
+        super(original, false, Charset.defaultCharset().name());
     }
 
     @Override

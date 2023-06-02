@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.10</version>
+        <version>3.0.0-beta.11</version>
     </parent>
 
     <artifactId>sdmx-dl-format-protobuf</artifactId>
@@ -16,10 +16,6 @@
     <name>sdmx-dl-format-protobuf</name>
     <description>Download SDMX data - Protocol Buffers</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
-
-    <properties>
-        <protobuf.version>3.21.12</protobuf.version>
-    </properties>
 
     <dependencies>
         <!-- compile only -->
@@ -55,11 +51,30 @@
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>${protobuf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.errorprone</groupId>
+                    <artifactId>error_prone_annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- test only -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-base</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
             <type>test-jar</type>
@@ -84,6 +99,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <configuration>
                     <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <checkStaleness>true</checkStaleness>
                 </configuration>
                 <executions>
                     <execution>

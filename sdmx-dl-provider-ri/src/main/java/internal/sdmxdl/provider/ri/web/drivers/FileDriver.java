@@ -30,7 +30,7 @@ public final class FileDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(RI_FILE)
+            .id(RI_FILE)
             .rank(NATIVE_RANK)
             .availability(ENABLE::get)
             .connector(this::newConnection)

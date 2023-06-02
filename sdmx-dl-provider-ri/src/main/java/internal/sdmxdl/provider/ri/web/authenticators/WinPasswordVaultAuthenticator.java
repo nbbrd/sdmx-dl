@@ -1,6 +1,7 @@
 package internal.sdmxdl.provider.ri.web.authenticators;
 
 import internal.util.credentials.WinPasswordVault;
+import lombok.NonNull;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.web.SdmxWebSource;
@@ -11,6 +12,11 @@ import java.net.PasswordAuthentication;
 
 @ServiceProvider
 public final class WinPasswordVaultAuthenticator implements WebAuthenticator {
+
+    @Override
+    public @NonNull String getId() {
+        return "WIN_PASSWORD_VAULT";
+    }
 
     @Override
     public boolean isAvailable() {

@@ -1,5 +1,6 @@
 package sdmxdl.web.spi;
 
+import internal.sdmxdl.ServiceId;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
@@ -17,6 +18,9 @@ import java.net.PasswordAuthentication;
 )
 @ThreadSafe
 public interface WebAuthenticator {
+
+    @ServiceId
+    @NonNull String getId();
 
     @ServiceFilter
     boolean isAvailable();

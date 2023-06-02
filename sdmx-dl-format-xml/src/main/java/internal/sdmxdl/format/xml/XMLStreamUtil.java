@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package internal.sdmxdl.format.xml;
@@ -26,10 +26,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
@@ -123,7 +123,7 @@ public class XMLStreamUtil {
 
     static void check(boolean expression, Supplier<Location> location, String message, Object... args) throws XMLStreamException {
         if (!expression) {
-            throw new XMLStreamException(String.format(message, args), location.get());
+            throw new XMLStreamException(String.format(Locale.ROOT, message, args), location.get());
         }
     }
 

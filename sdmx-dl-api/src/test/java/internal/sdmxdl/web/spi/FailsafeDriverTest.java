@@ -45,15 +45,15 @@ public class FailsafeDriverTest {
     @Test
     public void testGetName() {
         failsafe.reset();
-        assertThat(valid.getName()).isEqualTo("valid");
+        assertThat(valid.getId()).isEqualTo("valid");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getName()).isEqualTo(TestDriver.FAILING.getClass().getName());
+        assertThat(failing.getId()).isEqualTo(TestDriver.FAILING.getClass().getName());
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        assertThat(nul.getName()).isEqualTo(TestDriver.NULL.getClass().getName());
+        assertThat(nul.getId()).isEqualTo(TestDriver.NULL.getClass().getName());
         failsafe.assertUnexpectedNull("unexpected null");
     }
 

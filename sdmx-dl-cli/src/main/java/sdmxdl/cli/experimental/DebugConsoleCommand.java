@@ -19,6 +19,7 @@ package sdmxdl.cli.experimental;
 import internal.sdmxdl.cli.DebugOutputOptions;
 import nbbrd.console.properties.ConsoleProperties;
 import picocli.CommandLine;
+import sdmxdl.cli.protobuf.ConsoleInfo;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
@@ -35,25 +36,17 @@ public final class DebugConsoleCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        output.dump(ConsoleInfo.class, ConsoleInfo.of(ConsoleProperties.ofServiceLoader()));
+        output.dumpAll(of(ConsoleProperties.ofServiceLoader()));
         return null;
     }
 
-    @lombok.AllArgsConstructor
-    private static class ConsoleInfo {
-
-        String stdInEncoding;
-        String stdOutEncoding;
-        int columns;
-        int rows;
-
-        static ConsoleInfo of(ConsoleProperties properties) {
-            return new ConsoleInfo(
-                    properties.getStdInEncoding().map(Charset::name).orElse(null),
-                    properties.getStdOutEncoding().map(Charset::name).orElse(null),
-                    properties.getColumns().orElse(-1),
-                    properties.getRows().orElse(-1)
-            );
-        }
+    private static ConsoleInfo of(ConsoleProperties properties) {
+        return ConsoleInfo
+                .newBuilder()
+                .setStdInEncoding(properties.getStdInEncoding().map(Charset::name).orElse(""))
+                .setStdOutEncoding(properties.getStdOutEncoding().map(Charset::name).orElse(""))
+                .setColumns(properties.getColumns().orElse(-1))
+                .setRows(properties.getRows().orElse(-1))
+                .build();
     }
 }

@@ -17,6 +17,7 @@
 package sdmxdl.provider.web;
 
 import lombok.NonNull;
+import nbbrd.design.VisibleForTesting;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.provider.DataRef;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static sdmxdl.DataSet.toDataSet;
@@ -44,8 +46,9 @@ final class CachedRestClient implements RestClient {
         return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
-    private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
-        return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+    @VisibleForTesting
+    static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+        return TypedId.resolveURI(URI.create("cache:rest"), source.getId(), String.valueOf(source.hashCode()), languages.toString());
     }
 
     @lombok.NonNull
@@ -148,8 +151,8 @@ final class CachedRestClient implements RestClient {
     }
 
     @Override
-    public boolean isDetailSupported() throws IOException {
-        return delegate.isDetailSupported();
+    public Set<Feature> getSupportedFeatures() throws IOException {
+        return delegate.getSupportedFeatures();
     }
 
     @Override

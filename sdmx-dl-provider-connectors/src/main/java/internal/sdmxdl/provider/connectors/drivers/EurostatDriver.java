@@ -38,7 +38,7 @@ public final class EurostatDriver implements WebDriver {
     @lombok.experimental.Delegate
     private final WebDriverSupport support = WebDriverSupport
             .builder()
-            .name(CONNECTORS_EUROSTAT)
+            .id(CONNECTORS_EUROSTAT)
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(EUROSTAT::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
