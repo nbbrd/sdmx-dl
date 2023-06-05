@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-desktop</name>
-    <description>Download SDMX data - Desktop</description>
+    <description>Easily download official statistics - Desktop</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>

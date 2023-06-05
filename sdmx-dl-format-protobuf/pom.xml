@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-protobuf</name>
-    <description>Download SDMX data - Protocol Buffers</description>
+    <description>Easily download official statistics - Protocol Buffers</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

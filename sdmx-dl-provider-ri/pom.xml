@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-provider-ri</name>
-    <description>Download SDMX data - RI</description>
+    <description>Easily download official statistics - RI</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

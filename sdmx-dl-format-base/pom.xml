@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-base</name>
-    <description>Download SDMX data - Format</description>
+    <description>Easily download official statistics - Format</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

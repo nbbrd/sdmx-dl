@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-provider-base</name>
-    <description>Download SDMX data - Provider</description>
+    <description>Easily download official statistics - Provider</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

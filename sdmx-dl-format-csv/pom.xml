@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-csv</name>
-    <description>Download SDMX data - CSV</description>
+    <description>Easily download official statistics - CSV</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

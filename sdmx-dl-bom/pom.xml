@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>sdmx-dl-bom</name>
-    <description>Download SDMX data - Bill of Materials</description>
+    <description>Easily download official statistics - Bill of Materials</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencyManagement>

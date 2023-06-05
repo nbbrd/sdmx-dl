@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-kryo</name>
-    <description>Download SDMX data - Kryo</description>
+    <description>Easily download official statistics - Kryo</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

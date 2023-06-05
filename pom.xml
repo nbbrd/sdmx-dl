@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
-    <description>Download SDMX data</description>
+    <description>Easily download official statistics</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
     <inceptionYear>2020</inceptionYear>
 

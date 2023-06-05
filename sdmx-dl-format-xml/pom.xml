@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-xml</name>
-    <description>Download SDMX data - XML</description>
+    <description>Easily download official statistics - XML</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
