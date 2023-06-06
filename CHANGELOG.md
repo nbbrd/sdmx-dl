@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- ![GRPC] Migrate gRPC module to Quarkus framework
+
 ## [3.0.0-beta.11] - 2023-06-02
 
 This is the eleventh beta release of **sdmx-dl**.  

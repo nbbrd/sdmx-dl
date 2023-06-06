@@ -4,6 +4,7 @@ import internal.http.curl.CurlHttpURLConnection;
 import lombok.NonNull;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
+import sdmxdl.format.protobuf.ProtobufProvider;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.format.spi.FileFormatProviderLoader;
 import sdmxdl.provider.ext.FileCache;

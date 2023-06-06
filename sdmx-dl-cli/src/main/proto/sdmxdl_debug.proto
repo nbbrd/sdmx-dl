@@ -1,8 +1,8 @@
 syntax = "proto3";
 option java_multiple_files = true;
 
-import "sdmxdl/format/protobuf/repository.proto";
-import "sdmxdl/format/protobuf/source.proto";
+import "sdmxdl_repository.proto";
+import "sdmxdl_source.proto";
 
 package sdmxdl.cli.protobuf;
 
