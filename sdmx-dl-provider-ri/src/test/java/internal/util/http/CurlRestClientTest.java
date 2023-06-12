@@ -17,7 +17,7 @@
 package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import internal.http.curl.CurlHttpURLConnection;
+import nbbrd.io.curl.CurlHttpURLConnection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.URLConnectionFactory;

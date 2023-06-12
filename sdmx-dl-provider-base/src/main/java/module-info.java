@@ -11,6 +11,4 @@ module sdmxdl.provider.base {
     exports sdmxdl.provider.ext;
     exports sdmxdl.provider.file;
     exports sdmxdl.provider.web;
-
-    exports internal.http.curl to sdmxdl.provider.ri;
 }

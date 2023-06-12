@@ -1,7 +1,7 @@
 package internal.sdmxdl.desktop;
 
-import internal.http.curl.CurlHttpURLConnection;
 import lombok.NonNull;
+import nbbrd.io.curl.CurlHttpURLConnection;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.FileFormatProvider;

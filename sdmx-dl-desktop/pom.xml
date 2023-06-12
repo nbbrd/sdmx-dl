@@ -131,6 +131,10 @@
             <artifactId>miglayout-swing</artifactId>
             <version>5.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-io-util</groupId>
+            <artifactId>java-io-curl</artifactId>
+        </dependency>
 
         <!-- runtime only -->
         <dependency>

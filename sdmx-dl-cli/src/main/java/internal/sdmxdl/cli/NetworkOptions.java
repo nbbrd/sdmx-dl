@@ -1,10 +1,10 @@
 package internal.sdmxdl.cli;
 
-import internal.http.curl.CurlHttpURLConnection;
 import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.ProxyOptions;
 import internal.sdmxdl.cli.ext.SslOptions;
+import nbbrd.io.curl.CurlHttpURLConnection;
 import picocli.CommandLine;
 import sdmxdl.web.URLConnectionFactory;
 

@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- ![PROVIDER] Move curl backend to an external project
 - ![GRPC] Migrate gRPC module to Quarkus framework
 
 ## [3.0.0-beta.11] - 2023-06-02
