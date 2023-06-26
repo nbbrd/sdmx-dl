@@ -1,10 +1,10 @@
 package sdmxdl.web.spi;
 
-import internal.sdmxdl.ServiceId;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceId;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebSource;
 
