@@ -109,13 +109,12 @@ public final class CheckRulesCommand implements Callable<Void> {
 
     private static RulesConfig configOf(SdmxWebSource source) {
         try {
-            return RulesConfig
-                    .newBuilder()
-                    .setDriver(source.getDriver())
-                    .setDialect(source.getDialect())
-                    .setProtocol(source.getEndpoint().toURL().getProtocol())
-                    .setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()))
-                    .build();
+            RulesConfig.Builder result = RulesConfig.newBuilder();
+            result.setDriver(source.getDriver());
+            if (source.getDialect() != null) result.setDialect(source.getDialect());
+            result.setProtocol(source.getEndpoint().toURL().getProtocol());
+            result.setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()));
+            return result.build();
         } catch (MalformedURLException ex) {
             throw new UncheckedIOException(ex);
         }
