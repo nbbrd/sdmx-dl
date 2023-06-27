@@ -39,7 +39,7 @@ public class XmlWebSourceTest {
                     .name("en", "European Central Bank")
                     .driver("ri:sdmx21")
                     .dialect(SDMX21_DIALECT)
-                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
+                    .endpointOf("https://data-api.ecb.europa.eu/service")
                     .property("detailSupported", "true")
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
@@ -63,7 +63,7 @@ public class XmlWebSourceTest {
             + "        <description lang=\"en\">European Central Bank</description>\n"
             + "        <driver>ri:sdmx21</driver>\n"
             + "        <dialect>SDMX21</dialect>\n"
-            + "        <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>\n"
+            + "        <endpoint>https://data-api.ecb.europa.eu/service</endpoint>\n"
             + "        <property key=\"detailSupported\" value=\"true\"/>\n"
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
