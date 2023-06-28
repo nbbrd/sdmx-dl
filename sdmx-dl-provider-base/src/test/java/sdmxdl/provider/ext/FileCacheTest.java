@@ -29,7 +29,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -52,12 +54,15 @@ public class FileCacheTest {
         clock.set(1000);
         FileFormat<DataRepository> serializer = newFakeFileFormat();
 
+        List<IOException> exceptions = new ArrayList<>();
+
         FileCache cache = FileCache
                 .builder()
                 .root(temp.resolve("testfolder"))
                 .fileNameGenerator(UnaryOperator.identity())
                 .repositoryFormat(serializer)
                 .clock(clock)
+                .onIOException((message, exception) -> exceptions.add(exception))
                 .build();
 
         assertThat(cache.getRoot())
@@ -110,28 +115,30 @@ public class FileCacheTest {
         assertThat(cache.getRepository("KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r2);
+
+        assertThat(exceptions)
+                .isEmpty();
     }
 
     private static FileFormat<DataRepository> newFakeFileFormat() {
         Map<String, DataRepository> content = new HashMap<>();
-        return new FileFormat<>(newFakeFileParser(content), newFakeFileFormatter(content), ".dat");
+        return new FileFormat<>(
+                FileParser.onParsingStream(stream -> parseFake(content, stream)),
+                FileFormatter.onFormattingStream((value, stream) -> formatFake(content, stream, value)),
+                ".dat"
+        );
     }
 
-    private static FileParser<DataRepository> newFakeFileParser(Map<String, DataRepository> content) {
-        return (stream) -> {
-            try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-                String name = new BufferedReader(reader).lines().collect(Collectors.joining(""));
-                return content.get(name);
-            }
-        };
+    private static DataRepository parseFake(Map<String, DataRepository> content, InputStream stream) {
+        Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+        String name = new BufferedReader(reader).lines().collect(Collectors.joining(""));
+        return content.get(name);
     }
 
-    private static FileFormatter<DataRepository> newFakeFileFormatter(Map<String, DataRepository> content) {
-        return (entry, stream) -> {
-            try (Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
-                writer.write(entry.getName());
-                content.put(entry.getName(), entry);
-            }
-        };
+    private static void formatFake(Map<String, DataRepository> content, OutputStream stream, DataRepository value) throws IOException {
+        Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+        writer.write(value.getName());
+        writer.flush();
+        content.put(value.getName(), value);
     }
 }

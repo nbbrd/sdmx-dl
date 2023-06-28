@@ -120,9 +120,9 @@ public final class FileCache implements Cache {
         Path file = getFile(key, fileType, fileFormat);
         if (Files.exists(file) && Files.isRegularFile(file)) {
             try {
-                return fileFormat.getParser().parsePath(file);
+                return new LockingFileParser<>(fileFormat.getParser()).parsePath(file);
             } catch (IOException ex) {
-                onIOException.accept("While reading '" + file + "'", ex);
+                onIOException.accept("Failed reading '" + file + "'", ex);
             }
         }
         return null;
@@ -132,9 +132,9 @@ public final class FileCache implements Cache {
         Path file = getFile(key, fileType, fileFormat);
         ensureParentExists(file);
         try {
-            fileFormat.getFormatter().formatPath(entry, file);
+            new LockingFileFormatter<>(fileFormat.getFormatter()).formatPath(entry, file);
         } catch (IOException ex) {
-            onIOException.accept("While writing '" + file + "'", ex);
+            onIOException.accept("Failed writing '" + file + "'", ex);
         }
     }
 

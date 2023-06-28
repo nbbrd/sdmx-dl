@@ -2,6 +2,8 @@ package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
 
+import java.util.Objects;
+
 @lombok.Getter
 @lombok.Setter
 public class VerboseOptions {
@@ -30,13 +32,14 @@ public class VerboseOptions {
 
     public void reportToErrorStream(String anchor, String message, Exception ex) {
         CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+        String details = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
         reportToErrorStream(colorScheme
                 .text("[")
                 .concat(colorScheme.commandText(anchor))
                 .concat(colorScheme.text("] "))
                 .concat(colorScheme.optionText(message))
                 .concat(" ")
-                .concat(colorScheme.stackTraceText(ex.getMessage()))
+                .concat(colorScheme.stackTraceText(details))
         );
     }
 
