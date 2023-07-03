@@ -54,7 +54,7 @@ public class CachingAssert {
         }
 
         public MapCache newCache() {
-            return MapCache.of(map, monitors, clock);
+            return MapCache.builder().repositories(map).webMonitors(monitors).clock(clock).build();
         }
     }
 

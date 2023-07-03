@@ -32,22 +32,20 @@ import java.util.function.Predicate;
  * @author Philippe Charles
  */
 @lombok.Getter
-@lombok.AllArgsConstructor(staticName = "of")
+@lombok.Builder(toBuilder = true)
 public final class MapCache implements Cache {
 
-    @NonNull
-    public static MapCache of() {
-        return of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), Clock.systemDefaultZone());
-    }
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final ConcurrentMap<String, DataRepository> repositories = new ConcurrentHashMap<>();
 
     @lombok.NonNull
-    private final ConcurrentMap<String, DataRepository> repositories;
+    @lombok.Builder.Default
+    private final ConcurrentMap<String, MonitorReports> webMonitors = new ConcurrentHashMap<>();
 
     @lombok.NonNull
-    private final ConcurrentMap<String, MonitorReports> webMonitors;
-
-    @lombok.NonNull
-    private final Clock clock;
+    @lombok.Builder.Default
+    private final Clock clock = Clock.systemDefaultZone();
 
     @Override
     public @Nullable DataRepository getRepository(@NonNull String key) {
@@ -92,8 +90,7 @@ public final class MapCache implements Cache {
         return result;
     }
 
-    @VisibleForTesting
-    static <T> void put(@NonNull ConcurrentMap<String, T> map, @NonNull String key, @NonNull T value) {
+    private static <T> void put(@NonNull ConcurrentMap<String, T> map, @NonNull String key, @NonNull T value) {
         map.put(key, value);
     }
 }

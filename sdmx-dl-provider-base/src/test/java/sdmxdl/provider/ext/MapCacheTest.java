@@ -34,7 +34,7 @@ public class MapCacheTest {
 
     @Test
     public void testCompliance() {
-        CacheAssert.assertCompliance(MapCache.of());
+        CacheAssert.assertCompliance(MapCache.builder().build());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class MapCacheTest {
                 .name("r1")
                 .ttl(clock(1000).instant(), Duration.ofMillis(10))
                 .build();
-        MapCache.put(map, "KEY1", r1000);
+        map.put("KEY1", r1000);
         assertThat(MapCache.getRepository(map, clock(1009), "KEY1"))
                 .as("Non-expired key should return value")
                 .isEqualTo(r1000);
@@ -71,10 +71,9 @@ public class MapCacheTest {
                 .name("r2")
                 .ttl(clock(1009).instant(), Duration.ofMillis(10))
                 .build();
-        MapCache.put(map, "KEY1", r1009);
+        map.put("KEY1", r1009);
         assertThat(MapCache.getRepository(map, clock(1010), "KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r1009);
     }
-
 }

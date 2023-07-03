@@ -22,11 +22,11 @@ import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.FileFormat;
+import sdmxdl.provider.ext.DualCache;
 import sdmxdl.provider.ext.FileCache;
 import sdmxdl.provider.ext.MapCache;
 import sdmxdl.provider.ext.VerboseCache;
@@ -42,7 +42,6 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -69,7 +68,7 @@ public class WebNetOptions extends WebOptions {
         return defaultManager
                 .toBuilder()
                 .network(new LazyNetwork())
-                .cache(new DryCache(getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions())))
+                .cache(getDryCache())
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -90,6 +89,14 @@ public class WebNetOptions extends WebOptions {
         return url.getScheme().equals("http")
                 ? URI.create("https" + url.toString().substring(4))
                 : url;
+    }
+
+    private Cache getDryCache() {
+        Cache main = getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions());
+        Clock clock = main.getClock();
+        return new DualCache(
+                MapCache.builder().clock(clock).build(),
+                main, main.getClock());
     }
 
     private static Cache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
@@ -154,58 +161,6 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static final String CACHE_ANCHOR = "CCH";
-
-    private static final class DryCache implements Cache {
-
-        private final Cache delegate;
-        private final MapCache dry;
-
-        public DryCache(Cache delegate) {
-            this.delegate = delegate;
-            this.dry = MapCache.of(new ConcurrentHashMap<>(), new ConcurrentHashMap<>(), delegate.getClock());
-        }
-
-        @Override
-        public @NonNull Clock getClock() {
-            return delegate.getClock();
-        }
-
-        @Override
-        public @Nullable DataRepository getRepository(@NonNull String key) {
-            DataRepository result = dry.getRepository(key);
-            if (result == null) {
-                result = delegate.getRepository(key);
-                if (result != null) {
-                    dry.putRepository(key, result);
-                }
-            }
-            return result;
-        }
-
-        @Override
-        public void putRepository(@NonNull String key, @NonNull DataRepository value) {
-            dry.putRepository(key, value);
-            delegate.putRepository(key, value);
-        }
-
-        @Override
-        public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
-            MonitorReports result = dry.getMonitorReports(key);
-            if (result == null) {
-                result = delegate.getMonitorReports(key);
-                if (result != null) {
-                    dry.putMonitorReports(key, result);
-                }
-            }
-            return result;
-        }
-
-        @Override
-        public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
-            dry.putMonitorReports(key, value);
-            delegate.putMonitorReports(key, value);
-        }
-    }
 
     private final class LazyNetwork implements Network {
 
