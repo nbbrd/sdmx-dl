@@ -40,7 +40,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 
-        Cache cache = context.getCache();
+        Cache cache = context.getCache(source);
         String key = id.toSummaryURL().toString();
 
         MonitorReports reports = cache.getMonitorReports(key);

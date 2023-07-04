@@ -16,6 +16,7 @@
  */
 package sdmxdl.web;
 
+import internal.util.CacheProviderLoader;
 import internal.util.WebAuthenticatorLoader;
 import internal.util.WebDriverLoader;
 import internal.util.WebMonitoringLoader;
@@ -25,7 +26,8 @@ import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.Cache;
+import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -35,7 +37,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -56,6 +57,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .builder()
                 .drivers(WebDriverLoader.load())
                 .monitorings(WebMonitoringLoader.load())
+                .cacheProvider(CacheProviderLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
     }
@@ -83,11 +85,11 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    CacheProvider cacheProvider = CacheProvider.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    BiConsumer<? super SdmxWebSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
+    SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular
@@ -187,7 +189,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     private WebContext initContext() {
         return WebContext
                 .builder()
-                .cache(cache)
+                .cacheProvider(cacheProvider)
                 .languages(languages)
                 .network(network)
                 .eventListener(eventListener)

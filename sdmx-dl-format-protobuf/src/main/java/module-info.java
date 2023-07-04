@@ -11,6 +11,9 @@ module sdmxdl.format.protobuf {
     exports sdmxdl.format.protobuf;
     exports sdmxdl.format.protobuf.web;
 
+    provides sdmxdl.ext.spi.CacheProvider with
+            sdmxdl.format.protobuf.JsonProvider,
+            sdmxdl.format.protobuf.ProtobufProvider;
     provides sdmxdl.format.spi.FileFormatProvider with
             sdmxdl.format.protobuf.JsonProvider,
             sdmxdl.format.protobuf.ProtobufProvider;

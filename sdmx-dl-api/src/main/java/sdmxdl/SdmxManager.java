@@ -19,13 +19,13 @@ package sdmxdl;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
-import sdmxdl.ext.Cache;
+import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -41,14 +41,12 @@ public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
     public abstract @NonNull LanguagePriorityList getLanguages();
 
-    public abstract @NonNull Cache getCache();
+    public abstract @NonNull CacheProvider getCacheProvider();
 
-    public abstract @NonNull BiConsumer<? super SOURCE, ? super String> getEventListener();
+    public abstract @NonNull SdmxSourceConsumer<? super SOURCE, ? super String> getEventListener();
 
     public abstract @NonNull Optional<String> getDialect(@NonNull SOURCE source);
 
-    public static final BiConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = SdmxManager::doNothing;
-
-    private static void doNothing(SdmxSource ignoredSource, String message) {
-    }
+    public static final SdmxSourceConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = (source, t) -> {
+    };
 }

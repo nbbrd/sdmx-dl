@@ -8,6 +8,9 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
+import sdmxdl.ext.Cache;
+import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.provider.web.WebDriverSupport;
@@ -18,6 +21,8 @@ import sdmxdl.web.spi.WebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 
 @ServiceProvider
 public final class FileDriver implements WebDriver {
@@ -44,9 +49,53 @@ public final class FileDriver implements WebDriver {
                 .toBuilder()
                 .languages(context.getLanguages())
                 .eventListener((fileSource, message) -> context.getEventListener().accept(source, message))
-                .cache(context.getCache())
+                .cacheProvider(new FileToWebCacheFactory(source, context.getCacheProvider(), context.getEventListener()))
                 .build()
                 .getConnection(toFileSource(source));
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class FileToWebCacheFactory implements CacheProvider {
+
+        private final @NonNull SdmxWebSource webSource;
+
+        private final @NonNull CacheProvider webCacheFactory;
+
+        private final @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener;
+
+        private Cache getCache() {
+            return webCacheFactory.getWebCache(webSource, eventListener);
+        }
+
+        @Override
+        public @NonNull String getCacheId() {
+            return webCacheFactory.getCacheId();
+        }
+
+        @Override
+        public int getCacheRank() {
+            return webCacheFactory.getCacheRank();
+        }
+
+        @Override
+        public @NonNull Cache getFileCache(@NonNull SdmxFileSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> ignoreEvent) {
+            return getCache();
+        }
+
+        @Override
+        public @NonNull Cache getWebCache(@NonNull SdmxWebSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> ignoreEvent) {
+            return getCache();
+        }
+
+        @Override
+        public @NonNull Collection<String> getSupportedFileProperties() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public @NonNull Collection<String> getSupportedWebProperties() {
+            return webCacheFactory.getSupportedWebProperties();
+        }
     }
 
     private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {

@@ -41,7 +41,7 @@ public final class WebDriverSupport implements WebDriver {
 
     @lombok.Getter
     @lombok.Builder.Default
-    private final int rank = UNKNOWN;
+    private final int rank = UNKNOWN_RANK;
 
     @NonNull
     private final WebConnector connector;

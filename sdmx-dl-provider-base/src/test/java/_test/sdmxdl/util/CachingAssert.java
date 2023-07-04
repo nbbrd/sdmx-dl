@@ -3,7 +3,7 @@ package _test.sdmxdl.util;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.Condition;
 import sdmxdl.DataRepository;
-import sdmxdl.provider.ext.MapCache;
+import sdmxdl.provider.ext.MemCache;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -12,8 +12,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,10 +39,10 @@ public class CachingAssert {
         AtomicInteger count = new AtomicInteger(0);
 
         @lombok.NonNull
-        ConcurrentMap<String, DataRepository> map = new ConcurrentHashMap<>();
+        Map<String, DataRepository> map = new HashMap<>();
 
         @lombok.NonNull
-        ConcurrentMap<String, MonitorReports> monitors = new ConcurrentHashMap<>();
+        Map<String, MonitorReports> monitors = new HashMap<>();
 
         @lombok.NonNull
         FakeClock clock = new FakeClock().set(0);
@@ -53,8 +53,8 @@ public class CachingAssert {
             clock.set(0);
         }
 
-        public MapCache newCache() {
-            return MapCache.builder().repositories(map).webMonitors(monitors).clock(clock).build();
+        public MemCache newCache() {
+            return MemCache.builder().repositories(map).webMonitors(monitors).clock(clock).build();
         }
     }
 

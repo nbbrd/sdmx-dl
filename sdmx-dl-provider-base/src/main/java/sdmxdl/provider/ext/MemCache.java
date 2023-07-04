@@ -24,8 +24,8 @@ import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -33,15 +33,15 @@ import java.util.function.Predicate;
  */
 @lombok.Getter
 @lombok.Builder(toBuilder = true)
-public final class MapCache implements Cache {
+public final class MemCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final ConcurrentMap<String, DataRepository> repositories = new ConcurrentHashMap<>();
+    private final Map<String, DataRepository> repositories = new HashMap<>();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final ConcurrentMap<String, MonitorReports> webMonitors = new ConcurrentHashMap<>();
+    private final Map<String, MonitorReports> webMonitors = new HashMap<>();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -68,17 +68,17 @@ public final class MapCache implements Cache {
     }
 
     @VisibleForTesting
-    static DataRepository getRepository(@NonNull ConcurrentMap<String, DataRepository> map, @NonNull Clock clock, @NonNull String key) {
+    static DataRepository getRepository(@NonNull Map<String, DataRepository> map, @NonNull Clock clock, @NonNull String key) {
         return get(reports -> !reports.isExpired(clock), map, key);
     }
 
     @VisibleForTesting
-    static MonitorReports getWebMonitorReports(@NonNull ConcurrentMap<String, MonitorReports> map, @NonNull Clock clock, @NonNull String key) {
+    static MonitorReports getWebMonitorReports(@NonNull Map<String, MonitorReports> map, @NonNull Clock clock, @NonNull String key) {
         return get(reports -> !reports.isExpired(clock), map, key);
     }
 
     @Nullable
-    private static <T> T get(@NonNull Predicate<T> validator, @NonNull ConcurrentMap<String, T> map, @NonNull String key) {
+    private static <T> T get(@NonNull Predicate<T> validator, @NonNull Map<String, T> map, @NonNull String key) {
         T result = map.get(key);
         if (result == null) {
             return null;
@@ -90,7 +90,7 @@ public final class MapCache implements Cache {
         return result;
     }
 
-    private static <T> void put(@NonNull ConcurrentMap<String, T> map, @NonNull String key, @NonNull T value) {
+    private static <T> void put(@NonNull Map<String, T> map, @NonNull String key, @NonNull T value) {
         map.put(key, value);
     }
 }

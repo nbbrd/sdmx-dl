@@ -16,14 +16,16 @@
  */
 package sdmxdl.web.spi;
 
+import lombok.NonNull;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.Cache;
+import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -38,11 +40,11 @@ public class WebContext {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    CacheProvider cacheProvider = CacheProvider.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    BiConsumer<? super SdmxWebSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
+    SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular
@@ -51,4 +53,8 @@ public class WebContext {
     @lombok.NonNull
     @lombok.Builder.Default
     Network network = Network.getDefault();
+
+    public @NonNull Cache getCache(@NonNull SdmxWebSource source) {
+        return getCacheProvider().getWebCache(source, getEventListener());
+    }
 }

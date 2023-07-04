@@ -75,7 +75,7 @@ public final class FailsafeDriver implements WebDriver {
             return delegate.getRank();
         } catch (RuntimeException ex) {
             unexpectedError("while getting rank", ex);
-            return UNKNOWN;
+            return UNKNOWN_RANK;
         }
     }
 

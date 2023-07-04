@@ -16,6 +16,7 @@
  */
 package sdmxdl.file;
 
+import internal.util.CacheProviderLoader;
 import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -23,14 +24,14 @@ import nbbrd.design.StaticFactoryMethod;
 import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.Cache;
+import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -44,6 +45,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     public static @NonNull SdmxFileManager ofServiceLoader() {
         return builder()
                 .readers(FileReaderLoader.load())
+                .cacheProvider(CacheProviderLoader.load())
                 .build();
     }
 
@@ -58,11 +60,11 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    CacheProvider cacheProvider = CacheProvider.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    BiConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
+    SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
 
     @lombok.NonNull
     @lombok.Singular
@@ -90,7 +92,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
                 .builder()
                 .languages(languages)
                 .eventListener(eventListener)
-                .cache(cache)
+                .cacheProvider(cacheProvider)
                 .build();
     }
 

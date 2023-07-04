@@ -64,7 +64,7 @@ public class FailsafeDriverTest {
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getRank()).isEqualTo(WebDriver.UNKNOWN);
+        assertThat(failing.getRank()).isEqualTo(WebDriver.UNKNOWN_RANK);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 

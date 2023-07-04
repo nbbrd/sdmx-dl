@@ -10,10 +10,10 @@ import sdmxdl.Dataflow;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
-import sdmxdl.provider.file.CachedFileClient;
-import sdmxdl.provider.file.FileConnection;
-import sdmxdl.provider.file.FileClient;
 import sdmxdl.format.ObsParser;
+import sdmxdl.provider.file.CachedFileClient;
+import sdmxdl.provider.file.FileClient;
+import sdmxdl.provider.file.FileConnection;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class XmlReader implements FileReader {
                 ObsParser::newDefault,
                 context.getEventListener()
         );
-        return CachedFileClient.of(client, context.getCache(), source, context.getLanguages());
+        return CachedFileClient.of(client, context.getCache(source), source, context.getLanguages());
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");

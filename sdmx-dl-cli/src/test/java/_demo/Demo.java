@@ -2,7 +2,6 @@ package _demo;
 
 import nbbrd.io.curl.CurlHttpURLConnection;
 import sdmxdl.*;
-import sdmxdl.provider.ext.MapCache;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ public class Demo {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .cache(MapCache.builder().build())
                 .network(EasyNetwork.DEFAULT
                         .toBuilder()
                         .urlConnectionFactory(() -> CurlHttpURLConnection::of)

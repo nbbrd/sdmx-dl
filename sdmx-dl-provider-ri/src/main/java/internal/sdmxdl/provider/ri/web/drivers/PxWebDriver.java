@@ -89,7 +89,7 @@ public final class PxWebDriver implements WebDriver {
 
         PxWebClient cachedClient = CachedPxWebClient.of(
                 client,
-                context.getCache(),
+                context.getCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 context.getLanguages()

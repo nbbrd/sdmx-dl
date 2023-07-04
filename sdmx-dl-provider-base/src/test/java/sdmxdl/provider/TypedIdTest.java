@@ -4,7 +4,7 @@ import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.ext.MapCache;
+import sdmxdl.provider.ext.MemCache;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class TypedIdTest {
 
         FakeClock clock = new FakeClock();
 
-        Cache cache = MapCache.builder().clock(clock).build();
+        Cache cache = MemCache.builder().clock(clock).build();
 
         IOSupplier<Integer> factory = new AtomicInteger()::getAndIncrement;
 

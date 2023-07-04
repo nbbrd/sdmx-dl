@@ -4,6 +4,8 @@ import com.google.protobuf.util.JsonFormat;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.format.DiskCacheProviderSupport;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.web.MonitorReports;
@@ -15,20 +17,34 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static nbbrd.io.text.TextFormatter.onFormattingWriter;
 import static nbbrd.io.text.TextParser.onParsingReader;
 
-@ServiceProvider
-public final class JsonProvider implements FileFormatProvider {
+@ServiceProvider(FileFormatProvider.class)
+@ServiceProvider(CacheProvider.class)
+public final class JsonProvider implements FileFormatProvider, CacheProvider {
+
+    private static final String ID = "JSON";
+
+    private static final int RANK = 200;
 
     private final JsonFormat.Parser jsonParser = JsonFormat.parser();
+
     private final JsonFormat.Printer jsonFormatter = JsonFormat.printer();
+
+    @lombok.experimental.Delegate
+    private final DiskCacheProviderSupport cacheProvider = DiskCacheProviderSupport
+            .builder()
+            .cacheId(ID)
+            .cacheRank(RANK)
+            .formatProvider(this)
+            .build();
 
     @Override
     public @NonNull String getId() {
-        return "JSON";
+        return ID;
     }
 
     @Override
     public int getRank() {
-        return 200;
+        return RANK;
     }
 
     @Override

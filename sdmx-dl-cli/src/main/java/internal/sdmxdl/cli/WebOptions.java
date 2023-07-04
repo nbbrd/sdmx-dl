@@ -24,6 +24,7 @@ import nbbrd.io.text.BooleanProperty;
 import picocli.CommandLine;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
+import sdmxdl.ext.SdmxSourceConsumer;
 import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -112,8 +113,8 @@ public class WebOptions {
         }
     }
 
-    private BiConsumer<? super SdmxWebSource, ? super String> getEventListener() {
-        BiConsumer<? super SdmxWebSource, ? super String> original = isNoLog() ? SdmxManager.NO_OP_EVENT_LISTENER : new LoggingListener()::onSourceEvent;
+    private SdmxSourceConsumer<? super SdmxWebSource, ? super String> getEventListener() {
+        SdmxSourceConsumer<? super SdmxWebSource, ? super String> original = isNoLog() ? SdmxManager.NO_OP_EVENT_LISTENER : new LoggingListener()::onSourceEvent;
         return new VerboseListener(original, verboseOptions)::onSourceEvent;
     }
 

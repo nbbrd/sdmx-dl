@@ -2,11 +2,6 @@ package internal.sdmxdl.desktop;
 
 import lombok.NonNull;
 import nbbrd.io.curl.CurlHttpURLConnection;
-import sdmxdl.ext.Cache;
-import sdmxdl.format.FileFormat;
-import sdmxdl.format.spi.FileFormatProvider;
-import sdmxdl.format.spi.FileFormatProviderLoader;
-import sdmxdl.provider.ext.FileCache;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.URLConnectionFactory;
@@ -26,7 +21,6 @@ public class DesktopWebFactory {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .network(getNetwork())
-                .cache(getCache())
                 .eventListener((source, msg) -> System.out.println(source.getId() + ": " + msg))
                 .build();
     }
@@ -53,14 +47,5 @@ public class DesktopWebFactory {
                 return CurlHttpURLConnection::of;
             }
         };
-    }
-
-    private static Cache getCache() {
-        FileFormatProvider fileFormatProvider = FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new);
-        return FileCache
-                .builder()
-                .repositoryFormat(FileFormat.gzip(fileFormatProvider.getDataRepositoryFormat()))
-                .monitorFormat(FileFormat.gzip(fileFormatProvider.getMonitorReportsFormat()))
-                .build();
     }
 }

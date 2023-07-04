@@ -62,7 +62,7 @@ public interface WebDriver {
 
     int NATIVE_RANK = Byte.MAX_VALUE;
     int WRAPPED_RANK = 0;
-    int UNKNOWN = -1;
+    int UNKNOWN_RANK = -1;
 
     String NO_DEFAULT_DIALECT = "";
 }

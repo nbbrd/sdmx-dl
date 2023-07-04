@@ -21,8 +21,8 @@ import sdmxdl.DataRepository;
 import tests.sdmxdl.ext.CacheAssert;
 
 import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import static _test.sdmxdl.util.CachingAssert.clock;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,18 +30,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Philippe Charles
  */
-public class MapCacheTest {
+public class MemCacheTest {
 
     @Test
     public void testCompliance() {
-        CacheAssert.assertCompliance(MapCache.builder().build());
+        CacheAssert.assertCompliance(MemCache.builder().build());
     }
 
     @Test
     public void testGetRepository() {
-        ConcurrentMap<String, DataRepository> map = new ConcurrentHashMap<>();
+        Map<String, DataRepository> map = new HashMap<>();
 
-        assertThat(MapCache.getRepository(map, clock(1000), "KEY1"))
+        assertThat(MemCache.getRepository(map, clock(1000), "KEY1"))
                 .as("Empty map should return null")
                 .isNull();
 
@@ -51,18 +51,18 @@ public class MapCacheTest {
                 .ttl(clock(1000).instant(), Duration.ofMillis(10))
                 .build();
         map.put("KEY1", r1000);
-        assertThat(MapCache.getRepository(map, clock(1009), "KEY1"))
+        assertThat(MemCache.getRepository(map, clock(1009), "KEY1"))
                 .as("Non-expired key should return value")
                 .isEqualTo(r1000);
 
-        assertThat(MapCache.getRepository(map, clock(1010), "KEY1"))
+        assertThat(MemCache.getRepository(map, clock(1010), "KEY1"))
                 .as("Expired key should return null")
                 .isNull();
         assertThat(map)
                 .as("Expired key should be evicted")
                 .doesNotContainKey("KEY1");
 
-        assertThat(MapCache.getRepository(map, clock(1009), "KEY2"))
+        assertThat(MemCache.getRepository(map, clock(1009), "KEY2"))
                 .as("Non-existing key should return null")
                 .isNull();
 
@@ -72,7 +72,7 @@ public class MapCacheTest {
                 .ttl(clock(1009).instant(), Duration.ofMillis(10))
                 .build();
         map.put("KEY1", r1009);
-        assertThat(MapCache.getRepository(map, clock(1010), "KEY1"))
+        assertThat(MemCache.getRepository(map, clock(1010), "KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r1009);
     }

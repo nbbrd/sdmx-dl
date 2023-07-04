@@ -23,7 +23,7 @@ public final class MockedDriver implements WebDriver {
 
     @lombok.Getter
     @lombok.Builder.Default
-    private final int rank = WebDriver.UNKNOWN;
+    private final int rank = WebDriver.UNKNOWN_RANK;
 
     @lombok.Getter
     @lombok.Builder.Default

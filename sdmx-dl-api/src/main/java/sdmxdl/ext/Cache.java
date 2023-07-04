@@ -18,8 +18,8 @@ package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
+import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.web.MonitorReports;
@@ -29,7 +29,7 @@ import java.time.Clock;
 /**
  * @author Philippe Charles
  */
-@ThreadSafe
+@NotThreadSafe
 public interface Cache {
 
     @NonNull Clock getClock();

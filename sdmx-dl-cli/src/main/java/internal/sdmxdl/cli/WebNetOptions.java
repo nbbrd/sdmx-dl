@@ -23,14 +23,16 @@ import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
-import sdmxdl.DataRepository;
-import sdmxdl.ext.Cache;
-import sdmxdl.format.FileFormat;
-import sdmxdl.provider.ext.DualCache;
-import sdmxdl.provider.ext.FileCache;
-import sdmxdl.provider.ext.MapCache;
-import sdmxdl.provider.ext.VerboseCache;
-import sdmxdl.web.*;
+import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.file.SdmxFileSource;
+import sdmxdl.format.DiskCache;
+import sdmxdl.format.DiskCacheProviderSupport;
+import sdmxdl.provider.ext.DualCacheProviderSupport;
+import sdmxdl.provider.ext.MemCacheProviderSupport;
+import sdmxdl.web.Network;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.URLConnectionFactory;
 import sdmxdl.web.spi.WebAuthenticator;
 
 import javax.net.ssl.HostnameVerifier;
@@ -38,11 +40,11 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -68,7 +70,7 @@ public class WebNetOptions extends WebOptions {
         return defaultManager
                 .toBuilder()
                 .network(new LazyNetwork())
-                .cache(getDryCache())
+                .cacheProvider(getCacheProvider(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -91,57 +93,6 @@ public class WebNetOptions extends WebOptions {
                 : url;
     }
 
-    private Cache getDryCache() {
-        Cache main = getCache(getNetworkOptions().getCacheOptions(), getVerboseOptions());
-        Clock clock = main.getClock();
-        return new DualCache(
-                MapCache.builder().clock(clock).build(),
-                main, main.getClock());
-    }
-
-    private static Cache getCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
-        if (cacheOptions.isNoCache()) {
-            return Cache.noOp();
-        }
-        FileCache fileCache = getFileCache(cacheOptions, verboseOptions);
-        if (verboseOptions.isVerbose()) {
-            verboseOptions.reportToErrorStream(CACHE_ANCHOR, "Using cache folder '" + fileCache.getRoot() + "'");
-        }
-        return getVerboseCache(fileCache, verboseOptions);
-    }
-
-    private static FileCache getFileCache(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
-        FileCache.Builder result = FileCache
-                .builder()
-                .repositoryFormat(getRepositoryFormat(cacheOptions))
-                .monitorFormat(getMonitorFormat(cacheOptions));
-        if (cacheOptions.getCacheFolder() != null) {
-            result.root(cacheOptions.getCacheFolder().toPath());
-        }
-        if (verboseOptions.isVerbose()) {
-            result.onIOException((msg, ex) -> verboseOptions.reportToErrorStream(CACHE_ANCHOR, msg, ex));
-        }
-        return result.build();
-    }
-
-    private static FileFormat<DataRepository> getRepositoryFormat(CacheOptions cacheOptions) {
-        FileFormat<DataRepository> result = cacheOptions.getCacheFormat().getDataRepositoryFormat();
-        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
-    }
-
-    private static FileFormat<MonitorReports> getMonitorFormat(CacheOptions cacheOptions) {
-        FileFormat<MonitorReports> result = cacheOptions.getCacheFormat().getMonitorReportsFormat();
-        return cacheOptions.isNoCacheCompression() ? result : FileFormat.gzip(result);
-    }
-
-    private static Cache getVerboseCache(Cache delegate, VerboseOptions options) {
-        if (options.isVerbose()) {
-            BiConsumer<String, Boolean> listener = (key, hit) -> options.reportToErrorStream(CACHE_ANCHOR, (hit ? "Hit " : "Miss ") + key);
-            return new VerboseCache(delegate, listener, listener);
-        }
-        return delegate;
-    }
-
     private List<WebAuthenticator> getAuthenticators() {
         AuthOptions authOptions = networkOptions.getAuthOptions();
         if (authOptions.hasUsername() && authOptions.hasPassword()) {
@@ -161,6 +112,52 @@ public class WebNetOptions extends WebOptions {
     }
 
     private static final String CACHE_ANCHOR = "CCH";
+
+    private static CacheProvider getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+        if (cacheOptions.isNoCache()) {
+            return CacheProvider.noOp();
+        }
+
+        Clock clock = Clock.systemDefaultZone();
+        Path root = cacheOptions.getCacheFolder() != null ? cacheOptions.getCacheFolder().toPath() : DiskCache.SDMXDL_TMP_DIR;
+        reportConfig(verboseOptions, root);
+
+        return DualCacheProviderSupport
+                .builder()
+                .cacheId("DRY")
+                .first(MemCacheProviderSupport
+                        .builder()
+                        .cacheId("MEM")
+                        .clock(clock)
+                        .build())
+                .second(DiskCacheProviderSupport
+                        .builder()
+                        .cacheId("DISK")
+                        .root(root)
+                        .formatProvider(cacheOptions.getCacheFormat())
+                        .onFileError((src, msg, ex) -> reportFileError(verboseOptions, src, msg, ex))
+                        .onWebError((src, msg, ex) -> reportWebError(verboseOptions, src, msg, ex))
+                        .clock(clock)
+                        .noCompression(cacheOptions.isNoCacheCompression())
+                        .build())
+                .clock(clock)
+                .build();
+    }
+
+    private static void reportConfig(VerboseOptions verboseOptions, Path root) {
+        if (verboseOptions.isVerbose())
+            verboseOptions.reportToErrorStream(CACHE_ANCHOR, "Using cache folder '" + root + "'");
+    }
+
+    private static void reportFileError(VerboseOptions verboseOptions, SdmxFileSource src, String msg, IOException ex) {
+        if (verboseOptions.isVerbose())
+            verboseOptions.reportToErrorStream(CACHE_ANCHOR, src.getData() + ": " + msg, ex);
+    }
+
+    private static void reportWebError(VerboseOptions verboseOptions, SdmxWebSource src, String msg, IOException ex) {
+        if (verboseOptions.isVerbose())
+            verboseOptions.reportToErrorStream(CACHE_ANCHOR, src.getId() + ": " + msg, ex);
+    }
 
     private final class LazyNetwork implements Network {
 

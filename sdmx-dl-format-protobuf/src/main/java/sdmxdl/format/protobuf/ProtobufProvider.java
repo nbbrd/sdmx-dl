@@ -4,6 +4,8 @@ import com.google.protobuf.MessageLite;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
+import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.format.DiskCacheProviderSupport;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.FileFormatProvider;
 import sdmxdl.web.MonitorReports;
@@ -14,17 +16,30 @@ import java.io.OutputStream;
 import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
 
-@ServiceProvider
-public final class ProtobufProvider implements FileFormatProvider {
+@ServiceProvider(FileFormatProvider.class)
+@ServiceProvider(CacheProvider.class)
+public final class ProtobufProvider implements FileFormatProvider, CacheProvider {
+
+    private static final String ID = "PROTOBUF";
+
+    private static final int RANK = 300;
+
+    @lombok.experimental.Delegate
+    private final DiskCacheProviderSupport cacheProvider = DiskCacheProviderSupport
+            .builder()
+            .cacheId(ID)
+            .cacheRank(RANK)
+            .formatProvider(this)
+            .build();
 
     @Override
     public @NonNull String getId() {
-        return "PROTOBUF";
+        return ID;
     }
 
     @Override
     public int getRank() {
-        return 300;
+        return RANK;
     }
 
     @Override

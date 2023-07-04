@@ -88,7 +88,7 @@ public final class StatCanDriver implements WebDriver {
 
         StatCanClient cachedClient = CachedStatCanClient.of(
                 client,
-                context.getCache(), CACHE_TTL_PROPERTY.get(source.getProperties()),
+                context.getCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source, context.getLanguages()
         );
 

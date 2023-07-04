@@ -14,14 +14,13 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ext;
+package sdmxdl.format;
 
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.DataRepository;
-import sdmxdl.format.FileFormat;
 import tests.sdmxdl.ext.CacheAssert;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -41,11 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Philippe Charles
  */
-public class FileCacheTest {
+public class DiskCacheTest {
 
     @Test
     public void testCompliance() {
-        CacheAssert.assertCompliance(FileCache.builder().build());
+        CacheAssert.assertCompliance(DiskCache.builder().build());
     }
 
     @Test
@@ -56,13 +55,13 @@ public class FileCacheTest {
 
         List<IOException> exceptions = new ArrayList<>();
 
-        FileCache cache = FileCache
+        DiskCache cache = DiskCache
                 .builder()
                 .root(temp.resolve("testfolder"))
                 .fileNameGenerator(UnaryOperator.identity())
                 .repositoryFormat(serializer)
                 .clock(clock)
-                .onIOException((message, exception) -> exceptions.add(exception))
+                .onError((message, exception) -> exceptions.add(exception))
                 .build();
 
         assertThat(cache.getRoot())
@@ -77,7 +76,7 @@ public class FileCacheTest {
                 .ttl(clock.instant(), Duration.ofMillis(10))
                 .build();
         cache.putRepository("KEY1", r1);
-        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
                 .exists()
                 .hasContent("r1");
 
@@ -94,7 +93,7 @@ public class FileCacheTest {
         assertThat(cache.getRepository("KEY1"))
                 .as("Expired key should return null")
                 .isNull();
-        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
                 .as("Expired key should be deleted")
                 .doesNotExist();
 
@@ -109,7 +108,7 @@ public class FileCacheTest {
                 .build();
         cache.putRepository("KEY1", r1b);
         cache.putRepository("KEY1", r2);
-        assertThat(cache.getFile("KEY1", FileCache.FileType.REPOSITORY, serializer))
+        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
                 .exists()
                 .hasContent("r2");
         assertThat(cache.getRepository("KEY1"))

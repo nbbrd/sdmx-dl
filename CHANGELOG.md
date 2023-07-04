@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- ![API] Refactor cache API [#500](https://github.com/nbbrd/sdmx-dl/issues/500)
 - ![SOURCE] Update ECB endpoint [#495](https://github.com/nbbrd/sdmx-dl/issues/495)
 - ![PROVIDER] Move curl backend to an external project
 - ![GRPC] Migrate gRPC module to Quarkus framework

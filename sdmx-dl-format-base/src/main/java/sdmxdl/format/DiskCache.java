@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ext;
+package sdmxdl.format;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
@@ -25,7 +25,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
-import sdmxdl.format.FileFormat;
 import sdmxdl.web.MonitorReports;
 
 import java.io.IOException;
@@ -44,11 +43,11 @@ import static java.util.Objects.requireNonNull;
  */
 @lombok.Getter
 @lombok.Builder(toBuilder = true)
-public final class FileCache implements Cache {
+public final class DiskCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
+    private final Path root = SDMXDL_TMP_DIR;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -60,7 +59,7 @@ public final class FileCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final UnaryOperator<String> fileNameGenerator = DEFAULT_GENERATOR;
+    private final UnaryOperator<String> fileNameGenerator = NORMALIZE_HASH_CODE;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -72,7 +71,11 @@ public final class FileCache implements Cache {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final BiConsumer<String, IOException> onIOException = DO_NOT_REPORT;
+    private final BiConsumer<? super String, ? super DiskCacheEvent> onRead = DO_NOT_REPORT;
+
+    @lombok.NonNull
+    @lombok.Builder.Default
+    private final BiConsumer<? super String, ? super IOException> onError = DO_NOT_REPORT;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -109,12 +112,15 @@ public final class FileCache implements Cache {
     private <T> T read(FileFormat<T> fileFormat, Predicate<T> validator, String key, FileType fileType) {
         T result = read(fileFormat, fileType, key);
         if (result == null) {
+            onRead.accept(key, DiskCacheEvent.MISSED);
             return null;
         }
         if (!validator.test(result)) {
             delete(key, fileType, fileFormat);
+            onRead.accept(key, DiskCacheEvent.EXPIRED);
             return null;
         }
+        onRead.accept(key, DiskCacheEvent.HIT);
         return result;
     }
 
@@ -124,7 +130,7 @@ public final class FileCache implements Cache {
             try {
                 return FileParser.onParsingLock(fileFormat.getParser()).parsePath(file);
             } catch (IOException ex) {
-                onIOException.accept("Failed reading '" + file + "'", ex);
+                onError.accept("Failed reading '" + file + "'", ex);
             }
         }
         return null;
@@ -136,7 +142,7 @@ public final class FileCache implements Cache {
         try {
             FileFormatter.onFormattingLock(fileFormat.getFormatter()).formatPath(entry, file);
         } catch (IOException ex) {
-            onIOException.accept("Failed writing '" + file + "'", ex);
+            onError.accept("Failed writing '" + file + "'", ex);
         }
     }
 
@@ -144,7 +150,7 @@ public final class FileCache implements Cache {
         try {
             Files.createDirectories(file.getParent());
         } catch (IOException ex) {
-            onIOException.accept("While creating working dir '" + file + "'", ex);
+            onError.accept("While creating working dir '" + file + "'", ex);
         }
     }
 
@@ -153,7 +159,7 @@ public final class FileCache implements Cache {
         try {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
-            onIOException.accept("While deleting '" + file + "'", ex);
+            onError.accept("While deleting '" + file + "'", ex);
         }
     }
 
@@ -162,11 +168,12 @@ public final class FileCache implements Cache {
         return root.resolve(fileNamePrefix + fileType.name().charAt(0) + fileNameGenerator.apply(key) + fileNameSuffix + fileFormat.getFileExtension());
     }
 
-    private static final UnaryOperator<String> DEFAULT_GENERATOR = FileCache::generateFileNameFromHashCode;
-    private static final BiConsumer<String, IOException> DO_NOT_REPORT = (msg, ex) -> {
+    public static final Path SDMXDL_TMP_DIR = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
+    private static final UnaryOperator<String> NORMALIZE_HASH_CODE = DiskCache::normalizeHashCode;
+    private static final BiConsumer<Object, Object> DO_NOT_REPORT = (msg, ex) -> {
     };
 
-    private static String generateFileNameFromHashCode(String key) {
+    private static String normalizeHashCode(String key) {
         int hashCode = key.hashCode();
         return String.format(Locale.ROOT, hashCode >= 0 ? "0%010d" : "1%010d", Math.abs(hashCode));
     }
