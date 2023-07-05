@@ -134,7 +134,7 @@ public class WebNetOptions extends WebOptions {
                         .builder()
                         .cacheId("DISK")
                         .root(root)
-                        .formatProvider(cacheOptions.getCacheFormat())
+                        .persistence(cacheOptions.getCacheFormat())
                         .onFileError((src, msg, ex) -> reportFileError(verboseOptions, src, msg, ex))
                         .onWebError((src, msg, ex) -> reportWebError(verboseOptions, src, msg, ex))
                         .clock(clock)

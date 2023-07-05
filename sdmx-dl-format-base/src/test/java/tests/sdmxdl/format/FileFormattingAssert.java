@@ -21,7 +21,7 @@ import nbbrd.io.FileParser;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.spi.FileFormatProvider;
+import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.TckUtil;
@@ -33,15 +33,15 @@ import java.time.Clock;
 import java.time.Duration;
 
 @lombok.experimental.UtilityClass
-public class FileFormatProviderAssert {
+public class FileFormattingAssert {
 
-    public void assertCompliance(FileFormatProvider provider) {
-        TckUtil.run(s -> assertCompliance(s, provider));
+    public void assertCompliance(Persistence formatting) {
+        TckUtil.run(s -> assertCompliance(s, formatting));
     }
 
-    public void assertCompliance(SoftAssertions s, FileFormatProvider provider) throws Exception {
-        checkDataRepository(s, provider.getDataRepositoryFormat());
-        checkMonitorReports(s, provider.getMonitorReportsFormat());
+    public void assertCompliance(SoftAssertions s, Persistence formatting) throws Exception {
+        checkDataRepository(s, formatting.getDataRepositoryFormat());
+        checkMonitorReports(s, formatting.getMonitorReportsFormat());
     }
 
     private void checkDataRepository(SoftAssertions s, FileFormat<DataRepository> fileFormat) throws IOException {

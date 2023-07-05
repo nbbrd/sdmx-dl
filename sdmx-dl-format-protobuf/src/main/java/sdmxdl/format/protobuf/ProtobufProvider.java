@@ -1,14 +1,12 @@
 package sdmxdl.format.protobuf;
 
 import com.google.protobuf.MessageLite;
-import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataRepository;
 import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.format.DiskCacheProviderSupport;
-import sdmxdl.format.FileFormat;
-import sdmxdl.format.spi.FileFormatProvider;
-import sdmxdl.web.MonitorReports;
+import sdmxdl.format.protobuf.web.MonitorReports;
+import sdmxdl.format.spi.Persistence;
+import sdmxdl.format.spi.PersistenceSupport;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,48 +14,29 @@ import java.io.OutputStream;
 import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
 
-@ServiceProvider(FileFormatProvider.class)
+@ServiceProvider(Persistence.class)
 @ServiceProvider(CacheProvider.class)
-public final class ProtobufProvider implements FileFormatProvider, CacheProvider {
-
-    private static final String ID = "PROTOBUF";
-
-    private static final int RANK = 300;
+public final class ProtobufProvider implements Persistence, CacheProvider {
 
     @lombok.experimental.Delegate
-    private final DiskCacheProviderSupport cacheProvider = DiskCacheProviderSupport
+    private final PersistenceSupport persistence = PersistenceSupport
             .builder()
-            .cacheId(ID)
-            .cacheRank(RANK)
-            .formatProvider(this)
+            .persistenceId("PROTOBUF")
+            .persistenceRank(300)
+            .monitorReportsParser(onParsingStream(MonitorReports::parseFrom).andThen(ProtobufMonitors::toMonitorReports))
+            .monitorReportsFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufMonitors::fromMonitorReports))
+            .dataRepositoryParser(onParsingStream(DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository))
+            .dataRepositoryFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufRepositories::fromDataRepository))
+            .fileExtension(".protobuf")
             .build();
 
-    @Override
-    public @NonNull String getId() {
-        return ID;
-    }
-
-    @Override
-    public int getRank() {
-        return RANK;
-    }
-
-    @Override
-    public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
-        return new FileFormat<>(
-                onParsingStream(sdmxdl.format.protobuf.web.MonitorReports::parseFrom).andThen(ProtobufMonitors::toMonitorReports),
-                onFormattingStream(this::writeProtobuf).compose(ProtobufMonitors::fromMonitorReports),
-                ".protobuf"
-        );
-    }
-
-    @Override
-    public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
-        return new FileFormat<>(
-                onParsingStream(sdmxdl.format.protobuf.DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository),
-                onFormattingStream(this::writeProtobuf).compose(ProtobufRepositories::fromDataRepository),
-                ".protobuf");
-    }
+    @lombok.experimental.Delegate
+    private final DiskCacheProviderSupport caching = DiskCacheProviderSupport
+            .builder()
+            .cacheId(persistence.getPersistenceId())
+            .cacheRank(persistence.getPersistenceRank())
+            .persistence(persistence)
+            .build();
 
     private void writeProtobuf(MessageLite message, OutputStream outputStream) throws IOException {
         message.writeTo(outputStream);

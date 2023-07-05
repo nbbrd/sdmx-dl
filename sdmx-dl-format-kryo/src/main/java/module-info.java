@@ -1,3 +1,5 @@
+import sdmxdl.format.spi.Persistence;
+
 module sdmxdl.format.kryo {
 
     requires static lombok;
@@ -10,5 +12,5 @@ module sdmxdl.format.kryo {
     exports sdmxdl.format.kryo;
 
     provides sdmxdl.ext.spi.CacheProvider with sdmxdl.format.kryo.KryoProvider;
-    provides sdmxdl.format.spi.FileFormatProvider with sdmxdl.format.kryo.KryoProvider;
+    provides Persistence with sdmxdl.format.kryo.KryoProvider;
 }

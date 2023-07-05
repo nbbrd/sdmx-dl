@@ -1,3 +1,5 @@
+import sdmxdl.format.spi.Persistence;
+
 module sdmxdl.format.protobuf {
 
     requires static lombok;
@@ -14,7 +16,7 @@ module sdmxdl.format.protobuf {
     provides sdmxdl.ext.spi.CacheProvider with
             sdmxdl.format.protobuf.JsonProvider,
             sdmxdl.format.protobuf.ProtobufProvider;
-    provides sdmxdl.format.spi.FileFormatProvider with
+    provides Persistence with
             sdmxdl.format.protobuf.JsonProvider,
             sdmxdl.format.protobuf.ProtobufProvider;
 }

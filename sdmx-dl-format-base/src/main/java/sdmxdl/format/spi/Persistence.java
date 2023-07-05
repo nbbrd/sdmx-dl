@@ -12,15 +12,17 @@ import sdmxdl.web.MonitorReports;
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE
 )
-public interface FileFormatProvider {
+public interface Persistence {
 
     @ServiceId
-    @NonNull String getId();
+    @NonNull String getPersistenceId();
 
     @ServiceSorter(reverse = true)
-    int getRank();
+    int getPersistenceRank();
 
     @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException;
 
     @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException;
+
+    int UNKNOWN_PERSISTENCE_RANK = -1;
 }

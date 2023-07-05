@@ -7,7 +7,7 @@ import sdmxdl.ext.SdmxSourceBiConsumer;
 import sdmxdl.ext.SdmxSourceConsumer;
 import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.format.spi.FileFormatProvider;
+import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
 
@@ -92,9 +92,9 @@ public final class DiskCacheProviderSupport implements CacheProvider {
 
     public static final class Builder {
 
-        public @NonNull Builder formatProvider(@NonNull FileFormatProvider formatProvider) {
-            repositoryFormat(formatProvider.getDataRepositoryFormat());
-            monitorFormat(formatProvider.getMonitorReportsFormat());
+        public @NonNull Builder persistence(@NonNull Persistence persistence) {
+            repositoryFormat(persistence.getDataRepositoryFormat());
+            monitorFormat(persistence.getMonitorReportsFormat());
             return this;
         }
     }

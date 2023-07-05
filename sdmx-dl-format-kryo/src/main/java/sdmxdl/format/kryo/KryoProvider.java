@@ -6,32 +6,32 @@ import sdmxdl.DataRepository;
 import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.format.DiskCacheProviderSupport;
 import sdmxdl.format.FileFormat;
-import sdmxdl.format.spi.FileFormatProvider;
+import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 
-@ServiceProvider(FileFormatProvider.class)
+@ServiceProvider(Persistence.class)
 @ServiceProvider(CacheProvider.class)
-public final class KryoProvider implements FileFormatProvider, CacheProvider {
+public final class KryoProvider implements Persistence, CacheProvider {
 
     private static final String ID = "KRYO";
 
     private static final int RANK = 400;
 
     @lombok.experimental.Delegate
-    private final DiskCacheProviderSupport cacheProvider = DiskCacheProviderSupport
+    private final DiskCacheProviderSupport caching = DiskCacheProviderSupport
             .builder()
             .cacheId(ID)
             .cacheRank(RANK)
-            .formatProvider(this)
+            .persistence(this)
             .build();
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getPersistenceId() {
         return ID;
     }
 
     @Override
-    public int getRank() {
+    public int getPersistenceRank() {
         return RANK;
     }
 

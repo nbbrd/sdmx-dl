@@ -1,8 +1,8 @@
 package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
-import sdmxdl.format.spi.FileFormatProvider;
-import sdmxdl.format.spi.FileFormatProviderLoader;
+import sdmxdl.format.spi.Persistence;
+import sdmxdl.format.spi.PersistenceLoader;
 
 import java.io.File;
 import java.util.List;
@@ -43,19 +43,19 @@ public class CacheOptions {
             converter = FileFormatters.class,
             hidden = true
     )
-    private FileFormatProvider cacheFormat = PROVIDERS.stream()
-            .filter(provider -> provider.getId().equals("PROTOBUF"))
+    private Persistence cacheFormat = PROVIDERS.stream()
+            .filter(provider -> provider.getPersistenceId().equals("PROTOBUF"))
             .findFirst()
             .orElseThrow(NoSuchElementException::new);
 
-    private static final List<FileFormatProvider> PROVIDERS = FileFormatProviderLoader.load();
+    private static final List<Persistence> PROVIDERS = PersistenceLoader.load();
 
-    private static final class FileFormatters implements CommandLine.ITypeConverter<FileFormatProvider> {
+    private static final class FileFormatters implements CommandLine.ITypeConverter<Persistence> {
 
         @Override
-        public FileFormatProvider convert(String value) throws Exception {
+        public Persistence convert(String value) throws Exception {
             return PROVIDERS.stream()
-                    .filter(provider -> provider.getId().equals(value))
+                    .filter(provider -> provider.getPersistenceId().equals(value))
                     .findFirst()
                     .orElseThrow(NoSuchElementException::new);
         }
