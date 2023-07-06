@@ -24,12 +24,13 @@ import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.desktop.favicon.URLConnectionFactory;
 import nbbrd.io.Resource;
-import sdmxdl.*;
 import sdmxdl.Dimension;
+import sdmxdl.*;
 import sdmxdl.desktop.MainComponent;
 import sdmxdl.ext.Registry;
 import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.Network;
+import sdmxdl.web.SSLFactory;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -382,9 +383,10 @@ public abstract class SdmxAutoCompletion {
 
         private void applyHttps(URLConnection result, Network network) {
             if (result instanceof HttpsURLConnection) {
+                SSLFactory sslFactory = network.getSSLFactory();
                 HttpsURLConnection https = (HttpsURLConnection) result;
-                https.setHostnameVerifier(network.getHostnameVerifier());
-                https.setSSLSocketFactory(network.getSSLSocketFactory());
+                https.setHostnameVerifier(sslFactory.getHostnameVerifier());
+                https.setSSLSocketFactory(sslFactory.getSSLSocketFactory());
             }
         }
 

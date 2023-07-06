@@ -2,11 +2,9 @@ package internal.sdmxdl.web;
 
 import lombok.NonNull;
 import sdmxdl.web.Network;
+import sdmxdl.web.SSLFactory;
 import sdmxdl.web.URLConnectionFactory;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
 
 public enum DefaultNetwork implements Network {
@@ -19,13 +17,8 @@ public enum DefaultNetwork implements Network {
     }
 
     @Override
-    public @NonNull SSLSocketFactory getSSLSocketFactory() {
-        return HttpsURLConnection.getDefaultSSLSocketFactory();
-    }
-
-    @Override
-    public @NonNull HostnameVerifier getHostnameVerifier() {
-        return HttpsURLConnection.getDefaultHostnameVerifier();
+    public @NonNull SSLFactory getSSLFactory() {
+        return SSLFactory.getDefault();
     }
 
     @Override

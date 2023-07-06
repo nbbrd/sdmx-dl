@@ -52,9 +52,13 @@ public class WebContext {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    Network network = Network.getDefault();
+    Networking networking = Networking.getDefault();
 
     public @NonNull Cache getCache(@NonNull SdmxWebSource source) {
         return getCacheProvider().getWebCache(source, getEventListener());
+    }
+
+    public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {
+        return getNetworking().getNetwork(source);
     }
 }

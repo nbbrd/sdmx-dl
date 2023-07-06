@@ -16,10 +16,7 @@
  */
 package sdmxdl.web;
 
-import internal.util.CacheProviderLoader;
-import internal.util.WebAuthenticatorLoader;
-import internal.util.WebDriverLoader;
-import internal.util.WebMonitoringLoader;
+import internal.util.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
@@ -28,10 +25,7 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxSourceConsumer;
 import sdmxdl.ext.spi.CacheProvider;
-import sdmxdl.web.spi.WebAuthenticator;
-import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
-import sdmxdl.web.spi.WebMonitoring;
+import sdmxdl.web.spi.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -57,6 +51,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .builder()
                 .drivers(WebDriverLoader.load())
                 .monitorings(WebMonitoringLoader.load())
+                .networking(NetworkingLoader.load())
                 .cacheProvider(CacheProviderLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
@@ -81,7 +76,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    Network network = Network.getDefault();
+    Networking networking = Networking.getDefault();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -191,7 +186,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .builder()
                 .cacheProvider(cacheProvider)
                 .languages(languages)
-                .network(network)
+                .networking(networking)
                 .eventListener(eventListener)
                 .authenticators(authenticators)
                 .build();

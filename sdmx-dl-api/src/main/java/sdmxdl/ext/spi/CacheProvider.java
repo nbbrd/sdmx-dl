@@ -2,6 +2,7 @@ package sdmxdl.ext.spi;
 
 import internal.sdmxdl.NoOpCacheProvider;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
@@ -36,6 +37,7 @@ public interface CacheProvider {
 
     int UNKNOWN_RANK = -1;
 
+    @StaticFactoryMethod
     static @NonNull CacheProvider noOp() {
         return NoOpCacheProvider.INSTANCE;
     }

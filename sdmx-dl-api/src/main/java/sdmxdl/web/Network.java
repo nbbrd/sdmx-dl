@@ -2,21 +2,21 @@ package sdmxdl.web;
 
 import internal.sdmxdl.web.DefaultNetwork;
 import lombok.NonNull;
+import nbbrd.design.NotThreadSafe;
+import nbbrd.design.StaticFactoryMethod;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 import java.net.ProxySelector;
 
+@NotThreadSafe
 public interface Network {
 
     @NonNull ProxySelector getProxySelector();
 
-    @NonNull SSLSocketFactory getSSLSocketFactory();
-
-    @NonNull HostnameVerifier getHostnameVerifier();
+    @NonNull SSLFactory getSSLFactory();
 
     @NonNull URLConnectionFactory getURLConnectionFactory();
 
+    @StaticFactoryMethod
     static @NonNull Network getDefault() {
         return DefaultNetwork.INSTANCE;
     }

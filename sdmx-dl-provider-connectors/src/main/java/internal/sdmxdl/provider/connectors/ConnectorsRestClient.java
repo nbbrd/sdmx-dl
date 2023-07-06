@@ -33,6 +33,8 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
+import sdmxdl.web.Network;
+import sdmxdl.web.SSLFactory;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
@@ -208,9 +210,11 @@ public final class ConnectorsRestClient implements RestClient {
 //        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
-        client.setProxySelector(context.getNetwork().getProxySelector());
-        client.setSslSocketFactory(context.getNetwork().getSSLSocketFactory());
-        client.setHostnameVerifier(context.getNetwork().getHostnameVerifier());
+        Network network = context.getNetwork(source);
+        client.setProxySelector(network.getProxySelector());
+        SSLFactory sslFactory = network.getSSLFactory();
+        client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
+        client.setHostnameVerifier(sslFactory.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
         RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
         client.setRedirectionEventListener(eventListener);

@@ -18,6 +18,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.ext.Registry;
+import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
@@ -39,7 +40,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.Proxy;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,13 +93,23 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final FaviconSupport faviconSupport = FaviconSupport.ofServiceLoader()
             .toBuilder()
-            .client(url -> getSdmxManager().getNetwork().getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY))
+            .client(this::openConnection)
             .build();
 
     private final ImageIcon sdmxIcon = new ImageIcon(loadImage());
 
+    private URLConnection openConnection(URL url) throws IOException {
+        try {
+            SdmxWebSource source = SdmxWebSource.builder().id("").driver("").endpoint(url.toURI()).build();
+            Network network = getSdmxManager().getNetworking().getNetwork(source);
+            return network.getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY);
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
+    }
+
     private Image loadImage() {
-        try (InputStream stream = Resource.getResourceAsStream(MainComponent.class, "sdmx-logo.png").orElseThrow(RuntimeException::new)) {
+        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
             return ImageIO.read(stream);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.spi.CacheProvider;
 import sdmxdl.ext.spi.Dialect;
+import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.ext.MockedDialect;
@@ -60,7 +61,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCacheProvider()).isEqualTo(CacheProvider.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
@@ -73,7 +74,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCacheProvider()).isEqualTo(CacheProvider.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
@@ -85,7 +86,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getDrivers()).containsExactly(sampleDriver);
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
-            assertThat(o.getNetwork()).isEqualTo(Network.getDefault());
+            assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCacheProvider()).isEqualTo(CacheProvider.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();

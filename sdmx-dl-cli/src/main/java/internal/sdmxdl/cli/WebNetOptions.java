@@ -29,22 +29,23 @@ import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCacheProviderSupport;
 import sdmxdl.provider.ext.DualCacheProviderSupport;
 import sdmxdl.provider.ext.MemCacheProviderSupport;
-import sdmxdl.web.Network;
+import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebAuthenticator;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +70,7 @@ public class WebNetOptions extends WebOptions {
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
-                .network(new LazyNetwork())
+                .networking(getNetworking(getNetworkOptions(), getVerboseOptions()))
                 .cacheProvider(getCacheProvider(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
@@ -159,50 +160,47 @@ public class WebNetOptions extends WebOptions {
             verboseOptions.reportToErrorStream(CACHE_ANCHOR, src.getId() + ": " + msg, ex);
     }
 
-    private final class LazyNetwork implements Network {
+    private static Networking getNetworking(NetworkOptions networkOptions, VerboseOptions verboseOptions) {
+        return SingleNetworkingSupport
+                .builder()
+                .id("DRY")
+                .proxySelector(memoize(networkOptions.getProxyOptions()::getProxySelector, "Loading proxy selector", verboseOptions))
+                .sslFactory(memoize(() -> new SSLFactoryAdapter(networkOptions.getSslOptions().getSSLFactory()), "Loading SSL factory", verboseOptions))
+                .urlConnectionFactory(memoize(networkOptions::getURLConnectionFactory, "Loading URL connection factory", verboseOptions))
+                .build();
+    }
 
-        @lombok.Getter(lazy = true)
-        private final ProxySelector lazyProxySelector = initProxySelector();
+    private static void reportNetwork(VerboseOptions verboseOptions, String msg) {
+        if (verboseOptions.isVerbose())
+            verboseOptions.reportToErrorStream("NET", msg);
+    }
 
-        @lombok.Getter(lazy = true)
-        private final SSLFactory lazySSLFactory = initSSLFactory();
+    private static <T> Supplier<T> memoize(Supplier<T> supplier, String message, VerboseOptions verboseOptions) {
+        AtomicReference<T> ref = new AtomicReference<>();
+        return () -> {
+            T result = ref.get();
+            if (result == null) {
+                reportNetwork(verboseOptions, message);
+                result = supplier.get();
+                ref.set(result);
+            }
+            return result;
+        };
+    }
 
-        @lombok.Getter(lazy = true)
-        private final URLConnectionFactory lazyURLConnectionFactory = initURLConnectionFactory();
+    @lombok.AllArgsConstructor
+    private static final class SSLFactoryAdapter implements sdmxdl.web.SSLFactory {
 
-        private ProxySelector initProxySelector() {
-            getVerboseOptions().reportToErrorStream("NET", "Initializing proxy selector");
-            return networkOptions.getProxyOptions().getProxySelector();
-        }
-
-        private SSLFactory initSSLFactory() {
-            getVerboseOptions().reportToErrorStream("NET", "Initializing SSL factory");
-            return networkOptions.getSslOptions().getSSLFactory();
-        }
-
-        private URLConnectionFactory initURLConnectionFactory() {
-            getVerboseOptions().reportToErrorStream("NET", "Initializing URL backend");
-            return networkOptions.getURLConnectionFactory();
-        }
-
-        @Override
-        public @NonNull ProxySelector getProxySelector() {
-            return getLazyProxySelector();
-        }
+        private final @NonNull SSLFactory delegate;
 
         @Override
         public @NonNull SSLSocketFactory getSSLSocketFactory() {
-            return getLazySSLFactory().getSslSocketFactory();
+            return delegate.getSslSocketFactory();
         }
 
         @Override
         public @NonNull HostnameVerifier getHostnameVerifier() {
-            return getLazySSLFactory().getHostnameVerifier();
-        }
-
-        @Override
-        public @NonNull URLConnectionFactory getURLConnectionFactory() {
-            return getLazyURLConnectionFactory();
+            return delegate.getHostnameVerifier();
         }
     }
 }

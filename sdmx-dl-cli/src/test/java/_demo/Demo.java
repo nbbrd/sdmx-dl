@@ -2,6 +2,7 @@ package _demo;
 
 import nbbrd.io.curl.CurlHttpURLConnection;
 import sdmxdl.*;
+import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -13,10 +14,7 @@ public class Demo {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .network(EasyNetwork.DEFAULT
-                        .toBuilder()
-                        .urlConnectionFactory(() -> CurlHttpURLConnection::of)
-                        .build())
+                .networking(SingleNetworkingSupport.builder().id("CURL").urlConnectionFactoryOf(CurlHttpURLConnection::of).build())
                 .languages(LanguagePriorityList.ANY)
                 .eventListener((source, message) -> System.err.println("[" + source.getId() + "] " + message))
                 .build();

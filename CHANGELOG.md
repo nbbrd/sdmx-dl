@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - ![API] Refactor cache API [#500](https://github.com/nbbrd/sdmx-dl/issues/500)
+- ![API] Refactor network API [#503](https://github.com/nbbrd/sdmx-dl/issues/503)
 - ![SOURCE] Update ECB endpoint [#495](https://github.com/nbbrd/sdmx-dl/issues/495)
 - ![FORMAT] Refactor file format API [#502](https://github.com/nbbrd/sdmx-dl/issues/502)
 - ![PROVIDER] Move curl backend to an external project

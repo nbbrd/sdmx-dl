@@ -10,9 +10,7 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.SdmxManager;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.provider.web.WebMonitors;
-import sdmxdl.web.MonitorReport;
-import sdmxdl.web.MonitorStatus;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.*;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebMonitoring;
 
@@ -99,7 +97,8 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
     private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, SdmxWebSource source) throws IOException {
         byte[] data = query.getBytes(StandardCharsets.UTF_8);
 
-        Proxy proxy = context.getNetwork().getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
+        Network network = context.getNetwork(source);
+        Proxy proxy = network.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getEventListener() != SdmxManager.NO_OP_EVENT_LISTENER) {
             context.getEventListener().accept(source, WebEvents.onQuery(url, proxy));
@@ -108,8 +107,9 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
 
         if (conn instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) conn).setSSLSocketFactory(context.getNetwork().getSSLSocketFactory());
-            ((HttpsURLConnection) conn).setHostnameVerifier(context.getNetwork().getHostnameVerifier());
+            SSLFactory sslFactory = network.getSSLFactory();
+            ((HttpsURLConnection) conn).setSSLSocketFactory(sslFactory.getSSLSocketFactory());
+            ((HttpsURLConnection) conn).setHostnameVerifier(sslFactory.getHostnameVerifier());
         }
 
         conn.setDoOutput(true);

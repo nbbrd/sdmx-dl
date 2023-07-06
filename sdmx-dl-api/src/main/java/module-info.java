@@ -18,6 +18,7 @@ module sdmxdl.api {
     uses sdmxdl.ext.spi.CacheProvider;
     uses sdmxdl.ext.spi.Dialect;
     uses sdmxdl.file.spi.FileReader;
+    uses sdmxdl.web.spi.Networking;
     uses sdmxdl.web.spi.WebAuthenticator;
     uses sdmxdl.web.spi.WebDriver;
     uses sdmxdl.web.spi.WebMonitoring;

@@ -12,8 +12,8 @@ public class NetworkAssert {
     }
 
     public void assertCompliance(SoftAssertions s, Network network) {
-        s.assertThat(network.getHostnameVerifier()).isNotNull();
-        s.assertThat(network.getSSLSocketFactory()).isNotNull();
         s.assertThat(network.getProxySelector()).isNotNull();
+        s.assertThat(network.getSSLFactory()).isNotNull();
+        s.assertThat(network.getURLConnectionFactory()).isNotNull();
     }
 }

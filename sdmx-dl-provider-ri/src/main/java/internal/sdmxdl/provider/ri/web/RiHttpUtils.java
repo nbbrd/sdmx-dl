@@ -30,6 +30,7 @@ import sdmxdl.About;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.provider.web.WebEvents;
+import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
@@ -93,16 +94,17 @@ public class RiHttpUtils {
     }
 
     public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull WebContext context) {
+        Network network = context.getNetwork(source);
         return HttpContext
                 .builder()
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
                 .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(source.getProperties()))
-                .proxySelector(context.getNetwork()::getProxySelector)
-                .sslSocketFactory(context.getNetwork()::getSSLSocketFactory)
-                .hostnameVerifier(context.getNetwork()::getHostnameVerifier)
-                .urlConnectionFactory(context.getNetwork()::getURLConnectionFactory)
+                .proxySelector(network::getProxySelector)
+                .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
+                .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
+                .urlConnectionFactory(network::getURLConnectionFactory)
                 .listener(new RiHttpEventListener(source, context.getEventListener()))
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getEventListener()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))
