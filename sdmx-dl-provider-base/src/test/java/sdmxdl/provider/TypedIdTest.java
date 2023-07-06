@@ -4,7 +4,7 @@ import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
-import sdmxdl.provider.ext.MemCache;
+import sdmxdl.format.MemCache;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.io.IOException;

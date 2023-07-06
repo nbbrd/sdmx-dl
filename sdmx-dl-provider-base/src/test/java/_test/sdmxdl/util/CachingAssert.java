@@ -3,15 +3,12 @@ package _test.sdmxdl.util;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.Condition;
 import sdmxdl.DataRepository;
-import sdmxdl.provider.ext.MemCache;
+import sdmxdl.format.MemCache;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.io.IOException;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,10 +23,6 @@ public class CachingAssert {
 
     public static String idOf(Object... items) {
         return Stream.of(items).map(Object::toString).collect(Collectors.joining());
-    }
-
-    public static Clock clock(long value) {
-        return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
     }
 
     @lombok.Value

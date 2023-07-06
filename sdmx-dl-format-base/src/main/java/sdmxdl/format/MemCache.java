@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ext;
+package sdmxdl.format;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;

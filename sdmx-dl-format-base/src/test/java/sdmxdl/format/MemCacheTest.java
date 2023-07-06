@@ -14,17 +14,21 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ext;
+package sdmxdl.format;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
 import tests.sdmxdl.ext.CacheAssert;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static _test.sdmxdl.util.CachingAssert.clock;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -75,5 +79,30 @@ public class MemCacheTest {
         assertThat(MemCache.getRepository(map, clock(1010), "KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r1009);
+    }
+
+    @Test
+    public void testMapFactories() {
+        assertThat(MemCache.builder().build())
+                .satisfies(x -> {
+                    assertThat(x.getRepositories())
+                            .isInstanceOf(HashMap.class);
+
+                    assertThat(x.getWebMonitors())
+                            .isInstanceOf(HashMap.class);
+                });
+
+        assertThat(MemCache.builder().repositories(new TreeMap<>()).webMonitors(new ConcurrentHashMap<>()).build())
+                .satisfies(x -> {
+                    assertThat(x.getRepositories())
+                            .isInstanceOf(TreeMap.class);
+
+                    assertThat(x.getWebMonitors())
+                            .isInstanceOf(ConcurrentHashMap.class);
+                });
+    }
+
+    private static Clock clock(long value) {
+        return Clock.fixed(Instant.ofEpochMilli(value), ZoneId.systemDefault());
     }
 }
