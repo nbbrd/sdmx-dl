@@ -20,7 +20,7 @@ import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
@@ -41,7 +41,7 @@ public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
     public abstract @NonNull LanguagePriorityList getLanguages();
 
-    public abstract @NonNull CacheProvider getCacheProvider();
+    public abstract @NonNull Caching getCaching();
 
     public abstract @NonNull SdmxSourceConsumer<? super SOURCE, ? super String> getEventListener();
 

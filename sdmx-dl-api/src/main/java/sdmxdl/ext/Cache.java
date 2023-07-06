@@ -16,7 +16,7 @@
  */
 package sdmxdl.ext;
 
-import internal.sdmxdl.NoOpCache;
+import internal.sdmxdl.ext.NoOpCache;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;

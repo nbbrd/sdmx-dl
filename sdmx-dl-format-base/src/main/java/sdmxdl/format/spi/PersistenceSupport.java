@@ -10,13 +10,11 @@ import sdmxdl.web.MonitorReports;
 @lombok.Builder(toBuilder = true)
 public final class PersistenceSupport implements Persistence {
 
-    @lombok.Getter
     @lombok.NonNull
-    private final String persistenceId;
+    private final String id;
 
-    @lombok.Getter
     @lombok.Builder.Default
-    private final int persistenceRank = UNKNOWN_PERSISTENCE_RANK;
+    private final int rank = UNKNOWN_PERSISTENCE_RANK;
 
     @lombok.NonNull
     private final FileParser<MonitorReports> monitorReportsParser;
@@ -32,6 +30,16 @@ public final class PersistenceSupport implements Persistence {
 
     @lombok.NonNull
     private final String fileExtension;
+
+    @Override
+    public @NonNull String getPersistenceId() {
+        return id;
+    }
+
+    @Override
+    public int getPersistenceRank() {
+        return rank;
+    }
 
     @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {

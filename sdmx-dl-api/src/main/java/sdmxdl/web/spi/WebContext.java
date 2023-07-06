@@ -21,7 +21,7 @@ import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 
@@ -40,7 +40,7 @@ public class WebContext {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    CacheProvider cacheProvider = CacheProvider.noOp();
+    Caching caching = Caching.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -55,7 +55,7 @@ public class WebContext {
     Networking networking = Networking.getDefault();
 
     public @NonNull Cache getCache(@NonNull SdmxWebSource source) {
-        return getCacheProvider().getWebCache(source, getEventListener());
+        return getCaching().getWebCache(source, getEventListener());
     }
 
     public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {

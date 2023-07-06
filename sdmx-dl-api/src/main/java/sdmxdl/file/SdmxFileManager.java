@@ -16,7 +16,7 @@
  */
 package sdmxdl.file;
 
-import internal.util.CacheProviderLoader;
+import internal.util.CachingLoader;
 import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -25,7 +25,7 @@ import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
 
@@ -45,7 +45,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     public static @NonNull SdmxFileManager ofServiceLoader() {
         return builder()
                 .readers(FileReaderLoader.load())
-                .cacheProvider(CacheProviderLoader.load())
+                .caching(CachingLoader.load())
                 .build();
     }
 
@@ -60,7 +60,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    CacheProvider cacheProvider = CacheProvider.noOp();
+    Caching caching = Caching.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -92,7 +92,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
                 .builder()
                 .languages(languages)
                 .eventListener(eventListener)
-                .cacheProvider(cacheProvider)
+                .caching(caching)
                 .build();
     }
 

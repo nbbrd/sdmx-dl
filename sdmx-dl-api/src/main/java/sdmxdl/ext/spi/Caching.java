@@ -1,6 +1,6 @@
 package sdmxdl.ext.spi;
 
-import internal.sdmxdl.NoOpCacheProvider;
+import internal.sdmxdl.ext.spi.NoOpCaching;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.service.Quantifier;
@@ -16,29 +16,29 @@ import java.util.Collection;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.CacheProviderLoader",
-        fallback = NoOpCacheProvider.class
+        loaderName = "internal.util.CachingLoader",
+        fallback = NoOpCaching.class
 )
-public interface CacheProvider {
+public interface Caching {
 
     @ServiceId
-    @NonNull String getCacheId();
+    @NonNull String getCachingId();
 
     @ServiceSorter(reverse = true)
-    int getCacheRank();
+    int getCachingRank();
 
     @NonNull Cache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener);
 
     @NonNull Cache getWebCache(@NonNull SdmxWebSource source, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener);
 
-    @NonNull Collection<String> getSupportedFileProperties();
+    @NonNull Collection<String> getFileCachingProperties();
 
-    @NonNull Collection<String> getSupportedWebProperties();
+    @NonNull Collection<String> getWebCachingProperties();
 
-    int UNKNOWN_RANK = -1;
+    int UNKNOWN_CACHING_RANK = -1;
 
     @StaticFactoryMethod
-    static @NonNull CacheProvider noOp() {
-        return NoOpCacheProvider.INSTANCE;
+    static @NonNull Caching noOp() {
+        return NoOpCaching.INSTANCE;
     }
 }

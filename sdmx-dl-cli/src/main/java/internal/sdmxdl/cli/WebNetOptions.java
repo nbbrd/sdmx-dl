@@ -23,12 +23,12 @@ import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DiskCache;
-import sdmxdl.format.DiskCacheProviderSupport;
-import sdmxdl.provider.ext.DualCacheProviderSupport;
-import sdmxdl.provider.ext.MemCacheProviderSupport;
+import sdmxdl.format.DiskCachingSupport;
+import sdmxdl.provider.ext.DualCachingSupport;
+import sdmxdl.provider.ext.MemCachingSupport;
 import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -71,7 +71,7 @@ public class WebNetOptions extends WebOptions {
         return defaultManager
                 .toBuilder()
                 .networking(getNetworking(getNetworkOptions(), getVerboseOptions()))
-                .cacheProvider(getCacheProvider(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
+                .caching(getCacheProvider(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -114,26 +114,26 @@ public class WebNetOptions extends WebOptions {
 
     private static final String CACHE_ANCHOR = "CCH";
 
-    private static CacheProvider getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+    private static Caching getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
         if (cacheOptions.isNoCache()) {
-            return CacheProvider.noOp();
+            return Caching.noOp();
         }
 
         Clock clock = Clock.systemDefaultZone();
         Path root = cacheOptions.getCacheFolder() != null ? cacheOptions.getCacheFolder().toPath() : DiskCache.SDMXDL_TMP_DIR;
         reportConfig(verboseOptions, root);
 
-        return DualCacheProviderSupport
+        return DualCachingSupport
                 .builder()
-                .cacheId("DRY")
-                .first(MemCacheProviderSupport
+                .id("DRY")
+                .first(MemCachingSupport
                         .builder()
-                        .cacheId("MEM")
+                        .id("MEM")
                         .clock(clock)
                         .build())
-                .second(DiskCacheProviderSupport
+                .second(DiskCachingSupport
                         .builder()
-                        .cacheId("DISK")
+                        .id("DISK")
                         .root(root)
                         .persistence(cacheOptions.getCacheFormat())
                         .onFileError((src, msg, ex) -> reportFileError(verboseOptions, src, msg, ex))

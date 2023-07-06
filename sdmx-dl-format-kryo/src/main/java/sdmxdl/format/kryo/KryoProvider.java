@@ -3,25 +3,25 @@ package sdmxdl.format.kryo;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.spi.CacheProvider;
-import sdmxdl.format.DiskCacheProviderSupport;
+import sdmxdl.ext.spi.Caching;
+import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(CacheProvider.class)
-public final class KryoProvider implements Persistence, CacheProvider {
+@ServiceProvider(Caching.class)
+public final class KryoProvider implements Persistence, Caching {
 
     private static final String ID = "KRYO";
 
     private static final int RANK = 400;
 
     @lombok.experimental.Delegate
-    private final DiskCacheProviderSupport caching = DiskCacheProviderSupport
+    private final DiskCachingSupport caching = DiskCachingSupport
             .builder()
-            .cacheId(ID)
-            .cacheRank(RANK)
+            .id(ID)
+            .rank(RANK)
             .persistence(this)
             .build();
 

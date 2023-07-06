@@ -3,7 +3,7 @@ package sdmxdl.provider.ext;
 import lombok.NonNull;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.web.SdmxWebSource;
 
@@ -14,27 +14,35 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 @lombok.Builder(toBuilder = true)
-public final class DualCacheProviderSupport implements CacheProvider {
+public final class DualCachingSupport implements Caching {
 
-    @lombok.Getter
     @lombok.NonNull
-    private final String cacheId;
+    private final String id;
 
-    @lombok.Getter
     @lombok.Builder.Default
-    private final int cacheRank = UNKNOWN_RANK;
+    private final int rank = UNKNOWN_CACHING_RANK;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final CacheProvider first = CacheProvider.noOp();
+    private final Caching first = Caching.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
-    private final CacheProvider second = CacheProvider.noOp();
+    private final Caching second = Caching.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
     private final Clock clock = Clock.systemDefaultZone();
+
+    @Override
+    public @NonNull String getCachingId() {
+        return id;
+    }
+
+    @Override
+    public int getCachingRank() {
+        return rank;
+    }
 
     @Override
     public @NonNull Cache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener) {
@@ -49,12 +57,12 @@ public final class DualCacheProviderSupport implements CacheProvider {
     }
 
     @Override
-    public @NonNull Collection<String> getSupportedFileProperties() {
-        return Stream.concat(first.getSupportedFileProperties().stream(), second.getSupportedFileProperties().stream()).collect(toList());
+    public @NonNull Collection<String> getFileCachingProperties() {
+        return Stream.concat(first.getFileCachingProperties().stream(), second.getFileCachingProperties().stream()).collect(toList());
     }
 
     @Override
-    public @NonNull Collection<String> getSupportedWebProperties() {
-        return Stream.concat(first.getSupportedWebProperties().stream(), second.getSupportedWebProperties().stream()).collect(toList());
+    public @NonNull Collection<String> getWebCachingProperties() {
+        return Stream.concat(first.getWebCachingProperties().stream(), second.getWebCachingProperties().stream()).collect(toList());
     }
 }

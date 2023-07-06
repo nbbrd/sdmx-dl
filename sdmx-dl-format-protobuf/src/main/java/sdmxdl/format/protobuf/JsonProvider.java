@@ -2,8 +2,8 @@ package sdmxdl.format.protobuf;
 
 import com.google.protobuf.util.JsonFormat;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.CacheProvider;
-import sdmxdl.format.DiskCacheProviderSupport;
+import sdmxdl.ext.spi.Caching;
+import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
 
@@ -15,8 +15,8 @@ import static nbbrd.io.text.TextFormatter.onFormattingWriter;
 import static nbbrd.io.text.TextParser.onParsingReader;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(CacheProvider.class)
-public final class JsonProvider implements Persistence, CacheProvider {
+@ServiceProvider(Caching.class)
+public final class JsonProvider implements Persistence, Caching {
 
     private final JsonFormat.Parser parser = JsonFormat.parser();
 
@@ -25,8 +25,8 @@ public final class JsonProvider implements Persistence, CacheProvider {
     @lombok.experimental.Delegate
     private final PersistenceSupport persistence = PersistenceSupport
             .builder()
-            .persistenceId("JSON")
-            .persistenceRank(200)
+            .id("JSON")
+            .rank(200)
             .monitorReportsParser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
             .monitorReportsFormatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
             .dataRepositoryParser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
@@ -35,10 +35,10 @@ public final class JsonProvider implements Persistence, CacheProvider {
             .build();
 
     @lombok.experimental.Delegate
-    private final DiskCacheProviderSupport caching = DiskCacheProviderSupport
+    private final DiskCachingSupport caching = DiskCachingSupport
             .builder()
-            .cacheId(persistence.getPersistenceId())
-            .cacheRank(persistence.getPersistenceRank())
+            .id(persistence.getPersistenceId())
+            .rank(persistence.getPersistenceRank())
             .persistence(persistence)
             .build();
 

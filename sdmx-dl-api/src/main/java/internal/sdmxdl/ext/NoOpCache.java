@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl;
+package internal.sdmxdl.ext;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

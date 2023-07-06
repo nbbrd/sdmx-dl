@@ -24,7 +24,7 @@ import sdmxdl.Connection;
 import sdmxdl.LanguagePriorityList;
 import sdmxdl.SdmxManager;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.CacheProvider;
+import sdmxdl.ext.spi.Caching;
 import sdmxdl.web.spi.*;
 
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .drivers(WebDriverLoader.load())
                 .monitorings(WebMonitoringLoader.load())
                 .networking(NetworkingLoader.load())
-                .cacheProvider(CacheProviderLoader.load())
+                .caching(CachingLoader.load())
                 .authenticators(WebAuthenticatorLoader.load())
                 .build();
     }
@@ -80,7 +80,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    CacheProvider cacheProvider = CacheProvider.noOp();
+    Caching caching = Caching.noOp();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -184,7 +184,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     private WebContext initContext() {
         return WebContext
                 .builder()
-                .cacheProvider(cacheProvider)
+                .caching(caching)
                 .languages(languages)
                 .networking(networking)
                 .eventListener(eventListener)
