@@ -21,7 +21,7 @@ import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.Cache;
+import sdmxdl.web.WebCache;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -41,14 +41,14 @@ import java.util.stream.Stream;
  */
 @lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode
-public final class TypedId<T> {
+public final class WebTypedId<T> {
 
     @NonNull
-    public static <T> TypedId<T> of(
+    public static <T> WebTypedId<T> of(
             @NonNull URI content,
             @NonNull Function<DataRepository, T> loader,
             @NonNull Function<T, DataRepository> storer) {
-        return new TypedId<>(content, loader, storer);
+        return new WebTypedId<>(content, loader, storer);
     }
 
     @lombok.NonNull
@@ -62,27 +62,27 @@ public final class TypedId<T> {
     private final Function<T, DataRepository> storer;
 
     @NonNull
-    public TypedId<T> with(@NonNull Object o) {
-        return new TypedId<>(resolveURI(content, o.toString()), loader, storer);
+    public WebTypedId<T> with(@NonNull Object o) {
+        return new WebTypedId<>(resolveURI(content, o.toString()), loader, storer);
     }
 
     @Nullable
-    public T peek(@NonNull Cache cache) {
-        DataRepository repo = cache.getRepository(content.toString());
+    public T peek(@NonNull WebCache cache) {
+        DataRepository repo = cache.getWebRepository(content.toString());
         return repo != null ? loader.apply(repo) : null;
     }
 
     @NonNull
-    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
+    public T load(@NonNull WebCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
         return load(cache, factory, ttl, o -> true);
     }
 
     @NonNull
-    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
+    public T load(@NonNull WebCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();
-            cache.putRepository(content.toString(), storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
+            cache.putWebRepository(content.toString(), storer.apply(result).toBuilder().ttl(cache.getWebClock().instant(), ttl.apply(result)).build());
         }
         return result;
     }

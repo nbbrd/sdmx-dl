@@ -7,22 +7,26 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Connection;
-import sdmxdl.ext.Cache;
+import sdmxdl.DataRepository;
 import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.ext.spi.Caching;
+import sdmxdl.web.spi.WebCaching;
+import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.spi.FileCaching;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebCache;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Collection;
-import java.util.Collections;
 
 @ServiceProvider
 public final class FileDriver implements WebDriver {
@@ -49,52 +53,59 @@ public final class FileDriver implements WebDriver {
                 .toBuilder()
                 .languages(context.getLanguages())
                 .eventListener((fileSource, message) -> context.getEventListener().accept(source, message))
-                .caching(new FileToWebCacheFactory(source, context.getCaching(), context.getEventListener()))
+                .caching(new FileCachingAdapter(source, context.getCaching(), context.getEventListener()))
                 .build()
                 .getConnection(toFileSource(source));
     }
 
     @lombok.AllArgsConstructor
-    private static final class FileToWebCacheFactory implements Caching {
+    private static final class FileCachingAdapter implements FileCaching {
 
         private final @NonNull SdmxWebSource webSource;
 
-        private final @NonNull Caching webCacheFactory;
+        private final @NonNull WebCaching delegate;
 
-        private final @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener;
+        private final @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> webListener;
 
-        private Cache getCache() {
-            return webCacheFactory.getWebCache(webSource, eventListener);
+        @Override
+        public @NonNull String getFileCachingId() {
+            return delegate.getWebCachingId();
         }
 
         @Override
-        public @NonNull String getCachingId() {
-            return webCacheFactory.getCachingId();
+        public int getFileCachingRank() {
+            return delegate.getWebCachingRank();
         }
 
         @Override
-        public int getCachingRank() {
-            return webCacheFactory.getCachingRank();
-        }
-
-        @Override
-        public @NonNull Cache getFileCache(@NonNull SdmxFileSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> ignoreEvent) {
-            return getCache();
-        }
-
-        @Override
-        public @NonNull Cache getWebCache(@NonNull SdmxWebSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> ignoreEvent) {
-            return getCache();
+        public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> ignoreEvent) {
+            return new FileCacheAdapter(delegate.getWebCache(webSource, webListener));
         }
 
         @Override
         public @NonNull Collection<String> getFileCachingProperties() {
-            return Collections.emptyList();
+            return delegate.getWebCachingProperties();
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static final class FileCacheAdapter implements FileCache {
+
+        private final @NonNull WebCache delegate;
+
+        @Override
+        public @NonNull Clock getFileClock() {
+            return delegate.getWebClock();
         }
 
         @Override
-        public @NonNull Collection<String> getWebCachingProperties() {
-            return webCacheFactory.getWebCachingProperties();
+        public @Nullable DataRepository getFileRepository(@NonNull String key) {
+            return delegate.getWebRepository(key);
+        }
+
+        @Override
+        public void putFileRepository(@NonNull String key, @NonNull DataRepository value) {
+            delegate.putWebRepository(key, value);
         }
     }
 

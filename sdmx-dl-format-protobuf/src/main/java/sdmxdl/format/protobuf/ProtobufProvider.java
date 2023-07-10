@@ -2,11 +2,12 @@ package sdmxdl.format.protobuf;
 
 import com.google.protobuf.MessageLite;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.Caching;
+import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.protobuf.web.MonitorReports;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
+import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,8 +16,9 @@ import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(Caching.class)
-public final class ProtobufProvider implements Persistence, Caching {
+@ServiceProvider(FileCaching.class)
+@ServiceProvider(WebCaching.class)
+public final class ProtobufProvider implements Persistence, FileCaching, WebCaching {
 
     @lombok.experimental.Delegate
     private final PersistenceSupport persistence = PersistenceSupport

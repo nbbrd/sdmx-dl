@@ -9,16 +9,16 @@ module sdmxdl.api {
 
     exports sdmxdl;
     exports sdmxdl.ext;
-    exports sdmxdl.ext.spi;
     exports sdmxdl.file;
     exports sdmxdl.file.spi;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
-    uses sdmxdl.ext.spi.Caching;
+    uses sdmxdl.file.spi.FileCaching;
     uses sdmxdl.file.spi.FileReader;
     uses sdmxdl.web.spi.Networking;
     uses sdmxdl.web.spi.WebAuthenticator;
+    uses sdmxdl.web.spi.WebCaching;
     uses sdmxdl.web.spi.WebDriver;
     uses sdmxdl.web.spi.WebMonitoring;
 }

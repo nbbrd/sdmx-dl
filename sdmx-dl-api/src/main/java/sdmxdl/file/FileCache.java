@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 National Bank of Belgium
+ * Copyright 2016 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,43 +14,31 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.ext;
+package sdmxdl.file;
 
+import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
+import nbbrd.design.NotThreadSafe;
+import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.Cache;
-import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
 
 /**
  * @author Philippe Charles
  */
-public enum NoOpCache implements Cache {
+@NotThreadSafe
+public interface FileCache {
 
-    INSTANCE;
+    @NonNull Clock getFileClock();
 
-    @Override
-    public @NonNull Clock getClock() {
-        return Clock.systemDefaultZone();
-    }
+    @Nullable DataRepository getFileRepository(@NonNull String key);
 
-    @Override
-    public DataRepository getRepository(@NonNull String key) {
-        return null;
-    }
+    void putFileRepository(@NonNull String key, @NonNull DataRepository value);
 
-    @Override
-    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
-    }
-
-    @Override
-    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
-        return null;
-    }
-
-    @Override
-    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
+    @StaticFactoryMethod
+    static @NonNull FileCache noOp() {
+        return NoOpCache.INSTANCE;
     }
 }

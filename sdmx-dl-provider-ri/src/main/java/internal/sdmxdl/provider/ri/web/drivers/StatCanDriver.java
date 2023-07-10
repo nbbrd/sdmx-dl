@@ -14,7 +14,7 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
-import sdmxdl.ext.Cache;
+import sdmxdl.web.WebCache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -263,20 +263,20 @@ public final class StatCanDriver implements WebDriver {
     static class CachedStatCanClient implements StatCanClient {
 
         static @NonNull CachedStatCanClient of(
-                @NonNull StatCanClient client, @NonNull Cache cache, long ttlInMillis,
+                @NonNull StatCanClient client, @NonNull WebCache cache, long ttlInMillis,
                 @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
         @lombok.NonNull
         private final StatCanClient delegate;
 
         @lombok.NonNull
-        private final Cache cache;
+        private final WebCache cache;
 
         @lombok.NonNull
         private final URI base;
@@ -285,20 +285,20 @@ public final class StatCanDriver implements WebDriver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
+        private final WebTypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<DataRepository> idOfRepo = initIdOfRepo(base);
+        private final WebTypedId<DataRepository> idOfRepo = initIdOfRepo(base);
 
-        private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
-            return TypedId.of(base,
+        private static WebTypedId<List<Dataflow>> initIdOfFlows(URI base) {
+            return WebTypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
             ).with("flows");
         }
 
-        private static TypedId<DataRepository> initIdOfRepo(URI base) {
-            return TypedId.of(base, identity(), identity())
+        private static WebTypedId<DataRepository> initIdOfRepo(URI base) {
+            return WebTypedId.of(base, identity(), identity())
                     .with("structAndData");
         }
 

@@ -24,8 +24,9 @@ import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.Cache;
+import sdmxdl.file.FileCache;
 import sdmxdl.web.MonitorReports;
+import sdmxdl.web.WebCache;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,7 +44,7 @@ import static java.util.Objects.requireNonNull;
  */
 @lombok.Getter
 @lombok.Builder(toBuilder = true)
-public final class DiskCache implements Cache {
+public final class DiskCache implements FileCache, WebCache {
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -82,22 +83,42 @@ public final class DiskCache implements Cache {
     private final Clock clock = Clock.systemDefaultZone();
 
     @Override
-    public @Nullable DataRepository getRepository(@NonNull String key) {
+    public @NonNull Clock getFileClock() {
+        return clock;
+    }
+
+    @Override
+    public @NonNull Clock getWebClock() {
+        return clock;
+    }
+
+    @Override
+    public @Nullable DataRepository getFileRepository(@NonNull String key) {
         return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
     }
 
     @Override
-    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
+    public @Nullable DataRepository getWebRepository(@NonNull String key) {
+        return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
+    }
+
+    @Override
+    public void putFileRepository(@NonNull String key, @NonNull DataRepository value) {
         write(repositoryFormat, key, FileType.REPOSITORY, value);
     }
 
     @Override
-    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
+    public void putWebRepository(@NonNull String key, @NonNull DataRepository value) {
+        write(repositoryFormat, key, FileType.REPOSITORY, value);
+    }
+
+    @Override
+    public @Nullable MonitorReports getWebMonitorReports(@NonNull String key) {
         return read(monitorFormat, this::isValid, key, FileType.MONITOR);
     }
 
     @Override
-    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
+    public void putWebMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
         write(monitorFormat, key, FileType.MONITOR, value);
     }
 

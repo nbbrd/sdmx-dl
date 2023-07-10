@@ -19,7 +19,7 @@ import nbbrd.io.text.TextParser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.ext.Cache;
+import sdmxdl.web.WebCache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
@@ -27,7 +27,7 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.WebTypedId;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -249,20 +249,20 @@ public final class PxWebDriver implements WebDriver {
     private static final class CachedPxWebClient implements PxWebClient {
 
         static @NonNull CachedPxWebClient of(
-                @NonNull PxWebClient client, @NonNull Cache cache, long ttlInMillis,
+                @NonNull PxWebClient client, @NonNull WebCache cache, long ttlInMillis,
                 @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
             return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
         @lombok.NonNull
         private final PxWebClient delegate;
 
         @lombok.NonNull
-        private final Cache cache;
+        private final WebCache cache;
 
         @lombok.NonNull
         private final URI base;
@@ -271,20 +271,20 @@ public final class PxWebDriver implements WebDriver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
+        private final WebTypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<DataStructure> idOfMeta = initIdOfMeta(base);
+        private final WebTypedId<DataStructure> idOfMeta = initIdOfMeta(base);
 
-        private static TypedId<List<Dataflow>> initIdOfTables(URI base) {
-            return TypedId.of(base,
+        private static WebTypedId<List<Dataflow>> initIdOfTables(URI base) {
+            return WebTypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
             ).with("tables");
         }
 
-        private static TypedId<DataStructure> initIdOfMeta(URI base) {
-            return TypedId.of(base,
+        private static WebTypedId<DataStructure> initIdOfMeta(URI base) {
+            return WebTypedId.of(base,
                     repo -> repo.getStructures().stream().findFirst().orElse(null),
                     struct -> DataRepository.builder().structure(struct).build()
             ).with("meta");

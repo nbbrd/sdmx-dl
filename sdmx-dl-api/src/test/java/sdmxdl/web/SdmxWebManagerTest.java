@@ -18,7 +18,7 @@ package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
-import sdmxdl.ext.spi.Caching;
+import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
@@ -60,7 +60,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
-            assertThat(o.getCaching()).isEqualTo(Caching.noOp());
+            assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
@@ -73,7 +73,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
-            assertThat(o.getCaching()).isEqualTo(Caching.noOp());
+            assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
@@ -85,7 +85,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getMonitorings()).isEmpty();
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
-            assertThat(o.getCaching()).isEqualTo(Caching.noOp());
+            assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();

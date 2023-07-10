@@ -66,7 +66,7 @@ public class DiskCacheTest {
 
         assertThat(cache.getRoot())
                 .doesNotExist();
-        assertThat(cache.getRepository("KEY1"))
+        assertThat(cache.getWebRepository("KEY1"))
                 .as("Empty directory should return null")
                 .isNull();
 
@@ -75,22 +75,22 @@ public class DiskCacheTest {
                 .name("r1")
                 .ttl(clock.instant(), Duration.ofMillis(10))
                 .build();
-        cache.putRepository("KEY1", r1);
+        cache.putWebRepository("KEY1", r1);
         assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
                 .exists()
                 .hasContent("r1");
 
-        assertThat(cache.getRepository("KEY2"))
+        assertThat(cache.getWebRepository("KEY2"))
                 .as("Non-existing key should return null")
                 .isNull();
 
         clock.plus(9);
-        assertThat(cache.getRepository("KEY1"))
+        assertThat(cache.getWebRepository("KEY1"))
                 .as("Non-expired key should return value")
                 .isEqualTo(r1);
 
         clock.plus(1);
-        assertThat(cache.getRepository("KEY1"))
+        assertThat(cache.getWebRepository("KEY1"))
                 .as("Expired key should return null")
                 .isNull();
         assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
@@ -106,12 +106,12 @@ public class DiskCacheTest {
                 .name("r2")
                 .ttl(clock.instant(), Duration.ofMillis(10))
                 .build();
-        cache.putRepository("KEY1", r1b);
-        cache.putRepository("KEY1", r2);
+        cache.putWebRepository("KEY1", r1b);
+        cache.putWebRepository("KEY1", r2);
         assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
                 .exists()
                 .hasContent("r2");
-        assertThat(cache.getRepository("KEY1"))
+        assertThat(cache.getWebRepository("KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r2);
 

@@ -3,15 +3,17 @@ package sdmxdl.format.kryo;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.spi.Caching;
+import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
+import sdmxdl.web.spi.WebCaching;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(Caching.class)
-public final class KryoProvider implements Persistence, Caching {
+@ServiceProvider(FileCaching.class)
+@ServiceProvider(WebCaching.class)
+public final class KryoProvider implements Persistence, FileCaching, WebCaching {
 
     private static final String ID = "KRYO";
 

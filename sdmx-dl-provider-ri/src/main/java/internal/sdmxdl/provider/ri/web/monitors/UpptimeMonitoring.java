@@ -6,7 +6,7 @@ import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.Cache;
+import sdmxdl.web.WebCache;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
@@ -40,14 +40,14 @@ public final class UpptimeMonitoring implements WebMonitoring {
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 
-        Cache cache = context.getCache(source);
+        WebCache cache = context.getCache(source);
         String key = id.toSummaryURL().toString();
 
-        MonitorReports reports = cache.getMonitorReports(key);
+        MonitorReports reports = cache.getWebMonitorReports(key);
 
         if (reports == null) {
-            reports = createReports(RiHttpUtils.newClient(source, context), id, cache.getClock());
-            cache.putMonitorReports(key, reports);
+            reports = createReports(RiHttpUtils.newClient(source, context), id, cache.getWebClock());
+            cache.putWebMonitorReports(key, reports);
         }
 
         return reports.getReports()

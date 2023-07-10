@@ -14,15 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.ext;
+package sdmxdl.web;
 
-import internal.sdmxdl.ext.NoOpCache;
+import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
 
@@ -30,20 +29,20 @@ import java.time.Clock;
  * @author Philippe Charles
  */
 @NotThreadSafe
-public interface Cache {
+public interface WebCache {
 
-    @NonNull Clock getClock();
+    @NonNull Clock getWebClock();
 
-    @Nullable DataRepository getRepository(@NonNull String key);
+    @Nullable DataRepository getWebRepository(@NonNull String key);
 
-    void putRepository(@NonNull String key, @NonNull DataRepository value);
+    void putWebRepository(@NonNull String key, @NonNull DataRepository value);
 
-    @Nullable MonitorReports getMonitorReports(@NonNull String key);
+    @Nullable MonitorReports getWebMonitorReports(@NonNull String key);
 
-    void putMonitorReports(@NonNull String key, @NonNull MonitorReports value);
+    void putWebMonitorReports(@NonNull String key, @NonNull MonitorReports value);
 
     @StaticFactoryMethod
-    static @NonNull Cache noOp() {
+    static @NonNull WebCache noOp() {
         return NoOpCache.INSTANCE;
     }
 }

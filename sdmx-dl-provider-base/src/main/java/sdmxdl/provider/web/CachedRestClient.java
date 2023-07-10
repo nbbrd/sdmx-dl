@@ -19,10 +19,10 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import sdmxdl.*;
-import sdmxdl.ext.Cache;
+import sdmxdl.web.WebCache;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
-import sdmxdl.provider.TypedId;
+import sdmxdl.provider.WebTypedId;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
@@ -41,21 +41,21 @@ import static sdmxdl.DataSet.toDataSet;
 final class CachedRestClient implements RestClient {
 
     static @NonNull RestClient of(
-            @NonNull RestClient client, @NonNull Cache cache, long ttlInMillis,
+            @NonNull RestClient client, @NonNull WebCache cache, long ttlInMillis,
             @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
         return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
     @VisibleForTesting
     static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
-        return TypedId.resolveURI(URI.create("cache:rest"), source.getId(), String.valueOf(source.hashCode()), languages.toString());
+        return WebTypedId.resolveURI(URI.create("cache:rest"), source.getId(), String.valueOf(source.hashCode()), languages.toString());
     }
 
     @lombok.NonNull
     private final RestClient delegate;
 
     @lombok.NonNull
-    private final Cache cache;
+    private final WebCache cache;
 
     @lombok.NonNull
     private final URI base;
@@ -64,50 +64,50 @@ final class CachedRestClient implements RestClient {
     private final Duration ttl;
 
     @lombok.Getter(lazy = true)
-    private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
+    private final WebTypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<Dataflow> idOfFlow = initIdOfFlow(base);
+    private final WebTypedId<Dataflow> idOfFlow = initIdOfFlow(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<DataStructure> idOfStruct = initIdOfStruct(base);
+    private final WebTypedId<DataStructure> idOfStruct = initIdOfStruct(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<DataSet> idOfSeriesKeysOnly = initIdOfSeriesKeysOnly(base);
+    private final WebTypedId<DataSet> idOfSeriesKeysOnly = initIdOfSeriesKeysOnly(base);
 
     @lombok.Getter(lazy = true)
-    private final TypedId<DataSet> idOfNoData = initIdOfNoData(base);
+    private final WebTypedId<DataSet> idOfNoData = initIdOfNoData(base);
 
-    private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
-        return TypedId.of(base,
+    private static WebTypedId<List<Dataflow>> initIdOfFlows(URI base) {
+        return WebTypedId.of(base,
                 DataRepository::getFlows,
                 flows -> DataRepository.builder().flows(flows).build()
         ).with("flows");
     }
 
-    private static TypedId<Dataflow> initIdOfFlow(URI base) {
-        return TypedId.of(base,
+    private static WebTypedId<Dataflow> initIdOfFlow(URI base) {
+        return WebTypedId.of(base,
                 repo -> repo.getFlows().stream().findFirst().orElse(null),
                 flow -> DataRepository.builder().flow(flow).build()
         ).with("flow");
     }
 
-    private static TypedId<DataStructure> initIdOfStruct(URI base) {
-        return TypedId.of(base,
+    private static WebTypedId<DataStructure> initIdOfStruct(URI base) {
+        return WebTypedId.of(base,
                 repo -> repo.getStructures().stream().findFirst().orElse(null),
                 struct -> DataRepository.builder().structure(struct).build()
         ).with("struct");
     }
 
-    private static TypedId<DataSet> initIdOfSeriesKeysOnly(URI base) {
-        return TypedId.of(base,
+    private static WebTypedId<DataSet> initIdOfSeriesKeysOnly(URI base) {
+        return WebTypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> DataRepository.builder().dataSet(dataSet).build()
         ).with("seriesKeysOnly");
     }
 
-    private static TypedId<DataSet> initIdOfNoData(URI base) {
-        return TypedId.of(base,
+    private static WebTypedId<DataSet> initIdOfNoData(URI base) {
+        return WebTypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 dataSet -> DataRepository.builder().dataSet(dataSet).build()
         ).with("noData");
@@ -165,17 +165,17 @@ final class CachedRestClient implements RestClient {
     }
 
     private DataStructure loadDataStructureWithCache(DataStructureRef ref) throws IOException {
-        TypedId<DataStructure> id = getIdOfStruct().with(ref);
+        WebTypedId<DataStructure> id = getIdOfStruct().with(ref);
         return id.load(cache, () -> delegate.getStructure(ref), this::getTtl);
     }
 
     private DataSet loadSeriesKeysOnlyWithCache(DataRef ref, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = getIdOfSeriesKeysOnly().with(ref.getFlowRef());
+        WebTypedId<DataSet> id = getIdOfSeriesKeysOnly().with(ref.getFlowRef());
         return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getQuery().getKey(), o.getQuery()));
     }
 
     private DataSet loadNoDataWithCache(DataRef ref, DataStructure dsd) throws IOException {
-        TypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
+        WebTypedId<DataSet> id = getIdOfNoData().with(ref.getFlowRef());
         return id.load(cache, () -> copyData(ref, dsd), this::getTtl, o -> isNarrowerRequest(ref.getQuery().getKey(), o.getQuery()));
     }
 
@@ -195,7 +195,7 @@ final class CachedRestClient implements RestClient {
     }
 
     private Dataflow loadDataflowWithCache(DataflowRef ref) throws IOException {
-        TypedId<Dataflow> id = getIdOfFlow().with(ref);
+        WebTypedId<Dataflow> id = getIdOfFlow().with(ref);
         return id.load(cache, () -> delegate.getFlow(ref), this::getTtl);
     }
 

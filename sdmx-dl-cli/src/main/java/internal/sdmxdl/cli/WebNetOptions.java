@@ -23,12 +23,12 @@ import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
-import sdmxdl.ext.spi.Caching;
+import sdmxdl.web.spi.WebCaching;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.MemCachingSupport;
-import sdmxdl.provider.ext.DualCachingSupport;
+import sdmxdl.provider.ext.DualWebCachingSupport;
 import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -114,16 +114,16 @@ public class WebNetOptions extends WebOptions {
 
     private static final String CACHE_ANCHOR = "CCH";
 
-    private static Caching getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+    private static WebCaching getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
         if (cacheOptions.isNoCache()) {
-            return Caching.noOp();
+            return WebCaching.noOp();
         }
 
         Clock clock = Clock.systemDefaultZone();
         Path root = cacheOptions.getCacheFolder() != null ? cacheOptions.getCacheFolder().toPath() : DiskCache.SDMXDL_TMP_DIR;
         reportConfig(verboseOptions, root);
 
-        return DualCachingSupport
+        return DualWebCachingSupport
                 .builder()
                 .id("DRY")
                 .first(MemCachingSupport
