@@ -103,7 +103,6 @@ public final class FileDriver implements WebDriver {
                 .builder()
                 .data(toFile(source.getEndpoint()))
                 .structure(toFile(STRUCTURE_PROPERTY.get(source.getProperties())))
-                .dialect(source.getDialect())
                 .build();
     }
 

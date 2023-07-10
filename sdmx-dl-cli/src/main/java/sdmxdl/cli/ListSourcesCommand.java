@@ -55,7 +55,6 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Description", this::getDescription)
                 .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .columnOf("Driver", SdmxWebSource::getDriver)
-                .columnOf("Dialect", SdmxWebSource::getDialect)
                 .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())

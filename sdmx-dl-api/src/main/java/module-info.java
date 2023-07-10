@@ -16,7 +16,6 @@ module sdmxdl.api {
     exports sdmxdl.web.spi;
 
     uses sdmxdl.ext.spi.Caching;
-    uses sdmxdl.ext.spi.Dialect;
     uses sdmxdl.file.spi.FileReader;
     uses sdmxdl.web.spi.Networking;
     uses sdmxdl.web.spi.WebAuthenticator;

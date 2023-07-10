@@ -145,13 +145,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return monitoring.getReport(source, getContext());
     }
 
-    @Override
-    public @NonNull Optional<String> getDialect(@NonNull SdmxWebSource source) {
-        return source.getDialect() != null
-                ? Optional.of(source.getDialect())
-                : lookupDriverById(source.getDriver()).map(WebDriver::getDefaultDialect);
-    }
-
     private void checkSourceProperties(SdmxWebSource source, WebDriver driver) {
         if (eventListener != NO_OP_EVENT_LISTENER) {
             Collection<String> expected = driver.getSupportedProperties();

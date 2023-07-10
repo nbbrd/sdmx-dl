@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2015 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,23 +14,19 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package tests.sdmxdl.ext;
+package sdmxdl.provider.ext;
 
-import sdmxdl.ext.spi.Dialect;
+import java.time.temporal.TemporalAmount;
 
-import static org.assertj.core.api.Assertions.assertThat;
+@lombok.Value
+@lombok.Builder
+public class SeriesMeta {
 
-/**
- * @author Philippe Charles
- */
-@lombok.experimental.UtilityClass
-public class DialectAssert {
+    public static final SeriesMeta EMPTY = SeriesMeta.builder().build();
 
-    @SuppressWarnings("null")
-    public void assertDialectCompliance(Dialect d) {
-        assertThat(d.getName()).isNotBlank();
-        assertThat(d.getDescription()).isNotBlank();
-
-        assertThat(d.getClass()).isFinal();
-    }
+    TemporalAmount timeUnit;
+    String valueUnit;
+    String decimals;
+    String name;
+    String description;
 }

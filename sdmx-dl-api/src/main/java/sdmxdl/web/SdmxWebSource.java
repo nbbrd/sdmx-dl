@@ -44,9 +44,6 @@ public class SdmxWebSource extends SdmxSource {
     @lombok.NonNull
     String driver;
 
-    @Nullable
-    String dialect;
-
     @lombok.NonNull
     URI endpoint;
 

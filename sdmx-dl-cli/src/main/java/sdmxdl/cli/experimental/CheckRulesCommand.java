@@ -111,7 +111,6 @@ public final class CheckRulesCommand implements Callable<Void> {
         try {
             RulesConfig.Builder result = RulesConfig.newBuilder();
             result.setDriver(source.getDriver());
-            if (source.getDialect() != null) result.setDialect(source.getDialect());
             result.setProtocol(source.getEndpoint().toURL().getProtocol());
             result.setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()));
             return result.build();

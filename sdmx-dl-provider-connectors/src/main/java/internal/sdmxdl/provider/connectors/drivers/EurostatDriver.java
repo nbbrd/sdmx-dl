@@ -25,7 +25,6 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebDriver;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 
 /**
  * @author Philippe Charles
@@ -42,7 +41,6 @@ public final class EurostatDriver implements WebDriver {
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(EUROSTAT::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("ESTAT")

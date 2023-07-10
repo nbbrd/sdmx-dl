@@ -28,7 +28,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 
 /**
  * @author Philippe Charles
@@ -45,7 +44,6 @@ public final class SeDriver implements WebDriver {
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(SeClient::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("SE")

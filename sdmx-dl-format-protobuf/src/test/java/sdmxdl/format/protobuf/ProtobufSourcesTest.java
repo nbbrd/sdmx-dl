@@ -22,7 +22,6 @@ public class ProtobufSourcesTest {
         SdmxWebSource max = min
                 .toBuilder()
                 .name("en", "hello")
-                .dialect("OTHER")
                 .property("key", "value")
                 .alias("EUROSTAT")
                 .websiteOf("http://website")

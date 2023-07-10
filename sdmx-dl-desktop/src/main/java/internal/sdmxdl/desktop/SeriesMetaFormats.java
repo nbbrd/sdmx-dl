@@ -1,7 +1,7 @@
 package internal.sdmxdl.desktop;
 
 import nbbrd.io.text.Parser;
-import sdmxdl.ext.SeriesMeta;
+import sdmxdl.provider.ext.SeriesMeta;
 
 import java.text.*;
 import java.time.format.DateTimeFormatter;

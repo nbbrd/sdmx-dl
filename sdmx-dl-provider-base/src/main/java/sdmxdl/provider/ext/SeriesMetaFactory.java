@@ -19,7 +19,6 @@ package sdmxdl.provider.ext;
 import lombok.NonNull;
 import nbbrd.io.text.Parser;
 import sdmxdl.*;
-import sdmxdl.ext.SeriesMeta;
 import sdmxdl.format.SeriesMetaUtil;
 
 import java.time.Duration;
@@ -65,6 +64,17 @@ public final class SeriesMetaFactory {
     }
 
     @NonNull
+    public static SeriesMetaFactory getDefault(@NonNull DataStructure dsd) {
+        return builder()
+                .byContent()
+                .valueUnit(getValueUnit(dsd))
+                .decimal(getDecimal(dsd))
+                .name(getName(dsd))
+                .description(getDescription(dsd))
+                .build();
+    }
+
+    @NonNull
     public static SeriesMetaFactory sdmx20(@NonNull DataStructure dsd) {
         return builder()
                 .byAttribute(SeriesMetaUtil.TIME_FORMAT_CONCEPT, TimeUnitParsers.onTimeFormatCodeList())
@@ -87,6 +97,10 @@ public final class SeriesMetaFactory {
     }
 
     public static final class Builder {
+
+        public Builder byContent() {
+            return timeUnit(series -> series.getObs().stream().map(obs -> obs.getPeriod().getDuration()).distinct().findFirst().orElse(null));
+        }
 
         public Builder byAttribute(@NonNull String attributeName, Parser<TemporalAmount> timeUnitParser) {
             return timeUnit(series -> timeUnitParser.parse(series.getMeta().get(attributeName)));

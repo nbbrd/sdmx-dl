@@ -7,11 +7,10 @@ message SdmxWebSource {
   string id = 1;
   map<string, string> names = 2;
   string driver = 3;
-  optional string dialect = 4;
-  string endpoint = 5;
-  map<string, string> properties = 6;
-  repeated string aliases = 7;
-  optional string website = 8;
-  optional string monitor = 9;
-  optional string monitor_website = 10;
+  string endpoint = 4;
+  map<string, string> properties = 5;
+  repeated string aliases = 6;
+  optional string website = 7;
+  optional string monitor = 8;
+  optional string monitor_website = 9;
 }

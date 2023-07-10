@@ -45,7 +45,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
@@ -63,7 +62,6 @@ public final class ImfDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(ImfDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("IMF")

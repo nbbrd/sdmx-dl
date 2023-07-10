@@ -25,7 +25,6 @@ import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * @author Philippe Charles
@@ -44,8 +43,6 @@ public abstract class SdmxManager<SOURCE extends SdmxSource> {
     public abstract @NonNull Caching getCaching();
 
     public abstract @NonNull SdmxSourceConsumer<? super SOURCE, ? super String> getEventListener();
-
-    public abstract @NonNull Optional<String> getDialect(@NonNull SOURCE source);
 
     public static final SdmxSourceConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = (source, t) -> {
     };

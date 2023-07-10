@@ -52,7 +52,6 @@ public final class XmlWebSource {
     private static final String NAME_TAG = "name";
     private static final String DESCRIPTION_TAG = "description";
     private static final String DRIVER_TAG = "driver";
-    private static final String DIALECT_TAG = "dialect";
     private static final String ENDPOINT_TAG = "endpoint";
     private static final String PROPERTY_TAG = "property";
     private static final String ALIAS_TAG = "alias";
@@ -83,9 +82,6 @@ public final class XmlWebSource {
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());
-                            break;
-                        case DIALECT_TAG:
-                            item.dialect(reader.getElementText());
                             break;
                         case ENDPOINT_TAG:
                             item.endpointOf(reader.getElementText());
@@ -129,7 +125,6 @@ public final class XmlWebSource {
                 writeDescription(writer, description);
             }
             writeTextElement(writer, DRIVER_TAG, source.getDriver());
-            writeTextElement(writer, DIALECT_TAG, source.getDialect());
             writeTextElement(writer, ENDPOINT_TAG, source.getEndpoint().toString());
             for (Map.Entry<String, String> property : source.getProperties().entrySet()) {
                 writeProperty(writer, property);

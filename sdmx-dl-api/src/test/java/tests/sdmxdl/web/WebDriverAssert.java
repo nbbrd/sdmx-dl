@@ -19,7 +19,6 @@ public class WebDriverAssert {
                 .builder()
                 .id("valid")
                 .driver(d.getId())
-                .dialect("azerty")
                 .endpointOf("http://localhost")
                 .build();
 

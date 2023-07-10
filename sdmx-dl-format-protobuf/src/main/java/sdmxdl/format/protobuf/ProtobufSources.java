@@ -11,7 +11,6 @@ public class ProtobufSources {
         result.setId(value.getId());
         result.putAllNames(value.getNames());
         result.setDriver(value.getDriver());
-        if (value.getDialect() != null) result.setDialect(value.getDialect());
         result.setEndpoint(value.getEndpoint().toString());
         result.putAllProperties(value.getProperties());
         result.addAllAliases(value.getAliases());
@@ -27,7 +26,6 @@ public class ProtobufSources {
                 .id(value.getId())
                 .names(value.getNamesMap())
                 .driver(value.getDriver())
-                .dialect(value.hasDialect() ? value.getDialect() : null)
                 .endpointOf(value.getEndpoint())
                 .properties(value.getPropertiesMap())
                 .aliases(value.getAliasesList())

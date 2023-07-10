@@ -33,7 +33,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
 import static sdmxdl.provider.web.WebProperties.TRAILING_SLASH_REQUIRED_PROPERTY;
 
@@ -54,7 +53,6 @@ public final class Sdmx21Driver2 implements WebDriver {
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
             .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
-            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("ABS")
@@ -93,7 +91,6 @@ public final class Sdmx21Driver2 implements WebDriver {
                     .id("ECB")
                     .name("en", "European Central Bank")
                     .driver(RI_SDMX_21)
-                    .dialect("ECB2020")
                     .endpointOf("https://data-api.ecb.europa.eu/service")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://data.ecb.europa.eu/")

@@ -60,7 +60,6 @@ public final class InseeDriver implements WebDriver {
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .defaultDialect(INSEE_2017)
             .source(SdmxWebSource
                     .builder()
                     .id("INSEE")
@@ -72,9 +71,6 @@ public final class InseeDriver implements WebDriver {
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
                     .build())
             .build();
-
-    @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
-    private static final String INSEE_2017 = "INSEE2017";
 
     private final static class InseeClient extends RestSdmxClient implements HasDetailSupported {
 

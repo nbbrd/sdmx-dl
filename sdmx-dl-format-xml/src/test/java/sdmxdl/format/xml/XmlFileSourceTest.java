@@ -34,9 +34,6 @@ public class XmlFileSourceTest {
     public void testFormatter() throws IOException {
         Xml.Formatter<SdmxFileSource> x = XmlFileSource.getFormatter();
 
-        assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).dialect("hello").build()))
-                .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\"/>");
-
         assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).build()))
                 .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\" structure=\"b.xml\"/>");
 
@@ -56,23 +53,15 @@ public class XmlFileSourceTest {
 
         assertThat(x.parseChars("<file data=\"a.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null)
-                .hasFieldOrPropertyWithValue("dialect", null);
+                .hasFieldOrPropertyWithValue("structure", null);
 
         assertThat(x.parseChars("<file data=\"a.xml\" structure=\"\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", null)
-                .hasFieldOrPropertyWithValue("dialect", null);
+                .hasFieldOrPropertyWithValue("structure", null);
 
         assertThat(x.parseChars("<file data=\"a.xml\" structure=\"b.xml\" />"))
                 .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", structure)
-                .hasFieldOrPropertyWithValue("dialect", null);
-
-        assertThat(x.parseChars("<file data=\"a.xml\" structure=\"b.xml\" dialect=\"hello\" />"))
-                .hasFieldOrPropertyWithValue("data", data)
-                .hasFieldOrPropertyWithValue("structure", structure)
-                .hasFieldOrPropertyWithValue("dialect", "hello");
+                .hasFieldOrPropertyWithValue("structure", structure);
     }
 
     private final File data = new File("a.xml");

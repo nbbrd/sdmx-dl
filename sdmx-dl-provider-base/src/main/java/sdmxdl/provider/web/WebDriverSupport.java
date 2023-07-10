@@ -52,10 +52,6 @@ public final class WebDriverSupport implements WebDriver {
     @lombok.Singular
     private final Collection<String> supportedProperties;
 
-    @lombok.Getter
-    @lombok.Builder.Default
-    private final String defaultDialect = NO_DEFAULT_DIALECT;
-
     @lombok.NonNull
     @lombok.Builder.Default
     private final Predicate<Properties> availability = properties -> true;

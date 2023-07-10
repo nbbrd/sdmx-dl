@@ -146,25 +146,6 @@ public final class FailsafeDriver implements WebDriver {
         return result;
     }
 
-    @Override
-    public @NonNull String getDefaultDialect() {
-        String result;
-
-        try {
-            result = delegate.getDefaultDialect();
-        } catch (RuntimeException ex) {
-            unexpectedError("while getting default dialect", ex);
-            return NO_DEFAULT_DIALECT;
-        }
-
-        if (result == null) {
-            unexpectedNull("null list");
-            return NO_DEFAULT_DIALECT;
-        }
-
-        return result;
-    }
-
     private IOException newUnexpectedError(String context, RuntimeException ex) {
         String msg = "Unexpected " + ex.getClass().getSimpleName() + " " + context;
         onUnexpectedError.accept(msg, ex);

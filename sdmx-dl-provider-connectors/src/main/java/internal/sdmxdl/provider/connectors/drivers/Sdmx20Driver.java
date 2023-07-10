@@ -19,7 +19,6 @@ package internal.sdmxdl.provider.connectors.drivers;
 import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.spi.WebDriver;
@@ -46,7 +45,6 @@ public final class Sdmx20Driver implements WebDriver {
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx20Client::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
-            .defaultDialect(Dialect.SDMX20_DIALECT)
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

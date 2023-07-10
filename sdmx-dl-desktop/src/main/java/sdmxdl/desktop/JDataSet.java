@@ -16,7 +16,6 @@ import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
 import sdmxdl.Attribute;
 import sdmxdl.Obs;
-import sdmxdl.ext.Registry;
 import sdmxdl.web.SdmxWebManager;
 
 import javax.swing.*;
@@ -43,13 +42,6 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     public void setSdmxManager(@NonNull SdmxWebManager sdmxManager) {
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);
-    }
-
-    @lombok.Getter
-    private Registry registry = Registry.noOp();
-
-    public void setRegistry(@NonNull Registry registry) {
-        firePropertyChange(REGISTRY_PROPERTY, this.registry, this.registry = registry);
     }
 
     public static final String MODEL_PROPERTY = "model";
@@ -140,7 +132,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         new SwingWorker<SingleSeries, Void>() {
             @Override
             protected SingleSeries doInBackground() throws Exception {
-                return SingleSeries.load(getSdmxManager(), getRegistry(), model);
+                return SingleSeries.load(getSdmxManager(), model);
             }
 
             @Override

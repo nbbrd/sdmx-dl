@@ -243,7 +243,6 @@ Output format:
     [`Description:string`](../datatypes#string),
     [`Aliases:list`](../datatypes#list),
     [`Driver:string`](../datatypes#string),
-    [`Dialect:string`](../datatypes#string),
     [`Endpoint:uri`](../datatypes#uri),
     [`Properties:map`](../datatypes#list),
     [`Website:url`](../datatypes#url),
@@ -254,11 +253,11 @@ Output format:
 
 {{< expand "Output sample" >}}
 
-| Name  | Description                     | Aliases  | Driver              | Dialect | Endpoint                                         | Properties           | Website                                     | Monitor                           | MonitorWebsite                                     | Languages |
-|-------|---------------------------------|----------|---------------------|---------|--------------------------------------------------|----------------------|---------------------------------------------|-----------------------------------|----------------------------------------------------|-----------|
-| ABS   | Australian Bureau of Statistics |          | ri:abs              |         | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | upptime:/nbbrd/sdmx-upptime/ABS   | https://nbbrd.github.io/sdmx-upptime/history/abs   | en        |
-| ECB   | European Central Bank           |          | ri:sdmx21           | ECB2020 | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | upptime:/nbbrd/sdmx-upptime/ECB   | https://nbbrd.github.io/sdmx-upptime/history/ecb   | en        |
-| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat |         | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | upptime:/nbbrd/sdmx-upptime/ESTAT | https://nbbrd.github.io/sdmx-upptime/history/estat | en,de,fr  |
+| Name  | Description                     | Aliases  | Driver              | Endpoint                                         | Properties           | Website                                     | Monitor                           | MonitorWebsite                                     | Languages |
+|-------|---------------------------------|----------|---------------------|--------------------------------------------------|----------------------|---------------------------------------------|-----------------------------------|----------------------------------------------------|-----------|
+| ABS   | Australian Bureau of Statistics |          | ri:abs              | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | upptime:/nbbrd/sdmx-upptime/ABS   | https://nbbrd.github.io/sdmx-upptime/history/abs   | en        |
+| ECB   | European Central Bank           |          | ri:sdmx21           | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | upptime:/nbbrd/sdmx-upptime/ECB   | https://nbbrd.github.io/sdmx-upptime/history/ecb   | en        |
+| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | upptime:/nbbrd/sdmx-upptime/ESTAT | https://nbbrd.github.io/sdmx-upptime/history/estat | en,de,fr  |
 
 {{< /expand >}}
 

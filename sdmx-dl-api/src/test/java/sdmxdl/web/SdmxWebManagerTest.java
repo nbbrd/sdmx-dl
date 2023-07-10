@@ -19,11 +19,9 @@ package sdmxdl.web;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.ext.spi.Caching;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
-import tests.sdmxdl.ext.MockedDialect;
 import tests.sdmxdl.web.MockedDriver;
 
 import java.io.IOException;
@@ -103,7 +101,6 @@ public class SdmxWebManagerTest {
         SdmxWebSource abs = SdmxWebSource.builder().id("abs").driver("sdmx21").endpointOf("http://abs").build();
 
         SdmxWebSource nbbAlias = nbb.alias("bnb");
-        SdmxWebSource nbbDialect = nbb.toBuilder().dialect("custom").clearAliases().build();
 
         WebDriver sdmx21 = MockedDriver
                 .builder()
@@ -141,7 +138,6 @@ public class SdmxWebManagerTest {
                 SdmxWebManager
                         .builder()
                         .customSource(nbb)
-                        .customSource(nbbDialect)
                         .customSource(abs)
                         .build()
                         .getSources()
@@ -157,7 +153,6 @@ public class SdmxWebManagerTest {
                 SdmxWebManager
                         .builder()
                         .driver(sdmx21)
-                        .customSource(nbbDialect)
                         .customSource(abs)
                         .build()
                         .getSources()
@@ -167,7 +162,7 @@ public class SdmxWebManagerTest {
                         entryOf("abs", abs),
                         entryOf("bnb", nbbAlias),
                         entryOf("ecb", ecb),
-                        entryOf("nbb", nbbDialect)
+                        entryOf("nbb", nbb)
                 );
     }
 
@@ -207,7 +202,7 @@ public class SdmxWebManagerTest {
                 .rank(WRAPPED_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(SdmxWebSource.builder().id("source").driver("d1").dialect("azerty").endpointOf(sample.getName()).build())
+                .customSource(SdmxWebSource.builder().id("source").driver("d1").endpointOf(sample.getName()).build())
                 .build();
 
         WebDriver driver2 = MockedDriver
@@ -216,7 +211,7 @@ public class SdmxWebManagerTest {
                 .rank(NATIVE_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
-                .customSource(SdmxWebSource.builder().id("source").driver("d2").dialect("azerty").endpointOf(sample.getName()).build())
+                .customSource(SdmxWebSource.builder().id("source").driver("d2").endpointOf(sample.getName()).build())
                 .build();
 
         try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source")) {
@@ -278,7 +273,6 @@ public class SdmxWebManagerTest {
             .builder()
             .id("repoSource")
             .driver("repoDriver")
-            .dialect("azerty")
             .endpointOf(sample.getName())
             .build();
     private final WebDriver sampleDriver = MockedDriver
@@ -289,7 +283,6 @@ public class SdmxWebManagerTest {
             .repo(sample, EnumSet.allOf(Feature.class))
             .customSource(sampleSource)
             .build();
-    private final Dialect sampleDialect = new MockedDialect("azerty");
 
     private static <K, V> AbstractMap.SimpleEntry<K, V> entryOf(K name, V source) {
         return new AbstractMap.SimpleEntry<>(name, source);

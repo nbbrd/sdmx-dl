@@ -36,7 +36,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
@@ -54,7 +53,6 @@ public final class BbkDriver implements WebDriver {
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(BbkDriver::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("BBK")
@@ -134,7 +132,4 @@ public final class BbkDriver implements WebDriver {
             }
         }
     }
-
-    // FIXME: use TIME_FORMAT attribute instead of FREQ dimension in SDMX21 ?
-    private static final String DIALECT = SDMX20_DIALECT;
 }

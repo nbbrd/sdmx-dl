@@ -29,7 +29,6 @@ import java.net.URI;
 import java.util.Map;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 
 /**
@@ -47,7 +46,6 @@ public final class UisDriver implements WebDriver {
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("UIS")

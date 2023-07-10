@@ -33,9 +33,8 @@ message RulesTarget {
 
 message RulesConfig {
   string driver = 1;
-  string dialect = 2;
-  string protocol = 3;
-  string properties = 4;
+  string protocol = 2;
+  string properties = 3;
 }
 
 message RulesExpect {

@@ -57,7 +57,6 @@ import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTI
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
 import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
@@ -84,7 +83,6 @@ public final class EurostatDriver2 implements WebDriver {
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
-            .defaultDialect(SDMX21_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("ESTAT")

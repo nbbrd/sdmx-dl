@@ -25,8 +25,6 @@ import sdmxdl.web.spi.WebDriver;
 import java.util.Collection;
 import java.util.Collections;
 
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
-
 /**
  * @author Philippe Charles
  */
@@ -61,11 +59,6 @@ public enum TestDriver implements WebDriver {
         public @NonNull Collection<String> getSupportedProperties() {
             return Collections.singletonList("hello");
         }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
-            return NO_DEFAULT_DIALECT;
-        }
     }, FAILING {
         @Override
         public @NonNull String getId() {
@@ -94,11 +87,6 @@ public enum TestDriver implements WebDriver {
 
         @Override
         public @NonNull Collection<String> getSupportedProperties() {
-            throw new CustomException();
-        }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
             throw new CustomException();
         }
     }, NULL {
@@ -131,12 +119,7 @@ public enum TestDriver implements WebDriver {
         public @NonNull Collection<String> getSupportedProperties() {
             return null;
         }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
-            return null;
-        }
     };
 
-    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().id("123").driver("456").dialect(SDMX21_DIALECT).endpointOf("http://localhost").build();
+    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().id("123").driver("456").endpointOf("http://localhost").build();
 }

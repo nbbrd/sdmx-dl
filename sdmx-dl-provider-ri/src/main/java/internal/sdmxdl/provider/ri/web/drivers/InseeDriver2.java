@@ -63,7 +63,6 @@ public final class InseeDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .defaultDialect(DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("INSEE")
@@ -76,9 +75,6 @@ public final class InseeDriver2 implements WebDriver {
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/insee")
                     .build())
             .build();
-
-    @SdmxFix(id = 2, category = CONTENT, cause = "Does not follow sdmx standard codes")
-    private static final String DIALECT = "INSEE2017";
 
     @SdmxFix(id = 3, category = CONTENT, cause = "Some dimension/code ids are invalid")
     private static Dimension fixDimensionId(Dimension dimension) {

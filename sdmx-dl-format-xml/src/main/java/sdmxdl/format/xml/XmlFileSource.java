@@ -42,11 +42,6 @@ public class XmlFileSource {
             xml.writeAttribute(STRUCT_ATTR, source.getStructure().toString());
         }
 
-        String dialect = source.getDialect();
-        if (!isNullOrEmpty(dialect)) {
-            xml.writeAttribute(DIALECT_ATTR, dialect);
-        }
-
         xml.writeEndDocument();
     }
 
@@ -59,13 +54,11 @@ public class XmlFileSource {
     private static SdmxFileSource parseXml(XMLStreamReader xml) throws XMLStreamException {
         String data = null;
         String structure = null;
-        String dialect = null;
 
         while (xml.hasNext()) {
             if (xml.next() == XMLStreamReader.START_ELEMENT && xml.getLocalName().equals(ROOT_TAG)) {
                 data = xml.getAttributeValue(null, DATA_ATTR);
                 structure = xml.getAttributeValue(null, STRUCT_ATTR);
-                dialect = xml.getAttributeValue(null, DIALECT_ATTR);
             }
         }
 
@@ -76,7 +69,6 @@ public class XmlFileSource {
         return SdmxFileSource.builder()
                 .data(new File(data))
                 .structure(!isNullOrEmpty(structure) ? new File(structure) : null)
-                .dialect(dialect)
                 .build();
     }
 
@@ -91,5 +83,4 @@ public class XmlFileSource {
     private static final String ROOT_TAG = "file";
     private static final String DATA_ATTR = "data";
     private static final String STRUCT_ATTR = "structure";
-    private static final String DIALECT_ATTR = "dialect";
 }

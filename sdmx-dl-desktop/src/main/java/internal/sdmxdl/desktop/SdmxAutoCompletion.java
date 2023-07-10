@@ -27,8 +27,6 @@ import nbbrd.io.Resource;
 import sdmxdl.Dimension;
 import sdmxdl.*;
 import sdmxdl.desktop.MainComponent;
-import sdmxdl.ext.Registry;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.web.Network;
 import sdmxdl.web.SSLFactory;
 import sdmxdl.web.SdmxWebManager;
@@ -65,10 +63,6 @@ public abstract class SdmxAutoCompletion {
 
     public abstract ListCellRenderer getRenderer();
 
-    public static SdmxAutoCompletion onDialect(Registry registry) {
-        return new DialectCompletion(registry);
-    }
-
     public static SdmxAutoCompletion onWebSource(SdmxWebManager manager) {
         return new WebSourceCompletion(manager);
     }
@@ -83,45 +77,6 @@ public abstract class SdmxAutoCompletion {
 
     public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
         return new AttributeCompletion<>(manager, source, flowRef, cache);
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class DialectCompletion extends SdmxAutoCompletion {
-
-        @lombok.NonNull
-        private final Registry registry;
-
-        @Override
-        public AutoCompletionSource getSource() {
-            return ExtAutoCompletionSource
-                    .builder(this::load)
-                    .behavior(SYNC)
-                    .postProcessor(this::filterAndSort)
-                    .valueToString(Dialect::getName)
-                    .build();
-        }
-
-        @Override
-        public ListCellRenderer getRenderer() {
-            return CustomListCellRenderer.of(Dialect::getName, Dialect::getDescription);
-        }
-
-        private List<Dialect> load(String term) {
-            return registry.getDialects();
-        }
-
-        private List<Dialect> filterAndSort(List<Dialect> list, String term) {
-            return list.stream().filter(getFilter(term)).sorted(getSorter(term)).collect(toList());
-        }
-
-        private Predicate<Dialect> getFilter(String term) {
-            Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            return value -> filter.test(value.getDescription()) || filter.test(value.getName());
-        }
-
-        private Comparator<Dialect> getSorter(String term) {
-            return Comparator.comparing(Dialect::getDescription);
-        }
     }
 
     @lombok.AllArgsConstructor

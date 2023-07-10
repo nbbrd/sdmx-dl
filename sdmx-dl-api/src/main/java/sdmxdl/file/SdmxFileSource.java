@@ -37,9 +37,6 @@ public class SdmxFileSource extends SdmxSource {
     @Nullable
     File structure;
 
-    @Nullable
-    String dialect;
-
     @NonNull
     public DataflowRef asDataflowRef() {
         return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));

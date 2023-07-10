@@ -19,7 +19,6 @@ package internal.sdmxdl.provider.connectors.drivers;
 import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.ext.spi.Dialect;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -42,7 +41,6 @@ public final class OecdDriver implements WebDriver {
             .rank(WRAPPED_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .defaultDialect(Dialect.SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("OECD")

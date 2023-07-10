@@ -17,7 +17,6 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.DataflowRef;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.Registry;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -61,13 +60,6 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     public void setSdmxManager(@NonNull SdmxWebManager sdmxManager) {
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);
-    }
-
-    @lombok.Getter
-    private Registry registry = Registry.noOp();
-
-    public void setRegistry(@NonNull Registry registry) {
-        firePropertyChange(REGISTRY_PROPERTY, this.registry, this.registry = registry);
     }
 
     public static final String DATA_SOURCES_PROPERTY = "dataSources";
@@ -210,7 +202,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         }));
 
         driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getId(), value.getDefaultDialect()).render());
+            label.setText(value.getId());
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 
@@ -285,7 +277,6 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                     } else {
                         JDataSet result = new JDataSet();
                         result.setSdmxManager(sdmxManager);
-                        result.setRegistry(registry);
                         result.setModel(dataSetRef);
                         main.addTab(title, getDataSourceIcon(dataSetRef.getDataSourceRef(), main::repaint), result);
                         main.setSelectedComponent(result);

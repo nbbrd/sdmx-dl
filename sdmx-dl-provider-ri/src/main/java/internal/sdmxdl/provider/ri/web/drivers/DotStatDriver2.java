@@ -34,7 +34,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
@@ -53,7 +52,6 @@ public final class DotStatDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(DotStatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("OECD")

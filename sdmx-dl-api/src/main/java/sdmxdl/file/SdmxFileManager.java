@@ -82,11 +82,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
         return reader.read(source, getContext());
     }
 
-    @Override
-    public @NonNull Optional<String> getDialect(@NonNull SdmxFileSource source) {
-        return Optional.ofNullable(source.getDialect());
-    }
-
     private FileContext initContext() {
         return FileContext
                 .builder()

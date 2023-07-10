@@ -45,7 +45,6 @@ import java.util.EnumSet;
 
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
-import static sdmxdl.ext.spi.Dialect.SDMX20_DIALECT;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
@@ -64,7 +63,6 @@ public final class NbbDriver2 implements WebDriver {
             .rank(NATIVE_RANK)
             .connector(RestConnector.of(NbbDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .defaultDialect(SDMX20_DIALECT)
             .source(SdmxWebSource
                     .builder()
                     .id("NBB")
