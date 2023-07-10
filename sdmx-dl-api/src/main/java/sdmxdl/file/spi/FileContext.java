@@ -1,9 +1,10 @@
 package sdmxdl.file.spi;
 
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.ext.SdmxSourceConsumer;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 
@@ -19,11 +20,11 @@ public class FileContext {
     @lombok.Builder.Default
     FileCaching caching = FileCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
+    @Nullable EventListener<? super SdmxFileSource> onEvent;
+
+    @Nullable ErrorListener<? super SdmxFileSource> onError;
 
     public @NonNull FileCache getCache(@NonNull SdmxFileSource source) {
-        return getCaching().getFileCache(source, getEventListener());
+        return getCaching().getFileCache(source, getOnEvent(), getOnError());
     }
 }

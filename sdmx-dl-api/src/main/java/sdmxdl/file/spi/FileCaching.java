@@ -7,7 +7,9 @@ import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
-import sdmxdl.ext.SdmxSourceConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 
@@ -26,14 +28,17 @@ public interface FileCaching {
     @ServiceSorter(reverse = true)
     int getFileCachingRank();
 
-    @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> listener);
+    @NonNull FileCache getFileCache(
+            @NonNull SdmxFileSource source,
+            @Nullable EventListener<? super SdmxFileSource> onEvent,
+            @Nullable ErrorListener<? super SdmxFileSource> onError);
 
     @NonNull Collection<String> getFileCachingProperties();
-
-    int UNKNOWN_FILE_CACHING_RANK = -1;
 
     @StaticFactoryMethod
     static @NonNull FileCaching noOp() {
         return NoOpCaching.INSTANCE;
     }
+
+    int UNKNOWN_FILE_CACHING_RANK = -1;
 }

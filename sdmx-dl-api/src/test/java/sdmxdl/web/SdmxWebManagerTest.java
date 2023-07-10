@@ -17,9 +17,12 @@
 package sdmxdl.web;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.*;
-import sdmxdl.web.spi.WebCaching;
+import sdmxdl.Connection;
+import sdmxdl.DataRepository;
+import sdmxdl.Feature;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.spi.Networking;
+import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.web.MockedDriver;
@@ -61,7 +64,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
-            assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
+            assertThat(o.getOnEvent()).isNull();
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
@@ -74,7 +77,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
-            assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
+            assertThat(o.getOnEvent()).isNull();
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).isEmpty();
@@ -86,7 +89,7 @@ public class SdmxWebManagerTest {
             assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
-            assertThat(o.getEventListener()).isEqualTo(SdmxManager.NO_OP_EVENT_LISTENER);
+            assertThat(o.getOnEvent()).isNull();
             assertThat(o.getAuthenticators()).isEmpty();
             assertThat(o.getCustomSources()).isEmpty();
             assertThat(o.getDefaultSources()).containsAll(sampleDriver.getDefaultSources());
@@ -247,7 +250,7 @@ public class SdmxWebManagerTest {
         SdmxWebManager manager = SdmxWebManager
                 .builder()
                 .driver(sampleDriver)
-                .eventListener((source, event) -> events.add(source.getId() + ":" + event))
+                .onEvent((source, marker, event) -> events.add(source.getId() + ":" + event))
                 .build();
 
         SdmxWebSource noProp = sampleSource.toBuilder().id("noProp").clearProperties().build();

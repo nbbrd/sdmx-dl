@@ -48,7 +48,7 @@ public class XmlFileClientTest {
         SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
         SdmxFileSource source = sourceOf(compact21);
-        FileClient x = new XmlFileClient(source, ANY, DECODER, null, SdmxManager.NO_OP_EVENT_LISTENER);
+        FileClient x = new XmlFileClient(source, ANY, DECODER, null, null);
 
         FileInfo info = x.decode();
 
@@ -95,6 +95,6 @@ public class XmlFileClientTest {
         return SdmxFileSource.builder().data(compact21).build();
     }
 
-    public static final SdmxDecoder DECODER = new XmlDecoder(SdmxManager.NO_OP_EVENT_LISTENER);
+    public static final SdmxDecoder DECODER = new XmlDecoder(null);
     public static final Dataflow DATAFLOW = Dataflow.builder().ref(DataflowRef.parse("data")).structureRef(DataStructureRef.parse("xyz")).name("label").build();
 }

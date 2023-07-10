@@ -27,8 +27,9 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
+import sdmxdl.EventListener;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
+import sdmxdl.Marker;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
@@ -43,7 +44,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static sdmxdl.provider.web.WebProperties.*;
@@ -105,8 +106,8 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(network::getURLConnectionFactory)
-                .listener(new RiHttpEventListener(source, context.getEventListener()))
-                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getEventListener()))
+                .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, RI_HTTP_MARKER)) : HttpEventListener.noOp())
+                .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))
                 .build();
     }
@@ -114,49 +115,35 @@ public class RiHttpUtils {
     @lombok.AllArgsConstructor
     private static final class RiHttpEventListener implements HttpEventListener {
 
-        @lombok.NonNull
-        private final SdmxWebSource source;
-
-        @lombok.NonNull
-        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
+        private final @NonNull Consumer<CharSequence> listener;
 
         @Override
         public void onOpen(@NonNull HttpRequest request, @NonNull Proxy proxy, @NonNull HttpAuthScheme scheme) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                String message = WebEvents.onQuery(request.getMethod().name(), request.getQuery(), proxy);
-                if (!HttpAuthScheme.NONE.equals(scheme)) {
-                    message += " with auth '" + scheme.name() + "'";
-                }
-                listener.accept(source, message);
+            String message = WebEvents.onQuery(request.getMethod().name(), request.getQuery(), proxy);
+            if (!HttpAuthScheme.NONE.equals(scheme)) {
+                message += " with auth '" + scheme.name() + "'";
             }
+            listener.accept(message);
         }
 
         @Override
         public void onSuccess(@NonNull Supplier<String> contentType) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format(Locale.ROOT, "Parsing '%s' content-type", contentType.get()));
-            }
+            listener.accept(String.format(Locale.ROOT, "Parsing '%s' content-type", contentType.get()));
         }
 
         @Override
         public void onRedirection(@NonNull URL oldUrl, @NonNull URL newUrl) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, WebEvents.onRedirection(oldUrl, newUrl));
-            }
+            listener.accept(WebEvents.onRedirection(oldUrl, newUrl));
         }
 
         @Override
         public void onUnauthorized(@NonNull URL url, @NonNull HttpAuthScheme oldScheme, @NonNull HttpAuthScheme newScheme) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, String.format(Locale.ROOT, "Authenticating %s with '%s'", url, newScheme.name()));
-            }
+            listener.accept(String.format(Locale.ROOT, "Authenticating %s with '%s'", url, newScheme.name()));
         }
 
         @Override
         public void onEvent(@NonNull String message) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
-                listener.accept(source, message);
-            }
+            listener.accept(message);
         }
     }
 
@@ -169,8 +156,7 @@ public class RiHttpUtils {
         @lombok.NonNull
         private final List<WebAuthenticator> authenticators;
 
-        @lombok.NonNull
-        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
+        private final @Nullable EventListener<? super SdmxWebSource> listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {
@@ -201,7 +187,9 @@ public class RiHttpUtils {
             try {
                 return authenticator.getPasswordAuthentication(source);
             } catch (IOException ex) {
-                listener.accept(source, "Failed to get password authentication: " + ex.getMessage());
+                if (listener != null) {
+                    listener.accept(source, RI_HTTP_MARKER, "Failed to get password authentication: " + ex.getMessage());
+                }
                 return null;
             }
         }
@@ -210,8 +198,12 @@ public class RiHttpUtils {
             try {
                 authenticator.invalidate(source);
             } catch (IOException ex) {
-                listener.accept(source, "Failed to invalidate password authentication: " + ex.getMessage());
+                if (listener != null) {
+                    listener.accept(source, RI_HTTP_MARKER, "Failed to invalidate password authentication: " + ex.getMessage());
+                }
             }
         }
     }
+
+    public static final Marker RI_HTTP_MARKER = Marker.parse("RI_HTTP");
 }

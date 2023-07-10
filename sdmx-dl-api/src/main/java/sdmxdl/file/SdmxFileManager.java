@@ -21,10 +21,8 @@ import internal.util.FileReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.ext.SdmxSourceConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.*;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
@@ -62,9 +60,9 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @lombok.Builder.Default
     FileCaching caching = FileCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
+    @Nullable EventListener<? super SdmxFileSource> onEvent;
+
+    @Nullable ErrorListener<? super SdmxFileSource> onError;
 
     @lombok.NonNull
     @lombok.Singular
@@ -86,7 +84,8 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
         return FileContext
                 .builder()
                 .languages(languages)
-                .eventListener(eventListener)
+                .onEvent(onEvent)
+                .onError(onError)
                 .caching(caching)
                 .build();
     }

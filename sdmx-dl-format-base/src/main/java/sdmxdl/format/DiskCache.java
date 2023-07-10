@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Locale;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -70,13 +71,9 @@ public final class DiskCache implements FileCache, WebCache {
     @lombok.Builder.Default
     private final FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final BiConsumer<? super String, ? super DiskCacheEvent> onRead = DO_NOT_REPORT;
+    private final @Nullable Consumer<? super String> onRead;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final BiConsumer<? super String, ? super IOException> onError = DO_NOT_REPORT;
+    private final @Nullable BiConsumer<? super String, ? super IOException> onError;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -133,16 +130,20 @@ public final class DiskCache implements FileCache, WebCache {
     private <T> T read(FileFormat<T> fileFormat, Predicate<T> validator, String key, FileType fileType) {
         T result = read(fileFormat, fileType, key);
         if (result == null) {
-            onRead.accept(key, DiskCacheEvent.MISSED);
+            reportRead(key, DiskCacheEvent.MISSED);
             return null;
         }
         if (!validator.test(result)) {
             delete(key, fileType, fileFormat);
-            onRead.accept(key, DiskCacheEvent.EXPIRED);
+            reportRead(key, DiskCacheEvent.EXPIRED);
             return null;
         }
-        onRead.accept(key, DiskCacheEvent.HIT);
+        reportRead(key, DiskCacheEvent.HIT);
         return result;
+    }
+
+    private void reportRead(String key, DiskCacheEvent event) {
+        if (onRead != null) onRead.accept(event.name() + " " + key);
     }
 
     private <T> T read(FileFormat<T> fileFormat, FileType fileType, String key) {
@@ -151,7 +152,7 @@ public final class DiskCache implements FileCache, WebCache {
             try {
                 return FileParser.onParsingLock(fileFormat.getParser()).parsePath(file);
             } catch (IOException ex) {
-                onError.accept("Failed reading '" + file + "'", ex);
+                if (onError != null) onError.accept("Failed reading '" + file + "'", ex);
             }
         }
         return null;
@@ -163,7 +164,7 @@ public final class DiskCache implements FileCache, WebCache {
         try {
             FileFormatter.onFormattingLock(fileFormat.getFormatter()).formatPath(entry, file);
         } catch (IOException ex) {
-            onError.accept("Failed writing '" + file + "'", ex);
+            if (onError != null) onError.accept("Failed writing '" + file + "'", ex);
         }
     }
 
@@ -171,7 +172,7 @@ public final class DiskCache implements FileCache, WebCache {
         try {
             Files.createDirectories(file.getParent());
         } catch (IOException ex) {
-            onError.accept("While creating working dir '" + file + "'", ex);
+            if (onError != null) onError.accept("While creating working dir '" + file + "'", ex);
         }
     }
 
@@ -180,7 +181,7 @@ public final class DiskCache implements FileCache, WebCache {
         try {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
-            onError.accept("While deleting '" + file + "'", ex);
+            if (onError != null) onError.accept("While deleting '" + file + "'", ex);
         }
     }
 
@@ -191,8 +192,6 @@ public final class DiskCache implements FileCache, WebCache {
 
     public static final Path SDMXDL_TMP_DIR = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
     private static final UnaryOperator<String> NORMALIZE_HASH_CODE = DiskCache::normalizeHashCode;
-    private static final BiConsumer<Object, Object> DO_NOT_REPORT = (msg, ex) -> {
-    };
 
     private static String normalizeHashCode(String key) {
         int hashCode = key.hashCode();
@@ -202,5 +201,10 @@ public final class DiskCache implements FileCache, WebCache {
     @VisibleForTesting
     enum FileType {
         REPOSITORY, MONITOR
+    }
+
+    @VisibleForTesting
+    enum DiskCacheEvent {
+        HIT, MISSED, EXPIRED
     }
 }

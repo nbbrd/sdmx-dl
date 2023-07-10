@@ -1,7 +1,9 @@
 package sdmxdl.provider.ext;
 
 import lombok.NonNull;
-import sdmxdl.ext.SdmxSourceConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.WebCache;
 import sdmxdl.web.spi.WebCaching;
@@ -44,9 +46,9 @@ public final class DualWebCachingSupport implements WebCaching {
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> listener) {
-        WebCache main = first.getWebCache(source, listener);
-        return new DualWebCache(main, second.getWebCache(source, listener), clock);
+    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        WebCache main = first.getWebCache(source, onEvent, onError);
+        return new DualWebCache(main, second.getWebCache(source, onEvent, onError), clock);
     }
 
     @Override

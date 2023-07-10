@@ -19,7 +19,7 @@ package sdmxdl;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
-import sdmxdl.ext.SdmxSourceConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
@@ -39,8 +39,7 @@ public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
     public abstract @NonNull LanguagePriorityList getLanguages();
 
-    public abstract @NonNull SdmxSourceConsumer<? super SOURCE, ? super String> getEventListener();
+    public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
 
-    public static final SdmxSourceConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = (source, t) -> {
-    };
+    public abstract @Nullable ErrorListener<? super SOURCE> getOnError();
 }

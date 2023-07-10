@@ -1,9 +1,11 @@
 package sdmxdl.format;
 
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.SdmxSourceBiConsumer;
-import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
+import sdmxdl.Marker;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
@@ -13,7 +15,6 @@ import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Collection;
@@ -39,14 +40,6 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     @lombok.NonNull
     @lombok.Builder.Default
     private final FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final SdmxSourceBiConsumer<SdmxFileSource, ? super String, ? super IOException> onFileError = NO_OP_FILE_ERROR;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final SdmxSourceBiConsumer<SdmxWebSource, ? super String, ? super IOException> onWebError = NO_OP_WEB_ERROR;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -85,18 +78,18 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> listener) {
+    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
         return newFileCacheBuilder()
-                .onRead((key, event) -> listener.accept(source, event.name() + " " + key))
-                .onError(onFileError.asBiConsumer(source))
+                .onRead(onEvent != null ? onEvent.asConsumer(source, Marker.parse(id)) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, Marker.parse(id)) : null)
                 .build();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> listener) {
+    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
         return newFileCacheBuilder()
-                .onRead((key, event) -> listener.accept(source, event.name() + " " + key))
-                .onError(onWebError.asBiConsumer(source))
+                .onRead(onEvent != null ? onEvent.asConsumer(source, Marker.parse(id)) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, Marker.parse(id)) : null)
                 .build();
     }
 
@@ -118,10 +111,4 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
             return this;
         }
     }
-
-    public static final SdmxSourceBiConsumer<SdmxFileSource, ? super String, ? super IOException> NO_OP_FILE_ERROR = (source, t, u) -> {
-    };
-
-    public static final SdmxSourceBiConsumer<SdmxWebSource, ? super String, ? super IOException> NO_OP_WEB_ERROR = (source, t, u) -> {
-    };
 }

@@ -5,6 +5,7 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
+import sdmxdl.Marker;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebSource;
 
@@ -28,4 +29,6 @@ public interface WebMonitoring {
             @NonNull SdmxWebSource source,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
+
+    Marker WEB_MONITORING_MARKER = Marker.parse("WEB_MONITORING");
 }

@@ -4,6 +4,7 @@ import nbbrd.io.curl.CurlHttpURLConnection;
 import sdmxdl.*;
 import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ public class Demo {
                 .toBuilder()
                 .networking(SingleNetworkingSupport.builder().id("CURL").urlConnectionFactoryOf(CurlHttpURLConnection::of).build())
                 .languages(LanguagePriorityList.ANY)
-                .eventListener((source, message) -> System.err.println("[" + source.getId() + "] " + message))
+                .onEvent(Demo::printEvent)
                 .build();
 
         try (Connection ecb = manager.getConnection("ECB")) {
@@ -30,5 +31,9 @@ public class Demo {
                     .map(Series::getKey)
                     .forEach(System.out::println);
         }
+    }
+
+    private static void printEvent(SdmxWebSource source, Marker marker, CharSequence message) {
+        System.err.println("[" + source.getId() + "] (" + marker + ") " + message);
     }
 }

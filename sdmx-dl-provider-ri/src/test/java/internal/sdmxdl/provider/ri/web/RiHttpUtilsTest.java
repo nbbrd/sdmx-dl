@@ -5,6 +5,7 @@ import internal.util.http.HttpRequest;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Marker;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.WebDriverAssert;
@@ -56,7 +57,7 @@ public class RiHttpUtilsTest {
 
         WebContext webContext = WebContext
                 .builder()
-                .eventListener(events::onSourceEvent)
+                .onEvent(events::onSourceEvent)
                 .build();
 
         HttpEventListener x = RiHttpUtils.newContext(source, webContext).getListener();
@@ -124,8 +125,8 @@ public class RiHttpUtilsTest {
             return result;
         }
 
-        public void onSourceEvent(@NonNull SdmxWebSource source, @NonNull String message) {
-            events.add(new Event(source, message));
+        public void onSourceEvent(@NonNull SdmxWebSource source, @NonNull Marker marker, @NonNull CharSequence message) {
+            events.add(new Event(source, message.toString()));
         }
     }
 }

@@ -10,8 +10,8 @@ import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.web.spi.WebCaching;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
@@ -19,6 +19,7 @@ import sdmxdl.file.spi.FileCaching;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
@@ -52,8 +53,8 @@ public final class FileDriver implements WebDriver {
         return fileManager
                 .toBuilder()
                 .languages(context.getLanguages())
-                .eventListener((fileSource, message) -> context.getEventListener().accept(source, message))
-                .caching(new FileCachingAdapter(source, context.getCaching(), context.getEventListener()))
+                .onEvent(context.getOnEvent() != null ? (fileSource, marker, message) -> context.getOnEvent().accept(source, marker, message) : null)
+                .caching(new FileCachingAdapter(context.getCaching(), source, context.getOnEvent(), context.getOnError()))
                 .build()
                 .getConnection(toFileSource(source));
     }
@@ -61,11 +62,13 @@ public final class FileDriver implements WebDriver {
     @lombok.AllArgsConstructor
     private static final class FileCachingAdapter implements FileCaching {
 
-        private final @NonNull SdmxWebSource webSource;
-
         private final @NonNull WebCaching delegate;
 
-        private final @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> webListener;
+        private final @NonNull SdmxWebSource webSource;
+
+        private final @Nullable EventListener<? super SdmxWebSource> onWebEvent;
+
+        private final @Nullable ErrorListener<? super SdmxWebSource> onWebError;
 
         @Override
         public @NonNull String getFileCachingId() {
@@ -78,8 +81,8 @@ public final class FileDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> ignoreEvent) {
-            return new FileCacheAdapter(delegate.getWebCache(webSource, webListener));
+        public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
+            return new FileCacheAdapter(delegate.getWebCache(webSource, onWebEvent, onWebError));
         }
 
         @Override

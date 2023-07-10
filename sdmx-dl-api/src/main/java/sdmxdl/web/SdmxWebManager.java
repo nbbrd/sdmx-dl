@@ -20,11 +20,9 @@ import internal.util.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.ext.SdmxSourceConsumer;
-import sdmxdl.web.spi.WebCaching;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.EventListener;
+import sdmxdl.*;
 import sdmxdl.web.spi.*;
 
 import java.io.IOException;
@@ -44,6 +42,8 @@ import java.util.stream.Stream;
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
+
+    public static final Marker WEB_MANAGER_MARKER = Marker.parse("WEB_MANAGER");
 
     @StaticFactoryMethod
     public static @NonNull SdmxWebManager ofServiceLoader() {
@@ -82,9 +82,9 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @lombok.Builder.Default
     WebCaching caching = WebCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
+    @Nullable EventListener<? super SdmxWebSource> onEvent;
+
+    @Nullable ErrorListener<? super SdmxWebSource> onError;
 
     @lombok.NonNull
     @lombok.Singular
@@ -146,12 +146,12 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     private void checkSourceProperties(SdmxWebSource source, WebDriver driver) {
-        if (eventListener != NO_OP_EVENT_LISTENER) {
+        if (onEvent != null) {
             Collection<String> expected = driver.getSupportedProperties();
             Collection<String> found = source.getProperties().keySet();
             String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
             if (!diff.isEmpty()) {
-                eventListener.accept(source, "Unexpected properties [" + diff + "]");
+                onEvent.accept(source, WEB_MANAGER_MARKER, "Unexpected properties [" + diff + "]");
             }
         }
     }
@@ -180,7 +180,8 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .caching(caching)
                 .languages(languages)
                 .networking(networking)
-                .eventListener(eventListener)
+                .onEvent(onEvent)
+                .onError(onError)
                 .authenticators(authenticators)
                 .build();
     }

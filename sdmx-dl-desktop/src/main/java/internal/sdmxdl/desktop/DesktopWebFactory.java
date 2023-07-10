@@ -14,7 +14,7 @@ public class DesktopWebFactory {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .networking(SingleNetworkingSupport.builder().id("CURL").urlConnectionFactoryOf(CurlHttpURLConnection::of).build())
-                .eventListener((source, msg) -> System.out.println(source.getId() + ": " + msg))
+                .onEvent((source, marker, msg) -> System.out.println(source.getId() + ": " + msg))
                 .build();
     }
 }

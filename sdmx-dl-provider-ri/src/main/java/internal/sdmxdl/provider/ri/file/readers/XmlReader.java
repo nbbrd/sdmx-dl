@@ -43,9 +43,9 @@ public class XmlReader implements FileReader {
         FileClient client = new XmlFileClient(
                 source,
                 context.getLanguages(),
-                new XmlDecoder(context.getEventListener()),
+                new XmlDecoder(context.getOnEvent()),
                 ObsParser::newDefault,
-                context.getEventListener()
+                context.getOnEvent()
         );
         return CachedFileClient.of(client, context.getCache(source), source, context.getLanguages());
     }

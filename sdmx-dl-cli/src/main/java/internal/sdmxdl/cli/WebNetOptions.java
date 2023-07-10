@@ -16,6 +16,7 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
@@ -23,8 +24,6 @@ import internal.util.WebAuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
-import sdmxdl.web.spi.WebCaching;
-import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.MemCachingSupport;
@@ -34,6 +33,7 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.WebCaching;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
@@ -136,8 +136,6 @@ public class WebNetOptions extends WebOptions {
                         .id("DISK")
                         .root(root)
                         .persistence(cacheOptions.getCacheFormat())
-                        .onFileError((src, msg, ex) -> reportFileError(verboseOptions, src, msg, ex))
-                        .onWebError((src, msg, ex) -> reportWebError(verboseOptions, src, msg, ex))
                         .clock(clock)
                         .noCompression(cacheOptions.isNoCacheCompression())
                         .build())
@@ -147,17 +145,7 @@ public class WebNetOptions extends WebOptions {
 
     private static void reportConfig(VerboseOptions verboseOptions, Path root) {
         if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream(CACHE_ANCHOR, "Using cache folder '" + root + "'");
-    }
-
-    private static void reportFileError(VerboseOptions verboseOptions, SdmxFileSource src, String msg, IOException ex) {
-        if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream(CACHE_ANCHOR, src.getData() + ": " + msg, ex);
-    }
-
-    private static void reportWebError(VerboseOptions verboseOptions, SdmxWebSource src, String msg, IOException ex) {
-        if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream(CACHE_ANCHOR, src.getId() + ": " + msg, ex);
+            verboseOptions.reportToErrorStream(Anchor.CCH, "Using cache folder '" + root + "'");
     }
 
     private static Networking getNetworking(NetworkOptions networkOptions, VerboseOptions verboseOptions) {
@@ -172,7 +160,7 @@ public class WebNetOptions extends WebOptions {
 
     private static void reportNetwork(VerboseOptions verboseOptions, String msg) {
         if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream("NET", msg);
+            verboseOptions.reportToErrorStream(Anchor.NET, msg);
     }
 
     private static <T> Supplier<T> memoize(Supplier<T> supplier, String message, VerboseOptions verboseOptions) {

@@ -17,12 +17,13 @@
 package sdmxdl.web.spi;
 
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.web.WebCache;
-import sdmxdl.ext.SdmxSourceConsumer;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebCache;
 
 import java.util.List;
 
@@ -41,9 +42,9 @@ public class WebContext {
     @lombok.Builder.Default
     WebCaching caching = WebCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    SdmxSourceConsumer<? super SdmxWebSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
+    @Nullable EventListener<? super SdmxWebSource> onEvent;
+
+    @Nullable ErrorListener<? super SdmxWebSource> onError;
 
     @lombok.NonNull
     @lombok.Singular
@@ -54,7 +55,7 @@ public class WebContext {
     Networking networking = Networking.getDefault();
 
     public @NonNull WebCache getCache(@NonNull SdmxWebSource source) {
-        return getCaching().getWebCache(source, getEventListener());
+        return getCaching().getWebCache(source, getOnEvent(), getOnError());
     }
 
     public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {

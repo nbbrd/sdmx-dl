@@ -1,7 +1,9 @@
 package internal.sdmxdl;
 
 import lombok.NonNull;
-import sdmxdl.ext.SdmxSourceConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
@@ -37,12 +39,12 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> listener) {
+    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
         return FileCache.noOp();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> listener) {
+    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource ignoreSource, @Nullable EventListener<? super SdmxWebSource> ignoreEvent, @Nullable ErrorListener<? super SdmxWebSource> ignoreError) {
         return WebCache.noOp();
     }
 

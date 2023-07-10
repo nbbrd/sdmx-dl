@@ -26,6 +26,8 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.EventListener;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
@@ -42,7 +44,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -171,7 +172,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public Set<Feature> getSupportedFeatures() {
+    public @NonNull Set<Feature> getSupportedFeatures() {
         return connector instanceof HasDetailSupported
                 && ((HasDetailSupported) connector).isDetailSupported()
                 ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
@@ -216,7 +217,7 @@ public final class ConnectorsRestClient implements RestClient {
         client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
         client.setHostnameVerifier(sslFactory.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getEventListener());
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getOnEvent());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
@@ -227,18 +228,17 @@ public final class ConnectorsRestClient implements RestClient {
         @lombok.NonNull
         private final SdmxWebSource source;
 
-        @lombok.NonNull
-        private final BiConsumer<? super SdmxWebSource, ? super String> listener;
+        private final @Nullable EventListener<? super SdmxWebSource> listener;
 
         @Override
         public void onSdmxEvent(RestSdmxEvent event) {
-            if (listener != SdmxManager.NO_OP_EVENT_LISTENER) {
+            if (listener != null) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(source, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(source, REST_CLIENT_MARKER, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(source, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(source, REST_CLIENT_MARKER, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

@@ -1,8 +1,10 @@
 package sdmxdl.format;
 
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.ext.SdmxSourceConsumer;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
@@ -61,12 +63,12 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @NonNull SdmxSourceConsumer<? super SdmxFileSource, ? super String> eventListener) {
+    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
         return getCache();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @NonNull SdmxSourceConsumer<? super SdmxWebSource, ? super String> listener) {
+    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
         return getCache();
     }
 

@@ -3,7 +3,6 @@ package sdmxdl.format;
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import sdmxdl.SdmxManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.web.SdmxWebSource;
 
@@ -38,12 +37,12 @@ public class MemCachingSupportTest {
         FILE {
             @Override
             MemCache f(MemCachingSupport z) {
-                return (MemCache) z.getFileCache(FILE_SOURCE, SdmxManager.NO_OP_EVENT_LISTENER);
+                return (MemCache) z.getFileCache(FILE_SOURCE, null, null);
             }
         }, WEB {
             @Override
             MemCache f(MemCachingSupport z) {
-                return (MemCache) z.getWebCache(WEB_SOURCE, SdmxManager.NO_OP_EVENT_LISTENER);
+                return (MemCache) z.getWebCache(WEB_SOURCE, null, null);
             }
         };
 
