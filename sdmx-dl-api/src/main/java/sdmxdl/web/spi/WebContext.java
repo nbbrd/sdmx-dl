@@ -20,7 +20,6 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.WebCache;
@@ -33,10 +32,6 @@ import java.util.List;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 public class WebContext {
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
     @lombok.Builder.Default

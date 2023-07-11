@@ -72,10 +72,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
     Networking networking = Networking.getDefault();
 
     @lombok.NonNull
@@ -106,21 +102,21 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     WebContext context = initContext();
 
-    public @NonNull Connection getConnection(@NonNull String name) throws IOException {
+    public @NonNull Connection getConnection(@NonNull String name, @NonNull LanguagePriorityList languages) throws IOException {
         SdmxWebSource source = lookupSource(name)
                 .orElseThrow(() -> newMissingSource(name));
 
-        return getConnection(source);
+        return getConnection(source, languages);
     }
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxWebSource source) throws IOException {
+    public @NonNull Connection getConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) throws IOException {
         WebDriver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
         checkSourceProperties(source, driver);
 
-        return driver.connect(source, getContext());
+        return driver.connect(source, languages, getContext());
     }
 
     @NonNull
@@ -178,7 +174,6 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return WebContext
                 .builder()
                 .caching(caching)
-                .languages(languages)
                 .networking(networking)
                 .onEvent(onEvent)
                 .onError(onError)

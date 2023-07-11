@@ -97,11 +97,11 @@ public final class InseeDriver2 implements WebDriver {
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(SdmxWebSource s, WebContext c) throws IOException {
+        InseeRestClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
             super(
                     Marker.of(s),
                     s.getEndpoint().toURL(),
-                    c.getLanguages(),
+                    languages,
                     OBS_FACTORY,
                     RiHttpUtils.newClient(s, c),
                     new Sdmx21RestQueries(false),

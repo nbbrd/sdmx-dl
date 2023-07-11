@@ -23,6 +23,7 @@ import sdmxdl.SdmxSource;
 
 import java.io.IOException;
 
+import static sdmxdl.LanguagePriorityList.ANY;
 import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
 
 /**
@@ -44,23 +45,22 @@ public class SdmxManagerAssert {
     }
 
     public <S extends SdmxSource> void assertCompliance(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
-        checkGetLanguages(s, manager);
         checkGetConnection(s, manager, sample);
     }
 
-    private <S extends SdmxSource> void checkGetLanguages(SoftAssertions s, SdmxManager<S> manager) {
-        s.assertThat(manager.getLanguages()).isNotNull();
-    }
-
     private <S extends SdmxSource> void checkGetConnection(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
-        s.assertThatThrownBy(() -> manager.getConnection(null))
-                .as(nullDescriptionOf("getConnection(SOURCE)", "source"))
+        s.assertThatThrownBy(() -> manager.getConnection(null, ANY))
+                .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "source"))
                 .isInstanceOf(NullPointerException.class);
 
         if (sample.validSource != null) {
-            try (Connection conn = manager.getConnection(sample.validSource)) {
+            s.assertThatThrownBy(() -> manager.getConnection(sample.validSource, null))
+                    .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "languages"))
+                    .isInstanceOf(NullPointerException.class);
+
+            try (Connection conn = manager.getConnection(sample.validSource, ANY)) {
                 s.assertThat(conn)
-                        .as("Expecting 'getConnection(SOURCE)' to return a non-null connection")
+                        .as("Expecting 'getConnection(SOURCE,LANGUAGES)' to return a non-null connection")
                         .isNotNull();
             } catch (IOException ex) {
                 s.fail("Not expected to raise exception", ex);
@@ -68,7 +68,11 @@ public class SdmxManagerAssert {
         }
 
         if (sample.invalidSource != null) {
-            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource))
+            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource, null))
+                    .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "languages"))
+                    .isInstanceOf(NullPointerException.class);
+
+            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource, ANY))
                     .as("Expecting 'getConnection(SOURCE) to raise IOException on invalid name")
                     .isInstanceOf(IOException.class);
         }

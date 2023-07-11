@@ -57,7 +57,7 @@ public final class RngDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(Marker.of(source), config);

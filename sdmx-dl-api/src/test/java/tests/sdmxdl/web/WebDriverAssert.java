@@ -5,6 +5,7 @@ import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 @lombok.experimental.UtilityClass
 public class WebDriverAssert {
@@ -28,10 +29,11 @@ public class WebDriverAssert {
 
         assertThat(d.getId()).isNotBlank();
 
-        assertThatNullPointerException().isThrownBy(() -> d.connect(null, context));
-        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, context));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, context));
+        assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, ANY, null));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, context));
+        assertThatIllegalArgumentException().isThrownBy(() -> d.connect(invalidSource, ANY, context));
 
         assertThat(d.getDefaultSources()).allSatisfy(o -> checkSource(o, d));
 

@@ -8,6 +8,8 @@ import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 
+import static sdmxdl.LanguagePriorityList.ANY;
+
 public class Demo {
 
     @nbbrd.design.Demo
@@ -16,11 +18,10 @@ public class Demo {
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .networking(SingleNetworkingSupport.builder().id("CURL").urlConnectionFactoryOf(CurlHttpURLConnection::of).build())
-                .languages(LanguagePriorityList.ANY)
                 .onEvent(Demo::printEvent)
                 .build();
 
-        try (Connection ecb = manager.getConnection("ECB")) {
+        try (Connection ecb = manager.getConnection("ECB", ANY)) {
             DataflowRef exr = DataflowRef.parse("EXR");
             System.out.println(ecb.getFlow(exr).getName());
 

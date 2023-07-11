@@ -18,6 +18,7 @@ package _test.sdmxdl;
 
 import lombok.NonNull;
 import sdmxdl.Connection;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -46,7 +47,7 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.TEST_VALID;
         }
 
@@ -76,7 +77,7 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -106,7 +107,7 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 

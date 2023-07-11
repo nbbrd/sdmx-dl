@@ -22,6 +22,7 @@ import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.web.WebDriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  * @author Philippe Charles
@@ -37,6 +38,7 @@ public class Sdmx20DriverTest {
     public void testConnect() {
         SdmxWebSource x = SdmxWebSource.builder().id("localhost").driver("connectors:sdmx20").endpointOf("http://localhost").build();
 
-        assertThatCode(() -> new Sdmx20Driver().connect(x, WebDriverAssert.noOpWebContext()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, WebDriverAssert.noOpWebContext()).close())
+                .doesNotThrowAnyException();
     }
 }

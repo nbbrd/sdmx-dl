@@ -20,7 +20,6 @@ import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Dataflow;
 import sdmxdl.format.csv.SdmxCsvFields;
@@ -60,6 +59,6 @@ public final class ListFlowsCommand implements Callable<Void> {
     }
 
     private Stream<Dataflow> getRows() throws IOException {
-        return sort.applySort(web.loadFlows(web.loadManager()), WebSourceOptions.FLOWS_BY_REF);
+        return sort.applySort(web.loadFlows(web.loadManager(), web.getLangs()), WebSourceOptions.FLOWS_BY_REF);
     }
 }

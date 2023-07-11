@@ -7,6 +7,7 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.FileReader;
@@ -28,26 +29,26 @@ public class XmlReader implements FileReader {
     }
 
     @Override
-    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull FileContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages, @NonNull FileContext context) throws IOException, IllegalArgumentException {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }
-        return new FileConnection(getClient(source, context), getDataflow(source));
+        return new FileConnection(getClient(source, languages, context), getDataflow(source));
     }
 
     private boolean isXmlFileName(File file) {
         return file.toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private FileClient getClient(SdmxFileSource source, FileContext context) throws IOException {
+    private FileClient getClient(SdmxFileSource source, LanguagePriorityList languages, FileContext context) throws IOException {
         FileClient client = new XmlFileClient(
                 source,
-                context.getLanguages(),
+                languages,
                 new XmlDecoder(context.getOnEvent()),
                 ObsParser::newDefault,
                 context.getOnEvent()
         );
-        return CachedFileClient.of(client, context.getCache(source), source, context.getLanguages());
+        return CachedFileClient.of(client, context.getCache(source), source, languages);
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");

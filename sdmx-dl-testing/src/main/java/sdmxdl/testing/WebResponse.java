@@ -64,7 +64,7 @@ public class WebResponse {
                 .request(request)
                 .source(manager.getSources().get(request.getSource()));
 
-        try (Connection conn = manager.getConnection(request.getSource())) {
+        try (Connection conn = manager.getConnection(request.getSource(), request.getLanguages())) {
             result
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getFlowRef()))

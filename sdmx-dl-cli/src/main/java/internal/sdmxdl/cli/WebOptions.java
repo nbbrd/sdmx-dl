@@ -105,7 +105,6 @@ public class WebOptions {
 
             return defaultWebManager.get()
                     .toBuilder()
-                    .languages(langs)
                     .onEvent(getEventListener())
                     .onError(getErrorListener())
                     .customSources(customSources.get())

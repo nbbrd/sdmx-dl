@@ -34,6 +34,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.LanguagePriorityList.ANY;
 import static sdmxdl.web.spi.WebDriver.NATIVE_RANK;
 import static sdmxdl.web.spi.WebDriver.WRAPPED_RANK;
 
@@ -61,7 +62,6 @@ public class SdmxWebManagerTest {
             assertThat(o).isNotNull();
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
-            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -74,7 +74,6 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.noOp()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
             assertThat(o.getMonitorings()).isEmpty();
-            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -86,7 +85,6 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.builder().driver(sampleDriver).build()).satisfies(o -> {
             assertThat(o.getDrivers()).containsExactly(sampleDriver);
             assertThat(o.getMonitorings()).isEmpty();
-            assertThat(o.getLanguages()).isEqualTo(LanguagePriorityList.ANY);
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -191,13 +189,13 @@ public class SdmxWebManagerTest {
     public void testGetConnection() throws IOException {
         SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null, ANY));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection("ko"))
+                .isThrownBy(() -> manager.getConnection("ko", ANY))
                 .as("Invalid source name");
 
-        assertThatCode(() -> manager.getConnection(sampleSource.getId()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.getId(), ANY).close()).doesNotThrowAnyException();
 
         WebDriver driver1 = MockedDriver
                 .builder()
@@ -217,7 +215,7 @@ public class SdmxWebManagerTest {
                 .customSource(SdmxWebSource.builder().id("source").driver("d2").endpointOf(sample.getName()).build())
                 .build();
 
-        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source")) {
+        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source", ANY)) {
             // TODO: create code that verifies that driver2 is selected
 //            assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
@@ -228,18 +226,18 @@ public class SdmxWebManagerTest {
     public void testGetConnectionOfSource() {
         SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((SdmxWebSource) null, ANY));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build()))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build(), ANY))
                 .as("Invalid source endpoint");
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build()))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build(), ANY))
                 .as("Invalid source driver");
 
-        assertThatCode(() -> manager.getConnection(sampleSource).close()).doesNotThrowAnyException();
-        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build()).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource, ANY).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build(), ANY).close()).doesNotThrowAnyException();
     }
 
     @SuppressWarnings("EmptyTryBlock")
@@ -254,17 +252,17 @@ public class SdmxWebManagerTest {
                 .build();
 
         SdmxWebSource noProp = sampleSource.toBuilder().id("noProp").clearProperties().build();
-        try (Connection ignored = manager.getConnection(noProp)) {
+        try (Connection ignored = manager.getConnection(noProp, ANY)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource validProp = sampleSource.toBuilder().id("validProp").build();
-        try (Connection ignored = manager.getConnection(validProp)) {
+        try (Connection ignored = manager.getConnection(validProp, ANY)) {
         }
         assertThat(events).isEmpty();
 
         SdmxWebSource invalidProp = sampleSource.toBuilder().id("invalidProp").property("boom", "123").build();
-        try (Connection ignored = manager.getConnection(invalidProp)) {
+        try (Connection ignored = manager.getConnection(invalidProp, ANY)) {
         }
         assertThat(events).singleElement(as(STRING))
                 .contains(invalidProp.getId())

@@ -69,7 +69,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromDataflows(web.loadFlows(web.loadManager())));
+        nonNull(out).dumpAll(fromDataflows(web.loadFlows(web.loadManager(), web.getLangs())));
     }
 
     private static Flows fromDataflows(Collection<Dataflow> value) {
@@ -86,7 +86,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromFeatures(web.loadFeatures(web.loadManager())));
+        nonNull(out).dumpAll(fromFeatures(web.loadFeatures(web.loadManager(), web.getLangs())));
     }
 
     private static Features fromFeatures(Collection<Feature> value) {

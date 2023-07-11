@@ -9,6 +9,8 @@ import tests.sdmxdl.web.WebDriverAssert;
 
 import java.io.IOException;
 
+import static sdmxdl.LanguagePriorityList.ANY;
+
 public class RngDriverTest {
 
     @Test
@@ -21,7 +23,7 @@ public class RngDriverTest {
 
         for (SdmxWebSource source : x.getDefaultSources()) {
             System.out.println(source);
-            try (Connection conn = x.connect(source, WebDriverAssert.noOpWebContext())) {
+            try (Connection conn = x.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
                 for (Dataflow dataflow : conn.getFlows()) {
                     System.out.println(dataflow);
                     System.out.println(conn.getStructure(dataflow.getRef()));

@@ -6,6 +6,7 @@ import io.smallrye.mutiny.Uni;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.SdmxWebSource;
@@ -17,6 +18,7 @@ import java.io.IOException;
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     private final SdmxWebManager manager = GrpcWebFactory.loadManager();
+    private final LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @Override
     public Uni<MonitorReport> getMonitorReport(SourceRequest request) {
@@ -31,7 +33,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Override
     public Uni<Dataflow> getFlow(FlowRequest request) {
-        try (Connection connection = manager.getConnection(request.getSource())) {
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
                     .item(connection.getFlow(DataflowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataflow);
@@ -42,7 +44,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Override
     public Uni<DataStructure> getStructure(FlowRequest request) {
-        try (Connection connection = manager.getConnection(request.getSource())) {
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
                     .item(connection.getStructure(DataflowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataStructure);
@@ -53,7 +55,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Override
     public Uni<DataSet> getData(KeyRequest request) {
-        try (Connection connection = manager.getConnection(request.getSource())) {
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
                     .item(connection.getData(getFlowRef(request), getDataQuery(request)))
                     .map(ProtobufRepositories::fromDataSet);
@@ -72,7 +74,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Override
     public Multi<Dataflow> getFlows(SourceRequest request) {
-        try (Connection connection = manager.getConnection(request.getSource())) {
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
                     .items(connection.getFlows().stream())
                     .map(ProtobufRepositories::fromDataflow);
@@ -83,7 +85,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Override
     public Multi<Series> getDataStream(KeyRequest request) {
-        try (Connection connection = manager.getConnection(request.getSource())) {
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
                     .items(connection.getData(getFlowRef(request), getDataQuery(request)).getData().stream())
                     .map(ProtobufRepositories::fromSeries);

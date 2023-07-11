@@ -62,6 +62,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);
     }
 
+    @lombok.Getter
+    private LanguagePriorityList languages = LanguagePriorityList.ANY;
+
+    public void setLanguages(@NonNull LanguagePriorityList languages) {
+        firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
+    }
+
     public static final String DATA_SOURCES_PROPERTY = "dataSources";
 
     @lombok.Getter
@@ -172,7 +179,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                         .orElse(null);
             }
         });
-        DynamicTree.enable(datasetsTree, new DataNodeFactory(this::getSdmxManager), new DefaultMutableTreeNode("root"));
+        DynamicTree.enable(datasetsTree, new DataNodeFactory(this::getSdmxManager, this::getLanguages), new DefaultMutableTreeNode("root"));
         datasetsTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -313,7 +320,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
             @Override
             protected Void doInBackground() throws Exception {
                 for (DataSourceRef dataSourceRef : JLists.asList(dataSources)) {
-                    publish(FlowStruct.load(getSdmxManager(), dataSourceRef));
+                    publish(FlowStruct.load(getSdmxManager(), getLanguages(), dataSourceRef));
                 }
                 return null;
             }
@@ -331,13 +338,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         public void execute(@NonNull MainComponent c) {
 
             JTextField sourceField = new JTextField("");
-            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(c.getSdmxManager());
+            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(c.getSdmxManager(), c.getLanguages());
             JAutoCompletion sourceAutoCompletion = new JAutoCompletion(sourceField);
             sourceAutoCompletion.setSource(sourceCompletion.getSource());
             sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
 
             JTextField flowField = new JTextField("");
-            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(c.getSdmxManager(), () -> c.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
+            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(c.getSdmxManager(), c.getLanguages(), () -> c.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
             JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
             flowAutoCompletion.setSource(flowCompletion.getSource());
             flowAutoCompletion.getList().setCellRenderer(flowCompletion.getRenderer());

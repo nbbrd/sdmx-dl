@@ -71,7 +71,7 @@ public final class FetchExtraCommand implements Callable<Void> {
     private Stream<Extra> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
 
-        try (Connection conn = web.open(manager)) {
+        try (Connection conn = web.open(manager, web.getLangs())) {
             DataStructure dsd = conn.getStructure(web.getFlow());
 
             SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);

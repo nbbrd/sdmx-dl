@@ -36,7 +36,7 @@ public final class MockedDriver implements WebDriver {
     private final Collection<SdmxWebSource> customSources;
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
         return repos

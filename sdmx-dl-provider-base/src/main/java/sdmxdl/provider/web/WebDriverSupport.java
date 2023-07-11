@@ -19,6 +19,7 @@ package sdmxdl.provider.web;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -65,10 +66,10 @@ public final class WebDriverSupport implements WebDriver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
         getLazySourceValidator().checkValidity(source);
 
-        return connector.connect(source, context);
+        return connector.connect(source, languages, context);
     }
 
     @Override

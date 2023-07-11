@@ -19,7 +19,6 @@ import nbbrd.io.text.TextParser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.web.WebCache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
@@ -30,6 +29,7 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.WebTypedId;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebCache;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
@@ -79,7 +79,7 @@ public final class PxWebDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 Marker.of(source),
                 source.getId().toLowerCase(Locale.ROOT),
@@ -92,7 +92,7 @@ public final class PxWebDriver implements WebDriver {
                 context.getCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
-                context.getLanguages()
+                languages
         );
 
         return new PxWebConnection(cachedClient);

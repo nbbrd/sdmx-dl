@@ -19,6 +19,7 @@ package internal.sdmxdl.web.spi;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
@@ -90,11 +91,11 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Connection result;
 
         try {
-            result = delegate.connect(source, context);
+            result = delegate.connect(source, languages, context);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {

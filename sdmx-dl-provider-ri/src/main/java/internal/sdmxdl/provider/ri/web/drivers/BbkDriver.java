@@ -66,11 +66,11 @@ public final class BbkDriver implements WebDriver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
         return new RiRestClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),
-                c.getLanguages(),
+                languages,
                 ObsParser::newDefault,
                 RiHttpUtils.newClient(s, c),
                 new BbkQueries(),

@@ -30,6 +30,7 @@ import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -138,11 +139,11 @@ public final class EurostatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
         return new RiRestClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),
-                c.getLanguages(),
+                languages,
                 ObsParser::newDefault,
                 getHttpClient(s, c),
                 new Sdmx21RestQueries(false),

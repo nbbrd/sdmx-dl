@@ -24,6 +24,7 @@ import java.util.Map;
 import static internal.sdmxdl.provider.ri.web.drivers.StatCanDriver.Converter.*;
 import static nbbrd.io.Resource.getResourceAsStream;
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 public class StatCanDriverTest {
 
@@ -36,7 +37,7 @@ public class StatCanDriverTest {
     public void testConnectionArgs() throws IOException {
         StatCanDriver driver = new StatCanDriver();
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
-        try (Connection connection = driver.connect(source, WebDriverAssert.noOpWebContext())) {
+        try (Connection connection = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
             DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
@@ -140,7 +141,7 @@ public class StatCanDriverTest {
             Files.copy(StatCanDriverTest.class.getResourceAsStream(fileName), x.toPath());
 
             Map<LanguagePriorityList, String> labels = new HashMap<>();
-            labels.put(LanguagePriorityList.ANY, "Data Structure");
+            labels.put(ANY, "Data Structure");
             labels.put(LanguagePriorityList.parse("en"), "Data Structure");
             labels.put(LanguagePriorityList.parse("fr"), "Structure de données");
 
@@ -177,7 +178,7 @@ public class StatCanDriverTest {
             File x = new File(tmp, fileName);
             Files.copy(getResourceAsStream(StatCanDriverTest.class, fileName).orElseThrow(FileNotFoundException::new), x.toPath());
 
-            assertThat(toSdmxRepository(x, 34100158, LanguagePriorityList.ANY).getDataSets().get(0).getData())
+            assertThat(toSdmxRepository(x, 34100158, ANY).getDataSets().get(0).getData())
                     .has(uniqueKeys())
                     .have(uniqueObs())
                     .filteredOn(Series::getKey, Key.parse("1"))

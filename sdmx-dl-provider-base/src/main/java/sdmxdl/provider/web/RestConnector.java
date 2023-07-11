@@ -3,6 +3,7 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
@@ -26,16 +27,16 @@ public final class RestConnector implements WebConnector {
     private final Validator<DataflowRef> dataflowRefValidator = WebValidators.DEFAULT_DATAFLOW_REF_VALIDATOR;
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
-        return RestConnection.of(getClient(source, context), dataflowRefValidator, false);
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
+        return RestConnection.of(getClient(source, languages, context), dataflowRefValidator, false);
     }
 
-    private RestClient getClient(SdmxWebSource source, WebContext context) throws IOException {
+    private RestClient getClient(SdmxWebSource source, LanguagePriorityList languages, WebContext context) throws IOException {
         return CachedRestClient.of(
-                client.get(source, context),
+                client.get(source, languages, context),
                 context.getCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
-                context.getLanguages());
+                languages);
     }
 }

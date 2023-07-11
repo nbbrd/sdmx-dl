@@ -21,6 +21,7 @@ import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
@@ -99,8 +100,8 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
-        return RiRestClient.of(s, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
+    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+        return RiRestClient.of(s, languages, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
     }
 
     @SdmxFix(id = 1, category = ENDPOINT, cause = "UIS API requires auth by key in header and this is not supported yet in facade")

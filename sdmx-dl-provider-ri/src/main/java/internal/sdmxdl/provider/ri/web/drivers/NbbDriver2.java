@@ -78,11 +78,11 @@ public final class NbbDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, WebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
         return newClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),
-                c.getLanguages(),
+                languages,
                 RiHttpUtils.newClient(s, c)
         );
     }

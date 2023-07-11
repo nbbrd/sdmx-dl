@@ -20,6 +20,7 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
 import org.junit.jupiter.api.Test;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.spi.WebDriver;
 import tests.sdmxdl.web.MockedDriver;
 import tests.sdmxdl.web.WebDriverAssert;
@@ -28,6 +29,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  * @author Philippe Charles
@@ -82,20 +84,20 @@ public class FailsafeDriverTest {
     @Test
     public void testConnect() throws IOException {
         failsafe.reset();
-        assertThat(valid.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+        assertThat(valid.connect(TestDriver.SOURCE, ANY, WebDriverAssert.noOpWebContext()))
                 .isNotNull()
                 .isInstanceOf(FailsafeConnection.class);
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, ANY, WebDriverAssert.noOpWebContext()))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, ANY, WebDriverAssert.noOpWebContext()))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }

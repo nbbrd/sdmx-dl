@@ -14,14 +14,14 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
-import sdmxdl.provider.Marker;
-import sdmxdl.web.WebCache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
+import sdmxdl.provider.Marker;
 import sdmxdl.provider.*;
 import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebCache;
 import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.WebDriver;
 
@@ -79,18 +79,18 @@ public final class StatCanDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
                 Marker.of(source),
                 source.getEndpoint().toURL(),
-                context.getLanguages(),
+                languages,
                 newClient(source, context)
         );
 
         StatCanClient cachedClient = CachedStatCanClient.of(
                 client,
                 context.getCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source, context.getLanguages()
+                source, languages
         );
 
         return new StatCanConnection(cachedClient);

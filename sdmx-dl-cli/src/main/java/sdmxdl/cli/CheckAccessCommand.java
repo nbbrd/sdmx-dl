@@ -22,10 +22,10 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
 import lombok.NonNull;
-import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Connection;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -71,7 +71,7 @@ public final class CheckAccessCommand implements Callable<Void> {
     private Stream<Access> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
         Stream<String> sources = web.isAllSources() ? WebSourcesOptions.getAllSourceNames(manager) : web.getSources().stream();
-        return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, sourceName)), BY_SOURCE);
+        return sort.applySort(web.applyParallel(sources).map(sourceName -> Access.of(manager, web.getLangs(), sourceName)), BY_SOURCE);
     }
 
     private static String formatDuration(Duration o) {
@@ -84,8 +84,8 @@ public final class CheckAccessCommand implements Callable<Void> {
     @lombok.Value
     private static class Access {
 
-        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull String source) {
-            try (Connection conn = manager.getConnection(source)) {
+        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull LanguagePriorityList languages, @NonNull String source) {
+            try (Connection conn = manager.getConnection(source, languages)) {
                 Clock clock = Clock.systemDefaultZone();
                 Instant start = clock.instant();
                 conn.testConnection();

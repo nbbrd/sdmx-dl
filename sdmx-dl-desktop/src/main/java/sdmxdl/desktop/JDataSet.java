@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
 import sdmxdl.Attribute;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.Obs;
 import sdmxdl.web.SdmxWebManager;
 
@@ -42,6 +43,13 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     public void setSdmxManager(@NonNull SdmxWebManager sdmxManager) {
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);
+    }
+
+    @lombok.Getter
+    private LanguagePriorityList languages = LanguagePriorityList.ANY;
+
+    public void setLanguages(@NonNull LanguagePriorityList languages) {
+        firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
     }
 
     public static final String MODEL_PROPERTY = "model";
@@ -132,7 +140,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         new SwingWorker<SingleSeries, Void>() {
             @Override
             protected SingleSeries doInBackground() throws Exception {
-                return SingleSeries.load(getSdmxManager(), model);
+                return SingleSeries.load(getSdmxManager(), getLanguages(), model);
             }
 
             @Override

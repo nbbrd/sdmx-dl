@@ -54,10 +54,6 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
-
-    @lombok.NonNull
-    @lombok.Builder.Default
     FileCaching caching = FileCaching.noOp();
 
     @Nullable EventListener<? super SdmxFileSource> onEvent;
@@ -73,17 +69,16 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     FileContext context = initContext();
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxFileSource source) throws IOException {
+    public @NonNull Connection getConnection(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException {
         FileReader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
-        return reader.read(source, getContext());
+        return reader.read(source, languages, getContext());
     }
 
     private FileContext initContext() {
         return FileContext
                 .builder()
-                .languages(languages)
                 .onEvent(onEvent)
                 .onError(onError)
                 .caching(caching)

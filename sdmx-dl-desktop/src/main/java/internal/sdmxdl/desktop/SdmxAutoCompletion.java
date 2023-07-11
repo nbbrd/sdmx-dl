@@ -63,20 +63,20 @@ public abstract class SdmxAutoCompletion {
 
     public abstract ListCellRenderer getRenderer();
 
-    public static SdmxAutoCompletion onWebSource(SdmxWebManager manager) {
-        return new WebSourceCompletion(manager);
+    public static SdmxAutoCompletion onWebSource(SdmxWebManager manager, LanguagePriorityList languages) {
+        return new WebSourceCompletion(manager, languages);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Supplier<S> source, ConcurrentMap cache) {
-        return new DataflowCompletion<>(manager, source, cache);
+    public static <S extends SdmxSource> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, ConcurrentMap cache) {
+        return new DataflowCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
-        return new DimensionCompletion<>(manager, source, flowRef, cache);
+    public static <S extends SdmxSource> SdmxAutoCompletion onDimension(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+        return new DimensionCompletion<>(manager, languages, source, flowRef, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
-        return new AttributeCompletion<>(manager, source, flowRef, cache);
+    public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+        return new AttributeCompletion<>(manager, languages, source, flowRef, cache);
     }
 
     @lombok.AllArgsConstructor
@@ -84,6 +84,9 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxWebManager manager;
+
+        @lombok.NonNull
+        private final LanguagePriorityList languages;
 
         @Override
         public AutoCompletionSource getSource() {
@@ -100,7 +103,7 @@ public abstract class SdmxAutoCompletion {
             return new CustomListCellRenderer<SdmxWebSource>() {
                 @Override
                 protected String getValueAsString(SdmxWebSource value) {
-                    return value.getId() + ": " + manager.getLanguages().select(value.getNames());
+                    return value.getId() + ": " + languages.select(value.getNames());
                 }
 
                 @Override
@@ -125,8 +128,7 @@ public abstract class SdmxAutoCompletion {
 
         private Predicate<SdmxWebSource> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
-            LanguagePriorityList langs = manager.getLanguages();
-            return value -> filter.test(langs.select(value.getNames()))
+            return value -> filter.test(languages.select(value.getNames()))
                     || filter.test(value.getId())
                     || value.getAliases().stream().anyMatch(filter);
         }
@@ -137,6 +139,9 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
+
+        @lombok.NonNull
+        private final LanguagePriorityList languages;
 
         @lombok.NonNull
         private final Supplier<S> source;
@@ -161,7 +166,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Dataflow> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get())) {
+            try (Connection c = manager.getConnection(source.get(), languages)) {
                 return new ArrayList<>(c.getFlows());
             }
         }
@@ -179,7 +184,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Dataflow" + source.get() + manager.getLanguages();
+            return "Dataflow" + source.get() + languages;
         }
     }
 
@@ -188,6 +193,9 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
+
+        @lombok.NonNull
+        private final LanguagePriorityList languages;
 
         @lombok.NonNull
         private final Supplier<S> source;
@@ -215,7 +223,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Dimension> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get())) {
+            try (Connection c = manager.getConnection(source.get(), languages)) {
                 return new ArrayList<>(c.getStructure(flowRef.get()).getDimensions());
             }
         }
@@ -233,7 +241,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Dimension" + source.get() + flowRef.get() + manager.getLanguages();
+            return "Dimension" + source.get() + flowRef.get() + languages;
         }
     }
 
@@ -242,6 +250,9 @@ public abstract class SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
+
+        @lombok.NonNull
+        private final LanguagePriorityList languages;
 
         @lombok.NonNull
         private final Supplier<S> source;
@@ -269,7 +280,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Attribute> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get())) {
+            try (Connection c = manager.getConnection(source.get(), languages)) {
                 return new ArrayList<>(c.getStructure(flowRef.get()).getAttributes());
             }
         }
@@ -287,7 +298,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Attribute" + source.get() + flowRef.get() + manager.getLanguages();
+            return "Attribute" + source.get() + flowRef.get() + languages;
         }
     }
 

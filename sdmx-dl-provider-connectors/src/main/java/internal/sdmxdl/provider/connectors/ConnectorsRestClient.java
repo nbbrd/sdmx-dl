@@ -75,7 +75,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     public static @NonNull RestClientSupplier ofSpecific(@NonNull SpecificSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
-        return (source, context) -> {
+        return (source, languages, context) -> {
             try {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint());
@@ -92,7 +92,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     public static @NonNull RestClientSupplier ofGeneric(@NonNull GenericSupplier supplier, @NonNull Supplier<ObsParser> obsFactory) {
-        return (source, context) -> {
+        return (source, languages, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
             return new ConnectorsRestClient(Marker.of(source), client, obsFactory);

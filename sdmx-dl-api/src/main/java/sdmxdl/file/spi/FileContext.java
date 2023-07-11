@@ -4,17 +4,12 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 public class FileContext {
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
 
     @lombok.NonNull
     @lombok.Builder.Default

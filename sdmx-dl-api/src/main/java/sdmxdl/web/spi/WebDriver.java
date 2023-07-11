@@ -21,6 +21,7 @@ import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
 import sdmxdl.Connection;
+import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
@@ -49,6 +50,7 @@ public interface WebDriver {
     @NonNull
     Connection connect(
             @NonNull SdmxWebSource source,
+            @NonNull LanguagePriorityList languages,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 

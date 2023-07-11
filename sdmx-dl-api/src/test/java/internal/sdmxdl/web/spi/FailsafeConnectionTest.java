@@ -32,6 +32,7 @@ import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static sdmxdl.LanguagePriorityList.ANY;
 
 /**
  * @author Philippe Charles
@@ -45,7 +46,7 @@ public class FailsafeConnectionTest {
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
         ConnectionAssert.assertCompliance(
-                () -> FailsafeConnection.wrap(driver.connect(source, WebDriverAssert.noOpWebContext())),
+                () -> FailsafeConnection.wrap(driver.connect(source, ANY, WebDriverAssert.noOpWebContext())),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
