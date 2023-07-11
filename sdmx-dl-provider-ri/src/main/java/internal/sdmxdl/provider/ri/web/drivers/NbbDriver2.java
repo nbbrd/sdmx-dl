@@ -29,9 +29,10 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
+import sdmxdl.provider.Marker;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Marker;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
@@ -80,7 +81,7 @@ public final class NbbDriver2 implements Driver {
 
     private static RiRestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return newClient(
-                Marker.of(s),
+                HasMarker.of(s),
                 s.getEndpoint().toURL(),
                 languages,
                 RiHttpUtils.newClient(s, c)

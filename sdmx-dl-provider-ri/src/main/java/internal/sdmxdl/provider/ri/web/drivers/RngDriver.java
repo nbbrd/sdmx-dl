@@ -60,7 +60,7 @@ public final class RngDriver implements Driver {
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
-        return new RngConnection(Marker.of(source), config);
+        return new RngConnection(HasMarker.of(source), config);
     }
 
     @RepresentableAs(URI.class)

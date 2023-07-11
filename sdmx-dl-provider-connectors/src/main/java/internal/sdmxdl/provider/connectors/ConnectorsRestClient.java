@@ -31,13 +31,14 @@ import sdmxdl.EventListener;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
-import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public final class ConnectorsRestClient implements RestClient {
                 RestSdmxClient client = supplier.get();
                 client.setEndpoint(source.getEndpoint());
                 configure(client, source, context);
-                return new ConnectorsRestClient(Marker.of(source), client, obsFactory);
+                return new ConnectorsRestClient(HasMarker.of(source), client, obsFactory);
             } catch (URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
@@ -95,7 +96,7 @@ public final class ConnectorsRestClient implements RestClient {
         return (source, languages, context) -> {
             RestSdmxClient client = supplier.get(source.getEndpoint(), source.getProperties());
             configure(client, source, context);
-            return new ConnectorsRestClient(Marker.of(source), client, obsFactory);
+            return new ConnectorsRestClient(HasMarker.of(source), client, obsFactory);
         };
     }
 
@@ -217,7 +218,7 @@ public final class ConnectorsRestClient implements RestClient {
         client.setSslSocketFactory(sslFactory.getSSLSocketFactory());
         client.setHostnameVerifier(sslFactory.getHostnameVerifier());
         client.setMaxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()));
-        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getOnEvent());
+        RestSdmxEventListener eventListener = new DefaultRestSdmxEventListener(source, context.getOnEvent(), client.getName());
         client.setRedirectionEventListener(eventListener);
         client.setOpenEventListener(eventListener);
     }
@@ -225,20 +226,23 @@ public final class ConnectorsRestClient implements RestClient {
     @lombok.AllArgsConstructor
     private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
-        @lombok.NonNull
+        @NonNull
         private final SdmxWebSource source;
 
         private final @Nullable EventListener<? super SdmxWebSource> listener;
+
+        @NonNull
+        private final String marker;
 
         @Override
         public void onSdmxEvent(RestSdmxEvent event) {
             if (listener != null) {
                 if (event instanceof RedirectionEvent) {
                     RedirectionEvent redirectionEvent = (RedirectionEvent) event;
-                    listener.accept(source, REST_CLIENT_MARKER, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
+                    listener.accept(source, marker, WebEvents.onRedirection(redirectionEvent.getUrl(), redirectionEvent.getRedirection()));
                 } else if (event instanceof OpenEvent) {
                     OpenEvent openEvent = (OpenEvent) event;
-                    listener.accept(source, REST_CLIENT_MARKER, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
+                    listener.accept(source, marker, WebEvents.onQuery(openEvent.getUrl(), openEvent.getProxy()));
                 }
             }
         }

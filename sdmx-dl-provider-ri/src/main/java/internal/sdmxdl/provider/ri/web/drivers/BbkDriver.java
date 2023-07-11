@@ -22,10 +22,10 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.Marker;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.DriverSupport;
+import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -68,7 +68,7 @@ public final class BbkDriver implements Driver {
 
     private static RiRestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return new RiRestClient(
-                Marker.of(s),
+                HasMarker.of(s),
                 s.getEndpoint().toURL(),
                 languages,
                 ObsParser::newDefault,

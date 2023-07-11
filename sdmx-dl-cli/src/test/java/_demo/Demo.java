@@ -7,7 +7,9 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
+import static sdmxdl.DataDetail.DATA_ONLY;
 import static sdmxdl.Languages.ANY;
 
 public class Demo {
@@ -23,18 +25,25 @@ public class Demo {
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
             DataflowRef exr = DataflowRef.parse("EXR");
-            System.out.println(ecb.getFlow(exr).getName());
+            printFlow(ecb.getFlow(exr));
 
             Key chf = Key.parse("M.CHF.EUR.SP00.A");
-            ecb.getData(exr, DataQuery.builder().key(chf).build())
-                    .getData()
-                    .stream()
-                    .map(Series::getKey)
-                    .forEach(System.out::println);
+            DataQuery chfData = DataQuery.builder().key(chf).detail(DATA_ONLY).build();
+            try (Stream<Series> dataStream = ecb.getDataStream(exr, chfData)) {
+                dataStream.forEach(Demo::printSeries);
+            }
         }
     }
 
-    private static void printEvent(SdmxWebSource source, Marker marker, CharSequence message) {
+    private static void printFlow(Dataflow flow) {
+        System.out.println(flow.getName());
+    }
+
+    private static void printSeries(Series series) {
+        System.out.println(series.getKey() + ": " + series.getObs().size() + " observations");
+    }
+
+    private static void printEvent(SdmxWebSource source, String marker, CharSequence message) {
         System.err.println("[" + source.getId() + "] (" + marker + ") " + message);
     }
 }

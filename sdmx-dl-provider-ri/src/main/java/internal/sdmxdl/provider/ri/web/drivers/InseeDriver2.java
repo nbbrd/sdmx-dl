@@ -31,7 +31,7 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
-import sdmxdl.provider.Marker;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
@@ -99,7 +99,7 @@ public final class InseeDriver2 implements Driver {
 
         InseeRestClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
             super(
-                    Marker.of(s),
+                    HasMarker.of(s),
                     s.getEndpoint().toURL(),
                     languages,
                     OBS_FACTORY,

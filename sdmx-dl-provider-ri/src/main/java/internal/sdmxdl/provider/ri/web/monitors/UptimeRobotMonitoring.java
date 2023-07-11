@@ -9,11 +9,13 @@ import nbbrd.io.xml.Xml;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.provider.web.WebMonitors;
-import sdmxdl.web.*;
+import sdmxdl.web.MonitorReport;
+import sdmxdl.web.MonitorStatus;
+import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.Monitor;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLStreamException;
@@ -47,7 +49,7 @@ public final class UptimeRobotMonitoring implements Monitor {
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
 
         Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitoring::parseReport);
-        return post(url, id.toBody(), parser::parseReader, context, source);
+        return post(url, id.toBody(), parser::parseReader, context, source, getMonitorId());
     }
 
     @lombok.AllArgsConstructor
@@ -95,14 +97,14 @@ public final class UptimeRobotMonitoring implements Monitor {
     }
 
     @MightBePromoted
-    private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, SdmxWebSource source) throws IOException {
+    private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, SdmxWebSource source, String monitorId) throws IOException {
         byte[] data = query.getBytes(StandardCharsets.UTF_8);
 
         Network network = context.getNetwork(source);
         Proxy proxy = network.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getOnEvent() != null) {
-            context.getOnEvent().accept(source, MONITOR_MARKER, WebEvents.onQuery(url, proxy));
+            context.getOnEvent().accept(source, monitorId, WebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);

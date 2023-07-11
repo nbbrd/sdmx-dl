@@ -20,6 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
@@ -40,7 +41,7 @@ public final class XRepoRestClient implements RestClient {
 
     @Override
     public @NonNull Marker getMarker() {
-        return Marker.of(repository);
+        return HasMarker.of(repository);
     }
 
     @Override

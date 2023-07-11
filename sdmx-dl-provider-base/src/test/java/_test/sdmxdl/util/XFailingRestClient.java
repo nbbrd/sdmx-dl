@@ -36,7 +36,7 @@ public enum XFailingRestClient implements RestClient {
     TEST_EXPECTED {
         @Override
         public @NonNull Marker getMarker() {
-            return Marker.of("");
+            return Marker.parse("");
         }
 
         @Override

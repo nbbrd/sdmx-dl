@@ -27,7 +27,7 @@ import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.Marker;
+import sdmxdl.provider.Marker;
 import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
@@ -144,13 +144,13 @@ public class WebOptions {
     @lombok.extern.java.Log
     private static class LoggingListener {
 
-        public void onSourceEvent(SdmxWebSource source, Marker marker, CharSequence message) {
+        public void onSourceEvent(SdmxWebSource source, String marker, CharSequence message) {
             if (log.isLoggable(Level.INFO)) {
                 log.info(message.toString());
             }
         }
 
-        public void onSourceError(SdmxWebSource source, Marker marker, CharSequence message, IOException error) {
+        public void onSourceError(SdmxWebSource source, String marker, CharSequence message, IOException error) {
             if (log.isLoggable(Level.INFO)) {
                 log.log(Level.INFO, message.toString(), error);
             }
@@ -165,7 +165,7 @@ public class WebOptions {
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceEvent(SdmxWebSource source, Marker marker, CharSequence message) {
+        public void onSourceEvent(SdmxWebSource source, String marker, CharSequence message) {
             if (main != null) {
                 main.accept(source, marker, message);
             }
@@ -183,7 +183,7 @@ public class WebOptions {
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceError(SdmxWebSource source, Marker marker, CharSequence message, IOException error) {
+        public void onSourceError(SdmxWebSource source, String marker, CharSequence message, IOException error) {
             if (main != null) {
                 main.accept(source, marker, message, error);
             }

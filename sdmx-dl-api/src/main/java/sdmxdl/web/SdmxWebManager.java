@@ -46,8 +46,6 @@ import static java.util.stream.Collectors.toList;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
-    public static final Marker WEB_MANAGER_MARKER = Marker.parse("WEB_MANAGER");
-
     @StaticFactoryMethod
     public static @NonNull SdmxWebManager ofServiceLoader() {
         return SdmxWebManager
@@ -139,7 +137,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
             Collection<String> found = source.getProperties().keySet();
             String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
             if (!diff.isEmpty()) {
-                onEvent.accept(source, WEB_MANAGER_MARKER, "Unexpected properties [" + diff + "]");
+                onEvent.accept(source, "WEB_MANAGER", "Unexpected properties [" + diff + "]");
             }
         }
     }

@@ -81,7 +81,7 @@ public final class PxWebDriver implements Driver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
-                Marker.of(source),
+                HasMarker.of(source),
                 source.getId().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)

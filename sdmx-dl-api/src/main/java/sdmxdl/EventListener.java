@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface EventListener<S extends SdmxSource> {
 
-    void accept(@NonNull S source, @NonNull Marker marker, @NonNull CharSequence message);
+    void accept(@NonNull S source, @NonNull String marker, @NonNull CharSequence message);
 
-    default @NonNull Consumer<CharSequence> asConsumer(@NonNull S source, @NonNull Marker marker) {
+    default @NonNull Consumer<CharSequence> asConsumer(@NonNull S source, @NonNull String marker) {
         return message -> accept(source, marker, message);
     }
 }

@@ -18,7 +18,6 @@ import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
-import sdmxdl.provider.Marker;
 import sdmxdl.provider.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
@@ -81,7 +80,7 @@ public final class StatCanDriver implements Driver {
 
     private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
-                Marker.of(source),
+                HasMarker.of(source),
                 source.getEndpoint().toURL(),
                 languages,
                 newClient(source, context)

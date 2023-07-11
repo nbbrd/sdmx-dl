@@ -44,6 +44,4 @@ public interface RestClient extends HasMarker {
     @NonNull Set<Feature> getSupportedFeatures() throws IOException;
 
     void testClient() throws IOException;
-
-    Marker REST_CLIENT_MARKER = sdmxdl.Marker.parse("REST_CLIENT");
 }

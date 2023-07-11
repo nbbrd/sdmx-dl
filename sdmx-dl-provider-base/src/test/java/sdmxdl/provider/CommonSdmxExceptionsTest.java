@@ -12,7 +12,7 @@ import static sdmxdl.provider.CommonSdmxExceptions.*;
 @SuppressWarnings({"ConstantConditions", "ThrowableNotThrown"})
 public class CommonSdmxExceptionsTest {
 
-    private static final Marker SOURCE = Marker.of("abc");
+    private static final Marker SOURCE = Marker.parse("abc");
     private static final DataflowRef DATAFLOW_REF = DataflowRef.parse("df");
     private static final DataStructureRef DATA_STRUCTURE_REF = DataStructureRef.parse("ds");
     private static final CodelistRef CODELIST_REF = CodelistRef.parse("cl");

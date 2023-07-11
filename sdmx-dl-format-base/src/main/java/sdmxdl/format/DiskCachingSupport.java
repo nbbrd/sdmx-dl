@@ -6,7 +6,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.Marker;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
@@ -46,9 +45,6 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     @lombok.Builder.Default
     private final boolean noCompression = false;
 
-    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final Marker marker = initLazyMarker();
-
     @Override
     public @NonNull String getFileCachingId() {
         return id;
@@ -77,8 +73,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
                 .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
                 .namePrefix("R")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getFileCachingId()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getFileCachingId()) : null)
                 .build();
     }
 
@@ -90,8 +86,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
                 .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
                 .namePrefix("D")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getWebCachingId()) : null)
                 .build();
     }
 
@@ -103,8 +99,8 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
                 .format(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat))
                 .namePrefix("M")
                 .clock(clock)
-                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getWebCachingId()) : null)
                 .build();
     }
 
@@ -116,10 +112,6 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Collection<String> getWebCachingProperties() {
         return Collections.emptyList();
-    }
-
-    private Marker initLazyMarker() {
-        return Marker.parse(getId());
     }
 
     public static final class Builder {

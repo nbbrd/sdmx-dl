@@ -104,7 +104,7 @@ public class NbbDriver2Test {
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
         return NbbDriver2.newClient(
-                Marker.of("NBBFIX2"),
+                Marker.parse("NBBFIX2"),
                 new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"),
                 Languages.ANY,
                 (httpRequest) -> response);

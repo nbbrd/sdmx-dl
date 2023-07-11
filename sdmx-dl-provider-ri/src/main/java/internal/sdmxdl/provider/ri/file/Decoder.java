@@ -18,7 +18,6 @@ package internal.sdmxdl.provider.ri.file;
 
 import lombok.NonNull;
 import sdmxdl.Languages;
-import sdmxdl.Marker;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.provider.file.FileInfo;
 
@@ -30,6 +29,4 @@ import java.io.IOException;
 public interface Decoder {
 
     @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull Languages languages) throws IOException;
-
-    Marker SDMX_DECODER_MARKER = Marker.parse("SDMX_DECODER");
 }

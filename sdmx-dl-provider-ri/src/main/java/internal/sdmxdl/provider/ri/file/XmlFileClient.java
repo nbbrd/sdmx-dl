@@ -30,6 +30,7 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
@@ -61,7 +62,7 @@ public class XmlFileClient implements FileClient {
 
     @Override
     public @NonNull Marker getMarker() {
-        return Marker.of(source);
+        return HasMarker.of(source);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class XmlFileClient implements FileClient {
     @Override
     public @NonNull Stream<Series> loadData(@NonNull FileInfo info, @NonNull DataRef dataRef) throws IOException {
         if (listener != null) {
-            listener.accept(source, FILE_CLIENT_MARKER, "Loading data from file '" + source.getData() + "'");
+            listener.accept(source, MARKER, "Loading data from file '" + source.getData() + "'");
         }
         return dataRef.getQuery().execute(
                 getDataSupplier(info.getDataType(), info.getStructure())
@@ -103,4 +104,6 @@ public class XmlFileClient implements FileClient {
         }
         throw new IOException("Don't known how to handle type '" + dataType + "'");
     }
+
+    private static final String MARKER = "XML_FILE_CLIENT";
 }

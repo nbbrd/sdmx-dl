@@ -1,30 +1,25 @@
 package sdmxdl.provider;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
-import sdmxdl.DataRepository;
-import sdmxdl.file.SdmxFileSource;
-import sdmxdl.web.SdmxWebSource;
+import nbbrd.design.RepresentableAsString;
+import nbbrd.design.StaticFactoryMethod;
 
-@lombok.Value(staticConstructor = "of")
+@RepresentableAsString
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+@lombok.EqualsAndHashCode
 public class Marker implements CharSequence {
 
     @lombok.experimental.Delegate(types = CharSequence.class)
-    @NonNull String content;
+    private final @NonNull String value;
 
     @Override
     public String toString() {
-        return content;
+        return value;
     }
 
-    public static @NonNull Marker of(@NonNull SdmxWebSource s) {
-        return new Marker(s.getDriver() + ":" + s.getId());
-    }
-
-    public static @NonNull Marker of(@NonNull SdmxFileSource s) {
-        return new Marker(s.getData().getPath());
-    }
-
-    public static @NonNull Marker of(@NonNull DataRepository repository) {
-        return new Marker(repository.getName());
+    @StaticFactoryMethod
+    public static @NonNull Marker parse(@NonNull CharSequence value) {
+        return new Marker(value.toString());
     }
 }

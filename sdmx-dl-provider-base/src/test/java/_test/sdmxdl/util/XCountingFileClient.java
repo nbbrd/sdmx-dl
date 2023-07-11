@@ -1,9 +1,9 @@
 package _test.sdmxdl.util;
 
 import lombok.NonNull;
+import sdmxdl.provider.Marker;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Marker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 

@@ -24,6 +24,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.web.SdmxWebSource;
@@ -49,7 +50,7 @@ public class RiRestClient implements RestClient {
     public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull Languages languages, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
         return new RiRestClient(
-                Marker.of(s),
+                HasMarker.of(s),
                 s.getEndpoint().toURL(),
                 languages,
                 ObsParser::newDefault,

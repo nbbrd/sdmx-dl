@@ -29,11 +29,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.Marker;
 import sdmxdl.provider.web.WebEvents;
+import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Network;
-import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
@@ -106,7 +105,7 @@ public class RiHttpUtils {
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
                 .urlConnectionFactory(network::getURLConnectionFactory)
-                .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, RI_HTTP_MARKER)) : HttpEventListener.noOp())
+                .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))
                 .build();
@@ -188,7 +187,7 @@ public class RiHttpUtils {
                 return authenticator.getPasswordAuthenticationOrNull(source);
             } catch (IOException ex) {
                 if (listener != null) {
-                    listener.accept(source, RI_HTTP_MARKER, "Failed to get password authentication: " + ex.getMessage());
+                    listener.accept(source, authenticator.getAuthenticatorId(), "Failed to get password authentication: " + ex.getMessage());
                 }
                 return null;
             }
@@ -199,11 +198,9 @@ public class RiHttpUtils {
                 authenticator.invalidateAuthentication(source);
             } catch (IOException ex) {
                 if (listener != null) {
-                    listener.accept(source, RI_HTTP_MARKER, "Failed to invalidate password authentication: " + ex.getMessage());
+                    listener.accept(source, authenticator.getAuthenticatorId(), "Failed to invalidate password authentication: " + ex.getMessage());
                 }
             }
         }
     }
-
-    public static final Marker RI_HTTP_MARKER = Marker.parse("RI_HTTP");
 }

@@ -5,7 +5,6 @@ import internal.util.http.HttpRequest;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Marker;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.WebDriverAssert;
@@ -125,7 +124,7 @@ public class RiHttpUtilsTest {
             return result;
         }
 
-        public void onSourceEvent(@NonNull SdmxWebSource source, @NonNull Marker marker, @NonNull CharSequence message) {
+        public void onSourceEvent(@NonNull SdmxWebSource source, @NonNull String marker, @NonNull CharSequence message) {
             events.add(new Event(source, message.toString()));
         }
     }

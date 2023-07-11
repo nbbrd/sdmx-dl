@@ -46,7 +46,7 @@ public final class XmlDecoder implements Decoder {
 
     private MediaType probeDataType(SdmxFileSource source) throws IOException {
         if (listener != null) {
-            listener.accept(source, SDMX_DECODER_MARKER, "Probing data type from '" + source.getData() + "'");
+            listener.accept(source, MARKER, "Probing data type from '" + source.getData() + "'");
         }
         return XmlMediaTypeProbe.of()
                 .parseFile(source.getData())
@@ -61,7 +61,7 @@ public final class XmlDecoder implements Decoder {
 
     private DataStructure parseStruct(MediaType dataType, Languages langs, SdmxFileSource source) throws IOException {
         if (listener != null) {
-            listener.accept(source, SDMX_DECODER_MARKER, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
+            listener.accept(source, MARKER, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
         }
         return getStructParser(dataType, langs)
                 .parseFile(source.getStructure())
@@ -81,7 +81,7 @@ public final class XmlDecoder implements Decoder {
 
     private DataStructure decodeStruct(MediaType dataType, SdmxFileSource source) throws IOException {
         if (listener != null) {
-            listener.accept(source, SDMX_DECODER_MARKER, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
+            listener.accept(source, MARKER, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
         }
         return getStructDecoder(dataType)
                 .parseFile(source.getData());
@@ -99,4 +99,6 @@ public final class XmlDecoder implements Decoder {
         }
         throw new IOException("Don't know how to handle '" + o + "'");
     }
+
+    private static final String MARKER = "XML_DECODER";
 }

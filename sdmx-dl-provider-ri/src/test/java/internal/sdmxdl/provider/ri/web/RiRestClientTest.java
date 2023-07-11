@@ -85,7 +85,7 @@ public class RiRestClientTest {
 
     private static RiRestClient of(HttpClient executor) throws MalformedURLException {
         return new RiRestClient(
-                Marker.of("abc"),
+                Marker.parse("abc"),
                 new URL("http://localhost"),
                 Languages.ANY,
                 ObsParser::newDefault,

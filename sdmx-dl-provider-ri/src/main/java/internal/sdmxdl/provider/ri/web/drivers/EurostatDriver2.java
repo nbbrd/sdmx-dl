@@ -35,14 +35,14 @@ import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
-import sdmxdl.provider.Marker;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -141,7 +141,7 @@ public final class EurostatDriver2 implements Driver {
 
     private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return new RiRestClient(
-                Marker.of(s),
+                HasMarker.of(s),
                 s.getEndpoint().toURL(),
                 languages,
                 ObsParser::newDefault,
