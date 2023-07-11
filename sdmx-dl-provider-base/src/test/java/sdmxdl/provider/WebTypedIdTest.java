@@ -3,7 +3,7 @@ package sdmxdl.provider;
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.format.MemCache;
 import tests.sdmxdl.ext.FakeClock;
 

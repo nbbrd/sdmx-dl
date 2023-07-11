@@ -19,7 +19,7 @@ package internal.sdmxdl.format.xml;
 import lombok.NonNull;
 import sdmxdl.Codelist;
 import sdmxdl.CodelistRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -47,7 +47,7 @@ public final class XMLStreamCodelist21 {
 
     private final TextBuilder label;
 
-    public XMLStreamCodelist21(LanguagePriorityList languages) {
+    public XMLStreamCodelist21(Languages languages) {
         this.label = new TextBuilder(languages);
     }
 

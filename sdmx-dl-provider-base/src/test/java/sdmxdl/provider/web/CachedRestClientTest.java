@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.web.CachedRestClient.getBase;
 import static tests.sdmxdl.api.KeyAssert.keys;
 import static tests.sdmxdl.api.RepoSamples.*;
@@ -193,7 +193,7 @@ public class CachedRestClientTest {
         assertThat(getBase(s1, ANY))
                 .hasToString("cache:rest/id1/1032839954/*")
                 .isEqualTo(getBase(s1, ANY))
-                .isNotEqualTo(getBase(s1, LanguagePriorityList.parse("fr")))
+                .isNotEqualTo(getBase(s1, Languages.parse("fr")))
                 .isNotEqualTo(getBase(s1.toBuilder().id("id2").build(), ANY))
                 .isNotEqualTo(getBase(s1.toBuilder().driver("driver2").build(), ANY))
                 .isNotEqualTo(getBase(s1.toBuilder().endpointOf("http://localhost/stuff").build(), ANY))

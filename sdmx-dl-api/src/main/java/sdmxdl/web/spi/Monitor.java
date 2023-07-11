@@ -13,22 +13,20 @@ import java.io.IOException;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.WebMonitoringLoader"
+        loaderName = "internal.util.MonitorLoader"
 )
 @ThreadSafe
-public interface WebMonitoring {
+public interface Monitor {
 
     @ServiceId
-    @NonNull String getId();
+    @NonNull String getMonitorId();
 
-    @NonNull
-    String getUriScheme();
+    @NonNull String getMonitorUriScheme();
 
-    @NonNull
-    MonitorReport getReport(
+    @NonNull MonitorReport getReport(
             @NonNull SdmxWebSource source,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 
-    Marker WEB_MONITORING_MARKER = Marker.parse("WEB_MONITORING");
+    Marker MONITOR_MARKER = Marker.parse("MONITOR");
 }

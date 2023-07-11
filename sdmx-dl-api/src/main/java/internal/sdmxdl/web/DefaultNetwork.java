@@ -1,9 +1,9 @@
 package internal.sdmxdl.web;
 
 import lombok.NonNull;
-import sdmxdl.web.Network;
-import sdmxdl.web.SSLFactory;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import java.net.ProxySelector;
 

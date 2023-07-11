@@ -1,7 +1,7 @@
 package tests.sdmxdl.ext;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.web.Network;
+import sdmxdl.web.spi.Network;
 import tests.sdmxdl.api.TckUtil;
 
 @lombok.experimental.UtilityClass

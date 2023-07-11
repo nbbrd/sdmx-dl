@@ -4,7 +4,7 @@ import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.DataStructure;
 import sdmxdl.Dataflow;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class FlowStruct {
 
     @NonNull DataStructure dataStructure;
 
-    public static FlowStruct load(SdmxWebManager manager, LanguagePriorityList languages, DataSourceRef ref) throws IOException {
+    public static FlowStruct load(SdmxWebManager manager, Languages languages, DataSourceRef ref) throws IOException {
         try (Connection conn = manager.getConnection(ref.getSource(), languages)) {
             return new FlowStruct(conn.getFlow(ref.getFlow()), conn.getStructure(ref.getFlow()));
         }

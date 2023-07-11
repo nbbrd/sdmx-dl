@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.Marker;
 import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.web.SdmxWebManager;
@@ -63,10 +63,10 @@ public class WebOptions {
             names = {"-l", "--languages"},
             paramLabel = "<langs>",
             converter = LangsConverter.class,
-            defaultValue = LanguagePriorityList.ANY_KEYWORD,
+            defaultValue = Languages.ANY_KEYWORD,
             descriptionKey = "cli.sdmx.languages"
     )
-    private LanguagePriorityList langs;
+    private Languages langs;
 
     @CommandLine.Option(
             names = {"--no-log"},

@@ -30,7 +30,7 @@ import nbbrd.io.text.LongProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -39,10 +39,10 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,15 +57,15 @@ import java.util.zip.ZipInputStream;
 import static internal.sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 import static java.util.Collections.singletonList;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class EurostatDriver2 implements WebDriver {
+@ServiceProvider(Driver.class)
+public final class EurostatDriver2 implements Driver {
 
     public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
             IntProperty.of("asyncMaxRetries", 10);
@@ -76,10 +76,10 @@ public final class EurostatDriver2 implements WebDriver {
     private static final String RI_EUROSTAT = "ri:estat";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_EUROSTAT)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(EurostatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
@@ -139,7 +139,7 @@ public final class EurostatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return new RiRestClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),

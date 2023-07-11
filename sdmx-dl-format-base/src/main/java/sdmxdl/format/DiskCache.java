@@ -24,9 +24,9 @@ import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.DataRepository;
-import sdmxdl.file.FileCache;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 
 import java.io.IOException;
 import java.nio.file.Files;

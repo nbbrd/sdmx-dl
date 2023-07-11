@@ -42,7 +42,7 @@ public class FacadeResource {
     public DataRepository nbb() throws IOException {
         DataRepository result = NBB.get();
         if (result == null) {
-            LanguagePriorityList l = LanguagePriorityList.parse("fr");
+            Languages l = Languages.parse("fr");
 
             List<DataStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
             List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
@@ -63,7 +63,7 @@ public class FacadeResource {
     public DataRepository ecb() throws IOException {
         DataRepository result = ECB.get();
         if (result == null) {
-            LanguagePriorityList l = LanguagePriorityList.parse("fr");
+            Languages l = Languages.parse("fr");
 
             List<DataStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
             List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
@@ -84,11 +84,11 @@ public class FacadeResource {
     private static final AtomicReference<DataRepository> NBB = new AtomicReference<>();
     private static final AtomicReference<DataRepository> ECB = new AtomicReference<>();
 
-    private List<DataStructure> struct20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<DataStructure> struct20(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.struct20(l).parseReader(xml::openReader);
     }
 
-    private List<Dataflow> flow20(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow20(ByteSource xml, Languages l) throws IOException {
         // FIXME: find sample of dataflow20 ?
         return struct20(xml, l).stream()
                 .map(FacadeResource::asDataflow)
@@ -101,11 +101,11 @@ public class FacadeResource {
         }
     }
 
-    private List<DataStructure> struct21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<DataStructure> struct21(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.struct21(l).parseReader(xml::openReader);
     }
 
-    private List<Dataflow> flow21(ByteSource xml, LanguagePriorityList l) throws IOException {
+    private List<Dataflow> flow21(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.flow21(l).parseReader(xml::openReader);
     }
 

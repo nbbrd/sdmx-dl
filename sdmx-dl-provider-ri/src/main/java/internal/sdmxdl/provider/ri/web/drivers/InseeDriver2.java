@@ -33,11 +33,11 @@ import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -51,16 +51,16 @@ import static sdmxdl.provider.SdmxFix.Category.MEDIA_TYPE;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class InseeDriver2 implements WebDriver {
+@ServiceProvider(Driver.class)
+public final class InseeDriver2 implements Driver {
 
     private static final String RI_INSEE = "ri:insee";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_INSEE)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
@@ -97,7 +97,7 @@ public final class InseeDriver2 implements WebDriver {
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+        InseeRestClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
             super(
                     Marker.of(s),
                     s.getEndpoint().toURL(),

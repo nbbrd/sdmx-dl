@@ -2,10 +2,11 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import sdmxdl.web.Network;
-import sdmxdl.web.SSLFactory;
+import sdmxdl.format.ServiceSupport;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 import sdmxdl.web.spi.Networking;
 
 import java.net.ProxySelector;
@@ -15,6 +16,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+@ServiceSupport
 @lombok.Builder(toBuilder = true)
 public final class SingleNetworkingSupport implements Networking {
 
@@ -36,7 +38,7 @@ public final class SingleNetworkingSupport implements Networking {
     private final @NonNull Supplier<? extends URLConnectionFactory> urlConnectionFactory = Network.getDefault()::getURLConnectionFactory;
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final @NonNull Network singleNetwork = initSingleNetwork();
+    private final @NonNull Network singleNetwork = initLazySingleNetwork();
 
     @Override
     public @NonNull String getNetworkingId() {
@@ -63,7 +65,7 @@ public final class SingleNetworkingSupport implements Networking {
         return getSingleNetwork();
     }
 
-    private Network initSingleNetwork() {
+    private Network initLazySingleNetwork() {
         return LazyNetwork
                 .builder()
                 .proxySelector(proxySelector)

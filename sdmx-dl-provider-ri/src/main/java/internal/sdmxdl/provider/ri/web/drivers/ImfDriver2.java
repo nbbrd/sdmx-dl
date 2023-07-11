@@ -30,12 +30,12 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,16 +50,16 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class ImfDriver2 implements WebDriver {
+@ServiceProvider
+public final class ImfDriver2 implements Driver {
 
     private static final String RI_IMF = "ri:imf";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_IMF)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(ImfDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
@@ -74,7 +74,7 @@ public final class ImfDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, new ImfQueries(), new ImfParsers(), IMF_FEATURES);
     }
 
@@ -111,7 +111,7 @@ public final class ImfDriver2 implements WebDriver {
     private static final class ImfParsers extends DotStatRestParsers {
 
         @Override
-        public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs) {
+        public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
             return SdmxXmlStreams.flow20(langs);
         }
 

@@ -22,7 +22,7 @@ import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.xml.*;
 import sdmxdl.provider.file.FileInfo;
@@ -34,12 +34,12 @@ import java.util.List;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class XmlDecoder implements SdmxDecoder {
+public final class XmlDecoder implements Decoder {
 
     private final @Nullable EventListener<? super SdmxFileSource> listener;
 
     @Override
-    public @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList langs) throws IOException {
+    public @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull Languages langs) throws IOException {
         MediaType type = probeDataType(source);
         return FileInfo.of(type, loadStructure(source, langs, type));
     }
@@ -53,13 +53,13 @@ public final class XmlDecoder implements SdmxDecoder {
                 .orElseThrow(() -> new IOException("Cannot probe data type"));
     }
 
-    private DataStructure loadStructure(SdmxFileSource source, LanguagePriorityList langs, MediaType type) throws IOException {
+    private DataStructure loadStructure(SdmxFileSource source, Languages langs, MediaType type) throws IOException {
         return XmlFileSource.isValidFile(source.getStructure())
                 ? parseStruct(type, langs, source)
                 : decodeStruct(type, source);
     }
 
-    private DataStructure parseStruct(MediaType dataType, LanguagePriorityList langs, SdmxFileSource source) throws IOException {
+    private DataStructure parseStruct(MediaType dataType, Languages langs, SdmxFileSource source) throws IOException {
         if (listener != null) {
             listener.accept(source, SDMX_DECODER_MARKER, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
         }
@@ -70,7 +70,7 @@ public final class XmlDecoder implements SdmxDecoder {
                 .orElseThrow(IOException::new);
     }
 
-    private Xml.Parser<List<DataStructure>> getStructParser(MediaType dataType, LanguagePriorityList langs) throws IOException {
+    private Xml.Parser<List<DataStructure>> getStructParser(MediaType dataType, Languages langs) throws IOException {
         if (XmlMediaTypes.GENERIC_DATA_20.equals(dataType) || XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20.equals(dataType)) {
             return SdmxXmlStreams.struct20(langs);
         } else if (XmlMediaTypes.GENERIC_DATA_21.equals(dataType) || XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21.equals(dataType)) {

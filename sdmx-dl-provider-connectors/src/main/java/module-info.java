@@ -1,3 +1,5 @@
+import sdmxdl.web.spi.Driver;
+
 module sdmxdl.provider.connectors {
 
     requires static lombok;
@@ -11,7 +13,7 @@ module sdmxdl.provider.connectors {
 
     requires transitive sdmxdl.api;
 
-    provides sdmxdl.web.spi.WebDriver with
+    provides Driver with
             internal.sdmxdl.provider.connectors.drivers.EurostatDriver,
             internal.sdmxdl.provider.connectors.drivers.ImfDriver,
             internal.sdmxdl.provider.connectors.drivers.InseeDriver,

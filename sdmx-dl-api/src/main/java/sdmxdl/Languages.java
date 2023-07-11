@@ -39,14 +39,14 @@ import java.util.stream.Collectors;
 @RepresentableAsString
 @lombok.EqualsAndHashCode
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class LanguagePriorityList {
+public final class Languages {
 
     public static final String ANY_KEYWORD = "*";
 
     /**
      * Any language.
      */
-    public static final LanguagePriorityList ANY = LanguagePriorityList.parse(ANY_KEYWORD);
+    public static final Languages ANY = Languages.parse(ANY_KEYWORD);
 
     /**
      * Parses the given ranges to generate a priority list.
@@ -60,8 +60,8 @@ public final class LanguagePriorityList {
      *                                  the given {@code ranges} is ill-formed
      */
     @StaticFactoryMethod
-    public static @NonNull LanguagePriorityList parse(@NonNull CharSequence ranges) throws IllegalArgumentException {
-        return new LanguagePriorityList(Locale.LanguageRange.parse(ranges.toString()));
+    public static @NonNull Languages parse(@NonNull CharSequence ranges) throws IllegalArgumentException {
+        return new Languages(Locale.LanguageRange.parse(ranges.toString()));
     }
 
     private final List<Locale.LanguageRange> list;
@@ -112,14 +112,14 @@ public final class LanguagePriorityList {
         return data
                 .values()
                 .stream()
-                .filter(LanguagePriorityList::isNonBlank)
+                .filter(Languages::isNonBlank)
                 .findFirst()
                 .orElse(null);
     }
 
     private static String asString(List<Locale.LanguageRange> list) {
         return list.stream()
-                .map(LanguagePriorityList::asString)
+                .map(Languages::asString)
                 .collect(Collectors.joining(","));
     }
 

@@ -6,7 +6,7 @@ import internal.sdmxdl.cli.ext.ProxyOptions;
 import internal.sdmxdl.cli.ext.SslOptions;
 import nbbrd.io.curl.CurlHttpURLConnection;
 import picocli.CommandLine;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 @lombok.Getter
 @lombok.Setter

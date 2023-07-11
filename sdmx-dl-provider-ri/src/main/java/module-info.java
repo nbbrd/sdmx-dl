@@ -1,3 +1,8 @@
+import sdmxdl.file.spi.Reader;
+import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.Monitor;
+
 module sdmxdl.provider.ri {
 
     requires static lombok;
@@ -12,7 +17,7 @@ module sdmxdl.provider.ri {
     requires com.google.gson;
     requires java.logging;
 
-    provides sdmxdl.web.spi.WebDriver with
+    provides Driver with
             internal.sdmxdl.provider.ri.web.drivers.BbkDriver,
             internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
             internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
@@ -25,13 +30,13 @@ module sdmxdl.provider.ri {
             internal.sdmxdl.provider.ri.web.drivers.Sdmx21Driver2,
             internal.sdmxdl.provider.ri.web.drivers.StatCanDriver;
 
-    provides sdmxdl.file.spi.FileReader with
+    provides Reader with
             internal.sdmxdl.provider.ri.file.readers.XmlReader;
 
-    provides sdmxdl.web.spi.WebAuthenticator with
+    provides Authenticator with
             internal.sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
 
-    provides sdmxdl.web.spi.WebMonitoring with
+    provides Monitor with
             internal.sdmxdl.provider.ri.web.monitors.UpptimeMonitoring,
             internal.sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
 

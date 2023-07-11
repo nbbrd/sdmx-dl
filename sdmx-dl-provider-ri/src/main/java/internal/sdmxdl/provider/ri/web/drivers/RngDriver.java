@@ -10,10 +10,10 @@ import sdmxdl.*;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URI;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.singleton;
 
 @ServiceProvider
-public final class RngDriver implements WebDriver {
+public final class RngDriver implements Driver {
 
     private static final String RI_RNG = "ri:rng";
 
@@ -42,10 +42,10 @@ public final class RngDriver implements WebDriver {
             BooleanProperty.of("enableRngDriver", false);
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_RNG)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(RngDriver::newConnection)
             .source(SdmxWebSource
@@ -57,7 +57,7 @@ public final class RngDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(Marker.of(source), config);

@@ -2,7 +2,7 @@ package tests.sdmxdl.web;
 
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.Authenticator;
 import tests.sdmxdl.api.TckUtil;
 
 @SuppressWarnings("ConstantConditions")
@@ -15,28 +15,28 @@ public class WebAuthenticatorAssert {
         SdmxWebSource source;
     }
 
-    public void assertCompliance(WebAuthenticator actual, Sample sample) {
+    public void assertCompliance(Authenticator actual, Sample sample) {
         TckUtil.run(s -> assertCompliance(s, actual, sample));
     }
 
-    public void assertCompliance(SoftAssertions s, WebAuthenticator actual, Sample sample) {
+    public void assertCompliance(SoftAssertions s, Authenticator actual, Sample sample) {
         checkGetPasswordAuthentication(s, actual, sample);
         checkInvalidate(s, actual, sample);
     }
 
-    private void checkGetPasswordAuthentication(SoftAssertions s, WebAuthenticator actual, Sample sample) {
-        s.assertThatThrownBy(() -> actual.getPasswordAuthentication(null))
+    private void checkGetPasswordAuthentication(SoftAssertions s, Authenticator actual, Sample sample) {
+        s.assertThatThrownBy(() -> actual.getPasswordAuthenticationOrNull(null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatCode(() -> actual.getPasswordAuthentication(sample.source)).
+        s.assertThatCode(() -> actual.getPasswordAuthenticationOrNull(sample.source)).
                 doesNotThrowAnyException();
     }
 
-    private void checkInvalidate(SoftAssertions s, WebAuthenticator actual, Sample sample) {
-        s.assertThatThrownBy(() -> actual.invalidate(null))
+    private void checkInvalidate(SoftAssertions s, Authenticator actual, Sample sample) {
+        s.assertThatThrownBy(() -> actual.invalidateAuthentication(null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatCode(() -> actual.invalidate(sample.source))
+        s.assertThatCode(() -> actual.invalidateAuthentication(sample.source))
                 .doesNotThrowAnyException();
     }
 }

@@ -1,7 +1,7 @@
 package internal.sdmxdl.web;
 
 import lombok.NonNull;
-import sdmxdl.web.SSLFactory;
+import sdmxdl.web.spi.SSLFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;

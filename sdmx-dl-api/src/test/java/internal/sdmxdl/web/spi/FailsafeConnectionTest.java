@@ -32,7 +32,7 @@ import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles

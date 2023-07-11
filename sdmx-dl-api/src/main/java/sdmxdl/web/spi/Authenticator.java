@@ -14,19 +14,18 @@ import java.net.PasswordAuthentication;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.WebAuthenticatorLoader"
+        loaderName = "internal.util.AuthenticatorLoader"
 )
 @ThreadSafe
-public interface WebAuthenticator {
+public interface Authenticator {
 
     @ServiceId
-    @NonNull String getId();
+    @NonNull String getAuthenticatorId();
 
     @ServiceFilter
-    boolean isAvailable();
+    boolean isAuthenticatorAvailable();
 
-    @Nullable
-    PasswordAuthentication getPasswordAuthentication(@NonNull SdmxWebSource source) throws IOException;
+    @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) throws IOException;
 
-    void invalidate(@NonNull SdmxWebSource source) throws IOException;
+    void invalidateAuthentication(@NonNull SdmxWebSource source) throws IOException;
 }

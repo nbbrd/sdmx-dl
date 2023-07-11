@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 class DataNodeFactory implements DynamicTree.NodeFactory {
 
     private final Supplier<SdmxWebManager> manager;
-    private final Supplier<LanguagePriorityList> languages;
+    private final Supplier<Languages> languages;
 
     @Override
     public boolean isLeaf(Object userObject) {
@@ -35,7 +35,7 @@ class DataNodeFactory implements DynamicTree.NodeFactory {
         return Collections.emptyList();
     }
 
-    private static List<DataSetRef> getChildren(SdmxWebManager manager, LanguagePriorityList languages, DataSourceRef dataSourceRef, Key key) throws IOException {
+    private static List<DataSetRef> getChildren(SdmxWebManager manager, Languages languages, DataSourceRef dataSourceRef, Key key) throws IOException {
         try (Connection conn = manager.getConnection(dataSourceRef.getSource(), languages)) {
             DataStructure dsd = conn.getStructure(dataSourceRef.getFlow());
             List<sdmxdl.Dimension> dimensionList = dsd.getDimensionList();

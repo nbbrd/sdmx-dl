@@ -46,7 +46,7 @@ import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements RestClient {
 
-    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull LanguagePriorityList languages, @NonNull WebContext c,
+    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull Languages languages, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
         return new RiRestClient(
                 Marker.of(s),
@@ -63,7 +63,7 @@ public class RiRestClient implements RestClient {
     @lombok.Getter
     protected final Marker marker;
     protected final URL endpoint;
-    protected final LanguagePriorityList langs;
+    protected final Languages langs;
     protected final Supplier<ObsParser> obsFactory;
     protected final HttpClient httpClient;
     protected final RiRestQueries queries;

@@ -22,7 +22,7 @@ import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataStructure;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.Series;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.DataCursor;
@@ -49,10 +49,10 @@ public class XmlFileClient implements FileClient {
     private final SdmxFileSource source;
 
     @lombok.NonNull
-    private final LanguagePriorityList languages;
+    private final Languages languages;
 
     @lombok.NonNull
-    private final SdmxDecoder decoder;
+    private final Decoder decoder;
 
     @Nullable
     private final Supplier<ObsParser> obsFactory;

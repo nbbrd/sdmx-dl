@@ -19,7 +19,7 @@ package sdmxdl.provider.web;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import sdmxdl.*;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.WebTypedId;
@@ -42,12 +42,12 @@ final class CachedRestClient implements RestClient {
 
     static @NonNull RestClient of(
             @NonNull RestClient client, @NonNull WebCache cache, long ttlInMillis,
-            @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
+            @NonNull SdmxWebSource source, @NonNull Languages languages) {
         return new CachedRestClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
     }
 
     @VisibleForTesting
-    static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+    static URI getBase(SdmxWebSource source, Languages languages) {
         return WebTypedId.resolveURI(URI.create("cache:rest"), source.getId(), String.valueOf(source.hashCode()), languages.toString());
     }
 

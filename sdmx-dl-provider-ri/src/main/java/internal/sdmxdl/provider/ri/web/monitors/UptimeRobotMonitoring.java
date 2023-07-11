@@ -10,8 +10,10 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.*;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebMonitoring;
+import sdmxdl.web.spi.Monitor;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLStreamException;
@@ -24,23 +26,23 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 @ServiceProvider
-public final class UptimeRobotMonitoring implements WebMonitoring {
+public final class UptimeRobotMonitoring implements Monitor {
 
     private final URL url = Parser.onURL().parseValue("https://api.uptimerobot.com/v2/getMonitors").orElseThrow(RuntimeException::new);
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getMonitorId() {
         return "UPTIME_ROBOT";
     }
 
     @Override
-    public @NonNull String getUriScheme() {
+    public @NonNull String getMonitorUriScheme() {
         return UptimeRobotId.URI_SCHEME;
     }
 
     @Override
     public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+        WebMonitors.checkMonitor(source.getMonitor(), getMonitorUriScheme());
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
 
@@ -100,7 +102,7 @@ public final class UptimeRobotMonitoring implements WebMonitoring {
         Proxy proxy = network.getProxySelector().select(toURI(url)).stream().findFirst().orElse(Proxy.NO_PROXY);
 
         if (context.getOnEvent() != null) {
-            context.getOnEvent().accept(source, WEB_MONITORING_MARKER, WebEvents.onQuery(url, proxy));
+            context.getOnEvent().accept(source, MONITOR_MARKER, WebEvents.onQuery(url, proxy));
         }
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);

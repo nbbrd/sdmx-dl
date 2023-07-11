@@ -27,7 +27,7 @@ import nbbrd.io.xml.Xml;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -103,7 +103,7 @@ public abstract class HttpRestClientTest {
 
         wire.verify(1, getRequestedFor(urlEqualTo(SAMPLE_URL))
                         .withHeader(HTTP_ACCEPT_HEADER, equalTo(GENERIC_DATA_21.toString()))
-                        .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
+                        .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(Languages.ANY.toString()))
                         .withHeader(HTTP_ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
                         .withHeader(HTTP_LOCATION_HEADER, absent())
                         .withHeader(HTTP_USER_AGENT_HEADER, equalTo("hello world"))
@@ -141,7 +141,7 @@ public abstract class HttpRestClientTest {
 
         wire.verify(1, postRequestedFor(urlEqualTo(SAMPLE_URL))
                         .withHeader(HTTP_ACCEPT_HEADER, equalTo(GENERIC_DATA_21.toString()))
-                        .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(LanguagePriorityList.ANY.toString()))
+                        .withHeader(HTTP_ACCEPT_LANGUAGE_HEADER, equalTo(Languages.ANY.toString()))
                         .withHeader(HTTP_ACCEPT_ENCODING_HEADER, equalTo("gzip, deflate"))
                         .withHeader(HTTP_LOCATION_HEADER, absent())
                         .withHeader(HTTP_USER_AGENT_HEADER, equalTo("hello world"))
@@ -580,7 +580,7 @@ public abstract class HttpRestClientTest {
         return Arrays.asList(301, 302, 303, 307, 308);
     }
 
-    protected static final String ANY_LANG = LanguagePriorityList.ANY.toString();
+    protected static final String ANY_LANG = Languages.ANY.toString();
     protected static final String SAMPLE_URL = "/first.xml";
     protected static final String SECOND_URL = "/second.xml";
     protected static final String SAMPLE_XML = "<firstName>John</firstName><lastName>Doe</lastName>";

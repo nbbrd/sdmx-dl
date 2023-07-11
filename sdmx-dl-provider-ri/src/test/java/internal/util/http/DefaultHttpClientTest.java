@@ -3,7 +3,7 @@ package internal.util.http;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.format.xml.XmlMediaTypes;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import java.io.IOException;
 import java.net.ProxySelector;

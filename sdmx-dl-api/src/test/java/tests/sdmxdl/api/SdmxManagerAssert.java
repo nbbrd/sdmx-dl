@@ -23,7 +23,7 @@ import sdmxdl.SdmxSource;
 
 import java.io.IOException;
 
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
 
 /**

@@ -8,7 +8,7 @@ import sdmxdl.web.SdmxWebSource;
 
 import java.io.IOException;
 
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 public class Demo {
 

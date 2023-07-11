@@ -17,15 +17,15 @@ public interface RiRestParsers {
 
     @NonNull List<MediaType> getFlowsTypes();
 
-    @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs);
+    @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs);
 
     @NonNull List<MediaType> getFlowTypes();
 
-    @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataflowRef ref);
+    @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataflowRef ref);
 
     @NonNull List<MediaType> getStructureTypes();
 
-    @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataStructureRef ref);
+    @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataStructureRef ref);
 
     @NonNull List<MediaType> getDataTypes();
 
@@ -33,7 +33,7 @@ public interface RiRestParsers {
 
     @NonNull List<MediaType> getCodelistTypes();
 
-    @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref);
+    @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull CodelistRef ref);
 
     static <T extends Resource<R>, R extends ResourceRef<R>> @NonNull IOFunction<List<T>, Optional<T>> getResourceSelector(@NonNull R ref) {
         return list -> list

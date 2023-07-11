@@ -35,8 +35,8 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
-import sdmxdl.web.Network;
-import sdmxdl.web.SSLFactory;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
 

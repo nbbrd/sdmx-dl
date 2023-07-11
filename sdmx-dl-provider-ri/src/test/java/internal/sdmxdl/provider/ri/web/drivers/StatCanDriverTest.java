@@ -24,7 +24,7 @@ import java.util.Map;
 import static internal.sdmxdl.provider.ri.web.drivers.StatCanDriver.Converter.*;
 import static nbbrd.io.Resource.getResourceAsStream;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 public class StatCanDriverTest {
 
@@ -140,12 +140,12 @@ public class StatCanDriverTest {
             File x = new File(tmp, fileName);
             Files.copy(StatCanDriverTest.class.getResourceAsStream(fileName), x.toPath());
 
-            Map<LanguagePriorityList, String> labels = new HashMap<>();
+            Map<Languages, String> labels = new HashMap<>();
             labels.put(ANY, "Data Structure");
-            labels.put(LanguagePriorityList.parse("en"), "Data Structure");
-            labels.put(LanguagePriorityList.parse("fr"), "Structure de données");
+            labels.put(Languages.parse("en"), "Data Structure");
+            labels.put(Languages.parse("fr"), "Structure de données");
 
-            for (Map.Entry<LanguagePriorityList, String> label : labels.entrySet()) {
+            for (Map.Entry<Languages, String> label : labels.entrySet()) {
                 assertThat(toSdmxRepository(x, 10100001, label.getKey()))
                         .satisfies(repo -> {
                             assertThat(repo.getStructures())

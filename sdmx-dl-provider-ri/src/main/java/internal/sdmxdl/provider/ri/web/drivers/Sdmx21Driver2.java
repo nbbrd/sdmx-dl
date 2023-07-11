@@ -21,13 +21,13 @@ import internal.sdmxdl.provider.ri.web.Sdmx21RestParsers;
 import internal.sdmxdl.provider.ri.web.Sdmx21RestQueries;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -41,15 +41,15 @@ import static sdmxdl.provider.web.WebProperties.TRAILING_SLASH_REQUIRED_PROPERTY
  * @author Philippe Charles
  */
 @ServiceProvider
-public final class Sdmx21Driver2 implements WebDriver {
+public final class Sdmx21Driver2 implements Driver {
 
     private static final String RI_SDMX_21 = "ri:sdmx21";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_SDMX_21)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(Sdmx21Driver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
@@ -280,7 +280,7 @@ public final class Sdmx21Driver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, getQueries(s), getParsers(s), getSupportedFeatures(s));
     }
 

@@ -1,7 +1,7 @@
 package tests.sdmxdl.ext;
 
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.api.TckUtil;
 

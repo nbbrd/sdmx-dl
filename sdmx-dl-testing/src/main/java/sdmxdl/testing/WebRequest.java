@@ -18,7 +18,7 @@ package sdmxdl.testing;
 
 import sdmxdl.DataQuery;
 import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 /**
  * @author Philippe Charles
@@ -33,7 +33,7 @@ public class WebRequest {
     String source;
 
     @lombok.NonNull
-    LanguagePriorityList languages;
+    Languages languages;
 
     @lombok.NonNull
     DataflowRef flowRef;

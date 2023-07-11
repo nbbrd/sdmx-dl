@@ -27,11 +27,11 @@ import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.WebTypedId;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -51,7 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
-public final class PxWebDriver implements WebDriver {
+public final class PxWebDriver implements Driver {
 
     private static final String RI_PXWEB = "ri:pxweb";
 
@@ -59,10 +59,10 @@ public final class PxWebDriver implements WebDriver {
             BooleanProperty.of("enablePxWebDriver", false);
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_PXWEB)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)
             .supportedProperties(RI_CONNECTION_PROPERTIES)
@@ -79,7 +79,7 @@ public final class PxWebDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 Marker.of(source),
                 source.getId().toLowerCase(Locale.ROOT),
@@ -250,11 +250,11 @@ public final class PxWebDriver implements WebDriver {
 
         static @NonNull CachedPxWebClient of(
                 @NonNull PxWebClient client, @NonNull WebCache cache, long ttlInMillis,
-                @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
+                @NonNull SdmxWebSource source, @NonNull Languages languages) {
             return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
-        private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+        private static URI getBase(SdmxWebSource source, Languages languages) {
             return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 

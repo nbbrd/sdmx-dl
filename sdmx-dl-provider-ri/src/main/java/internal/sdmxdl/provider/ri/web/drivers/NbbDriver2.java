@@ -28,16 +28,16 @@ import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.net.URL;
@@ -51,16 +51,16 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class NbbDriver2 implements WebDriver {
+@ServiceProvider(Driver.class)
+public final class NbbDriver2 implements Driver {
 
     private static final String RI_NBB = "ri:nbb";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_NBB)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(NbbDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
@@ -78,7 +78,7 @@ public final class NbbDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+    private static RiRestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return newClient(
                 Marker.of(s),
                 s.getEndpoint().toURL(),
@@ -88,7 +88,7 @@ public final class NbbDriver2 implements WebDriver {
     }
 
     @VisibleForTesting
-    static @NonNull RiRestClient newClient(@NonNull Marker marker, @NonNull URL endpoint, @NonNull LanguagePriorityList langs, @NonNull HttpClient executor) {
+    static @NonNull RiRestClient newClient(@NonNull Marker marker, @NonNull URL endpoint, @NonNull Languages langs, @NonNull HttpClient executor) {
         return new RiRestClient(marker, endpoint, langs, ObsParser::newDefault,
                 new InterceptingClient(executor, (client, request, response) -> checkInternalErrorRedirect(response)),
                 new NbbQueries(),

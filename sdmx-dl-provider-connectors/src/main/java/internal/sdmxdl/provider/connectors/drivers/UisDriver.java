@@ -20,10 +20,10 @@ import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
 import java.util.Map;
@@ -35,15 +35,15 @@ import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
  * @author Philippe Charles
  */
 @ServiceProvider
-public final class UisDriver implements WebDriver {
+public final class UisDriver implements Driver {
 
     private static final String CONNECTORS_UIS = "connectors:uis";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(CONNECTORS_UIS)
-            .rank(WRAPPED_RANK)
+            .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource

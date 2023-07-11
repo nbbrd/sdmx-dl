@@ -24,45 +24,45 @@ import java.util.*;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.LanguagePriorityList.parse;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.Languages.parse;
 
 /**
  * @author Philippe Charles
  */
-public class LanguagePriorityListTest {
+public class LanguagesTest {
 
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        Assertions.assertThat(LanguagePriorityList.parse("*")).hasToString("*");
-        Assertions.assertThat(LanguagePriorityList.parse("fr")).hasToString("fr");
-        Assertions.assertThat(LanguagePriorityList.parse("fr-BE")).hasToString("fr-be");
-        Assertions.assertThat(LanguagePriorityList.parse("fr-BE,fr;q=0.5")).hasToString("fr-be,fr;q=0.5");
-        Assertions.assertThat(LanguagePriorityList.parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
-        assertThatIllegalArgumentException().isThrownBy(() -> LanguagePriorityList.parse("fr-BE;"));
-        assertThatNullPointerException().isThrownBy(() -> LanguagePriorityList.parse(null));
+        Assertions.assertThat(Languages.parse("*")).hasToString("*");
+        Assertions.assertThat(Languages.parse("fr")).hasToString("fr");
+        Assertions.assertThat(Languages.parse("fr-BE")).hasToString("fr-be");
+        Assertions.assertThat(Languages.parse("fr-BE,fr;q=0.5")).hasToString("fr-be,fr;q=0.5");
+        Assertions.assertThat(Languages.parse("fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")).hasToString("fr-ch,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5");
+        assertThatIllegalArgumentException().isThrownBy(() -> Languages.parse("fr-BE;"));
+        assertThatNullPointerException().isThrownBy(() -> Languages.parse(null));
     }
 
     @Test
     public void testEquals() {
-        Assertions.assertThat(LanguagePriorityList.parse("*"))
-                .isEqualTo(LanguagePriorityList.parse("*"))
-                .isEqualTo(LanguagePriorityList.ANY);
+        Assertions.assertThat(Languages.parse("*"))
+                .isEqualTo(Languages.parse("*"))
+                .isEqualTo(Languages.ANY);
 
-        Assertions.assertThat(LanguagePriorityList.parse("fr-BE"))
-                .isEqualTo(LanguagePriorityList.parse("fr-BE;q=1"))
-                .isEqualTo(LanguagePriorityList.parse("fr-BE"));
+        Assertions.assertThat(Languages.parse("fr-BE"))
+                .isEqualTo(Languages.parse("fr-BE;q=1"))
+                .isEqualTo(Languages.parse("fr-BE"));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testLookupTag() {
-        Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
-        Assertions.assertThat(LanguagePriorityList.parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
-        Assertions.assertThat(LanguagePriorityList.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
-        Assertions.assertThat(LanguagePriorityList.parse("fr").lookupTag(Collections.singletonList("nl"))).isNull();
-        assertThatNullPointerException().isThrownBy(() -> LanguagePriorityList.parse("fr").lookupTag(null));
+        Assertions.assertThat(Languages.parse("fr").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
+        Assertions.assertThat(Languages.parse("fr-BE").lookupTag(Arrays.asList("fr", "nl"))).isEqualTo("fr");
+        Assertions.assertThat(Languages.parse("fr,nl;q=0.7,en;q=0.3").lookupTag(Arrays.asList("de", "nl", "en"))).isEqualTo("nl");
+        Assertions.assertThat(Languages.parse("fr").lookupTag(Collections.singletonList("nl"))).isNull();
+        assertThatNullPointerException().isThrownBy(() -> Languages.parse("fr").lookupTag(null));
     }
 
     @Test

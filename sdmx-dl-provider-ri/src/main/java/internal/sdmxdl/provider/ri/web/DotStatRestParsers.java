@@ -29,7 +29,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs) {
+    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().map(DotStatRestParsers::getFlowFromStructure).collect(Collectors.toList()));
     }
@@ -40,7 +40,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataflowRef ref) {
+    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataflowRef ref) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().map(DotStatRestParsers::getFlowFromStructure).findFirst());
     }
@@ -51,7 +51,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataStructureRef ref) {
+    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataStructureRef ref) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().findFirst());
     }
@@ -74,7 +74,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref) {
+    public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull CodelistRef ref) {
         throw new UnsupportedOperationException("codelist");
     }
 

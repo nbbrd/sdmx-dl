@@ -37,7 +37,7 @@ public class XMLStreamStructure21Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(LanguagePriorityList.ANY);
+        Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
 
         assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("AMECO");

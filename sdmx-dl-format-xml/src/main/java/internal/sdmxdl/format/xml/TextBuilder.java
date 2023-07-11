@@ -18,7 +18,7 @@ package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ import java.util.Map;
 final class TextBuilder {
 
     @lombok.NonNull
-    private final LanguagePriorityList ranges;
+    private final Languages ranges;
 
     // this map preserves insertion order but is not sortable !
     private final Map<String, String> data = new LinkedHashMap<>();

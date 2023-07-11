@@ -32,7 +32,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs) {
+    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs), mediaType.getCharset());
@@ -47,7 +47,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataflowRef ref) {
+    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataflowRef ref) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
@@ -62,7 +62,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull DataStructureRef ref) {
+    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataStructureRef ref) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
@@ -98,7 +98,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull LanguagePriorityList langs, @NonNull CodelistRef ref) {
+    public @NonNull FileParser<Optional<Codelist>> getCodelistParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull CodelistRef ref) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.codelist21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2016 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,22 +14,31 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.provider.ri.file;
+package sdmxdl.file.spi;
 
+import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.Marker;
-import sdmxdl.file.SdmxFileSource;
-import sdmxdl.provider.file.FileInfo;
+import nbbrd.design.NotThreadSafe;
+import nbbrd.design.StaticFactoryMethod;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 
-import java.io.IOException;
+import java.time.Clock;
 
 /**
  * @author Philippe Charles
  */
-public interface SdmxDecoder {
+@NotThreadSafe
+public interface FileCache {
 
-    @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException;
+    @NonNull Clock getFileClock();
 
-    Marker SDMX_DECODER_MARKER = Marker.parse("SDMX_DECODER");
+    @Nullable DataRepository getFileRepository(@NonNull String key);
+
+    void putFileRepository(@NonNull String key, @NonNull DataRepository value);
+
+    @StaticFactoryMethod
+    static @NonNull FileCache noOp() {
+        return NoOpCache.INSTANCE;
+    }
 }

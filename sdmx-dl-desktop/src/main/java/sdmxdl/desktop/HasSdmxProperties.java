@@ -1,7 +1,7 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.SdmxManager;
 
 public interface HasSdmxProperties<M extends SdmxManager<?>> {
@@ -14,7 +14,7 @@ public interface HasSdmxProperties<M extends SdmxManager<?>> {
 
     String LANGUAGES_PROPERTY = "languages";
 
-    @NonNull LanguagePriorityList getLanguages();
+    @NonNull Languages getLanguages();
 
-    void setLanguages(@NonNull LanguagePriorityList languages);
+    void setLanguages(@NonNull Languages languages);
 }

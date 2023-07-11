@@ -22,7 +22,7 @@ import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.web.WebDriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles

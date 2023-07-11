@@ -37,7 +37,7 @@ public class XMLStreamStructure20Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
+        Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(Languages.ANY);
 
         assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("My first dataset");
@@ -66,7 +66,7 @@ public class XMLStreamStructure20Test {
             });
         });
 
-        Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
+        Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(Languages.parse("fr"));
 
         assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("Mon premier dataset");

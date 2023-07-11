@@ -35,7 +35,7 @@ import java.io.IOException;
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends SdmxSource> {
 
-    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull LanguagePriorityList languages) throws IOException;
+    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 
     public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
 

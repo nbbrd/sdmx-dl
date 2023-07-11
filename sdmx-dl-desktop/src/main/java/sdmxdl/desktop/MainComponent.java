@@ -16,11 +16,11 @@ import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.web.Network;
+import sdmxdl.Languages;
+import sdmxdl.web.spi.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -63,9 +63,9 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     @lombok.Getter
-    private LanguagePriorityList languages = LanguagePriorityList.ANY;
+    private Languages languages = Languages.ANY;
 
-    public void setLanguages(@NonNull LanguagePriorityList languages) {
+    public void setLanguages(@NonNull Languages languages) {
         firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
     }
 
@@ -82,7 +82,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final JList<SdmxWebSource> sourcesList = new JList<>();
 
-    private final JList<WebDriver> driversList = new JList<>();
+    private final JList<Driver> driversList = new JList<>();
 
     private final JTabbedPane main = new JTabbedPane();
 
@@ -203,13 +203,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_TYPE, FlatClientProperties.TABBED_PANE_TAB_TYPE_CARD);
 
         sourcesList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getId(), value.getName(LanguagePriorityList.ANY)).render());
+            label.setText(nameDescription(value.getId(), value.getName(Languages.ANY)).render());
             label.setIcon(getDataSourceIcon(value.getId(), 24, sourcesList::repaint));
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 
         driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(value.getId());
+            label.setText(value.getDriverId());
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 

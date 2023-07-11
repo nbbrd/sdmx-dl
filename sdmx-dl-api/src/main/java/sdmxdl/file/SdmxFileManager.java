@@ -17,7 +17,7 @@
 package sdmxdl.file;
 
 import internal.util.FileCachingLoader;
-import internal.util.FileReaderLoader;
+import internal.util.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
@@ -25,7 +25,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
-import sdmxdl.file.spi.FileReader;
+import sdmxdl.file.spi.Reader;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,7 +42,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @StaticFactoryMethod
     public static @NonNull SdmxFileManager ofServiceLoader() {
         return builder()
-                .readers(FileReaderLoader.load())
+                .readers(ReaderLoader.load())
                 .caching(FileCachingLoader.load())
                 .build();
     }
@@ -52,31 +52,28 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
         return builder().build();
     }
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    FileCaching caching = FileCaching.noOp();
+    @NonNull FileCaching caching = FileCaching.noOp();
 
     @Nullable EventListener<? super SdmxFileSource> onEvent;
 
     @Nullable ErrorListener<? super SdmxFileSource> onError;
 
-    @lombok.NonNull
     @lombok.Singular
-    List<FileReader> readers;
+    @NonNull List<Reader> readers;
 
-    @lombok.NonNull
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    FileContext context = initContext();
+    @NonNull FileContext context = initLazyContext();
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) throws IOException {
-        FileReader reader = lookupReader(source)
+    public @NonNull Connection getConnection(@NonNull SdmxFileSource source, @NonNull Languages languages) throws IOException {
+        Reader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
         return reader.read(source, languages, getContext());
     }
 
-    private FileContext initContext() {
+    private FileContext initLazyContext() {
         return FileContext
                 .builder()
                 .onEvent(onEvent)
@@ -85,7 +82,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
                 .build();
     }
 
-    private Optional<FileReader> lookupReader(SdmxFileSource source) {
+    private Optional<Reader> lookupReader(SdmxFileSource source) {
         return readers.stream()
                 .filter(reader -> reader.canRead(source))
                 .findFirst();

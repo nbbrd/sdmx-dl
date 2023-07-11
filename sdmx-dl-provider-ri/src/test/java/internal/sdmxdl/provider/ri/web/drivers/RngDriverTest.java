@@ -9,7 +9,7 @@ import tests.sdmxdl.web.WebDriverAssert;
 
 import java.io.IOException;
 
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 public class RngDriverTest {
 

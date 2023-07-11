@@ -31,10 +31,10 @@ import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
 import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
 import java.util.Map;
@@ -49,15 +49,15 @@ import static sdmxdl.provider.SdmxFix.Category.CONTENT;
  * @author Philippe Charles
  */
 @ServiceProvider
-public final class InseeDriver implements WebDriver {
+public final class InseeDriver implements Driver {
 
     private static final String CONNECTORS_INSEE = "connectors:insee";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(CONNECTORS_INSEE)
-            .rank(WRAPPED_RANK)
+            .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource

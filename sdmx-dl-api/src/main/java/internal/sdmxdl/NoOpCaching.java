@@ -4,11 +4,11 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.file.FileCache;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.util.Collection;

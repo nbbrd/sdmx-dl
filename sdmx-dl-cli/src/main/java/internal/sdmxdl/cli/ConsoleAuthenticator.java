@@ -2,7 +2,7 @@ package internal.sdmxdl.cli;
 
 import lombok.NonNull;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.Authenticator;
 
 import java.io.Console;
 import java.io.IOError;
@@ -10,24 +10,24 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class ConsoleAuthenticator implements WebAuthenticator {
+final class ConsoleAuthenticator implements Authenticator {
 
     private final Console console = System.console();
 
     private final ConcurrentHashMap<SdmxWebSource, PasswordAuthentication> cache = new ConcurrentHashMap<>();
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getAuthenticatorId() {
         return "CONSOLE";
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAuthenticatorAvailable() {
         return isConsoleAvailable();
     }
 
     @Override
-    public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) throws IOException {
+    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) throws IOException {
         if (!isConsoleAvailable()) {
             throw new IOException("Console is not available");
         }
@@ -46,7 +46,7 @@ final class ConsoleAuthenticator implements WebAuthenticator {
     }
 
     @Override
-    public void invalidate(SdmxWebSource source) {
+    public void invalidateAuthentication(@NonNull SdmxWebSource source) {
         cache.remove(source);
     }
 

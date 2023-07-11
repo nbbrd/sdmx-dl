@@ -28,12 +28,12 @@ import nbbrd.io.text.Property;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.EventListener;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.Marker;
 import sdmxdl.provider.web.WebEvents;
-import sdmxdl.web.Network;
+import sdmxdl.web.spi.Authenticator;
+import sdmxdl.web.spi.Network;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.File;
@@ -71,7 +71,7 @@ public class RiHttpUtils {
     static final Property<String> HTTP_AGENT =
             Property.of("http.agent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
 
-    public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull LanguagePriorityList langs) {
+    public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull Languages langs) {
         return HttpRequest
                 .builder()
                 .query(query)
@@ -154,7 +154,7 @@ public class RiHttpUtils {
         private final SdmxWebSource source;
 
         @lombok.NonNull
-        private final List<WebAuthenticator> authenticators;
+        private final List<Authenticator> authenticators;
 
         private final @Nullable EventListener<? super SdmxWebSource> listener;
 
@@ -183,9 +183,9 @@ public class RiHttpUtils {
                     || url.getPort() != source.getEndpoint().getPort();
         }
 
-        private PasswordAuthentication getPasswordAuthentication(WebAuthenticator authenticator) {
+        private PasswordAuthentication getPasswordAuthentication(Authenticator authenticator) {
             try {
-                return authenticator.getPasswordAuthentication(source);
+                return authenticator.getPasswordAuthenticationOrNull(source);
             } catch (IOException ex) {
                 if (listener != null) {
                     listener.accept(source, RI_HTTP_MARKER, "Failed to get password authentication: " + ex.getMessage());
@@ -194,9 +194,9 @@ public class RiHttpUtils {
             }
         }
 
-        private void invalidate(WebAuthenticator authenticator) {
+        private void invalidate(Authenticator authenticator) {
             try {
-                authenticator.invalidate(source);
+                authenticator.invalidateAuthentication(source);
             } catch (IOException ex) {
                 if (listener != null) {
                     listener.accept(source, RI_HTTP_MARKER, "Failed to invalidate password authentication: " + ex.getMessage());

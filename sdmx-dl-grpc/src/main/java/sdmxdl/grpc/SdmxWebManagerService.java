@@ -6,7 +6,7 @@ import io.smallrye.mutiny.Uni;
 import sdmxdl.Connection;
 import sdmxdl.DataflowRef;
 import sdmxdl.Key;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.SdmxWebSource;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     private final SdmxWebManager manager = GrpcWebFactory.loadManager();
-    private final LanguagePriorityList languages = LanguagePriorityList.ANY;
+    private final Languages languages = Languages.ANY;
 
     @Override
     public Uni<MonitorReport> getMonitorReport(SourceRequest request) {

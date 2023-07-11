@@ -59,7 +59,7 @@ public final class XMLStreamStructure20 {
     private final TextBuilder structureLabel;
     private final TextBuilder label;
 
-    public XMLStreamStructure20(LanguagePriorityList languages) {
+    public XMLStreamStructure20(Languages languages) {
         this.structureLabel = new TextBuilder(languages);
         this.label = new TextBuilder(languages);
     }

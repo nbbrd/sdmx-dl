@@ -18,7 +18,7 @@ package sdmxdl.web;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.SdmxSource;
 
 import java.net.MalformedURLException;
@@ -35,36 +35,28 @@ import java.util.Set;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxWebSource extends SdmxSource {
 
-    @lombok.NonNull
-    String id;
+    @NonNull String id;
 
     @lombok.Singular
-    Map<String, String> names;
+    @NonNull Map<String, String> names;
 
-    @lombok.NonNull
-    String driver;
+    @NonNull String driver;
 
-    @lombok.NonNull
-    URI endpoint;
+    @NonNull URI endpoint;
 
     @lombok.Singular
-    Map<String, String> properties;
+    @NonNull Map<String, String> properties;
 
     @lombok.Singular
-    Set<String> aliases;
+    @NonNull Set<String> aliases;
 
-    @Nullable
-    URL website;
+    @Nullable URL website;
 
-    @Nullable
-    URI monitor;
+    @Nullable URI monitor;
 
-    @Nullable
-    @lombok.Builder.Default
-    URL monitorWebsite = null;
+    @Nullable URL monitorWebsite;
 
-    @NonNull
-    public SdmxWebSource alias(@NonNull String id) throws IllegalArgumentException {
+    public @NonNull SdmxWebSource alias(@NonNull String id) throws IllegalArgumentException {
         if (!aliases.contains(id)) {
             throw new IllegalArgumentException(id);
         }
@@ -75,8 +67,8 @@ public class SdmxWebSource extends SdmxSource {
         return aliases.contains(id);
     }
 
-    public @Nullable String getName(@NonNull LanguagePriorityList langs) {
-        return langs.select(names);
+    public @Nullable String getName(@NonNull Languages languages) {
+        return languages.select(names);
     }
 
     public static class Builder {

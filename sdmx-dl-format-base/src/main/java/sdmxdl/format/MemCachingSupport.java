@@ -5,12 +5,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.file.FileCache;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.time.Clock;
@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
+@ServiceSupport(FileCaching.class)
+@ServiceSupport(WebCaching.class)
 @lombok.Builder(toBuilder = true)
 public final class MemCachingSupport implements FileCaching, WebCaching {
 

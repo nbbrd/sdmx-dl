@@ -25,7 +25,7 @@ import static internal.sdmxdl.provider.ri.web.Sdmx21RestParsers.*;
 import static nbbrd.io.net.MediaType.ANY_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 public class Sdmx21RestParsersTest {
 

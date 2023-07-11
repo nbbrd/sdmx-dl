@@ -20,10 +20,9 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.web.MockedDriver;
 
@@ -34,9 +33,9 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.web.spi.WebDriver.NATIVE_RANK;
-import static sdmxdl.web.spi.WebDriver.WRAPPED_RANK;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.web.spi.Driver.NATIVE_DRIVER_RANK;
+import static sdmxdl.web.spi.Driver.WRAPPED_DRIVER_RANK;
 
 /**
  * @author Philippe Charles
@@ -61,7 +60,7 @@ public class SdmxWebManagerTest {
         assertThat(SdmxWebManager.ofServiceLoader()).satisfies(o -> {
             assertThat(o).isNotNull();
             assertThat(o.getDrivers()).isEmpty();
-            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getMonitors()).isEmpty();
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -73,7 +72,7 @@ public class SdmxWebManagerTest {
 
         assertThat(SdmxWebManager.noOp()).satisfies(o -> {
             assertThat(o.getDrivers()).isEmpty();
-            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getMonitors()).isEmpty();
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -84,7 +83,7 @@ public class SdmxWebManagerTest {
 
         assertThat(SdmxWebManager.builder().driver(sampleDriver).build()).satisfies(o -> {
             assertThat(o.getDrivers()).containsExactly(sampleDriver);
-            assertThat(o.getMonitorings()).isEmpty();
+            assertThat(o.getMonitors()).isEmpty();
             assertThat(o.getNetworking()).isEqualTo(Networking.getDefault());
             assertThat(o.getCaching()).isEqualTo(WebCaching.noOp());
             assertThat(o.getOnEvent()).isNull();
@@ -103,10 +102,10 @@ public class SdmxWebManagerTest {
 
         SdmxWebSource nbbAlias = nbb.alias("bnb");
 
-        WebDriver sdmx21 = MockedDriver
+        Driver sdmx21 = MockedDriver
                 .builder()
                 .id("sdmx21")
-                .rank(WRAPPED_RANK)
+                .rank(WRAPPED_DRIVER_RANK)
                 .available(true)
                 .customSource(nbb)
                 .customSource(ecb)
@@ -171,11 +170,11 @@ public class SdmxWebManagerTest {
     public void testGetDefaultSources() {
         SdmxWebSource source1a = SdmxWebSource.builder().id("s1").driver("dX").endpointOf("http://abc").build();
         SdmxWebSource source2 = SdmxWebSource.builder().id("s2").driver("dX").endpointOf("http://abc").build();
-        WebDriver driverX = MockedDriver.builder().id("dX").rank(WRAPPED_RANK).available(true).customSource(source1a).customSource(source2).build();
+        Driver driverX = MockedDriver.builder().id("dX").rank(WRAPPED_DRIVER_RANK).available(true).customSource(source1a).customSource(source2).build();
 
         SdmxWebSource source1b = SdmxWebSource.builder().id("s1").driver("dY").endpointOf("http://xyz").build();
         SdmxWebSource source3 = SdmxWebSource.builder().id("s3").driver("dY").endpointOf("http://xyz").build();
-        WebDriver driverY = MockedDriver.builder().id("dY").rank(NATIVE_RANK).available(true).customSource(source1b).customSource(source3).build();
+        Driver driverY = MockedDriver.builder().id("dY").rank(NATIVE_DRIVER_RANK).available(true).customSource(source1b).customSource(source3).build();
 
         assertThat(SdmxWebManager.builder().driver(driverX).driver(driverY).build().getDefaultSources())
                 .containsExactly(source1a, source2, source3);
@@ -197,19 +196,19 @@ public class SdmxWebManagerTest {
 
         assertThatCode(() -> manager.getConnection(sampleSource.getId(), ANY).close()).doesNotThrowAnyException();
 
-        WebDriver driver1 = MockedDriver
+        Driver driver1 = MockedDriver
                 .builder()
                 .id("d1")
-                .rank(WRAPPED_RANK)
+                .rank(WRAPPED_DRIVER_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
                 .customSource(SdmxWebSource.builder().id("source").driver("d1").endpointOf(sample.getName()).build())
                 .build();
 
-        WebDriver driver2 = MockedDriver
+        Driver driver2 = MockedDriver
                 .builder()
                 .id("d2")
-                .rank(NATIVE_RANK)
+                .rank(NATIVE_DRIVER_RANK)
                 .available(true)
                 .repo(sample, EnumSet.allOf(Feature.class))
                 .customSource(SdmxWebSource.builder().id("source").driver("d2").endpointOf(sample.getName()).build())
@@ -276,7 +275,7 @@ public class SdmxWebManagerTest {
             .driver("repoDriver")
             .endpointOf(sample.getName())
             .build();
-    private final WebDriver sampleDriver = MockedDriver
+    private final Driver sampleDriver = MockedDriver
             .builder()
             .id("repoDriver")
             .rank(0)

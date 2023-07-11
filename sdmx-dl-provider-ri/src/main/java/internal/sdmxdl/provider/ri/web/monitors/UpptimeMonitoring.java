@@ -6,14 +6,14 @@ import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.Monitor;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebMonitoring;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -22,21 +22,21 @@ import java.time.Duration;
 import java.util.Locale;
 
 @ServiceProvider
-public final class UpptimeMonitoring implements WebMonitoring {
+public final class UpptimeMonitoring implements Monitor {
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getMonitorId() {
         return "UPPPTIME";
     }
 
     @Override
-    public @NonNull String getUriScheme() {
+    public @NonNull String getMonitorUriScheme() {
         return UpptimeId.URI_SCHEME;
     }
 
     @Override
     public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        WebMonitors.checkMonitor(source.getMonitor(), getUriScheme());
+        WebMonitors.checkMonitor(source.getMonitor(), getMonitorUriScheme());
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());
 
@@ -58,7 +58,7 @@ public final class UpptimeMonitoring implements WebMonitoring {
     }
 
     private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {
-        MonitorReports.Builder result = MonitorReports.builder().uriScheme(getUriScheme());
+        MonitorReports.Builder result = MonitorReports.builder().uriScheme(getMonitorUriScheme());
         for (UpptimeSummary summary : UpptimeSummary.request(client, base.toSummaryURL())) {
             result.report(getReport(summary));
         }

@@ -4,8 +4,9 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.format.ServiceSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.time.Clock;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+@ServiceSupport
 @lombok.Builder(toBuilder = true)
 public final class DualWebCachingSupport implements WebCaching {
 

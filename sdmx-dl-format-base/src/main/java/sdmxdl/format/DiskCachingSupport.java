@@ -6,13 +6,13 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Marker;
-import sdmxdl.file.FileCache;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.nio.file.Path;
@@ -20,6 +20,8 @@ import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 
+@ServiceSupport(FileCaching.class)
+@ServiceSupport(WebCaching.class)
 @lombok.Builder(toBuilder = true)
 public final class DiskCachingSupport implements FileCaching, WebCaching {
 

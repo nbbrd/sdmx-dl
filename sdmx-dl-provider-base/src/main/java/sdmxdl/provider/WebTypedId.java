@@ -21,7 +21,7 @@ import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

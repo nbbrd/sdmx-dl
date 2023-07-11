@@ -1,11 +1,11 @@
 package tests.sdmxdl.web;
 
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 @lombok.experimental.UtilityClass
 public class WebDriverAssert {
@@ -15,11 +15,11 @@ public class WebDriverAssert {
     }
 
     @SuppressWarnings("null")
-    public void assertCompliance(WebDriver d) {
+    public void assertCompliance(Driver d) {
         SdmxWebSource validSource = SdmxWebSource
                 .builder()
                 .id("valid")
-                .driver(d.getId())
+                .driver(d.getDriverId())
                 .endpointOf("http://localhost")
                 .build();
 
@@ -27,7 +27,7 @@ public class WebDriverAssert {
 
         WebContext context = WebDriverAssert.noOpWebContext();
 
-        assertThat(d.getId()).isNotBlank();
+        assertThat(d.getDriverId()).isNotBlank();
 
         assertThatNullPointerException().isThrownBy(() -> d.connect(null, ANY, context));
         assertThatNullPointerException().isThrownBy(() -> d.connect(validSource, null, context));
@@ -40,10 +40,10 @@ public class WebDriverAssert {
         assertThat(d.getClass()).isFinal();
     }
 
-    private void checkSource(SdmxWebSource o, WebDriver d) {
+    private void checkSource(SdmxWebSource o, Driver d) {
         assertThat(o.getId()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
-        assertThat(o.getDriver()).isEqualTo(d.getId());
-        assertThat(o.getProperties().keySet()).isSubsetOf(d.getSupportedProperties());
+        assertThat(o.getDriver()).isEqualTo(d.getDriverId());
+        assertThat(o.getProperties().keySet()).isSubsetOf(d.getDriverProperties());
     }
 }

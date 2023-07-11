@@ -19,7 +19,7 @@ package sdmxdl.provider.file;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import sdmxdl.*;
-import sdmxdl.file.FileCache;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.FileTypedId;
@@ -41,11 +41,11 @@ public final class CachedFileClient implements FileClient {
 
     public static @NonNull CachedFileClient of(
             @NonNull FileClient client, @NonNull FileCache cache,
-            @NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages) {
+            @NonNull SdmxFileSource source, @NonNull Languages languages) {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
 
-    private static URI getBase(SdmxFileSource source, LanguagePriorityList languages) {
+    private static URI getBase(SdmxFileSource source, Languages languages) {
         return WebTypedId.resolveURI(URI.create("cache:file"), source.getData().toString() + source.getStructure(), languages.toString());
     }
 

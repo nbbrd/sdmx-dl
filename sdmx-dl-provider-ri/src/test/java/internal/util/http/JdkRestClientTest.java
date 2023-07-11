@@ -17,7 +17,7 @@
 package internal.util.http;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 /**
  * @author Philippe Charles

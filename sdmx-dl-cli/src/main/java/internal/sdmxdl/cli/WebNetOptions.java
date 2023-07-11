@@ -20,7 +20,7 @@ import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
-import internal.util.WebAuthenticatorLoader;
+import internal.util.AuthenticatorLoader;
 import lombok.NonNull;
 import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
@@ -31,8 +31,8 @@ import sdmxdl.provider.ext.DualWebCachingSupport;
 import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Networking;
-import sdmxdl.web.spi.WebAuthenticator;
 import sdmxdl.web.spi.WebCaching;
 
 import javax.net.ssl.HostnameVerifier;
@@ -94,18 +94,18 @@ public class WebNetOptions extends WebOptions {
                 : url;
     }
 
-    private List<WebAuthenticator> getAuthenticators() {
+    private List<Authenticator> getAuthenticators() {
         AuthOptions authOptions = networkOptions.getAuthOptions();
         if (authOptions.hasUsername() && authOptions.hasPassword()) {
             return Collections.singletonList(new ConstantAuthenticator(authOptions.getUser()));
         }
-        List<WebAuthenticator> result = new ArrayList<>();
+        List<Authenticator> result = new ArrayList<>();
         if (!authOptions.isNoSystemAuth()) {
-            result.addAll(WebAuthenticatorLoader.load());
+            result.addAll(AuthenticatorLoader.load());
         }
         if (result.isEmpty()) {
             ConsoleAuthenticator fallback = new ConsoleAuthenticator();
-            if (fallback.isAvailable()) {
+            if (fallback.isAuthenticatorAvailable()) {
                 result.add(fallback);
             }
         }
@@ -177,7 +177,7 @@ public class WebNetOptions extends WebOptions {
     }
 
     @lombok.AllArgsConstructor
-    private static final class SSLFactoryAdapter implements sdmxdl.web.SSLFactory {
+    private static final class SSLFactoryAdapter implements sdmxdl.web.spi.SSLFactory {
 
         private final @NonNull SSLFactory delegate;
 

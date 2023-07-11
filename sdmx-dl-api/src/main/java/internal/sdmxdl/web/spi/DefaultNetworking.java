@@ -1,7 +1,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.Network;
+import sdmxdl.web.spi.Network;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Networking;
 

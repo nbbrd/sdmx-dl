@@ -2,13 +2,12 @@ package tests.sdmxdl.file;
 
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
-import sdmxdl.file.spi.FileReader;
+import sdmxdl.file.spi.Reader;
 import tests.sdmxdl.api.TckUtil;
 
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 @lombok.experimental.UtilityClass
 public class FileReaderAssert {
@@ -27,16 +26,16 @@ public class FileReaderAssert {
         FileContext context;
     }
 
-    public void assertCompliance(FileReader reader, Sample sample) {
+    public void assertCompliance(Reader reader, Sample sample) {
         TckUtil.run(s -> assertCompliance(s, reader, sample));
     }
 
-    public void assertCompliance(SoftAssertions s, FileReader reader, Sample sample) {
+    public void assertCompliance(SoftAssertions s, Reader reader, Sample sample) {
         checkCanRead(s, reader, sample);
         checkRead(s, reader, sample);
     }
 
-    private static void checkRead(SoftAssertions s, FileReader reader, Sample sample) {
+    private static void checkRead(SoftAssertions s, Reader reader, Sample sample) {
         s.assertThatThrownBy(() -> reader.read(null, ANY, sample.context))
                 .isInstanceOf(NullPointerException.class);
 
@@ -53,7 +52,7 @@ public class FileReaderAssert {
         }
     }
 
-    private static void checkCanRead(SoftAssertions s, FileReader reader, Sample sample) {
+    private static void checkCanRead(SoftAssertions s, Reader reader, Sample sample) {
         s.assertThatThrownBy(() -> reader.canRead(null))
                 .isInstanceOf(NullPointerException.class);
 

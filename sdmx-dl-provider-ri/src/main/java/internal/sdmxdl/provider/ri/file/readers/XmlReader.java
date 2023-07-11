@@ -7,10 +7,10 @@ import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileContext;
-import sdmxdl.file.spi.FileReader;
+import sdmxdl.file.spi.Reader;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.file.CachedFileClient;
 import sdmxdl.provider.file.FileClient;
@@ -21,7 +21,22 @@ import java.io.IOException;
 import java.util.Locale;
 
 @ServiceProvider
-public class XmlReader implements FileReader {
+public class XmlReader implements Reader {
+
+    @Override
+    public @NonNull String getReaderId() {
+        return "XML";
+    }
+
+    @Override
+    public int getReaderRank() {
+        return UNKNOWN_READER_RANK;
+    }
+
+    @Override
+    public boolean isReaderAvailable() {
+        return true;
+    }
 
     @Override
     public boolean canRead(@NonNull SdmxFileSource source) {
@@ -29,7 +44,7 @@ public class XmlReader implements FileReader {
     }
 
     @Override
-    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull LanguagePriorityList languages, @NonNull FileContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull Languages languages, @NonNull FileContext context) throws IOException, IllegalArgumentException {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }
@@ -40,7 +55,7 @@ public class XmlReader implements FileReader {
         return file.toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private FileClient getClient(SdmxFileSource source, LanguagePriorityList languages, FileContext context) throws IOException {
+    private FileClient getClient(SdmxFileSource source, Languages languages, FileContext context) throws IOException {
         FileClient client = new XmlFileClient(
                 source,
                 languages,

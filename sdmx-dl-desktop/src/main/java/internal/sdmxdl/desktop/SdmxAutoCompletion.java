@@ -27,8 +27,8 @@ import nbbrd.io.Resource;
 import sdmxdl.Dimension;
 import sdmxdl.*;
 import sdmxdl.desktop.MainComponent;
-import sdmxdl.web.Network;
-import sdmxdl.web.SSLFactory;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -63,19 +63,19 @@ public abstract class SdmxAutoCompletion {
 
     public abstract ListCellRenderer getRenderer();
 
-    public static SdmxAutoCompletion onWebSource(SdmxWebManager manager, LanguagePriorityList languages) {
+    public static SdmxAutoCompletion onWebSource(SdmxWebManager manager, Languages languages) {
         return new WebSourceCompletion(manager, languages);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, ConcurrentMap cache) {
+    public static <S extends SdmxSource> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
         return new DataflowCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDimension(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends SdmxSource> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
         return new DimensionCompletion<>(manager, languages, source, flowRef, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, LanguagePriorityList languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
         return new AttributeCompletion<>(manager, languages, source, flowRef, cache);
     }
 
@@ -86,7 +86,7 @@ public abstract class SdmxAutoCompletion {
         private final SdmxWebManager manager;
 
         @lombok.NonNull
-        private final LanguagePriorityList languages;
+        private final Languages languages;
 
         @Override
         public AutoCompletionSource getSource() {
@@ -141,7 +141,7 @@ public abstract class SdmxAutoCompletion {
         private final SdmxManager<S> manager;
 
         @lombok.NonNull
-        private final LanguagePriorityList languages;
+        private final Languages languages;
 
         @lombok.NonNull
         private final Supplier<S> source;
@@ -195,7 +195,7 @@ public abstract class SdmxAutoCompletion {
         private final SdmxManager<S> manager;
 
         @lombok.NonNull
-        private final LanguagePriorityList languages;
+        private final Languages languages;
 
         @lombok.NonNull
         private final Supplier<S> source;
@@ -252,7 +252,7 @@ public abstract class SdmxAutoCompletion {
         private final SdmxManager<S> manager;
 
         @lombok.NonNull
-        private final LanguagePriorityList languages;
+        private final Languages languages;
 
         @lombok.NonNull
         private final Supplier<S> source;

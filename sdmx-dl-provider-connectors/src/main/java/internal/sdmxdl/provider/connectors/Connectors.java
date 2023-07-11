@@ -160,7 +160,7 @@ public class Connectors {
         return result;
     }
 
-    public List<Locale.LanguageRange> fromLanguages(LanguagePriorityList l) {
+    public List<Locale.LanguageRange> fromLanguages(Languages l) {
         return Locale.LanguageRange.parse(l.toString());
     }
 

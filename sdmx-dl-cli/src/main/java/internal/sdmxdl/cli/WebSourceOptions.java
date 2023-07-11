@@ -20,7 +20,7 @@ import picocli.CommandLine;
 import sdmxdl.Connection;
 import sdmxdl.Dataflow;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -42,17 +42,17 @@ public class WebSourceOptions extends WebNetOptions {
     )
     private String source;
 
-    public Connection open(SdmxWebManager manager, LanguagePriorityList languages) throws IOException {
+    public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
         return manager.getConnection(getSource(), languages);
     }
 
-    public Set<Feature> loadFeatures(SdmxWebManager manager, LanguagePriorityList languages) throws IOException {
+    public Set<Feature> loadFeatures(SdmxWebManager manager, Languages languages) throws IOException {
         try (Connection conn = open(manager, languages)) {
             return conn.getSupportedFeatures();
         }
     }
 
-    public Collection<Dataflow> loadFlows(SdmxWebManager manager, LanguagePriorityList languages) throws IOException {
+    public Collection<Dataflow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
         try (Connection conn = open(manager, languages)) {
             return conn.getFlows();
         }

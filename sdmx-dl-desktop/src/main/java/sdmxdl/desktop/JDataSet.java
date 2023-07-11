@@ -15,7 +15,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
 import sdmxdl.Attribute;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.Obs;
 import sdmxdl.web.SdmxWebManager;
 
@@ -46,9 +46,9 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     }
 
     @lombok.Getter
-    private LanguagePriorityList languages = LanguagePriorityList.ANY;
+    private Languages languages = Languages.ANY;
 
-    public void setLanguages(@NonNull LanguagePriorityList languages) {
+    public void setLanguages(@NonNull Languages languages) {
         firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
     }
 

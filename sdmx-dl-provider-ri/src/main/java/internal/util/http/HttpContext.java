@@ -1,7 +1,7 @@
 package internal.util.http;
 
 import org.checkerframework.checker.index.qual.NonNegative;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;

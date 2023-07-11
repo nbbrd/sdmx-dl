@@ -31,19 +31,15 @@ import java.io.File;
 @lombok.EqualsAndHashCode(callSuper = false)
 public class SdmxFileSource extends SdmxSource {
 
-    @lombok.NonNull
-    File data;
+    @NonNull File data;
 
-    @Nullable
-    File structure;
+    @Nullable File structure;
 
-    @NonNull
-    public DataflowRef asDataflowRef() {
+    public @NonNull DataflowRef asDataflowRef() {
         return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
     }
 
-    @NonNull
-    public static String asFlowLabel(@NonNull SdmxFileSource source) {
+    public static @NonNull String asFlowLabel(@NonNull SdmxFileSource source) {
         return source.getData().getName().replace(".xml", "");
     }
 }

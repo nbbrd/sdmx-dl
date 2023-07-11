@@ -19,26 +19,26 @@ package internal.sdmxdl.provider.connectors.drivers;
 import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.OECD;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class OecdDriver implements WebDriver {
+@ServiceProvider(Driver.class)
+public final class OecdDriver implements Driver {
 
     private static final String CONNECTORS_OECD = "connectors:oecd";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(CONNECTORS_OECD)
-            .rank(WRAPPED_RANK)
+            .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource

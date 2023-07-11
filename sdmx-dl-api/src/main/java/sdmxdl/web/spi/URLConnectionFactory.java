@@ -1,6 +1,7 @@
-package sdmxdl.web;
+package sdmxdl.web.spi;
 
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -12,6 +13,7 @@ public interface URLConnectionFactory {
 
     @NonNull URLConnection openConnection(@NonNull URL url, @NonNull Proxy proxy) throws IOException;
 
+    @StaticFactoryMethod
     static @NonNull URLConnectionFactory getDefault() {
         return URL::openConnection;
     }

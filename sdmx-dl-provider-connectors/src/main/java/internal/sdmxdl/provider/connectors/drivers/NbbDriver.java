@@ -19,10 +19,10 @@ package internal.sdmxdl.provider.connectors.drivers;
 import internal.sdmxdl.provider.connectors.ConnectorsRestClient;
 import it.bancaditalia.oss.sdmx.client.custom.NBB;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
@@ -30,15 +30,15 @@ import static internal.sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTOR
  * @author Philippe Charles
  */
 @ServiceProvider
-public final class NbbDriver implements WebDriver {
+public final class NbbDriver implements Driver {
 
     private static final String CONNECTORS_NBB = "connectors:nbb";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(CONNECTORS_NBB)
-            .rank(WRAPPED_RANK)
+            .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(NBB::new)))
             .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource

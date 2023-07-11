@@ -19,11 +19,11 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.*;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -53,15 +53,15 @@ import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
 @ServiceProvider
-public final class StatCanDriver implements WebDriver {
+public final class StatCanDriver implements Driver {
 
     private static final String RI_STATCAN = "ri:statcan";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_STATCAN)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(StatCanDriver::newConnection)
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .supportedPropertyOf(CACHE_TTL_PROPERTY)
@@ -79,7 +79,7 @@ public final class StatCanDriver implements WebDriver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
                 Marker.of(source),
                 source.getEndpoint().toURL(),
@@ -178,7 +178,7 @@ public final class StatCanDriver implements WebDriver {
         @lombok.Getter
         private final Marker marker;
         private final URL endpoint;
-        private final LanguagePriorityList langs;
+        private final Languages langs;
         private final HttpClient client;
 
         @Override
@@ -265,11 +265,11 @@ public final class StatCanDriver implements WebDriver {
 
         static @NonNull CachedStatCanClient of(
                 @NonNull StatCanClient client, @NonNull WebCache cache, long ttlInMillis,
-                @NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages) {
+                @NonNull SdmxWebSource source, @NonNull Languages languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
-        private static URI getBase(SdmxWebSource source, LanguagePriorityList languages) {
+        private static URI getBase(SdmxWebSource source, Languages languages) {
             return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
@@ -418,7 +418,7 @@ public final class StatCanDriver implements WebDriver {
             return DataStructureRef.of(AGENCY, STRUCT_PREFIX + checkProductId(productId), VERSION);
         }
 
-        static Dataflow toDataFlow(DataTable dataTable, LanguagePriorityList langs) {
+        static Dataflow toDataFlow(DataTable dataTable, Languages langs) {
             return Dataflow
                     .builder()
                     .ref(toDataflowRef(dataTable.getProductId()))
@@ -427,7 +427,7 @@ public final class StatCanDriver implements WebDriver {
                     .build();
         }
 
-        static DataRepository toSdmxRepository(File fullTable, int productId, LanguagePriorityList langs) throws IOException {
+        static DataRepository toSdmxRepository(File fullTable, int productId, Languages langs) throws IOException {
             try (ZipFile zipFile = new ZipFile(fullTable)) {
 
                 DataStructure dsd = parseStruct(zipFile, langs);
@@ -440,7 +440,7 @@ public final class StatCanDriver implements WebDriver {
             }
         }
 
-        private static DataStructure parseStruct(ZipFile file, LanguagePriorityList langs) throws IOException {
+        private static DataStructure parseStruct(ZipFile file, Languages langs) throws IOException {
             FileParser<List<DataStructure>> parser = SdmxXmlStreams.struct21(langs);
 
             try {

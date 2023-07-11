@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class XMLStreamFlow20Test {
 
     @Test
     public void test() throws IOException {
-        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow20(LanguagePriorityList.ANY)::parse);
+        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow20(Languages.ANY)::parse);
 
         assertThat(p.parseReader(SdmxXmlSources.OTHER_FLOWS20::openReader))
                 .containsExactly(

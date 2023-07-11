@@ -20,7 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

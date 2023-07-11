@@ -106,7 +106,7 @@ public class NbbDriver2Test {
         return NbbDriver2.newClient(
                 Marker.of("NBBFIX2"),
                 new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"),
-                LanguagePriorityList.ANY,
+                Languages.ANY,
                 (httpRequest) -> response);
     }
 

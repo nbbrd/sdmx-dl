@@ -21,14 +21,14 @@ import internal.sdmxdl.provider.ri.web.DotStatRestQueries;
 import internal.sdmxdl.provider.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -41,16 +41,16 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(WebDriver.class)
-public final class DotStatDriver2 implements WebDriver {
+@ServiceProvider(Driver.class)
+public final class DotStatDriver2 implements Driver {
 
     private static final String RI_DOTSTAT = "ri:dotstat";
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_DOTSTAT)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDriver2::newClient))
             .supportedProperties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
@@ -100,7 +100,7 @@ public final class DotStatDriver2 implements WebDriver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, LanguagePriorityList languages, WebContext c) throws IOException {
+    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
     }
 

@@ -7,7 +7,7 @@ import sdmxdl.Feature;
 import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.web.MockedDriver;
 import tests.sdmxdl.web.WebDriverAssert;
 
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Key.ALL;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 import static tests.sdmxdl.api.RepoSamples.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -40,7 +40,7 @@ public class SdmxCubeUtilTest {
             .key(M_FR_XXX)
             .build();
 
-    private List<WebDriver> getDrivers() {
+    private List<Driver> getDrivers() {
         return Stream.of(EnumSet.noneOf(Feature.class), EnumSet.allOf(Feature.class))
                 .map(features -> MockedDriver.builder().repo(REPO, features).build())
                 .collect(Collectors.toList());
@@ -48,7 +48,7 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetAllSeries() throws IOException {
-        for (WebDriver driver : getDrivers()) {
+        for (Driver driver : getDrivers()) {
             SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
@@ -74,7 +74,7 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetAllSeriesWithData() throws IOException {
-        for (WebDriver driver : getDrivers()) {
+        for (Driver driver : getDrivers()) {
             SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
@@ -100,7 +100,7 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetSeries() throws IOException {
-        for (WebDriver driver : getDrivers()) {
+        for (Driver driver : getDrivers()) {
             SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
@@ -120,7 +120,7 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetSeriesWithData() throws IOException {
-        for (WebDriver driver : getDrivers()) {
+        for (Driver driver : getDrivers()) {
             SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
@@ -140,7 +140,7 @@ public class SdmxCubeUtilTest {
 
     @Test
     public void testGetChildren() throws IOException {
-        for (WebDriver driver : getDrivers()) {
+        for (Driver driver : getDrivers()) {
             SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, WebDriverAssert.noOpWebContext())) {

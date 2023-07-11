@@ -63,42 +63,42 @@ public class SdmxXmlStreams {
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<DataStructure>> struct20(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<List<DataStructure>> struct20(@NonNull Languages langs) {
         return Stax.StreamParser.<List<DataStructure>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamStructure20(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<DataStructure>> struct21(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<List<DataStructure>> struct21(@NonNull Languages langs) {
         return Stax.StreamParser.<List<DataStructure>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamStructure21(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<Dataflow>> flow20(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<List<Dataflow>> flow20(@NonNull Languages langs) {
         return Stax.StreamParser.<List<Dataflow>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamFlow20(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<Dataflow>> flow21(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<List<Dataflow>> flow21(@NonNull Languages langs) {
         return Stax.StreamParser.<List<Dataflow>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamFlow21(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<List<Codelist>> codelist21(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<List<Codelist>> codelist21(@NonNull Languages langs) {
         return Stax.StreamParser.<List<Codelist>>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamCodelist21(langs)::parse))
                 .build();
     }
 
-    public Xml.@NonNull Parser<MessageFooter> messageFooter21(@NonNull LanguagePriorityList langs) {
+    public Xml.@NonNull Parser<MessageFooter> messageFooter21(@NonNull Languages langs) {
         return Stax.StreamParser.<MessageFooter>builder()
                 .factory(ImmutableXMLInputFactory::getDefaultInputFactory)
                 .handler(Stax.FlowHandler.of(new XMLStreamMessageFooter21(langs)::parse))

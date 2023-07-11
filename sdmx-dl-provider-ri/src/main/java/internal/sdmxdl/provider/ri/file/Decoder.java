@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 National Bank of Belgium
+ * Copyright 2015 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,34 +14,22 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.file.spi;
+package internal.sdmxdl.provider.ri.file;
 
 import lombok.NonNull;
-import nbbrd.design.ThreadSafe;
-import nbbrd.service.Quantifier;
-import nbbrd.service.ServiceDefinition;
-import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
+import sdmxdl.Marker;
 import sdmxdl.file.SdmxFileSource;
+import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
 
 /**
  * @author Philippe Charles
  */
-@ServiceDefinition(
-        quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.FileReaderLoader"
-)
-@ThreadSafe
-public interface FileReader {
+public interface Decoder {
 
-    boolean canRead(@NonNull SdmxFileSource source);
+    @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull Languages languages) throws IOException;
 
-    @NonNull
-    Connection read(
-            @NonNull SdmxFileSource source,
-            @NonNull LanguagePriorityList languages,
-            @NonNull FileContext context
-    ) throws IOException, IllegalArgumentException;
+    Marker SDMX_DECODER_MARKER = Marker.parse("SDMX_DECODER");
 }

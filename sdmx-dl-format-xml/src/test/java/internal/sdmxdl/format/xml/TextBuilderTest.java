@@ -16,13 +16,12 @@
  */
 package internal.sdmxdl.format.xml;
 
-import internal.sdmxdl.format.xml.TextBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.LanguagePriorityList.ANY;
-import static sdmxdl.LanguagePriorityList.parse;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.Languages.parse;
 
 /**
  * @author Philippe Charles

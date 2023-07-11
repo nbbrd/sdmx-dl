@@ -1,4 +1,4 @@
-package sdmxdl.web;
+package sdmxdl.web.spi;
 
 import internal.sdmxdl.web.DefaultNetwork;
 import lombok.NonNull;

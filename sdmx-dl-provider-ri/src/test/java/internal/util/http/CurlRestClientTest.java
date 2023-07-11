@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import nbbrd.io.curl.CurlHttpURLConnection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;

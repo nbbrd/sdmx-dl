@@ -9,16 +9,16 @@ import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.file.FileCache;
+import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
-import sdmxdl.provider.web.WebDriverSupport;
+import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.time.Clock;
 import java.util.Collection;
 
 @ServiceProvider
-public final class FileDriver implements WebDriver {
+public final class FileDriver implements Driver {
 
     private static final String RI_FILE = "ri:file";
 
@@ -35,10 +35,10 @@ public final class FileDriver implements WebDriver {
             BooleanProperty.of("enableFileDriver", false);
 
     @lombok.experimental.Delegate
-    private final WebDriverSupport support = WebDriverSupport
+    private final DriverSupport support = DriverSupport
             .builder()
             .id(RI_FILE)
-            .rank(NATIVE_RANK)
+            .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(this::newConnection)
             .supportedPropertyOf(STRUCTURE_PROPERTY)
@@ -46,7 +46,7 @@ public final class FileDriver implements WebDriver {
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
-    private @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    private @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         return fileManager
                 .toBuilder()
                 .onEvent(context.getOnEvent() != null ? (fileSource, marker, message) -> context.getOnEvent().accept(source, marker, message) : null)

@@ -35,7 +35,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles
@@ -95,6 +95,6 @@ public class XmlFileClientTest {
         return SdmxFileSource.builder().data(compact21).build();
     }
 
-    public static final SdmxDecoder DECODER = new XmlDecoder(null);
+    public static final Decoder DECODER = new XmlDecoder(null);
     public static final Dataflow DATAFLOW = Dataflow.builder().ref(DataflowRef.parse("data")).structureRef(DataStructureRef.parse("xyz")).name("label").build();
 }

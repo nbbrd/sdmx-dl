@@ -5,7 +5,6 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
-import sdmxdl.web.Network;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.Collection;

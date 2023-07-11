@@ -3,8 +3,8 @@ package tests.sdmxdl.web;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -15,17 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @lombok.Builder(toBuilder = true)
-public final class MockedDriver implements WebDriver {
+public final class MockedDriver implements Driver {
 
-    @lombok.Getter
     @lombok.Builder.Default
     private final String id = "mockedDriver";
 
-    @lombok.Getter
     @lombok.Builder.Default
-    private final int rank = WebDriver.UNKNOWN_RANK;
+    private final int rank = Driver.UNKNOWN_DRIVER_RANK;
 
-    @lombok.Getter
     @lombok.Builder.Default
     private final boolean available = false;
 
@@ -36,7 +33,22 @@ public final class MockedDriver implements WebDriver {
     private final Collection<SdmxWebSource> customSources;
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
+    public @NonNull String getDriverId() {
+        return id;
+    }
+
+    @Override
+    public int getDriverRank() {
+        return rank;
+    }
+
+    @Override
+    public boolean isDriverAvailable() {
+        return available;
+    }
+
+    @Override
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
         return repos
@@ -54,7 +66,7 @@ public final class MockedDriver implements WebDriver {
     }
 
     @Override
-    public @NonNull Collection<String> getSupportedProperties() {
+    public @NonNull Collection<String> getDriverProperties() {
         return Collections.emptyList();
     }
 
@@ -68,7 +80,7 @@ public final class MockedDriver implements WebDriver {
         return repos
                 .keySet()
                 .stream()
-                .map(repo -> sourceOf(repo.getName(), getId(), repo));
+                .map(repo -> sourceOf(repo.getName(), getDriverId(), repo));
     }
 
     public static SdmxWebSource sourceOf(String name, String driverId, DataRepository repo) {

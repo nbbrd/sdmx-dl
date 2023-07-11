@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 National Bank of Belgium
+ * Copyright 2020 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,53 +14,43 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.web.spi;
+package sdmxdl.file.spi;
 
-import internal.sdmxdl.web.spi.FailsafeDriver;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
 import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.Languages;
+import sdmxdl.file.SdmxFileSource;
 
 import java.io.IOException;
-import java.util.Collection;
 
 /**
  * @author Philippe Charles
  */
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        wrapper = FailsafeDriver.class,
-        loaderName = "internal.util.WebDriverLoader"
+        loaderName = "internal.util.ReaderLoader"
 )
 @ThreadSafe
-public interface WebDriver {
+public interface Reader {
 
     @ServiceId
-    @NonNull String getId();
+    @NonNull String getReaderId();
 
     @ServiceSorter(reverse = true)
-    int getRank();
+    int getReaderRank();
 
     @ServiceFilter
-    boolean isAvailable();
+    boolean isReaderAvailable();
 
-    @NonNull
-    Connection connect(
-            @NonNull SdmxWebSource source,
-            @NonNull LanguagePriorityList languages,
-            @NonNull WebContext context
+    boolean canRead(@NonNull SdmxFileSource source);
+
+    @NonNull Connection read(
+            @NonNull SdmxFileSource source,
+            @NonNull Languages languages,
+            @NonNull FileContext context
     ) throws IOException, IllegalArgumentException;
 
-    @NonNull
-    Collection<SdmxWebSource> getDefaultSources();
-
-    @NonNull
-    Collection<String> getSupportedProperties();
-
-    int NATIVE_RANK = Byte.MAX_VALUE;
-    int WRAPPED_RANK = 0;
-    int UNKNOWN_RANK = -1;
+    int UNKNOWN_READER_RANK = -1;
 }

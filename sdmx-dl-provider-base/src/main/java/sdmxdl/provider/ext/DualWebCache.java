@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.WebCache;
+import sdmxdl.web.spi.WebCache;
 
 import java.time.Clock;
 

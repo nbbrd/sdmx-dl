@@ -19,11 +19,12 @@ package sdmxdl.provider.web;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
+import sdmxdl.format.ServiceSupport;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -33,16 +34,15 @@ import java.util.function.Predicate;
 /**
  * @author Philippe Charles
  */
+@ServiceSupport
 @lombok.Builder(toBuilder = true)
-public final class WebDriverSupport implements WebDriver {
+public final class DriverSupport implements Driver {
 
-    @lombok.Getter
     @NonNull
     private final String id;
 
-    @lombok.Getter
     @lombok.Builder.Default
-    private final int rank = UNKNOWN_RANK;
+    private final int rank = UNKNOWN_DRIVER_RANK;
 
     @NonNull
     private final WebConnector connector;
@@ -61,12 +61,22 @@ public final class WebDriverSupport implements WebDriver {
     private final Validator<SdmxWebSource> lazySourceValidator = WebValidators.onDriverId(id);
 
     @Override
-    public boolean isAvailable() {
+    public @NonNull String getDriverId() {
+        return id;
+    }
+
+    @Override
+    public int getDriverRank() {
+        return rank;
+    }
+
+    @Override
+    public boolean isDriverAvailable() {
         return availability.test(System.getProperties());
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         getLazySourceValidator().checkValidity(source);
 
         return connector.connect(source, languages, context);
@@ -78,7 +88,7 @@ public final class WebDriverSupport implements WebDriver {
     }
 
     @Override
-    public @NonNull Collection<String> getSupportedProperties() {
+    public @NonNull Collection<String> getDriverProperties() {
         return supportedProperties;
     }
 

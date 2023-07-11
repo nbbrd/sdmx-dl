@@ -20,7 +20,7 @@ import lombok.NonNull;
 import sdmxdl.DataStructureRef;
 import sdmxdl.Dataflow;
 import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -53,7 +53,7 @@ public final class XMLStreamFlow20 {
     private final TextBuilder flowName;
     private final TextBuilder flowDescription;
 
-    public XMLStreamFlow20(LanguagePriorityList languages) {
+    public XMLStreamFlow20(Languages languages) {
         this.flowName = new TextBuilder(languages);
         this.flowDescription = new TextBuilder(languages);
     }

@@ -2,7 +2,7 @@ package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
 import nbbrd.io.text.Parser;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
 
 import javax.xml.stream.XMLStreamException;
@@ -21,7 +21,7 @@ public final class XMLStreamMessageFooter21 {
 
     private final TextBuilder label;
 
-    public XMLStreamMessageFooter21(LanguagePriorityList langs) {
+    public XMLStreamMessageFooter21(Languages langs) {
         this.label = new TextBuilder(langs);
     }
 

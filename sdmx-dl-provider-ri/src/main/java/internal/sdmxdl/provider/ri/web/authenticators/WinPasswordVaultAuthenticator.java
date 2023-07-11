@@ -5,26 +5,26 @@ import lombok.NonNull;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.spi.Authenticator;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
 
 @ServiceProvider
-public final class WinPasswordVaultAuthenticator implements WebAuthenticator {
+public final class WinPasswordVaultAuthenticator implements Authenticator {
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getAuthenticatorId() {
         return "WIN_PASSWORD_VAULT";
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAuthenticatorAvailable() {
         return OS.NAME.equals(OS.Name.WINDOWS);
     }
 
     @Override
-    public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) throws IOException {
+    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) throws IOException {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
             String message = "Enter your credentials for " + source.getId();
             return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
@@ -32,7 +32,7 @@ public final class WinPasswordVaultAuthenticator implements WebAuthenticator {
     }
 
     @Override
-    public void invalidate(SdmxWebSource source) throws IOException {
+    public void invalidateAuthentication(@NonNull SdmxWebSource source) throws IOException {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
             vault.invalidate(getResource(source));
         }

@@ -18,10 +18,10 @@ package _test.sdmxdl;
 
 import lombok.NonNull;
 import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,25 +29,25 @@ import java.util.Collections;
 /**
  * @author Philippe Charles
  */
-public enum TestDriver implements WebDriver {
+public enum TestDriver implements Driver {
     VALID {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             return "valid";
         }
 
         @Override
-        public int getRank() {
-            return NATIVE_RANK;
+        public int getDriverRank() {
+            return NATIVE_DRIVER_RANK;
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             return true;
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.TEST_VALID;
         }
 
@@ -57,27 +57,27 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getDriverProperties() {
             return Collections.singletonList("hello");
         }
     }, FAILING {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             throw new CustomException();
         }
 
         @Override
-        public int getRank() {
+        public int getDriverRank() {
             throw new CustomException();
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -87,27 +87,27 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getDriverProperties() {
             throw new CustomException();
         }
     }, NULL {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             return null;
         }
 
         @Override
-        public int getRank() {
+        public int getDriverRank() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull LanguagePriorityList languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 
@@ -117,7 +117,7 @@ public enum TestDriver implements WebDriver {
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getDriverProperties() {
             return null;
         }
     };

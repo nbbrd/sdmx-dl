@@ -25,7 +25,7 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -84,7 +84,7 @@ public final class CheckAccessCommand implements Callable<Void> {
     @lombok.Value
     private static class Access {
 
-        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull LanguagePriorityList languages, @NonNull String source) {
+        static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull Languages languages, @NonNull String source) {
             try (Connection conn = manager.getConnection(source, languages)) {
                 Clock clock = Clock.systemDefaultZone();
                 Instant start = clock.instant();

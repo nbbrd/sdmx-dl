@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Remove dialect API [#505](https://github.com/nbbrd/sdmx-dl/issues/505)
 - ![API] Refactor listeners API [#506](https://github.com/nbbrd/sdmx-dl/issues/506)
 - ![API] Handle languages per connection instead of per manager [#507](https://github.com/nbbrd/sdmx-dl/issues/507)
+- ![API] Simplify naming and structure [#508](https://github.com/nbbrd/sdmx-dl/issues/508)
 - ![SOURCE] Update ECB endpoint [#495](https://github.com/nbbrd/sdmx-dl/issues/495)
 - ![FORMAT] Refactor file format API [#502](https://github.com/nbbrd/sdmx-dl/issues/502)
 - ![PROVIDER] Move curl backend to an external project

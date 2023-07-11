@@ -87,7 +87,7 @@ public class RiRestClientTest {
         return new RiRestClient(
                 Marker.of("abc"),
                 new URL("http://localhost"),
-                LanguagePriorityList.ANY,
+                Languages.ANY,
                 ObsParser::newDefault,
                 executor,
                 new Sdmx21RestQueries(false),

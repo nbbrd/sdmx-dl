@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.web;
+package sdmxdl.web.spi;
 
 import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
@@ -22,6 +22,7 @@ import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
+import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
 
