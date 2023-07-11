@@ -63,7 +63,7 @@ public class XmlReader implements Reader {
                 ObsParser::newDefault,
                 context.getOnEvent()
         );
-        return CachedFileClient.of(client, context.getCache(source), source, languages);
+        return CachedFileClient.of(client, context.getReaderCache(source), source, languages);
     }
 
     private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");

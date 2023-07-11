@@ -19,6 +19,7 @@ package sdmxdl.format;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
 import tests.sdmxdl.ext.CacheAssert;
+import tests.sdmxdl.ext.FakeClock;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -27,7 +28,6 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,10 +42,19 @@ public class MemCacheTest {
     }
 
     @Test
-    public void testGetRepository() {
+    public void testGet() {
         Map<String, DataRepository> map = new HashMap<>();
 
-        assertThat(MemCache.getRepository(map, clock(1000), "KEY1"))
+        FakeClock clock = new FakeClock();
+
+        MemCache<DataRepository> x = MemCache
+                .<DataRepository>builder()
+                .map(map)
+                .clock(clock)
+                .build();
+
+        clock.set(1000);
+        assertThat(x.get("KEY1"))
                 .as("Empty map should return null")
                 .isNull();
 
@@ -55,18 +64,21 @@ public class MemCacheTest {
                 .ttl(clock(1000).instant(), Duration.ofMillis(10))
                 .build();
         map.put("KEY1", r1000);
-        assertThat(MemCache.getRepository(map, clock(1009), "KEY1"))
+        clock.set(1009);
+        assertThat(x.get("KEY1"))
                 .as("Non-expired key should return value")
                 .isEqualTo(r1000);
 
-        assertThat(MemCache.getRepository(map, clock(1010), "KEY1"))
+        clock.set(1010);
+        assertThat(x.get("KEY1"))
                 .as("Expired key should return null")
                 .isNull();
         assertThat(map)
                 .as("Expired key should be evicted")
                 .doesNotContainKey("KEY1");
 
-        assertThat(MemCache.getRepository(map, clock(1009), "KEY2"))
+        clock.set(1009);
+        assertThat(x.get("KEY2"))
                 .as("Non-existing key should return null")
                 .isNull();
 
@@ -76,30 +88,19 @@ public class MemCacheTest {
                 .ttl(clock(1009).instant(), Duration.ofMillis(10))
                 .build();
         map.put("KEY1", r1009);
-        assertThat(MemCache.getRepository(map, clock(1010), "KEY1"))
+        clock.set(1010);
+        assertThat(x.get("KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r1009);
     }
 
     @Test
     public void testMapFactories() {
-        assertThat(MemCache.builder().build())
-                .satisfies(x -> {
-                    assertThat(x.getRepositories())
-                            .isInstanceOf(HashMap.class);
+        assertThat(MemCache.builder().build().getMap())
+                .isInstanceOf(HashMap.class);
 
-                    assertThat(x.getWebMonitors())
-                            .isInstanceOf(HashMap.class);
-                });
-
-        assertThat(MemCache.builder().repositories(new TreeMap<>()).webMonitors(new ConcurrentHashMap<>()).build())
-                .satisfies(x -> {
-                    assertThat(x.getRepositories())
-                            .isInstanceOf(TreeMap.class);
-
-                    assertThat(x.getWebMonitors())
-                            .isInstanceOf(ConcurrentHashMap.class);
-                });
+        assertThat(MemCache.builder().map(new TreeMap<>()).build().getMap())
+                .isInstanceOf(TreeMap.class);
     }
 
     private static Clock clock(long value) {

@@ -19,12 +19,11 @@ package sdmxdl.provider.file;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import sdmxdl.*;
-import sdmxdl.file.spi.FileCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.FileTypedId;
 import sdmxdl.provider.Marker;
-import sdmxdl.provider.WebTypedId;
+import sdmxdl.provider.TypedId;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,13 +39,13 @@ import static sdmxdl.DataSet.toDataSet;
 public final class CachedFileClient implements FileClient {
 
     public static @NonNull CachedFileClient of(
-            @NonNull FileClient client, @NonNull FileCache cache,
+            @NonNull FileClient client, @NonNull Cache<DataRepository> cache,
             @NonNull SdmxFileSource source, @NonNull Languages languages) {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
 
     private static URI getBase(SdmxFileSource source, Languages languages) {
-        return WebTypedId.resolveURI(URI.create("cache:file"), source.getData().toString() + source.getStructure(), languages.toString());
+        return TypedId.resolveURI(URI.create("cache:file"), source.getData().toString() + source.getStructure(), languages.toString());
     }
 
     // TODO: replace ttl with file last modification time
@@ -56,26 +55,26 @@ public final class CachedFileClient implements FileClient {
     private final FileClient delegate;
 
     @lombok.NonNull
-    private final FileCache cache;
+    private final Cache<DataRepository> cache;
 
     @lombok.NonNull
     private final URI base;
 
     @lombok.Getter(lazy = true)
-    private final FileTypedId<FileInfo> idOfDecode = initIdOfDecode(base);
+    private final TypedId<FileInfo> idOfDecode = initIdOfDecode(base);
 
     @lombok.Getter(lazy = true)
-    private final FileTypedId<DataSet> idOfLoadData = initIdOfLoadData(base);
+    private final TypedId<DataSet> idOfLoadData = initIdOfLoadData(base);
 
-    private static FileTypedId<FileInfo> initIdOfDecode(URI base) {
-        return FileTypedId.of(base,
+    private static TypedId<FileInfo> initIdOfDecode(URI base) {
+        return TypedId.of(base,
                 repo -> FileInfo.of(MediaType.parse(repo.getName()), repo.getStructures().stream().findFirst().orElse(null)),
                 info -> DataRepository.builder().name(info.getDataType().toString()).structure(info.getStructure()).build()
         ).with("decode");
     }
 
-    private static FileTypedId<DataSet> initIdOfLoadData(URI base) {
-        return FileTypedId.of(base,
+    private static TypedId<DataSet> initIdOfLoadData(URI base) {
+        return TypedId.of(base,
                 repo -> repo.getDataSets().stream().findFirst().orElse(null),
                 data -> DataRepository.builder().dataSet(data).build()
         ).with("loadData");

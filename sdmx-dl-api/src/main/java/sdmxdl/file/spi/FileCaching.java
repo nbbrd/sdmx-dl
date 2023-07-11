@@ -8,8 +8,10 @@ import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 
 import java.util.Collection;
@@ -27,7 +29,7 @@ public interface FileCaching {
     @ServiceSorter(reverse = true)
     int getFileCachingRank();
 
-    @NonNull FileCache getFileCache(
+    @NonNull Cache<DataRepository> getReaderCache(
             @NonNull SdmxFileSource source,
             @Nullable EventListener<? super SdmxFileSource> onEvent,
             @Nullable ErrorListener<? super SdmxFileSource> onError);

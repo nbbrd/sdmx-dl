@@ -5,12 +5,11 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.file.spi.FileCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.time.Clock;
@@ -65,13 +64,30 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
-        return getCache();
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
+        return MemCache
+                .<DataRepository>builder()
+                .map(repositories.get())
+                .clock(clock)
+                .build();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
-        return getCache();
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return MemCache
+                .<DataRepository>builder()
+                .map(repositories.get())
+                .clock(clock)
+                .build();
+    }
+
+    @Override
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return MemCache
+                .<MonitorReports>builder()
+                .map(webMonitors.get())
+                .clock(clock)
+                .build();
     }
 
     @Override
@@ -82,15 +98,6 @@ public final class MemCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Collection<String> getWebCachingProperties() {
         return Collections.emptyList();
-    }
-
-    private MemCache getCache() {
-        return MemCache
-                .builder()
-                .repositories(repositories.get())
-                .webMonitors(webMonitors.get())
-                .clock(clock)
-                .build();
     }
 
     public static final class Builder {

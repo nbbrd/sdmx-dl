@@ -1,13 +1,12 @@
 package sdmxdl.ext;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.spi.WebCache;
 import tests.sdmxdl.ext.CacheAssert;
 
-public class WebCacheTest {
+public class CacheTest {
 
     @Test
     public void testNoOp() {
-        CacheAssert.assertCompliance(WebCache.noOp());
+        CacheAssert.assertCompliance(Cache.noOp());
     }
 }

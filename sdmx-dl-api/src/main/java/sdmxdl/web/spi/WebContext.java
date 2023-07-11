@@ -18,8 +18,11 @@ package sdmxdl.web.spi;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.ext.Cache;
+import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.List;
@@ -44,8 +47,12 @@ public class WebContext {
     @lombok.Builder.Default
     @NonNull Networking networking = Networking.getDefault();
 
-    public @NonNull WebCache getCache(@NonNull SdmxWebSource source) {
-        return caching.getWebCache(source, onEvent, onError);
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source) {
+        return caching.getDriverCache(source, onEvent, onError);
+    }
+
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source) {
+        return caching.getMonitorCache(source, onEvent, onError);
     }
 
     public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {

@@ -8,8 +8,11 @@ import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.ext.Cache;
+import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.Collection;
@@ -27,7 +30,12 @@ public interface WebCaching {
     @ServiceSorter(reverse = true)
     int getWebCachingRank();
 
-    @NonNull WebCache getWebCache(
+    @NonNull Cache<DataRepository> getDriverCache(
+            @NonNull SdmxWebSource source,
+            @Nullable EventListener<? super SdmxWebSource> onEvent,
+            @Nullable ErrorListener<? super SdmxWebSource> onError);
+
+    @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull SdmxWebSource source,
             @Nullable EventListener<? super SdmxWebSource> onEvent,
             @Nullable ErrorListener<? super SdmxWebSource> onError);

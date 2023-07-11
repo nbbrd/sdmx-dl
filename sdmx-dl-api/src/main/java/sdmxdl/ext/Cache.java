@@ -14,15 +14,14 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.web.spi;
+package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRepository;
-import sdmxdl.web.MonitorReports;
+import sdmxdl.HasExpiration;
 
 import java.time.Clock;
 
@@ -30,20 +29,17 @@ import java.time.Clock;
  * @author Philippe Charles
  */
 @NotThreadSafe
-public interface WebCache {
+public interface Cache<V extends HasExpiration> {
 
-    @NonNull Clock getWebClock();
+    @NonNull Clock getClock();
 
-    @Nullable DataRepository getWebRepository(@NonNull String key);
+    @Nullable V get(@NonNull String key);
 
-    void putWebRepository(@NonNull String key, @NonNull DataRepository value);
+    void put(@NonNull String key, @NonNull V value);
 
-    @Nullable MonitorReports getWebMonitorReports(@NonNull String key);
-
-    void putWebMonitorReports(@NonNull String key, @NonNull MonitorReports value);
-
+    @SuppressWarnings("unchecked")
     @StaticFactoryMethod
-    static @NonNull WebCache noOp() {
-        return NoOpCache.INSTANCE;
+    static <V extends HasExpiration> @NonNull Cache<V> noOp() {
+        return (Cache<V>) NoOpCache.INSTANCE;
     }
 }

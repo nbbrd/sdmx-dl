@@ -46,8 +46,8 @@ public class CachingAssert {
             clock.set(0);
         }
 
-        public MemCache newCache() {
-            return MemCache.builder().repositories(map).webMonitors(monitors).clock(clock).build();
+        public MemCache<DataRepository> newCache() {
+            return MemCache.<DataRepository>builder().map(map).clock(clock).build();
         }
     }
 

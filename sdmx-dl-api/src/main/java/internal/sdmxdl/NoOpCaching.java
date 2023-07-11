@@ -2,13 +2,14 @@ package internal.sdmxdl;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.file.spi.FileCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
+import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.util.Collection;
@@ -39,13 +40,18 @@ public enum NoOpCaching implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
-        return FileCache.noOp();
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
+        return Cache.noOp();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource ignoreSource, @Nullable EventListener<? super SdmxWebSource> ignoreEvent, @Nullable ErrorListener<? super SdmxWebSource> ignoreError) {
-        return WebCache.noOp();
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return Cache.noOp();
+    }
+
+    @Override
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return Cache.noOp();
     }
 
     @Override

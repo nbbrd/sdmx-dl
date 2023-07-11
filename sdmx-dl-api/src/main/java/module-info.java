@@ -1,7 +1,6 @@
+import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
-import sdmxdl.web.spi.Authenticator;
-import sdmxdl.web.spi.Driver;
-import sdmxdl.web.spi.Monitor;
+import sdmxdl.web.spi.*;
 
 module sdmxdl.api {
 
@@ -19,11 +18,11 @@ module sdmxdl.api {
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
-    uses sdmxdl.file.spi.FileCaching;
+    uses FileCaching;
     uses Reader;
-    uses sdmxdl.web.spi.Networking;
+    uses Networking;
     uses Authenticator;
-    uses sdmxdl.web.spi.WebCaching;
+    uses WebCaching;
     uses Driver;
     uses Monitor;
 }

@@ -9,13 +9,12 @@ import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
-import sdmxdl.file.spi.FileCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
@@ -77,8 +76,8 @@ public final class FileDriver implements Driver {
         }
 
         @Override
-        public @NonNull FileCache getFileCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
-            return new FileCacheAdapter(delegate.getWebCache(webSource, onWebEvent, onWebError));
+        public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
+            return new FileCacheAdapter(delegate.getDriverCache(webSource, onWebEvent, onWebError));
         }
 
         @Override
@@ -88,23 +87,23 @@ public final class FileDriver implements Driver {
     }
 
     @lombok.AllArgsConstructor
-    private static final class FileCacheAdapter implements FileCache {
+    private static final class FileCacheAdapter implements Cache<DataRepository> {
 
-        private final @NonNull WebCache delegate;
+        private final @NonNull Cache<DataRepository> delegate;
 
         @Override
-        public @NonNull Clock getFileClock() {
-            return delegate.getWebClock();
+        public @NonNull Clock getClock() {
+            return delegate.getClock();
         }
 
         @Override
-        public @Nullable DataRepository getFileRepository(@NonNull String key) {
-            return delegate.getWebRepository(key);
+        public @Nullable DataRepository get(@NonNull String key) {
+            return delegate.get(key);
         }
 
         @Override
-        public void putFileRepository(@NonNull String key, @NonNull DataRepository value) {
-            delegate.putWebRepository(key, value);
+        public void put(@NonNull String key, @NonNull DataRepository value) {
+            delegate.put(key, value);
         }
     }
 

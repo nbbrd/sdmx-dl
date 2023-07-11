@@ -34,7 +34,7 @@ public final class RestConnector implements WebConnector {
     private RestClient getClient(SdmxWebSource source, Languages languages, WebContext context) throws IOException {
         return CachedRestClient.of(
                 client.get(source, languages, context),
-                context.getCache(source),
+                context.getDriverCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 languages);

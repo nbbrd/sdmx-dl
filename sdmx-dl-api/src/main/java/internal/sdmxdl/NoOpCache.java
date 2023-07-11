@@ -18,54 +18,30 @@ package internal.sdmxdl;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRepository;
-import sdmxdl.file.spi.FileCache;
-import sdmxdl.web.MonitorReports;
-import sdmxdl.web.spi.WebCache;
+import sdmxdl.HasExpiration;
+import sdmxdl.ext.Cache;
 
 import java.time.Clock;
 
 /**
  * @author Philippe Charles
  */
-public enum NoOpCache implements FileCache, WebCache {
+public enum NoOpCache implements Cache<HasExpiration> {
 
     INSTANCE;
 
     @Override
-    public @NonNull Clock getFileClock() {
+    public @NonNull Clock getClock() {
         return Clock.systemDefaultZone();
     }
 
+    @Nullable
     @Override
-    public @NonNull Clock getWebClock() {
-        return Clock.systemDefaultZone();
-    }
-
-    @Override
-    public DataRepository getFileRepository(@NonNull String key) {
+    public HasExpiration get(@NonNull String key) {
         return null;
     }
 
     @Override
-    public DataRepository getWebRepository(@NonNull String key) {
-        return null;
-    }
-
-    @Override
-    public void putFileRepository(@NonNull String key, @NonNull DataRepository value) {
-    }
-
-    @Override
-    public void putWebRepository(@NonNull String key, @NonNull DataRepository value) {
-    }
-
-    @Override
-    public @Nullable MonitorReports getWebMonitorReports(@NonNull String key) {
-        return null;
-    }
-
-    @Override
-    public void putWebMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
+    public void put(@NonNull String key, @NonNull HasExpiration value) {
     }
 }

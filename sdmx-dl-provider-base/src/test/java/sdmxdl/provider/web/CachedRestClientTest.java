@@ -25,7 +25,7 @@ import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.WebTypedId;
+import sdmxdl.provider.TypedId;
 import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.api.RepoSamples;
 
@@ -54,11 +54,11 @@ public class CachedRestClientTest {
     private final URI base = URI.create("cache:rest");
     private final Duration ttl = Duration.ofMillis(100);
 
-    private final String flowsId = WebTypedId.resolveURI(base, "flows").toString();
-    private final String flowId = WebTypedId.resolveURI(base, "flow", FLOW_REF.toString()).toString();
-    private final String structId = WebTypedId.resolveURI(base, "struct", STRUCT_REF.toString()).toString();
-    private final String seriesKeysOnlyId = WebTypedId.resolveURI(base, "seriesKeysOnly", FLOW_REF.toString()).toString();
-    private final String noDataId = WebTypedId.resolveURI(base, "noData", FLOW_REF.toString()).toString();
+    private final String flowsId = TypedId.resolveURI(base, "flows").toString();
+    private final String flowId = TypedId.resolveURI(base, "flow", FLOW_REF.toString()).toString();
+    private final String structId = TypedId.resolveURI(base, "struct", STRUCT_REF.toString()).toString();
+    private final String seriesKeysOnlyId = TypedId.resolveURI(base, "seriesKeysOnly", FLOW_REF.toString()).toString();
+    private final String noDataId = TypedId.resolveURI(base, "noData", FLOW_REF.toString()).toString();
 
     private CachedRestClient getClient(CachingAssert.Context ctx) {
         RestClient original = XRepoRestClient.of(RepoSamples.REPO);

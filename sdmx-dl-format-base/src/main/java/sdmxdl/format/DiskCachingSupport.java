@@ -1,18 +1,18 @@
 package sdmxdl.format;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Marker;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
-import sdmxdl.file.spi.FileCache;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
 import sdmxdl.web.spi.WebCaching;
 
 import java.nio.file.Path;
@@ -25,39 +25,29 @@ import java.util.Collections;
 @lombok.Builder(toBuilder = true)
 public final class DiskCachingSupport implements FileCaching, WebCaching {
 
-    @lombok.NonNull
-    private final String id;
+    @lombok.Getter(AccessLevel.PRIVATE)
+    private final @NonNull String id;
 
     @lombok.Builder.Default
     private final int rank = UNKNOWN_WEB_CACHING_RANK;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = DiskCache.SDMXDL_TMP_DIR;
+    private final @NonNull Path root = DiskCache.SDMXDL_TMP_DIR;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final FileFormat<DataRepository> repositoryFormat = FileFormat.noOp();
+    private final @NonNull FileFormat<DataRepository> repositoryFormat = FileFormat.noOp();
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
+    private final @NonNull FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final Clock clock = Clock.systemDefaultZone();
+    private final @NonNull Clock clock = Clock.systemDefaultZone();
 
     @lombok.Builder.Default
     private final boolean noCompression = false;
 
-    private DiskCache.Builder newFileCacheBuilder() {
-        return DiskCache
-                .builder()
-                .root(root)
-                .repositoryFormat(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
-                .monitorFormat(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat))
-                .clock(clock);
-    }
+    @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
+    private final Marker marker = initLazyMarker();
 
     @Override
     public @NonNull String getFileCachingId() {
@@ -80,18 +70,41 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull FileCache getFileCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
-        return newFileCacheBuilder()
-                .onRead(onEvent != null ? onEvent.asConsumer(source, Marker.parse(id)) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, Marker.parse(id)) : null)
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
+        return DiskCache
+                .<DataRepository>builder()
+                .root(root)
+                .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
+                .namePrefix("R")
+                .clock(clock)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
                 .build();
     }
 
     @Override
-    public @NonNull WebCache getWebCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
-        return newFileCacheBuilder()
-                .onRead(onEvent != null ? onEvent.asConsumer(source, Marker.parse(id)) : null)
-                .onError(onError != null ? onError.asBiConsumer(source, Marker.parse(id)) : null)
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return DiskCache
+                .<DataRepository>builder()
+                .root(root)
+                .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
+                .namePrefix("D")
+                .clock(clock)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
+                .build();
+    }
+
+    @Override
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
+        return DiskCache
+                .<MonitorReports>builder()
+                .root(root)
+                .format(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat))
+                .namePrefix("M")
+                .clock(clock)
+                .onRead(onEvent != null ? onEvent.asConsumer(source, getMarker()) : null)
+                .onError(onError != null ? onError.asBiConsumer(source, getMarker()) : null)
                 .build();
     }
 
@@ -103,6 +116,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Collection<String> getWebCachingProperties() {
         return Collections.emptyList();
+    }
+
+    private Marker initLazyMarker() {
+        return Marker.parse(getId());
     }
 
     public static final class Builder {

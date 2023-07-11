@@ -32,9 +32,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+import static java.util.function.UnaryOperator.identity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,25 +48,25 @@ public class DiskCacheTest {
     }
 
     @Test
-    public void testGetSet(@TempDir Path temp) throws IOException {
+    public void testGetSet(@TempDir Path temp) {
         FakeClock clock = new FakeClock();
         clock.set(1000);
-        FileFormat<DataRepository> serializer = newFakeFileFormat();
 
+        Path root = temp.resolve("testfolder");
         List<IOException> exceptions = new ArrayList<>();
 
-        DiskCache cache = DiskCache
-                .builder()
-                .root(temp.resolve("testfolder"))
-                .fileNameGenerator(UnaryOperator.identity())
-                .repositoryFormat(serializer)
+        DiskCache<DataRepository> cache = DiskCache
+                .<DataRepository>builder()
+                .root(root)
+                .nameGenerator(identity())
+                .format(newFakeFileFormat())
                 .clock(clock)
                 .onError((message, exception) -> exceptions.add(exception))
                 .build();
 
-        assertThat(cache.getRoot())
+        assertThat(root)
                 .doesNotExist();
-        assertThat(cache.getWebRepository("KEY1"))
+        assertThat(cache.get("KEY1"))
                 .as("Empty directory should return null")
                 .isNull();
 
@@ -75,25 +75,25 @@ public class DiskCacheTest {
                 .name("r1")
                 .ttl(clock.instant(), Duration.ofMillis(10))
                 .build();
-        cache.putWebRepository("KEY1", r1);
-        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
+        cache.put("KEY1", r1);
+        assertThat(cache.getFile("KEY1"))
                 .exists()
                 .hasContent("r1");
 
-        assertThat(cache.getWebRepository("KEY2"))
+        assertThat(cache.get("KEY2"))
                 .as("Non-existing key should return null")
                 .isNull();
 
         clock.plus(9);
-        assertThat(cache.getWebRepository("KEY1"))
+        assertThat(cache.get("KEY1"))
                 .as("Non-expired key should return value")
                 .isEqualTo(r1);
 
         clock.plus(1);
-        assertThat(cache.getWebRepository("KEY1"))
+        assertThat(cache.get("KEY1"))
                 .as("Expired key should return null")
                 .isNull();
-        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
+        assertThat(cache.getFile("KEY1"))
                 .as("Expired key should be deleted")
                 .doesNotExist();
 
@@ -106,12 +106,12 @@ public class DiskCacheTest {
                 .name("r2")
                 .ttl(clock.instant(), Duration.ofMillis(10))
                 .build();
-        cache.putWebRepository("KEY1", r1b);
-        cache.putWebRepository("KEY1", r2);
-        assertThat(cache.getFile("KEY1", DiskCache.FileType.REPOSITORY, serializer))
+        cache.put("KEY1", r1b);
+        cache.put("KEY1", r2);
+        assertThat(cache.getFile("KEY1"))
                 .exists()
                 .hasContent("r2");
-        assertThat(cache.getWebRepository("KEY1"))
+        assertThat(cache.get("KEY1"))
                 .as("Updated key should return updated value")
                 .isEqualTo(r2);
 

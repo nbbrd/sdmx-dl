@@ -3,7 +3,7 @@ package sdmxdl.provider;
 import nbbrd.io.function.IOSupplier;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import sdmxdl.web.spi.WebCache;
+import sdmxdl.ext.Cache;
 import sdmxdl.format.MemCache;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebTypedIdTest {
+public class TypedIdTest {
 
     @Test
     public void test() throws IOException {
-        WebTypedId<Integer> id = WebTypedId.of(
+        TypedId<Integer> id = TypedId.of(
                 URI.create("cache://key"),
                 repo -> Integer.parseInt(repo.getName()),
                 data -> DataRepository.builder().name(Integer.toString(data)).build()
@@ -26,7 +26,7 @@ public class WebTypedIdTest {
 
         FakeClock clock = new FakeClock();
 
-        WebCache cache = MemCache.builder().clock(clock).build();
+        Cache<DataRepository> cache = MemCache.<DataRepository>builder().clock(clock).build();
 
         IOSupplier<Integer> factory = new AtomicInteger()::getAndIncrement;
 

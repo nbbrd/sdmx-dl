@@ -18,7 +18,6 @@ package sdmxdl;
 
 import lombok.NonNull;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -29,7 +28,7 @@ import java.util.Optional;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class DataRepository {
+public class DataRepository implements HasExpiration {
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -54,10 +53,6 @@ public class DataRepository {
     @lombok.NonNull
     @lombok.Builder.Default
     Instant expirationTime = Instant.MAX;
-
-    public boolean isExpired(@NonNull Clock clock) {
-        return !clock.instant().isBefore(expirationTime);
-    }
 
     @NonNull
     public Optional<DataStructure> getStructure(@NonNull DataStructureRef ref) {

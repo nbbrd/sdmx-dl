@@ -2,8 +2,10 @@ package sdmxdl.file.spi;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileSource;
 
 @lombok.Value
@@ -17,7 +19,7 @@ public class FileContext {
 
     @Nullable ErrorListener<? super SdmxFileSource> onError;
 
-    public @NonNull FileCache getCache(@NonNull SdmxFileSource source) {
-        return caching.getFileCache(source, onEvent, onError);
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source) {
+        return caching.getReaderCache(source, onEvent, onError);
     }
 }

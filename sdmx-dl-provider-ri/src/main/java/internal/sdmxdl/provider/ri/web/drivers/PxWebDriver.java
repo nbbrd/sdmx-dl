@@ -19,6 +19,7 @@ import nbbrd.io.text.TextParser;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
+import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
@@ -26,12 +27,11 @@ import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
-import sdmxdl.provider.WebTypedId;
+import sdmxdl.provider.TypedId;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
-import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -89,7 +89,7 @@ public final class PxWebDriver implements Driver {
 
         PxWebClient cachedClient = CachedPxWebClient.of(
                 client,
-                context.getCache(source),
+                context.getDriverCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 languages
@@ -249,20 +249,20 @@ public final class PxWebDriver implements Driver {
     private static final class CachedPxWebClient implements PxWebClient {
 
         static @NonNull CachedPxWebClient of(
-                @NonNull PxWebClient client, @NonNull WebCache cache, long ttlInMillis,
+                @NonNull PxWebClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
                 @NonNull SdmxWebSource source, @NonNull Languages languages) {
             return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(SdmxWebSource source, Languages languages) {
-            return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
         @lombok.NonNull
         private final PxWebClient delegate;
 
         @lombok.NonNull
-        private final WebCache cache;
+        private final Cache<DataRepository> cache;
 
         @lombok.NonNull
         private final URI base;
@@ -271,20 +271,20 @@ public final class PxWebDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final WebTypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
+        private final TypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
 
         @lombok.Getter(lazy = true)
-        private final WebTypedId<DataStructure> idOfMeta = initIdOfMeta(base);
+        private final TypedId<DataStructure> idOfMeta = initIdOfMeta(base);
 
-        private static WebTypedId<List<Dataflow>> initIdOfTables(URI base) {
-            return WebTypedId.of(base,
+        private static TypedId<List<Dataflow>> initIdOfTables(URI base) {
+            return TypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
             ).with("tables");
         }
 
-        private static WebTypedId<DataStructure> initIdOfMeta(URI base) {
-            return WebTypedId.of(base,
+        private static TypedId<DataStructure> initIdOfMeta(URI base) {
+            return TypedId.of(base,
                     repo -> repo.getStructures().stream().findFirst().orElse(null),
                     struct -> DataRepository.builder().structure(struct).build()
             ).with("meta");

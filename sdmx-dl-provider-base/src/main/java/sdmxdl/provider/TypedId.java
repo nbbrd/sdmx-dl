@@ -21,7 +21,7 @@ import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
-import sdmxdl.file.spi.FileCache;
+import sdmxdl.ext.Cache;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -41,14 +41,14 @@ import java.util.stream.Stream;
  */
 @lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode
-public final class FileTypedId<T> {
+public final class TypedId<T> {
 
     @NonNull
-    public static <T> FileTypedId<T> of(
+    public static <T> TypedId<T> of(
             @NonNull URI content,
             @NonNull Function<DataRepository, T> loader,
             @NonNull Function<T, DataRepository> storer) {
-        return new FileTypedId<>(content, loader, storer);
+        return new TypedId<>(content, loader, storer);
     }
 
     @NonNull
@@ -62,27 +62,27 @@ public final class FileTypedId<T> {
     private final Function<T, DataRepository> storer;
 
     @NonNull
-    public FileTypedId<T> with(@NonNull Object o) {
-        return new FileTypedId<>(resolveURI(content, o.toString()), loader, storer);
+    public TypedId<T> with(@NonNull Object o) {
+        return new TypedId<>(resolveURI(content, o.toString()), loader, storer);
     }
 
     @Nullable
-    public T peek(@NonNull FileCache cache) {
-        DataRepository repo = cache.getFileRepository(content.toString());
+    public T peek(@NonNull Cache<DataRepository> cache) {
+        DataRepository repo = cache.get(content.toString());
         return repo != null ? loader.apply(repo) : null;
     }
 
     @NonNull
-    public T load(@NonNull FileCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
+    public T load(@NonNull Cache<DataRepository> cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
         return load(cache, factory, ttl, o -> true);
     }
 
     @NonNull
-    public T load(@NonNull FileCache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
+    public T load(@NonNull Cache<DataRepository> cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();
-            cache.putFileRepository(content.toString(), storer.apply(result).toBuilder().ttl(cache.getFileClock().instant(), ttl.apply(result)).build());
+            cache.put(content.toString(), storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
         }
         return result;
     }

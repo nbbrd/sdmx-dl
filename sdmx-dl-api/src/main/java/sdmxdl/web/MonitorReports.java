@@ -1,15 +1,15 @@
 package sdmxdl.web;
 
 import lombok.NonNull;
+import sdmxdl.HasExpiration;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class MonitorReports {
+public class MonitorReports implements HasExpiration {
 
     @NonNull String uriScheme;
 
@@ -21,10 +21,6 @@ public class MonitorReports {
 
     @lombok.Builder.Default
     @NonNull Instant expirationTime = Instant.MAX;
-
-    public boolean isExpired(@NonNull Clock clock) {
-        return !clock.instant().isBefore(expirationTime);
-    }
 
     public static final class Builder {
 

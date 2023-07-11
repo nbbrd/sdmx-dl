@@ -14,6 +14,7 @@ import nbbrd.io.function.IOSupplier;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -21,9 +22,8 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebCache;
-import sdmxdl.web.spi.WebContext;
 import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.WebContext;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -89,7 +89,7 @@ public final class StatCanDriver implements Driver {
 
         StatCanClient cachedClient = CachedStatCanClient.of(
                 client,
-                context.getCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
+                context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source, languages
         );
 
@@ -264,20 +264,20 @@ public final class StatCanDriver implements Driver {
     static class CachedStatCanClient implements StatCanClient {
 
         static @NonNull CachedStatCanClient of(
-                @NonNull StatCanClient client, @NonNull WebCache cache, long ttlInMillis,
+                @NonNull StatCanClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
                 @NonNull SdmxWebSource source, @NonNull Languages languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
         private static URI getBase(SdmxWebSource source, Languages languages) {
-            return WebTypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
         @lombok.NonNull
         private final StatCanClient delegate;
 
         @lombok.NonNull
-        private final WebCache cache;
+        private final Cache<DataRepository> cache;
 
         @lombok.NonNull
         private final URI base;
@@ -286,20 +286,20 @@ public final class StatCanDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final WebTypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
+        private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
 
         @lombok.Getter(lazy = true)
-        private final WebTypedId<DataRepository> idOfRepo = initIdOfRepo(base);
+        private final TypedId<DataRepository> idOfRepo = initIdOfRepo(base);
 
-        private static WebTypedId<List<Dataflow>> initIdOfFlows(URI base) {
-            return WebTypedId.of(base,
+        private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
+            return TypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
             ).with("flows");
         }
 
-        private static WebTypedId<DataRepository> initIdOfRepo(URI base) {
-            return WebTypedId.of(base, identity(), identity())
+        private static TypedId<DataRepository> initIdOfRepo(URI base) {
+            return TypedId.of(base, identity(), identity())
                     .with("structAndData");
         }
 

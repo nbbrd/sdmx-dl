@@ -23,10 +23,8 @@ import nbbrd.io.FileParser;
 import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
-import sdmxdl.DataRepository;
-import sdmxdl.file.spi.FileCache;
-import sdmxdl.web.MonitorReports;
-import sdmxdl.web.spi.WebCache;
+import sdmxdl.HasExpiration;
+import sdmxdl.ext.Cache;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +33,6 @@ import java.time.Clock;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 import static java.util.Objects.requireNonNull;
@@ -43,98 +40,46 @@ import static java.util.Objects.requireNonNull;
 /**
  * @author Philippe Charles
  */
-@lombok.Getter
 @lombok.Builder(toBuilder = true)
-public final class DiskCache implements FileCache, WebCache {
+public final class DiskCache<V extends HasExpiration> implements Cache<V> {
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final Path root = SDMXDL_TMP_DIR;
+    private final @NonNull Path root = SDMXDL_TMP_DIR;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final String fileNamePrefix = "sdmx_";
+    private final @NonNull String namePrefix = "sdmx_";
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final String fileNameSuffix = "_";
+    private final @NonNull String nameSuffix = "_";
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final UnaryOperator<String> fileNameGenerator = NORMALIZE_HASH_CODE;
+    private final @NonNull UnaryOperator<String> nameGenerator = NORMALIZE_HASH_CODE;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final FileFormat<DataRepository> repositoryFormat = FileFormat.noOp();
-
-    @lombok.NonNull
-    @lombok.Builder.Default
-    private final FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
+    private final @NonNull FileFormat<V> format = FileFormat.noOp();
 
     private final @Nullable Consumer<? super String> onRead;
 
     private final @Nullable BiConsumer<? super String, ? super IOException> onError;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    private final Clock clock = Clock.systemDefaultZone();
+    private final @NonNull Clock clock = Clock.systemDefaultZone();
 
     @Override
-    public @NonNull Clock getFileClock() {
+    public @NonNull Clock getClock() {
         return clock;
     }
 
     @Override
-    public @NonNull Clock getWebClock() {
-        return clock;
-    }
-
-    @Override
-    public @Nullable DataRepository getFileRepository(@NonNull String key) {
-        return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
-    }
-
-    @Override
-    public @Nullable DataRepository getWebRepository(@NonNull String key) {
-        return read(repositoryFormat, this::isValid, key, FileType.REPOSITORY);
-    }
-
-    @Override
-    public void putFileRepository(@NonNull String key, @NonNull DataRepository value) {
-        write(repositoryFormat, key, FileType.REPOSITORY, value);
-    }
-
-    @Override
-    public void putWebRepository(@NonNull String key, @NonNull DataRepository value) {
-        write(repositoryFormat, key, FileType.REPOSITORY, value);
-    }
-
-    @Override
-    public @Nullable MonitorReports getWebMonitorReports(@NonNull String key) {
-        return read(monitorFormat, this::isValid, key, FileType.MONITOR);
-    }
-
-    @Override
-    public void putWebMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
-        write(monitorFormat, key, FileType.MONITOR, value);
-    }
-
-    private boolean isValid(DataRepository value) {
-        return !value.isExpired(clock);
-    }
-
-    private boolean isValid(MonitorReports value) {
-        return !value.isExpired(clock);
-    }
-
-    private <T> T read(FileFormat<T> fileFormat, Predicate<T> validator, String key, FileType fileType) {
-        T result = read(fileFormat, fileType, key);
+    public @Nullable V get(@NonNull String key) {
+        Path file = getFile(key);
+        V result = readFile(file);
         if (result == null) {
             reportRead(key, DiskCacheEvent.MISSED);
             return null;
         }
-        if (!validator.test(result)) {
-            delete(key, fileType, fileFormat);
+        if (result.isExpired(clock)) {
+            deleteFile(file);
             reportRead(key, DiskCacheEvent.EXPIRED);
             return null;
         }
@@ -142,15 +87,20 @@ public final class DiskCache implements FileCache, WebCache {
         return result;
     }
 
+    @Override
+    public void put(@NonNull String key, @NonNull V value) {
+        Path file = getFile(key);
+        writeFile(file, value);
+    }
+
     private void reportRead(String key, DiskCacheEvent event) {
         if (onRead != null) onRead.accept(event.name() + " " + key);
     }
 
-    private <T> T read(FileFormat<T> fileFormat, FileType fileType, String key) {
-        Path file = getFile(key, fileType, fileFormat);
+    private V readFile(Path file) {
         if (Files.exists(file) && Files.isRegularFile(file)) {
             try {
-                return FileParser.onParsingLock(fileFormat.getParser()).parsePath(file);
+                return FileParser.onParsingLock(format.getParser()).parsePath(file);
             } catch (IOException ex) {
                 if (onError != null) onError.accept("Failed reading '" + file + "'", ex);
             }
@@ -158,11 +108,10 @@ public final class DiskCache implements FileCache, WebCache {
         return null;
     }
 
-    private <T> void write(FileFormat<T> fileFormat, String key, FileType fileType, T entry) {
-        Path file = getFile(key, fileType, fileFormat);
+    private void writeFile(Path file, V value) {
         ensureParentExists(file);
         try {
-            FileFormatter.onFormattingLock(fileFormat.getFormatter()).formatPath(entry, file);
+            FileFormatter.onFormattingLock(format.getFormatter()).formatPath(value, file);
         } catch (IOException ex) {
             if (onError != null) onError.accept("Failed writing '" + file + "'", ex);
         }
@@ -176,8 +125,7 @@ public final class DiskCache implements FileCache, WebCache {
         }
     }
 
-    private void delete(String key, FileType fileType, FileFormat<?> fileFormat) {
-        Path file = getFile(key, fileType, fileFormat);
+    private void deleteFile(Path file) {
         try {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
@@ -186,11 +134,12 @@ public final class DiskCache implements FileCache, WebCache {
     }
 
     @VisibleForTesting
-    Path getFile(String key, FileType fileType, FileFormat<?> fileFormat) {
-        return root.resolve(fileNamePrefix + fileType.name().charAt(0) + fileNameGenerator.apply(key) + fileNameSuffix + fileFormat.getFileExtension());
+    Path getFile(String key) {
+        return root.resolve(namePrefix + nameGenerator.apply(key) + nameSuffix + format.getFileExtension());
     }
 
     public static final Path SDMXDL_TMP_DIR = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve(About.VERSION);
+
     private static final UnaryOperator<String> NORMALIZE_HASH_CODE = DiskCache::normalizeHashCode;
 
     private static String normalizeHashCode(String key) {
@@ -198,13 +147,7 @@ public final class DiskCache implements FileCache, WebCache {
         return String.format(Locale.ROOT, hashCode >= 0 ? "0%010d" : "1%010d", Math.abs(hashCode));
     }
 
-    @VisibleForTesting
-    enum FileType {
-        REPOSITORY, MONITOR
-    }
-
-    @VisibleForTesting
-    enum DiskCacheEvent {
+    private enum DiskCacheEvent {
         HIT, MISSED, EXPIRED
     }
 }
