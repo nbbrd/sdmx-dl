@@ -67,41 +67,41 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source, @Nullable EventListener<? super SdmxFileSource> onEvent, @Nullable ErrorListener<? super SdmxFileSource> onError) {
-        return DiskCache
+        return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
                 .root(root)
-                .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
+                .format(FileFormat.lock(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat)))
                 .namePrefix("R")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getFileCachingId()) : null)
                 .onError(onError != null ? onError.asBiConsumer(source, getFileCachingId()) : null)
-                .build();
+                .build());
     }
 
     @Override
     public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
-        return DiskCache
+        return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
                 .root(root)
-                .format(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat))
+                .format(FileFormat.lock(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat)))
                 .namePrefix("D")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
                 .onError(onError != null ? onError.asBiConsumer(source, getWebCachingId()) : null)
-                .build();
+                .build());
     }
 
     @Override
     public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source, @Nullable EventListener<? super SdmxWebSource> onEvent, @Nullable ErrorListener<? super SdmxWebSource> onError) {
-        return DiskCache
+        return new LockingCache<>(DiskCache
                 .<MonitorReports>builder()
                 .root(root)
-                .format(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat))
+                .format(FileFormat.lock(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat)))
                 .namePrefix("M")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
                 .onError(onError != null ? onError.asBiConsumer(source, getWebCachingId()) : null)
-                .build();
+                .build());
     }
 
     @Override

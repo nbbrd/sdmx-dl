@@ -18,8 +18,6 @@ package sdmxdl.format;
 
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
 import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
@@ -100,7 +98,7 @@ public final class DiskCache<V extends HasExpiration> implements Cache<V> {
     private V readFile(Path file) {
         if (Files.exists(file) && Files.isRegularFile(file)) {
             try {
-                return FileParser.onParsingLock(format.getParser()).parsePath(file);
+                return format.getParser().parsePath(file);
             } catch (IOException ex) {
                 if (onError != null) onError.accept("Failed reading '" + file + "'", ex);
             }
@@ -111,7 +109,7 @@ public final class DiskCache<V extends HasExpiration> implements Cache<V> {
     private void writeFile(Path file, V value) {
         ensureParentExists(file);
         try {
-            FileFormatter.onFormattingLock(format.getFormatter()).formatPath(value, file);
+            format.getFormatter().formatPath(value, file);
         } catch (IOException ex) {
             if (onError != null) onError.accept("Failed writing '" + file + "'", ex);
         }
