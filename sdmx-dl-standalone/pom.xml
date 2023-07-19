@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.nbbrd.sdmx-dl</groupId>
+        <artifactId>sdmx-dl-parent</artifactId>
+        <version>3.0.0-beta.12-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sdmx-dl-standalone</artifactId>
+
+    <name>sdmx-dl-standalone</name>
+    <description>Easily download official statistics - Standalone</description>
+    <url>https://github.com/nbbrd/sdmx-dl</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Generates a all-in-one executable jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>**/module-info.class</exclude>
+                                <exclude>**/pom.properties</exclude>
+                                <exclude>**/pom.xml</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.txt</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        </transformer>
+                    </transformers>
+                    <relocations>
+                        <relocation>
+                            <pattern>sdmxdl.format</pattern>
+                            <shadedPattern>standalone.sdmxdl.format</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>sdmxdl.provider</pattern>
+                            <shadedPattern>standalone.sdmxdl.provider</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>internal</pattern>
+                            <shadedPattern>standalone.internal</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>nbbrd</pattern>
+                            <shadedPattern>standalone.nbbrd</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com</pattern>
+                            <shadedPattern>standalone.com</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

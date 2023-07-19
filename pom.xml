@@ -242,6 +242,7 @@
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
         <module>sdmx-dl-bom</module>
+        <module>sdmx-dl-standalone</module>
     </modules>
 
     <profiles>
