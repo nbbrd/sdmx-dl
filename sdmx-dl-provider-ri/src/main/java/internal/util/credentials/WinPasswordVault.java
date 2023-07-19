@@ -2,14 +2,17 @@ package internal.util.credentials;
 
 import com.github.tuupertunut.powershelllibjava.PowerShell;
 import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
-import nbbrd.io.Resource;
+import lombok.NonNull;
 import nbbrd.io.picocsv.Picocsv;
 import nbbrd.io.text.TextParser;
+import nbbrd.io.text.TextResource;
 import nbbrd.picocsv.Csv;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class WinPasswordVault implements Closeable {
 
@@ -17,30 +20,26 @@ public final class WinPasswordVault implements Closeable {
     @lombok.Value
     public static class PasswordCredential {
 
-        @lombok.NonNull
-        String resource;
+        @NonNull String resource;
 
-        @lombok.NonNull
-        String userName;
+        @NonNull String userName;
 
-        @lombok.NonNull
-        char[] password;
+        @NonNull char[] password;
     }
 
-    public static WinPasswordVault open() throws IOException {
+    public static @NonNull WinPasswordVault open() throws IOException {
         WinPasswordVault result = new WinPasswordVault();
         result.exec(loadCode());
         return result;
     }
 
-    @lombok.NonNull
-    private final PowerShell psSession;
+    private final @NonNull PowerShell psSession;
 
     private WinPasswordVault() throws IOException {
         psSession = PowerShell.open();
     }
 
-    public PasswordCredential getOrPrompt(String resource, String message, boolean force) throws IOException {
+    public @NonNull PasswordCredential getOrPrompt(@NonNull String resource, @NonNull String message, boolean force) throws IOException {
         String resourceParam = PowerShell.escapePowerShellString(resource);
         String messageParam = PowerShell.escapePowerShellString(message);
         String forceParam = force ? "$true" : "$false";
@@ -53,7 +52,7 @@ public final class WinPasswordVault implements Closeable {
         return CREDENTIAL_PARSER.parseChars(result);
     }
 
-    public void invalidate(String resource) throws IOException {
+    public void invalidate(@NonNull String resource) throws IOException {
         String resourceParam = PowerShell.escapePowerShellString(resource);
         exec("InvalidateCredential -resource " + resourceParam);
     }
@@ -90,11 +89,8 @@ public final class WinPasswordVault implements Closeable {
     }
 
     private static String[] loadCode() throws IOException {
-        Optional<InputStream> script = Resource.getResourceAsStream(WinPasswordVault.class, "WinPasswordVault.ps1");
-        try (InputStream stream = script.orElseThrow(() -> new IOException("Cannot find WinPasswordVault script"))) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-                return reader.lines().toArray(String[]::new);
-            }
+        try (BufferedReader reader = TextResource.newBufferedReader(WinPasswordVault.class, "WinPasswordVault.ps1", UTF_8.newDecoder())) {
+            return reader.lines().toArray(String[]::new);
         }
     }
 }

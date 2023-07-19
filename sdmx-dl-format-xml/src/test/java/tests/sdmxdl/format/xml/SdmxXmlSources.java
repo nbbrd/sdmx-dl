@@ -19,8 +19,6 @@ package tests.sdmxdl.format.xml;
 import nbbrd.io.Resource;
 import tests.sdmxdl.api.ByteSource;
 
-import java.io.IOException;
-
 /**
  * @author Philippe Charles
  */
@@ -28,7 +26,7 @@ import java.io.IOException;
 public class SdmxXmlSources {
 
     private static ByteSource of(String name) {
-        return () -> Resource.getResourceAsStream(SdmxXmlSources.class, name).orElseThrow(IOException::new);
+        return () -> Resource.newInputStream(SdmxXmlSources.class, name);
     }
 
     public static final ByteSource ECB_DATAFLOWS = of("ecb/EcbDataflows.xml");

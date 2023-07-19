@@ -1,3 +1,8 @@
+import sdmxdl.provider.ri.file.readers.XmlReader;
+import sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
+import sdmxdl.provider.ri.web.drivers.*;
+import sdmxdl.provider.ri.web.monitors.UpptimeMonitoring;
+import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Driver;
@@ -18,27 +23,27 @@ module sdmxdl.provider.ri {
     requires java.logging;
 
     provides Driver with
-            internal.sdmxdl.provider.ri.web.drivers.BbkDriver,
-            internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.FileDriver,
-            internal.sdmxdl.provider.ri.web.drivers.ImfDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.InseeDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.NbbDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.PxWebDriver,
-            internal.sdmxdl.provider.ri.web.drivers.RngDriver,
-            internal.sdmxdl.provider.ri.web.drivers.Sdmx21Driver2,
-            internal.sdmxdl.provider.ri.web.drivers.StatCanDriver;
+            BbkDriver,
+            DotStatDriver2,
+            EurostatDriver2,
+            FileDriver,
+            ImfDriver2,
+            InseeDriver2,
+            NbbDriver2,
+            PxWebDriver,
+            RngDriver,
+            Sdmx21Driver2,
+            StatCanDriver;
 
     provides Reader with
-            internal.sdmxdl.provider.ri.file.readers.XmlReader;
+            XmlReader;
 
     provides Authenticator with
-            internal.sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
+            WinPasswordVaultAuthenticator;
 
     provides Monitor with
-            internal.sdmxdl.provider.ri.web.monitors.UpptimeMonitoring,
-            internal.sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
+            UpptimeMonitoring,
+            UptimeRobotMonitoring;
 
-    opens internal.sdmxdl.provider.ri.web.monitors to com.google.gson;
+    opens sdmxdl.provider.ri.web.monitors to com.google.gson;
 }

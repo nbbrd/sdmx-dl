@@ -29,7 +29,6 @@ import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -137,7 +136,7 @@ public class XMLStreamCompactDataCursorTest {
 
     @Test
     public void testMissingSeriesHeader() throws IOException, XMLStreamException {
-        ByteSource xml = () -> Resource.getResourceAsStream(XMLStreamCompactDataCursorTest.class, "10100139_187.xml").orElseThrow(FileNotFoundException::new);
+        ByteSource xml = () -> Resource.newInputStream(XMLStreamCompactDataCursorTest.class, "10100139_187.xml");
         Key.Builder builder = Key.builder(asList("A", "B"));
         ObsParser obsParser = ObsParser.newDefault();
 

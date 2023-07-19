@@ -27,10 +27,10 @@ import nbbrd.io.Resource;
 import sdmxdl.Dimension;
 import sdmxdl.*;
 import sdmxdl.desktop.MainComponent;
-import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.spi.Network;
+import sdmxdl.web.spi.SSLFactory;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
@@ -309,7 +309,7 @@ public abstract class SdmxAutoCompletion {
     private static final ImageIcon sdmxIcon = new ImageIcon(loadImage());
 
     private static Image loadImage() {
-        try (InputStream stream = Resource.getResourceAsStream(MainComponent.class, "sdmx-logo.png").orElseThrow(RuntimeException::new)) {
+        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
             return ImageIO.read(stream);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

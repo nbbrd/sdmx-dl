@@ -16,8 +16,6 @@
  */
 package _test.sdmxdl.connectors.samples;
 
-import internal.sdmxdl.provider.connectors.Connectors;
-import internal.sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.*;
@@ -27,6 +25,8 @@ import it.bancaditalia.oss.sdmx.util.LocalizedText;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
+import sdmxdl.provider.connectors.Connectors;
+import sdmxdl.provider.connectors.PortableTimeSeriesCursor;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
