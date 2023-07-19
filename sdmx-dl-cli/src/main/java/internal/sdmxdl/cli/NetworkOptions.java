@@ -2,43 +2,51 @@ package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
-import internal.sdmxdl.cli.ext.ProxyOptions;
-import internal.sdmxdl.cli.ext.SslOptions;
-import nbbrd.io.curl.CurlHttpURLConnection;
 import picocli.CommandLine;
-import sdmxdl.web.spi.URLConnectionFactory;
 
 @lombok.Getter
 @lombok.Setter
 public class NetworkOptions {
 
     @CommandLine.Option(
-            names = "--dummy-network-option",
-            hidden = true,
-            defaultValue = "false"
+            names = {"--auto-proxy"},
+            negatable = true,
+            defaultValue = "${env:SDMXDL_NETWORKING_AUTOPROXY:-false}",
+            fallbackValue = "true",
+            descriptionKey = "cli.autoProxy"
     )
-    private boolean dummyNetworkOption;
+    private boolean autoProxy;
 
     @CommandLine.Option(
             names = "--curl",
-            defaultValue = "false",
+            negatable = true,
+            defaultValue = "${env:SDMXDL_NETWORKING_CURLBACKEND:-false}",
+            fallbackValue = "true",
             descriptionKey = "cli.sdmx.curl"
     )
-    private boolean curl;
+    private boolean curlBackend;
+
+    @CommandLine.Option(
+            names = {"--no-default-ssl"},
+            negatable = true,
+            defaultValue = "${env:SDMXDL_NETWORKING_NODEFAULTSSL:-false}",
+            fallbackValue = "true",
+            descriptionKey = "cli.noDefaultSsl"
+    )
+    boolean noDefaultSsl;
+
+    @CommandLine.Option(
+            names = {"--no-system-ssl"},
+            negatable = true,
+            defaultValue = "${env:SDMXDL_NETWORKING_NOSYSTEMSSL:-false}",
+            fallbackValue = "true",
+            descriptionKey = "cli.noSystemSsl"
+    )
+    boolean noSystemSsl;
 
     @CommandLine.ArgGroup(validate = false)
     private CacheOptions cacheOptions = new CacheOptions();
 
     @CommandLine.ArgGroup(validate = false)
-    private ProxyOptions proxyOptions = new ProxyOptions();
-
-    @CommandLine.ArgGroup(validate = false)
-    private SslOptions sslOptions = new SslOptions();
-
-    @CommandLine.ArgGroup(validate = false)
     private AuthOptions authOptions = new AuthOptions();
-
-    public URLConnectionFactory getURLConnectionFactory() {
-        return isCurl() ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
-    }
 }

@@ -17,10 +17,10 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.DataflowRef;
 import sdmxdl.Languages;
-import sdmxdl.web.spi.Network;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.Network;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -100,7 +100,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     private URLConnection openConnection(URL url) throws IOException {
         try {
             SdmxWebSource source = SdmxWebSource.builder().id("").driver("").endpoint(url.toURI()).build();
-            Network network = getSdmxManager().getNetworking().getNetwork(source);
+            Network network = getSdmxManager().getNetworking().getNetwork(source, null, null);
             return network.getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY);
         } catch (URISyntaxException ex) {
             throw new IOException(ex);

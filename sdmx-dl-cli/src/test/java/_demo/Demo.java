@@ -1,8 +1,6 @@
 package _demo;
 
-import nbbrd.io.curl.CurlHttpURLConnection;
 import sdmxdl.*;
-import sdmxdl.provider.web.SingleNetworkingSupport;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -19,7 +17,6 @@ public class Demo {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .networking(SingleNetworkingSupport.builder().id("CURL").urlConnectionFactoryOf(CurlHttpURLConnection::of).build())
                 .onEvent(Demo::printEvent)
                 .build();
 

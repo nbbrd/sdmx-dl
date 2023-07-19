@@ -56,6 +56,6 @@ public class WebContext {
     }
 
     public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {
-        return networking.getNetwork(source);
+        return networking.getNetwork(source, onEvent, onError);
     }
 }

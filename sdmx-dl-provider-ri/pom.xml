@@ -69,6 +69,27 @@
             <groupId>com.github.nbbrd.java-io-util</groupId>
             <artifactId>java-io-curl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.hakky54</groupId>
+            <artifactId>sslcontext-kickstart</artifactId>
+            <version>8.1.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-net-proxy</groupId>
+            <artifactId>java-net-proxy</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>slf4j-api</artifactId>
+            <groupId>org.slf4j</groupId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
         <!-- test only -->
         <dependency>

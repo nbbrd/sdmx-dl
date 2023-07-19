@@ -21,22 +21,18 @@ import internal.sdmxdl.cli.ext.AuthOptions;
 import internal.sdmxdl.cli.ext.CacheOptions;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import internal.util.AuthenticatorLoader;
-import lombok.NonNull;
-import nl.altindag.ssl.SSLFactory;
 import picocli.CommandLine;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.ext.DualWebCachingSupport;
-import sdmxdl.provider.web.SingleNetworkingSupport;
+import sdmxdl.provider.ri.web.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
@@ -44,8 +40,6 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -70,8 +64,8 @@ public class WebNetOptions extends WebOptions {
         SdmxWebManager defaultManager = super.loadManager();
         return defaultManager
                 .toBuilder()
-                .networking(getNetworking(getNetworkOptions(), getVerboseOptions()))
-                .caching(getCacheProvider(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
+                .networking(getNetworking(getNetworkOptions()))
+                .caching(getWebCaching(getNetworkOptions().getCacheOptions(), getVerboseOptions()))
                 .clearAuthenticators()
                 .authenticators(getAuthenticators())
                 .customSources(getForcedSslSources(defaultManager))
@@ -112,16 +106,14 @@ public class WebNetOptions extends WebOptions {
         return result;
     }
 
-    private static final String CACHE_ANCHOR = "CCH";
-
-    private static WebCaching getCacheProvider(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
+    private static WebCaching getWebCaching(CacheOptions cacheOptions, VerboseOptions verboseOptions) {
         if (cacheOptions.isNoCache()) {
             return WebCaching.noOp();
         }
 
         Clock clock = Clock.systemDefaultZone();
         Path root = cacheOptions.getCacheFolder() != null ? cacheOptions.getCacheFolder().toPath() : DiskCache.SDMXDL_TMP_DIR;
-        reportConfig(verboseOptions, root);
+        reportCaching(verboseOptions, root);
 
         return DualWebCachingSupport
                 .builder()
@@ -143,52 +135,16 @@ public class WebNetOptions extends WebOptions {
                 .build();
     }
 
-    private static void reportConfig(VerboseOptions verboseOptions, Path root) {
+    private static void reportCaching(VerboseOptions verboseOptions, Path root) {
         if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream(Anchor.CCH, "Using cache folder '" + root + "'");
+            verboseOptions.reportToErrorStream(Anchor.CFG, "Using cache folder '" + root + "'");
     }
 
-    private static Networking getNetworking(NetworkOptions networkOptions, VerboseOptions verboseOptions) {
-        return SingleNetworkingSupport
-                .builder()
-                .id("DRY")
-                .proxySelector(memoize(networkOptions.getProxyOptions()::getProxySelector, "Loading proxy selector", verboseOptions))
-                .sslFactory(memoize(() -> new SSLFactoryAdapter(networkOptions.getSslOptions().getSSLFactory()), "Loading SSL factory", verboseOptions))
-                .urlConnectionFactory(memoize(networkOptions::getURLConnectionFactory, "Loading URL connection factory", verboseOptions))
-                .build();
-    }
-
-    private static void reportNetwork(VerboseOptions verboseOptions, String msg) {
-        if (verboseOptions.isVerbose())
-            verboseOptions.reportToErrorStream(Anchor.NET, msg);
-    }
-
-    private static <T> Supplier<T> memoize(Supplier<T> supplier, String message, VerboseOptions verboseOptions) {
-        AtomicReference<T> ref = new AtomicReference<>();
-        return () -> {
-            T result = ref.get();
-            if (result == null) {
-                reportNetwork(verboseOptions, message);
-                result = supplier.get();
-                ref.set(result);
-            }
-            return result;
-        };
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class SSLFactoryAdapter implements sdmxdl.web.spi.SSLFactory {
-
-        private final @NonNull SSLFactory delegate;
-
-        @Override
-        public @NonNull SSLSocketFactory getSSLSocketFactory() {
-            return delegate.getSslSocketFactory();
-        }
-
-        @Override
-        public @NonNull HostnameVerifier getHostnameVerifier() {
-            return delegate.getHostnameVerifier();
-        }
+    private static Networking getNetworking(NetworkOptions networkOptions) {
+        System.setProperty(RiNetworking.AUTO_PROXY_PROPERTY.getKey(), Boolean.toString(networkOptions.isAutoProxy()));
+        System.setProperty(RiNetworking.NO_DEFAULT_SSL_PROPERTY.getKey(), Boolean.toString(networkOptions.isNoDefaultSsl()));
+        System.setProperty(RiNetworking.NO_SYSTEM_SSL_PROPERTY.getKey(), Boolean.toString(networkOptions.isNoSystemSsl()));
+        System.setProperty(RiNetworking.CURL_BACKEND_PROPERTY.getKey(), Boolean.toString(networkOptions.isCurlBackend()));
+        return new RiNetworking();
     }
 }

@@ -4,9 +4,11 @@ import sdmxdl.provider.ri.web.drivers.*;
 import sdmxdl.provider.ri.web.monitors.UpptimeMonitoring;
 import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
 import sdmxdl.file.spi.Reader;
+import sdmxdl.provider.ri.web.networking.RiNetworking;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.Monitor;
+import sdmxdl.web.spi.Networking;
 
 module sdmxdl.provider.ri {
 
@@ -21,6 +23,9 @@ module sdmxdl.provider.ri {
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;
     requires java.logging;
+    requires nl.altindag.ssl;
+    requires nbbrd.io.curl;
+    requires nbbrd.net.proxy;
 
     provides Driver with
             BbkDriver,
@@ -44,6 +49,9 @@ module sdmxdl.provider.ri {
     provides Monitor with
             UpptimeMonitoring,
             UptimeRobotMonitoring;
+
+    provides Networking with
+            RiNetworking;
 
     opens sdmxdl.provider.ri.web.monitors to com.google.gson;
 }

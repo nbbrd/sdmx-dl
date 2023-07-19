@@ -2,12 +2,15 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.format.ServiceSupport;
-import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.URLConnectionFactory;
+import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;
+import sdmxdl.web.spi.SSLFactory;
+import sdmxdl.web.spi.URLConnectionFactory;
 
 import java.net.ProxySelector;
 import java.util.Collection;
@@ -61,7 +64,10 @@ public final class SingleNetworkingSupport implements Networking {
     }
 
     @Override
-    public @NonNull Network getNetwork(@NonNull SdmxWebSource ignore) {
+    public @NonNull Network getNetwork(
+            @NonNull SdmxWebSource source,
+            @Nullable EventListener<? super SdmxWebSource> onEvent,
+            @Nullable ErrorListener<? super SdmxWebSource> onError) {
         return getSingleNetwork();
     }
 

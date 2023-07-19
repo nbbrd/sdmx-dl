@@ -65,6 +65,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -77,22 +82,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-csv</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.java-net-proxy</groupId>
-            <artifactId>java-net-proxy</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart</artifactId>
-            <version>8.1.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-desktop-util</groupId>
@@ -131,18 +120,8 @@
             <artifactId>miglayout-swing</artifactId>
             <version>5.3</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.nbbrd.java-io-util</groupId>
-            <artifactId>java-io-curl</artifactId>
-        </dependency>
 
         <!-- runtime only -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-ri</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-protobuf</artifactId>

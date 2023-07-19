@@ -5,6 +5,9 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.web.SdmxWebSource;
 
 import java.util.Collection;
@@ -28,9 +31,14 @@ public interface Networking {
 
     @NonNull Collection<String> getNetworkingProperties();
 
-    @NonNull Network getNetwork(@NonNull SdmxWebSource source);
+    @NonNull Network getNetwork(
+            @NonNull SdmxWebSource source,
+            @Nullable EventListener<? super SdmxWebSource> onEvent,
+            @Nullable ErrorListener<? super SdmxWebSource> onError);
 
     int UNKNOWN_NETWORKING_RANK = -1;
+
+    String NETWORKING_PROPERTY_PREFIX = "sdmxdl.networking";
 
     @StaticFactoryMethod
     static @NonNull Networking getDefault() {
