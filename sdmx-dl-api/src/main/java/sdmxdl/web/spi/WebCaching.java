@@ -48,4 +48,6 @@ public interface WebCaching {
     }
 
     int UNKNOWN_WEB_CACHING_RANK = -1;
+
+    String WEB_CACHING_PROPERTY_PREFIX = "sdmxdl.caching";
 }

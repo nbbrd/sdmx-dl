@@ -1,12 +1,12 @@
 package internal.sdmxdl.cli;
 
-import internal.sdmxdl.cli.ext.AuthOptions;
-import internal.sdmxdl.cli.ext.CacheOptions;
 import picocli.CommandLine;
+import sdmxdl.provider.ri.web.networking.RiNetworking;
+import sdmxdl.web.spi.Networking;
 
 @lombok.Getter
 @lombok.Setter
-public class NetworkOptions {
+public class NetworkingOptions {
 
     @CommandLine.Option(
             names = {"--auto-proxy"},
@@ -44,9 +44,11 @@ public class NetworkOptions {
     )
     boolean noSystemSsl;
 
-    @CommandLine.ArgGroup(validate = false)
-    private CacheOptions cacheOptions = new CacheOptions();
-
-    @CommandLine.ArgGroup(validate = false)
-    private AuthOptions authOptions = new AuthOptions();
+    public Networking getNetworking() {
+        System.setProperty(RiNetworking.AUTO_PROXY_PROPERTY.getKey(), Boolean.toString(isAutoProxy()));
+        System.setProperty(RiNetworking.NO_DEFAULT_SSL_PROPERTY.getKey(), Boolean.toString(isNoDefaultSsl()));
+        System.setProperty(RiNetworking.NO_SYSTEM_SSL_PROPERTY.getKey(), Boolean.toString(isNoSystemSsl()));
+        System.setProperty(RiNetworking.CURL_BACKEND_PROPERTY.getKey(), Boolean.toString(isCurlBackend()));
+        return new RiNetworking();
+    }
 }

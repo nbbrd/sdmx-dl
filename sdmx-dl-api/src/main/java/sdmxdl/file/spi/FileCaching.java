@@ -42,4 +42,6 @@ public interface FileCaching {
     }
 
     int UNKNOWN_FILE_CACHING_RANK = -1;
+
+    String FILE_CACHING_PROPERTY_PREFIX = "sdmxdl.caching";
 }

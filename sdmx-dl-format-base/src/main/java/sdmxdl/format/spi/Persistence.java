@@ -1,5 +1,6 @@
 package sdmxdl.format.spi;
 
+import internal.sdmxdl.format.NoOpPersistence;
 import lombok.NonNull;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
@@ -25,4 +26,8 @@ public interface Persistence {
     @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException;
 
     int UNKNOWN_PERSISTENCE_RANK = -1;
+
+    static @NonNull Persistence noOp() {
+        return NoOpPersistence.INSTANCE;
+    }
 }

@@ -1,14 +1,13 @@
+import sdmxdl.file.spi.FileCaching;
+import sdmxdl.file.spi.Reader;
+import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.file.readers.XmlReader;
 import sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
 import sdmxdl.provider.ri.web.drivers.*;
 import sdmxdl.provider.ri.web.monitors.UpptimeMonitor;
 import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitor;
-import sdmxdl.file.spi.Reader;
 import sdmxdl.provider.ri.web.networking.RiNetworking;
-import sdmxdl.web.spi.Authenticator;
-import sdmxdl.web.spi.Driver;
-import sdmxdl.web.spi.Monitor;
-import sdmxdl.web.spi.Networking;
+import sdmxdl.web.spi.*;
 
 module sdmxdl.provider.ri {
 
@@ -52,6 +51,12 @@ module sdmxdl.provider.ri {
 
     provides Networking with
             RiNetworking;
+
+    provides FileCaching with
+            RiCaching;
+
+    provides WebCaching with
+            RiCaching;
 
     opens sdmxdl.provider.ri.web.monitors to com.google.gson;
 }

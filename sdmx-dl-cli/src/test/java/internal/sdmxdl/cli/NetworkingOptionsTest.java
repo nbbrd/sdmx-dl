@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NetworkOptionsTest {
+public class NetworkingOptionsTest {
 
     @Nested
     class AutoProxyOptionTest {
@@ -136,14 +136,14 @@ public class NetworkOptionsTest {
     static class Holder implements Callable<Void> {
 
         @CommandLine.Mixin
-        NetworkOptions options;
+        NetworkingOptions options;
 
         @Override
         public Void call() {
             return null;
         }
 
-        NetworkOptions execute(String... args) {
+        NetworkingOptions execute(String... args) {
             CommandLine cmd = new CommandLine(this);
             cmd.execute(args);
             return options;

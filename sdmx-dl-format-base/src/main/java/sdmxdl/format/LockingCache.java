@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @lombok.AllArgsConstructor
-final class LockingCache<V extends HasExpiration> implements Cache<V> {
+public final class LockingCache<V extends HasExpiration> implements Cache<V> {
 
     private final @NonNull Cache<V> delegate;
 

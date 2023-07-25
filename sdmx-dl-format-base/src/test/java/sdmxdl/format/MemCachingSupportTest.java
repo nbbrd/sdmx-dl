@@ -1,6 +1,7 @@
 package sdmxdl.format;
 
 import nbbrd.io.text.Parser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import sdmxdl.file.SdmxFileSource;
@@ -12,8 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.format.MemCachingSupport.builder;
+import static tests.sdmxdl.file.spi.FileCachingAssert.assertFileCompliance;
+import static tests.sdmxdl.web.spi.WebCachingAssert.assertWebCompliance;
 
 public class MemCachingSupportTest {
+
+    @Test
+    public void testCompliance() {
+        MemCachingSupport x = MemCachingSupport.builder().id("COMPLIANCE").build();
+        assertFileCompliance(x);
+        assertWebCompliance(x);
+    }
 
     @ParameterizedTest
     @EnumSource(Extractor.class)

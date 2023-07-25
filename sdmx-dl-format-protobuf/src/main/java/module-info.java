@@ -1,5 +1,3 @@
-import sdmxdl.file.spi.FileCaching;
-import sdmxdl.web.spi.WebCaching;
 import sdmxdl.format.spi.Persistence;
 
 module sdmxdl.format.protobuf {
@@ -15,12 +13,6 @@ module sdmxdl.format.protobuf {
     exports sdmxdl.format.protobuf;
     exports sdmxdl.format.protobuf.web;
 
-    provides FileCaching with
-            sdmxdl.format.protobuf.JsonProvider,
-            sdmxdl.format.protobuf.ProtobufProvider;
-    provides WebCaching with
-            sdmxdl.format.protobuf.JsonProvider,
-            sdmxdl.format.protobuf.ProtobufProvider;
     provides Persistence with
             sdmxdl.format.protobuf.JsonProvider,
             sdmxdl.format.protobuf.ProtobufProvider;

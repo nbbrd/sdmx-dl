@@ -2,12 +2,9 @@ package sdmxdl.format.protobuf;
 
 import com.google.protobuf.MessageLite;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.file.spi.FileCaching;
-import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.protobuf.web.MonitorReports;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
-import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,9 +13,7 @@ import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(FileCaching.class)
-@ServiceProvider(WebCaching.class)
-public final class ProtobufProvider implements Persistence, FileCaching, WebCaching {
+public final class ProtobufProvider implements Persistence {
 
     @lombok.experimental.Delegate
     private final PersistenceSupport persistence = PersistenceSupport
@@ -30,14 +25,6 @@ public final class ProtobufProvider implements Persistence, FileCaching, WebCach
             .dataRepositoryParser(onParsingStream(DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository))
             .dataRepositoryFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufRepositories::fromDataRepository))
             .fileExtension(".protobuf")
-            .build();
-
-    @lombok.experimental.Delegate
-    private final DiskCachingSupport caching = DiskCachingSupport
-            .builder()
-            .id(persistence.getPersistenceId())
-            .rank(persistence.getPersistenceRank())
-            .persistence(persistence)
             .build();
 
     private void writeProtobuf(MessageLite message, OutputStream outputStream) throws IOException {

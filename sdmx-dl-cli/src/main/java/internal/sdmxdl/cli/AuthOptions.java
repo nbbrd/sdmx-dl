@@ -1,8 +1,13 @@
-package internal.sdmxdl.cli.ext;
+package internal.sdmxdl.cli;
 
+import internal.util.AuthenticatorLoader;
 import picocli.CommandLine;
+import sdmxdl.web.spi.Authenticator;
 
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @lombok.Getter
 @lombok.Setter
@@ -49,5 +54,22 @@ public class AuthOptions {
         static PasswordAuthentication getNoUser() {
             return new PasswordAuthentication(null, new char[0]);
         }
+    }
+
+    public List<Authenticator> getAuthenticators() {
+        if (hasUsername() && hasPassword()) {
+            return Collections.singletonList(new ConstantAuthenticator(getUser()));
+        }
+        List<Authenticator> result = new ArrayList<>();
+        if (!isNoSystemAuth()) {
+            result.addAll(AuthenticatorLoader.load());
+        }
+        if (result.isEmpty()) {
+            ConsoleAuthenticator fallback = new ConsoleAuthenticator();
+            if (fallback.isAuthenticatorAvailable()) {
+                result.add(fallback);
+            }
+        }
+        return result;
     }
 }

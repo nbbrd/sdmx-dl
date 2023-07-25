@@ -2,11 +2,8 @@ package sdmxdl.format.protobuf;
 
 import com.google.protobuf.util.JsonFormat;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.file.spi.FileCaching;
-import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
-import sdmxdl.web.spi.WebCaching;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -16,9 +13,7 @@ import static nbbrd.io.text.TextFormatter.onFormattingWriter;
 import static nbbrd.io.text.TextParser.onParsingReader;
 
 @ServiceProvider(Persistence.class)
-@ServiceProvider(FileCaching.class)
-@ServiceProvider(WebCaching.class)
-public final class JsonProvider implements Persistence, FileCaching, WebCaching {
+public final class JsonProvider implements Persistence {
 
     private final JsonFormat.Parser parser = JsonFormat.parser();
 
@@ -34,14 +29,6 @@ public final class JsonProvider implements Persistence, FileCaching, WebCaching 
             .dataRepositoryParser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
             .dataRepositoryFormatter(onFormattingWriter(formatter::appendTo).compose(ProtobufRepositories::fromDataRepository).asFileFormatter(UTF_8))
             .fileExtension(".json")
-            .build();
-
-    @lombok.experimental.Delegate
-    private final DiskCachingSupport caching = DiskCachingSupport
-            .builder()
-            .id(persistence.getPersistenceId())
-            .rank(persistence.getPersistenceRank())
-            .persistence(persistence)
             .build();
 
     private sdmxdl.format.protobuf.web.MonitorReports parseJsonReports(Reader reader) throws IOException {

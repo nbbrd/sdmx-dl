@@ -21,7 +21,7 @@ import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.DataRepository;
-import tests.sdmxdl.ext.CacheAssert;
+import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.io.*;
@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 
 import static java.util.function.UnaryOperator.identity;
 import static org.assertj.core.api.Assertions.assertThat;
+import static tests.sdmxdl.ext.CacheAssert.assertMonitorCompliance;
+import static tests.sdmxdl.ext.CacheAssert.assertRepositoryCompliance;
 
 /**
  * @author Philippe Charles
@@ -44,7 +46,8 @@ public class DiskCacheTest {
 
     @Test
     public void testCompliance() {
-        CacheAssert.assertCompliance(DiskCache.builder().build());
+        assertMonitorCompliance(DiskCache.<MonitorReports>builder().build());
+        assertRepositoryCompliance(DiskCache.<DataRepository>builder().build());
     }
 
     @Test

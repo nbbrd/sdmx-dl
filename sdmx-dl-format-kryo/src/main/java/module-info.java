@@ -1,5 +1,3 @@
-import sdmxdl.file.spi.FileCaching;
-import sdmxdl.web.spi.WebCaching;
 import sdmxdl.format.spi.Persistence;
 
 module sdmxdl.format.kryo {
@@ -13,7 +11,5 @@ module sdmxdl.format.kryo {
 
     exports sdmxdl.format.kryo;
 
-    provides FileCaching with sdmxdl.format.kryo.KryoProvider;
-    provides WebCaching with sdmxdl.format.kryo.KryoProvider;
     provides Persistence with sdmxdl.format.kryo.KryoProvider;
 }

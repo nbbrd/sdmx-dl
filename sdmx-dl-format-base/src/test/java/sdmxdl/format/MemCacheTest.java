@@ -18,7 +18,7 @@ package sdmxdl.format;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataRepository;
-import tests.sdmxdl.ext.CacheAssert;
+import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
 import java.time.Clock;
@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static tests.sdmxdl.ext.CacheAssert.assertMonitorCompliance;
+import static tests.sdmxdl.ext.CacheAssert.assertRepositoryCompliance;
 
 /**
  * @author Philippe Charles
@@ -38,7 +40,8 @@ public class MemCacheTest {
 
     @Test
     public void testCompliance() {
-        CacheAssert.assertCompliance(MemCache.builder().build());
+        assertMonitorCompliance(MemCache.<MonitorReports>builder().build());
+        assertRepositoryCompliance(MemCache.<DataRepository>builder().build());
     }
 
     @Test
