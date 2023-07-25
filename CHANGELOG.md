@@ -9,8 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- ![PROVIDER] Add RI networking
-- ![PROVIDER] Add support of environment variables
+- ![PROVIDER] Allow networking configuration by environment variables
+- ![PROVIDER] Allow networking configuration per source [#493](https://github.com/nbbrd/sdmx-dl/issues/493)
 
 ### Fixed
 
@@ -28,6 +28,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![SOURCE] Update ECB endpoint [#495](https://github.com/nbbrd/sdmx-dl/issues/495)
 - ![FORMAT] Refactor file format API [#502](https://github.com/nbbrd/sdmx-dl/issues/502)
 - ![PROVIDER] Move curl backend to an external project
+- ![CLI] Use environment variables as default values
 - ![GRPC] Migrate gRPC module to Quarkus framework
 
 ## [3.0.0-beta.11] - 2023-06-02

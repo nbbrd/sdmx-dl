@@ -133,7 +133,10 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
 
     private void checkSourceProperties(SdmxWebSource source, Driver driver) {
         if (onEvent != null) {
-            Collection<String> expected = driver.getDriverProperties();
+            Collection<String> expected = new ArrayList<>();
+            expected.addAll(driver.getDriverProperties());
+            expected.addAll(networking.getNetworkingProperties());
+            expected.addAll(caching.getWebCachingProperties());
             Collection<String> found = source.getProperties().keySet();
             String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
             if (!diff.isEmpty()) {
