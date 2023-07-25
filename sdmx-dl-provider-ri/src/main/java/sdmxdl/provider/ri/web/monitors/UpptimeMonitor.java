@@ -1,12 +1,12 @@
 package sdmxdl.provider.ri.web.monitors;
 
-import sdmxdl.provider.ri.web.RiHttpUtils;
 import internal.util.http.HttpClient;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.Cache;
+import sdmxdl.provider.ri.web.RiHttpUtils;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
@@ -22,7 +22,7 @@ import java.time.Duration;
 import java.util.Locale;
 
 @ServiceProvider
-public final class UpptimeMonitoring implements Monitor {
+public final class UpptimeMonitor implements Monitor {
 
     @Override
     public @NonNull String getMonitorId() {

@@ -8,15 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @lombok.experimental.UtilityClass
 public class NetworkAssert {
 
-    public static void assertCompliance(@NonNull Network x) {
-        assertThat(x.getProxySelector())
+    public static void assertCompliance(@NonNull Network network) {
+        assertThat(network.getProxySelector())
                 .isNotNull();
 
-        assertThat(x.getSSLFactory())
+        assertThat(network.getSSLFactory())
                 .isNotNull()
                 .satisfies(SSLFactoryAssert::assertCompliance);
 
-        assertThat(x.getURLConnectionFactory())
+        assertThat(network.getURLConnectionFactory())
                 .isNotNull();
     }
 }

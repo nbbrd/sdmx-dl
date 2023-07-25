@@ -1,4 +1,4 @@
-package internal.sdmxdl.web;
+package internal.sdmxdl.web.spi;
 
 import lombok.NonNull;
 import sdmxdl.web.spi.SSLFactory;

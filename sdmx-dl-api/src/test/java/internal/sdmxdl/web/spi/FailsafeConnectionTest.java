@@ -25,8 +25,8 @@ import sdmxdl.Feature;
 import sdmxdl.web.SdmxWebSource;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.web.MockedDriver;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.MockedDriver;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.util.EnumSet;
 
@@ -46,7 +46,7 @@ public class FailsafeConnectionTest {
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
 
         ConnectionAssert.assertCompliance(
-                () -> FailsafeConnection.wrap(driver.connect(source, ANY, WebDriverAssert.noOpWebContext())),
+                () -> FailsafeConnection.wrap(driver.connect(source, ANY, DriverAssert.noOpWebContext())),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

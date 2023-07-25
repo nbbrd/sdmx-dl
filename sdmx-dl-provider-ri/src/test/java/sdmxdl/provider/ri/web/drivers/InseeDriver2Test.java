@@ -3,9 +3,8 @@ package sdmxdl.provider.ri.web.drivers;
 import nbbrd.io.text.Parser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.drivers.InseeDriver2;
 import sdmxdl.format.time.*;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.time.Year;
 import java.time.YearMonth;
@@ -20,7 +19,7 @@ public class InseeDriver2Test {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new InseeDriver2());
+        DriverAssert.assertCompliance(new InseeDriver2());
     }
 
     @Test

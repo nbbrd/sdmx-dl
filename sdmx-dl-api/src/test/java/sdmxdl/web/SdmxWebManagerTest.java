@@ -24,7 +24,7 @@ import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.api.SdmxManagerAssert;
-import tests.sdmxdl.web.MockedDriver;
+import tests.sdmxdl.web.spi.MockedDriver;
 
 import java.io.IOException;
 import java.util.AbstractMap;

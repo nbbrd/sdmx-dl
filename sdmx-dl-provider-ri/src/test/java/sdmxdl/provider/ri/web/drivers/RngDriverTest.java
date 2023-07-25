@@ -1,12 +1,11 @@
 package sdmxdl.provider.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.drivers.RngDriver;
 import sdmxdl.Connection;
 import sdmxdl.DataQuery;
 import sdmxdl.Dataflow;
 import sdmxdl.web.SdmxWebSource;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
 
@@ -16,7 +15,7 @@ public class RngDriverTest {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new RngDriver());
+        DriverAssert.assertCompliance(new RngDriver());
     }
 
     public static void main(String[] args) throws IOException {
@@ -24,7 +23,7 @@ public class RngDriverTest {
 
         for (SdmxWebSource source : x.getDefaultSources()) {
             System.out.println(source);
-            try (Connection conn = x.connect(source, ANY, WebDriverAssert.noOpWebContext())) {
+            try (Connection conn = x.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 for (Dataflow dataflow : conn.getFlows()) {
                     System.out.println(dataflow);
                     System.out.println(conn.getStructure(dataflow.getRef()));

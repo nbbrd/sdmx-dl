@@ -16,9 +16,8 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.drivers.Sdmx21Driver;
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +26,6 @@ public class Sdmx21DriverTest {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new Sdmx21Driver());
+        DriverAssert.assertCompliance(new Sdmx21Driver());
     }
 }

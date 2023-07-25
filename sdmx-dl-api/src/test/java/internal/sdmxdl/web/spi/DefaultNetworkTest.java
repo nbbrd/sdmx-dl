@@ -1,6 +1,5 @@
-package internal.sdmxdl.web;
+package internal.sdmxdl.web.spi;
 
-import internal.sdmxdl.web.spi.DefaultNetwork;
 import org.junit.jupiter.api.Test;
 
 import static tests.sdmxdl.web.spi.NetworkAssert.assertCompliance;

@@ -14,16 +14,17 @@ import static tests.sdmxdl.api.TckUtil.startingWith;
 public class NetworkingAssert {
 
     @SuppressWarnings("DataFlowIssue")
-    public static void assertCompliance(@NonNull Networking x) {
-        assertThat(x.getNetworkingId())
-                .containsPattern(SCREAMING_SNAKE_CASE);
+    public static void assertCompliance(@NonNull Networking networking) {
+        assertThat(networking.getNetworkingId())
+                .containsPattern(SCREAMING_SNAKE_CASE)
+                .isNotBlank();
 
-        assertThat(x.getNetworkingProperties())
+        assertThat(networking.getNetworkingProperties())
                 .are(startingWith(NETWORKING_PROPERTY_PREFIX))
                 .doesNotHaveDuplicates();
 
         assertThatNullPointerException()
-                .isThrownBy(() -> x.getNetwork(null, null, null));
+                .isThrownBy(() -> networking.getNetwork(null, null, null));
 
         SdmxWebSource validSource = SdmxWebSource
                 .builder()
@@ -32,7 +33,7 @@ public class NetworkingAssert {
                 .endpointOf("http://localhost")
                 .build();
 
-        assertThat(x.getNetwork(validSource, null, null))
+        assertThat(networking.getNetwork(validSource, null, null))
                 .isNotNull()
                 .satisfies(NetworkAssert::assertCompliance);
     }

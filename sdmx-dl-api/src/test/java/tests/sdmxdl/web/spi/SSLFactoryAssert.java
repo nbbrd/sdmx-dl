@@ -8,11 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @lombok.experimental.UtilityClass
 public class SSLFactoryAssert {
 
-    public static void assertCompliance(@NonNull SSLFactory x) {
-        assertThat(x.getSSLSocketFactory())
+    public static void assertCompliance(@NonNull SSLFactory sslFactory) {
+        assertThat(sslFactory.getSSLSocketFactory())
                 .isNotNull();
 
-        assertThat(x.getHostnameVerifier())
+        assertThat(sslFactory.getHostnameVerifier())
                 .isNotNull();
     }
 }

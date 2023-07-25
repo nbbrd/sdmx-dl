@@ -12,7 +12,7 @@ public class UpptimeTest {
 
     @Test
     public void testGetReport() throws MalformedURLException {
-        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ABS", "up", "100.00%", 4674)))
+        assertThat(UpptimeMonitor.getReport(new UpptimeSummary("ABS", "up", "100.00%", 4674)))
                 .isEqualTo(MonitorReport
                         .builder()
                         .source("ABS")
@@ -21,7 +21,7 @@ public class UpptimeTest {
                         .averageResponseTime(4674L)
                         .build());
 
-        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ILO", "down", "20.97%", 14989)))
+        assertThat(UpptimeMonitor.getReport(new UpptimeSummary("ILO", "down", "20.97%", 14989)))
                 .isEqualTo(MonitorReport
                         .builder()
                         .source("ILO")
@@ -30,7 +30,7 @@ public class UpptimeTest {
                         .averageResponseTime(14989L)
                         .build());
 
-        assertThat(UpptimeMonitoring.getReport(new UpptimeSummary("ILO", "down", "X", -1)))
+        assertThat(UpptimeMonitor.getReport(new UpptimeSummary("ILO", "down", "X", -1)))
                 .isEqualTo(MonitorReport
                         .builder()
                         .source("ILO")

@@ -28,7 +28,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 @ServiceProvider
-public final class UptimeRobotMonitoring implements Monitor {
+public final class UptimeRobotMonitor implements Monitor {
 
     private final URL url = Parser.onURL().parseValue("https://api.uptimerobot.com/v2/getMonitors").orElseThrow(RuntimeException::new);
 
@@ -48,7 +48,7 @@ public final class UptimeRobotMonitoring implements Monitor {
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
 
-        Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitoring::parseReport);
+        Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitor::parseReport);
         return post(url, id.toBody(), parser::parseReader, context, source, getMonitorId());
     }
 

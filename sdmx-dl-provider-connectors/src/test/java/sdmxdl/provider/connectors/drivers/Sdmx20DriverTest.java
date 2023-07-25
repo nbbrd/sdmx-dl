@@ -16,10 +16,9 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.drivers.Sdmx20Driver;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.SdmxWebSource;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static sdmxdl.Languages.ANY;
@@ -31,14 +30,14 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new Sdmx20Driver());
+        DriverAssert.assertCompliance(new Sdmx20Driver());
     }
 
     @Test
     public void testConnect() {
         SdmxWebSource x = SdmxWebSource.builder().id("localhost").driver("connectors:sdmx20").endpointOf("http://localhost").build();
 
-        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, WebDriverAssert.noOpWebContext()).close())
+        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, DriverAssert.noOpWebContext()).close())
                 .doesNotThrowAnyException();
     }
 }

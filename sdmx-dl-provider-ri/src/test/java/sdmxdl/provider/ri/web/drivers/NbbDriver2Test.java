@@ -21,11 +21,10 @@ import sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.drivers.NbbDriver2;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class NbbDriver2Test {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new NbbDriver2());
+        DriverAssert.assertCompliance(new NbbDriver2());
     }
 
     @Test

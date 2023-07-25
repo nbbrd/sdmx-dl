@@ -5,10 +5,9 @@ import internal.util.http.HttpRequest;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.RiHttpUtils;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.WebContext;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.net.*;
 import java.util.ArrayList;
@@ -37,12 +36,12 @@ public class RiHttpUtilsTest {
 
     @Test
     public void testUserAgent() {
-        assertThat(RiHttpUtils.newContext(source, WebDriverAssert.noOpWebContext()).getUserAgent())
+        assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
         String previous = System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), "hello world");
         try {
-            assertThat(RiHttpUtils.newContext(source, WebDriverAssert.noOpWebContext()).getUserAgent())
+            assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                     .startsWith("hello world");
         } finally {
             if (previous != null)

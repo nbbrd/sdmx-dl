@@ -1,6 +1,6 @@
 package sdmxdl.web.spi;
 
-import internal.sdmxdl.web.DefaultNetwork;
+import internal.sdmxdl.web.spi.DefaultNetwork;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;

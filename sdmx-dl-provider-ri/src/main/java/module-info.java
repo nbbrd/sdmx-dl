@@ -1,8 +1,8 @@
 import sdmxdl.provider.ri.file.readers.XmlReader;
 import sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
 import sdmxdl.provider.ri.web.drivers.*;
-import sdmxdl.provider.ri.web.monitors.UpptimeMonitoring;
-import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
+import sdmxdl.provider.ri.web.monitors.UpptimeMonitor;
+import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitor;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.provider.ri.web.networking.RiNetworking;
 import sdmxdl.web.spi.Authenticator;
@@ -47,8 +47,8 @@ module sdmxdl.provider.ri {
             WinPasswordVaultAuthenticator;
 
     provides Monitor with
-            UpptimeMonitoring,
-            UptimeRobotMonitoring;
+            UpptimeMonitor,
+            UptimeRobotMonitor;
 
     provides Networking with
             RiNetworking;

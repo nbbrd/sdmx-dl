@@ -2,10 +2,9 @@ package sdmxdl.provider.ri.file.readers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sdmxdl.provider.ri.file.readers.XmlReader;
 import sdmxdl.file.SdmxFileSource;
 import sdmxdl.format.xml.XmlFileSource;
-import tests.sdmxdl.file.FileReaderAssert;
+import tests.sdmxdl.file.spi.ReaderAssert;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -24,11 +23,11 @@ public class XmlReaderTest {
         SdmxFileSource invalidSource = SdmxFileSource.builder().data(temp.resolve("invalid.csv").toFile()).build();
         String invalidName = "invalid.csv";
 
-        FileReaderAssert.assertCompliance(
+        ReaderAssert.assertCompliance(
                 new XmlReader(),
-                FileReaderAssert.Sample
+                ReaderAssert.Sample
                         .builder()
-                        .context(FileReaderAssert.noOpFileContext())
+                        .context(ReaderAssert.noOpFileContext())
                         .validSource(validSource)
                         .validName(validName)
                         .invalidSource(invalidSource)

@@ -17,8 +17,7 @@
 package sdmxdl.provider.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.drivers.ImfDriver2;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 /**
  * @author Philippe Charles
@@ -27,6 +26,6 @@ public class ImfDriver2Test {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new ImfDriver2());
+        DriverAssert.assertCompliance(new ImfDriver2());
     }
 }

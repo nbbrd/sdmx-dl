@@ -1,4 +1,4 @@
-package tests.sdmxdl.file;
+package tests.sdmxdl.file.spi;
 
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
@@ -10,7 +10,7 @@ import tests.sdmxdl.api.TckUtil;
 import static sdmxdl.Languages.ANY;
 
 @lombok.experimental.UtilityClass
-public class FileReaderAssert {
+public class ReaderAssert {
 
     public FileContext noOpFileContext() {
         return FileContext.builder().build();

@@ -60,4 +60,6 @@ public interface Driver {
     int NATIVE_DRIVER_RANK = Byte.MAX_VALUE;
     int WRAPPED_DRIVER_RANK = 0;
     int UNKNOWN_DRIVER_RANK = -1;
+
+    String DRIVER_PROPERTY_PREFIX = "sdmxdl.driver";
 }

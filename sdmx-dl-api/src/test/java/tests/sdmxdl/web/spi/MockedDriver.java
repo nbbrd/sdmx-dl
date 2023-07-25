@@ -1,4 +1,4 @@
-package tests.sdmxdl.web;
+package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
 import sdmxdl.*;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public final class MockedDriver implements Driver {
 
     @lombok.Builder.Default
-    private final String id = "mockedDriver";
+    private final String id = "MOCKED_DRIVER";
 
     @lombok.Builder.Default
     private final int rank = Driver.UNKNOWN_DRIVER_RANK;

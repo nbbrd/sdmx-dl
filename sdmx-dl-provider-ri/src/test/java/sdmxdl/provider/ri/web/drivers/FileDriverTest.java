@@ -17,8 +17,7 @@
 package sdmxdl.provider.ri.web.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.web.drivers.FileDriver;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +32,7 @@ public class FileDriverTest {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(new FileDriver());
+        DriverAssert.assertCompliance(new FileDriver());
     }
 
     @Test
