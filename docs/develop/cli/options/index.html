@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.115.3">
+<meta name="generator" content="Hugo 0.115.4">
 
 
   <meta name="description" content="An option has the following caracteristics:
@@ -53,7 +53,7 @@ Name Shortcut Parameter Description --verbose -v - Enable verbose mode." />
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2022-06-24T12:59:01+02:00"
+      content="2023-07-19T11:39:32+02:00"
     />
 
 
@@ -86,7 +86,7 @@ Name Shortcut Parameter Description --verbose -v - Enable verbose mode." />
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2022-06-24T12:59:01.00Z",
+      "dateModified": "2023-07-19T11:39:32.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1049,10 +1049,28 @@ The format is <a
 </thead>
 <tbody>
 <tr>
-<td><a id="curl" href="#curl"><code>--curl</code></a></td>
+<td><a id="auto-proxy" href="#auto-proxy"><code>--[no-]auto-proxy</code></a></td>
+<td>-</td>
+<td>-</td>
+<td>Enable automatic proxy detection.</td>
+</tr>
+<tr>
+<td><a id="curl" href="#curl"><code>--[no-]curl</code></a></td>
 <td>-</td>
 <td>-</td>
 <td>Use curl backend instead of JDK.</td>
+</tr>
+<tr>
+<td><a id="no-default-ssl" href="#no-default-ssl"><code>--[no-]default-ssl</code></a></td>
+<td>-</td>
+<td>-</td>
+<td>Disable default truststore.</td>
+</tr>
+<tr>
+<td><a id="no-system-ssl" href="#no-system-ssl"><code>--[no-]system-ssl</code></a></td>
+<td>-</td>
+<td>-</td>
+<td>Disable system truststore.</td>
 </tr>
 <tr>
 <td><a id="no-cache" href="#no-cache"><code>--no-cache</code></a></td>
@@ -1061,25 +1079,7 @@ The format is <a
 <td>Disable caching.</td>
 </tr>
 <tr>
-<td><a id="auto-proxy" href="#auto-proxy"><code>--auto-proxy</code></a></td>
-<td>-</td>
-<td>-</td>
-<td>Enable automatic proxy detection.</td>
-</tr>
-<tr>
-<td><a id="no-default-ssl" href="#no-default-ssl"><code>--no-default-ssl</code></a></td>
-<td>-</td>
-<td>-</td>
-<td>Disable default truststore.</td>
-</tr>
-<tr>
-<td><a id="no-system-ssl" href="#no-system-ssl"><code>--no-system-ssl</code></a></td>
-<td>-</td>
-<td>-</td>
-<td>Disable system truststore.</td>
-</tr>
-<tr>
-<td><a id="no-system-auth" href="#no-system-auth"><code>--no-system-auth</code></a></td>
+<td><a id="no-system-auth" href="#no-system-auth"><code>--system-auth</code></a></td>
 <td>-</td>
 <td>-</td>
 <td>Disable system authentication.</td>
