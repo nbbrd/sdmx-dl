@@ -44,7 +44,7 @@ public final class UisDriver implements Driver {
             .id(CONNECTORS_UIS)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(UIS2::new)))
-            .supportedProperties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("UIS")

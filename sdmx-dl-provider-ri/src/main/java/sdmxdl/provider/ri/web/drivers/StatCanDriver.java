@@ -48,7 +48,7 @@ import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
 import static sdmxdl.DataSet.toDataSet;
-import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
 @ServiceProvider
@@ -62,8 +62,8 @@ public final class StatCanDriver implements Driver {
             .id(RI_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
             .connector(StatCanDriver::newConnection)
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(CACHE_TTL_PROPERTY)
+            .properties(RI_CONNECTION_PROPERTIES)
+            .propertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .id("STATCAN")

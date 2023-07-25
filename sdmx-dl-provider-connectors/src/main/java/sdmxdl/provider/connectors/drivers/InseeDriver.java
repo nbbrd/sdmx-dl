@@ -59,7 +59,7 @@ public final class InseeDriver implements Driver {
             .id(CONNECTORS_INSEE)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("INSEE")

@@ -52,7 +52,7 @@ public final class DotStatDriver2 implements Driver {
             .id(RI_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDriver2::newClient))
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("OECD")

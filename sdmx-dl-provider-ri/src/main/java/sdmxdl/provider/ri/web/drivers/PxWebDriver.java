@@ -48,7 +48,7 @@ import static internal.util.CollectionUtil.zip;
 import static internal.util.gson.GsonUtil.asStream;
 import static internal.util.gson.GsonUtil.getAsString;
 import static java.util.stream.Collectors.toList;
-import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 @ServiceProvider
 public final class PxWebDriver implements Driver {
@@ -65,8 +65,8 @@ public final class PxWebDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(CACHE_TTL_PROPERTY)
+            .properties(RI_CONNECTION_PROPERTIES)
+            .propertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .id("STATFIN")

@@ -62,7 +62,7 @@ public final class InseeDriver2 implements Driver {
             .id(RI_INSEE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("INSEE")

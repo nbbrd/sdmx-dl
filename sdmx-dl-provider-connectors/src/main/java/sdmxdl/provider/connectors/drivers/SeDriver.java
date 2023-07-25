@@ -41,7 +41,7 @@ public final class SeDriver implements Driver {
             .id(CONNECTORS_SE)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(SeClient::new)))
-            .supportedProperties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("SE")

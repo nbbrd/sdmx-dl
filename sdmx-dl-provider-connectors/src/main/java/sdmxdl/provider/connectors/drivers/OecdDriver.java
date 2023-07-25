@@ -40,7 +40,7 @@ public final class OecdDriver implements Driver {
             .id(CONNECTORS_OECD)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(OECD::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("OECD")

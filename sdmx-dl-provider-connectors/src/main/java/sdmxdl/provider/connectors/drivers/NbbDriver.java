@@ -40,7 +40,7 @@ public final class NbbDriver implements Driver {
             .id(CONNECTORS_NBB)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(NBB::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("NBB")

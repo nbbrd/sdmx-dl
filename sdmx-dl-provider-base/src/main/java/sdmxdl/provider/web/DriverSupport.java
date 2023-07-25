@@ -51,7 +51,7 @@ public final class DriverSupport implements Driver {
     private final Collection<SdmxWebSource> sources;
 
     @lombok.Singular
-    private final Collection<String> supportedProperties;
+    private final Collection<String> properties;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -89,14 +89,14 @@ public final class DriverSupport implements Driver {
 
     @Override
     public @NonNull Collection<String> getDriverProperties() {
-        return supportedProperties;
+        return properties;
     }
 
     public static final class Builder {
 
         @NonNull
-        public Builder supportedPropertyOf(@NonNull CharSequence property) {
-            return supportedProperty(property.toString());
+        public Builder propertyOf(@NonNull CharSequence property) {
+            return property(property.toString());
         }
     }
 }

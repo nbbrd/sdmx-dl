@@ -46,7 +46,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static sdmxdl.provider.web.WebProperties.*;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles
@@ -58,7 +58,7 @@ public class RiHttpUtils {
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY,
-            PREEMPTIVE_AUTHENTICATION_PROPERTY
+            PREEMPTIVE_AUTH_PROPERTY
     );
 
     // TODO: document these options?
@@ -100,7 +100,7 @@ public class RiHttpUtils {
                 .readTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .connectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()))
                 .maxRedirects(MAX_REDIRECTS_PROPERTY.get(source.getProperties()))
-                .preemptiveAuthentication(PREEMPTIVE_AUTHENTICATION_PROPERTY.get(source.getProperties()))
+                .preemptiveAuthentication(PREEMPTIVE_AUTH_PROPERTY.get(source.getProperties()))
                 .proxySelector(network::getProxySelector)
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())

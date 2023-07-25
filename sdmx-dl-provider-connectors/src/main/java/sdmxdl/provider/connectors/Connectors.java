@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+
 /**
  * @author Philippe Charles
  */
@@ -169,11 +171,11 @@ public class Connectors {
     }
 
     public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
-            BooleanProperty.of("supportsCompression", false);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".supportsCompression", false);
 
     public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
-            BooleanProperty.of("needsCredentials", false);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".needsCredentials", false);
 
     public static final BooleanProperty NEEDS_URL_ENCODING_PROPERTY =
-            BooleanProperty.of("needsURLEncoding", false);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".needsURLEncoding", false);
 }

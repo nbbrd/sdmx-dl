@@ -34,8 +34,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
-import static sdmxdl.provider.web.WebProperties.TRAILING_SLASH_REQUIRED_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -51,9 +51,9 @@ public final class Sdmx21Driver2 implements Driver {
             .id(RI_SDMX_21)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(Sdmx21Driver2::newClient))
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .supportedPropertyOf(TRAILING_SLASH_REQUIRED_PROPERTY)
+            .properties(RI_CONNECTION_PROPERTIES)
+            .propertyOf(DETAIL_SUPPORTED_PROPERTY)
+            .propertyOf(TRAILING_SLASH_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .id("ABS")
@@ -142,7 +142,7 @@ public final class Sdmx21Driver2 implements Driver {
                     .driver(RI_SDMX_21)
                     .endpointOf("https://sdmx.snieg.mx/service/Rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
+                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://sdmx.snieg.mx")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/inegi")
@@ -261,7 +261,7 @@ public final class Sdmx21Driver2 implements Driver {
                     .driver(RI_SDMX_21)
                     .endpointOf("https://api.worldbank.org/v2/sdmx/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
+                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://data.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wb")
@@ -273,7 +273,7 @@ public final class Sdmx21Driver2 implements Driver {
                     .name("es", "Solución Comercial Integrada Mundial")
                     .driver(RI_SDMX_21)
                     .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
-                    .propertyOf(TRAILING_SLASH_REQUIRED_PROPERTY, true)
+                    .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://wits.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wits")
@@ -287,7 +287,7 @@ public final class Sdmx21Driver2 implements Driver {
     private static Sdmx21RestQueries getQueries(SdmxWebSource s) {
         return Sdmx21RestQueries
                 .builder()
-                .trailingSlashRequired(TRAILING_SLASH_REQUIRED_PROPERTY.get(s.getProperties()))
+                .trailingSlashRequired(TRAILING_SLASH_PROPERTY.get(s.getProperties()))
                 .build();
     }
 

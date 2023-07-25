@@ -49,7 +49,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sdmxdl.provider.web.WebProperties.*;
+import static sdmxdl.provider.web.DriverProperties.*;
 
 /**
  * @author Philippe Charles

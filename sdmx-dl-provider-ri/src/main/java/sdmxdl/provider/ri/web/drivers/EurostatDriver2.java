@@ -68,10 +68,10 @@ import static sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 public final class EurostatDriver2 implements Driver {
 
     public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
-            IntProperty.of("asyncMaxRetries", 10);
+            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncMaxRetries", 10);
 
     public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
-            LongProperty.of("asyncSleepTime", 6000);
+            LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 
     private static final String RI_EUROSTAT = "ri:estat";
 
@@ -81,9 +81,9 @@ public final class EurostatDriver2 implements Driver {
             .id(RI_EUROSTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(EurostatDriver2::newClient))
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(ASYNC_MAX_RETRIES_PROPERTY)
-            .supportedPropertyOf(ASYNC_SLEEP_TIME_PROPERTY)
+            .properties(RI_CONNECTION_PROPERTIES)
+            .propertyOf(ASYNC_MAX_RETRIES_PROPERTY)
+            .propertyOf(ASYNC_SLEEP_TIME_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .id("ESTAT")

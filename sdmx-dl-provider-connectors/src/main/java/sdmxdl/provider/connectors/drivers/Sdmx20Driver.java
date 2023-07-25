@@ -43,8 +43,8 @@ public final class Sdmx20Driver implements Driver {
             .id(CONNECTORS_SDMX_20)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx20Client::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
+            .propertyOf(NEEDS_CREDENTIALS_PROPERTY)
             .build();
 
     private static final class Sdmx20Client extends RestSdmx20Client {

@@ -10,7 +10,7 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 
-import static sdmxdl.provider.web.WebProperties.CACHE_TTL_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 @lombok.Builder
 public final class RestConnector implements WebConnector {

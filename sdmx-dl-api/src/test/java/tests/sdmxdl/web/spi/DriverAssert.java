@@ -7,6 +7,8 @@ import sdmxdl.web.spi.WebContext;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+import static tests.sdmxdl.api.TckUtil.startingWith;
 
 @lombok.experimental.UtilityClass
 public class DriverAssert {
@@ -22,7 +24,7 @@ public class DriverAssert {
                 .isNotBlank();
 
         assertThat(driver.getDriverProperties())
-//                .are(startingWith(DRIVER_PROPERTY_PREFIX))
+                .are(startingWith(DRIVER_PROPERTY_PREFIX))
                 .doesNotHaveDuplicates();
 
         SdmxWebSource validSource = SdmxWebSource

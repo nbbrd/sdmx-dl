@@ -40,7 +40,7 @@ public final class ImfDriver implements Driver {
             .id(CONNECTORS_IMF)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(IMF2::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("IMF")

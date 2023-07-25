@@ -40,7 +40,7 @@ public final class EurostatDriver implements Driver {
             .id(CONNECTORS_EUROSTAT)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(EUROSTAT::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("ESTAT")

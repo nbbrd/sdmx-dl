@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static sdmxdl.provider.connectors.Connectors.*;
 import static sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.web.WebProperties.DETAIL_SUPPORTED_PROPERTY;
+import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 
 /**
  * @author Philippe Charles
@@ -46,11 +46,11 @@ public final class Sdmx21Driver implements Driver {
             .id(CONNECTORS_SDMX_21)
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(Sdmx21Client::new)))
-            .supportedProperties(CONNECTORS_CONNECTION_PROPERTIES)
-            .supportedPropertyOf(NEEDS_CREDENTIALS_PROPERTY)
-            .supportedPropertyOf(NEEDS_URL_ENCODING_PROPERTY)
-            .supportedPropertyOf(SUPPORTS_COMPRESSION_PROPERTY)
-            .supportedPropertyOf(DETAIL_SUPPORTED_PROPERTY)
+            .properties(CONNECTORS_CONNECTION_PROPERTIES)
+            .propertyOf(NEEDS_CREDENTIALS_PROPERTY)
+            .propertyOf(NEEDS_URL_ENCODING_PROPERTY)
+            .propertyOf(SUPPORTS_COMPRESSION_PROPERTY)
+            .propertyOf(DETAIL_SUPPORTED_PROPERTY)
             .source(SdmxWebSource
                     .builder()
                     .id("ABS")

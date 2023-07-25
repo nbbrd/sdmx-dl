@@ -28,6 +28,9 @@ import java.util.Collection;
 @ServiceProvider
 public final class FileDriver implements Driver {
 
+    public static final Property<URI> STRUCTURE_URI_PROPERTY
+            = Property.of(DRIVER_PROPERTY_PREFIX + ".structureURI", null, Parser.onURI(), Formatter.onURI());
+
     private static final String RI_FILE = "ri:file";
 
     private static final BooleanProperty ENABLE =
@@ -40,7 +43,7 @@ public final class FileDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(this::newConnection)
-            .supportedPropertyOf(STRUCTURE_PROPERTY)
+            .propertyOf(STRUCTURE_URI_PROPERTY)
             .build();
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
@@ -111,7 +114,7 @@ public final class FileDriver implements Driver {
         return SdmxFileSource
                 .builder()
                 .data(toFile(source.getEndpoint()))
-                .structure(toFile(STRUCTURE_PROPERTY.get(source.getProperties())))
+                .structure(toFile(STRUCTURE_URI_PROPERTY.get(source.getProperties())))
                 .build();
     }
 
@@ -126,7 +129,4 @@ public final class FileDriver implements Driver {
         }
         return null;
     }
-
-    private static final Property<URI> STRUCTURE_PROPERTY =
-            Property.of("structureURL", null, Parser.onURI(), Formatter.onURI());
 }

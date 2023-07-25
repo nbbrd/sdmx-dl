@@ -1,5 +1,6 @@
 package _test;
 
+import sdmxdl.provider.ri.web.drivers.FileDriver;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.format.xml.XmlWebSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -33,13 +34,13 @@ public class FileSample {
         return source;
     }
 
-    private static SdmxWebSource sourceOf(String name, File data, File struct) throws MalformedURLException {
+    private static SdmxWebSource sourceOf(String name, File data, File struct) {
         return SdmxWebSource
                 .builder()
                 .id(name)
                 .driver("ri:file")
                 .endpoint(data.toURI())
-                .property("structureURL", struct.toURI().toURL().toString())
+                .propertyOf(FileDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
                 .build();
     }
 }

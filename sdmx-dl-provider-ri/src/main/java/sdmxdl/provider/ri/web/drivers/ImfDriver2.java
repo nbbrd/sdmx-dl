@@ -61,7 +61,7 @@ public final class ImfDriver2 implements Driver {
             .id(RI_IMF)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(ImfDriver2::newClient))
-            .supportedProperties(RI_CONNECTION_PROPERTIES)
+            .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("IMF")

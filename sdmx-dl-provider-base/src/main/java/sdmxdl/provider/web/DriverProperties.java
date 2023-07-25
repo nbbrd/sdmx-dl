@@ -22,27 +22,29 @@ import nbbrd.io.text.LongProperty;
 
 import java.util.concurrent.TimeUnit;
 
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
+
 /**
  * @author Philippe Charles
  */
 @lombok.experimental.UtilityClass
-public class WebProperties {
-    
+public class DriverProperties {
+
     /**
-     * Defines the timeout value (in milliseconds) to be used when opening an
+     * Defines the timeout value (in milliseconds) to be used when opening a
      * URL connection. A timeout of zero is interpreted as an infinite timeout.
      * Default value is 2 minutes.
      */
     public static final IntProperty CONNECT_TIMEOUT_PROPERTY =
-            IntProperty.of("connectTimeout", (int) TimeUnit.MINUTES.toMillis(2));
+            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".connectTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
     /**
      * Defines the timeout value (in milliseconds) to be used when reading an
-     * input stream from an URL connection. A timeout of zero is interpreted as
+     * input stream from a URL connection. A timeout of zero is interpreted as
      * an infinite timeout. Default value is 2 minutes.
      */
     public static final IntProperty READ_TIMEOUT_PROPERTY =
-            IntProperty.of("readTimeout", (int) TimeUnit.MINUTES.toMillis(2));
+            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".readTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
     /**
      * Defines the duration (in milliseconds) of response storage in the cache.
@@ -50,30 +52,30 @@ public class WebProperties {
      * is 5 minutes.
      */
     public static final LongProperty CACHE_TTL_PROPERTY =
-            LongProperty.of("cacheTtl", TimeUnit.MINUTES.toMillis(5));
+            LongProperty.of(DRIVER_PROPERTY_PREFIX + ".cacheTtl", TimeUnit.MINUTES.toMillis(5));
 
     /**
      * Defines the max number of redirects to be followed by HTTP client. This
      * limit is intended to prevent infinite loop. Default value is 5.
      */
     public static final IntProperty MAX_REDIRECTS_PROPERTY =
-            IntProperty.of("maxRedirects", 5);
+            IntProperty.of(DRIVER_PROPERTY_PREFIX + ".maxRedirects", 5);
 
     /**
      * Defines if detail query is supported. Default value is false.
      */
     public static final BooleanProperty DETAIL_SUPPORTED_PROPERTY =
-            BooleanProperty.of("detailSupported", false);
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".detailSupported", false);
 
     /**
      * Defines if trailing slash is required in queries. Default value is false.
      */
-    public static final BooleanProperty TRAILING_SLASH_REQUIRED_PROPERTY =
-            BooleanProperty.of("trailingSlashRequired", false);
+    public static final BooleanProperty TRAILING_SLASH_PROPERTY =
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".trailingSlash", false);
 
     /**
      * Defines if preemptive authentication should be used. Default value is false.
      */
-    public static final BooleanProperty PREEMPTIVE_AUTHENTICATION_PROPERTY =
-            BooleanProperty.of("preemptiveAuthentication", false);
+    public static final BooleanProperty PREEMPTIVE_AUTH_PROPERTY =
+            BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".preemptiveAuth", false);
 }
