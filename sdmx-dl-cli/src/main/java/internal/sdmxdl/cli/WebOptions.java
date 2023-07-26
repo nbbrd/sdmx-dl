@@ -27,20 +27,20 @@ import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.provider.Marker;
-import sdmxdl.format.xml.XmlWebSource;
+import sdmxdl.provider.ri.web.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+
+import static java.util.Collections.emptyList;
 
 /**
  * @author Philippe Charles
@@ -54,6 +54,7 @@ public class WebOptions {
 
     @CommandLine.Option(
             names = {"-s", "--sources"},
+            defaultValue = "${env:SDMXDL_SOURCES}",
             paramLabel = "<file>",
             descriptionKey = "cli.sdmx.sourcesFile"
     )
@@ -132,13 +133,16 @@ public class WebOptions {
 
     @ReturnNew
     private List<SdmxWebSource> loadCustomSources() throws IOException {
-        if (sourcesFile != null) {
+        if (isNoConfig()) return emptyList();
+        if (sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile()) {
+            System.setProperty(SourceProperties.SOURCES.getKey(), sourcesFile.toString());
             if (verboseOptions.isVerbose()) {
                 verboseOptions.reportToErrorStream(Anchor.CFG, "Using source file '" + sourcesFile + "'");
             }
-            return XmlWebSource.getParser().parseFile(sourcesFile);
+        } else {
+            System.clearProperty(SourceProperties.SOURCES.getKey());
         }
-        return Collections.emptyList();
+        return SourceProperties.loadCustomSources();
     }
 
     @lombok.extern.java.Log

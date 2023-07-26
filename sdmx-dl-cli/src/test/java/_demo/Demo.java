@@ -1,6 +1,7 @@
 package _demo;
 
 import sdmxdl.*;
+import sdmxdl.provider.ri.web.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -18,6 +19,7 @@ public class Demo {
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .onEvent(Demo::printEvent)
+                .customSources(SourceProperties.loadCustomSources())
                 .build();
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
