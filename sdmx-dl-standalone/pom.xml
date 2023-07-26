@@ -22,6 +22,16 @@
             <artifactId>sdmx-dl-provider-ri</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-format-kryo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -50,6 +60,7 @@
                                 <exclude>META-INF/NOTICE</exclude>
                                 <exclude>META-INF/LICENSE</exclude>
                                 <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>**/*.proto</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -63,26 +74,36 @@
                     <relocations>
                         <relocation>
                             <pattern>sdmxdl.format</pattern>
-                            <shadedPattern>standalone.sdmxdl.format</shadedPattern>
+                            <shadedPattern>standalone_sdmxdl.sdmxdl.format</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>sdmxdl.provider</pattern>
-                            <shadedPattern>standalone.sdmxdl.provider</shadedPattern>
+                            <shadedPattern>standalone_sdmxdl.sdmxdl.provider</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>internal</pattern>
-                            <shadedPattern>standalone.internal</shadedPattern>
+                            <shadedPattern>standalone_sdmxdl.internal</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>nbbrd</pattern>
-                            <shadedPattern>standalone.nbbrd</shadedPattern>
+                            <shadedPattern>standalone_sdmxdl.nbbrd</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com</pattern>
-                            <shadedPattern>standalone.com</shadedPattern>
+                            <shadedPattern>standalone_sdmxdl.com</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>nl</pattern>
+                            <shadedPattern>standalone_sdmxdl.nl</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org</pattern>
+                            <shadedPattern>standalone_sdmxdl.org</shadedPattern>
                         </relocation>
                     </relocations>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                 </configuration>
             </plugin>
         </plugins>
