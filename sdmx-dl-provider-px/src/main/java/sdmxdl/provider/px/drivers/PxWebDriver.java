@@ -1,9 +1,6 @@
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
-import sdmxdl.provider.ri.web.RiHttpUtils;
-import internal.util.CollectionUtil;
-import internal.util.gson.GsonIO;
 import internal.util.http.HttpClient;
 import internal.util.http.HttpMethod;
 import internal.util.http.HttpRequest;
@@ -28,6 +25,7 @@ import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
+import sdmxdl.provider.ri.web.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Driver;
@@ -42,11 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static internal.util.CollectionUtil.indexedStreamOf;
-import static internal.util.CollectionUtil.zip;
-import static internal.util.gson.GsonUtil.asStream;
-import static internal.util.gson.GsonUtil.getAsString;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
@@ -65,7 +58,7 @@ public final class PxWebDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)
-            .properties(RI_CONNECTION_PROPERTIES)
+            .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
                     .builder()
@@ -470,9 +463,9 @@ public final class PxWebDriver implements Driver {
         public Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject obj = json.getAsJsonObject();
             return new Table(
-                    getAsString(obj, "id"),
-                    getAsString(obj, "path"),
-                    getAsString(obj, "title")
+                    GsonUtil.getAsString(obj, "id"),
+                    GsonUtil.getAsString(obj, "path"),
+                    GsonUtil.getAsString(obj, "title")
             );
         }
     }
@@ -495,7 +488,7 @@ public final class PxWebDriver implements Driver {
         }
 
         List<Dimension> toDimensionList() {
-            return indexedStreamOf(variables)
+            return CollectionUtil.indexedStreamOf(variables)
                     .filter(item -> !item.getElement().isTime())
                     .map(item -> item.getElement().toDimension(item.getIndex() + 1))
                     .collect(Collectors.toList());
@@ -520,7 +513,7 @@ public final class PxWebDriver implements Driver {
             JsonObject x = json.getAsJsonObject();
             JsonArray y = x.getAsJsonArray("variables");
             return new TableMeta(
-                    asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
+                    GsonUtil.asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
             );
         }
     }
@@ -544,7 +537,7 @@ public final class PxWebDriver implements Driver {
                     .codelist(Codelist
                             .builder()
                             .ref(CodelistRef.parse(code))
-                            .codes(zip(values, valueTexts))
+                            .codes(CollectionUtil.zip(values, valueTexts))
                             .build())
                     .build();
         }
@@ -557,10 +550,10 @@ public final class PxWebDriver implements Driver {
         public TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new TableVariable(
-                    getAsString(x, "code"),
-                    getAsString(x, "text"),
-                    asStream(x.getAsJsonArray("values")).map(JsonElement::getAsString).collect(toList()),
-                    asStream(x.getAsJsonArray("valueTexts")).map(JsonElement::getAsString).collect(toList()),
+                    GsonUtil.getAsString(x, "code"),
+                    GsonUtil.getAsString(x, "text"),
+                    GsonUtil.asStream(x.getAsJsonArray("values")).map(JsonElement::getAsString).collect(toList()),
+                    GsonUtil.asStream(x.getAsJsonArray("valueTexts")).map(JsonElement::getAsString).collect(toList()),
                     x.has("time") && x.get("time").getAsBoolean()
             );
         }
@@ -574,7 +567,7 @@ public final class PxWebDriver implements Driver {
         Map<String, Collection<String>> itemFilters;
 
         static TableQuery fromDataStructureAndKey(DataStructure dsd, Key key) {
-            return new TableQuery(indexedStreamOf(dsd.getDimensionList())
+            return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensionList())
                     .collect(Collectors.toMap(
                             dimension -> dimension.getElement().getId(),
                             dimension -> fromDimensionAndKey(dimension, key))

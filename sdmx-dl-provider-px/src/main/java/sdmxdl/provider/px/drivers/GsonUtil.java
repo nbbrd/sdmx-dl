@@ -1,15 +1,17 @@
-package internal.util.gson;
+package sdmxdl.provider.px.drivers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import nbbrd.design.MightBePromoted;
 
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@MightBePromoted
 @lombok.experimental.UtilityClass
-public class GsonUtil {
+class GsonUtil {
 
     public static String getAsString(JsonObject obj, String memberName) {
         if (obj.has(memberName)) return obj.get(memberName).getAsString();

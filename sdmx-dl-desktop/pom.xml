@@ -70,6 +70,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-px</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>

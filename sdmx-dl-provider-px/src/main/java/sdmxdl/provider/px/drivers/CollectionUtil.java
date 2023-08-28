@@ -1,11 +1,14 @@
-package internal.util;
+package sdmxdl.provider.px.drivers;
+
+import nbbrd.design.MightBePromoted;
 
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+@MightBePromoted
 @lombok.experimental.UtilityClass
-public class CollectionUtil {
+class CollectionUtil {
 
     public static <K, V> Map<K, V> zip(Collection<K> keys, Collection<V> values) {
         Map<K, V> result = new HashMap<>();

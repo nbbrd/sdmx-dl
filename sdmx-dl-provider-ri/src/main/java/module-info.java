@@ -26,6 +26,9 @@ module sdmxdl.provider.ri {
     requires nbbrd.io.curl;
     requires nbbrd.net.proxy;
 
+    exports sdmxdl.provider.ri.web to sdmxdl.provider.px;
+    exports internal.util.http to sdmxdl.provider.px;
+
     provides Driver with
             BbkDriver,
             DotStatDriver2,
@@ -34,7 +37,6 @@ module sdmxdl.provider.ri {
             ImfDriver2,
             InseeDriver2,
             NbbDriver2,
-            PxWebDriver,
             RngDriver,
             Sdmx21Driver2,
             StatCanDriver;

@@ -1,7 +1,8 @@
-package internal.util.gson;
+package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.TextFormatter;
 import nbbrd.io.text.TextParser;
 
@@ -9,8 +10,9 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+@MightBePromoted
 @lombok.experimental.UtilityClass
-public class GsonIO {
+class GsonIO {
 
     @lombok.Builder
     public static final class GsonParser<T> implements TextParser<T> {

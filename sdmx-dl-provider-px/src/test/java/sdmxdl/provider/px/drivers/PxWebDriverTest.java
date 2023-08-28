@@ -1,11 +1,14 @@
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.px.drivers;
 
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataStructureRef;
-import wiremock.com.google.common.collect.ImmutableMap;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
@@ -14,6 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 
 public class PxWebDriverTest {
+
+    @Test
+    public void testCompliance() {
+        DriverAssert.assertCompliance(new PxWebDriver());
+    }
 
     @Test
     public void testConfig() throws IOException {
@@ -56,9 +64,11 @@ public class PxWebDriverTest {
 
     @Test
     public void testTableQuery() throws IOException {
-        PxWebDriver.TableQuery query = new PxWebDriver.TableQuery(
-                ImmutableMap.of("kon", asList("1", "2"), "ContentsCode", singletonList("BE0101N1"))
-        );
+        Map<String, Collection<String>> itemFilters = new HashMap<>();
+        itemFilters.put("kon", asList("1", "2"));
+        itemFilters.put("ContentsCode", singletonList("BE0101N1"));
+
+        PxWebDriver.TableQuery query = new PxWebDriver.TableQuery(itemFilters);
 
 //        System.out.println(PxWebDriver.TableQuery.FORMATTER.formatToString(query));
 
