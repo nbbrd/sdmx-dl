@@ -55,9 +55,9 @@ import static sdmxdl.format.xml.XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21;
 /**
  * @author Philippe Charles
  */
-public abstract class HttpRestClientTest {
+public abstract class HttpClientTest {
 
-    abstract protected HttpClient getRestClient(HttpContext context);
+    abstract protected HttpClient getClient(HttpContext context);
 
     abstract protected WireMockConfiguration getWireMockConfiguration();
 
@@ -71,7 +71,7 @@ public abstract class HttpRestClientTest {
         HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         assertThatNullPointerException()
                 .isThrownBy(() -> x.send(null));
@@ -85,7 +85,7 @@ public abstract class HttpRestClientTest {
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .userAgent("hello world")
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -121,7 +121,7 @@ public abstract class HttpRestClientTest {
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .userAgent("hello world")
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(post(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -158,7 +158,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -181,7 +181,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         String customErrorMessage = "Custom error message";
 
@@ -210,7 +210,7 @@ public abstract class HttpRestClientTest {
         HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         assertThatIOException()
                 .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("ftp://localhost")).mediaType(Xml.APPLICATION_XML_UTF_8).build()))
@@ -222,7 +222,7 @@ public abstract class HttpRestClientTest {
         HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         assertThatIOException()
                 .isThrownBy(() -> x.send(HttpRequest.builder().query(new URL("http://localhoooooost")).mediaType(Xml.APPLICATION_XML_UTF_8).build()))
@@ -237,7 +237,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
@@ -266,7 +266,7 @@ public abstract class HttpRestClientTest {
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .maxRedirects(0)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         String absoluteSecondURL = wireURL(SECOND_URL).toString();
 
@@ -291,7 +291,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         for (int redirection : getHttpRedirectionCodes()) {
             wire.resetAll();
@@ -311,7 +311,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         String location = wireHttpUrl(SECOND_URL);
 
@@ -332,7 +332,7 @@ public abstract class HttpRestClientTest {
         HttpContext context = HttpContext
                 .builder()
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -355,7 +355,7 @@ public abstract class HttpRestClientTest {
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .readTimeout(readTimeout)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML).withFixedDelay(readTimeout * 2)));
@@ -375,7 +375,7 @@ public abstract class HttpRestClientTest {
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpClient x = getRestClient(context);
+            HttpClient x = getClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -399,7 +399,7 @@ public abstract class HttpRestClientTest {
                     .authenticator(HttpAuthenticator.noOp())
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpClient x = getRestClient(context);
+            HttpClient x = getClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -427,7 +427,7 @@ public abstract class HttpRestClientTest {
                     .authenticator(authenticatorOf("user", "xyz"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpClient x = getRestClient(context);
+            HttpClient x = getClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -456,7 +456,7 @@ public abstract class HttpRestClientTest {
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpClient x = getRestClient(context);
+            HttpClient x = getClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized().withHeader(HTTP_AUTHENTICATE_HEADER, BASIC_AUTH_RESPONSE)));
@@ -482,7 +482,7 @@ public abstract class HttpRestClientTest {
                     .authenticator(authenticatorOf("user", "password"))
                     .preemptiveAuthentication(preemptive)
                     .build();
-            HttpClient x = getRestClient(context);
+            HttpClient x = getClient(context);
 
             wire.resetAll();
             wire.stubFor(get(SAMPLE_URL).willReturn(unauthorized()));
@@ -503,7 +503,7 @@ public abstract class HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get("/abc/../first.xml").willReturn(okXml(SAMPLE_XML)));

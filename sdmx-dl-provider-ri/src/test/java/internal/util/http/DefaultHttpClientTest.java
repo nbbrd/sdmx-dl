@@ -16,14 +16,14 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 
-public abstract class DefaultHttpClientTest extends HttpRestClientTest {
+public abstract class DefaultHttpClientTest extends HttpClientTest {
 
     abstract protected URLConnectionFactory getURLConnectionFactory();
 
     abstract protected boolean isHttpsURLConnectionSupported();
 
     @Override
-    protected HttpClient getRestClient(HttpContext context) {
+    protected HttpClient getClient(HttpContext context) {
         return new DefaultHttpClient(
                 context
                         .toBuilder()
@@ -53,7 +53,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
                 .sslSocketFactory(counting(this::wireSSLSocketFactory, sslSocketFactoryCount))
                 .hostnameVerifier(counting(this::wireHostnameVerifier, hostnameVerifierCount))
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(okXml(SAMPLE_XML)));
@@ -81,7 +81,7 @@ public abstract class DefaultHttpClientTest extends HttpRestClientTest {
                 .sslSocketFactory(this::wireSSLSocketFactory)
                 .hostnameVerifier(this::wireHostnameVerifier)
                 .build();
-        HttpClient x = getRestClient(context);
+        HttpClient x = getClient(context);
 
         wire.resetAll();
         wire.stubFor(get(SAMPLE_URL).willReturn(ok()));

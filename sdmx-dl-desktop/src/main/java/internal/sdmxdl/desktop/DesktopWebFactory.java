@@ -12,6 +12,7 @@ public class DesktopWebFactory {
 
     static {
         System.setProperty("enableRngDriver", "true");
+        System.setProperty("enablePxWebDriver", "true");
     }
 
     public static SdmxWebManager loadManager() {

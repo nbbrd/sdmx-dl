@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * @author Philippe Charles
  */
-public class CurlRestClientTest extends DefaultHttpClientTest {
+public class CurlClientTest extends DefaultHttpClientTest {
 
     @Override
     protected URLConnectionFactory getURLConnectionFactory() {

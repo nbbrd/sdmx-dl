@@ -22,7 +22,7 @@ import sdmxdl.web.spi.URLConnectionFactory;
 /**
  * @author Philippe Charles
  */
-public class JdkRestClientTest extends DefaultHttpClientTest {
+public class JdkClientTest extends DefaultHttpClientTest {
 
     @Override
     protected URLConnectionFactory getURLConnectionFactory() {
