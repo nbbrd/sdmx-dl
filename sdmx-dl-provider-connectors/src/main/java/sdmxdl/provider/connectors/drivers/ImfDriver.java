@@ -16,7 +16,7 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.ConnectorsRestClient;
+import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
@@ -24,12 +24,13 @@ import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Driver;
 
-import static sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
+@DirectImpl
+@ServiceProvider
 public final class ImfDriver implements Driver {
 
     private static final String CONNECTORS_IMF = "connectors:imf";

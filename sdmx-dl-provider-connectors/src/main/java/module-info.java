@@ -4,6 +4,7 @@ import sdmxdl.web.spi.Driver;
 module sdmxdl.provider.connectors {
 
     requires static lombok;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.checkerframework.checker.qual;
 

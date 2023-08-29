@@ -1,6 +1,7 @@
 package sdmxdl.format.protobuf;
 
 import com.google.protobuf.MessageLite;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.format.protobuf.web.MonitorReports;
 import sdmxdl.format.spi.Persistence;
@@ -12,7 +13,8 @@ import java.io.OutputStream;
 import static nbbrd.io.FileFormatter.onFormattingStream;
 import static nbbrd.io.FileParser.onParsingStream;
 
-@ServiceProvider(Persistence.class)
+@DirectImpl
+@ServiceProvider
 public final class ProtobufProvider implements Persistence {
 
     @lombok.experimental.Delegate

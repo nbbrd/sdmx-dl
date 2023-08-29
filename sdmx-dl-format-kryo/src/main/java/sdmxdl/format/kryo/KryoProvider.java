@@ -1,13 +1,15 @@
 package sdmxdl.format.kryo;
 
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 
-@ServiceProvider(Persistence.class)
+@DirectImpl
+@ServiceProvider
 public final class KryoProvider implements Persistence {
 
     private static final String ID = "KRYO";

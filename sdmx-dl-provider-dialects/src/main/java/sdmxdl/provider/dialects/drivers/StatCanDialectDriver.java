@@ -42,8 +42,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.ri.web.RiHttpUtils.newClient;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;

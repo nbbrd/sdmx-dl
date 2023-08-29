@@ -1,6 +1,7 @@
 package sdmxdl.format.protobuf;
 
 import com.google.protobuf.util.JsonFormat;
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
@@ -12,7 +13,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static nbbrd.io.text.TextFormatter.onFormattingWriter;
 import static nbbrd.io.text.TextParser.onParsingReader;
 
-@ServiceProvider(Persistence.class)
+@DirectImpl
+@ServiceProvider
 public final class JsonProvider implements Persistence {
 
     private final JsonFormat.Parser parser = JsonFormat.parser();

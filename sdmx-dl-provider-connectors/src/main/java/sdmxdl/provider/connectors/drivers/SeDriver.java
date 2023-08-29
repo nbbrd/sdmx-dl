@@ -16,7 +16,7 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.ConnectorsRestClient;
+import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 /**
  * @author Philippe Charles
  */
+@DirectImpl
 @ServiceProvider
 public final class SeDriver implements Driver {
 

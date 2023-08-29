@@ -1,6 +1,6 @@
 package internal.sdmxdl.desktop;
 
-import sdmxdl.provider.ri.web.SourceProperties;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
@@ -12,6 +12,7 @@ public class DesktopWebFactory {
 
     static {
         System.setProperty("enableRngDriver", "true");
+        System.setProperty("enableFileDriver", "true");
         System.setProperty("enablePxWebDriver", "true");
     }
 

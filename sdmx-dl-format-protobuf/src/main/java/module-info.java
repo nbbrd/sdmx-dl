@@ -3,6 +3,7 @@ import sdmxdl.format.spi.Persistence;
 module sdmxdl.format.protobuf {
 
     requires static lombok;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.checkerframework.checker.qual;
 

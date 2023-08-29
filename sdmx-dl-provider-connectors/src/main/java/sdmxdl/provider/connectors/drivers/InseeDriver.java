@@ -16,8 +16,7 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.ConnectorsRestClient;
-import sdmxdl.provider.connectors.HasDetailSupported;
+import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
@@ -41,13 +40,14 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import static sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
 
 /**
  * @author Philippe Charles
  */
+@DirectImpl
 @ServiceProvider
 public final class InseeDriver implements Driver {
 

@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.provider.ri.web.networking.RiNetworking;
+import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.spi.Networking;
 
 @lombok.Getter

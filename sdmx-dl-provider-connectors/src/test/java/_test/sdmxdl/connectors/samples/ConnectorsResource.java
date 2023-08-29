@@ -25,8 +25,8 @@ import it.bancaditalia.oss.sdmx.util.LocalizedText;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
-import sdmxdl.provider.connectors.Connectors;
-import sdmxdl.provider.connectors.PortableTimeSeriesCursor;
+import sdmxdl.provider.connectors.drivers.Connectors;
+import sdmxdl.provider.connectors.drivers.PortableTimeSeriesCursor;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 

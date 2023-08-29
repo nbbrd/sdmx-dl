@@ -16,7 +16,7 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import sdmxdl.provider.connectors.ConnectorsRestClient;
+import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
@@ -26,12 +26,13 @@ import sdmxdl.web.spi.Driver;
 import java.net.URI;
 import java.util.Map;
 
-import static sdmxdl.provider.connectors.Connectors.NEEDS_CREDENTIALS_PROPERTY;
-import static sdmxdl.provider.connectors.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.connectors.drivers.Connectors.NEEDS_CREDENTIALS_PROPERTY;
+import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
  */
+@DirectImpl
 @ServiceProvider
 public final class Sdmx20Driver implements Driver {
 

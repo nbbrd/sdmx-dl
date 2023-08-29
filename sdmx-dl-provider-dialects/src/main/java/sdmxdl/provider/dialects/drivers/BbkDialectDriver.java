@@ -24,7 +24,7 @@ import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.web.*;
+import sdmxdl.provider.ri.drivers.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.SdmxWebSource;
@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles

@@ -1,5 +1,6 @@
 package sdmxdl.testing;
 
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
 import sdmxdl.provider.Validator;
@@ -173,6 +174,7 @@ public enum OtherRules {
                 : null;
     }
 
+    @DirectImpl
     @ServiceProvider
     public static final class OtherRulesProvider implements WebRuleBatch {
 

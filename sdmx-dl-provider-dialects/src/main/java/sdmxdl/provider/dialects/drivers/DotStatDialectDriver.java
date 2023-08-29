@@ -17,7 +17,7 @@
 package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
-import sdmxdl.provider.ri.web.RiRestClient;
+import sdmxdl.provider.ri.drivers.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 

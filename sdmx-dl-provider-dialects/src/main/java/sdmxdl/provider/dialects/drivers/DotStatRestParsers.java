@@ -10,7 +10,7 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.web.RiRestParsers;
+import sdmxdl.provider.ri.drivers.RiRestParsers;
 
 import java.util.List;
 import java.util.Optional;

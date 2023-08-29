@@ -17,7 +17,7 @@
 package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
-import sdmxdl.provider.ri.web.RiRestClient;
+import sdmxdl.provider.ri.drivers.RiRestClient;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
 
 /**

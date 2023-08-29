@@ -27,7 +27,7 @@ import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.provider.ri.web.SourceProperties;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 

@@ -17,7 +17,7 @@
 package sdmxdl.provider.dialects.drivers;
 
 import _tests.RestClientResponseMock;
-import sdmxdl.provider.ri.web.RiRestClient;
+import sdmxdl.provider.ri.drivers.RiRestClient;
 import internal.util.http.HttpResponseException;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;

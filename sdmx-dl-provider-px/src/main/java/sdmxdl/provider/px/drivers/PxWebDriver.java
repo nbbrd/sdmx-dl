@@ -6,6 +6,7 @@ import internal.util.http.HttpMethod;
 import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -25,7 +26,7 @@ import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
-import sdmxdl.provider.ri.web.RiHttpUtils;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.web.spi.Driver;
@@ -43,10 +44,11 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
+@DirectImpl
 @ServiceProvider
 public final class PxWebDriver implements Driver {
 
-    private static final String RI_PXWEB = "ri:pxweb";
+    private static final String PX_PXWEB = "px:pxweb";
 
     private static final BooleanProperty ENABLE =
             BooleanProperty.of("enablePxWebDriver", false);
@@ -54,7 +56,7 @@ public final class PxWebDriver implements Driver {
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_PXWEB)
+            .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)
@@ -66,7 +68,7 @@ public final class PxWebDriver implements Driver {
                     .name("en", "Statistics Finland")
                     .name("sv", "Statistikcentralen")
                     .name("fi", "Tilastokeskus")
-                    .driver(RI_PXWEB)
+                    .driver(PX_PXWEB)
                     .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
                     .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
                     .build())

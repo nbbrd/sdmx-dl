@@ -6,7 +6,7 @@ import sdmxdl.CodelistRef;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.ri.web.RiRestQueries;
+import sdmxdl.provider.ri.drivers.RiRestQueries;
 
 import java.net.URL;
 

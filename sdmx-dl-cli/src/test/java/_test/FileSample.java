@@ -1,13 +1,12 @@
 package _test;
 
-import sdmxdl.provider.ri.web.drivers.FileDriver;
+import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.web.SdmxWebSource;
 import sdmxdl.format.xml.XmlWebSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -40,7 +39,7 @@ public class FileSample {
                 .id(name)
                 .driver("ri:file")
                 .endpoint(data.toURI())
-                .propertyOf(FileDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
+                .propertyOf(FileRiDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
                 .build();
     }
 }

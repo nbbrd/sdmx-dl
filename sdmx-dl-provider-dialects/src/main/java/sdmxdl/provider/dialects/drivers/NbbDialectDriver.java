@@ -34,7 +34,9 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.SdmxFix;
-import sdmxdl.provider.ri.web.*;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.provider.ri.drivers.RiRestClient;
+import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.SdmxWebSource;
@@ -48,7 +50,7 @@ import java.util.EnumSet;
 import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 import static sdmxdl.provider.SdmxFix.Category.PROTOCOL;
 import static sdmxdl.provider.SdmxFix.Category.QUERY;
-import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles

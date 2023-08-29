@@ -2,6 +2,7 @@ package sdmxdl.provider.ri.caching;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
@@ -33,6 +34,7 @@ import java.util.function.Function;
 
 import static nbbrd.io.text.BaseProperty.keysOf;
 
+@DirectImpl
 @ServiceProvider(FileCaching.class)
 @ServiceProvider(WebCaching.class)
 public final class RiCaching implements FileCaching, WebCaching {

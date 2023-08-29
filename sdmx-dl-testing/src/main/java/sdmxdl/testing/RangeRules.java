@@ -1,5 +1,6 @@
 package sdmxdl.testing;
 
+import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataStructure;
 import sdmxdl.Dataflow;
@@ -72,6 +73,7 @@ public enum RangeRules {
         return value -> !range.contains(value) ? String.format(Locale.ROOT, "Expecting range '%s' to contain value %s", range.toShortString(), value) : null;
     }
 
+    @DirectImpl
     @ServiceProvider
     public static final class RangeRulesProvider implements WebRuleBatch {
 

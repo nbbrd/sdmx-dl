@@ -1,14 +1,14 @@
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
+import sdmxdl.provider.ri.authenticators.WinPasswordVaultAuthenticator;
 import sdmxdl.provider.ri.caching.RiCaching;
-import sdmxdl.provider.ri.file.readers.XmlReader;
-import sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
-import sdmxdl.provider.ri.web.drivers.FileDriver;
-import sdmxdl.provider.ri.web.drivers.RngDriver;
-import sdmxdl.provider.ri.web.drivers.Sdmx21Driver2;
-import sdmxdl.provider.ri.web.monitors.UpptimeMonitor;
-import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitor;
-import sdmxdl.provider.ri.web.networking.RiNetworking;
+import sdmxdl.provider.ri.drivers.FileRiDriver;
+import sdmxdl.provider.ri.drivers.RngRiDriver;
+import sdmxdl.provider.ri.drivers.Sdmx21RiDriver;
+import sdmxdl.provider.ri.monitors.UpptimeMonitor;
+import sdmxdl.provider.ri.monitors.UptimeRobotMonitor;
+import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.provider.ri.readers.XmlReader;
 import sdmxdl.web.spi.*;
 
 module sdmxdl.provider.ri {
@@ -28,14 +28,14 @@ module sdmxdl.provider.ri {
     requires nbbrd.io.curl;
     requires nbbrd.net.proxy;
 
-    exports sdmxdl.provider.ri.web to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
     exports internal.util.http to sdmxdl.provider.dialects, sdmxdl.provider.px;
     exports internal.util.http.ext to sdmxdl.provider.dialects, sdmxdl.provider.px;
 
     provides Driver with
-            FileDriver,
-            RngDriver,
-            Sdmx21Driver2;
+            FileRiDriver,
+            RngRiDriver,
+            Sdmx21RiDriver;
 
     provides Reader with
             XmlReader;
@@ -56,5 +56,5 @@ module sdmxdl.provider.ri {
     provides WebCaching with
             RiCaching;
 
-    opens sdmxdl.provider.ri.web.monitors to com.google.gson;
+    opens sdmxdl.provider.ri.monitors to com.google.gson;
 }

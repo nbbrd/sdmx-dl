@@ -1,6 +1,6 @@
 package sdmxdl.grpc;
 
-import sdmxdl.provider.ri.web.SourceProperties;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.SdmxWebSource;
 
