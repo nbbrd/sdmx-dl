@@ -14,9 +14,9 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
-import _test.sdmxdl.ri.RestClientResponseMock;
+import _tests.RestClientResponseMock;
 import sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.HttpResponseException;
 import nbbrd.io.net.MediaType;
@@ -32,25 +32,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static sdmxdl.provider.ri.web.drivers.NbbDriver2.checkInternalErrorRedirect;
+import static sdmxdl.provider.dialects.drivers.NbbDialectDriver.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.DataDetail.FULL;
 
 /**
  * @author Philippe Charles
  */
-public class NbbDriver2Test {
+public class NbbDialectDriverTest {
 
     @Test
     public void testCompliance() {
-        DriverAssert.assertCompliance(new NbbDriver2());
+        DriverAssert.assertCompliance(new NbbDialectDriver());
     }
 
     @Test
     public void testQueries() throws MalformedURLException {
         URL endpoint = new URL("https://stat.nbb.be/restsdmx/sdmx.ashx");
 
-        NbbDriver2.NbbQueries queries = new NbbDriver2.NbbQueries();
+        NbbDialectDriver.NbbQueries queries = new NbbDialectDriver.NbbQueries();
 
         assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.builder().key(Key.parse("AUD.M")).detail(FULL).build()), DataStructureRef.parse("abc")))
                 .describedAs("SdmxFix#1")
@@ -103,7 +103,7 @@ public class NbbDriver2Test {
     }
 
     private RiRestClient newClient(RestClientResponseMock response) throws MalformedURLException {
-        return NbbDriver2.newClient(
+        return NbbDialectDriver.newClient(
                 Marker.parse("NBBFIX2"),
                 new URL("https://stat.nbb.be/restsdmx/sdmx.ashx"),
                 Languages.ANY,

@@ -29,6 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![FORMAT] Refactor file format API [#502](https://github.com/nbbrd/sdmx-dl/issues/502)
 - ![PROVIDER] Move curl backend to an external project
 - ![PROVIDER] Move PxWebDriver to its own module
+- ![PROVIDER] Move dialects drivers to their own module
 - ![CLI] Use environment variables as default values
 - ![GRPC] Migrate gRPC module to Quarkus framework
 

@@ -81,6 +81,16 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <artifactId>sdmx-dl-provider-dialects</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-provider-px</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <artifactId>sdmx-dl-provider-base</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>

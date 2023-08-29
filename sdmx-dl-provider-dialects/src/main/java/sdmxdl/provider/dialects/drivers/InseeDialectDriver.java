@@ -14,9 +14,10 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
@@ -51,15 +52,16 @@ import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
-public final class InseeDriver2 implements Driver {
+@DirectImpl
+@ServiceProvider
+public final class InseeDialectDriver implements Driver {
 
-    private static final String RI_INSEE = "ri:insee";
+    private static final String DIALECTS_INSEE = "dialects:insee";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_INSEE)
+            .id(DIALECTS_INSEE)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
             .properties(RI_CONNECTION_PROPERTIES)
@@ -68,7 +70,7 @@ public final class InseeDriver2 implements Driver {
                     .id("INSEE")
                     .name("en", "National Institute of Statistics and Economic Studies")
                     .name("fr", "Institut national de la statistique et des études économiques")
-                    .driver(RI_INSEE)
+                    .driver(DIALECTS_INSEE)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")

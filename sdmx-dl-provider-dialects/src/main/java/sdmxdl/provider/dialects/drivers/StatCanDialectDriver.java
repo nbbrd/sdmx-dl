@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import com.google.gson.*;
 import internal.util.http.HttpClient;
@@ -6,6 +6,7 @@ import internal.util.http.HttpRequest;
 import internal.util.http.HttpResponse;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
@@ -51,17 +52,18 @@ import static sdmxdl.DataSet.toDataSet;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
+@DirectImpl
 @ServiceProvider
-public final class StatCanDriver implements Driver {
+public final class StatCanDialectDriver implements Driver {
 
-    private static final String RI_STATCAN = "ri:statcan";
+    private static final String DIALECTS_STATCAN = "dialects:statcan";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_STATCAN)
+            .id(DIALECTS_STATCAN)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(StatCanDriver::newConnection)
+            .connector(StatCanDialectDriver::newConnection)
             .properties(RI_CONNECTION_PROPERTIES)
             .propertyOf(CACHE_TTL_PROPERTY)
             .source(SdmxWebSource
@@ -69,7 +71,7 @@ public final class StatCanDriver implements Driver {
                     .id("STATCAN")
                     .name("en", "Statistics Canada")
                     .name("fr", "Statistique Canada")
-                    .driver(RI_STATCAN)
+                    .driver(DIALECTS_STATCAN)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                     .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))

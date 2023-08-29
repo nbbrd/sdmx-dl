@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import org.junit.jupiter.api.Test;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -22,10 +22,10 @@ import tests.sdmxdl.web.spi.DriverAssert;
 /**
  * @author Philippe Charles
  */
-public class DotStatDriver2Test {
+public class ImfDialectDriverTest {
 
     @Test
     public void testCompliance() {
-        DriverAssert.assertCompliance(new DotStatDriver2());
+        DriverAssert.assertCompliance(new ImfDialectDriver());
     }
 }

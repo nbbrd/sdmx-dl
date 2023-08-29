@@ -14,9 +14,10 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import internal.util.http.URLQueryBuilder;
+import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -41,24 +42,25 @@ import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
-public final class BbkDriver implements Driver {
+@DirectImpl
+@ServiceProvider
+public final class BbkDialectDriver implements Driver {
 
-    private static final String RI_BBK = "ri:bbk";
+    private static final String DIALECTS_BBK = "dialects:bbk";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_BBK)
+            .id(DIALECTS_BBK)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(BbkDriver::newClient))
+            .connector(RestConnector.of(BbkDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("BBK")
                     .name("en", "Deutsche Bundesbank")
                     .name("de", "Deutsche Bundesbank")
-                    .driver(RI_BBK)
+                    .driver(DIALECTS_BBK)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")

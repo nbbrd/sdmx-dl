@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.web;
+package sdmxdl.provider.dialects.drivers;
 
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
@@ -6,6 +6,7 @@ import sdmxdl.CodelistRef;
 import sdmxdl.DataStructureRef;
 import sdmxdl.DataflowRef;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.ri.web.RiRestQueries;
 
 import java.net.URL;
 

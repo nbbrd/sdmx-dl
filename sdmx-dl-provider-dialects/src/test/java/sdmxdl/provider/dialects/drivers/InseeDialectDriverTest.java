@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.io.text.Parser;
 import org.assertj.core.api.Assertions;
@@ -9,22 +9,22 @@ import tests.sdmxdl.web.spi.DriverAssert;
 import java.time.Year;
 import java.time.YearMonth;
 
-import static sdmxdl.provider.ri.web.drivers.InseeDriver2.REPORTING_TWO_MONTH;
+import static sdmxdl.provider.dialects.drivers.InseeDialectDriver.REPORTING_TWO_MONTH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sdmxdl.format.time.StandardReportingFormat.REPORTING_QUARTER;
 import static sdmxdl.format.time.StandardReportingFormat.REPORTING_SEMESTER;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 
-public class InseeDriver2Test {
+public class InseeDialectDriverTest {
 
     @Test
     public void testCompliance() {
-        DriverAssert.assertCompliance(new InseeDriver2());
+        DriverAssert.assertCompliance(new InseeDialectDriver());
     }
 
     @Test
     public void testPeriodParser() {
-        Parser<ObservationalTimePeriod> x = InseeDriver2.EXTENDED_TIME_PARSER;
+        Parser<ObservationalTimePeriod> x = InseeDialectDriver.EXTENDED_TIME_PARSER;
         assertThat(x.parse("2013")).isEqualTo(GregorianTimePeriod.Year.of(Year.of(2013)));
         assertThat(x.parse("1990-09")).isEqualTo(GregorianTimePeriod.YearMonth.of(YearMonth.of(1990, 9)));
         assertThat(x.parse("2014-Q3")).isEqualTo(ReportingTimePeriod.of(REPORTING_QUARTER, StandardReportingPeriod.parse("2014-Q3")));

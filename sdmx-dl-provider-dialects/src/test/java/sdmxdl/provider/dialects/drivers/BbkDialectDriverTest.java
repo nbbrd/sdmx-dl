@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.DataQuery;
@@ -34,18 +34,18 @@ import static sdmxdl.DataDetail.SERIES_KEYS_ONLY;
 /**
  * @author Philippe Charles
  */
-public class BbkDriverTest {
+public class BbkDialectDriverTest {
 
     @Test
     public void testCompliance() {
-        DriverAssert.assertCompliance(new BbkDriver());
+        DriverAssert.assertCompliance(new BbkDialectDriver());
     }
 
     @Test
     public void testQueries() throws MalformedURLException {
         URL endpoint = new URL(" https://api.statistiken.bundesbank.de/rest");
 
-        BbkDriver.BbkQueries queries = new BbkDriver.BbkQueries();
+        BbkDialectDriver.BbkQueries queries = new BbkDialectDriver.BbkQueries();
 
         assertThat(queries.getFlowsQuery(endpoint).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2 + SdmxFix#3")

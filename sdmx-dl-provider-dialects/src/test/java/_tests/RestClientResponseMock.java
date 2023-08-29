@@ -1,4 +1,4 @@
-package _test.sdmxdl.ri;
+package _tests;
 
 import internal.util.http.HttpResponse;
 import lombok.NonNull;

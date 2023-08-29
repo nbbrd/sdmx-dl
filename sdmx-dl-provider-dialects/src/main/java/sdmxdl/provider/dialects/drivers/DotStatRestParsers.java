@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.web;
+package sdmxdl.provider.dialects.drivers;
 
 import lombok.NonNull;
 import nbbrd.io.FileParser;
@@ -10,6 +10,7 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.SdmxFix;
+import sdmxdl.provider.ri.web.RiRestParsers;
 
 import java.util.List;
 import java.util.Optional;

@@ -21,6 +21,7 @@ flowchart BT
         provider-base[base]
         connectors
         ri
+        dialects
         px
     end
     testing

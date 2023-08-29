@@ -14,10 +14,9 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
-import sdmxdl.provider.ri.web.DotStatRestParsers;
-import sdmxdl.provider.ri.web.DotStatRestQueries;
+import nbbrd.design.DirectImpl;
 import sdmxdl.provider.ri.web.RiRestClient;
 import internal.util.http.URLQueryBuilder;
 import lombok.NonNull;
@@ -50,23 +49,24 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
+@DirectImpl
 @ServiceProvider
-public final class ImfDriver2 implements Driver {
+public final class ImfDialectDriver implements Driver {
 
-    private static final String RI_IMF = "ri:imf";
+    private static final String DIALECTS_IMF = "dialects:imf";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_IMF)
+            .id(DIALECTS_IMF)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(ImfDriver2::newClient))
+            .connector(RestConnector.of(ImfDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
                     .id("IMF")
                     .name("en", "International Monetary Fund")
-                    .driver(RI_IMF)
+                    .driver(DIALECTS_IMF)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")

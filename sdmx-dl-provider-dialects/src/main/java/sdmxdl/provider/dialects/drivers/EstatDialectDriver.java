@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import internal.util.http.HttpClient;
 import internal.util.http.HttpRequest;
@@ -22,6 +22,7 @@ import internal.util.http.HttpResponse;
 import internal.util.http.HttpResponseException;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.io.Resource;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.IntProperty;
@@ -64,8 +65,9 @@ import static sdmxdl.provider.ri.web.Sdmx21RestParsers.withCharset;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
-public final class EurostatDriver2 implements Driver {
+@DirectImpl
+@ServiceProvider
+public final class EstatDialectDriver implements Driver {
 
     public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncMaxRetries", 10);
@@ -73,14 +75,14 @@ public final class EurostatDriver2 implements Driver {
     public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
             LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 
-    private static final String RI_EUROSTAT = "ri:estat";
+    private static final String DIALECTS_EUROSTAT = "dialects:estat";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_EUROSTAT)
+            .id(DIALECTS_EUROSTAT)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(EurostatDriver2::newClient))
+            .connector(RestConnector.of(EstatDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
             .propertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .propertyOf(ASYNC_SLEEP_TIME_PROPERTY)
@@ -91,7 +93,7 @@ public final class EurostatDriver2 implements Driver {
                     .name("en", "Eurostat")
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")
-                    .driver(RI_EUROSTAT)
+                    .driver(DIALECTS_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
@@ -101,7 +103,7 @@ public final class EurostatDriver2 implements Driver {
                     .builder()
                     .id("ESTAT_COMEXT")
                     .name("en", "Eurostat - International trade in goods statistics (ITGS)")
-                    .driver(RI_EUROSTAT)
+                    .driver(DIALECTS_EUROSTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
@@ -111,7 +113,7 @@ public final class EurostatDriver2 implements Driver {
                     .builder()
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
-                    .driver(RI_EUROSTAT)
+                    .driver(DIALECTS_EUROSTAT)
                     .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
@@ -121,7 +123,7 @@ public final class EurostatDriver2 implements Driver {
                     .builder()
                     .id("EC_DG_EMPL")
                     .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
-                    .driver(RI_EUROSTAT)
+                    .driver(DIALECTS_EUROSTAT)
                     .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
@@ -131,7 +133,7 @@ public final class EurostatDriver2 implements Driver {
                     .builder()
                     .id("EC_DG_GROW")
                     .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
-                    .driver(RI_EUROSTAT)
+                    .driver(DIALECTS_EUROSTAT)
                     .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")

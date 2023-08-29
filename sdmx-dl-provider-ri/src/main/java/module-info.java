@@ -3,7 +3,9 @@ import sdmxdl.file.spi.Reader;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.file.readers.XmlReader;
 import sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
-import sdmxdl.provider.ri.web.drivers.*;
+import sdmxdl.provider.ri.web.drivers.FileDriver;
+import sdmxdl.provider.ri.web.drivers.RngDriver;
+import sdmxdl.provider.ri.web.drivers.Sdmx21Driver2;
 import sdmxdl.provider.ri.web.monitors.UpptimeMonitor;
 import sdmxdl.provider.ri.web.monitors.UptimeRobotMonitor;
 import sdmxdl.provider.ri.web.networking.RiNetworking;
@@ -26,20 +28,14 @@ module sdmxdl.provider.ri {
     requires nbbrd.io.curl;
     requires nbbrd.net.proxy;
 
-    exports sdmxdl.provider.ri.web to sdmxdl.provider.px;
-    exports internal.util.http to sdmxdl.provider.px;
+    exports sdmxdl.provider.ri.web to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports internal.util.http to sdmxdl.provider.dialects, sdmxdl.provider.px;
+    exports internal.util.http.ext to sdmxdl.provider.dialects, sdmxdl.provider.px;
 
     provides Driver with
-            BbkDriver,
-            DotStatDriver2,
-            EurostatDriver2,
             FileDriver,
-            ImfDriver2,
-            InseeDriver2,
-            NbbDriver2,
             RngDriver,
-            Sdmx21Driver2,
-            StatCanDriver;
+            Sdmx21Driver2;
 
     provides Reader with
             XmlReader;

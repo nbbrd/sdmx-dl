@@ -1,4 +1,4 @@
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.Resource;
@@ -24,18 +24,18 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
-import static sdmxdl.provider.ri.web.drivers.StatCanDriver.Converter.*;
+import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
 
-public class StatCanDriverTest {
+public class StatCanDialectDriverTest {
 
     @Test
     public void testCompliance() {
-        DriverAssert.assertCompliance(new StatCanDriver());
+        DriverAssert.assertCompliance(new StatCanDialectDriver());
     }
 
     @Test
     public void testConnectionArgs() throws IOException {
-        StatCanDriver driver = new StatCanDriver();
+        StatCanDialectDriver driver = new StatCanDialectDriver();
         SdmxWebSource source = driver.getDefaultSources().iterator().next();
         try (Connection connection = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
             DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
@@ -61,11 +61,11 @@ public class StatCanDriverTest {
 
     @Test
     public void testDataTableParseAll() throws IOException {
-        TextParser<StatCanDriver.DataTable[]> x = TextParser.onParsingReader(StatCanDriver.DataTable::parseAll);
+        TextParser<StatCanDialectDriver.DataTable[]> x = TextParser.onParsingReader(StatCanDialectDriver.DataTable::parseAll);
 
-        Assertions.assertThat(x.parseResource(StatCanDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
+        Assertions.assertThat(x.parseResource(StatCanDialectDriverTest.class, "statcan-datatables.json", StandardCharsets.UTF_8))
                 .hasSize(2)
-                .contains(new StatCanDriver.DataTable(
+                .contains(new StatCanDialectDriver.DataTable(
                         10100001,
                         "Federal public sector employment reconciliation of Treasury Board of Canada Secretariat, Public Service Commission of Canada and Statistics Canada statistical universes, as at December 31",
                         "Emploi du secteur public fédéral rapprochement des univers statistiques du Secrétariat du Conseil du Trésor du Canada, de la Commission de la fonction publique du Canada et de Statistique Canada, au 31 décembre"
@@ -138,7 +138,7 @@ public class StatCanDriverTest {
         public void testToSdmxRepository(@TempDir File tmp) throws IOException {
             String fileName = "statcan-10100001.zip";
             File x = new File(tmp, fileName);
-            Files.copy(StatCanDriverTest.class.getResourceAsStream(fileName), x.toPath());
+            Files.copy(StatCanDialectDriverTest.class.getResourceAsStream(fileName), x.toPath());
 
             Map<Languages, String> labels = new HashMap<>();
             labels.put(ANY, "Data Structure");
@@ -176,7 +176,7 @@ public class StatCanDriverTest {
         public void testRevisions(@TempDir File tmp) throws IOException {
             String fileName = "statcan-34100158.zip";
             File x = new File(tmp, fileName);
-            try (InputStream stream = Resource.newInputStream(StatCanDriverTest.class, fileName)) {
+            try (InputStream stream = Resource.newInputStream(StatCanDialectDriverTest.class, fileName)) {
                 Files.copy(stream, x.toPath());
             }
 

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
 import internal.util.http.HttpClient;
 import internal.util.http.HttpResponse;
@@ -22,6 +22,7 @@ import internal.util.http.HttpResponseException;
 import internal.util.http.URLQueryBuilder;
 import internal.util.http.ext.InterceptingClient;
 import lombok.NonNull;
+import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
@@ -52,17 +53,18 @@ import static sdmxdl.provider.ri.web.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
-public final class NbbDriver2 implements Driver {
+@DirectImpl
+@ServiceProvider
+public final class NbbDialectDriver implements Driver {
 
-    private static final String RI_NBB = "ri:nbb";
+    private static final String DIALECTS_NBB = "dialects:nbb";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_NBB)
+            .id(DIALECTS_NBB)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(NbbDriver2::newClient))
+            .connector(RestConnector.of(NbbDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
@@ -71,7 +73,7 @@ public final class NbbDriver2 implements Driver {
                     .name("de", "Belgische National Bank")
                     .name("fr", "Banque Nationale de Belgique")
                     .name("nl", "Nationale Bank van België")
-                    .driver(RI_NBB)
+                    .driver(DIALECTS_NBB)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")

@@ -237,6 +237,7 @@
         <module>sdmx-dl-format-xml</module>
         <module>sdmx-dl-provider-base</module>
         <module>sdmx-dl-provider-ri</module>
+        <module>sdmx-dl-provider-dialects</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-provider-px</module>
         <module>sdmx-dl-testing</module>

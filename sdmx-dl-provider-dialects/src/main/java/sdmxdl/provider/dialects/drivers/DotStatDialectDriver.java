@@ -14,10 +14,9 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package sdmxdl.provider.ri.web.drivers;
+package sdmxdl.provider.dialects.drivers;
 
-import sdmxdl.provider.ri.web.DotStatRestParsers;
-import sdmxdl.provider.ri.web.DotStatRestQueries;
+import nbbrd.design.DirectImpl;
 import sdmxdl.provider.ri.web.RiRestClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Feature;
@@ -41,17 +40,18 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 /**
  * @author Philippe Charles
  */
-@ServiceProvider(Driver.class)
-public final class DotStatDriver2 implements Driver {
+@DirectImpl
+@ServiceProvider
+public final class DotStatDialectDriver implements Driver {
 
-    private static final String RI_DOTSTAT = "ri:dotstat";
+    private static final String DIALECTS_DOTSTAT = "dialects:dotstat";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(RI_DOTSTAT)
+            .id(DIALECTS_DOTSTAT)
             .rank(NATIVE_DRIVER_RANK)
-            .connector(RestConnector.of(DotStatDriver2::newClient))
+            .connector(RestConnector.of(DotStatDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
             .source(SdmxWebSource
                     .builder()
@@ -60,7 +60,7 @@ public final class DotStatDriver2 implements Driver {
                     .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
                     .name("fr", "Organisation de coopération et de développement économiques")
                     .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
-                    .driver(RI_DOTSTAT)
+                    .driver(DIALECTS_DOTSTAT)
                     .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats.oecd.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
@@ -71,7 +71,7 @@ public final class DotStatDriver2 implements Driver {
                     .id("SE")
                     .name("en", "Statistics Estonia")
                     .name("et", "Statistikaameti")
-                    .driver(RI_DOTSTAT)
+                    .driver(DIALECTS_DOTSTAT)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
@@ -82,7 +82,7 @@ public final class DotStatDriver2 implements Driver {
                     .id("UIS")
                     .name("en", "Unesco Institute for Statistics")
                     .name("fr", "Unesco Institut de statistique")
-                    .driver(RI_DOTSTAT)
+                    .driver(DIALECTS_DOTSTAT)
                     .endpointOf(UIS_ENDPOINT)
                     .websiteOf("http://data.uis.unesco.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
@@ -92,7 +92,7 @@ public final class DotStatDriver2 implements Driver {
                     .builder()
                     .id("UKDS")
                     .name("en", "UK Data Service")
-                    .driver(RI_DOTSTAT)
+                    .driver(DIALECTS_DOTSTAT)
                     .endpointOf("https://stats2.digitalresources.jisc.ac.uk/restsdmx/sdmx.ashx")
                     .websiteOf("https://stats2.digitalresources.jisc.ac.uk/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UKDS")
