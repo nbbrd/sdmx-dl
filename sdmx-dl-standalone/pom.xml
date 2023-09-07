@@ -17,6 +17,19 @@
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
+        <!-- compile only -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-api</artifactId>
@@ -47,10 +60,42 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+        <!-- test only -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- List runtime dependencies for tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>list-runtime-dependencies</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputFile>${project.build.testOutputDirectory}/runtime-dependencies.txt</outputFile>
+                            <outputScope>false</outputScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Generates a all-in-one executable jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -109,16 +154,24 @@
                             <shadedPattern>standalone_sdmxdl.nbbrd</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com</pattern>
-                            <shadedPattern>standalone_sdmxdl.com</shadedPattern>
+                            <pattern>com.esotericsoftware</pattern>
+                            <shadedPattern>standalone_sdmxdl.com.esotericsoftware</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>nl</pattern>
-                            <shadedPattern>standalone_sdmxdl.nl</shadedPattern>
+                            <pattern>com.github.tuupertunut</pattern>
+                            <shadedPattern>standalone_sdmxdl.com.github.tuupertunut</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org</pattern>
-                            <shadedPattern>standalone_sdmxdl.org</shadedPattern>
+                            <pattern>com.google.gson</pattern>
+                            <shadedPattern>standalone_sdmxdl.com.google.gson</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>nl.altindag</pattern>
+                            <shadedPattern>standalone_sdmxdl.nl.altindag</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>standalone_sdmxdl.org.slf4j</shadedPattern>
                         </relocation>
                     </relocations>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
