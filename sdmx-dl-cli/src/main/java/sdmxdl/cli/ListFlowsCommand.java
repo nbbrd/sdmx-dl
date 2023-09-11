@@ -21,7 +21,7 @@ import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import picocli.CommandLine;
-import sdmxdl.Dataflow;
+import sdmxdl.Flow;
 import sdmxdl.format.csv.SdmxCsvFields;
 
 import java.io.IOException;
@@ -49,16 +49,16 @@ public final class ListFlowsCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<Dataflow> getTable() {
+    private CsvTable<Flow> getTable() {
         return CsvTable
-                .builderOf(Dataflow.class)
-                .columnOf("Ref", Dataflow::getRef, SdmxCsvFields.getDataflowRefFormatter())
-                .columnOf("Name", Dataflow::getName)
-                .columnOf("Description", Dataflow::getDescription)
+                .builderOf(Flow.class)
+                .columnOf("Ref", Flow::getRef, SdmxCsvFields.getDataflowRefFormatter())
+                .columnOf("Name", Flow::getName)
+                .columnOf("Description", Flow::getDescription)
                 .build();
     }
 
-    private Stream<Dataflow> getRows() throws IOException {
+    private Stream<Flow> getRows() throws IOException {
         return sort.applySort(web.loadFlows(web.loadManager(), web.getLangs()), WebSourceOptions.FLOWS_BY_REF);
     }
 }

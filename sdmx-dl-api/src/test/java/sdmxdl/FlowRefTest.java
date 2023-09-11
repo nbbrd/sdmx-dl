@@ -19,46 +19,46 @@ package sdmxdl;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DataflowRef.of;
+import static sdmxdl.FlowRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
 
 /**
  * @author Philippe Charles
  */
-public class DataflowRefTest {
+public class FlowRefTest {
 
     @Test
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testParse() {
-        assertThat(DataflowRef.parse("")).isEqualTo(of(null, "", null));
-        assertThat(DataflowRef.parse("hello")).isEqualTo(of(null, "hello", null));
-        assertThat(DataflowRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
-        assertThat(DataflowRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
-        assertThat(DataflowRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
-        assertThat(DataflowRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
-        assertThat(DataflowRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
-        assertThatIllegalArgumentException().isThrownBy(() -> DataflowRef.parse(",,,,"));
-        assertThatNullPointerException().isThrownBy(() -> DataflowRef.parse(null));
+        assertThat(FlowRef.parse("")).isEqualTo(of(null, "", null));
+        assertThat(FlowRef.parse("hello")).isEqualTo(of(null, "hello", null));
+        assertThat(FlowRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
+        assertThat(FlowRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
+        assertThat(FlowRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
+        assertThat(FlowRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
+        assertThat(FlowRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
+        assertThatIllegalArgumentException().isThrownBy(() -> FlowRef.parse(",,,,"));
+        assertThatNullPointerException().isThrownBy(() -> FlowRef.parse(null));
     }
 
     @Test
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, Object::toString)
+                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
         assertThat(of("", "hello", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, Object::toString)
+                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
         assertThat(of("world", "hello", null))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, Object::toString)
+                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
         assertThat(of("world", "hello", "123"))
-                .extracting(DataflowRef::getAgency, DataflowRef::getId, DataflowRef::getVersion, Object::toString)
+                .extracting(FlowRef::getAgency, FlowRef::getId, FlowRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));
@@ -83,7 +83,7 @@ public class DataflowRefTest {
     @Test
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testContains() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        FlowRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.contains(null));
 
@@ -102,7 +102,7 @@ public class DataflowRefTest {
     @Test
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testContainsRef() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        FlowRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.containsRef(null));
 
@@ -121,7 +121,7 @@ public class DataflowRefTest {
     @Test
     @SuppressWarnings({"null", "ConstantConditions"})
     public void testEqualsRef() {
-        DataflowRef x = of("ECB", "EXR", "1");
+        FlowRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.equalsRef(null));
 
@@ -137,7 +137,7 @@ public class DataflowRefTest {
         assertThat(x.equalsRef(flowOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
     }
 
-    private Dataflow flowOf(DataflowRef ref) {
-        return Dataflow.builder().ref(ref).structureRef(DataStructureRef.parse("")).name("").build();
+    private Flow flowOf(FlowRef ref) {
+        return Flow.builder().ref(ref).structureRef(StructureRef.parse("")).name("").build();
     }
 }

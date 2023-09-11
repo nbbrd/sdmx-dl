@@ -30,7 +30,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
+    public @NonNull FileParser<List<Flow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().map(DotStatRestParsers::getFlowFromStructure).collect(Collectors.toList()));
     }
@@ -41,7 +41,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataflowRef ref) {
+    public @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().map(DotStatRestParsers::getFlowFromStructure).findFirst());
     }
@@ -52,7 +52,7 @@ public class DotStatRestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataStructureRef ref) {
+    public @NonNull FileParser<Optional<Structure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull StructureRef ref) {
         return SdmxXmlStreams.struct20(langs)
                 .andThen(structs -> structs.stream().findFirst());
     }
@@ -64,8 +64,8 @@ public class DotStatRestParsers implements RiRestParsers {
 
     @SdmxFix(id = 1, category = CONTENT, cause = "Time dimension is always TIME in data")
     @Override
-    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
-        DataStructure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
+    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
+        Structure modifiedDsd = dsd.toBuilder().timeDimensionId("TIME").build();
         return SdmxXmlStreams.compactData20(modifiedDsd, dataFactory);
     }
 
@@ -79,11 +79,11 @@ public class DotStatRestParsers implements RiRestParsers {
         throw new UnsupportedOperationException("codelist");
     }
 
-    public static @NonNull Dataflow getFlowFromStructure(@NonNull DataStructure o) {
-        return Dataflow.builder().ref(getFlowRefFromStructureRef(o.getRef())).structureRef(o.getRef()).name(o.getName()).build();
+    public static @NonNull Flow getFlowFromStructure(@NonNull Structure o) {
+        return Flow.builder().ref(getFlowRefFromStructureRef(o.getRef())).structureRef(o.getRef()).name(o.getName()).build();
     }
 
-    public static @NonNull DataflowRef getFlowRefFromStructureRef(@NonNull DataStructureRef o) {
-        return DataflowRef.of(o.getAgency(), o.getId(), o.getVersion());
+    public static @NonNull FlowRef getFlowRefFromStructureRef(@NonNull StructureRef o) {
+        return FlowRef.of(o.getAgency(), o.getId(), o.getVersion());
     }
 }

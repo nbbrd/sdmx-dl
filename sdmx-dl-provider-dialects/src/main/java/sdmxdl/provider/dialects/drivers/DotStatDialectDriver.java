@@ -25,7 +25,7 @@ import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -53,7 +53,7 @@ public final class DotStatDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("OECD")
                     .name("en", "The Organisation for Economic Co-operation and Development")
@@ -66,7 +66,7 @@ public final class DotStatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SE")
                     .name("en", "Statistics Estonia")
@@ -77,7 +77,7 @@ public final class DotStatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/se")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("UIS")
                     .name("en", "Unesco Institute for Statistics")
@@ -88,7 +88,7 @@ public final class DotStatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UIS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/uis")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("UKDS")
                     .name("en", "UK Data Service")
@@ -100,7 +100,7 @@ public final class DotStatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, new DotStatRestQueries(), new DotStatRestParsers(), DOTSTAT_FEATURES);
     }
 

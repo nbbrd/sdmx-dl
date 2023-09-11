@@ -33,15 +33,15 @@ public interface Connection extends Closeable {
 
     void testConnection() throws IOException;
 
-    @NonNull Collection<Dataflow> getFlows() throws IOException;
+    @NonNull Collection<Flow> getFlows() throws IOException;
 
-    @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException;
+    @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
-    @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException;
+    @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
-    @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException;
+    @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
-    @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException;
+    @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
     @NonNull Set<Feature> getSupportedFeatures() throws IOException;
 }

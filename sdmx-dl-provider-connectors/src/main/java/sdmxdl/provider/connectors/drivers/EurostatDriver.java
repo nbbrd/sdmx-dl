@@ -21,7 +21,7 @@ import it.bancaditalia.oss.sdmx.client.custom.EUROSTAT;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
@@ -42,7 +42,7 @@ public final class EurostatDriver implements Driver {
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(EUROSTAT::new)))
             .properties(CONNECTORS_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ESTAT")
                     .alias("EUROSTAT")

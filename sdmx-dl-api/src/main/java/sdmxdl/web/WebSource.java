@@ -19,7 +19,7 @@ package sdmxdl.web;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Languages;
-import sdmxdl.SdmxSource;
+import sdmxdl.Source;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -33,7 +33,7 @@ import java.util.Set;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class SdmxWebSource extends SdmxSource {
+public class WebSource extends Source {
 
     @NonNull String id;
 
@@ -56,7 +56,7 @@ public class SdmxWebSource extends SdmxSource {
 
     @Nullable URL monitorWebsite;
 
-    public @NonNull SdmxWebSource alias(@NonNull String id) throws IllegalArgumentException {
+    public @NonNull WebSource alias(@NonNull String id) throws IllegalArgumentException {
         if (!aliases.contains(id)) {
             throw new IllegalArgumentException(id);
         }

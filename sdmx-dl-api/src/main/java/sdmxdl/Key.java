@@ -107,7 +107,7 @@ public final class Key {
     }
 
     @Nullable
-    public String validateOn(@NonNull DataStructure dsd) {
+    public String validateOn(@NonNull Structure dsd) {
         if (this == ALL) {
             return null;
         }
@@ -188,7 +188,7 @@ public final class Key {
     }
 
     @NonNull
-    public static Builder builder(@NonNull DataStructure dfs) {
+    public static Builder builder(@NonNull Structure dfs) {
         List<Dimension> dimensions = dfs.getDimensionList();
         Map<String, Integer> result = new HashMap<>();
         for (int i = 0; i < dimensions.size(); i++) {

@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.ServiceSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.SSLFactory;
@@ -65,9 +65,9 @@ public final class SingleNetworkingSupport implements Networking {
 
     @Override
     public @NonNull Network getNetwork(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError) {
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError) {
         return getSingleNetwork();
     }
 

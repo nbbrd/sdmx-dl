@@ -19,7 +19,7 @@ package _test.sdmxdl;
 import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -47,12 +47,12 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.TEST_VALID;
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             return Collections.singletonList(SOURCE);
         }
 
@@ -77,12 +77,12 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             throw new CustomException();
         }
 
@@ -107,12 +107,12 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             return null;
         }
 
@@ -122,5 +122,5 @@ public enum TestDriver implements Driver {
         }
     };
 
-    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().id("123").driver("456").endpointOf("http://localhost").build();
+    public static final WebSource SOURCE = WebSource.builder().id("123").driver("456").endpointOf("http://localhost").build();
 }

@@ -12,7 +12,7 @@ import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -50,7 +50,7 @@ public final class RngRiDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .availability(ENABLE::get)
             .connector(RngRiDriver::newConnection)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("RNG")
                     .name("en", "Random number generator")
@@ -59,7 +59,7 @@ public final class RngRiDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(HasMarker.of(source), config);
@@ -114,21 +114,21 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() {
-            return singleton(Dataflow.builder().ref(DataflowRef.parse("RNG")).structureRef(DataStructureRef.parse("STRUCT_RNG")).name("RNG").build());
+        public @NonNull Collection<Flow> getFlows() {
+            return singleton(Flow.builder().ref(FlowRef.parse("RNG")).structureRef(StructureRef.parse("STRUCT_RNG")).name("RNG").build());
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
             return ConnectionSupport.getFlowFromFlows(flowRef, this, this);
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
-            Dataflow dataflow = getFlow(flowRef);
-            return DataStructure
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+            Flow flow = getFlow(flowRef);
+            return Structure
                     .builder()
-                    .ref(dataflow.getStructureRef())
+                    .ref(flow.getStructureRef())
                     .dimension(Dimension
                             .builder()
                             .id(FREQ)
@@ -161,16 +161,16 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
             return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
         }
 
-        private Stream<Series> newSeriesStream(Freq freq, DataQuery query) {
+        private Stream<Series> newSeriesStream(Freq freq, Query query) {
             return IntStream
                     .range(0, config.getSeriesCount())
                     .mapToObj(series -> Key.of(freq.name(), String.valueOf(series)))
@@ -178,7 +178,7 @@ public final class RngRiDriver implements Driver {
                     .map(key -> newSeries(key, freq, query.getDetail()));
         }
 
-        private Series newSeries(Key key, Freq freq, DataDetail detail) {
+        private Series newSeries(Key key, Freq freq, Detail detail) {
             Series.Builder result = Series.builder().key(key);
             if (!detail.isIgnoreData()) {
                 int series = Integer.parseInt(key.get(1));

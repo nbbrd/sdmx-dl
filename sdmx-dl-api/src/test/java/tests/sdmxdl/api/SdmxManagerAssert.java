@@ -19,7 +19,7 @@ package tests.sdmxdl.api;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
 import sdmxdl.SdmxManager;
-import sdmxdl.SdmxSource;
+import sdmxdl.Source;
 
 import java.io.IOException;
 
@@ -35,20 +35,20 @@ public class SdmxManagerAssert {
 
     @lombok.Value
     @lombok.Builder(toBuilder = true)
-    public static class Sample<S extends SdmxSource> {
+    public static class Sample<S extends Source> {
         S validSource;
         S invalidSource;
     }
 
-    public <S extends SdmxSource> void assertCompliance(SdmxManager<S> manager, Sample<S> sample) {
+    public <S extends Source> void assertCompliance(SdmxManager<S> manager, Sample<S> sample) {
         TckUtil.run(s -> assertCompliance(s, manager, sample));
     }
 
-    public <S extends SdmxSource> void assertCompliance(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
+    public <S extends Source> void assertCompliance(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
         checkGetConnection(s, manager, sample);
     }
 
-    private <S extends SdmxSource> void checkGetConnection(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
+    private <S extends Source> void checkGetConnection(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
         s.assertThatThrownBy(() -> manager.getConnection(null, ANY))
                 .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "source"))
                 .isInstanceOf(NullPointerException.class);

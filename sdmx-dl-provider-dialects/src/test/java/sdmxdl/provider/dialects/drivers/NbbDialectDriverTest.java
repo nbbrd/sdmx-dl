@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static sdmxdl.provider.dialects.drivers.NbbDialectDriver.checkInternalErrorRedirect;
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DataDetail.FULL;
+import static sdmxdl.Detail.FULL;
 
 /**
  * @author Philippe Charles
@@ -52,7 +52,7 @@ public class NbbDialectDriverTest {
 
         NbbDialectDriver.NbbQueries queries = new NbbDialectDriver.NbbQueries();
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("EXR"), DataQuery.builder().key(Key.parse("AUD.M")).detail(FULL).build()), DataStructureRef.parse("abc")))
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(FlowRef.parse("EXR"), Query.builder().key(Key.parse("AUD.M")).detail(FULL).build()), StructureRef.parse("abc")))
                 .describedAs("SdmxFix#1")
                 .hasToString("https://stat.nbb.be/restsdmx/sdmx.ashx/GetData/EXR/AUD.M%2Fall?format=compact_v2");
     }

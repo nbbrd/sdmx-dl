@@ -37,13 +37,13 @@ public class XMLStreamStructure21Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        Xml.Parser<List<DataStructure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
+        Xml.Parser<List<Structure>> parser = SdmxXmlStreams.struct21(Languages.ANY);
 
         assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("AMECO");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME_PERIOD");
-            assertThat(o.getRef()).isEqualTo(DataStructureRef.of("ECB", "ECB_AME1", "1.0"));
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("ECB", "ECB_AME1", "1.0"));
             assertThat(o.getDimensions()).hasSize(7).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("FREQ");
                 assertThat(x.getName()).isEqualTo("Frequency");

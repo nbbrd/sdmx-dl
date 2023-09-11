@@ -21,7 +21,7 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 
 import java.io.IOException;
 
@@ -44,10 +44,10 @@ public interface Reader {
     @ServiceFilter
     boolean isReaderAvailable();
 
-    boolean canRead(@NonNull SdmxFileSource source);
+    boolean canRead(@NonNull FileSource source);
 
     @NonNull Connection read(
-            @NonNull SdmxFileSource source,
+            @NonNull FileSource source,
             @NonNull Languages languages,
             @NonNull FileContext context
     ) throws IOException, IllegalArgumentException;

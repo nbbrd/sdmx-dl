@@ -20,10 +20,10 @@ import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.format.xml.*;
 import sdmxdl.provider.file.FileInfo;
 
@@ -36,15 +36,15 @@ import java.util.List;
 @lombok.AllArgsConstructor
 public final class XmlDecoder implements Decoder {
 
-    private final @Nullable EventListener<? super SdmxFileSource> listener;
+    private final @Nullable EventListener<? super FileSource> listener;
 
     @Override
-    public @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull Languages langs) throws IOException {
+    public @NonNull FileInfo decode(@NonNull FileSource source, @NonNull Languages langs) throws IOException {
         MediaType type = probeDataType(source);
         return FileInfo.of(type, loadStructure(source, langs, type));
     }
 
-    private MediaType probeDataType(SdmxFileSource source) throws IOException {
+    private MediaType probeDataType(FileSource source) throws IOException {
         if (listener != null) {
             listener.accept(source, MARKER, "Probing data type from '" + source.getData() + "'");
         }
@@ -53,13 +53,13 @@ public final class XmlDecoder implements Decoder {
                 .orElseThrow(() -> new IOException("Cannot probe data type"));
     }
 
-    private DataStructure loadStructure(SdmxFileSource source, Languages langs, MediaType type) throws IOException {
+    private Structure loadStructure(FileSource source, Languages langs, MediaType type) throws IOException {
         return XmlFileSource.isValidFile(source.getStructure())
                 ? parseStruct(type, langs, source)
                 : decodeStruct(type, source);
     }
 
-    private DataStructure parseStruct(MediaType dataType, Languages langs, SdmxFileSource source) throws IOException {
+    private Structure parseStruct(MediaType dataType, Languages langs, FileSource source) throws IOException {
         if (listener != null) {
             listener.accept(source, MARKER, "Parsing structure from '" + source.getStructure() + "' with data type '" + dataType + "'");
         }
@@ -70,7 +70,7 @@ public final class XmlDecoder implements Decoder {
                 .orElseThrow(IOException::new);
     }
 
-    private Xml.Parser<List<DataStructure>> getStructParser(MediaType dataType, Languages langs) throws IOException {
+    private Xml.Parser<List<Structure>> getStructParser(MediaType dataType, Languages langs) throws IOException {
         if (XmlMediaTypes.GENERIC_DATA_20.equals(dataType) || XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20.equals(dataType)) {
             return SdmxXmlStreams.struct20(langs);
         } else if (XmlMediaTypes.GENERIC_DATA_21.equals(dataType) || XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21.equals(dataType)) {
@@ -79,7 +79,7 @@ public final class XmlDecoder implements Decoder {
         throw new IOException("Don't know how to handle '" + dataType + "'");
     }
 
-    private DataStructure decodeStruct(MediaType dataType, SdmxFileSource source) throws IOException {
+    private Structure decodeStruct(MediaType dataType, FileSource source) throws IOException {
         if (listener != null) {
             listener.accept(source, MARKER, "Decoding structure from '" + source.getData() + "' with data type '" + dataType + "'");
         }
@@ -87,7 +87,7 @@ public final class XmlDecoder implements Decoder {
                 .parseFile(source.getData());
     }
 
-    private static Xml.Parser<DataStructure> getStructDecoder(MediaType o) throws IOException {
+    private static Xml.Parser<Structure> getStructDecoder(MediaType o) throws IOException {
         if (XmlMediaTypes.GENERIC_DATA_20.equals(o)) {
             return DataStructureDecoder.generic20();
         } else if (XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20.equals(o)) {

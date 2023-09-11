@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
 import tests.sdmxdl.ext.CacheAssert;
 
@@ -30,7 +30,7 @@ public class WebCachingAssert {
         assertThatNullPointerException()
                 .isThrownBy(() -> caching.getDriverCache(null, null, null));
 
-        SdmxWebSource validSource = SdmxWebSource
+        WebSource validSource = WebSource
                 .builder()
                 .id("valid")
                 .driver("SDMX21")

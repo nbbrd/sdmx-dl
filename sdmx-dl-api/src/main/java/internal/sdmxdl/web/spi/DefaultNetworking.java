@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;
 
@@ -37,9 +37,9 @@ public enum DefaultNetworking implements Networking {
 
     @Override
     public @NonNull Network getNetwork(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError) {
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError) {
         return Network.getDefault();
     }
 }

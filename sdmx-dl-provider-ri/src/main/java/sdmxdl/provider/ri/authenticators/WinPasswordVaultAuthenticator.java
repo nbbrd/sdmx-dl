@@ -5,7 +5,7 @@ import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.sys.OS;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
     }
 
     @Override
-    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) throws IOException {
+    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
             String message = "Enter your credentials for " + source.getId();
             return toPasswordAuthentication(vault.getOrPrompt(getResource(source), message, false));
@@ -34,13 +34,13 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
     }
 
     @Override
-    public void invalidateAuthentication(@NonNull SdmxWebSource source) throws IOException {
+    public void invalidateAuthentication(@NonNull WebSource source) throws IOException {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
             vault.invalidate(getResource(source));
         }
     }
 
-    private String getResource(SdmxWebSource source) {
+    private String getResource(WebSource source) {
         return "sdmx-dl:" + source.getEndpoint().getHost();
     }
 

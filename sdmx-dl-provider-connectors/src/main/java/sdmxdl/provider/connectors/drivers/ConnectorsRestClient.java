@@ -36,7 +36,7 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestClientSupplier;
 import sdmxdl.provider.web.WebEvents;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.spi.WebContext;
@@ -115,7 +115,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Flow> getFlows() throws IOException {
         try {
             return connector
                     .getDataflows()
@@ -129,7 +129,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
         try {
             return Connectors.toFlow(connector.getDataflow(ref.getId(), ref.getAgency(), ref.getVersion()));
         } catch (SdmxException ex) {
@@ -138,7 +138,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+    public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         try {
             return Connectors.toStructure(connector.getDataFlowStructure(Connectors.fromStructureRef(ref), true));
         } catch (SdmxException ex) {
@@ -147,7 +147,7 @@ public final class ConnectorsRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         try {
             List<PortableTimeSeries<Double>> data = getData(connector, ref, dsd);
             return PortableTimeSeriesCursor.of(data, dataFactory, dsd).asStream();
@@ -195,12 +195,12 @@ public final class ConnectorsRestClient implements RestClient {
             MAX_REDIRECTS_PROPERTY
     );
 
-    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, DataStructure dsd) throws SdmxException {
+    private static List<PortableTimeSeries<Double>> getData(RestSdmxClient connector, DataRef ref, Structure dsd) throws SdmxException {
         return connector.getTimeSeries(
                 Connectors.fromFlowQuery(ref.getFlowRef(), dsd.getRef()),
                 Connectors.fromStructure(dsd), ref.getQuery().getKey().toString(),
                 null, null,
-                ref.getQuery().getDetail().equals(DataDetail.SERIES_KEYS_ONLY),
+                ref.getQuery().getDetail().equals(Detail.SERIES_KEYS_ONLY),
                 null, false);
     }
 
@@ -208,7 +208,7 @@ public final class ConnectorsRestClient implements RestClient {
         return new IOException(String.format(Locale.ROOT, format, args), ex);
     }
 
-    private static void configure(RestSdmxClient client, SdmxWebSource source, WebContext context) {
+    private static void configure(RestSdmxClient client, WebSource source, WebContext context) {
 //        client.setLanguages(Connectors.fromLanguages(context.getLanguages()));
         client.setConnectTimeout(CONNECT_TIMEOUT_PROPERTY.get(source.getProperties()));
         client.setReadTimeout(READ_TIMEOUT_PROPERTY.get(source.getProperties()));
@@ -227,9 +227,9 @@ public final class ConnectorsRestClient implements RestClient {
     private static final class DefaultRestSdmxEventListener implements RestSdmxEventListener {
 
         @NonNull
-        private final SdmxWebSource source;
+        private final WebSource source;
 
-        private final @Nullable EventListener<? super SdmxWebSource> listener;
+        private final @Nullable EventListener<? super WebSource> listener;
 
         @NonNull
         private final String marker;

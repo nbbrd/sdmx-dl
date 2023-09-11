@@ -1,7 +1,7 @@
 package internal.sdmxdl.cli;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.AuthenticatorAssert;
 
 import java.net.PasswordAuthentication;
@@ -12,7 +12,7 @@ public class ConstantAuthenticatorTest {
 
     @Test
     public void testCompliance() {
-        SdmxWebSource validSource = SdmxWebSource
+        WebSource validSource = WebSource
                 .builder()
                 .id("valid")
                 .driver("driver")

@@ -19,9 +19,9 @@ package internal.sdmxdl.format.xml;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
+import sdmxdl.Flow;
+import sdmxdl.StructureRef;
+import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -37,26 +37,26 @@ public class XMLStreamFlow21Test {
 
     @Test
     public void test() throws IOException {
-        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(Languages.ANY)::parse);
+        Xml.Parser<List<Flow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(Languages.ANY)::parse);
 
         assertThat(p.parseReader(SdmxXmlSources.ECB_DATAFLOWS::openReader))
                 .containsExactly(
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("ECB", "AME", "1.0"))
-                                .structureRef(DataStructureRef.of("ECB", "ECB_AME1", "1.0"))
+                                .ref(FlowRef.of("ECB", "AME", "1.0"))
+                                .structureRef(StructureRef.of("ECB", "ECB_AME1", "1.0"))
                                 .name("AMECO")
                                 .build(),
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("ECB", "BKN", "1.0"))
-                                .structureRef(DataStructureRef.of("ECB", "ECB_BKN1", "1.0"))
+                                .ref(FlowRef.of("ECB", "BKN", "1.0"))
+                                .structureRef(StructureRef.of("ECB", "ECB_BKN1", "1.0"))
                                 .name("Banknotes statistics")
                                 .build(),
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("ECB", "BLS", "1.0"))
-                                .structureRef(DataStructureRef.of("ECB", "ECB_BLS1", "1.0"))
+                                .ref(FlowRef.of("ECB", "BLS", "1.0"))
+                                .structureRef(StructureRef.of("ECB", "ECB_BLS1", "1.0"))
                                 .name("Bank Lending Survey Statistics")
                                 .build()
                 );
@@ -64,21 +64,21 @@ public class XMLStreamFlow21Test {
 
     @Test
     public void testDescription() throws IOException {
-        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(Languages.ANY)::parse);
+        Xml.Parser<List<Flow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow21(Languages.ANY)::parse);
 
         assertThat(p.parseResource(XMLStreamMessageFooter21Test.class, "FlowWithDescription.xml"))
                 .containsExactly(
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("CD2030", "CD2030", "1.0"))
-                                .structureRef(DataStructureRef.of("CD2030", "CD2030", "1.0"))
+                                .ref(FlowRef.of("CD2030", "CD2030", "1.0"))
+                                .structureRef(StructureRef.of("CD2030", "CD2030", "1.0"))
                                 .name("Coundown 2030")
                                 .description("This dataset is used to support the downolad of the CD2030 data")
                                 .build(),
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("EAPRO", "DF_EAPRO_CROSS_SECTOR", "1.0"))
-                                .structureRef(DataStructureRef.of("EAPRO", "DSD_EAPRO", "1.0"))
+                                .ref(FlowRef.of("EAPRO", "DF_EAPRO_CROSS_SECTOR", "1.0"))
+                                .structureRef(StructureRef.of("EAPRO", "DSD_EAPRO", "1.0"))
                                 .name("EAPRO Cross Sector Indicators")
                                 .description("A dataflow based on a subset of the global cross-sector indicators.")
                                 .build()

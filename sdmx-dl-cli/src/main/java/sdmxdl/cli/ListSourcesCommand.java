@@ -22,7 +22,7 @@ import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -48,31 +48,31 @@ public final class ListSourcesCommand implements Callable<Void> {
         return null;
     }
 
-    private CsvTable<SdmxWebSource> getTable() {
+    private CsvTable<WebSource> getTable() {
         return CsvTable
-                .builderOf(SdmxWebSource.class)
-                .columnOf("Name", SdmxWebSource::getId)
+                .builderOf(WebSource.class)
+                .columnOf("Name", WebSource::getId)
                 .columnOf("Description", this::getDescription)
-                .columnOf("Aliases", SdmxWebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
-                .columnOf("Driver", SdmxWebSource::getDriver)
-                .columnOf("Endpoint", SdmxWebSource::getEndpoint, Formatter.onURI())
-                .columnOf("Properties", SdmxWebSource::getProperties, DEFAULT_MAP_FORMATTER)
-                .columnOf("Website", SdmxWebSource::getWebsite, Formatter.onURL())
-                .columnOf("Monitor", SdmxWebSource::getMonitor, Formatter.onURI())
-                .columnOf("MonitorWebsite", SdmxWebSource::getMonitorWebsite, Formatter.onURL())
+                .columnOf("Aliases", WebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
+                .columnOf("Driver", WebSource::getDriver)
+                .columnOf("Endpoint", WebSource::getEndpoint, Formatter.onURI())
+                .columnOf("Properties", WebSource::getProperties, DEFAULT_MAP_FORMATTER)
+                .columnOf("Website", WebSource::getWebsite, Formatter.onURL())
+                .columnOf("Monitor", WebSource::getMonitor, Formatter.onURI())
+                .columnOf("MonitorWebsite", WebSource::getMonitorWebsite, Formatter.onURL())
                 .columnOf("Languages", this::getLanguages, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
     }
 
-    private String getDescription(SdmxWebSource source) {
+    private String getDescription(WebSource source) {
         return source.getName(web.getLangs());
     }
 
-    private Iterable<String> getLanguages(SdmxWebSource source) {
+    private Iterable<String> getLanguages(WebSource source) {
         return source.getNames().keySet();
     }
 
-    private Stream<SdmxWebSource> getRows() throws IOException {
+    private Stream<WebSource> getRows() throws IOException {
         return web.loadManager()
                 .getSources()
                 .values()

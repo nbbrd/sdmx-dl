@@ -27,7 +27,7 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ import static sdmxdl.provider.web.RestErrorMapping.CLIENT_NO_RESULTS_FOUND;
 @lombok.RequiredArgsConstructor
 public class RiRestClient implements RestClient {
 
-    public static @NonNull RiRestClient of(@NonNull SdmxWebSource s, @NonNull Languages languages, @NonNull WebContext c,
+    public static @NonNull RiRestClient of(@NonNull WebSource s, @NonNull Languages languages, @NonNull WebContext c,
                                            @NonNull RiRestQueries queries, @NonNull RiRestParsers parsers, @NonNull Set<Feature> supportedFeatures) throws IOException {
         return new RiRestClient(
                 HasMarker.of(s),
@@ -73,22 +73,22 @@ public class RiRestClient implements RestClient {
     protected final Set<Feature> supportedFeatures;
 
     @Override
-    public @NonNull List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Flow> getFlows() throws IOException {
         return getFlows(getFlowsQuery());
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
         return getFlow(getFlowQuery(ref), ref);
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+    public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         return getStructure(getStructureQuery(ref), ref);
     }
 
     @Override
-    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         return getData(getDataQuery(ref, dsd.getRef()), dsd);
     }
 
@@ -113,7 +113,7 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected List<Dataflow> getFlows(@NonNull URL url) throws IOException {
+    protected List<Flow> getFlows(@NonNull URL url) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowsTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
@@ -128,12 +128,12 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getFlowQuery(@NonNull DataflowRef ref) throws IOException {
+    protected URL getFlowQuery(@NonNull FlowRef ref) throws IOException {
         return queries.getFlowQuery(endpoint, ref).build();
     }
 
     @NonNull
-    protected Dataflow getFlow(@NonNull URL url, @NonNull DataflowRef ref) throws IOException {
+    protected Flow getFlow(@NonNull URL url, @NonNull FlowRef ref) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getFlowTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
@@ -149,12 +149,12 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getStructureQuery(@NonNull DataStructureRef ref) throws IOException {
+    protected URL getStructureQuery(@NonNull StructureRef ref) throws IOException {
         return queries.getStructureQuery(endpoint, ref).build();
     }
 
     @NonNull
-    protected DataStructure getStructure(@NonNull URL url, @NonNull DataStructureRef ref) throws IOException {
+    protected Structure getStructure(@NonNull URL url, @NonNull StructureRef ref) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getStructureTypes(), langs);
         try (HttpResponse response = httpClient.send(request)) {
             return parsers
@@ -170,12 +170,12 @@ public class RiRestClient implements RestClient {
     }
 
     @NonNull
-    protected URL getDataQuery(@NonNull DataRef ref, @NonNull DataStructureRef dsdRef) throws IOException {
+    protected URL getDataQuery(@NonNull DataRef ref, @NonNull StructureRef dsdRef) throws IOException {
         return queries.getDataQuery(endpoint, ref, dsdRef).build();
     }
 
     @NonNull
-    protected Stream<Series> getData(@NonNull URL url, @NonNull DataStructure dsd) throws IOException {
+    protected Stream<Series> getData(@NonNull URL url, @NonNull Structure dsd) throws IOException {
         HttpRequest request = RiHttpUtils.newRequest(url, parsers.getDataTypes(), langs);
         try {
             HttpResponse response = httpClient.send(request);

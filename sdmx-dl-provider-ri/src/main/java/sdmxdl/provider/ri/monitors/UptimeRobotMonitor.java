@@ -12,7 +12,7 @@ import sdmxdl.provider.web.WebEvents;
 import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorStatus;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
@@ -45,7 +45,7 @@ public final class UptimeRobotMonitor implements Monitor {
     }
 
     @Override
-    public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull MonitorReport getReport(@NonNull WebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         WebMonitors.checkMonitor(source.getMonitor(), getMonitorUriScheme());
 
         UptimeRobotId id = UptimeRobotId.parse(source.getMonitor());
@@ -99,7 +99,7 @@ public final class UptimeRobotMonitor implements Monitor {
     }
 
     @MightBePromoted
-    private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, SdmxWebSource source, String monitorId) throws IOException {
+    private static <T> T post(URL url, String query, IOFunction<Reader, T> factory, WebContext context, WebSource source, String monitorId) throws IOException {
         byte[] data = query.getBytes(StandardCharsets.UTF_8);
 
         Network network = context.getNetwork(source);

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.function.BiConsumer;
 
 @FunctionalInterface
-public interface ErrorListener<S extends SdmxSource> {
+public interface ErrorListener<S extends Source> {
 
     void accept(@NonNull S source, @NonNull String marker, @NonNull CharSequence message, @NonNull IOException error);
 

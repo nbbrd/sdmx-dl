@@ -25,8 +25,8 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
-import sdmxdl.DataDetail;
-import sdmxdl.Dataflow;
+import sdmxdl.Detail;
+import sdmxdl.Flow;
 import sdmxdl.Feature;
 import sdmxdl.Key;
 import sdmxdl.cli.protobuf.Features;
@@ -34,7 +34,7 @@ import sdmxdl.cli.protobuf.Flows;
 import sdmxdl.cli.protobuf.Sources;
 import sdmxdl.format.protobuf.ProtobufRepositories;
 import sdmxdl.format.protobuf.ProtobufSources;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
@@ -60,7 +60,7 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromWebSources(web.loadManager().getSources().values()));
     }
 
-    private static Sources fromWebSources(Collection<SdmxWebSource> value) {
+    private static Sources fromWebSources(Collection<WebSource> value) {
         return Sources
                 .newBuilder()
                 .addAllSources(value.stream().map(ProtobufSources::fromWebSource).collect(Collectors.toList()))
@@ -72,7 +72,7 @@ public final class DebugListCommand implements Callable<Void> {
         nonNull(out).dumpAll(fromDataflows(web.loadFlows(web.loadManager(), web.getLangs())));
     }
 
-    private static Flows fromDataflows(Collection<Dataflow> value) {
+    private static Flows fromDataflows(Collection<Flow> value) {
         return Flows
                 .newBuilder()
                 .addAllFlows(value.stream().map(ProtobufRepositories::fromDataflow).collect(Collectors.toList()))
@@ -81,7 +81,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(ProtobufRepositories.fromDataSet(web.loadSeries(web.loadManager(), Key.ALL, DataDetail.SERIES_KEYS_ONLY)));
+        nonNull(out).dumpAll(ProtobufRepositories.fromDataSet(web.loadSeries(web.loadManager(), Key.ALL, Detail.SERIES_KEYS_ONLY)));
     }
 
     @Command

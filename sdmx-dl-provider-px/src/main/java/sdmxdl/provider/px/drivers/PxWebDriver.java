@@ -28,7 +28,7 @@ import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -62,7 +62,7 @@ public final class PxWebDriver implements Driver {
             .connector(PxWebDriver::newConnection)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(CACHE_TTL_PROPERTY)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("STATFIN")
                     .name("en", "Statistics Finland")
@@ -74,7 +74,7 @@ public final class PxWebDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
                 source.getId().toLowerCase(Locale.ROOT),
@@ -105,28 +105,28 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() throws IOException {
+        public @NonNull Collection<Flow> getFlows() throws IOException {
             return client.getTables();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             return client.getMeta(flowRef.getId());
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
-            DataStructure dsd = client.getMeta(flowRef.getId());
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            Structure dsd = client.getMeta(flowRef.getId());
             DataCursor dataCursor = client.getData(flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
@@ -145,11 +145,11 @@ public final class PxWebDriver implements Driver {
 
         @NonNull Config getConfig() throws IOException;
 
-        @NonNull List<Dataflow> getTables() throws IOException;
+        @NonNull List<Flow> getTables() throws IOException;
 
-        @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException;
+        @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException;
 
-        @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+        @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
     }
 
     @lombok.AllArgsConstructor
@@ -186,7 +186,7 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Dataflow> getTables() throws IOException {
+        public @NonNull List<Flow> getTables() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(new URL(baseURL, "?query=*&filter=*"))
@@ -198,13 +198,13 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<List<Dataflow>> getTablesParser(MediaType ignore) {
+        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
             return Table.JSON_PARSER
                     .andThen(tables -> Stream.of(tables).map(table -> table.toDataflow(dbId)).collect(toList()));
         }
 
         @Override
-        public @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(new URL(baseURL, tableId))
@@ -216,13 +216,13 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<DataStructure> getMetaParser(String tableId, MediaType ignore) {
+        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toDataStructure(DataStructureRef.of(dbId, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(dbId, tableId, null)));
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(new URL(baseURL, tableId))
@@ -235,7 +235,7 @@ public final class PxWebDriver implements Driver {
                     .parseStream(response::asDisconnectingInputStream);
         }
 
-        private FileParser<DataCursor> getDataParser(DataStructure dsd, MediaType ignore) {
+        private FileParser<DataCursor> getDataParser(Structure dsd, MediaType ignore) {
             return PxWebSdmxDataCursor.parserOf(dsd);
         }
     }
@@ -245,11 +245,11 @@ public final class PxWebDriver implements Driver {
 
         static @NonNull CachedPxWebClient of(
                 @NonNull PxWebClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull SdmxWebSource source, @NonNull Languages languages) {
+                @NonNull WebSource source, @NonNull Languages languages) {
             return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
-        private static URI getBase(SdmxWebSource source, Languages languages) {
+        private static URI getBase(WebSource source, Languages languages) {
             return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
@@ -266,19 +266,19 @@ public final class PxWebDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Dataflow>> idOfTables = initIdOfTables(base);
+        private final TypedId<List<Flow>> idOfTables = initIdOfTables(base);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<DataStructure> idOfMeta = initIdOfMeta(base);
+        private final TypedId<Structure> idOfMeta = initIdOfMeta(base);
 
-        private static TypedId<List<Dataflow>> initIdOfTables(URI base) {
+        private static TypedId<List<Flow>> initIdOfTables(URI base) {
             return TypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
             ).with("tables");
         }
 
-        private static TypedId<DataStructure> initIdOfMeta(URI base) {
+        private static TypedId<Structure> initIdOfMeta(URI base) {
             return TypedId.of(base,
                     repo -> repo.getStructures().stream().findFirst().orElse(null),
                     struct -> DataRepository.builder().structure(struct).build()
@@ -296,17 +296,17 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Dataflow> getTables() throws IOException {
+        public @NonNull List<Flow> getTables() throws IOException {
             return getIdOfTables().load(cache, delegate::getTables, o -> ttl);
         }
 
         @Override
-        public @NonNull DataStructure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
             return getIdOfMeta().with(tableId).load(cache, () -> delegate.getMeta(tableId), o -> ttl);
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull DataStructure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
             return delegate.getData(tableId, dsd, key);
         }
     }
@@ -315,7 +315,7 @@ public final class PxWebDriver implements Driver {
     @lombok.AllArgsConstructor
     static final class PxWebSdmxDataCursor implements DataCursor {
 
-        public static @NonNull FileParser<DataCursor> parserOf(@NonNull DataStructure dsd) {
+        public static @NonNull FileParser<DataCursor> parserOf(@NonNull Structure dsd) {
             return SdmxXmlStreams
                     .genericData20(fixStructureDimensions(dsd), ObsParser::newDefault)
                     .andThen(PxWebSdmxDataCursor::new);
@@ -377,7 +377,7 @@ public final class PxWebDriver implements Driver {
             delegate.close();
         }
 
-        private static DataStructure fixStructureDimensions(DataStructure dsd) {
+        private static Structure fixStructureDimensions(Structure dsd) {
             return dsd
                     .toBuilder()
                     .clearDimensions()
@@ -443,11 +443,11 @@ public final class PxWebDriver implements Driver {
         String path;
         String title;
 
-        Dataflow toDataflow(String dbId) {
-            return Dataflow
+        Flow toDataflow(String dbId) {
+            return Flow
                     .builder()
-                    .ref(DataflowRef.of(dbId, id, null))
-                    .structureRef(DataStructureRef.of(dbId, id, null))
+                    .ref(FlowRef.of(dbId, id, null))
+                    .structureRef(StructureRef.of(dbId, id, null))
                     .name(title)
                     .build();
         }
@@ -478,8 +478,8 @@ public final class PxWebDriver implements Driver {
 
         List<TableVariable> variables;
 
-        DataStructure toDataStructure(DataStructureRef ref) {
-            return DataStructure
+        Structure toDataStructure(StructureRef ref) {
+            return Structure
                     .builder()
                     .ref(ref)
                     .timeDimensionId(toTimeDimensionId())
@@ -568,7 +568,7 @@ public final class PxWebDriver implements Driver {
         @lombok.Singular
         Map<String, Collection<String>> itemFilters;
 
-        static TableQuery fromDataStructureAndKey(DataStructure dsd, Key key) {
+        static TableQuery fromDataStructureAndKey(Structure dsd, Key key) {
             return new TableQuery(CollectionUtil.indexedStreamOf(dsd.getDimensionList())
                     .collect(Collectors.toMap(
                             dimension -> dimension.getElement().getId(),

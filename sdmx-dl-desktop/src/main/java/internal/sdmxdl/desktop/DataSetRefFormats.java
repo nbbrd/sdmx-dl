@@ -26,7 +26,7 @@ public class DataSetRefFormats {
     }
 
     private static Dimension getDimension(DataSetRef ref, FlowStruct fs) {
-        return fs.getDataStructure().getDimensionList().get(ref.getDimensionIndex());
+        return fs.getStructure().getDimensionList().get(ref.getDimensionIndex());
     }
 
     private static String getKeyText(DataSetRef ref) {

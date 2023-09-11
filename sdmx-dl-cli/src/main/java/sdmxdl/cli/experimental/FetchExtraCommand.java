@@ -72,11 +72,11 @@ public final class FetchExtraCommand implements Callable<Void> {
         SdmxWebManager manager = web.loadManager();
 
         try (Connection conn = web.open(manager, web.getLangs())) {
-            DataStructure dsd = conn.getStructure(web.getFlow());
+            Structure dsd = conn.getStructure(web.getFlow());
 
             SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);
 
-            return sort.applySort(conn.getData(web.getFlow(), DataQuery.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(web.getFlow(), Query.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
                     .map(series -> {
                         SeriesMeta x = factory.get(series);
                         return new Extra(
@@ -91,8 +91,8 @@ public final class FetchExtraCommand implements Callable<Void> {
         }
     }
 
-    private DataDetail getDetail() {
-        return DataDetail.FULL;
+    private Detail getDetail() {
+        return Detail.FULL;
     }
 
     @lombok.Value

@@ -21,7 +21,7 @@ import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
@@ -51,7 +51,7 @@ public final class Sdmx21Driver implements Driver {
             .propertyOf(NEEDS_URL_ENCODING_PROPERTY)
             .propertyOf(SUPPORTS_COMPRESSION_PROPERTY)
             .propertyOf(DETAIL_SUPPORTED_PROPERTY)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ABS")
                     .name("en", "Australian Bureau of Statistics")
@@ -62,7 +62,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/abs")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("BIS")
                     .name("en", "Bank for International Settlements")
@@ -73,7 +73,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bis")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("CAMSTAT")
                     .name("en", "National Institute of Statistics of Cambodia")
@@ -84,7 +84,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/camstat")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ECB")
                     .name("en", "European Central Bank")
@@ -96,7 +96,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ecb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ESCAP")
                     .name("en", "Economic and Social Commission for Asia and the Pacific")
@@ -106,7 +106,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/escap")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ILO")
                     .name("en", "International Labour Organization")
@@ -117,7 +117,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ilo")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("IMF_SDMX_CENTRAL")
                     .name("en", "International Monetary Fund (SDMX Central)")
@@ -129,7 +129,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("INEGI")
                     .name("en", "Instituto Nacional de Estadistica y Geografia")
@@ -139,7 +139,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/inegi")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ISTAT")
                     .name("en", "Istituto Nazionale di Statistica")
@@ -151,7 +151,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/istat")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("NB")
                     .name("en", "Norges Bank")
@@ -164,7 +164,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SGR")
                     .name("en", "SDMX Global Registry")
@@ -175,7 +175,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/sgr")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SIMEL")
                     .name("en", "El Salvador Labour Market Information System")
@@ -186,7 +186,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/simel")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SPC")
                     .name("en", "Pacific Data Hub")
@@ -198,7 +198,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/spc")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("STATEC")
                     .name("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
@@ -210,7 +210,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statec")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("UNDATA")
                     .name("en", "Data access system to UN databases")
@@ -221,7 +221,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/undata")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("WB")
                     .name("en", "World Bank")
@@ -232,7 +232,7 @@ public final class Sdmx21Driver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("WITS")
                     .name("en", "World Integrated Trade Solutions")

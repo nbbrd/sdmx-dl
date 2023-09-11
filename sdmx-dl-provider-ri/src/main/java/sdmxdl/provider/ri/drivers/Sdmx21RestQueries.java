@@ -21,20 +21,20 @@ public class Sdmx21RestQueries implements RiRestQueries {
     }
 
     @Override
-    public URLQueryBuilder getFlowQuery(URL endpoint, DataflowRef ref) {
+    public URLQueryBuilder getFlowQuery(URL endpoint, FlowRef ref) {
         return onMeta(endpoint, DEFAULT_DATAFLOW_PATH, ref)
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public URLQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+    public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
         return onMeta(endpoint, DEFAULT_DATASTRUCTURE_PATH, ref)
                 .param(REFERENCES_PARAM, "children")
                 .trailingSlash(trailingSlashRequired);
     }
 
     @Override
-    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
+    public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
         URLQueryBuilder result = onData(endpoint, DEFAULT_DATA_PATH, ref.getFlowRef(), ref.getQuery().getKey(), DEFAULT_PROVIDER_REF);
         applyFilter(ref.getQuery().getDetail(), result);
         return result.trailingSlash(trailingSlashRequired);
@@ -47,11 +47,11 @@ public class Sdmx21RestQueries implements RiRestQueries {
     }
 
     @Override
-    public DataStructureRef peekStructureRef(DataflowRef ref) {
+    public StructureRef peekStructureRef(FlowRef ref) {
         return null;
     }
 
-    protected void applyFilter(DataDetail detail, URLQueryBuilder result) {
+    protected void applyFilter(Detail detail, URLQueryBuilder result) {
         switch (detail) {
             case SERIES_KEYS_ONLY:
                 result.param(DETAIL_PARAM, "serieskeysonly");
@@ -74,7 +74,7 @@ public class Sdmx21RestQueries implements RiRestQueries {
                 .path(ref.getVersion());
     }
 
-    protected URLQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
+    protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
         return URLQueryBuilder
                 .of(endpoint)
                 .path(resourcePath)
@@ -93,5 +93,5 @@ public class Sdmx21RestQueries implements RiRestQueries {
     protected static final String REFERENCES_PARAM = "references";
     protected static final String DETAIL_PARAM = "detail";
 
-    protected static final DataflowRef FLOWS = DataflowRef.of("all", "all", "latest");
+    protected static final FlowRef FLOWS = FlowRef.of("all", "all", "latest");
 }

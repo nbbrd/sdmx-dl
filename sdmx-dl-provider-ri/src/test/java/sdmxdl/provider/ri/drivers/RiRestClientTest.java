@@ -5,10 +5,6 @@ import internal.util.http.HttpResponseException;
 import internal.util.http.ext.DumpingClientTest;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.drivers.RiRestClient;
-import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
-import sdmxdl.provider.ri.drivers.Sdmx21RestParsers;
-import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
 import sdmxdl.provider.Marker;
@@ -38,7 +34,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getFlow(BAD_FLOW_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
-        DataflowRef ref = DataflowRef.of("ECB", "AME", "1.0");
+        FlowRef ref = FlowRef.of("ECB", "AME", "1.0");
         assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATAFLOWS)).getFlow(ref)).satisfies(dsd -> {
                     assertThat(dsd.getRef()).isEqualTo(ref);
                 }
@@ -55,7 +51,7 @@ public class RiRestClientTest {
                 .isThrownBy(() -> of(onResponseError(HTTP_FORBIDDEN)).getStructure(BAD_STRUCT_REF))
                 .withMessageContaining(String.valueOf(HTTP_FORBIDDEN));
 
-        DataStructureRef ref = DataStructureRef.of("ECB", "ECB_AME1", "1.0");
+        StructureRef ref = StructureRef.of("ECB", "ECB_AME1", "1.0");
         assertThat(of(onResponseStream(SdmxXmlSources.ECB_DATA_STRUCTURE)).getStructure(ref)).satisfies(dsd -> {
                     assertThat(dsd.getRef()).isEqualTo(ref);
                     assertThat(dsd.getDimensions()).hasSize(7);

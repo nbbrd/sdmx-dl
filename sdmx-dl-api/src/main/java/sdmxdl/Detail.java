@@ -6,7 +6,7 @@ import lombok.AccessLevel;
  * Describe an amount of information
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum DataDetail {
+public enum Detail {
 
     /**
      * All data and documentation, including annotations

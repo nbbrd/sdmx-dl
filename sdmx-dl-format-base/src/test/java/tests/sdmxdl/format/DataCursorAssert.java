@@ -19,7 +19,7 @@ package tests.sdmxdl.format;
 import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOSupplier;
 import org.assertj.core.api.SoftAssertions;
-import sdmxdl.DataDetail;
+import sdmxdl.Detail;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import tests.sdmxdl.api.TckUtil;
@@ -30,11 +30,11 @@ import java.io.IOException;
 @lombok.experimental.UtilityClass
 public class DataCursorAssert {
 
-    public void assertCompliance(IOSupplier<DataCursor> supplier, Key key, DataDetail detail) {
+    public void assertCompliance(IOSupplier<DataCursor> supplier, Key key, Detail detail) {
         TckUtil.run(s -> assertCompliance(s, supplier, key, detail));
     }
 
-    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier, Key key, DataDetail detail) throws Exception {
+    public void assertCompliance(SoftAssertions s, IOSupplier<DataCursor> supplier, Key key, Detail detail) throws Exception {
         try (DataCursor c = supplier.getWithIO()) {
             while (c.nextSeries()) {
                 assertNonnull(s, c);

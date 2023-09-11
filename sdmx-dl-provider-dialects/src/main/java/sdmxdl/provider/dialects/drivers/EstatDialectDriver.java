@@ -41,7 +41,7 @@ import sdmxdl.provider.ri.drivers.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -86,7 +86,7 @@ public final class EstatDialectDriver implements Driver {
             .properties(RI_CONNECTION_PROPERTIES)
             .propertyOf(ASYNC_MAX_RETRIES_PROPERTY)
             .propertyOf(ASYNC_SLEEP_TIME_PROPERTY)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ESTAT")
                     .alias("EUROSTAT")
@@ -99,7 +99,7 @@ public final class EstatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ESTAT_COMEXT")
                     .name("en", "Eurostat - International trade in goods statistics (ITGS)")
@@ -109,7 +109,7 @@ public final class EstatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/estat_comext")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
@@ -119,7 +119,7 @@ public final class EstatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("EC_DG_EMPL")
                     .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
@@ -129,7 +129,7 @@ public final class EstatDialectDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("EC_DG_GROW")
                     .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
@@ -141,7 +141,7 @@ public final class EstatDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return new RiRestClient(
                 HasMarker.of(s),
                 s.getEndpoint().toURL(),
@@ -158,7 +158,7 @@ public final class EstatDialectDriver implements Driver {
     @SdmxFix(id = 4, category = QUERY, cause = "Data key parameter does not support 'all' keyword")
     private static final Set<Feature> ESTAT_FEATURES = EnumSet.of(Feature.DATA_QUERY_DETAIL);
 
-    private static HttpClient getHttpClient(SdmxWebSource s, WebContext c) {
+    private static HttpClient getHttpClient(WebSource s, WebContext c) {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
         long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
         return new InterceptingClient(

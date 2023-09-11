@@ -36,11 +36,11 @@ public class DataRepository implements HasExpiration {
 
     @lombok.NonNull
     @lombok.Singular
-    List<DataStructure> structures;
+    List<Structure> structures;
 
     @lombok.NonNull
     @lombok.Singular
-    List<Dataflow> flows;
+    List<Flow> flows;
 
     @lombok.NonNull
     @lombok.Singular
@@ -55,7 +55,7 @@ public class DataRepository implements HasExpiration {
     Instant expirationTime = Instant.MAX;
 
     @NonNull
-    public Optional<DataStructure> getStructure(@NonNull DataStructureRef ref) {
+    public Optional<Structure> getStructure(@NonNull StructureRef ref) {
         return structures
                 .stream()
                 .filter(ref::equalsRef)
@@ -63,7 +63,7 @@ public class DataRepository implements HasExpiration {
     }
 
     @NonNull
-    public Optional<Dataflow> getFlow(@NonNull DataflowRef ref) {
+    public Optional<Flow> getFlow(@NonNull FlowRef ref) {
         return flows
                 .stream()
                 .filter(ref::containsRef)
@@ -71,7 +71,7 @@ public class DataRepository implements HasExpiration {
     }
 
     @NonNull
-    public Optional<DataSet> getDataSet(@NonNull DataflowRef ref) {
+    public Optional<DataSet> getDataSet(@NonNull FlowRef ref) {
         return dataSets
                 .stream()
                 .filter(ref::containsRef)

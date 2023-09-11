@@ -2,7 +2,7 @@ package tests.sdmxdl.file.spi;
 
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
 import tests.sdmxdl.api.TckUtil;
@@ -21,8 +21,8 @@ public class ReaderAssert {
     public static class Sample {
         String validName;
         String invalidName;
-        SdmxFileSource validSource;
-        SdmxFileSource invalidSource;
+        FileSource validSource;
+        FileSource invalidSource;
         FileContext context;
     }
 

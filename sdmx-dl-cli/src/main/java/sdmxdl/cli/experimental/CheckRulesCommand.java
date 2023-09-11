@@ -25,7 +25,7 @@ import sdmxdl.testing.WebResponse;
 import sdmxdl.testing.WebRuleLoader;
 import sdmxdl.testing.xml.XmlSourceQuery;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public final class CheckRulesCommand implements Callable<Void> {
                 .build();
     }
 
-    private static RulesConfig configOf(SdmxWebSource source) {
+    private static RulesConfig configOf(WebSource source) {
         try {
             RulesConfig.Builder result = RulesConfig.newBuilder();
             result.setDriver(source.getDriver());

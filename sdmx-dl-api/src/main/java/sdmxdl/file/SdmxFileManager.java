@@ -37,7 +37,7 @@ import java.util.Optional;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
+public class SdmxFileManager extends SdmxManager<FileSource> {
 
     @StaticFactoryMethod
     public static @NonNull SdmxFileManager ofServiceLoader() {
@@ -55,9 +55,9 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @lombok.Builder.Default
     @NonNull FileCaching caching = FileCaching.noOp();
 
-    @Nullable EventListener<? super SdmxFileSource> onEvent;
+    @Nullable EventListener<? super FileSource> onEvent;
 
-    @Nullable ErrorListener<? super SdmxFileSource> onError;
+    @Nullable ErrorListener<? super FileSource> onError;
 
     @lombok.Singular
     @NonNull List<Reader> readers;
@@ -66,7 +66,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
     @NonNull FileContext context = initLazyContext();
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxFileSource source, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull FileSource source, @NonNull Languages languages) throws IOException {
         Reader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
@@ -82,7 +82,7 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
                 .build();
     }
 
-    private Optional<Reader> lookupReader(SdmxFileSource source) {
+    private Optional<Reader> lookupReader(FileSource source) {
         return readers.stream()
                 .filter(reader -> reader.canRead(source))
                 .findFirst();

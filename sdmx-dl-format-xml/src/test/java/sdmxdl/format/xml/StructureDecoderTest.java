@@ -17,8 +17,8 @@
 package sdmxdl.format.xml;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataStructure;
-import sdmxdl.DataStructureRef;
+import sdmxdl.Structure;
+import sdmxdl.StructureRef;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.IOException;
@@ -29,12 +29,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Philippe Charles
  */
-public class DataStructureDecoderTest {
+public class StructureDecoderTest {
 
     @Test
     public void testDecodeGeneric20() throws IOException {
-        DataStructure ds = DataStructure.builder()
-                .ref(DataStructureRef.of(null, "BIS_JOINT_DEBT", null))
+        Structure ds = Structure.builder()
+                .ref(StructureRef.of(null, "BIS_JOINT_DEBT", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("JD_TYPE", 2, "P"))
                 .dimension(dimension("JD_CATEGORY", 3, "A"))
@@ -49,8 +49,8 @@ public class DataStructureDecoderTest {
 
     @Test
     public void testDecodeCompact20() throws IOException {
-        DataStructure ds = DataStructure.builder()
-                .ref(DataStructureRef.of(null, "UNKNOWN", null))
+        Structure ds = Structure.builder()
+                .ref(StructureRef.of(null, "UNKNOWN", null))
                 .dimension(dimension("FREQ", 1, "A", "M"))
                 .dimension(dimension("COLLECTION", 2, "B"))
                 .dimension(dimension("VIS_CTY", 3, "MX"))
@@ -66,8 +66,8 @@ public class DataStructureDecoderTest {
 
     @Test
     public void testDecodeGeneric21() throws IOException {
-        DataStructure ds = DataStructure.builder()
-                .ref(DataStructureRef.of(null, "ECB_AME1", null))
+        Structure ds = Structure.builder()
+                .ref(StructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))
@@ -85,8 +85,8 @@ public class DataStructureDecoderTest {
 
     @Test
     public void testDecodeCompact21() throws IOException {
-        DataStructure ds = DataStructure.builder()
-                .ref(DataStructureRef.of(null, "ECB_AME1", null))
+        Structure ds = Structure.builder()
+                .ref(StructureRef.of(null, "ECB_AME1", null))
                 .dimension(dimension("FREQ", 1, "A"))
                 .dimension(dimension("AME_REF_AREA", 2, "BEL"))
                 .dimension(dimension("AME_TRANSFORMATION", 3, "1"))

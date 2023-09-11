@@ -46,7 +46,7 @@ public class ParsersTest {
                 .build();
     }
 
-    private DataStructure removeAttributeRelationship(DataStructure dsd) {
+    private Structure removeAttributeRelationship(Structure dsd) {
         return dsd
                 .toBuilder()
                 .clearAttributes()
@@ -68,7 +68,7 @@ public class ParsersTest {
                     .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
-                                .isEqualTo(DataStructureRef.of("ECB", "ECB_AME1", "1.0"));
+                                .isEqualTo(StructureRef.of("ECB", "ECB_AME1", "1.0"));
                         assertThat(dsd.getDimensions())
                                 .hasSize(7)
                                 .element(0)
@@ -114,8 +114,8 @@ public class ParsersTest {
             assertThat(repository.getFlows())
                     .hasSize(3)
                     .element(0)
-                    .extracting(Dataflow::getRef)
-                    .isEqualTo(DataflowRef.of("ECB", "AME", "1.0"));
+                    .extracting(Flow::getRef)
+                    .isEqualTo(FlowRef.of("ECB", "AME", "1.0"));
 
             assertThat(repository.getDataSets())
                     .hasSize(1);
@@ -132,7 +132,7 @@ public class ParsersTest {
                     .singleElement()
                     .satisfies(dsd -> {
                         assertThat(dsd.getRef())
-                                .isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", "latest"));
+                                .isEqualTo(StructureRef.of("NBB", "TEST_DATASET", "latest"));
                         assertThat(dsd.getDimensions())
                                 .hasSize(3)
                                 .element(0)
@@ -177,8 +177,8 @@ public class ParsersTest {
 
             assertThat(repository.getFlows())
                     .singleElement()
-                    .extracting(Dataflow::getRef)
-                    .isEqualTo(DataflowRef.of("NBB", "TEST_DATASET", "latest"));
+                    .extracting(Flow::getRef)
+                    .isEqualTo(FlowRef.of("NBB", "TEST_DATASET", "latest"));
 
             assertThat(repository.getDataSets())
                     .hasSize(1);

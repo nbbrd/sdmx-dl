@@ -29,7 +29,7 @@ import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class WebOptions {
         try (CloseableExecutorService executor = new CloseableExecutorService(newResourceExecutor())) {
 
             Future<SdmxWebManager> defaultWebManager = executor.submit(this::loadDefaultWebManager);
-            Future<List<SdmxWebSource>> customSources = executor.submit(this::loadCustomSources);
+            Future<List<WebSource>> customSources = executor.submit(this::loadCustomSources);
 
             return defaultWebManager.get()
                     .toBuilder()
@@ -116,13 +116,13 @@ public class WebOptions {
         }
     }
 
-    private EventListener<? super SdmxWebSource> getEventListener() {
-        EventListener<? super SdmxWebSource> original = isNoLog() ? null : new LoggingListener()::onSourceEvent;
+    private EventListener<? super WebSource> getEventListener() {
+        EventListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceEvent;
         return new VerboseEventListener(original, verboseOptions)::onSourceEvent;
     }
 
-    private ErrorListener<? super SdmxWebSource> getErrorListener() {
-        ErrorListener<? super SdmxWebSource> original = isNoLog() ? null : new LoggingListener()::onSourceError;
+    private ErrorListener<? super WebSource> getErrorListener() {
+        ErrorListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceError;
         return new VerboseErrorListener(original, verboseOptions)::onSourceError;
     }
 
@@ -132,7 +132,7 @@ public class WebOptions {
     }
 
     @ReturnNew
-    private List<SdmxWebSource> loadCustomSources() throws IOException {
+    private List<WebSource> loadCustomSources() throws IOException {
         if (isNoConfig()) return emptyList();
         if (sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile()) {
             System.setProperty(SourceProperties.SOURCES.getKey(), sourcesFile.toString());
@@ -148,13 +148,13 @@ public class WebOptions {
     @lombok.extern.java.Log
     private static class LoggingListener {
 
-        public void onSourceEvent(SdmxWebSource source, String marker, CharSequence message) {
+        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
             if (log.isLoggable(Level.INFO)) {
                 log.info(message.toString());
             }
         }
 
-        public void onSourceError(SdmxWebSource source, String marker, CharSequence message, IOException error) {
+        public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
             if (log.isLoggable(Level.INFO)) {
                 log.log(Level.INFO, message.toString(), error);
             }
@@ -164,12 +164,12 @@ public class WebOptions {
     @lombok.AllArgsConstructor
     private static class VerboseEventListener {
 
-        private final @Nullable EventListener<? super SdmxWebSource> main;
+        private final @Nullable EventListener<? super WebSource> main;
 
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceEvent(SdmxWebSource source, String marker, CharSequence message) {
+        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
             if (main != null) {
                 main.accept(source, marker, message);
             }
@@ -182,12 +182,12 @@ public class WebOptions {
     @lombok.AllArgsConstructor
     private static class VerboseErrorListener {
 
-        private final @Nullable ErrorListener<? super SdmxWebSource> main;
+        private final @Nullable ErrorListener<? super WebSource> main;
 
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceError(SdmxWebSource source, String marker, CharSequence message, IOException error) {
+        public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
             if (main != null) {
                 main.accept(source, marker, message, error);
             }

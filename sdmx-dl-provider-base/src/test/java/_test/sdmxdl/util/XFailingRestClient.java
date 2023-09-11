@@ -40,22 +40,22 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull List<Dataflow> getFlows() throws IOException {
+        public @NonNull List<Flow> getFlows() throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+        public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+        public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
             throw new CustomIOException();
         }
 
         @Override
-        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
             throw new CustomIOException();
         }
 
@@ -81,22 +81,22 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull List<Dataflow> getFlows() {
+        public @NonNull List<Flow> getFlows() {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) {
+        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) {
+        public @NonNull Structure getStructure(@NonNull StructureRef ref) {
             throw new CustomRuntimeException();
         }
 
         @Override
-        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) {
             throw new CustomRuntimeException();
         }
 
@@ -122,22 +122,22 @@ public enum XFailingRestClient implements RestClient {
         }
 
         @Override
-        public @NonNull List<Dataflow> getFlows() {
+        public @NonNull List<Flow> getFlows() {
             return null;
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) {
+        public @NonNull Flow getFlow(@NonNull FlowRef ref) {
             return null;
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) {
+        public @NonNull Structure getStructure(@NonNull StructureRef ref) {
             return null;
         }
 
         @Override
-        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) {
+        public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) {
             return null;
         }
 

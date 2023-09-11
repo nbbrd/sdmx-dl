@@ -27,11 +27,11 @@ public final class SdmxPicocsvParser {
     @lombok.Builder.Default
     private final Locale locale = Locale.ROOT;
 
-    public Picocsv.@NonNull Parser<DataSet> getParser(DataStructure dsd) {
+    public Picocsv.@NonNull Parser<DataSet> getParser(Structure dsd) {
         return Picocsv.Parser.builder(reader -> parseCsv(dsd, reader)).build();
     }
 
-    private DataSet parseCsv(DataStructure dsd, Csv.Reader reader) throws IOException {
+    private DataSet parseCsv(Structure dsd, Csv.Reader reader) throws IOException {
         List<String> header = readHeader(reader);
 
         int minHeaderSize = 3 + dsd.getDimensions().size();
@@ -63,9 +63,9 @@ public final class SdmxPicocsvParser {
         }
 
         ObsParser obsParser = factory.get();
-        Parser<DataflowRef> refParser = SdmxCsvFields.getDataflowRefParser();
+        Parser<FlowRef> refParser = SdmxCsvFields.getDataflowRefParser();
 
-        DataflowRef dataflowRef = DataflowRef.of(null, "", null);
+        FlowRef flowRef = FlowRef.of(null, "", null);
 
         Map<Key, Series.Builder> data = new HashMap<>();
         Key.Builder keyBuilder = Key.builder(dsd);
@@ -74,7 +74,7 @@ public final class SdmxPicocsvParser {
             if (!reader.readField()) {
                 throw new IOException("Missing dataflow field");
             }
-            dataflowRef = refParser.parse(reader);
+            flowRef = refParser.parse(reader);
 
             keyBuilder.clear();
             for (int i = 0; i < keyBuilder.size(); i++) {
@@ -117,7 +117,7 @@ public final class SdmxPicocsvParser {
         return data.values()
                 .stream()
                 .map(Series.Builder::build)
-                .collect(toDataSet(dataflowRef, DataQuery.ALL));
+                .collect(toDataSet(flowRef, Query.ALL));
     }
 
     private List<String> readHeader(Csv.Reader reader) throws IOException {

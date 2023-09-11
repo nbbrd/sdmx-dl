@@ -13,7 +13,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.util.Collection;
 
@@ -31,14 +31,14 @@ public interface WebCaching {
     int getWebCachingRank();
 
     @NonNull Cache<DataRepository> getDriverCache(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError);
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError);
 
     @NonNull Cache<MonitorReports> getMonitorCache(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError);
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError);
 
     @NonNull Collection<String> getWebCachingProperties();
 

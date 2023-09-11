@@ -8,7 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.provider.PropertiesSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;
 
@@ -60,9 +60,9 @@ public final class RiNetworking implements Networking {
 
     @Override
     public @NonNull Network getNetwork(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError) {
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError) {
         RiNetwork result = getNetwork(PropertiesSupport.asFunction(source));
         if (onEvent != null) onEvent.accept(source, getNetworkingId(), "Using " + result);
         return result;

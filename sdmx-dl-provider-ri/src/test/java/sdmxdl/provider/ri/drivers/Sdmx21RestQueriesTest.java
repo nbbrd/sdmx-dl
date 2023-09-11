@@ -19,7 +19,6 @@ package sdmxdl.provider.ri.drivers;
 import nbbrd.io.text.Parser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.drivers.Sdmx21RestQueries;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 
@@ -27,8 +26,8 @@ import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.DataDetail.FULL;
-import static sdmxdl.DataDetail.SERIES_KEYS_ONLY;
+import static sdmxdl.Detail.FULL;
+import static sdmxdl.Detail.SERIES_KEYS_ONLY;
 
 /**
  * @author Philippe Charles
@@ -116,14 +115,14 @@ public class Sdmx21RestQueriesTest {
     }
 
     private final URL base = Parser.onURL().parse("http://base");
-    private final DataflowRef specificFlow = DataflowRef.of("ECB", "EXR", "1.0");
-    private final DataflowRef genericFlow = DataflowRef.of(null, "EXR", null);
-    private final DataStructureRef specificStruct = DataStructureRef.of("ECB", "EXR", "1.0");
-    private final DataStructureRef genericStruct = DataStructureRef.of(null, "EXR", null);
+    private final FlowRef specificFlow = FlowRef.of("ECB", "EXR", "1.0");
+    private final FlowRef genericFlow = FlowRef.of(null, "EXR", null);
+    private final StructureRef specificStruct = StructureRef.of("ECB", "EXR", "1.0");
+    private final StructureRef genericStruct = StructureRef.of(null, "EXR", null);
     private final Key key = Key.parse("D.NOK.EUR.SP00.A");
-    private final DataStructureRef ignoreDsdRef = DataStructureRef.parse("abc");
+    private final StructureRef ignoreDsdRef = StructureRef.parse("abc");
 
-    private static DataQuery newDataQuery(Key key, DataDetail detail) {
-        return DataQuery.builder().key(key).detail(detail).build();
+    private static Query newDataQuery(Key key, Detail detail) {
+        return Query.builder().key(key).detail(detail).build();
     }
 }

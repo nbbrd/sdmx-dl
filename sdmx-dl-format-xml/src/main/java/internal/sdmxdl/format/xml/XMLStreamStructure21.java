@@ -70,12 +70,12 @@ public final class XMLStreamStructure21 {
     }
 
     @NonNull
-    public List<DataStructure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
+    public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }
 
-        List<DataStructure> result = new ArrayList<>();
+        List<Structure> result = new ArrayList<>();
         while (XMLStreamUtil.nextTags(reader, "")) {
             switch (reader.getLocalName()) {
                 case HEADER_TAG:
@@ -94,7 +94,7 @@ public final class XMLStreamStructure21 {
         XMLStreamUtil.check(Sdmxml.MESSAGE_V21.is(ns), reader, "Invalid namespace '%s'", ns);
     }
 
-    private void parseStructures(XMLStreamReader reader, List<DataStructure> structs) throws XMLStreamException {
+    private void parseStructures(XMLStreamReader reader, List<Structure> structs) throws XMLStreamException {
         DsdContext context = new DsdContext();
         while (XMLStreamUtil.nextTags(reader, STRUCTURES_TAG)) {
             switch (reader.getLocalName()) {
@@ -161,18 +161,18 @@ public final class XMLStreamStructure21 {
         concepts.put(id, label.build(id));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, DATA_STUCTURES_TAG, DATA_STUCTURE_TAG)) {
             parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
-        DataStructure.Builder ds = DataStructure.builder();
-        ds.ref(DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
+        Structure.Builder ds = Structure.builder();
+        ds.ref(StructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR)));
         structureLabel.clear();
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_TAG)) {
             switch (reader.getLocalName()) {
@@ -188,7 +188,7 @@ public final class XMLStreamStructure21 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DATA_STUCTURE_COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_LIST_TAG:
@@ -204,7 +204,7 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimensionList(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDimensionList(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, DIMENSION_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case DIMENSION_TAG:
@@ -217,7 +217,7 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Dimension id");
 
@@ -263,14 +263,14 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseTimeDimension(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+    private void parseTimeDimension(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing TimeDimension id");
 
         ds.timeDimensionId(id);
     }
 
-    private void parseMeasureList(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+    private void parseMeasureList(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
         if (XMLStreamUtil.nextTag(reader, MEASURE_LIST_TAG, PRIMARY_MEASURE_TAG)) {
             String id = reader.getAttributeValue(null, ID_ATTR);
             XMLStreamUtil.check(id != null, reader, "Missing PrimaryMeasure id");
@@ -286,7 +286,7 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseAttributeList(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttributeList(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTags(reader, ATTRIBUTE_LIST_TAG)) {
             switch (reader.getLocalName()) {
                 case ATTRIBUTE_TAG:
@@ -296,7 +296,7 @@ public final class XMLStreamStructure21 {
         }
     }
 
-    private void parseAttribute(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing Attribute id");
 

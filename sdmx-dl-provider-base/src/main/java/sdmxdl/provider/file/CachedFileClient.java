@@ -20,7 +20,7 @@ import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.TypedId;
@@ -40,11 +40,11 @@ public final class CachedFileClient implements FileClient {
 
     public static @NonNull CachedFileClient of(
             @NonNull FileClient client, @NonNull Cache<DataRepository> cache,
-            @NonNull SdmxFileSource source, @NonNull Languages languages) {
+            @NonNull FileSource source, @NonNull Languages languages) {
         return new CachedFileClient(client, cache, getBase(source, languages));
     }
 
-    private static URI getBase(SdmxFileSource source, Languages languages) {
+    private static URI getBase(FileSource source, Languages languages) {
         return TypedId.resolveURI(URI.create("cache:file"), source.getData().toString() + source.getStructure(), languages.toString());
     }
 
@@ -106,8 +106,8 @@ public final class CachedFileClient implements FileClient {
         return DEFAULT_CACHE_TTL;
     }
 
-    private DataSet copyAllNoData(FileInfo entry, DataflowRef flowRef) throws IOException {
-        DataRef ref = DataRef.of(flowRef, DataQuery.builder().key(Key.ALL).detail(DataDetail.NO_DATA).build());
+    private DataSet copyAllNoData(FileInfo entry, FlowRef flowRef) throws IOException {
+        DataRef ref = DataRef.of(flowRef, Query.builder().key(Key.ALL).detail(Detail.NO_DATA).build());
         try (Stream<Series> stream = delegate.loadData(entry, ref)) {
             return stream.collect(toDataSet(ref.getFlowRef(), ref.getQuery()));
         }

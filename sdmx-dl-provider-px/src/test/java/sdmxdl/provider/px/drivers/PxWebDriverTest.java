@@ -2,7 +2,7 @@ package sdmxdl.provider.px.drivers;
 
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataStructureRef;
+import sdmxdl.StructureRef;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class PxWebDriverTest {
                     assertThat(o.isTime()).isTrue();
                 }, Index.atIndex(2));
 
-        assertThat(meta.toDataStructure(DataStructureRef.parse("hello")))
+        assertThat(meta.toDataStructure(StructureRef.parse("hello")))
                 .satisfies(o -> {
                     assertThat(o.getDimensions()).hasSize(3);
                 });

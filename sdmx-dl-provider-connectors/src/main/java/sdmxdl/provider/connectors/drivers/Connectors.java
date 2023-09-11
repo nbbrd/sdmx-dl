@@ -38,17 +38,17 @@ import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 @lombok.experimental.UtilityClass
 public class Connectors {
 
-    public sdmxdl.Dataflow toFlow(Dataflow o) {
-        return sdmxdl.Dataflow
+    public Flow toFlow(Dataflow o) {
+        return Flow
                 .builder()
-                .ref(DataflowRef.parse(o.getFullIdentifier()))
+                .ref(FlowRef.parse(o.getFullIdentifier()))
                 .structureRef(toStructureRef(o.getDsdIdentifier()))
                 .name(o.getDescription())
                 .build();
     }
 
-    public DataStructureRef toStructureRef(SDMXReference o) {
-        return DataStructureRef.of(
+    public StructureRef toStructureRef(SDMXReference o) {
+        return StructureRef.of(
                 o.getAgency(),
                 o.getId(),
                 o.getVersion()
@@ -82,9 +82,9 @@ public class Connectors {
         return name != null ? name : o.getId();
     }
 
-    public DataStructure toStructure(DataFlowStructure dsd) {
-        return DataStructure.builder()
-                .ref(DataStructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
+    public Structure toStructure(DataFlowStructure dsd) {
+        return Structure.builder()
+                .ref(StructureRef.of(dsd.getAgency(), dsd.getId(), dsd.getVersion()))
                 .name(dsd.getName())
                 .timeDimensionId(dsd.getTimeDimension())
                 .primaryMeasureId(dsd.getMeasure())
@@ -93,7 +93,7 @@ public class Connectors {
                 .build();
     }
 
-    public Dataflow fromFlowQuery(DataflowRef flowRef, DataStructureRef structRef) {
+    public Dataflow fromFlowQuery(FlowRef flowRef, StructureRef structRef) {
         Dataflow result = new Dataflow(
                 flowRef.getId(),
                 flowRef.getAgency(),
@@ -103,7 +103,7 @@ public class Connectors {
         return result;
     }
 
-    public Dataflow fromFlow(sdmxdl.Dataflow flow) {
+    public Dataflow fromFlow(Flow flow) {
         Dataflow result = new Dataflow(
                 flow.getRef().getId(),
                 flow.getRef().getAgency(),
@@ -113,7 +113,7 @@ public class Connectors {
         return result;
     }
 
-    public SDMXReference fromStructureRef(DataStructureRef ref) {
+    public SDMXReference fromStructureRef(StructureRef ref) {
         return new SDMXReference(ref.getId(), ref.getAgency(), ref.getVersion());
     }
 
@@ -149,7 +149,7 @@ public class Connectors {
         return result;
     }
 
-    public DataFlowStructure fromStructure(DataStructure dsd) {
+    public DataFlowStructure fromStructure(Structure dsd) {
         DataFlowStructure result = new DataFlowStructure(
                 dsd.getRef().getId(),
                 dsd.getRef().getAgency(),

@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataStructureRef extends ResourceRef<DataStructureRef> {
+public class StructureRef extends ResourceRef<StructureRef> {
 
     @lombok.NonNull
     String agency;
@@ -48,12 +48,12 @@ public class DataStructureRef extends ResourceRef<DataStructureRef> {
     }
 
     @StaticFactoryMethod
-    public static @NonNull DataStructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return create(input, DataStructureRef::new);
+    public static @NonNull StructureRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+        return create(input, StructureRef::new);
     }
 
     @StaticFactoryMethod
-    public static @NonNull DataStructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
-        return of(agency, id, version, DataStructureRef::new);
+    public static @NonNull StructureRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
+        return of(agency, id, version, StructureRef::new);
     }
 }

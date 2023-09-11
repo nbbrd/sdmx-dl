@@ -1,7 +1,7 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
-import sdmxdl.DataflowRef;
+import sdmxdl.FlowRef;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class DataSourceRef {
 
     @NonNull String source;
 
-    @NonNull DataflowRef flow;
+    @NonNull FlowRef flow;
 
     @NonNull List<String> dimensions;
 }

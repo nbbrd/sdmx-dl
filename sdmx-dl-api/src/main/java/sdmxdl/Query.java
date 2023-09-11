@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class DataQuery {
+public class Query {
 
-    public static final DataQuery ALL = DataQuery.builder().build();
+    public static final Query ALL = Query.builder().build();
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -16,7 +16,7 @@ public class DataQuery {
 
     @lombok.NonNull
     @lombok.Builder.Default
-    DataDetail detail = DataDetail.FULL;
+    Detail detail = Detail.FULL;
 
     public @NonNull Stream<Series> execute(@NonNull Stream<Series> data) {
         return data

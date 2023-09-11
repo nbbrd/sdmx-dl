@@ -63,12 +63,12 @@ public interface SdmxCsvFieldWriter {
         };
     }
 
-    static @NonNull SdmxCsvFieldWriter onDataflow(@NonNull String label, @NonNull DataflowRef ref) {
+    static @NonNull SdmxCsvFieldWriter onDataflow(@NonNull String label, @NonNull FlowRef ref) {
         String dataflow = SdmxCsvFields.getDataflowRefFormatter().formatAsString(ref);
         return single(label, (series, obs) -> dataflow);
     }
 
-    static @NonNull SdmxCsvFieldWriter onKeyDimensions(@NonNull DataStructure dsd) {
+    static @NonNull SdmxCsvFieldWriter onKeyDimensions(@NonNull Structure dsd) {
         return onKeyDimensions(dsd.getDimensions()
                 .stream()
                 .map(Dimension::getId)
@@ -79,7 +79,7 @@ public interface SdmxCsvFieldWriter {
         return multi(labels, (series, obs, i) -> series.getKey().get(i));
     }
 
-    static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull DataStructure dsd, @NonNull Formatter<LocalDateTime> formatter) {
+    static @NonNull SdmxCsvFieldWriter onTimeDimension(@NonNull Structure dsd, @NonNull Formatter<LocalDateTime> formatter) {
         // FIXME: dsd#getTimeDimensionId() might be null !
         return onTimeDimension(dsd.getTimeDimensionId(), formatter);
     }
@@ -92,7 +92,7 @@ public interface SdmxCsvFieldWriter {
         return single(label, (series, obs) -> formatter.format(obs.getValue()));
     }
 
-    static @NonNull SdmxCsvFieldWriter onAttributes(@NonNull DataStructure dsd) {
+    static @NonNull SdmxCsvFieldWriter onAttributes(@NonNull Structure dsd) {
         return onAttributes(dsd.getAttributes()
                 .stream()
                 .sorted(Comparator.comparing(Attribute::getId))

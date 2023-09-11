@@ -35,27 +35,27 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Flow> getFlows() {
             return RepoSamples.REPO.getFlows();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) {
             return RepoSamples.FLOW;
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) {
             return RepoSamples.STRUCT;
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET;
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET.getData().stream();
         }
 
@@ -75,27 +75,27 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Flow> getFlows() {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
             throw new CustomException();
         }
 
@@ -115,27 +115,27 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() {
+        public @NonNull Collection<Flow> getFlows() {
             return null;
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) {
             return null;
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) {
             return null;
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) {
             return null;
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
             return null;
         }
 

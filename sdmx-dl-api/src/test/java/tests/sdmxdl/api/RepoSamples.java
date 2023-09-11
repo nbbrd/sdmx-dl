@@ -29,14 +29,14 @@ import java.time.LocalDate;
 @lombok.experimental.UtilityClass
 public class RepoSamples {
 
-    public static final DataStructureRef BAD_STRUCT_REF = DataStructureRef.parse("badStruct");
-    public static final DataflowRef BAD_FLOW_REF = DataflowRef.parse("other");
+    public static final StructureRef BAD_STRUCT_REF = StructureRef.parse("badStruct");
+    public static final FlowRef BAD_FLOW_REF = FlowRef.parse("other");
     public static final CodelistRef BAD_CODELIST_REF = CodelistRef.parse("badCodelist");
 
-    public static final DataStructureRef STRUCT_REF = DataStructureRef.of("NBB", "goodStruct", "v1.0");
-    public static final DataflowRef FLOW_REF = DataflowRef.of("NBB", "XYZ", "v2.0");
+    public static final StructureRef STRUCT_REF = StructureRef.of("NBB", "goodStruct", "v1.0");
+    public static final FlowRef FLOW_REF = FlowRef.of("NBB", "XYZ", "v2.0");
 
-    public static final Dataflow FLOW = Dataflow.builder().ref(FLOW_REF).structureRef(STRUCT_REF).name("flow1 name").description("flow1 description").build();
+    public static final Flow FLOW = Flow.builder().ref(FLOW_REF).structureRef(STRUCT_REF).name("flow1 name").description("flow1 description").build();
 
     public static final CodelistRef CL_REF1 = CodelistRef.parse("CL_FREQ");
     public static final CodelistRef CL_REF2 = CodelistRef.parse("CL_REGION");
@@ -55,7 +55,7 @@ public class RepoSamples {
     public static final Attribute NOT_CODED_ATTRIBUTE = Attribute.builder().id("TITLE").name("Title").relationship(AttributeRelationship.SERIES).build();
     public static final Attribute CODED_ATTRIBUTE = Attribute.builder().id("OBS_STATUS").codelist(CL4).name("Observation status").relationship(AttributeRelationship.OBSERVATION).build();
 
-    public static final DataStructure STRUCT = DataStructure
+    public static final Structure STRUCT = Structure
             .builder()
             .ref(STRUCT_REF)
             .dimension(DIM1)

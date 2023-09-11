@@ -22,7 +22,7 @@ import sdmxdl.Connection;
 import sdmxdl.Languages;
 import sdmxdl.format.ServiceSupport;
 import sdmxdl.provider.Validator;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -48,7 +48,7 @@ public final class DriverSupport implements Driver {
     private final WebConnector connector;
 
     @lombok.Singular
-    private final Collection<SdmxWebSource> sources;
+    private final Collection<WebSource> sources;
 
     @lombok.Singular
     private final Collection<String> properties;
@@ -58,7 +58,7 @@ public final class DriverSupport implements Driver {
     private final Predicate<Properties> availability = properties -> true;
 
     @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
-    private final Validator<SdmxWebSource> lazySourceValidator = WebValidators.onDriverId(id);
+    private final Validator<WebSource> lazySourceValidator = WebValidators.onDriverId(id);
 
     @Override
     public @NonNull String getDriverId() {
@@ -76,14 +76,14 @@ public final class DriverSupport implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         getLazySourceValidator().checkValidity(source);
 
         return connector.connect(source, languages, context);
     }
 
     @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+    public @NonNull Collection<WebSource> getDefaultSources() {
         return sources;
     }
 

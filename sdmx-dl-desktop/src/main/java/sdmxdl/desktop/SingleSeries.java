@@ -11,7 +11,7 @@ import java.io.IOException;
 @lombok.Value
 class SingleSeries {
 
-    @NonNull DataStructure dsd;
+    @NonNull Structure dsd;
 
     @NonNull Series series;
 
@@ -19,8 +19,8 @@ class SingleSeries {
 
     public static SingleSeries load(SdmxWebManager manager, Languages languages, DataSetRef ref) throws IOException {
         try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), languages)) {
-            DataStructure dsd = conn.getStructure(ref.getDataSourceRef().getFlow());
-            Series series = conn.getDataStream(ref.getDataSourceRef().getFlow(), DataQuery.builder().key(ref.getKey()).detail(DataDetail.FULL).build()).findFirst().orElseThrow(RuntimeException::new);
+            Structure dsd = conn.getStructure(ref.getDataSourceRef().getFlow());
+            Series series = conn.getDataStream(ref.getDataSourceRef().getFlow(), Query.builder().key(ref.getKey()).detail(Detail.FULL).build()).findFirst().orElseThrow(RuntimeException::new);
             return new SingleSeries(
                     dsd,
                     series,

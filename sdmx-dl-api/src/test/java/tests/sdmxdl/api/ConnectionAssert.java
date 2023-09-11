@@ -35,10 +35,10 @@ public class ConnectionAssert {
     public static class Sample {
 
         @lombok.NonNull
-        DataflowRef validFlow;
+        FlowRef validFlow;
 
         @lombok.NonNull
-        DataflowRef invalidFlow;
+        FlowRef invalidFlow;
 
         @lombok.NonNull
         Key validKey;
@@ -71,8 +71,8 @@ public class ConnectionAssert {
 
         checkRedundantClose(s, supplier);
 
-        assertState(s, supplier, o -> o.getData(sample.validFlow, DataQuery.ALL), "getData(DataflowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, DataQuery.ALL), "getDataStream(DataflowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getData(sample.validFlow, Query.ALL), "getData(DataflowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, Query.ALL), "getDataStream(DataflowRef, DataQuery)");
         assertState(s, supplier, o -> o.getStructure(sample.validFlow), "getStructure(DataflowRef)");
         assertState(s, supplier, o -> o.getFlow(sample.validFlow), "getFlow(DataflowRef)");
         assertState(s, supplier, Connection::getFlows, "getFlows()");
@@ -89,7 +89,7 @@ public class ConnectionAssert {
 
     private void checkValidFlow(SoftAssertions s, Sample sample, Connection conn) throws IOException {
         assertNonnull(s, conn, sample.validFlow);
-        for (DataDetail filter : DataDetail.values()) {
+        for (Detail filter : Detail.values()) {
             checkValidKey(s, sample, conn, filter);
             checkInvalidKey(s, sample, conn, filter);
         }
@@ -101,14 +101,14 @@ public class ConnectionAssert {
         s.assertThat(conn.getFlow(sample.validFlow))
                 .is(validDataflow());
 
-        DataStructure dsd = conn.getStructure(sample.validFlow);
+        Structure dsd = conn.getStructure(sample.validFlow);
         s.assertThat(dsd).has(validName());
         s.assertThat(dsd.getAttributes()).are(validAttribute());
         s.assertThat(dsd.getDimensions()).are(validDimension());
     }
 
-    private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, DataDetail filter) {
-        DataQuery invalidQuery = DataQuery.builder().key(sample.invalidKey).detail(filter).build();
+    private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) {
+        Query invalidQuery = Query.builder().key(sample.invalidKey).detail(filter).build();
 
         s.assertThatThrownBy(() -> conn.getData(sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -119,16 +119,16 @@ public class ConnectionAssert {
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
     }
 
-    private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, DataDetail filter) throws IOException {
-        DataQuery validQuery = DataQuery.builder().key(sample.validKey).detail(filter).build();
+    private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) throws IOException {
+        Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
 
         s.assertThat(conn.getDataStream(sample.validFlow, validQuery))
                 .containsExactlyElementsOf(conn.getData(sample.validFlow, validQuery).getData());
     }
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, Connection conn) {
-        for (DataDetail filter : DataDetail.values()) {
-            DataQuery validQuery = DataQuery.builder().key(sample.validKey).detail(filter).build();
+        for (Detail filter : Detail.values()) {
+            Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
 
             s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
@@ -145,8 +145,8 @@ public class ConnectionAssert {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void assertNonnull(SoftAssertions s, Connection conn, DataflowRef ref) {
-        s.assertThatThrownBy(() -> conn.getData(null, DataQuery.ALL))
+    private void assertNonnull(SoftAssertions s, Connection conn, FlowRef ref) {
+        s.assertThatThrownBy(() -> conn.getData(null, Query.ALL))
                 .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
@@ -154,7 +154,7 @@ public class ConnectionAssert {
                 .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(null, DataQuery.ALL))
+        s.assertThatThrownBy(() -> conn.getDataStream(null, Query.ALL))
                 .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 

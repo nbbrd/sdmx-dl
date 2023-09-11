@@ -65,8 +65,8 @@ public enum OtherRules {
     STRUCT_INVALID_REF {
         @Override
         boolean isInvalid(WebResponse r) {
-            DataStructure dsd = r.getStructure();
-            Dataflow flow = r.getFlow();
+            Structure dsd = r.getStructure();
+            Flow flow = r.getFlow();
             return dsd != null && flow != null && !flow.getStructureRef().contains(dsd.getRef());
         }
     },
@@ -101,11 +101,11 @@ public enum OtherRules {
                     .orElse(false);
         }
 
-        private boolean hasTimeFormatAttribute(DataStructure dsd) {
+        private boolean hasTimeFormatAttribute(Structure dsd) {
             return dsd.getAttributes().stream().map(Attribute::getId).anyMatch("TIME_FORMAT"::equals);
         }
 
-        private boolean hasFreqDimension(DataStructure dsd) {
+        private boolean hasFreqDimension(Structure dsd) {
             return dsd.getDimensions().stream().map(Dimension::getId).anyMatch("FREQ"::equals);
         }
     },

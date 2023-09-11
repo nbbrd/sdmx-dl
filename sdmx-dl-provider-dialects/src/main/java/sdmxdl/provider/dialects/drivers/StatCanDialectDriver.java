@@ -21,7 +21,7 @@ import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.*;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -66,7 +66,7 @@ public final class StatCanDialectDriver implements Driver {
             .connector(StatCanDialectDriver::newConnection)
             .properties(RI_CONNECTION_PROPERTIES)
             .propertyOf(CACHE_TTL_PROPERTY)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("STATCAN")
                     .name("en", "Statistics Canada")
@@ -80,7 +80,7 @@ public final class StatCanDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
                 HasMarker.of(source),
                 source.getEndpoint().toURL(),
@@ -104,44 +104,44 @@ public final class StatCanDialectDriver implements Driver {
         private final StatCanClient client;
 
         @Override
-        public @NonNull Collection<Dataflow> getFlows() throws IOException {
+        public @NonNull Collection<Flow> getFlows() throws IOException {
             return client.getFlows();
         }
 
         @Override
-        public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
             return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
+        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
             int productId = Converter.fromDataflowRef(flowRef);
-            DataStructureRef dsdRef = Converter.toDataStructureRef(productId);
+            StructureRef dsdRef = Converter.toDataStructureRef(productId);
             return client.getStructAndData(productId)
                     .getStructure(dsdRef)
                     .orElseThrow(() -> CommonSdmxExceptions.missingStructure(client, dsdRef));
         }
 
-        private Optional<DataSet> getDataSet(DataflowRef ref) throws IOException {
+        private Optional<DataSet> getDataSet(FlowRef ref) throws IOException {
             int productId = Converter.fromDataflowRef(ref);
             return client.getStructAndData(productId).getDataSet(ref);
         }
 
         @MightBePromoted
-        private static DataSet emptyDataSet(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+        private static DataSet emptyDataSet(@NonNull FlowRef flowRef, @NonNull Query query) {
             return DataSet.builder().ref(flowRef).query(query).build();
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
                     .orElseGet(() -> emptyDataSet(flowRef, query));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseGet(Stream::empty);
@@ -165,7 +165,7 @@ public final class StatCanDialectDriver implements Driver {
     @VisibleForTesting
     interface StatCanClient extends HasMarker {
 
-        @NonNull List<Dataflow> getFlows() throws IOException;
+        @NonNull List<Flow> getFlows() throws IOException;
 
         @NonNull DataRepository getStructAndData(int productId) throws IOException;
 
@@ -183,7 +183,7 @@ public final class StatCanDialectDriver implements Driver {
         private final HttpClient client;
 
         @Override
-        public @NonNull List<Dataflow> getFlows() throws IOException {
+        public @NonNull List<Flow> getFlows() throws IOException {
             return Stream.of(getAllCubesListLite())
                     .map(dataTable -> Converter.toDataFlow(dataTable, langs))
                     .collect(Collectors.toList());
@@ -266,11 +266,11 @@ public final class StatCanDialectDriver implements Driver {
 
         static @NonNull CachedStatCanClient of(
                 @NonNull StatCanClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull SdmxWebSource source, @NonNull Languages languages) {
+                @NonNull WebSource source, @NonNull Languages languages) {
             return new CachedStatCanClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
         }
 
-        private static URI getBase(SdmxWebSource source, Languages languages) {
+        private static URI getBase(WebSource source, Languages languages) {
             return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
         }
 
@@ -287,12 +287,12 @@ public final class StatCanDialectDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Dataflow>> idOfFlows = initIdOfFlows(base);
+        private final TypedId<List<Flow>> idOfFlows = initIdOfFlows(base);
 
         @lombok.Getter(lazy = true)
         private final TypedId<DataRepository> idOfRepo = initIdOfRepo(base);
 
-        private static TypedId<List<Dataflow>> initIdOfFlows(URI base) {
+        private static TypedId<List<Flow>> initIdOfFlows(URI base) {
             return TypedId.of(base,
                     DataRepository::getFlows,
                     flows -> DataRepository.builder().flows(flows).build()
@@ -310,7 +310,7 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public List<Dataflow> getFlows() throws IOException {
+        public List<Flow> getFlows() throws IOException {
             return getIdOfFlows().load(cache, delegate::getFlows, o -> ttl);
         }
 
@@ -399,28 +399,28 @@ public final class StatCanDialectDriver implements Driver {
         static final String STRUCT_PREFIX = "Data_Structure_";
         static final String VERSION = "1.0";
 
-        static final Validator<DataflowRef> DATAFLOW_REF_VALIDATOR = dataflowRefOf(
+        static final Validator<FlowRef> DATAFLOW_REF_VALIDATOR = dataflowRefOf(
                 compile("StatCan|all"),
                 compile("DF_\\d+"),
                 compile("1\\.0|latest")
         );
 
-        static DataflowRef toDataflowRef(int productId) throws IllegalArgumentException {
-            return DataflowRef.of(AGENCY, FLOW_PREFIX + checkProductId(productId), VERSION);
+        static FlowRef toDataflowRef(int productId) throws IllegalArgumentException {
+            return FlowRef.of(AGENCY, FLOW_PREFIX + checkProductId(productId), VERSION);
         }
 
-        static int fromDataflowRef(DataflowRef ref) throws IllegalArgumentException {
+        static int fromDataflowRef(FlowRef ref) throws IllegalArgumentException {
             DATAFLOW_REF_VALIDATOR.checkValidity(ref);
 
             return checkProductId(Integer.parseInt(ref.getId().substring(FLOW_PREFIX.length())));
         }
 
-        static DataStructureRef toDataStructureRef(int productId) throws IllegalArgumentException {
-            return DataStructureRef.of(AGENCY, STRUCT_PREFIX + checkProductId(productId), VERSION);
+        static StructureRef toDataStructureRef(int productId) throws IllegalArgumentException {
+            return StructureRef.of(AGENCY, STRUCT_PREFIX + checkProductId(productId), VERSION);
         }
 
-        static Dataflow toDataFlow(DataTable dataTable, Languages langs) {
-            return Dataflow
+        static Flow toDataFlow(DataTable dataTable, Languages langs) {
+            return Flow
                     .builder()
                     .ref(toDataflowRef(dataTable.getProductId()))
                     .structureRef(toDataStructureRef(dataTable.getProductId()))
@@ -431,18 +431,18 @@ public final class StatCanDialectDriver implements Driver {
         static DataRepository toSdmxRepository(File fullTable, int productId, Languages langs) throws IOException {
             try (ZipFile zipFile = new ZipFile(fullTable)) {
 
-                DataStructure dsd = parseStruct(zipFile, langs);
+                Structure dsd = parseStruct(zipFile, langs);
 
                 return DataRepository
                         .builder()
                         .structure(dsd)
-                        .dataSet(parseData(zipFile, dsd).collect(toDataSet(toDataflowRef(productId), DataQuery.ALL)))
+                        .dataSet(parseData(zipFile, dsd).collect(toDataSet(toDataflowRef(productId), Query.ALL)))
                         .build();
             }
         }
 
-        private static DataStructure parseStruct(ZipFile file, Languages langs) throws IOException {
-            FileParser<List<DataStructure>> parser = SdmxXmlStreams.struct21(langs);
+        private static Structure parseStruct(ZipFile file, Languages langs) throws IOException {
+            FileParser<List<Structure>> parser = SdmxXmlStreams.struct21(langs);
 
             try {
                 return file.stream()
@@ -457,7 +457,7 @@ public final class StatCanDialectDriver implements Driver {
             }
         }
 
-        private static Stream<Series> parseData(ZipFile file, DataStructure dsd) throws IOException {
+        private static Stream<Series> parseData(ZipFile file, Structure dsd) throws IOException {
             FileParser<Stream<Series>> parser = SdmxXmlStreams.compactData21(dsd, ObsParser::newDefault)
                     .andThen(DataCursor::asCloseableStream);
 

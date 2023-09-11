@@ -20,7 +20,7 @@ import internal.sdmxdl.format.xml.CustomDataStructureBuilder;
 import internal.sdmxdl.format.xml.ImmutableXMLInputFactory;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.format.SeriesMetaUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -35,29 +35,29 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public final class DataStructureDecoder {
 
-    public static Xml.Parser<DataStructure> generic20() {
-        return Stax.StreamParser.<DataStructure>builder()
+    public static Xml.Parser<Structure> generic20() {
+        return Stax.StreamParser.<Structure>builder()
                 .factory(ImmutableXMLInputFactory::getInputFactoryWithoutNamespace)
                 .handler(Stax.FlowHandler.of(DataStructureDecoder::generic20))
                 .build();
     }
 
-    public static Xml.Parser<DataStructure> compact20() {
-        return Stax.StreamParser.<DataStructure>builder()
+    public static Xml.Parser<Structure> compact20() {
+        return Stax.StreamParser.<Structure>builder()
                 .factory(ImmutableXMLInputFactory::getInputFactoryWithoutNamespace)
                 .handler(Stax.FlowHandler.of(DataStructureDecoder::compact20))
                 .build();
     }
 
-    public static Xml.Parser<DataStructure> generic21() {
-        return Stax.StreamParser.<DataStructure>builder()
+    public static Xml.Parser<Structure> generic21() {
+        return Stax.StreamParser.<Structure>builder()
                 .factory(ImmutableXMLInputFactory::getInputFactoryWithoutNamespace)
                 .handler(Stax.FlowHandler.of(DataStructureDecoder::generic21))
                 .build();
     }
 
-    public static Xml.Parser<DataStructure> compact21() {
-        return Stax.StreamParser.<DataStructure>builder()
+    public static Xml.Parser<Structure> compact21() {
+        return Stax.StreamParser.<Structure>builder()
                 .factory(ImmutableXMLInputFactory::getInputFactoryWithoutNamespace)
                 .handler(Stax.FlowHandler.of(DataStructureDecoder::compact21))
                 .build();
@@ -68,7 +68,7 @@ public final class DataStructureDecoder {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Generic20">
-    private static DataStructure generic20(XMLStreamReader reader) throws XMLStreamException {
+    private static Structure generic20(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(XmlMediaTypes.GENERIC_DATA_20);
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -156,7 +156,7 @@ public final class DataStructureDecoder {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Compact20">
-    private static DataStructure compact20(XMLStreamReader reader) throws XMLStreamException {
+    private static Structure compact20(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20);
         builder.refId("UNKNOWN"); // FIXME: find a way to parse/guess this information
         while (reader.hasNext()) {
@@ -197,7 +197,7 @@ public final class DataStructureDecoder {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Generic21">
-    private static DataStructure generic21(XMLStreamReader reader) throws XMLStreamException {
+    private static Structure generic21(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(XmlMediaTypes.GENERIC_DATA_21);
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -284,7 +284,7 @@ public final class DataStructureDecoder {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Compact21">
-    private static DataStructure compact21(XMLStreamReader reader) throws XMLStreamException {
+    private static Structure compact21(XMLStreamReader reader) throws XMLStreamException {
         CustomDataStructureBuilder builder = new CustomDataStructureBuilder().fileType(XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_21);
         while (reader.hasNext()) {
             switch (reader.next()) {

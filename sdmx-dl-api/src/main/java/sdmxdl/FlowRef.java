@@ -40,7 +40,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataflowRef extends ResourceRef<DataflowRef> {
+public class FlowRef extends ResourceRef<FlowRef> {
 
     @lombok.NonNull
     String agency;
@@ -57,12 +57,12 @@ public class DataflowRef extends ResourceRef<DataflowRef> {
     }
 
     @StaticFactoryMethod
-    public static @NonNull DataflowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return create(input, DataflowRef::new);
+    public static @NonNull FlowRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+        return create(input, FlowRef::new);
     }
 
     @StaticFactoryMethod
-    public static @NonNull DataflowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
-        return of(agency, id, version, DataflowRef::new);
+    public static @NonNull FlowRef of(@Nullable String agency, @NonNull String id, @Nullable String version) throws IllegalArgumentException {
+        return of(agency, id, version, FlowRef::new);
     }
 }

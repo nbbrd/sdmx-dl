@@ -12,7 +12,7 @@ import sdmxdl.provider.web.WebMonitors;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.WebContext;
 
@@ -37,7 +37,7 @@ public final class UpptimeMonitor implements Monitor {
     }
 
     @Override
-    public @NonNull MonitorReport getReport(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull MonitorReport getReport(@NonNull WebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         WebMonitors.checkMonitor(source.getMonitor(), getMonitorUriScheme());
 
         UpptimeId id = UpptimeId.parse(source.getMonitor());

@@ -18,8 +18,8 @@ package sdmxdl.file;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataflowRef;
-import sdmxdl.SdmxSource;
+import sdmxdl.FlowRef;
+import sdmxdl.Source;
 
 import java.io.File;
 
@@ -29,17 +29,17 @@ import java.io.File;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class SdmxFileSource extends SdmxSource {
+public class FileSource extends Source {
 
     @NonNull File data;
 
     @Nullable File structure;
 
-    public @NonNull DataflowRef asDataflowRef() {
-        return DataflowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
+    public @NonNull FlowRef asDataflowRef() {
+        return FlowRef.parse("data" + (structure != null && !structure.toString().isEmpty() ? "&struct" : ""));
     }
 
-    public static @NonNull String asFlowLabel(@NonNull SdmxFileSource source) {
+    public static @NonNull String asFlowLabel(@NonNull FileSource source) {
         return source.getData().getName().replace(".xml", "");
     }
 }

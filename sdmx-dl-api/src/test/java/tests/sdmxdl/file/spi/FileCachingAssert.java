@@ -1,7 +1,7 @@
 package tests.sdmxdl.file.spi;
 
 import lombok.NonNull;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import tests.sdmxdl.ext.CacheAssert;
 
@@ -29,7 +29,7 @@ public class FileCachingAssert {
         assertThatNullPointerException()
                 .isThrownBy(() -> caching.getReaderCache(null, null, null));
 
-        SdmxFileSource validSource = SdmxFileSource
+        FileSource validSource = FileSource
                 .builder()
                 .data(new File("hello.xml"))
                 .build();

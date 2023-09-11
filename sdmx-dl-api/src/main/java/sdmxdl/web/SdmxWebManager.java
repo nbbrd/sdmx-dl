@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.toList;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
+public class SdmxWebManager extends SdmxManager<WebSource> {
 
     @StaticFactoryMethod
     public static @NonNull SdmxWebManager ofServiceLoader() {
@@ -75,34 +75,34 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     @lombok.Builder.Default
     @NonNull WebCaching caching = WebCaching.noOp();
 
-    @Nullable EventListener<? super SdmxWebSource> onEvent;
+    @Nullable EventListener<? super WebSource> onEvent;
 
-    @Nullable ErrorListener<? super SdmxWebSource> onError;
+    @Nullable ErrorListener<? super WebSource> onError;
 
     @lombok.Singular
     @NonNull List<Authenticator> authenticators;
 
     @lombok.Singular
-    @NonNull List<SdmxWebSource> customSources;
+    @NonNull List<WebSource> customSources;
 
     @lombok.Getter(lazy = true)
-    @NonNull List<SdmxWebSource> defaultSources = initLazyDefaultSources(getDrivers());
+    @NonNull List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
 
     @lombok.Getter(lazy = true)
-    @NonNull SortedMap<String, SdmxWebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
+    @NonNull SortedMap<String, WebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     @NonNull WebContext context = initLazyContext();
 
     public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
-        SdmxWebSource source = lookupSource(name)
+        WebSource source = lookupSource(name)
                 .orElseThrow(() -> newMissingSource(name));
 
         return getConnection(source, languages);
     }
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxWebSource source, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
         Driver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
@@ -112,13 +112,13 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
     }
 
     public @NonNull MonitorReport getMonitorReport(@NonNull String name) throws IOException {
-        SdmxWebSource source = lookupSource(name)
+        WebSource source = lookupSource(name)
                 .orElseThrow(() -> newMissingSource(name));
 
         return getMonitorReport(source);
     }
 
-    public @NonNull MonitorReport getMonitorReport(@NonNull SdmxWebSource source) throws IOException {
+    public @NonNull MonitorReport getMonitorReport(@NonNull WebSource source) throws IOException {
         URI monitorURI = source.getMonitor();
 
         if (monitorURI == null) {
@@ -131,7 +131,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         return monitor.getReport(source, getContext());
     }
 
-    private void checkSourceProperties(SdmxWebSource source, Driver driver) {
+    private void checkSourceProperties(WebSource source, Driver driver) {
         if (onEvent != null) {
             Collection<String> expected = new ArrayList<>();
             expected.addAll(driver.getDriverProperties());
@@ -145,7 +145,7 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
         }
     }
 
-    private Optional<SdmxWebSource> lookupSource(String name) {
+    private Optional<WebSource> lookupSource(String name) {
         return Optional.ofNullable(getSources().get(name));
     }
 
@@ -174,22 +174,22 @@ public class SdmxWebManager extends SdmxManager<SdmxWebSource> {
                 .build();
     }
 
-    private static List<SdmxWebSource> initLazyDefaultSources(List<Driver> drivers) {
+    private static List<WebSource> initLazyDefaultSources(List<Driver> drivers) {
         return drivers
                 .stream()
                 .flatMap(driver -> driver.getDefaultSources().stream())
-                .filter(distinctByKey(SdmxWebSource::getId))
+                .filter(distinctByKey(WebSource::getId))
                 .collect(toList());
     }
 
-    private static SortedMap<String, SdmxWebSource> initLazySourceMap(List<SdmxWebSource> customSources, List<SdmxWebSource> defaultSources) {
+    private static SortedMap<String, WebSource> initLazySourceMap(List<WebSource> customSources, List<WebSource> defaultSources) {
         return Stream.concat(customSources.stream(), defaultSources.stream())
                 .flatMap(SdmxWebManager::expandAliases)
-                .collect(groupingBy(SdmxWebSource::getId, TreeMap::new, reducingByFirst()));
+                .collect(groupingBy(WebSource::getId, TreeMap::new, reducingByFirst()));
     }
 
-    private static Stream<SdmxWebSource> expandAliases(SdmxWebSource source) {
-        Stream<SdmxWebSource> first = Stream.of(source);
+    private static Stream<WebSource> expandAliases(WebSource source) {
+        Stream<WebSource> first = Stream.of(source);
         return !source.getAliases().isEmpty()
                 ? Stream.concat(first, source.getAliases().stream().map(source::alias))
                 : first;

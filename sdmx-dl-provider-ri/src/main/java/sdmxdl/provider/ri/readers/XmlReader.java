@@ -4,10 +4,10 @@ import nbbrd.design.DirectImpl;
 import lombok.NonNull;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.Connection;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
+import sdmxdl.StructureRef;
+import sdmxdl.Flow;
 import sdmxdl.Languages;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.format.ObsParser;
@@ -39,12 +39,12 @@ public final class XmlReader implements Reader {
     }
 
     @Override
-    public boolean canRead(@NonNull SdmxFileSource source) {
+    public boolean canRead(@NonNull FileSource source) {
         return isXmlFileName(source.getData());
     }
 
     @Override
-    public @NonNull Connection read(@NonNull SdmxFileSource source, @NonNull Languages languages, @NonNull FileContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection read(@NonNull FileSource source, @NonNull Languages languages, @NonNull FileContext context) throws IOException, IllegalArgumentException {
         if (!canRead(source)) {
             throw new IllegalArgumentException(source.toString());
         }
@@ -55,7 +55,7 @@ public final class XmlReader implements Reader {
         return file.toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private FileClient getClient(SdmxFileSource source, Languages languages, FileContext context) throws IOException {
+    private FileClient getClient(FileSource source, Languages languages, FileContext context) throws IOException {
         FileClient client = new XmlFileClient(
                 source,
                 languages,
@@ -66,9 +66,9 @@ public final class XmlReader implements Reader {
         return CachedFileClient.of(client, context.getReaderCache(source), source, languages);
     }
 
-    private static final DataStructureRef EMPTY = DataStructureRef.of("", "", "");
+    private static final StructureRef EMPTY = StructureRef.of("", "", "");
 
-    private Dataflow getDataflow(SdmxFileSource source) {
-        return Dataflow.builder().ref(source.asDataflowRef()).structureRef(EMPTY).name(SdmxFileSource.asFlowLabel(source)).build();
+    private Flow getDataflow(FileSource source) {
+        return Flow.builder().ref(source.asDataflowRef()).structureRef(EMPTY).name(FileSource.asFlowLabel(source)).build();
     }
 }

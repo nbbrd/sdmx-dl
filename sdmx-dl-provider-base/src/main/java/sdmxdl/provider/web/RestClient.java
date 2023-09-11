@@ -31,13 +31,13 @@ import java.util.stream.Stream;
  */
 public interface RestClient extends HasMarker {
 
-    @NonNull List<Dataflow> getFlows() throws IOException;
+    @NonNull List<Flow> getFlows() throws IOException;
 
-    @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException;
+    @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException;
 
-    @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException;
+    @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException;
 
-    @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException;
+    @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException;
 
     @NonNull Codelist getCodelist(@NonNull CodelistRef ref) throws IOException;
 

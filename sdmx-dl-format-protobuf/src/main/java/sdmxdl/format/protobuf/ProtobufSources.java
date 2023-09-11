@@ -2,11 +2,12 @@ package sdmxdl.format.protobuf;
 
 
 import sdmxdl.format.protobuf.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 @lombok.experimental.UtilityClass
 public class ProtobufSources {
 
-    public static SdmxWebSource fromWebSource(sdmxdl.web.SdmxWebSource value) {
+    public static SdmxWebSource fromWebSource(WebSource value) {
         SdmxWebSource.Builder result = SdmxWebSource.newBuilder();
         result.setId(value.getId());
         result.putAllNames(value.getNames());
@@ -20,8 +21,8 @@ public class ProtobufSources {
         return result.build();
     }
 
-    public static sdmxdl.web.SdmxWebSource toWebSource(SdmxWebSource value) {
-        return sdmxdl.web.SdmxWebSource
+    public static WebSource toWebSource(SdmxWebSource value) {
+        return WebSource
                 .builder()
                 .id(value.getId())
                 .names(value.getNamesMap())

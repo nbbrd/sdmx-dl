@@ -45,5 +45,5 @@ public class SdmxFileManagerTest {
         assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, ANY));
     }
 
-    private final SdmxFileSource source = SdmxFileSource.builder().data(new File("hello")).build();
+    private final FileSource source = FileSource.builder().data(new File("hello")).build();
 }

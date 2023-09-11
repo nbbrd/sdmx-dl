@@ -20,7 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -91,7 +91,7 @@ public final class FailsafeDriver implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Connection result;
 
         try {
@@ -110,8 +110,8 @@ public final class FailsafeDriver implements Driver {
     }
 
     @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        Collection<SdmxWebSource> result;
+    public @NonNull Collection<WebSource> getDefaultSources() {
+        Collection<WebSource> result;
 
         try {
             result = delegate.getDefaultSources();

@@ -7,7 +7,7 @@ import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceFilter;
 import nbbrd.service.ServiceId;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
@@ -25,7 +25,7 @@ public interface Authenticator {
     @ServiceFilter
     boolean isAuthenticatorAvailable();
 
-    @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) throws IOException;
+    @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException;
 
-    void invalidateAuthentication(@NonNull SdmxWebSource source) throws IOException;
+    void invalidateAuthentication(@NonNull WebSource source) throws IOException;
 }

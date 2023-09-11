@@ -2,9 +2,9 @@ package sdmxdl.provider.ri.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
-import sdmxdl.DataQuery;
-import sdmxdl.Dataflow;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.Query;
+import sdmxdl.Flow;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
@@ -21,13 +21,13 @@ public class RngRiDriverTest {
     public static void main(String[] args) throws IOException {
         RngRiDriver x = new RngRiDriver();
 
-        for (SdmxWebSource source : x.getDefaultSources()) {
+        for (WebSource source : x.getDefaultSources()) {
             System.out.println(source);
             try (Connection conn = x.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                for (Dataflow dataflow : conn.getFlows()) {
-                    System.out.println(dataflow);
-                    System.out.println(conn.getStructure(dataflow.getRef()));
-                    conn.getDataStream(dataflow.getRef(), DataQuery.ALL)
+                for (Flow flow : conn.getFlows()) {
+                    System.out.println(flow);
+                    System.out.println(conn.getStructure(flow.getRef()));
+                    conn.getDataStream(flow.getRef(), Query.ALL)
                             .forEach(series -> System.out.println(series.getKey() + " " + series.getObs().size()));
                 }
             }

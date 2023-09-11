@@ -19,11 +19,11 @@ package sdmxdl.testing;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.Connection;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
+import sdmxdl.Flow;
+import sdmxdl.Structure;
 import sdmxdl.Series;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.util.Collection;
 import java.util.logging.Level;
@@ -40,19 +40,19 @@ public class WebResponse {
     WebRequest request;
 
     @lombok.NonNull
-    SdmxWebSource source;
+    WebSource source;
 
     @Nullable
     String error;
 
     @Nullable
-    Collection<Dataflow> flows;
+    Collection<Flow> flows;
 
     @Nullable
-    Dataflow flow;
+    Flow flow;
 
     @Nullable
-    DataStructure structure;
+    Structure structure;
 
     @Nullable
     Collection<Series> data;

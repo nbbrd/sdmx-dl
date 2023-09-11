@@ -2,7 +2,7 @@ package sdmxdl.grpc;
 
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,7 +18,7 @@ class GrpcWebFactory {
                 .build();
     }
 
-    private static List<SdmxWebSource> getCustomSources() {
+    private static List<WebSource> getCustomSources() {
         try {
             return SourceProperties.loadCustomSources();
         } catch (IOException e) {

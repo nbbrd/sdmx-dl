@@ -33,13 +33,13 @@ import java.util.SortedSet;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataStructure extends Resource<DataStructureRef> implements HasName {
+public class Structure extends Resource<StructureRef> implements HasName {
 
     /**
      * Non-null unique reference to this data structure.
      */
     @lombok.NonNull
-    DataStructureRef ref;
+    StructureRef ref;
 
     /**
      * Non-null list of statistical concepts used to identify a statistical

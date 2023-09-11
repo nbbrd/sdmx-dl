@@ -36,7 +36,7 @@ import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -65,7 +65,7 @@ public final class InseeDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(InseeRestClient::new))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("INSEE")
                     .name("en", "National Institute of Statistics and Economic Studies")
@@ -99,7 +99,7 @@ public final class InseeDialectDriver implements Driver {
 
     private final static class InseeRestClient extends RiRestClient {
 
-        InseeRestClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+        InseeRestClient(WebSource s, Languages languages, WebContext c) throws IOException {
             super(
                     HasMarker.of(s),
                     s.getEndpoint().toURL(),
@@ -114,9 +114,9 @@ public final class InseeDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
-            DataStructure dsd = super.getStructure(ref);
-            DataStructure.Builder result = dsd.toBuilder().clearDimensions();
+        public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
+            Structure dsd = super.getStructure(ref);
+            Structure.Builder result = dsd.toBuilder().clearDimensions();
             for (Dimension dimension : dsd.getDimensions()) {
                 result.dimension(fixDimensionCodes(fixDimensionId(dimension), super::getCodelist));
             }
@@ -127,7 +127,7 @@ public final class InseeDialectDriver implements Driver {
     private static final class InseeRestParsers extends Sdmx21RestParsers {
 
         @Override
-        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
+        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
             return super.getDataParser(DATA_TYPE, dsd, dataFactory);
         }
     }

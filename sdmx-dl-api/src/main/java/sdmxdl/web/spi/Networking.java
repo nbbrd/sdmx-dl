@@ -8,7 +8,7 @@ import nbbrd.service.*;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.util.Collection;
 
@@ -32,9 +32,9 @@ public interface Networking {
     @NonNull Collection<String> getNetworkingProperties();
 
     @NonNull Network getNetwork(
-            @NonNull SdmxWebSource source,
-            @Nullable EventListener<? super SdmxWebSource> onEvent,
-            @Nullable ErrorListener<? super SdmxWebSource> onError);
+            @NonNull WebSource source,
+            @Nullable EventListener<? super WebSource> onEvent,
+            @Nullable ErrorListener<? super WebSource> onError);
 
     int UNKNOWN_NETWORKING_RANK = -1;
 

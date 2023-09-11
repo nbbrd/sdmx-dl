@@ -22,7 +22,7 @@ import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -48,12 +48,12 @@ public interface Driver {
     boolean isDriverAvailable();
 
     @NonNull Connection connect(
-            @NonNull SdmxWebSource source,
+            @NonNull WebSource source,
             @NonNull Languages languages,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 
-    @NonNull Collection<SdmxWebSource> getDefaultSources();
+    @NonNull Collection<WebSource> getDefaultSources();
 
     @NonNull Collection<String> getDriverProperties();
 

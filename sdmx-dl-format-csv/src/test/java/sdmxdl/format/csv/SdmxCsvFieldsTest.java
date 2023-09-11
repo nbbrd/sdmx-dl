@@ -3,7 +3,7 @@ package sdmxdl.format.csv;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataflowRef;
+import sdmxdl.FlowRef;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,16 +11,16 @@ public class SdmxCsvFieldsTest {
 
     @Test
     public void testParser() {
-        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser();
+        Parser<FlowRef> parser = SdmxCsvFields.getDataflowRefParser();
 
         assertThat(parser.parse("ECB:EXR(1.0)"))
-                .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));
+                .isEqualTo(FlowRef.of("ECB", "EXR", "1.0"));
 
         assertThat(parser.parse("all:EXR(latest)"))
-                .isEqualTo(DataflowRef.of(null, "EXR", null));
+                .isEqualTo(FlowRef.of(null, "EXR", null));
 
         assertThat(parser.parse(":()"))
-                .isEqualTo(DataflowRef.of(null, "", null));
+                .isEqualTo(FlowRef.of(null, "", null));
 
         assertThat(parser.parse(null)).isNull();
         assertThat(parser.parse("all:EXR(latest")).isNull();
@@ -33,26 +33,26 @@ public class SdmxCsvFieldsTest {
 
     @Test
     public void testCombinedParser() {
-        Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(DataflowRef::parse));
+        Parser<FlowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(FlowRef::parse));
 
         assertThat(parser.parse("ECB:EXR(1.0)"))
-                .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));
+                .isEqualTo(FlowRef.of("ECB", "EXR", "1.0"));
 
         assertThat(parser.parse("ECB,EXR,1.0"))
-                .isEqualTo(DataflowRef.of("ECB", "EXR", "1.0"));
+                .isEqualTo(FlowRef.of("ECB", "EXR", "1.0"));
 
         assertThat(parser.parse("EXR"))
-                .isEqualTo(DataflowRef.of("all", "EXR", "latest"));
+                .isEqualTo(FlowRef.of("all", "EXR", "latest"));
     }
 
     @Test
     public void testFormatter() {
-        Formatter<DataflowRef> formatter = SdmxCsvFields.getDataflowRefFormatter();
+        Formatter<FlowRef> formatter = SdmxCsvFields.getDataflowRefFormatter();
 
-        assertThat(formatter.format(DataflowRef.of("ECB", "EXR", "1.0")))
+        assertThat(formatter.format(FlowRef.of("ECB", "EXR", "1.0")))
                 .isEqualTo("ECB:EXR(1.0)");
 
-        assertThat(formatter.format(DataflowRef.of(null, "EXR", null)))
+        assertThat(formatter.format(FlowRef.of(null, "EXR", null)))
                 .isEqualTo("all:EXR(latest)");
 
         assertThat(formatter.format(null)).isNull();

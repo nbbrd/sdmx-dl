@@ -6,7 +6,7 @@ import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.provider.PropertiesSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class SourceProperties {
             Property.of("sdmxdl.sources", null, Parser.onFile(), Formatter.onFile());
 
     @ReturnNew
-    public static List<SdmxWebSource> loadCustomSources() throws IOException {
+    public static List<WebSource> loadCustomSources() throws IOException {
         File sourcesFile = SourceProperties.SOURCES.get(key -> PropertiesSupport.getProperty(emptyMap(), key));
         return sourcesFile != null ? XmlWebSource.getParser().parseFile(sourcesFile) : emptyList();
     }

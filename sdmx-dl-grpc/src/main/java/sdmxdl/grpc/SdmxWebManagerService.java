@@ -3,11 +3,12 @@ package sdmxdl.grpc;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import sdmxdl.Connection;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.Languages;
+import sdmxdl.*;
 import sdmxdl.format.protobuf.*;
+import sdmxdl.format.protobuf.DataSet;
+import sdmxdl.format.protobuf.DataStructure;
+import sdmxdl.format.protobuf.Dataflow;
+import sdmxdl.format.protobuf.Series;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.SdmxWebSource;
 import sdmxdl.web.SdmxWebManager;
@@ -35,7 +36,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Dataflow> getFlow(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getFlow(DataflowRef.parse(request.getFlow())))
+                    .item(connection.getFlow(FlowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -46,7 +47,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataStructure> getStructure(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getStructure(DataflowRef.parse(request.getFlow())))
+                    .item(connection.getStructure(FlowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -94,15 +95,15 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         }
     }
 
-    private DataflowRef getFlowRef(KeyRequest request) {
-        return DataflowRef.parse(request.getFlow());
+    private FlowRef getFlowRef(KeyRequest request) {
+        return FlowRef.parse(request.getFlow());
     }
 
-    private sdmxdl.DataQuery getDataQuery(KeyRequest request) {
-        return sdmxdl.DataQuery
+    private Query getDataQuery(KeyRequest request) {
+        return Query
                 .builder()
                 .key(Key.parse(request.getKey()))
-                .detail(sdmxdl.DataDetail.FULL)
+                .detail(Detail.FULL)
                 .build();
     }
 }

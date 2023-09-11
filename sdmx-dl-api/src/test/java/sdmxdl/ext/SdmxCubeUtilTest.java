@@ -6,7 +6,7 @@ import sdmxdl.Connection;
 import sdmxdl.Feature;
 import sdmxdl.Key;
 import sdmxdl.Series;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -49,7 +49,7 @@ public class SdmxCubeUtilTest {
     @Test
     public void testGetAllSeries() throws IOException {
         for (Driver driver : getDrivers()) {
-            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+            WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeries(null, FLOW_REF, ALL));
@@ -75,7 +75,7 @@ public class SdmxCubeUtilTest {
     @Test
     public void testGetAllSeriesWithData() throws IOException {
         for (Driver driver : getDrivers()) {
-            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+            WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeriesWithData(null, FLOW_REF, ALL));
@@ -101,7 +101,7 @@ public class SdmxCubeUtilTest {
     @Test
     public void testGetSeries() throws IOException {
         for (Driver driver : getDrivers()) {
-            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+            WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeries(null, FLOW_REF, K1));
@@ -121,7 +121,7 @@ public class SdmxCubeUtilTest {
     @Test
     public void testGetSeriesWithData() throws IOException {
         for (Driver driver : getDrivers()) {
-            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+            WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeriesWithData(null, FLOW_REF, K1));
@@ -141,7 +141,7 @@ public class SdmxCubeUtilTest {
     @Test
     public void testGetChildren() throws IOException {
         for (Driver driver : getDrivers()) {
-            SdmxWebSource source = driver.getDefaultSources().iterator().next();
+            WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getChildren(null, FLOW_REF, ALL, 0));

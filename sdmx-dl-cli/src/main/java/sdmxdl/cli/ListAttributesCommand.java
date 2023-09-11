@@ -23,7 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Attribute;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -65,7 +65,7 @@ public final class ListAttributesCommand implements Callable<Void> {
         return getAttributes(web.loadStructure(web.loadManager()));
     }
 
-    private Stream<Attribute> getAttributes(DataStructure dsd) {
+    private Stream<Attribute> getAttributes(Structure dsd) {
         return sort.applySort(dsd.getAttributes(), BY_RELATIONSHIP_AND_ID);
     }
 

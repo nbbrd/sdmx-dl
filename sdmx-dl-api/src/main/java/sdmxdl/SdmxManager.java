@@ -33,7 +33,7 @@ import java.io.IOException;
         SdmxWebManager.class
 })
 @ThreadSafe
-public abstract class SdmxManager<SOURCE extends SdmxSource> {
+public abstract class SdmxManager<SOURCE extends Source> {
 
     public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 

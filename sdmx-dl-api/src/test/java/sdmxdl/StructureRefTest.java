@@ -19,7 +19,7 @@ package sdmxdl;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.DataStructureRef.of;
+import static sdmxdl.StructureRef.of;
 import static sdmxdl.ResourceRef.ALL_AGENCIES;
 import static sdmxdl.ResourceRef.LATEST_VERSION;
 
@@ -27,39 +27,39 @@ import static sdmxdl.ResourceRef.LATEST_VERSION;
  * @author Philippe Charles
  */
 @SuppressWarnings("ALL")
-public class DataStructureRefTest {
+public class StructureRefTest {
 
     @Test
     @SuppressWarnings("null")
     public void testParse() {
-        assertThat(DataStructureRef.parse("")).isEqualTo(of(null, "", null));
-        assertThat(DataStructureRef.parse("hello")).isEqualTo(of(null, "hello", null));
-        assertThat(DataStructureRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
-        assertThat(DataStructureRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
-        assertThat(DataStructureRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
-        assertThat(DataStructureRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
-        assertThat(DataStructureRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
-        assertThatIllegalArgumentException().isThrownBy(() -> DataStructureRef.parse(",,,,"));
-        assertThatNullPointerException().isThrownBy(() -> DataStructureRef.parse(null));
+        assertThat(StructureRef.parse("")).isEqualTo(of(null, "", null));
+        assertThat(StructureRef.parse("hello")).isEqualTo(of(null, "hello", null));
+        assertThat(StructureRef.parse("world,hello")).isEqualTo(of("world", "hello", null));
+        assertThat(StructureRef.parse("world,hello,123")).isEqualTo(of("world", "hello", "123"));
+        assertThat(StructureRef.parse("world,hello,")).isEqualTo(of("world", "hello", LATEST_VERSION));
+        assertThat(StructureRef.parse(",hello,")).isEqualTo(of(ALL_AGENCIES, "hello", LATEST_VERSION));
+        assertThat(StructureRef.parse(",,")).isEqualTo(of(ALL_AGENCIES, "", LATEST_VERSION));
+        assertThatIllegalArgumentException().isThrownBy(() -> StructureRef.parse(",,,,"));
+        assertThatNullPointerException().isThrownBy(() -> StructureRef.parse(null));
     }
 
     @Test
     @SuppressWarnings("null")
     public void testValueOf() {
         assertThat(of(null, "", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
+                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "", LATEST_VERSION, "all,,latest");
 
         assertThat(of("", "hello", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
+                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
                 .containsExactly(ALL_AGENCIES, "hello", LATEST_VERSION, "all,hello,latest");
 
         assertThat(of("world", "hello", null))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
+                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", LATEST_VERSION, "world,hello,latest");
 
         assertThat(of("world", "hello", "123"))
-                .extracting(DataStructureRef::getAgency, DataStructureRef::getId, DataStructureRef::getVersion, Object::toString)
+                .extracting(StructureRef::getAgency, StructureRef::getId, StructureRef::getVersion, Object::toString)
                 .containsExactly("world", "hello", "123", "world,hello,123");
 
         assertThatIllegalArgumentException().isThrownBy(() -> of(null, "world,hello", null));
@@ -84,7 +84,7 @@ public class DataStructureRefTest {
     @Test
     @SuppressWarnings("null")
     public void testContains() {
-        DataStructureRef x = of("ECB", "EXR", "1");
+        StructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.contains(null));
 
@@ -103,7 +103,7 @@ public class DataStructureRefTest {
     @Test
     @SuppressWarnings("null")
     public void testContainsRef() {
-        DataStructureRef x = of("ECB", "EXR", "1");
+        StructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.containsRef(null));
 
@@ -122,7 +122,7 @@ public class DataStructureRefTest {
     @Test
     @SuppressWarnings("null")
     public void testEqualsRef() {
-        DataStructureRef x = of("ECB", "EXR", "1");
+        StructureRef x = of("ECB", "EXR", "1");
 
         assertThatNullPointerException().isThrownBy(() -> x.equalsRef(null));
 
@@ -138,7 +138,7 @@ public class DataStructureRefTest {
         assertThat(x.equalsRef(structOf(of(ALL_AGENCIES, "EXR", LATEST_VERSION)))).isFalse();
     }
 
-    private DataStructure structOf(DataStructureRef ref) {
-        return DataStructure.builder().ref(ref).primaryMeasureId("").name("").build();
+    private Structure structOf(StructureRef ref) {
+        return Structure.builder().ref(ref).primaryMeasureId("").name("").build();
     }
 }

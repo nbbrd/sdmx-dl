@@ -55,7 +55,7 @@ public class ConnectorsResource {
         List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
         List<PortableTimeSeries<Double>> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0), l);
 
-        DataflowRef ref = firstOf(flows);
+        FlowRef ref = firstOf(flows);
 
         return DataRepository
                 .builder()
@@ -65,7 +65,7 @@ public class ConnectorsResource {
                         PortableTimeSeriesCursor
                                 .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .asStream()
-                                .collect(toDataSet(ref, DataQuery.ALL)))
+                                .collect(toDataSet(ref, Query.ALL)))
                 .name("NBB")
                 .build();
     }
@@ -78,7 +78,7 @@ public class ConnectorsResource {
         List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
         List<PortableTimeSeries<Double>> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0), l);
 
-        DataflowRef ref = firstOf(flows);
+        FlowRef ref = firstOf(flows);
 
         return DataRepository
                 .builder()
@@ -88,12 +88,12 @@ public class ConnectorsResource {
                         PortableTimeSeriesCursor
                                 .of(data, ObsParser::newDefault, Connectors.toStructure(structs.get(0)))
                                 .asStream()
-                                .collect(toDataSet(ref, DataQuery.ALL)))
+                                .collect(toDataSet(ref, Query.ALL)))
                 .name("ECB")
                 .build();
     }
 
-    private DataflowRef firstOf(List<Dataflow> flows) {
+    private FlowRef firstOf(List<Dataflow> flows) {
         return flows.stream().map(o -> Connectors.toFlow(o).getRef()).findFirst().orElseThrow(RuntimeException::new);
     }
 

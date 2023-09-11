@@ -23,7 +23,7 @@ import sdmxdl.Languages;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -53,7 +53,7 @@ public final class Sdmx21RiDriver implements Driver {
             .properties(RI_CONNECTION_PROPERTIES)
             .propertyOf(DETAIL_SUPPORTED_PROPERTY)
             .propertyOf(TRAILING_SLASH_PROPERTY)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ABS")
                     .name("en", "Australian Bureau of Statistics")
@@ -64,7 +64,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ABS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/abs")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("BIS")
                     .name("en", "Bank for International Settlements")
@@ -75,7 +75,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BIS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/bis")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("CAMSTAT")
                     .name("en", "National Institute of Statistics of Cambodia")
@@ -86,7 +86,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/CAMSTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/camstat")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ECB")
                     .name("en", "European Central Bank")
@@ -97,7 +97,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ECB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ecb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ESCAP")
                     .name("en", "Economic and Social Commission for Asia and the Pacific")
@@ -108,7 +108,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESCAP")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/escap")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ILO")
                     .name("en", "International Labour Organization")
@@ -121,7 +121,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ilo")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("IMF_SDMX_CENTRAL")
                     .name("en", "International Monetary Fund (SDMX Central)")
@@ -133,7 +133,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF_SDMX_CENTRAL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("INEGI")
                     .name("en", "National Institute of Statistics, Geography and Informatics")
@@ -146,7 +146,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INEGI")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/inegi")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("ISTAT")
                     .name("en", "Italian National Institute of Statistics")
@@ -158,7 +158,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ISTAT")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/istat")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("NB")
                     .name("en", "Norges Bank")
@@ -170,7 +170,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SGR")
                     .name("en", "SDMX Global Registry")
@@ -181,7 +181,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SGR")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/sgr")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SIMEL")
                     .name("en", "El Salvador Labor Market Information System")
@@ -193,7 +193,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SIMEL")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/simel")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SPC")
                     .name("en", "Pacific Data Hub")
@@ -205,7 +205,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SPC")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/spc")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("STATEC")
                     .name("en", "National Institute of statistics and economic studies of the Grand Duchy of Luxembourg")
@@ -217,7 +217,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/STATEC")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/statec")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("TNSO")
                     .name("en", "National Statistical Office of Thailand")
@@ -229,7 +229,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/TNSO")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/tnso")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("UNDATA")
                     .name("en", "Data access system to UN databases")
@@ -240,7 +240,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UNDATA")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/undata")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("UNICEF")
                     .name("en", "UN International Children's Emergency Fund")
@@ -251,7 +251,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/UNICEF")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/unicef")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("WB")
                     .name("en", "World Bank")
@@ -265,7 +265,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wb")
                     .build())
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("WITS")
                     .name("en", "World Integrated Trade Solution")
@@ -279,22 +279,22 @@ public final class Sdmx21RiDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, getQueries(s), getParsers(s), getSupportedFeatures(s));
     }
 
-    private static Sdmx21RestQueries getQueries(SdmxWebSource s) {
+    private static Sdmx21RestQueries getQueries(WebSource s) {
         return Sdmx21RestQueries
                 .builder()
                 .trailingSlashRequired(TRAILING_SLASH_PROPERTY.get(s.getProperties()))
                 .build();
     }
 
-    private static Sdmx21RestParsers getParsers(SdmxWebSource s) {
+    private static Sdmx21RestParsers getParsers(WebSource s) {
         return new Sdmx21RestParsers();
     }
 
-    private static Set<Feature> getSupportedFeatures(SdmxWebSource s) {
+    private static Set<Feature> getSupportedFeatures(WebSource s) {
         return DETAIL_SUPPORTED_PROPERTY.get(s.getProperties())
                 ? EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD, Feature.DATA_QUERY_DETAIL)
                 : EnumSet.of(Feature.DATA_QUERY_ALL_KEYWORD);

@@ -3,7 +3,7 @@ package sdmxdl.format.csv;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
-import sdmxdl.DataflowRef;
+import sdmxdl.FlowRef;
 import sdmxdl.Series;
 
 import java.text.DecimalFormat;
@@ -27,11 +27,11 @@ public class SdmxCsvFields {
     public static final String ATTRIBUTES = "ATTRIBUTES";
     public static final String SERIESKEY = "SERIESKEY";
 
-    public @NonNull Formatter<DataflowRef> getDataflowRefFormatter() {
+    public @NonNull Formatter<FlowRef> getDataflowRefFormatter() {
         return SdmxCsvFields::formatDataflowField;
     }
 
-    public @NonNull Parser<DataflowRef> getDataflowRefParser() {
+    public @NonNull Parser<FlowRef> getDataflowRefParser() {
         return SdmxCsvFields::parseDataflowField;
     }
 
@@ -53,11 +53,11 @@ public class SdmxCsvFields {
         return DateTimeFormatter.ISO_DATE_TIME;
     }
 
-    private static String formatDataflowField(DataflowRef ref) {
+    private static String formatDataflowField(FlowRef ref) {
         return ref != null ? (ref.getAgency() + ":" + ref.getId() + "(" + ref.getVersion() + ")") : null;
     }
 
-    private static DataflowRef parseDataflowField(CharSequence ref) {
+    private static FlowRef parseDataflowField(CharSequence ref) {
         if (ref == null) return null;
         String text = ref.toString();
 
@@ -72,7 +72,7 @@ public class SdmxCsvFields {
 
         if (idx3 != text.length() - 1) return null;
 
-        return DataflowRef.of(
+        return FlowRef.of(
                 text.substring(0, idx1),
                 text.substring(idx1 + 1, idx2),
                 text.substring(idx2 + 1, idx3)

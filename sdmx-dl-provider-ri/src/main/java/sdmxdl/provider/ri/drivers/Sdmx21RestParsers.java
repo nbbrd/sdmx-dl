@@ -32,7 +32,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
+    public @NonNull FileParser<List<Flow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs), mediaType.getCharset());
@@ -47,7 +47,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<Dataflow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataflowRef ref) {
+    public @NonNull FileParser<Optional<Flow>> getFlowParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull FlowRef ref) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.flow21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
@@ -62,7 +62,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<Optional<DataStructure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull DataStructureRef ref) {
+    public @NonNull FileParser<Optional<Structure>> getStructureParser(@NonNull MediaType mediaType, @NonNull Languages langs, @NonNull StructureRef ref) {
 
         if (mediaType.isCompatibleWithoutParameters(STRUCTURE_21) || mediaType.isCompatibleWithoutParameters(APPLICATION_XML_UTF_8)) {
             return withCharset(SdmxXmlStreams.struct21(langs).andThen(getResourceSelector(ref)), mediaType.getCharset());
@@ -77,7 +77,7 @@ public class Sdmx21RestParsers implements RiRestParsers {
     }
 
     @Override
-    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
+    public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
 
         if (mediaType.isCompatibleWithoutParameters(GENERIC_DATA_21)) {
             return withCharset(SdmxXmlStreams.genericData21(dsd, dataFactory), mediaType.getCharset());

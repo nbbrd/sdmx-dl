@@ -6,7 +6,7 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
@@ -15,11 +15,11 @@ public class FileContext {
     @lombok.Builder.Default
     @NonNull FileCaching caching = FileCaching.noOp();
 
-    @Nullable EventListener<? super SdmxFileSource> onEvent;
+    @Nullable EventListener<? super FileSource> onEvent;
 
-    @Nullable ErrorListener<? super SdmxFileSource> onError;
+    @Nullable ErrorListener<? super FileSource> onError;
 
-    public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource source) {
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source) {
         return caching.getReaderCache(source, onEvent, onError);
     }
 }

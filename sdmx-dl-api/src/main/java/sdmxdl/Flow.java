@@ -24,13 +24,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class Dataflow extends Resource<DataflowRef> implements HasName, HasDescription {
+public class Flow extends Resource<FlowRef> implements HasName, HasDescription {
 
     @lombok.NonNull
-    DataflowRef ref;
+    FlowRef ref;
 
     @lombok.NonNull
-    DataStructureRef structureRef;
+    StructureRef structureRef;
 
     @lombok.NonNull
     String name;

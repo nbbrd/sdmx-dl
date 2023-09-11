@@ -2,7 +2,7 @@ package internal.sdmxdl.desktop;
 
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class DesktopWebFactory {
                 .build();
     }
 
-    private static List<SdmxWebSource> getCustomSources() {
+    private static List<WebSource> getCustomSources() {
         try {
             return SourceProperties.loadCustomSources();
         } catch (IOException e) {

@@ -18,8 +18,8 @@ package sdmxdl.provider;
 
 import lombok.NonNull;
 import sdmxdl.CodelistRef;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
+import sdmxdl.StructureRef;
+import sdmxdl.FlowRef;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -33,11 +33,11 @@ public final class CommonSdmxExceptions {
         return new IOException(String.format(Locale.ROOT, "Connection closed from '%s'", source.getMarker()));
     }
 
-    public static @NonNull IOException missingFlow(@NonNull HasMarker source, @NonNull DataflowRef ref) {
+    public static @NonNull IOException missingFlow(@NonNull HasMarker source, @NonNull FlowRef ref) {
         return new IOException(String.format(Locale.ROOT, "Missing flow '%s' from '%s'", ref, source.getMarker()));
     }
 
-    public static @NonNull IOException missingStructure(@NonNull HasMarker source, @NonNull DataStructureRef ref) {
+    public static @NonNull IOException missingStructure(@NonNull HasMarker source, @NonNull StructureRef ref) {
         return new IOException(String.format(Locale.ROOT, "Missing structure '%s' from '%s'", ref, source.getMarker()));
     }
 

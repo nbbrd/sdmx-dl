@@ -19,9 +19,9 @@ package internal.sdmxdl.format.xml;
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
+import sdmxdl.Flow;
+import sdmxdl.StructureRef;
+import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -37,20 +37,20 @@ public class XMLStreamFlow20Test {
 
     @Test
     public void test() throws IOException {
-        Xml.Parser<List<Dataflow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow20(Languages.ANY)::parse);
+        Xml.Parser<List<Flow>> p = Stax.StreamParser.valueOf(new XMLStreamFlow20(Languages.ANY)::parse);
 
         assertThat(p.parseReader(SdmxXmlSources.OTHER_FLOWS20::openReader))
                 .containsExactly(
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("IMF", "DS-BOP_2017M06", "1.0"))
-                                .structureRef(DataStructureRef.of("IMF", "BOP_2017M06", null))
+                                .ref(FlowRef.of("IMF", "DS-BOP_2017M06", "1.0"))
+                                .structureRef(StructureRef.of("IMF", "BOP_2017M06", null))
                                 .name("Balance of Payments (BOP), 2017 M06")
                                 .build(),
-                        Dataflow
+                        Flow
                                 .builder()
-                                .ref(DataflowRef.of("IMF", "DS-BOP_2020M3", "1.0"))
-                                .structureRef(DataStructureRef.of("IMF", "BOP_2020M3", null))
+                                .ref(FlowRef.of("IMF", "DS-BOP_2020M3", "1.0"))
+                                .structureRef(StructureRef.of("IMF", "BOP_2020M3", null))
                                 .name("Balance of Payments (BOP), 2020 M03")
                                 .build()
                 );

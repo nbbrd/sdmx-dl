@@ -34,32 +34,32 @@ import static java.util.stream.Collectors.toList;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class DataSet extends Resource<DataflowRef> {
+public class DataSet extends Resource<FlowRef> {
 
     @lombok.NonNull
-    DataflowRef ref;
+    FlowRef ref;
 
     @lombok.NonNull
     @lombok.Builder.Default
-    DataQuery query = DataQuery.ALL;
+    Query query = Query.ALL;
 
     @lombok.NonNull
     @lombok.Singular("series")
     Collection<Series> data;
 
-    public @NonNull DataSet getData(@NonNull DataQuery query) {
-        return query.equals(DataQuery.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));
+    public @NonNull DataSet getData(@NonNull Query query) {
+        return query.equals(Query.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));
     }
 
-    public @NonNull Stream<Series> getDataStream(@NonNull DataQuery query) {
-        return query.equals(DataQuery.ALL) ? data.stream() : query.execute(data.stream());
+    public @NonNull Stream<Series> getDataStream(@NonNull Query query) {
+        return query.equals(Query.ALL) ? data.stream() : query.execute(data.stream());
     }
 
-    public static @NonNull Collector<Series, ?, DataSet> toDataSet(@NonNull DataflowRef flowRef, @NonNull DataQuery query) {
+    public static @NonNull Collector<Series, ?, DataSet> toDataSet(@NonNull FlowRef flowRef, @NonNull Query query) {
         return collectingAndThen(toList(), newDataSet(flowRef, query));
     }
 
-    private static Function<List<Series>, DataSet> newDataSet(DataflowRef flowRef, DataQuery query) {
+    private static Function<List<Series>, DataSet> newDataSet(FlowRef flowRef, Query query) {
         return list -> new DataSet(flowRef, query, unmodifiableList(list));
     }
 }

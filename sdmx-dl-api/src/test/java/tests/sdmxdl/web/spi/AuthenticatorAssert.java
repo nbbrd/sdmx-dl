@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
 import static org.assertj.core.api.Assertions.*;
@@ -14,7 +14,7 @@ public class AuthenticatorAssert {
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Sample {
-        SdmxWebSource source;
+        WebSource source;
     }
 
     public void assertCompliance(@NonNull Authenticator authenticator, @NonNull Sample sample) {

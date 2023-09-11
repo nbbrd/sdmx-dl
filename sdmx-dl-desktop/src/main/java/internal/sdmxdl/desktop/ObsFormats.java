@@ -4,7 +4,7 @@ import j2html.tags.DomContent;
 import nbbrd.io.text.Formatter;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.Obs;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ import static j2html.TagCreator.*;
 
 public final class ObsFormats {
 
-    public static Formatter<Obs> getChartTooltipFormatter(DataStructure dsd) {
+    public static Formatter<Obs> getChartTooltipFormatter(Structure dsd) {
         Map<String, Attribute> attributes = dsd.getAttributes().stream()
                 .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))
                 .collect(Collectors.toMap(Attribute::getId, Function.identity()));
@@ -26,7 +26,7 @@ public final class ObsFormats {
         return obs.getPeriod() + ": " + obs.getValue();
     }
 
-    public static Formatter<Obs> getHtmlTooltipFormatter(DataStructure dsd) {
+    public static Formatter<Obs> getHtmlTooltipFormatter(Structure dsd) {
         Map<String, Attribute> attributes = dsd.getAttributes().stream()
                 .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))
                 .collect(Collectors.toMap(Attribute::getId, Function.identity()));

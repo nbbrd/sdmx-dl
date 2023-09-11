@@ -2,9 +2,8 @@ package sdmxdl.provider.ri.drivers;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sdmxdl.provider.ri.drivers.RiRestParsers;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
+import sdmxdl.Flow;
+import sdmxdl.FlowRef;
 
 import java.io.IOException;
 
@@ -22,11 +21,11 @@ public class RiRestParsersTest {
         assertThatNullPointerException()
                 .isThrownBy(() -> RiRestParsers.getResourceSelector(null));
 
-        DataflowRef fullRef1 = DataflowRef.of("NBB", "XYZ", "v1.0");
-        Dataflow resource1 = Dataflow.builder().ref(fullRef1).structureRef(STRUCT_REF).name("flow1").build();
+        FlowRef fullRef1 = FlowRef.of("NBB", "XYZ", "v1.0");
+        Flow resource1 = Flow.builder().ref(fullRef1).structureRef(STRUCT_REF).name("flow1").build();
 
-        DataflowRef fullRef2 = DataflowRef.of("NBB", "XYZ", "v2.0");
-        Dataflow resource2 = Dataflow.builder().ref(fullRef2).structureRef(STRUCT_REF).name("flow2").build();
+        FlowRef fullRef2 = FlowRef.of("NBB", "XYZ", "v2.0");
+        Flow resource2 = Flow.builder().ref(fullRef2).structureRef(STRUCT_REF).name("flow2").build();
 
         Assertions.assertThat(RiRestParsers.getResourceSelector(fullRef1).applyWithIO(emptyList()))
                 .isEmpty();
@@ -40,7 +39,7 @@ public class RiRestParsersTest {
         Assertions.assertThat(RiRestParsers.getResourceSelector(fullRef1).applyWithIO(asList(resource2, resource1)))
                 .contains(resource1);
 
-        DataflowRef partialRef = DataflowRef.of(null, "XYZ", null);
+        FlowRef partialRef = FlowRef.of(null, "XYZ", null);
 
         Assertions.assertThat(RiRestParsers.getResourceSelector(partialRef).applyWithIO(emptyList()))
                 .isEmpty();

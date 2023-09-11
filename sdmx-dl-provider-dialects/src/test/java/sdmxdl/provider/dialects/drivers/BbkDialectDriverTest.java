@@ -17,9 +17,9 @@
 package sdmxdl.provider.dialects.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataQuery;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
+import sdmxdl.Query;
+import sdmxdl.StructureRef;
+import sdmxdl.FlowRef;
 import sdmxdl.Key;
 import sdmxdl.provider.DataRef;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -28,8 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.DataDetail.FULL;
-import static sdmxdl.DataDetail.SERIES_KEYS_ONLY;
+import static sdmxdl.Detail.FULL;
+import static sdmxdl.Detail.SERIES_KEYS_ONLY;
 
 /**
  * @author Philippe Charles
@@ -51,19 +51,19 @@ public class BbkDialectDriverTest {
                 .describedAs("SdmxFix#1 + SdmxFix#2 + SdmxFix#3")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK");
 
-        assertThat(queries.getFlowQuery(endpoint, DataflowRef.parse("BBEX3")).build())
+        assertThat(queries.getFlowQuery(endpoint, FlowRef.parse("BBEX3")).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/dataflow/BBK/BBEX3");
 
-        assertThat(queries.getStructureQuery(endpoint, DataStructureRef.parse("BBK_ERX")).build())
+        assertThat(queries.getStructureQuery(endpoint, StructureRef.parse("BBK_ERX")).build())
                 .describedAs("SdmxFix#1 + SdmxFix#2")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/metadata/datastructure/BBK/BBK_ERX?references=children");
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("BBEX3"), DataQuery.builder().key(Key.parse("M.ISK.EUR+USD.CA.AC.A01")).detail(FULL).build()), DataStructureRef.parse("abc")).build())
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(FlowRef.parse("BBEX3"), Query.builder().key(Key.parse("M.ISK.EUR+USD.CA.AC.A01")).detail(FULL).build()), StructureRef.parse("abc")).build())
                 .describedAs("SdmxFix#4")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/data/BBEX3/M.ISK.EUR%2BUSD.CA.AC.A01");
 
-        assertThat(queries.getDataQuery(endpoint, DataRef.of(DataflowRef.parse("BBEX3"), DataQuery.builder().key(Key.parse("M.ISK.EUR+USD.CA.AC.A01")).detail(SERIES_KEYS_ONLY).build()), DataStructureRef.parse("abc")).build())
+        assertThat(queries.getDataQuery(endpoint, DataRef.of(FlowRef.parse("BBEX3"), Query.builder().key(Key.parse("M.ISK.EUR+USD.CA.AC.A01")).detail(SERIES_KEYS_ONLY).build()), StructureRef.parse("abc")).build())
                 .describedAs("SdmxFix#5")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/data/BBEX3/M.ISK.EUR%2BUSD.CA.AC.A01?detail=serieskeyonly");
     }

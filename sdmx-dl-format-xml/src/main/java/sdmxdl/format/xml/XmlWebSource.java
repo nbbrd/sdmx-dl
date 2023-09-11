@@ -18,7 +18,7 @@ package sdmxdl.format.xml;
 
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -36,16 +36,16 @@ import java.util.Map;
 @lombok.experimental.UtilityClass
 public final class XmlWebSource {
 
-    public static Xml.Parser<List<SdmxWebSource>> getParser() {
+    public static Xml.Parser<List<WebSource>> getParser() {
         return PARSER;
     }
 
-    public static Xml.Formatter<List<SdmxWebSource>> getFormatter() {
+    public static Xml.Formatter<List<WebSource>> getFormatter() {
         return FORMATTER;
     }
 
-    private static final Xml.Parser<List<SdmxWebSource>> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parseXml);
-    private static final Xml.Formatter<List<SdmxWebSource>> FORMATTER = Stax.StreamFormatter.of(XmlWebSource::formatXml);
+    private static final Xml.Parser<List<WebSource>> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parseXml);
+    private static final Xml.Formatter<List<WebSource>> FORMATTER = Stax.StreamFormatter.of(XmlWebSource::formatXml);
 
     private static final String SOURCES_TAG = "sources";
     private static final String SOURCE_TAG = "source";
@@ -63,15 +63,15 @@ public final class XmlWebSource {
     private static final String MONITOR_WEBSITE_TAG = "monitorWebsite";
     private static final String ROOT_LANGUAGE = Locale.ROOT.getLanguage();
 
-    private static List<SdmxWebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
-        List<SdmxWebSource> result = new ArrayList<>();
-        SdmxWebSource.Builder item = SdmxWebSource.builder();
+    private static List<WebSource> parseXml(XMLStreamReader reader) throws XMLStreamException {
+        List<WebSource> result = new ArrayList<>();
+        WebSource.Builder item = WebSource.builder();
         while (reader.hasNext()) {
             switch (reader.next()) {
                 case XMLStreamReader.START_ELEMENT:
                     switch (reader.getLocalName()) {
                         case SOURCE_TAG:
-                            item = SdmxWebSource.builder();
+                            item = WebSource.builder();
                             break;
                         case NAME_TAG:
                             item.id(reader.getElementText());
@@ -115,10 +115,10 @@ public final class XmlWebSource {
         return result;
     }
 
-    private static void formatXml(List<SdmxWebSource> list, XMLStreamWriter writer, Charset encoding) throws XMLStreamException {
+    private static void formatXml(List<WebSource> list, XMLStreamWriter writer, Charset encoding) throws XMLStreamException {
         writer.writeStartDocument(encoding.name(), "1.0");
         writer.writeStartElement(SOURCES_TAG);
-        for (SdmxWebSource source : list) {
+        for (WebSource source : list) {
             writer.writeStartElement(SOURCE_TAG);
             writeTextElement(writer, NAME_TAG, source.getId());
             for (Map.Entry<String, String> description : source.getNames().entrySet()) {

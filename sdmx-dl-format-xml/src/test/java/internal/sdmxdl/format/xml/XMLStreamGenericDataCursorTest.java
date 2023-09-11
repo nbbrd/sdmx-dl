@@ -17,7 +17,7 @@
 package internal.sdmxdl.format.xml;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataDetail;
+import sdmxdl.Detail;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
@@ -52,7 +52,7 @@ public class XMLStreamGenericDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        }, Key.ALL, DataDetail.FULL);
+        }, Key.ALL, Detail.FULL);
 
         ObsParser obsParser = ObsParser.newDefault();
         try (InputStream stream = xml.openStream();
@@ -105,7 +105,7 @@ public class XMLStreamGenericDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        }, Key.ALL, DataDetail.FULL);
+        }, Key.ALL, Detail.FULL);
 
         ObsParser obsParser = ObsParser.newDefault();
         try (InputStream stream = xml.openStream();
@@ -150,7 +150,7 @@ public class XMLStreamGenericDataCursorTest {
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
-        }, Key.ALL, DataDetail.FULL);
+        }, Key.ALL, Detail.FULL);
 
         ObsParser obsParser = ObsParser.newDefault();
         try (InputStream stream = xml.openStream();

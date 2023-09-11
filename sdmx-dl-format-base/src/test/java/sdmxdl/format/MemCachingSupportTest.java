@@ -4,8 +4,8 @@ import nbbrd.io.text.Parser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import sdmxdl.file.SdmxFileSource;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.file.FileSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class MemCachingSupportTest {
         abstract MemCache<?> f(MemCachingSupport z);
     }
 
-    private final static SdmxFileSource FILE_SOURCE = SdmxFileSource.builder().data(new File("")).build();
+    private final static FileSource FILE_SOURCE = FileSource.builder().data(new File("")).build();
 
-    private final static SdmxWebSource WEB_SOURCE = SdmxWebSource.builder().id("").driver("").endpoint(Parser.onURI().parseValue("http://localhost").orElseThrow(RuntimeException::new)).build();
+    private final static WebSource WEB_SOURCE = WebSource.builder().id("").driver("").endpoint(Parser.onURI().parseValue("http://localhost").orElseThrow(RuntimeException::new)).build();
 }

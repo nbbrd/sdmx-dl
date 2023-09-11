@@ -2,8 +2,8 @@ package sdmxdl.testing;
 
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
+import sdmxdl.Structure;
+import sdmxdl.Flow;
 import sdmxdl.Series;
 import sdmxdl.provider.Validator;
 
@@ -20,10 +20,10 @@ public enum RangeRules {
             return getValidator(r.getRequest()).validate(r.getFlows());
         }
 
-        private Validator<Collection<Dataflow>> getValidator(WebRequest request) {
+        private Validator<Collection<Flow>> getValidator(WebRequest request) {
             return RangeRules
                     .onRange(request.getFlowCount())
-                    .compose((Collection<Dataflow> o) -> o.size())
+                    .compose((Collection<Flow> o) -> o.size())
                     .onlyIf(Objects::nonNull);
         }
     },
@@ -33,10 +33,10 @@ public enum RangeRules {
             return getValidator(r.getRequest()).validate(r.getStructure());
         }
 
-        private Validator<DataStructure> getValidator(WebRequest request) {
+        private Validator<Structure> getValidator(WebRequest request) {
             return RangeRules
                     .onRange(request.getDimensionCount())
-                    .compose((DataStructure o) -> o.getDimensions().size())
+                    .compose((Structure o) -> o.getDimensions().size())
                     .onlyIf(Objects::nonNull);
         }
     },

@@ -1,7 +1,7 @@
 package _test;
 
 import sdmxdl.provider.ri.drivers.FileRiDriver;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.format.xml.XmlWebSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -33,8 +33,8 @@ public class FileSample {
         return source;
     }
 
-    private static SdmxWebSource sourceOf(String name, File data, File struct) {
-        return SdmxWebSource
+    private static WebSource sourceOf(String name, File data, File struct) {
+        return WebSource
                 .builder()
                 .id(name)
                 .driver("ri:file")

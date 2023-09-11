@@ -18,7 +18,7 @@ package sdmxdl.provider.ri.readers;
 
 import lombok.NonNull;
 import sdmxdl.Languages;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.provider.file.FileInfo;
 
 import java.io.IOException;
@@ -28,5 +28,5 @@ import java.io.IOException;
  */
 public interface Decoder {
 
-    @NonNull FileInfo decode(@NonNull SdmxFileSource source, @NonNull Languages languages) throws IOException;
+    @NonNull FileInfo decode(@NonNull FileSource source, @NonNull Languages languages) throws IOException;
 }

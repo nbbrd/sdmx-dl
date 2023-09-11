@@ -46,25 +46,25 @@ public final class XCountingRestClient implements RestClient {
     }
 
     @Override
-    public @NonNull List<Dataflow> getFlows() throws IOException {
+    public @NonNull List<Flow> getFlows() throws IOException {
         count.incrementAndGet();
         return delegate.getFlows();
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
         count.incrementAndGet();
         return delegate.getFlow(ref);
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+    public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         count.incrementAndGet();
         return delegate.getStructure(ref);
     }
 
     @Override
-    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         count.incrementAndGet();
         return delegate.getData(ref, dsd);
     }

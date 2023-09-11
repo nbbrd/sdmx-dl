@@ -6,7 +6,7 @@ import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import sdmxdl.web.MonitorReport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public interface Monitor {
     @NonNull String getMonitorUriScheme();
 
     @NonNull MonitorReport getReport(
-            @NonNull SdmxWebSource source,
+            @NonNull WebSource source,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 }

@@ -20,11 +20,11 @@ import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.Series;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.xml.SdmxXmlStreams;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 public class XmlFileClient implements FileClient {
 
     @lombok.NonNull
-    private final SdmxFileSource source;
+    private final FileSource source;
 
     @lombok.NonNull
     private final Languages languages;
@@ -58,7 +58,7 @@ public class XmlFileClient implements FileClient {
     @Nullable
     private final Supplier<ObsParser> obsFactory;
 
-    private final @Nullable EventListener<? super SdmxFileSource> listener;
+    private final @Nullable EventListener<? super FileSource> listener;
 
     @Override
     public @NonNull Marker getMarker() {
@@ -92,7 +92,7 @@ public class XmlFileClient implements FileClient {
         );
     }
 
-    private Xml.Parser<DataCursor> getDataSupplier(MediaType dataType, DataStructure dsd) throws IOException {
+    private Xml.Parser<DataCursor> getDataSupplier(MediaType dataType, Structure dsd) throws IOException {
         if (XmlMediaTypes.GENERIC_DATA_20.equals(dataType)) {
             return SdmxXmlStreams.genericData20(dsd, obsFactory != null ? obsFactory : ObsParser::newDefault);
         } else if (XmlMediaTypes.STRUCTURE_SPECIFIC_DATA_20.equals(dataType)) {

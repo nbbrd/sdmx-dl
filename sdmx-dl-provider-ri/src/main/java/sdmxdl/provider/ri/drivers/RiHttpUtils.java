@@ -30,7 +30,7 @@ import sdmxdl.About;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.provider.web.WebEvents;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.WebContext;
@@ -79,7 +79,7 @@ public class RiHttpUtils {
                 .build();
     }
 
-    public static @NonNull HttpClient newClient(@NonNull SdmxWebSource source, @NonNull WebContext context) {
+    public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull WebContext context) {
         return newClient(newContext(source, context));
     }
 
@@ -93,7 +93,7 @@ public class RiHttpUtils {
         return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
-    public static @NonNull HttpContext newContext(@NonNull SdmxWebSource source, @NonNull WebContext context) {
+    public static @NonNull HttpContext newContext(@NonNull WebSource source, @NonNull WebContext context) {
         Network network = context.getNetwork(source);
         return HttpContext
                 .builder()
@@ -150,12 +150,12 @@ public class RiHttpUtils {
     private static final class RiHttpAuthenticator implements HttpAuthenticator {
 
         @lombok.NonNull
-        private final SdmxWebSource source;
+        private final WebSource source;
 
         @lombok.NonNull
         private final List<Authenticator> authenticators;
 
-        private final @Nullable EventListener<? super SdmxWebSource> listener;
+        private final @Nullable EventListener<? super WebSource> listener;
 
         @Override
         public @Nullable PasswordAuthentication getPasswordAuthentication(URL url) {

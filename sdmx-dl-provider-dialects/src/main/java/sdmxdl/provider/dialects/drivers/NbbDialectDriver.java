@@ -26,7 +26,7 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.DataStructureRef;
+import sdmxdl.StructureRef;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.format.ObsParser;
@@ -39,7 +39,7 @@ import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.drivers.Sdmx21RestErrors;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -68,7 +68,7 @@ public final class NbbDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(NbbDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("NBB")
                     .name("en", "National Bank of Belgium")
@@ -83,7 +83,7 @@ public final class NbbDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RiRestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return newClient(
                 HasMarker.of(s),
                 s.getEndpoint().toURL(),
@@ -118,7 +118,7 @@ public final class NbbDialectDriver implements Driver {
 
         @SdmxFix(id = 1, category = QUERY, cause = "'/all' must be encoded to '%2Fall'")
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(DotStatRestQueries.DATA_RESOURCE)

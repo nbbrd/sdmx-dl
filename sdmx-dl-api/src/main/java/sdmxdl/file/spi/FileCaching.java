@@ -12,7 +12,7 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 
 import java.util.Collection;
 
@@ -30,9 +30,9 @@ public interface FileCaching {
     int getFileCachingRank();
 
     @NonNull Cache<DataRepository> getReaderCache(
-            @NonNull SdmxFileSource source,
-            @Nullable EventListener<? super SdmxFileSource> onEvent,
-            @Nullable ErrorListener<? super SdmxFileSource> onError);
+            @NonNull FileSource source,
+            @Nullable EventListener<? super FileSource> onEvent,
+            @Nullable ErrorListener<? super FileSource> onError);
 
     @NonNull Collection<String> getFileCachingProperties();
 

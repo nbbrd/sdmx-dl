@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
-import sdmxdl.DataStructure;
-import sdmxdl.Dataflow;
+import sdmxdl.Structure;
+import sdmxdl.Flow;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.net.HttpURLConnection;
@@ -46,9 +46,9 @@ public class ConnectorsTest {
     @Test
     public void testFlow() {
         // description field not supported in Connectors
-        Dataflow dataflowWithoutDescription = FLOW.toBuilder().description(null).build();
-        assertThat(toFlow(fromFlow(dataflowWithoutDescription)))
-                .isEqualTo(dataflowWithoutDescription);
+        Flow flowWithoutDescription = FLOW.toBuilder().description(null).build();
+        assertThat(toFlow(fromFlow(flowWithoutDescription)))
+                .isEqualTo(flowWithoutDescription);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ConnectorsTest {
                 .describedAs("Non-contiguous positions fail in connectors")
                 .isThrownBy(() -> toStructure(fromStructure(RepoSamples.STRUCT)));
 
-        DataStructure contiguousPositions = RepoSamples.STRUCT
+        Structure contiguousPositions = RepoSamples.STRUCT
                 .toBuilder()
                 .clearDimensions()
                 .dimension(DIM1)

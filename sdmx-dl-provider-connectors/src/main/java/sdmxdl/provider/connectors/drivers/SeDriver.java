@@ -21,7 +21,7 @@ import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
@@ -43,7 +43,7 @@ public final class SeDriver implements Driver {
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofSpecific(SeClient::new)))
             .properties(ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("SE")
                     .name("en", "Statistics Estonia")

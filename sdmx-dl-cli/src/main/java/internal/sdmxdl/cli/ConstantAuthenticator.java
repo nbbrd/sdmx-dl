@@ -2,7 +2,7 @@ package internal.sdmxdl.cli;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
 import java.net.PasswordAuthentication;
@@ -23,11 +23,11 @@ final class ConstantAuthenticator implements Authenticator {
     }
 
     @Override
-    public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull SdmxWebSource source) {
+    public @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) {
         return user;
     }
 
     @Override
-    public void invalidateAuthentication(@NonNull SdmxWebSource source) {
+    public void invalidateAuthentication(@NonNull WebSource source) {
     }
 }

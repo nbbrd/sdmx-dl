@@ -17,7 +17,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.DataDetail;
+import sdmxdl.Detail;
 import sdmxdl.DataSet;
 import sdmxdl.Key;
 import sdmxdl.web.SdmxWebManager;
@@ -39,7 +39,7 @@ public class WebKeyOptions extends WebFlowOptions {
     )
     private Key key;
 
-    public DataSet loadSeries(SdmxWebManager manager, DataDetail detail) throws IOException {
+    public DataSet loadSeries(SdmxWebManager manager, Detail detail) throws IOException {
         return loadSeries(manager, getKey(), detail);
     }
 }

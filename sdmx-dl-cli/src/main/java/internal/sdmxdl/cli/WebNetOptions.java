@@ -18,7 +18,7 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -56,13 +56,13 @@ public class WebNetOptions extends WebOptions {
                 .build();
     }
 
-    private List<SdmxWebSource> getForcedSslSources(SdmxWebManager manager) {
+    private List<WebSource> getForcedSslSources(SdmxWebManager manager) {
         return isForceSsl()
                 ? manager.getSources().values().stream().map(WebNetOptions::toHttps).collect(Collectors.toList())
                 : manager.getCustomSources();
     }
 
-    private static SdmxWebSource toHttps(SdmxWebSource source) {
+    private static WebSource toHttps(WebSource source) {
         return source.toBuilder().endpoint(toHttps(source.getEndpoint())).build();
     }
 

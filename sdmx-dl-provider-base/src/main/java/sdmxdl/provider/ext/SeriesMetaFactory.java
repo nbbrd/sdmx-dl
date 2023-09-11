@@ -64,7 +64,7 @@ public final class SeriesMetaFactory {
     }
 
     @NonNull
-    public static SeriesMetaFactory getDefault(@NonNull DataStructure dsd) {
+    public static SeriesMetaFactory getDefault(@NonNull Structure dsd) {
         return builder()
                 .byContent()
                 .valueUnit(getValueUnit(dsd))
@@ -75,7 +75,7 @@ public final class SeriesMetaFactory {
     }
 
     @NonNull
-    public static SeriesMetaFactory sdmx20(@NonNull DataStructure dsd) {
+    public static SeriesMetaFactory sdmx20(@NonNull Structure dsd) {
         return builder()
                 .byAttribute(SeriesMetaUtil.TIME_FORMAT_CONCEPT, TimeUnitParsers.onTimeFormatCodeList())
                 .valueUnit(getValueUnit(dsd))
@@ -86,7 +86,7 @@ public final class SeriesMetaFactory {
     }
 
     @NonNull
-    public static SeriesMetaFactory sdmx21(@NonNull DataStructure dsd) {
+    public static SeriesMetaFactory sdmx21(@NonNull Structure dsd) {
         return builder()
                 .byDimension(getFrequencyCodeIdIndex(dsd), TimeUnitParsers.onFreqCodeList())
                 .valueUnit(getValueUnit(dsd))
@@ -117,7 +117,7 @@ public final class SeriesMetaFactory {
 
     public static final int NO_FREQUENCY_CODE_ID_INDEX = -1;
 
-    public static int getFrequencyCodeIdIndex(@NonNull DataStructure dsd) {
+    public static int getFrequencyCodeIdIndex(@NonNull Structure dsd) {
         List<Dimension> dimensions = dsd.getDimensionList();
         return IntStream.range(0, dimensions.size())
                 .filter(i -> isFrequencyCodeId(dimensions.get(i)))
@@ -135,7 +135,7 @@ public final class SeriesMetaFactory {
         }
     }
 
-    private static Function<Series, String> getValueUnit(DataStructure dsd) {
+    private static Function<Series, String> getValueUnit(Structure dsd) {
         Dimension dimension = first(dsd.getDimensions(), o -> o.getId().contains("UNIT") && !o.getId().contains("MULT"), BY_LENGTH_ID);
         if (dimension != null) {
             return onDimension(dsd.getDimensionList().indexOf(dimension));
@@ -147,17 +147,17 @@ public final class SeriesMetaFactory {
         return NOT_FOUND;
     }
 
-    private static Function<Series, String> getDecimal(DataStructure dsd) {
+    private static Function<Series, String> getDecimal(Structure dsd) {
         Attribute attribute = first(dsd.getAttributes(), o -> o.getId().contains("DECIMALS"), BY_LENGTH_ID);
         return attribute != null ? onAttribute(attribute) : NOT_FOUND;
     }
 
-    private static Function<Series, String> getName(DataStructure dsd) {
+    private static Function<Series, String> getName(Structure dsd) {
         Attribute attribute = first(dsd.getAttributes(), o -> !o.isCoded() && o.getId().contains("TITLE"), BY_LENGTH_ID);
         return attribute != null ? onAttribute(attribute) : NOT_FOUND;
     }
 
-    private static Function<Series, String> getDescription(DataStructure dsd) {
+    private static Function<Series, String> getDescription(Structure dsd) {
         Attribute attribute = first(dsd.getAttributes(), o -> !o.isCoded() && o.getId().contains("TITLE"), BY_LENGTH_ID.reversed());
         return attribute != null ? onAttribute(attribute) : NOT_FOUND;
     }

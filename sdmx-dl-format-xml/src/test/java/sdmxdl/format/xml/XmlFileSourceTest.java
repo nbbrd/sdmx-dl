@@ -18,7 +18,7 @@ package sdmxdl.format.xml;
 
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,19 +32,19 @@ public class XmlFileSourceTest {
 
     @Test
     public void testFormatter() throws IOException {
-        Xml.Formatter<SdmxFileSource> x = XmlFileSource.getFormatter();
+        Xml.Formatter<FileSource> x = XmlFileSource.getFormatter();
 
-        assertThat(x.formatToString(SdmxFileSource.builder().data(data).structure(structure).build()))
+        assertThat(x.formatToString(FileSource.builder().data(data).structure(structure).build()))
                 .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\" structure=\"b.xml\"/>");
 
-        assertThat(x.formatToString(SdmxFileSource.builder().data(data).build()))
+        assertThat(x.formatToString(FileSource.builder().data(data).build()))
                 .isEqualTo("<?xml version=\"1.0\" encoding=\"UTF-8\"?><file data=\"a.xml\"/>");
     }
 
     @Test
     @SuppressWarnings("null")
     public void testParser() throws IOException {
-        Xml.Parser<SdmxFileSource> x = XmlFileSource.getParser();
+        Xml.Parser<FileSource> x = XmlFileSource.getParser();
 
         assertThatNullPointerException().isThrownBy(() -> x.parseChars(null));
         assertThatIOException().isThrownBy(() -> x.parseChars(""));

@@ -59,8 +59,8 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Collection<Dataflow> getFlows() throws IOException {
-        Collection<Dataflow> result;
+    public @NonNull Collection<Flow> getFlows() throws IOException {
+        Collection<Flow> result;
 
         try {
             result = delegate.getFlows();
@@ -76,8 +76,8 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
-        Dataflow result;
+    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+        Flow result;
 
         try {
             result = delegate.getFlow(flowRef);
@@ -95,8 +95,8 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
-        DataStructure result;
+    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+        Structure result;
 
         try {
             result = delegate.getStructure(flowRef);
@@ -114,7 +114,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         DataSet result;
 
         try {
@@ -133,7 +133,7 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         Stream<Series> result;
 
         try {

@@ -72,15 +72,15 @@ public class Sdmx21RestParsersTest {
 
     @Test
     public void testGetDataParser() throws IOException {
-        DataStructure dataStructure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxXmlSources.ECB_DATA_STRUCTURE::openStream);
-        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, dataStructure, ObsParser::newDefault).andThen(Sdmx21RestParsersTest::toDataSet);
+        Structure structure = SdmxXmlStreams.struct21(ANY).andThen(list -> list.get(0)).parseStream(SdmxXmlSources.ECB_DATA_STRUCTURE::openStream);
+        BiFunction<Sdmx21RestParsers, MediaType, FileParser<?>> extractor = (x, y) -> x.getDataParser(y, structure, ObsParser::newDefault).andThen(Sdmx21RestParsersTest::toDataSet);
         testParser(DEFAULT_DATA_TYPES, extractor);
         testContent(extractor, XmlMediaTypes.GENERIC_DATA_21, SdmxXmlSources.ECB_DATA);
     }
 
     private static DataSet toDataSet(DataCursor cursor) throws IOException {
         try (Stream<Series> stream = cursor.asCloseableStream()) {
-            return stream.collect(DataSet.toDataSet(DataflowRef.parse("abc"), DataQuery.ALL));
+            return stream.collect(DataSet.toDataSet(FlowRef.parse("abc"), Query.ALL));
         } catch (UncheckedIOException ex) {
             throw ex.getCause();
         }

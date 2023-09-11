@@ -18,11 +18,8 @@ package sdmxdl.provider.ri.readers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sdmxdl.provider.ri.readers.Decoder;
-import sdmxdl.provider.ri.readers.XmlDecoder;
-import sdmxdl.provider.ri.readers.XmlFileClient;
 import sdmxdl.*;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.file.FileConnection;
@@ -50,7 +47,7 @@ public class XmlFileClientTest {
         File compact21 = temp.resolve("compact21").toFile();
         SdmxXmlSources.OTHER_COMPACT21.copyTo(compact21);
 
-        SdmxFileSource source = sourceOf(compact21);
+        FileSource source = sourceOf(compact21);
         FileClient x = new XmlFileClient(source, ANY, DECODER, null, null);
 
         FileInfo info = x.decode();
@@ -60,7 +57,7 @@ public class XmlFileClientTest {
 
         Key key = Key.of("A", "BEL", "1", "0", "0", "0", "OVGD");
 
-        try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), DataQuery.ALL))) {
+        try (Stream<Series> o = x.loadData(info, DataRef.of(source.asDataflowRef(), Query.ALL))) {
             assertThat(o)
                     .singleElement()
                     .satisfies(series -> {
@@ -83,7 +80,7 @@ public class XmlFileClientTest {
         }
 
         ConnectionAssert.assertCompliance(
-                () -> new FileConnection(x, DATAFLOW),
+                () -> new FileConnection(x, FLOW),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(source.asDataflowRef())
@@ -94,10 +91,10 @@ public class XmlFileClientTest {
         );
     }
 
-    public static SdmxFileSource sourceOf(File compact21) {
-        return SdmxFileSource.builder().data(compact21).build();
+    public static FileSource sourceOf(File compact21) {
+        return FileSource.builder().data(compact21).build();
     }
 
     public static final Decoder DECODER = new XmlDecoder(null);
-    public static final Dataflow DATAFLOW = Dataflow.builder().ref(DataflowRef.parse("data")).structureRef(DataStructureRef.parse("xyz")).name("label").build();
+    public static final Flow FLOW = Flow.builder().ref(FlowRef.parse("data")).structureRef(StructureRef.parse("xyz")).name("label").build();
 }

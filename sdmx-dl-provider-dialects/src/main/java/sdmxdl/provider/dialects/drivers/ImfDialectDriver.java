@@ -32,7 +32,7 @@ import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestClient;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -62,7 +62,7 @@ public final class ImfDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(ImfDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("IMF")
                     .name("en", "International Monetary Fund")
@@ -74,7 +74,7 @@ public final class ImfDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return RiRestClient.of(s, languages, c, new ImfQueries(), new ImfParsers(), IMF_FEATURES);
     }
 
@@ -91,7 +91,7 @@ public final class ImfDialectDriver implements Driver {
         }
 
         @Override
-        public URLQueryBuilder getStructureQuery(URL endpoint, DataStructureRef ref) {
+        public URLQueryBuilder getStructureQuery(URL endpoint, StructureRef ref) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path("DataStructure")
@@ -99,7 +99,7 @@ public final class ImfDialectDriver implements Driver {
         }
 
         @Override
-        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull DataStructureRef dsdRef) {
+        public URLQueryBuilder getDataQuery(URL endpoint, DataRef ref, @NonNull StructureRef dsdRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path("CompactData")
@@ -111,12 +111,12 @@ public final class ImfDialectDriver implements Driver {
     private static final class ImfParsers extends DotStatRestParsers {
 
         @Override
-        public @NonNull FileParser<List<Dataflow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
+        public @NonNull FileParser<List<Flow>> getFlowsParser(@NonNull MediaType mediaType, @NonNull Languages langs) {
             return SdmxXmlStreams.flow20(langs);
         }
 
         @Override
-        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull DataStructure dsd, @NonNull Supplier<ObsParser> dataFactory) {
+        public @NonNull FileParser<DataCursor> getDataParser(@NonNull MediaType mediaType, @NonNull Structure dsd, @NonNull Supplier<ObsParser> dataFactory) {
             return SdmxXmlStreams.compactData20(dsd, dataFactory);
         }
     }

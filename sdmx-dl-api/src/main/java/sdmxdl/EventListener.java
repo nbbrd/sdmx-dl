@@ -5,7 +5,7 @@ import lombok.NonNull;
 import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface EventListener<S extends SdmxSource> {
+public interface EventListener<S extends Source> {
 
     void accept(@NonNull S source, @NonNull String marker, @NonNull CharSequence message);
 

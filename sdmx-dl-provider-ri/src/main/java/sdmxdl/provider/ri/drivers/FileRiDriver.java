@@ -12,10 +12,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileManager;
-import sdmxdl.file.SdmxFileSource;
+import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.provider.web.DriverSupport;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebCaching;
 import sdmxdl.web.spi.WebContext;
@@ -50,7 +50,7 @@ public final class FileRiDriver implements Driver {
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
-    private @NonNull Connection newConnection(@NonNull SdmxWebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    private @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         return fileManager
                 .toBuilder()
                 .onEvent(context.getOnEvent() != null ? (fileSource, marker, message) -> context.getOnEvent().accept(source, marker, message) : null)
@@ -64,11 +64,11 @@ public final class FileRiDriver implements Driver {
 
         private final @NonNull WebCaching delegate;
 
-        private final @NonNull SdmxWebSource webSource;
+        private final @NonNull WebSource webSource;
 
-        private final @Nullable EventListener<? super SdmxWebSource> onWebEvent;
+        private final @Nullable EventListener<? super WebSource> onWebEvent;
 
-        private final @Nullable ErrorListener<? super SdmxWebSource> onWebError;
+        private final @Nullable ErrorListener<? super WebSource> onWebError;
 
         @Override
         public @NonNull String getFileCachingId() {
@@ -81,7 +81,7 @@ public final class FileRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Cache<DataRepository> getReaderCache(@NonNull SdmxFileSource ignoreSource, @Nullable EventListener<? super SdmxFileSource> ignoreEvent, @Nullable ErrorListener<? super SdmxFileSource> ignoreError) {
+        public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource ignoreSource, @Nullable EventListener<? super FileSource> ignoreEvent, @Nullable ErrorListener<? super FileSource> ignoreError) {
             return new FileCacheAdapter(delegate.getDriverCache(webSource, onWebEvent, onWebError));
         }
 
@@ -112,8 +112,8 @@ public final class FileRiDriver implements Driver {
         }
     }
 
-    private static SdmxFileSource toFileSource(SdmxWebSource source) throws IOException {
-        return SdmxFileSource
+    private static FileSource toFileSource(WebSource source) throws IOException {
+        return FileSource
                 .builder()
                 .data(toFile(source.getEndpoint()))
                 .structure(toFile(STRUCTURE_URI_PROPERTY.get(source.getProperties())))

@@ -19,7 +19,7 @@ package sdmxdl.provider.connectors.drivers;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 @lombok.RequiredArgsConstructor
 public final class PortableTimeSeriesCursor implements DataCursor {
 
-    public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, Supplier<ObsParser> df, DataStructure dsd) {
+    public static PortableTimeSeriesCursor of(List<PortableTimeSeries<Double>> data, Supplier<ObsParser> df, Structure dsd) {
         return new PortableTimeSeriesCursor(data.iterator(), Key.builder(dsd), df.get());
     }
 

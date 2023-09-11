@@ -29,13 +29,13 @@ public class SdmxFileSourceTest {
 
     @Test
     public void testAsDataflowRef() {
-        assertThat(SdmxFileSource.builder().data(data).structure(structure).build().asDataflowRef().toString())
+        assertThat(FileSource.builder().data(data).structure(structure).build().asDataflowRef().toString())
                 .isEqualTo("all,data&struct,latest");
 
-        assertThat(SdmxFileSource.builder().data(data).structure(new File("")).build().asDataflowRef().toString())
+        assertThat(FileSource.builder().data(data).structure(new File("")).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
 
-        assertThat(SdmxFileSource.builder().data(data).build().asDataflowRef().toString())
+        assertThat(FileSource.builder().data(data).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
     }
 

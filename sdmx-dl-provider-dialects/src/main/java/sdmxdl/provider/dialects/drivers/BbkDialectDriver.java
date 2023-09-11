@@ -27,7 +27,7 @@ import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.ri.drivers.*;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -55,7 +55,7 @@ public final class BbkDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(BbkDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("BBK")
                     .name("en", "Deutsche Bundesbank")
@@ -68,7 +68,7 @@ public final class BbkDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static RiRestClient newClient(SdmxWebSource s, Languages languages, WebContext c) throws IOException {
+    private static RiRestClient newClient(WebSource s, Languages languages, WebContext c) throws IOException {
         return new RiRestClient(
                 HasMarker.of(s),
                 s.getEndpoint().toURL(),
@@ -116,7 +116,7 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 4, category = QUERY, cause = "Data does not support providerRef")
         @Override
-        protected URLQueryBuilder onData(URL endpoint, String resourcePath, DataflowRef flowRef, Key key, String providerRef) {
+        protected URLQueryBuilder onData(URL endpoint, String resourcePath, FlowRef flowRef, Key key, String providerRef) {
             return URLQueryBuilder
                     .of(endpoint)
                     .path(resourcePath)
@@ -126,8 +126,8 @@ public final class BbkDialectDriver implements Driver {
 
         @SdmxFix(id = 5, category = QUERY, cause = "Data detail parameter for series-keys-only has a typo")
         @Override
-        protected void applyFilter(DataDetail detail, URLQueryBuilder result) {
-            if (detail.equals(DataDetail.SERIES_KEYS_ONLY)) {
+        protected void applyFilter(Detail detail, URLQueryBuilder result) {
+            if (detail.equals(Detail.SERIES_KEYS_ONLY)) {
                 result.param(DETAIL_PARAM, "serieskeyonly");
             } else {
                 super.applyFilter(detail, result);

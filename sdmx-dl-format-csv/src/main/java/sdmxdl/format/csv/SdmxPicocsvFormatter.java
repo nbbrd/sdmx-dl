@@ -4,7 +4,7 @@ import lombok.NonNull;
 import nbbrd.io.picocsv.Picocsv;
 import nbbrd.picocsv.Csv;
 import sdmxdl.DataSet;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.Obs;
 import sdmxdl.Series;
 
@@ -33,11 +33,11 @@ public final class SdmxPicocsvFormatter {
     @lombok.Builder.Default
     private final boolean ignoreHeader = false;
 
-    public Picocsv.@NonNull Formatter<DataSet> getFormatter(DataStructure dsd) {
+    public Picocsv.@NonNull Formatter<DataSet> getFormatter(Structure dsd) {
         return Picocsv.Formatter.<DataSet>builder((value, writer) -> formatCsv(dsd, value, writer)).build();
     }
 
-    private void formatCsv(DataStructure dsd, DataSet data, Csv.Writer w) throws IOException {
+    private void formatCsv(Structure dsd, DataSet data, Csv.Writer w) throws IOException {
         SdmxCsvFieldWriter[] writers = fields.stream()
                 .map(field -> getFieldWriter(dsd, data, field))
                 .toArray(SdmxCsvFieldWriter[]::new);
@@ -59,7 +59,7 @@ public final class SdmxPicocsvFormatter {
         }
     }
 
-    private SdmxCsvFieldWriter getFieldWriter(DataStructure dsd, DataSet dataSet, String field) {
+    private SdmxCsvFieldWriter getFieldWriter(Structure dsd, DataSet dataSet, String field) {
         Function<DataSet, SdmxCsvFieldWriter> factory = customFactories.get(field);
         if (factory == null) {
             factory = getDefaultFactory(dsd, field);
@@ -67,7 +67,7 @@ public final class SdmxPicocsvFormatter {
         return factory.apply(dataSet);
     }
 
-    private Function<DataSet, SdmxCsvFieldWriter> getDefaultFactory(DataStructure dsd, String field) {
+    private Function<DataSet, SdmxCsvFieldWriter> getDefaultFactory(Structure dsd, String field) {
         switch (field) {
             case DATAFLOW:
                 return dataSet -> SdmxCsvFieldWriter.onDataflow(DATAFLOW, dataSet.getRef());

@@ -28,7 +28,7 @@ import sdmxdl.Dimension;
 import sdmxdl.*;
 import sdmxdl.desktop.MainComponent;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.SSLFactory;
 
@@ -67,15 +67,15 @@ public abstract class SdmxAutoCompletion {
         return new WebSourceCompletion(manager, languages);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
         return new DataflowCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
         return new DimensionCompletion<>(manager, languages, source, flowRef, cache);
     }
 
-    public static <S extends SdmxSource> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DataflowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
         return new AttributeCompletion<>(manager, languages, source, flowRef, cache);
     }
 
@@ -94,26 +94,26 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(SYNC)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(SdmxWebSource::getId)
+                    .valueToString(WebSource::getId)
                     .build();
         }
 
         @Override
         public ListCellRenderer getRenderer() {
-            return new CustomListCellRenderer<SdmxWebSource>() {
+            return new CustomListCellRenderer<WebSource>() {
                 @Override
-                protected String getValueAsString(SdmxWebSource value) {
+                protected String getValueAsString(WebSource value) {
                     return value.getId() + ": " + languages.select(value.getNames());
                 }
 
                 @Override
-                protected Icon toIcon(String term, JList list, SdmxWebSource value, int index, boolean isSelected, boolean cellHasFocus) {
+                protected Icon toIcon(String term, JList list, WebSource value, int index, boolean isSelected, boolean cellHasFocus) {
                     return getFavicon(value.getWebsite(), list::repaint);
                 }
             };
         }
 
-        private List<SdmxWebSource> load(String term) {
+        private List<WebSource> load(String term) {
             return manager
                     .getSources()
                     .values()
@@ -122,11 +122,11 @@ public abstract class SdmxAutoCompletion {
                     .collect(toList());
         }
 
-        private List<SdmxWebSource> filterAndSort(List<SdmxWebSource> list, String term) {
+        private List<WebSource> filterAndSort(List<WebSource> list, String term) {
             return list.stream().filter(getFilter(term)).collect(toList());
         }
 
-        private Predicate<SdmxWebSource> getFilter(String term) {
+        private Predicate<WebSource> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return value -> filter.test(languages.select(value.getNames()))
                     || filter.test(value.getId())
@@ -135,7 +135,7 @@ public abstract class SdmxAutoCompletion {
     }
 
     @lombok.AllArgsConstructor
-    private static final class DataflowCompletion<S extends SdmxSource> extends SdmxAutoCompletion {
+    private static final class DataflowCompletion<S extends Source> extends SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
@@ -162,10 +162,10 @@ public abstract class SdmxAutoCompletion {
 
         @Override
         public ListCellRenderer getRenderer() {
-            return CustomListCellRenderer.<Dataflow>of(flow -> flow.getRef() + "<br><i>" + flow.getName(), flow -> flow.getRef().toString());
+            return CustomListCellRenderer.<Flow>of(flow -> flow.getRef() + "<br><i>" + flow.getName(), flow -> flow.getRef().toString());
         }
 
-        private List<Dataflow> load(String term) throws Exception {
+        private List<Flow> load(String term) throws Exception {
             try (Connection c = manager.getConnection(source.get(), languages)) {
                 return new ArrayList<>(c.getFlows());
             }
@@ -175,11 +175,11 @@ public abstract class SdmxAutoCompletion {
             return source.get() != null ? ASYNC : NONE;
         }
 
-        private List<Dataflow> filterAndSort(List<Dataflow> values, String term) {
+        private List<Flow> filterAndSort(List<Flow> values, String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return values.stream()
                     .filter(o -> filter.test(o.getName()) || filter.test(o.getRef().getId()) || filter.test(o.getDescription()))
-                    .sorted(Comparator.comparing(Dataflow::getName))
+                    .sorted(Comparator.comparing(Flow::getName))
                     .collect(toList());
         }
 
@@ -189,7 +189,7 @@ public abstract class SdmxAutoCompletion {
     }
 
     @lombok.AllArgsConstructor
-    private static final class DimensionCompletion<S extends SdmxSource> extends SdmxAutoCompletion {
+    private static final class DimensionCompletion<S extends Source> extends SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
@@ -201,7 +201,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<DataflowRef> flowRef;
+        private final Supplier<FlowRef> flowRef;
 
         @lombok.NonNull
         private final ConcurrentMap cache;
@@ -246,7 +246,7 @@ public abstract class SdmxAutoCompletion {
     }
 
     @lombok.AllArgsConstructor
-    private static final class AttributeCompletion<S extends SdmxSource> extends SdmxAutoCompletion {
+    private static final class AttributeCompletion<S extends Source> extends SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
@@ -258,7 +258,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<DataflowRef> flowRef;
+        private final Supplier<FlowRef> flowRef;
 
         @lombok.NonNull
         private final ConcurrentMap cache;

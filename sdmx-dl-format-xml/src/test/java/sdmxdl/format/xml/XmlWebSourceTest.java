@@ -18,7 +18,7 @@ package sdmxdl.format.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,8 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class XmlWebSourceTest {
 
-    private final List<SdmxWebSource> sample = Arrays.asList(
-            SdmxWebSource
+    private final List<WebSource> sample = Arrays.asList(
+            WebSource
                     .builder()
                     .id("ECB")
                     .name("en", "European Central Bank")
@@ -44,7 +44,7 @@ public class XmlWebSourceTest {
                     .monitorOf("ABC:xyz")
                     .monitorWebsiteOf("https://someaddress")
                     .build(),
-            SdmxWebSource
+            WebSource
                     .builder()
                     .id("other")
                     .name("en", "some description")

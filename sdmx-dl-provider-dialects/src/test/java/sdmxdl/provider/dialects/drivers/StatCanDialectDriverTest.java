@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.*;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.File;
@@ -36,25 +36,25 @@ public class StatCanDialectDriverTest {
     @Test
     public void testConnectionArgs() throws IOException {
         StatCanDialectDriver driver = new StatCanDialectDriver();
-        SdmxWebSource source = driver.getDefaultSources().iterator().next();
+        WebSource source = driver.getDefaultSources().iterator().next();
         try (Connection connection = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-            DataflowRef badDataflowRef = DataflowRef.parse("F_10100001");
+            FlowRef badFlowRef = FlowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getFlow(badDataflowRef))
+                    .isThrownBy(() -> connection.getFlow(badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getStructure(badDataflowRef))
+                    .isThrownBy(() -> connection.getStructure(badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getData(badDataflowRef, DataQuery.ALL))
+                    .isThrownBy(() -> connection.getData(badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getDataStream(badDataflowRef, DataQuery.ALL))
+                    .isThrownBy(() -> connection.getDataStream(badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
         }
     }
@@ -78,7 +78,7 @@ public class StatCanDialectDriverTest {
         @Test
         public void testToDataflowRef() {
             assertThat(toDataflowRef(1234))
-                    .isEqualTo(DataflowRef.of("StatCan", "DF_1234", "1.0"));
+                    .isEqualTo(FlowRef.of("StatCan", "DF_1234", "1.0"));
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> toDataflowRef(-1))
@@ -87,47 +87,47 @@ public class StatCanDialectDriverTest {
 
         @Test
         public void testFromDataflowRef() {
-            assertThat(fromDataflowRef(DataflowRef.of("StatCan", "DF_1234", "1.0")))
+            assertThat(fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "1.0")))
                     .isEqualTo(1234);
 
-            assertThat(fromDataflowRef(DataflowRef.of("all", "DF_1234", "1.0")))
+            assertThat(fromDataflowRef(FlowRef.of("all", "DF_1234", "1.0")))
                     .isEqualTo(1234);
 
-            assertThat(fromDataflowRef(DataflowRef.of("StatCan", "DF_1234", "latest")))
+            assertThat(fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "latest")))
                     .isEqualTo(1234);
 
             assertThatNullPointerException()
                     .isThrownBy(() -> fromDataflowRef(null));
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "F_1234", "1.0")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "F_1234", "1.0")))
                     .withMessage("Expecting DataflowRef id 'F_1234' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("tatCan", "DF_1234", "1.0")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("tatCan", "DF_1234", "1.0")))
                     .withMessage("Expecting DataflowRef agency 'tatCan' to match pattern 'StatCan|all'");
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_1234", "1.")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "DF_1234", "1.")))
                     .withMessage("Expecting DataflowRef version '1.' to match pattern '1\\.0|latest'");
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_", "1.0")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "DF_", "1.0")))
                     .withMessage("Expecting DataflowRef id 'DF_' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_1234X", "1.0")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "DF_1234X", "1.0")))
                     .withMessage("Expecting DataflowRef id 'DF_1234X' to match pattern 'DF_\\d+'");
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> fromDataflowRef(DataflowRef.of("StatCan", "DF_-1234", "1.0")))
+                    .isThrownBy(() -> fromDataflowRef(FlowRef.of("StatCan", "DF_-1234", "1.0")))
                     .withMessage("Expecting DataflowRef id 'DF_-1234' to match pattern 'DF_\\d+'");
         }
 
         @Test
         public void testToDataStructureRef() {
             assertThat(toDataStructureRef(1234))
-                    .isEqualTo(DataStructureRef.of("StatCan", "Data_Structure_1234", "1.0"));
+                    .isEqualTo(StructureRef.of("StatCan", "Data_Structure_1234", "1.0"));
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> toDataStructureRef(-1))

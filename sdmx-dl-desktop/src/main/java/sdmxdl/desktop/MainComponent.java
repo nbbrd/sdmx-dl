@@ -15,10 +15,10 @@ import net.miginfocom.swing.MigLayout;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
-import sdmxdl.DataflowRef;
+import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.Network;
 
@@ -80,7 +80,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final JTree datasetsTree = new JTree();
 
-    private final JList<SdmxWebSource> sourcesList = new JList<>();
+    private final JList<WebSource> sourcesList = new JList<>();
 
     private final JList<Driver> driversList = new JList<>();
 
@@ -99,7 +99,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private URLConnection openConnection(URL url) throws IOException {
         try {
-            SdmxWebSource source = SdmxWebSource.builder().id("").driver("").endpoint(url.toURI()).build();
+            WebSource source = WebSource.builder().id("").driver("").endpoint(url.toURI()).build();
             Network network = getSdmxManager().getNetworking().getNetwork(source, null, null);
             return network.getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY);
         } catch (URISyntaxException ex) {
@@ -115,7 +115,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         }
     }
 
-    private final Map<DataflowRef, FlowStruct> flowStructs = new HashMap<>();
+    private final Map<FlowRef, FlowStruct> flowStructs = new HashMap<>();
 
     public MainComponent() {
         initComponent();
@@ -327,7 +327,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
             @Override
             protected void process(List<FlowStruct> chunks) {
-                chunks.forEach(chunk -> flowStructs.put(chunk.getDataflow().getRef(), chunk));
+                chunks.forEach(chunk -> flowStructs.put(chunk.getFlow().getRef(), chunk));
                 datasetsTree.repaint();
             }
         }.execute();
@@ -371,7 +371,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new Object[]{"Add", "Cancel"}, "Add") == 0) {
 
-                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), DataflowRef.parse(flowField.getText()), emptyList()));
+                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), FlowRef.parse(flowField.getText()), emptyList()));
             }
         }
 

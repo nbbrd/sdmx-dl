@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Monitor;
 import sdmxdl.web.spi.WebContext;
 
@@ -16,7 +16,7 @@ public class MonitorAssert {
     @lombok.Value
     @lombok.Builder(toBuilder = true)
     public static class Sample {
-        SdmxWebSource validSource;
+        WebSource validSource;
     }
 
     public void assertCompliance(@NonNull Monitor monitor, @NonNull Sample sample) {

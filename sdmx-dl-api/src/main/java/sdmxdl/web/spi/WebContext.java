@@ -23,7 +23,7 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.util.List;
 
@@ -37,9 +37,9 @@ public class WebContext {
     @lombok.Builder.Default
     @NonNull WebCaching caching = WebCaching.noOp();
 
-    @Nullable EventListener<? super SdmxWebSource> onEvent;
+    @Nullable EventListener<? super WebSource> onEvent;
 
-    @Nullable ErrorListener<? super SdmxWebSource> onError;
+    @Nullable ErrorListener<? super WebSource> onError;
 
     @lombok.Singular
     @NonNull List<Authenticator> authenticators;
@@ -47,15 +47,15 @@ public class WebContext {
     @lombok.Builder.Default
     @NonNull Networking networking = Networking.getDefault();
 
-    public @NonNull Cache<DataRepository> getDriverCache(@NonNull SdmxWebSource source) {
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source) {
         return caching.getDriverCache(source, onEvent, onError);
     }
 
-    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull SdmxWebSource source) {
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source) {
         return caching.getMonitorCache(source, onEvent, onError);
     }
 
-    public @NonNull Network getNetwork(@NonNull SdmxWebSource source) {
+    public @NonNull Network getNetwork(@NonNull WebSource source) {
         return networking.getNetwork(source, onEvent, onError);
     }
 }

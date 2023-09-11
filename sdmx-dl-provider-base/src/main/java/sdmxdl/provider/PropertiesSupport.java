@@ -2,8 +2,8 @@ package sdmxdl.provider;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.file.SdmxFileSource;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.file.FileSource;
+import sdmxdl.web.WebSource;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -14,11 +14,11 @@ import java.util.function.Function;
 @lombok.experimental.UtilityClass
 public class PropertiesSupport {
 
-    public static @NonNull Function<? super String, ? extends CharSequence> asFunction(@NonNull SdmxFileSource source) {
+    public static @NonNull Function<? super String, ? extends CharSequence> asFunction(@NonNull FileSource source) {
         return key -> PropertiesSupport.getProperty(Collections.emptyMap(), key);
     }
 
-    public static @NonNull Function<? super String, ? extends CharSequence> asFunction(@NonNull SdmxWebSource source) {
+    public static @NonNull Function<? super String, ? extends CharSequence> asFunction(@NonNull WebSource source) {
         return key -> PropertiesSupport.getProperty(source.getProperties(), key);
     }
 

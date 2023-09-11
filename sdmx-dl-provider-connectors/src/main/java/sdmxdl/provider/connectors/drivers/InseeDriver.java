@@ -32,7 +32,7 @@ import sdmxdl.format.time.TimeFormats;
 import sdmxdl.provider.SdmxFix;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
 import java.net.URI;
@@ -60,7 +60,7 @@ public final class InseeDriver implements Driver {
             .rank(WRAPPED_DRIVER_RANK)
             .connector(RestConnector.of(ConnectorsRestClient.ofGeneric(InseeClient::new, OBS_FACTORY)))
             .properties(CONNECTORS_CONNECTION_PROPERTIES)
-            .source(SdmxWebSource
+            .source(WebSource
                     .builder()
                     .id("INSEE")
                     .name("fr", "Institut national de la statistique et des études économiques")

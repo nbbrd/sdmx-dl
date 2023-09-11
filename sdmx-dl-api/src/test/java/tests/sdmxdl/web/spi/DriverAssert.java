@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
@@ -27,14 +27,14 @@ public class DriverAssert {
                 .are(startingWith(DRIVER_PROPERTY_PREFIX))
                 .doesNotHaveDuplicates();
 
-        SdmxWebSource validSource = SdmxWebSource
+        WebSource validSource = WebSource
                 .builder()
                 .id("valid")
                 .driver(driver.getDriverId())
                 .endpointOf("http://localhost")
                 .build();
 
-        SdmxWebSource invalidSource = validSource.toBuilder().driver("").build();
+        WebSource invalidSource = validSource.toBuilder().driver("").build();
 
         WebContext context = DriverAssert.noOpWebContext();
 
@@ -51,7 +51,7 @@ public class DriverAssert {
         assertThat(driver.getClass()).isFinal();
     }
 
-    private void checkSource(SdmxWebSource o, Driver d) {
+    private void checkSource(WebSource o, Driver d) {
         assertThat(o.getId()).isNotBlank();
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getDriver()).isEqualTo(d.getDriverId());

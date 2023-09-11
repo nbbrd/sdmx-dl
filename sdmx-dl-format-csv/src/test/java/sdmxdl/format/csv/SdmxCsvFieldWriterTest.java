@@ -3,8 +3,8 @@ package sdmxdl.format.csv;
 import nbbrd.io.text.Formatter;
 import nbbrd.picocsv.Csv;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataStructure;
-import sdmxdl.DataflowRef;
+import sdmxdl.Structure;
+import sdmxdl.FlowRef;
 import sdmxdl.Obs;
 import sdmxdl.Series;
 
@@ -47,10 +47,10 @@ public class SdmxCsvFieldWriterTest {
 
     @Test
     public void testOnDataflow() {
-        assertThatNullPointerException().isThrownBy(() -> onDataflow(null, DataflowRef.parse("abc")));
+        assertThatNullPointerException().isThrownBy(() -> onDataflow(null, FlowRef.parse("abc")));
         assertThatNullPointerException().isThrownBy(() -> onDataflow("xyz", null));
 
-        assertThat(onDataflow("xyz", DataflowRef.parse("abc")))
+        assertThat(onDataflow("xyz", FlowRef.parse("abc")))
                 .satisfies(x -> {
                     assertThat(head(x)).isEqualTo("xyz");
                     assertThat(body(x, S1, OBS1)).isEqualTo("all:abc(latest)");
@@ -59,7 +59,7 @@ public class SdmxCsvFieldWriterTest {
 
     @Test
     public void testOnKeyDimensions() {
-        assertThatNullPointerException().isThrownBy(() -> onKeyDimensions((DataStructure) null));
+        assertThatNullPointerException().isThrownBy(() -> onKeyDimensions((Structure) null));
 
         assertThat(onKeyDimensions(STRUCT))
                 .satisfies(x -> {
@@ -80,7 +80,7 @@ public class SdmxCsvFieldWriterTest {
     public void testOnTimeDimension() {
         Formatter<LocalDateTime> formatter = Formatter.onDateTimeFormatter(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-        assertThatNullPointerException().isThrownBy(() -> onTimeDimension((DataStructure) null, formatter));
+        assertThatNullPointerException().isThrownBy(() -> onTimeDimension((Structure) null, formatter));
         assertThatNullPointerException().isThrownBy(() -> onTimeDimension(STRUCT, null));
 
         assertThat(onTimeDimension(STRUCT, formatter))
@@ -115,7 +115,7 @@ public class SdmxCsvFieldWriterTest {
 
     @Test
     public void testOnAttributes() {
-        assertThatNullPointerException().isThrownBy(() -> onAttributes((DataStructure) null));
+        assertThatNullPointerException().isThrownBy(() -> onAttributes((Structure) null));
 
         assertThat(onAttributes(STRUCT))
                 .satisfies(x -> {

@@ -1,9 +1,6 @@
 package sdmxdl.format.protobuf;
 
-import sdmxdl.CodelistRef;
-import sdmxdl.DataflowRef;
-import sdmxdl.Key;
-import sdmxdl.TimeInterval;
+import sdmxdl.*;
 
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
@@ -34,7 +31,7 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static DataStructure fromDataStructure(sdmxdl.DataStructure value) {
+    public static DataStructure fromDataStructure(Structure value) {
         DataStructure.Builder result = DataStructure
                 .newBuilder()
                 .setRef(value.getRef().toString())
@@ -49,10 +46,10 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static sdmxdl.DataStructure toDataStructure(DataStructure value) {
-        return sdmxdl.DataStructure
+    public static Structure toDataStructure(DataStructure value) {
+        return Structure
                 .builder()
-                .ref(sdmxdl.DataStructureRef.parse(value.getRef()))
+                .ref(StructureRef.parse(value.getRef()))
                 .dimensions(toCollection(value.getDimensionsList(), ProtobufRepositories::toDimension))
                 .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
                 .timeDimensionId(value.hasTimeDimensionId() ? value.getTimeDimensionId() : null)
@@ -127,7 +124,7 @@ public class ProtobufRepositories {
         return sdmxdl.AttributeRelationship.valueOf(value.name());
     }
 
-    public static Dataflow fromDataflow(sdmxdl.Dataflow value) {
+    public static Dataflow fromDataflow(Flow value) {
         Dataflow.Builder result = Dataflow
                 .newBuilder()
                 .setRef(value.getRef().toString())
@@ -139,11 +136,11 @@ public class ProtobufRepositories {
         return result.build();
     }
 
-    public static sdmxdl.Dataflow toDataflow(Dataflow value) {
-        return sdmxdl.Dataflow
+    public static Flow toDataflow(Dataflow value) {
+        return Flow
                 .builder()
-                .ref(sdmxdl.DataflowRef.parse(value.getRef()))
-                .structureRef(sdmxdl.DataStructureRef.parse(value.getStructureRef()))
+                .ref(FlowRef.parse(value.getRef()))
+                .structureRef(StructureRef.parse(value.getStructureRef()))
                 .name(value.getName())
                 .description(value.hasDescription() ? value.getDescription() : null)
                 .build();
@@ -161,13 +158,13 @@ public class ProtobufRepositories {
     public static sdmxdl.DataSet toDataSet(DataSet value) {
         return sdmxdl.DataSet
                 .builder()
-                .ref(DataflowRef.parse(value.getRef()))
+                .ref(FlowRef.parse(value.getRef()))
                 .query(toDataQuery(value.getQuery()))
                 .data(toCollection(value.getDataList(), ProtobufRepositories::toSeries))
                 .build();
     }
 
-    public static DataQuery fromDataQuery(sdmxdl.DataQuery value) {
+    public static DataQuery fromDataQuery(Query value) {
         return DataQuery
                 .newBuilder()
                 .setKey(value.getKey().toString())
@@ -175,20 +172,20 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static sdmxdl.DataQuery toDataQuery(DataQuery value) {
-        return sdmxdl.DataQuery
+    public static Query toDataQuery(DataQuery value) {
+        return Query
                 .builder()
                 .key(Key.parse(value.getKey()))
                 .detail(toDataDetail(value.getDetail()))
                 .build();
     }
 
-    public static DataDetail fromDataDetail(sdmxdl.DataDetail value) {
+    public static DataDetail fromDataDetail(Detail value) {
         return DataDetail.valueOf(value.name());
     }
 
-    public static sdmxdl.DataDetail toDataDetail(DataDetail value) {
-        return sdmxdl.DataDetail.valueOf(value.name());
+    public static Detail toDataDetail(DataDetail value) {
+        return Detail.valueOf(value.name());
     }
 
     public static Series fromSeries(sdmxdl.Series value) {

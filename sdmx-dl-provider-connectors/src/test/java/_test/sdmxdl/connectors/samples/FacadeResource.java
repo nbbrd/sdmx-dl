@@ -34,18 +34,18 @@ import java.util.stream.Collectors;
 @lombok.experimental.UtilityClass
 public class FacadeResource {
 
-    public static final DataflowRef ECB_FLOW_REF = DataflowRef.of("ECB", "AME", "1.0");
-    public static final DataStructureRef ECB_STRUCT_REF = DataStructureRef.of("ECB", "ECB_AME1", "1.0");
+    public static final FlowRef ECB_FLOW_REF = FlowRef.of("ECB", "AME", "1.0");
+    public static final StructureRef ECB_STRUCT_REF = StructureRef.of("ECB", "ECB_AME1", "1.0");
 
-    public static final DataflowRef NBB_FLOW_REF = DataflowRef.of("NBB", "TEST_DATASET", null);
+    public static final FlowRef NBB_FLOW_REF = FlowRef.of("NBB", "TEST_DATASET", null);
 
     public DataRepository nbb() throws IOException {
         DataRepository result = NBB.get();
         if (result == null) {
             Languages l = Languages.parse("fr");
 
-            List<DataStructure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
-            List<Dataflow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+            List<Structure> structs = struct20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
+            List<Flow> flows = flow20(SdmxXmlSources.NBB_DATA_STRUCTURE, l);
             List<Series> data = data20(SdmxXmlSources.NBB_DATA, structs.get(0));
 
             result = DataRepository.builder()
@@ -65,8 +65,8 @@ public class FacadeResource {
         if (result == null) {
             Languages l = Languages.parse("fr");
 
-            List<DataStructure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
-            List<Dataflow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
+            List<Structure> structs = struct21(SdmxXmlSources.ECB_DATA_STRUCTURE, l);
+            List<Flow> flows = flow21(SdmxXmlSources.ECB_DATAFLOWS, l);
             List<Series> data = data21(SdmxXmlSources.ECB_DATA, structs.get(0));
 
             result = DataRepository.builder()
@@ -84,39 +84,39 @@ public class FacadeResource {
     private static final AtomicReference<DataRepository> NBB = new AtomicReference<>();
     private static final AtomicReference<DataRepository> ECB = new AtomicReference<>();
 
-    private List<DataStructure> struct20(ByteSource xml, Languages l) throws IOException {
+    private List<Structure> struct20(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.struct20(l).parseReader(xml::openReader);
     }
 
-    private List<Dataflow> flow20(ByteSource xml, Languages l) throws IOException {
+    private List<Flow> flow20(ByteSource xml, Languages l) throws IOException {
         // FIXME: find sample of dataflow20 ?
         return struct20(xml, l).stream()
                 .map(FacadeResource::asDataflow)
                 .collect(Collectors.toList());
     }
 
-    List<Series> data20(ByteSource xml, DataStructure dsd) throws IOException {
+    List<Series> data20(ByteSource xml, Structure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData20(dsd, ObsParser::newDefault).parseReader(xml::openReader)) {
             return c.asStream().collect(Collectors.toList());
         }
     }
 
-    private List<DataStructure> struct21(ByteSource xml, Languages l) throws IOException {
+    private List<Structure> struct21(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.struct21(l).parseReader(xml::openReader);
     }
 
-    private List<Dataflow> flow21(ByteSource xml, Languages l) throws IOException {
+    private List<Flow> flow21(ByteSource xml, Languages l) throws IOException {
         return SdmxXmlStreams.flow21(l).parseReader(xml::openReader);
     }
 
-    List<Series> data21(ByteSource xml, DataStructure dsd) throws IOException {
+    List<Series> data21(ByteSource xml, Structure dsd) throws IOException {
         try (DataCursor c = SdmxXmlStreams.genericData21(dsd, ObsParser::newDefault).parseReader(xml::openReader)) {
             return c.asStream().collect(Collectors.toList());
         }
     }
 
-    private Dataflow asDataflow(DataStructure o) {
-        DataflowRef ref = DataflowRef.of(o.getRef().getAgency(), o.getRef().getId(), o.getRef().getVersion());
-        return Dataflow.builder().ref(ref).structureRef(o.getRef()).name(o.getName()).build();
+    private Flow asDataflow(Structure o) {
+        FlowRef ref = FlowRef.of(o.getRef().getAgency(), o.getRef().getId(), o.getRef().getVersion());
+        return Flow.builder().ref(ref).structureRef(o.getRef()).name(o.getName()).build();
     }
 }

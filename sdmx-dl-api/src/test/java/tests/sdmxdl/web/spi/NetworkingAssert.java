@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Networking;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ public class NetworkingAssert {
         assertThatNullPointerException()
                 .isThrownBy(() -> networking.getNetwork(null, null, null));
 
-        SdmxWebSource validSource = SdmxWebSource
+        WebSource validSource = WebSource
                 .builder()
                 .id("valid")
                 .driver("SDMX21")
