@@ -12,8 +12,8 @@
 <meta name="generator" content="Hugo 0.118.2">
 
 
-  <meta name="description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+  <meta name="description" content="sdmx-dl library is designed as a facade for the SDMX model and APIs.
+Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies." />
 
     <title>Java library | sdmx-dl</title>
 
@@ -39,22 +39,22 @@ Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo pr
     content="Java library"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+  <meta property="og:description" content="sdmx-dl library is designed as a facade for the SDMX model and APIs.
+Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/api/" />
 
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2023-08-29T09:48:57+02:00"
+      content="2023-09-12T12:47:49+02:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Java library" />
-  <meta name="twitter:description" content="work-in-progress
-Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end testing cli formats --&gt; api providers --&gt; formats testing ---&gt; api cli --&gt; providers &amp; testing " />
+  <meta name="twitter:description" content="sdmx-dl library is designed as a facade for the SDMX model and APIs.
+Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies." />
 
 
   <script type="application/ld+json">
@@ -65,8 +65,8 @@ Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo pr
       "name": "Java library",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "work-in-progress\nDependency graph flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end testing cli formats --\u003e api providers --\u003e formats testing ---\u003e api cli --\u003e providers \u0026 testing ",
-      "wordCount" : "38",
+      "description": "sdmx-dl library is designed as a facade for the SDMX model and APIs.\nStructure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --\u003e api providers --\u003e formats testing ---\u003e api applications --\u003e providers \u0026 testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies.",
+      "wordCount" : "140",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -77,7 +77,7 @@ Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo pr
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2023-08-29T09:48:57.00Z",
+      "dateModified": "2023-09-12T12:47:49.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -859,11 +859,16 @@ Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo pr
     class="gdoc-markdown gdoc-markdown__align--left"
   >
     <h1>Java library</h1>
-    <p><em>work-in-progress</em></p>
+    <p><img
+  src="https://img.shields.io/badge/-work_in_progress-E2BC4A"
+  alt="&lt;em&gt;work-in-progress&lt;/em&gt;"
+  
+/></p>
+<p><strong>sdmx-dl library</strong> is designed as a facade for the SDMX model and APIs.</p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="dependency-graph">
-        Dependency graph
-        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/api/#dependency-graph" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Dependency graph" aria-label="Anchor to: Dependency graph" href="#dependency-graph">
+    <h2 id="structure-overview">
+        Structure overview
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/api/#structure-overview" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Structure overview" aria-label="Anchor to: Structure overview" href="#structure-overview">
             <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
@@ -892,14 +897,57 @@ Dependency graph flowchart BT api subgraph formats format-base[base] csv kryo pr
         dialects
         px
     end
+    subgraph applications
+        cli
+        desktop
+        grpc
+    end
     testing
-    cli
 
     formats --&gt; api
     providers --&gt; formats
     testing ---&gt; api
-    cli --&gt; providers &amp; testing</pre>
-
+    applications --&gt; providers &amp; testing</pre>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="dependencies-setup">
+        Dependencies setup
+        <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/api/#dependencies-setup" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Dependencies setup" aria-label="Anchor to: Dependencies setup" href="#dependencies-setup">
+            <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>sdmx-dl is <strong>distributed in two flavours</strong>: a <strong>standard JAR hierarchy</strong>, and a <strong>standalone uber JAR</strong> containing all the implementations and their dependencies.
+Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages.
+This allows sdmx-dl to be used in projects with conflicting versions of its dependencies.</p>
+<p>Standard JAR hierarchy:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-api<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-ri<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-dialects<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div><p>Standalone uber JAR:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-api<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>com.github.nbbrd.sdmx-dl<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sdmx-dl-standalone<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div>
   </article>
 
 
