@@ -1,8 +1,8 @@
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.HttpEventListener;
-import internal.util.http.HttpRequest;
 import lombok.NonNull;
+import nbbrd.io.http.HttpEventListener;
+import nbbrd.io.http.HttpRequest;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.WebSource;
@@ -13,9 +13,9 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static internal.util.http.HttpAuthScheme.BASIC;
-import static internal.util.http.HttpAuthScheme.NONE;
 import static java.net.Proxy.NO_PROXY;
+import static nbbrd.io.http.HttpAuthScheme.BASIC;
+import static nbbrd.io.http.HttpAuthScheme.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 

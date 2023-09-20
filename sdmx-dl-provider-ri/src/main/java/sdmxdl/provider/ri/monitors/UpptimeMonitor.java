@@ -1,6 +1,6 @@
 package sdmxdl.provider.ri.monitors;
 
-import internal.util.http.HttpClient;
+import nbbrd.io.http.HttpClient;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;

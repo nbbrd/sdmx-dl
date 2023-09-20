@@ -18,7 +18,7 @@ package sdmxdl.provider.dialects.drivers;
 
 import nbbrd.design.DirectImpl;
 import sdmxdl.provider.ri.drivers.RiRestClient;
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.io.FileParser;
 import nbbrd.io.net.MediaType;

@@ -26,11 +26,10 @@ module sdmxdl.provider.ri {
     requires java.logging;
     requires nl.altindag.ssl;
     requires nbbrd.io.curl;
+    requires nbbrd.io.http;
     requires nbbrd.net.proxy;
 
     exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
-    exports internal.util.http to sdmxdl.provider.dialects, sdmxdl.provider.px;
-    exports internal.util.http.ext to sdmxdl.provider.dialects, sdmxdl.provider.px;
 
     provides Driver with
             FileRiDriver,

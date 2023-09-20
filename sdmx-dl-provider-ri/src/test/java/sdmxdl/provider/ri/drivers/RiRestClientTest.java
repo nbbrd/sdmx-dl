@@ -1,8 +1,13 @@
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.HttpClient;
-import internal.util.http.HttpResponseException;
-import internal.util.http.ext.DumpingClientTest;
+import lombok.NonNull;
+import nbbrd.design.MightBePromoted;
+import nbbrd.io.function.IORunnable;
+import nbbrd.io.function.IOSupplier;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.HttpResponseException;
+import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
@@ -11,7 +16,9 @@ import sdmxdl.provider.Marker;
 import tests.sdmxdl.api.ByteSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumSet;
@@ -104,10 +111,48 @@ public class RiRestClientTest {
     }
 
     private static HttpClient onResponseStream(ByteSource byteSource) {
-        return (httpRequest) -> DumpingClientTest.MockedResponse
+        return (httpRequest) -> MockedResponse
                 .builder()
                 .body(byteSource::openStream)
                 .mediaType(() -> Xml.APPLICATION_XML_UTF_8)
                 .build();
+    }
+
+    @MightBePromoted
+    @lombok.Builder
+    private static final class MockedResponse implements HttpResponse {
+
+        public static MockedResponse ofBody(IOSupplier<InputStream> body) {
+            return builder().body(body).build();
+        }
+
+        @lombok.Builder.Default
+        private final IOSupplier<MediaType> mediaType = IOSupplier.of(MediaType.ANY_TYPE);
+
+        @lombok.Builder.Default
+        private final IOSupplier<InputStream> body = MockedResponse::emptyInputStream;
+
+        @lombok.Builder.Default
+        private final IORunnable onClose = IORunnable.noOp();
+
+        @Override
+        public @NonNull MediaType getContentType() throws IOException {
+            return mediaType.getWithIO();
+        }
+
+        @Override
+        public @NonNull InputStream getBody() throws IOException {
+            return body.getWithIO();
+        }
+
+        @Override
+        public void close() throws IOException {
+            onClose.runWithIO();
+        }
+
+        @MightBePromoted
+        private static InputStream emptyInputStream() {
+            return new ByteArrayInputStream(new byte[0]);
+        }
     }
 }

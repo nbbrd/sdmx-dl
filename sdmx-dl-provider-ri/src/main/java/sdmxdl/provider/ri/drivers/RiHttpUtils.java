@@ -16,10 +16,10 @@
  */
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.*;
-import internal.util.http.ext.DumpingClient;
 import lombok.NonNull;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.http.*;
+import nbbrd.io.http.ext.DumpingClient;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.Formatter;
@@ -104,7 +104,7 @@ public class RiHttpUtils {
                 .proxySelector(network::getProxySelector)
                 .sslSocketFactory(() -> network.getSSLFactory().getSSLSocketFactory())
                 .hostnameVerifier(() -> network.getSSLFactory().getHostnameVerifier())
-                .urlConnectionFactory(network::getURLConnectionFactory)
+                .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
                 .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
                 .userAgent(HTTP_AGENT.get(System.getProperties()))

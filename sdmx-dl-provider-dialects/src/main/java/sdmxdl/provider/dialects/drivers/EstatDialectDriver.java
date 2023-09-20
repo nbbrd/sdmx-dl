@@ -16,11 +16,11 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
-import internal.util.http.HttpClient;
-import internal.util.http.HttpRequest;
-import internal.util.http.HttpResponse;
-import internal.util.http.HttpResponseException;
-import internal.util.http.ext.InterceptingClient;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.HttpResponseException;
+import nbbrd.io.http.ext.InterceptingClient;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.Resource;

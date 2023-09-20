@@ -1,6 +1,6 @@
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.*;

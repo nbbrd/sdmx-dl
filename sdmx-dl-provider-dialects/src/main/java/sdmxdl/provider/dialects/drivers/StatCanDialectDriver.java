@@ -1,10 +1,10 @@
 package sdmxdl.provider.dialects.drivers;
 
 import com.google.gson.*;
-import internal.util.http.HttpClient;
-import internal.util.http.HttpRequest;
-import internal.util.http.HttpResponse;
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;

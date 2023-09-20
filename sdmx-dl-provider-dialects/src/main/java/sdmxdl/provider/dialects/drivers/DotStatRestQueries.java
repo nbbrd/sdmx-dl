@@ -1,6 +1,6 @@
 package sdmxdl.provider.dialects.drivers;
 
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import sdmxdl.CodelistRef;
 import sdmxdl.StructureRef;

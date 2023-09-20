@@ -1,6 +1,6 @@
 package _tests;
 
-import internal.util.http.HttpResponse;
+import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.function.IORunnable;
 import nbbrd.io.function.IOSupplier;

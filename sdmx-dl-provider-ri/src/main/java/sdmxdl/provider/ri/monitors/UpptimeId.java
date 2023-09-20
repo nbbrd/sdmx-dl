@@ -1,6 +1,6 @@
 package sdmxdl.provider.ri.monitors;
 
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;

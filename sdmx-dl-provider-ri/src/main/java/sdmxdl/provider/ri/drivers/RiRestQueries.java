@@ -1,6 +1,6 @@
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.CodelistRef;

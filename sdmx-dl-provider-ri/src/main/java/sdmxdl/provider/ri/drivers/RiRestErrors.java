@@ -1,6 +1,6 @@
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.HttpResponseException;
+import nbbrd.io.http.HttpResponseException;
 import lombok.NonNull;
 import sdmxdl.provider.web.RestErrorMapping;
 

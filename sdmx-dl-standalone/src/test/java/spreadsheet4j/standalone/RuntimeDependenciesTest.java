@@ -29,14 +29,20 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkJavaNetProxy)
                 .satisfies(RuntimeDependenciesTest::checkSlf4j)
                 .satisfies(RuntimeDependenciesTest::checkKryo5)
-                .hasSize(21);
+                .hasSize(22);
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {
         assertThatGroupId(coordinates, "com.github.nbbrd.java-io-util")
                 .has(sameVersion())
                 .extracting(DependencyResolver.GAV::getArtifactId)
-                .containsExactlyInAnyOrder("java-io-picocsv", "java-io-xml", "java-io-base", "java-io-curl");
+                .containsExactlyInAnyOrder(
+                        "java-io-picocsv",
+                        "java-io-xml",
+                        "java-io-base",
+                        "java-io-curl",
+                        "java-io-http"
+                );
     }
 
     private static void checkSdmxdl(List<? extends DependencyResolver.GAV> coordinates) {

@@ -2,8 +2,8 @@ package sdmxdl.provider.ri.monitors;
 
 import com.google.gson.*;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
-import internal.util.http.HttpClient;
-import internal.util.http.HttpResponse;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 

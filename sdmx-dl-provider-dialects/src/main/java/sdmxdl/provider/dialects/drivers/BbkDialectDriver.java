@@ -16,7 +16,7 @@
  */
 package sdmxdl.provider.dialects.drivers;
 
-import internal.util.http.URLQueryBuilder;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;

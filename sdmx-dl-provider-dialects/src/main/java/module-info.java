@@ -13,6 +13,7 @@ module sdmxdl.provider.dialects {
     requires sdmxdl.provider.ri;
     requires sdmxdl.provider.base;
     requires com.google.gson;
+    requires nbbrd.io.http;
 
     provides Driver with
             BbkDialectDriver,

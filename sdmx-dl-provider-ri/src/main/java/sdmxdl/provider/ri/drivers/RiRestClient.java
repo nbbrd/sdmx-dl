@@ -16,10 +16,10 @@
  */
 package sdmxdl.provider.ri.drivers;
 
-import internal.util.http.HttpClient;
-import internal.util.http.HttpRequest;
-import internal.util.http.HttpResponse;
-import internal.util.http.HttpResponseException;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.HttpResponseException;
 import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;
