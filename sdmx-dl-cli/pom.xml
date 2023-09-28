@@ -19,6 +19,7 @@
 
     <properties>
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
+        <hugo-geekdoc.version>v0.37.1</hugo-geekdoc.version>
     </properties>
 
     <dependencies>
@@ -309,12 +310,10 @@
                         </executions>
                         <configuration>
                             <url>
-                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/v0.37.1/hugo-geekdoc.tar.gz
+                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/${hugo-geekdoc.version}/hugo-geekdoc.tar.gz
                             </url>
                             <unpack>true</unpack>
                             <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
-                            <sha256>c73105401b063c38cfed359f5ee0b4230c3686d4797a67d7b8e80dfb7b2492f1</sha256>
-                            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
                         </configuration>
                     </plugin>
                 </plugins>
