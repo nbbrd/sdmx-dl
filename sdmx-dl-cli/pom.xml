@@ -355,6 +355,9 @@
                         </executions>
                         <configuration>
                             <jreleaser>
+                                <project>
+                                    <description>Easily download official statistics</description>
+                                </project>
                                 <release>
                                     <github>
                                         <skipTag>true</skipTag>
