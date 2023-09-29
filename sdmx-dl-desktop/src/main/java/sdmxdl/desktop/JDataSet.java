@@ -8,6 +8,7 @@ import ec.util.chart.swing.SwingColorSchemeSupport;
 import ec.util.grid.swing.AbstractGridModel;
 import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
+import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.*;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
@@ -18,6 +19,7 @@ import sdmxdl.Attribute;
 import sdmxdl.Languages;
 import sdmxdl.Obs;
 import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebSource;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +27,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
@@ -106,9 +110,11 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         contentToolBar.add(Box.createHorizontalGlue());
 
         contentToolBar.add(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(this))
+                .action(OpenWebsiteCommand.INSTANCE
+                        .toAction(this)
+                        .withWeakPropertyChangeListener(this, MODEL_PROPERTY))
                 .ikon(MDI_WEB)
-                .toolTipText("Open in web browser")
+                .toolTipText("Open web site")
                 .buildButton());
 
         contentToolBar.add(new ButtonBuilder()
@@ -276,6 +282,31 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
                 return obsFormatter.formatAsString(data.get(obs));
             }
         };
+    }
+
+    private static final class OpenWebsiteCommand extends JCommand<JDataSet> {
+
+        public static final OpenWebsiteCommand INSTANCE = new OpenWebsiteCommand();
+
+        @Override
+        public boolean isEnabled(@NonNull JDataSet component) {
+            return Desktop.isDesktopSupported()
+                    && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
+                    && getWebsite(component) != null;
+        }
+
+        @Override
+        public void execute(@NonNull JDataSet component) throws Exception {
+            URL website = getWebsite(component);
+            Desktop.getDesktop().browse(requireNonNull(website).toURI());
+        }
+
+        private URL getWebsite(JDataSet c) {
+            DataSetRef model = c.getModel();
+            if (model == null) return null;
+            WebSource source = c.getSdmxManager().getSources().get(model.getDataSourceRef().getSource());
+            return source != null ? source.getWebsite() : null;
+        }
     }
 
 //    private static final class CustomTooltip extends JLabel {
