@@ -30,7 +30,6 @@ import java.beans.PropertyChangeEvent;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -183,7 +182,6 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     private GridModel asGridModel(SingleSeries item) {
         List<Obs> data = item.getSeries().getObsList();
-        DateTimeFormatter dateTimeFormatter = SeriesMetaFormats.getDateTimeFormatter(item.getMeta());
         return new AbstractGridModel() {
             @Override
             public int getRowCount() {
@@ -207,7 +205,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
             @Override
             public String getRowName(int rowIndex) {
-                return dateTimeFormatter.format(data.get(rowIndex).getPeriod().getStart());
+                return data.get(rowIndex).getPeriod().getStartAsShortString();
             }
         };
     }

@@ -4,8 +4,8 @@ import j2html.tags.DomContent;
 import nbbrd.io.text.Formatter;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
-import sdmxdl.Structure;
 import sdmxdl.Obs;
+import sdmxdl.Structure;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public final class ObsFormats {
     }
 
     private static String getChartToolTipText(Obs obs, Map<String, Attribute> attributes) {
-        return obs.getPeriod() + ": " + obs.getValue();
+        return obs.getPeriod().toShortString() + ": " + obs.getValue();
     }
 
     public static Formatter<Obs> getHtmlTooltipFormatter(Structure dsd) {
@@ -36,7 +36,7 @@ public final class ObsFormats {
     private static String getToolTipText(Obs obs, Map<String, Attribute> attributes) {
         return html(
                 table(
-                        tr(th("Period:").withStyle("text-align:right"), td(text(obs.getPeriod().toString()))),
+                        tr(th("Period:").withStyle("text-align:right"), td(text(obs.getPeriod().toShortString()))),
                         tr(th("Value:").withStyle("text-align:right"), td(text(String.valueOf(obs.getValue())))),
                         tr(th("Meta:").withStyle("text-align:right"), td(metaToHtml(obs.getMeta(), attributes)))
                 )

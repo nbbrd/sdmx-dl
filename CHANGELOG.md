@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- ![API] Add support of partial ISO date/time in TimeInterval
 - ![PROVIDER] Allow caching & networking configuration by environment variables [#516](https://github.com/nbbrd/sdmx-dl/issues/516)
 - ![PROVIDER] Allow caching & networking configuration per source [#493](https://github.com/nbbrd/sdmx-dl/issues/493)
 

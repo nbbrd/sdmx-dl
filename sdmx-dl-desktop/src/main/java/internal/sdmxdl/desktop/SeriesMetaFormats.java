@@ -4,28 +4,12 @@ import nbbrd.io.text.Parser;
 import sdmxdl.provider.ext.SeriesMeta;
 
 import java.text.*;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAmount;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class SeriesMetaFormats {
-
-    public static DateTimeFormatter getDateTimeFormatter(SeriesMeta meta) {
-        TemporalAmount timeUnit = meta.getTimeUnit();
-        if (timeUnit != null) {
-            switch (timeUnit.toString()) {
-                case "P1D":
-                    return DateTimeFormatter.ISO_LOCAL_DATE;
-                case "P1M":
-                    return DateTimeFormatter.ofPattern("uuuu-MM", Locale.getDefault(Locale.Category.DISPLAY));
-                case "P1Y":
-                    return DateTimeFormatter.ofPattern("uuuu", Locale.getDefault(Locale.Category.DISPLAY));
-            }
-        }
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    }
 
     public static DateFormat getDateFormat(SeriesMeta meta) {
         TemporalAmount timeUnit = meta.getTimeUnit();
