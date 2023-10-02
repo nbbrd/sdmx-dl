@@ -19,46 +19,47 @@ public class StandardReportingFormat {
 
     public static final StandardReportingFormat REPORTING_YEAR = builder()
             .indicator('A')
-            .durationOf("P1Y")
+            .duration(Duration.P1Y)
             .limitPerYear(1)
             .build();
 
     public static final StandardReportingFormat REPORTING_SEMESTER = builder()
             .indicator('S')
-            .durationOf("P6M")
+            .duration(Duration.P6M)
             .limitPerYear(2)
             .build();
 
     public static final StandardReportingFormat REPORTING_TRIMESTER = builder()
             .indicator('T')
-            .durationOf("P4M")
+            .duration(Duration.P4M)
             .limitPerYear(3)
             .build();
 
     public static final StandardReportingFormat REPORTING_QUARTER = builder()
             .indicator('Q')
-            .durationOf("P3M")
+            .duration(Duration.P3M)
             .limitPerYear(4)
             .build();
 
     public static final StandardReportingFormat REPORTING_MONTH = builder()
             .indicator('M')
-            .durationOf("P1M")
+            .duration(Duration.P1M)
             .limitPerYear(12)
             .build();
 
     public static final StandardReportingFormat REPORTING_WEEK = builder()
             .indicator('W')
-            .durationOf("P7D")
+            .duration(Duration.P7D)
             .limitPerYear(53)
             .yearBaseFunction(StandardReportingFormat::getReportingWeekYearBase)
             .build();
 
     public static final StandardReportingFormat REPORTING_DAY = builder()
             .indicator('D')
-            .durationOf("P1D")
+            .duration(Duration.P1D)
             .limitPerYear(366)
             .build();
+
     public static final List<StandardReportingFormat> VALUES = Collections.unmodifiableList(Arrays.asList(
             REPORTING_YEAR,
             REPORTING_SEMESTER,
@@ -96,13 +97,6 @@ public class StandardReportingFormat {
                 .range(0, limitPerYear)
                 .mapToObj(getDuration()::multipliedBy)
                 .collect(Collectors.toList());
-    }
-
-    public static final class Builder {
-
-        public Builder durationOf(CharSequence duration) {
-            return duration(Duration.parse(duration));
-        }
     }
 
     private static final int[] DAY_OF_WEEK_LAGS = {0, -1, -2, -3, 3, 2, 1};

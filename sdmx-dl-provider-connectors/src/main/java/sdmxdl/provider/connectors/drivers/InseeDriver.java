@@ -16,15 +16,16 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.api.Codelist;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.SDMXReference;
 import it.bancaditalia.oss.sdmx.client.RestSdmxClient;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import nbbrd.design.DirectImpl;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Duration;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.time.StandardReportingFormat;
@@ -40,9 +41,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.SdmxFix.Category.CONTENT;
+import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS_CONNECTION_PROPERTIES;
 
 /**
  * @author Philippe Charles
@@ -129,7 +130,7 @@ public final class InseeDriver implements Driver {
     private static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
-            .durationOf("P2M")
+            .duration(Duration.parse("P2M"))
             .limitPerYear(6)
             .build();
 

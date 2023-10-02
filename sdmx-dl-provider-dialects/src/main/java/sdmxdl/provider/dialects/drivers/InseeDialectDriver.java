@@ -136,7 +136,7 @@ public final class InseeDialectDriver implements Driver {
     static final StandardReportingFormat REPORTING_TWO_MONTH = StandardReportingFormat
             .builder()
             .indicator('B')
-            .durationOf("P2M")
+            .duration(Duration.parse("P2M"))
             .limitPerYear(6)
             .build();
 
