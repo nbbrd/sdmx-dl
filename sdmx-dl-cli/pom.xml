@@ -368,9 +368,6 @@
                                         </changelog>
                                     </github>
                                 </release>
-                                <checksum>
-                                    <individual>true</individual>
-                                </checksum>
                                 <signing>
                                     <active>ALWAYS</active>
                                     <!-- Fix default value -->
