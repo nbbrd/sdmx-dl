@@ -18,8 +18,9 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.Connection;
-import sdmxdl.Dataflow;
+import sdmxdl.Flow;
 import sdmxdl.Feature;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -41,21 +42,21 @@ public class WebSourceOptions extends WebNetOptions {
     )
     private String source;
 
-    public Connection open(SdmxWebManager manager) throws IOException {
-        return manager.getConnection(getSource());
+    public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
+        return manager.getConnection(getSource(), languages);
     }
 
-    public Set<Feature> loadFeatures(SdmxWebManager manager) throws IOException {
-        try (Connection conn = open(manager)) {
+    public Set<Feature> loadFeatures(SdmxWebManager manager, Languages languages) throws IOException {
+        try (Connection conn = open(manager, languages)) {
             return conn.getSupportedFeatures();
         }
     }
 
-    public Collection<Dataflow> loadFlows(SdmxWebManager manager) throws IOException {
-        try (Connection conn = open(manager)) {
+    public Collection<Flow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
+        try (Connection conn = open(manager, languages)) {
             return conn.getFlows();
         }
     }
 
-    public static final Comparator<Dataflow> FLOWS_BY_REF = Comparator.comparing(dataflow -> dataflow.getRef().toString());
+    public static final Comparator<Flow> FLOWS_BY_REF = Comparator.comparing(dataflow -> dataflow.getRef().toString());
 }

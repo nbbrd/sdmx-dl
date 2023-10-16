@@ -18,18 +18,18 @@ package internal.sdmxdl.cli;
 
 import nbbrd.io.text.Parser;
 import picocli.CommandLine;
-import sdmxdl.DataflowRef;
+import sdmxdl.FlowRef;
 import sdmxdl.format.csv.SdmxCsvFields;
 
 /**
  * @author Philippe Charles
  */
-public final class DataflowRefConverter implements CommandLine.ITypeConverter<DataflowRef> {
+public final class DataflowRefConverter implements CommandLine.ITypeConverter<FlowRef> {
 
-    private final Parser<DataflowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(DataflowRef::parse));
+    private final Parser<FlowRef> parser = SdmxCsvFields.getDataflowRefParser().orElse(Parser.of(FlowRef::parse));
 
     @Override
-    public DataflowRef convert(String string) {
+    public FlowRef convert(String string) {
         return parser.parse(string);
     }
 }

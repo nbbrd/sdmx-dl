@@ -16,28 +16,31 @@
  */
 package internal.sdmxdl.cli;
 
+import internal.sdmxdl.cli.ext.Anchor;
 import internal.sdmxdl.cli.ext.CloseableExecutorService;
 import internal.sdmxdl.cli.ext.SameThreadExecutorService;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import nbbrd.design.ReturnNew;
 import nbbrd.io.text.BooleanProperty;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.format.xml.XmlWebSource;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
+import sdmxdl.Languages;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.BiConsumer;
 import java.util.logging.Level;
+
+import static java.util.Collections.emptyList;
 
 /**
  * @author Philippe Charles
@@ -51,6 +54,7 @@ public class WebOptions {
 
     @CommandLine.Option(
             names = {"-s", "--sources"},
+            defaultValue = "${env:SDMXDL_SOURCES}",
             paramLabel = "<file>",
             descriptionKey = "cli.sdmx.sourcesFile"
     )
@@ -60,10 +64,10 @@ public class WebOptions {
             names = {"-l", "--languages"},
             paramLabel = "<langs>",
             converter = LangsConverter.class,
-            defaultValue = LanguagePriorityList.ANY_KEYWORD,
+            defaultValue = Languages.ANY_KEYWORD,
             descriptionKey = "cli.sdmx.languages"
     )
-    private LanguagePriorityList langs;
+    private Languages langs;
 
     @CommandLine.Option(
             names = {"--no-log"},
@@ -98,12 +102,12 @@ public class WebOptions {
         try (CloseableExecutorService executor = new CloseableExecutorService(newResourceExecutor())) {
 
             Future<SdmxWebManager> defaultWebManager = executor.submit(this::loadDefaultWebManager);
-            Future<List<SdmxWebSource>> customSources = executor.submit(this::loadCustomSources);
+            Future<List<WebSource>> customSources = executor.submit(this::loadCustomSources);
 
             return defaultWebManager.get()
                     .toBuilder()
-                    .languages(langs)
-                    .eventListener(getEventListener())
+                    .onEvent(getEventListener())
+                    .onError(getErrorListener())
                     .customSources(customSources.get())
                     .build();
 
@@ -112,9 +116,14 @@ public class WebOptions {
         }
     }
 
-    private BiConsumer<? super SdmxWebSource, ? super String> getEventListener() {
-        BiConsumer<? super SdmxWebSource, ? super String> original = isNoLog() ? SdmxManager.NO_OP_EVENT_LISTENER : new LoggingListener()::onSourceEvent;
-        return new VerboseListener(original, verboseOptions)::onSourceEvent;
+    private EventListener<? super WebSource> getEventListener() {
+        EventListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceEvent;
+        return new VerboseEventListener(original, verboseOptions)::onSourceEvent;
+    }
+
+    private ErrorListener<? super WebSource> getErrorListener() {
+        ErrorListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceError;
+        return new VerboseErrorListener(original, verboseOptions)::onSourceError;
     }
 
     @ReturnNew
@@ -123,41 +132,67 @@ public class WebOptions {
     }
 
     @ReturnNew
-    private List<SdmxWebSource> loadCustomSources() throws IOException {
-        if (sourcesFile != null) {
+    private List<WebSource> loadCustomSources() throws IOException {
+        if (isNoConfig()) return emptyList();
+        if (sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile()) {
+            System.setProperty(SourceProperties.SOURCES.getKey(), sourcesFile.toString());
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream("CFG", "Using source file '" + sourcesFile + "'");
+                verboseOptions.reportToErrorStream(Anchor.CFG, "Using source file '" + sourcesFile + "'");
             }
-            return XmlWebSource.getParser().parseFile(sourcesFile);
+        } else {
+            System.clearProperty(SourceProperties.SOURCES.getKey());
         }
-        return Collections.emptyList();
+        return SourceProperties.loadCustomSources();
     }
 
     @lombok.extern.java.Log
     private static class LoggingListener {
 
-        public void onSourceEvent(SdmxWebSource source, String message) {
+        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
             if (log.isLoggable(Level.INFO)) {
-                log.info(message);
+                log.info(message.toString());
+            }
+        }
+
+        public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
+            if (log.isLoggable(Level.INFO)) {
+                log.log(Level.INFO, message.toString(), error);
             }
         }
     }
 
     @lombok.AllArgsConstructor
-    private static class VerboseListener {
+    private static class VerboseEventListener {
 
-        @lombok.NonNull
-        private final BiConsumer<? super SdmxWebSource, ? super String> main;
+        private final @Nullable EventListener<? super WebSource> main;
 
         @lombok.NonNull
         private final VerboseOptions verboseOptions;
 
-        public void onSourceEvent(SdmxWebSource source, String message) {
-            if (main != SdmxManager.NO_OP_EVENT_LISTENER) {
-                main.accept(source, message);
+        public void onSourceEvent(WebSource source, String marker, CharSequence message) {
+            if (main != null) {
+                main.accept(source, marker, message);
             }
             if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream("WEB", source.getId() + ": " + message);
+                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message);
+            }
+        }
+    }
+
+    @lombok.AllArgsConstructor
+    private static class VerboseErrorListener {
+
+        private final @Nullable ErrorListener<? super WebSource> main;
+
+        @lombok.NonNull
+        private final VerboseOptions verboseOptions;
+
+        public void onSourceError(WebSource source, String marker, CharSequence message, IOException error) {
+            if (main != null) {
+                main.accept(source, marker, message, error);
+            }
+            if (verboseOptions.isVerbose()) {
+                verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message, error);
             }
         }
     }

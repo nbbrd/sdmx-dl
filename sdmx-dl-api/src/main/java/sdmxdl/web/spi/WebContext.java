@@ -16,14 +16,16 @@
  */
 package sdmxdl.web.spi;
 
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
+import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.web.Network;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.MonitorReports;
+import sdmxdl.web.WebSource;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -32,23 +34,28 @@ import java.util.function.BiConsumer;
 @lombok.Builder(toBuilder = true)
 public class WebContext {
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
+    @NonNull WebCaching caching = WebCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    @Nullable EventListener<? super WebSource> onEvent;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    BiConsumer<? super SdmxWebSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
+    @Nullable ErrorListener<? super WebSource> onError;
 
-    @lombok.NonNull
     @lombok.Singular
-    List<WebAuthenticator> authenticators;
+    @NonNull List<Authenticator> authenticators;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    Network network = Network.getDefault();
+    @NonNull Networking networking = Networking.getDefault();
+
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source) {
+        return caching.getDriverCache(source, onEvent, onError);
+    }
+
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source) {
+        return caching.getMonitorCache(source, onEvent, onError);
+    }
+
+    public @NonNull Network getNetwork(@NonNull WebSource source) {
+        return networking.getNetwork(source, onEvent, onError);
+    }
 }

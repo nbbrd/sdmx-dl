@@ -49,12 +49,12 @@ The format is [RFC4180](https://tools.ietf.org/html/rfc4180).
 
 Network-related options used to deal with performance, proxies, security and authentication.
 
-| Name                                                                 | Shortcut | Parameter                              | Description                                                     |
-|----------------------------------------------------------------------|----------|----------------------------------------|-----------------------------------------------------------------|
-| <a id="curl" href="#curl">`--curl`</a>                               | -        | -                                      | Use curl backend instead of JDK.                                |
-| <a id="no-cache" href="#no-cache">`--no-cache`</a>                   | -        | -                                      | Disable caching.                                                |
-| <a id="auto-proxy" href="#auto-proxy">`--auto-proxy`</a>             | -        | -                                      | Enable automatic proxy detection.                               |
-| <a id="no-default-ssl" href="#no-default-ssl">`--no-default-ssl`</a> | -        | -                                      | Disable default truststore.                                     |
-| <a id="no-system-ssl" href="#no-system-ssl">`--no-system-ssl`</a>    | -        | -                                      | Disable system truststore.                                      |
-| <a id="no-system-auth" href="#no-system-auth">`--no-system-auth`</a> | -        | -                                      | Disable system authentication.                                  |
-| <a id="user" href="#user">`--user`</a>                               | -        | [`<user:password>`](../datatypes#user) | Specify the user and password to use for server authentication. |
+| Name                                                                   | Shortcut | Parameter                              | Description                                                     |
+|------------------------------------------------------------------------|----------|----------------------------------------|-----------------------------------------------------------------|
+| <a id="auto-proxy" href="#auto-proxy">`--[no-]auto-proxy`</a>          | -        | -                                      | Enable automatic proxy detection.                               |
+| <a id="curl" href="#curl">`--[no-]curl`</a>                            | -        | -                                      | Use curl backend instead of JDK.                                |
+| <a id="no-default-ssl" href="#no-default-ssl">`--[no-]default-ssl`</a> | -        | -                                      | Disable default truststore.                                     |
+| <a id="no-system-ssl" href="#no-system-ssl">`--[no-]system-ssl`</a>    | -        | -                                      | Disable system truststore.                                      |
+| <a id="no-cache" href="#no-cache">`--no-cache`</a>                     | -        | -                                      | Disable caching.                                                |
+| <a id="no-system-auth" href="#no-system-auth">`--system-auth`</a>      | -        | -                                      | Disable system authentication.                                  |
+| <a id="user" href="#user">`--user`</a>                                 | -        | [`<user:password>`](../datatypes#user) | Specify the user and password to use for server authentication. |

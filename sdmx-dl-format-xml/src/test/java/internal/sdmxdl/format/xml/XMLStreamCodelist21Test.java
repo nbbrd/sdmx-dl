@@ -4,7 +4,7 @@ import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Codelist;
 import sdmxdl.CodelistRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -18,7 +18,7 @@ public class XMLStreamCodelist21Test {
 
     @Test
     public void test() throws Exception {
-        Xml.Parser<List<Codelist>> parser = SdmxXmlStreams.codelist21(LanguagePriorityList.ANY);
+        Xml.Parser<List<Codelist>> parser = SdmxXmlStreams.codelist21(Languages.ANY);
 
         assertThat(parser.parseReader(SdmxXmlSources.ECB_DATA_STRUCTURE::openReader))
                 .hasSize(9)

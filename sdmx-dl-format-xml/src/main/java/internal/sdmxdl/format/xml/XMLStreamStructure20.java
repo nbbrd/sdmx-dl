@@ -59,18 +59,18 @@ public final class XMLStreamStructure20 {
     private final TextBuilder structureLabel;
     private final TextBuilder label;
 
-    public XMLStreamStructure20(LanguagePriorityList languages) {
+    public XMLStreamStructure20(Languages languages) {
         this.structureLabel = new TextBuilder(languages);
         this.label = new TextBuilder(languages);
     }
 
     @NonNull
-    public List<DataStructure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
+    public List<Structure> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (XMLStreamUtil.isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse structure");
         }
 
-        List<DataStructure> result = new ArrayList<>();
+        List<Structure> result = new ArrayList<>();
         DsdContext context = new DsdContext();
         while (XMLStreamUtil.nextTags(reader, "")) {
             switch (reader.getLocalName()) {
@@ -146,22 +146,22 @@ public final class XMLStreamStructure20 {
         concepts.put(id, label.build(id));
     }
 
-    private void parseDataStructures(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructures(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
         while (XMLStreamUtil.nextTag(reader, KEY_FAMILIES_TAG, KEY_FAMILY_TAG)) {
             parseDataStructure(reader, result, context);
         }
     }
 
-    private void parseDataStructure(XMLStreamReader reader, List<DataStructure> result, DsdContext context) throws XMLStreamException {
+    private void parseDataStructure(XMLStreamReader reader, List<Structure> result, DsdContext context) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing DataStrucure id");
 
         String optionalAgency = reader.getAttributeValue(null, AGENCY_ID_ATTR);
         String optionalVersion = reader.getAttributeValue(null, VERSION_ATTR);
 
-        DataStructure.Builder ds = DataStructure
+        Structure.Builder ds = Structure
                 .builder()
-                .ref(DataStructureRef.of(optionalAgency, id, optionalVersion))
+                .ref(StructureRef.of(optionalAgency, id, optionalVersion))
                 .primaryMeasureId("");
         structureLabel.clear();
         while (XMLStreamUtil.nextTags(reader, KEY_FAMILY_TAG)) {
@@ -178,7 +178,7 @@ public final class XMLStreamStructure20 {
         result.add(ds.build());
     }
 
-    private void parseDataStructureComponents(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseDataStructureComponents(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         int position = 1;
         while (XMLStreamUtil.nextTags(reader, COMPONENTS_TAG)) {
             switch (reader.getLocalName()) {
@@ -215,20 +215,20 @@ public final class XMLStreamStructure20 {
         component.codelist(context.getCodelist(ref));
     }
 
-    private void parseDimension(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context, int position) throws XMLStreamException {
+    private void parseDimension(XMLStreamReader reader, Structure.Builder ds, DsdContext context, int position) throws XMLStreamException {
         Dimension.Builder result = Dimension.builder();
         parseComponent(reader, result, context);
         ds.dimension(result.position(position).build());
     }
 
-    private void parseTimeDimension(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+    private void parseTimeDimension(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
         String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing TimeDimension id");
 
         ds.timeDimensionId(id);
     }
 
-    private void parsePrimaryMeasure(XMLStreamReader reader, DataStructure.Builder ds) throws XMLStreamException {
+    private void parsePrimaryMeasure(XMLStreamReader reader, Structure.Builder ds) throws XMLStreamException {
         String id = reader.getAttributeValue(null, CONCEPT_REF_ATTR);
         XMLStreamUtil.check(id != null, reader, "Missing PrimaryMeasure id");
 
@@ -242,7 +242,7 @@ public final class XMLStreamStructure20 {
         }
     }
 
-    private void parseAttribute(XMLStreamReader reader, DataStructure.Builder ds, DsdContext context) throws XMLStreamException {
+    private void parseAttribute(XMLStreamReader reader, Structure.Builder ds, DsdContext context) throws XMLStreamException {
         Attribute.Builder result = Attribute.builder();
         parseComponent(reader, result, context);
         result.relationship(getAttributeRelationship(reader.getAttributeValue(null, ATTACHMENT_LEVEL_ATTR)));

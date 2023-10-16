@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.11</version>
+        <version>3.0.0-beta.12</version>
     </parent>
 
     <artifactId>sdmx-dl-format-protobuf</artifactId>
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-protobuf</name>
-    <description>Download SDMX data - Protocol Buffers</description>
+    <description>Easily download official statistics - Protocol Buffers</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>
@@ -57,8 +57,28 @@
             <version>${protobuf.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>com.google.errorprone</groupId>
                     <artifactId>error_prone_annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.j2objc</groupId>
+                    <artifactId>j2objc-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.checkerframework</groupId>
+                    <artifactId>checker-qual</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>failureaccess</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>listenablefuture</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

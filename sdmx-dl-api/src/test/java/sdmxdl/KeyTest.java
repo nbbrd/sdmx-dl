@@ -435,7 +435,7 @@ public class KeyTest {
                 .isEqualTo("Expecting key 'IND.XX' to have a known code at position 2 for dimension 'REGION' instead of 'XX'");
     }
 
-    private static Condition<Key> validOn(DataStructure dsd) {
+    private static Condition<Key> validOn(Structure dsd) {
         return new Condition<>(parent -> parent.validateOn(dsd) == null, "valid on dsd %s", dsd);
     }
 
@@ -474,7 +474,7 @@ public class KeyTest {
     @Test
     public void testBuilderOfDataStructure() {
         assertThatNullPointerException()
-                .isThrownBy(() -> Key.builder((DataStructure) null));
+                .isThrownBy(() -> Key.builder((Structure) null));
 
         Key.Builder b;
 
@@ -503,9 +503,9 @@ public class KeyTest {
         assertThat(b.clear().put("SECTOR", "IND").put("REGION", "BE").isSeries()).isTrue();
     }
 
-    private final DataStructure dsd0 = DataStructure
+    private final Structure dsd0 = Structure
             .builder()
-            .ref(DataStructureRef.parse("ref"))
+            .ref(StructureRef.parse("ref"))
             .primaryMeasureId("")
             .name("")
             .build();
@@ -516,7 +516,7 @@ public class KeyTest {
     private final Dimension sector = Dimension.builder().position(1).id("SECTOR").name("Sector").codelist(clSector).build();
     private final Dimension region = Dimension.builder().position(3).id("REGION").name("Region").codelist(clRegion).build();
 
-    private final DataStructure dsd2 = dsd0
+    private final Structure dsd2 = dsd0
             .toBuilder()
             .dimension(sector)
             .dimension(region)

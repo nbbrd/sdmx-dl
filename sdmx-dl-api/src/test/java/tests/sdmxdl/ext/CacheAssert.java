@@ -1,92 +1,59 @@
 package tests.sdmxdl.ext;
 
-import org.assertj.core.api.SoftAssertions;
+import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.MonitorReports;
-import tests.sdmxdl.api.TckUtil;
 
 import java.time.Duration;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static tests.sdmxdl.api.RepoSamples.REPO;
 
 @SuppressWarnings("ConstantConditions")
 @lombok.experimental.UtilityClass
 public class CacheAssert {
 
-    public void assertCompliance(Cache cache) {
-        TckUtil.run(s -> assertCompliance(s, cache));
+    public static void assertMonitorCompliance(Cache<MonitorReports> cache) {
+        checkClock(cache);
     }
 
-    public void assertCompliance(SoftAssertions s, Cache cache) {
-        checkClock(s, cache);
-        checkRepository(s, cache);
-        checkMonitor(s, cache);
+    public static void assertRepositoryCompliance(Cache<DataRepository> cache) {
+        checkClock(cache);
+        checkRepository(cache);
     }
 
-    private static void checkClock(SoftAssertions s, Cache cache) {
-        s.assertThat(cache.getClock())
+    private static void checkClock(Cache<?> cache) {
+        assertThat(cache.getClock())
                 .isEqualTo(cache.getClock())
                 .isNotNull();
     }
 
-    private static void checkRepository(SoftAssertions s, Cache cache) {
-        s.assertThatThrownBy(() -> cache.putRepository(null, REPO))
+    private static void checkRepository(Cache<DataRepository> cache) {
+        assertThatThrownBy(() -> cache.put(null, REPO))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> cache.putRepository("key", null))
+        assertThatThrownBy(() -> cache.put("key", null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> cache.getRepository(null))
+        assertThatThrownBy(() -> cache.get(null))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThat(cache.getRepository("key"))
+        assertThat(cache.get("key"))
                 .isNull();
 
-        s.assertThatCode(() -> cache.putRepository("key", REPO.toBuilder().ttl(cache.getClock().instant(), Duration.ZERO).build()))
+        assertThatCode(() -> cache.put("key", REPO.toBuilder().ttl(cache.getClock().instant(), Duration.ZERO).build()))
                 .doesNotThrowAnyException();
 
-        s.assertThat(cache.getRepository("key"))
+        assertThat(cache.get("key"))
                 .isNull();
 
-        s.assertThatCode(() -> cache.putRepository("key", REPO))
+        assertThatCode(() -> cache.put("key", REPO))
                 .doesNotThrowAnyException();
 
-        s.assertThat(cache.getRepository("key"))
+        assertThat(cache.get("key"))
                 .satisfiesAnyOf(
                         result -> assertThat(result).isNull(),
                         result -> assertThat(result).isEqualTo(REPO)
-                );
-    }
-
-    private static void checkMonitor(SoftAssertions s, Cache cache) {
-        MonitorReports report = MonitorReports.builder().uriScheme("testscheme").build();
-
-        s.assertThatThrownBy(() -> cache.putMonitorReports(null, report))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> cache.putMonitorReports("key", null))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThatThrownBy(() -> cache.getMonitorReports(null))
-                .isInstanceOf(NullPointerException.class);
-
-        s.assertThat(cache.getMonitorReports("key"))
-                .isNull();
-
-        s.assertThatCode(() -> cache.putMonitorReports("key", report.toBuilder().ttl(cache.getClock().instant(), Duration.ZERO).build()))
-                .doesNotThrowAnyException();
-
-        s.assertThat(cache.getMonitorReports("key"))
-                .isNull();
-
-        s.assertThatCode(() -> cache.putMonitorReports("key", report))
-                .doesNotThrowAnyException();
-
-        s.assertThat(cache.getMonitorReports("key"))
-                .satisfiesAnyOf(
-                        result -> assertThat(result).isNull(),
-                        result -> assertThat(result).isEqualTo(report)
                 );
     }
 }

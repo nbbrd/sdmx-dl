@@ -20,7 +20,6 @@ import internal.sdmxdl.cli.SortOptions;
 import internal.sdmxdl.cli.WebSourceOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
-import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.Feature;
 
@@ -58,7 +57,7 @@ public final class ListFeaturesCommand implements Callable<Void> {
     }
 
     private Stream<Feature> getRows() throws IOException {
-        return sort.applySort(web.loadFeatures(web.loadManager()), BY_NAME);
+        return sort.applySort(web.loadFeatures(web.loadManager(), web.getLangs()), BY_NAME);
     }
 
     private static final Comparator<Feature> BY_NAME = Comparator.comparing(Enum::name);

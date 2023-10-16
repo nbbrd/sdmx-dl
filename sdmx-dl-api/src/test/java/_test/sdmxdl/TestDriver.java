@@ -18,125 +18,109 @@ package _test.sdmxdl;
 
 import lombok.NonNull;
 import sdmxdl.Connection;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.Languages;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
-
 /**
  * @author Philippe Charles
  */
-public enum TestDriver implements WebDriver {
+public enum TestDriver implements Driver {
     VALID {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             return "valid";
         }
 
         @Override
-        public int getRank() {
-            return NATIVE_RANK;
+        public int getDriverRank() {
+            return NATIVE_DRIVER_RANK;
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             return true;
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.TEST_VALID;
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             return Collections.singletonList(SOURCE);
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
+        public @NonNull Collection<String> getDriverProperties() {
             return Collections.singletonList("hello");
-        }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
-            return NO_DEFAULT_DIALECT;
         }
     }, FAILING {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             throw new CustomException();
         }
 
         @Override
-        public int getRank() {
+        public int getDriverRank() {
             throw new CustomException();
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
-            throw new CustomException();
-        }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
+        public @NonNull Collection<String> getDriverProperties() {
             throw new CustomException();
         }
     }, NULL {
         @Override
-        public @NonNull String getId() {
+        public @NonNull String getDriverId() {
             return null;
         }
 
         @Override
-        public int getRank() {
+        public int getDriverRank() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public boolean isAvailable() {
+        public boolean isDriverAvailable() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 
         @Override
-        public @NonNull Collection<SdmxWebSource> getDefaultSources() {
+        public @NonNull Collection<WebSource> getDefaultSources() {
             return null;
         }
 
         @Override
-        public @NonNull Collection<String> getSupportedProperties() {
-            return null;
-        }
-
-        @Override
-        public @NonNull String getDefaultDialect() {
+        public @NonNull Collection<String> getDriverProperties() {
             return null;
         }
     };
 
-    public static final SdmxWebSource SOURCE = SdmxWebSource.builder().id("123").driver("456").dialect(SDMX21_DIALECT).endpointOf("http://localhost").build();
+    public static final WebSource SOURCE = WebSource.builder().id("123").driver("456").endpointOf("http://localhost").build();
 }

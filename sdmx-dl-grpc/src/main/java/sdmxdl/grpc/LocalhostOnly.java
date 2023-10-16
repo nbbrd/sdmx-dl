@@ -1,11 +1,15 @@
 package sdmxdl.grpc;
 
 import io.grpc.*;
+import io.quarkus.grpc.GlobalInterceptor;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-final class LocalhostOnly implements ServerInterceptor {
+@ApplicationScoped
+@GlobalInterceptor
+public class LocalhostOnly implements ServerInterceptor {
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {

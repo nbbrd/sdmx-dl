@@ -3,9 +3,10 @@ package _test.sdmxdl.util;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import sdmxdl.DataRepository;
+import sdmxdl.provider.Marker;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
-import sdmxdl.provider.Marker;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.file.FileClient;
 import sdmxdl.provider.file.FileInfo;
 
@@ -20,7 +21,7 @@ public final class XRepoFileClient implements FileClient {
 
     @Override
     public @NonNull Marker getMarker() {
-        return Marker.of(repository);
+        return HasMarker.of(repository);
     }
 
     @Override

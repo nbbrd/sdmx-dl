@@ -2,7 +2,7 @@ package internal.sdmxdl.format.xml;
 
 import nbbrd.io.xml.Xml;
 import org.junit.jupiter.api.Test;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
@@ -16,7 +16,7 @@ public class XMLStreamMessageFooter21Test {
 
     @Test
     public void test() throws Exception {
-        Xml.Parser<MessageFooter> parser = SdmxXmlStreams.messageFooter21(LanguagePriorityList.ANY);
+        Xml.Parser<MessageFooter> parser = SdmxXmlStreams.messageFooter21(Languages.ANY);
 
         assertThat(parser.parseResource(XMLStreamMessageFooter21Test.class, "MessageFooter.xml"))
                 .satisfies(msg -> {

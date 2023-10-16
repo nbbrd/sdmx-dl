@@ -23,7 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.Dimension;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public final class ListDimensionsCommand implements Callable<Void> {
         return getDimensions(web.loadStructure(web.loadManager()));
     }
 
-    private Stream<IndexedComponent> getDimensions(DataStructure dsd) {
+    private Stream<IndexedComponent> getDimensions(Structure dsd) {
         List<Dimension> dimensions = dsd.getDimensionList();
         return IntStream
                 .range(0, dimensions.size())

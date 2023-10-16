@@ -16,21 +16,20 @@
  */
 package sdmxdl.file;
 
-import internal.util.FileReaderLoader;
+import internal.util.FileCachingLoader;
+import internal.util.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import sdmxdl.Connection;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
-import sdmxdl.ext.Cache;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.*;
+import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
-import sdmxdl.file.spi.FileReader;
+import sdmxdl.file.spi.Reader;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -38,12 +37,13 @@ import java.util.function.BiConsumer;
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 @lombok.EqualsAndHashCode(callSuper = false)
-public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
+public class SdmxFileManager extends SdmxManager<FileSource> {
 
     @StaticFactoryMethod
     public static @NonNull SdmxFileManager ofServiceLoader() {
         return builder()
-                .readers(FileReaderLoader.load())
+                .readers(ReaderLoader.load())
+                .caching(FileCachingLoader.load())
                 .build();
     }
 
@@ -52,49 +52,37 @@ public class SdmxFileManager extends SdmxManager<SdmxFileSource> {
         return builder().build();
     }
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
+    @NonNull FileCaching caching = FileCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    @Nullable EventListener<? super FileSource> onEvent;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    BiConsumer<? super SdmxFileSource, ? super String> eventListener = NO_OP_EVENT_LISTENER;
+    @Nullable ErrorListener<? super FileSource> onError;
 
-    @lombok.NonNull
     @lombok.Singular
-    List<FileReader> readers;
+    @NonNull List<Reader> readers;
 
-    @lombok.NonNull
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    FileContext context = initContext();
+    @NonNull FileContext context = initLazyContext();
 
     @Override
-    public @NonNull Connection getConnection(@NonNull SdmxFileSource source) throws IOException {
-        FileReader reader = lookupReader(source)
+    public @NonNull Connection getConnection(@NonNull FileSource source, @NonNull Languages languages) throws IOException {
+        Reader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
-        return reader.read(source, getContext());
+        return reader.read(source, languages, getContext());
     }
 
-    @Override
-    public @NonNull Optional<String> getDialect(@NonNull SdmxFileSource source) {
-        return Optional.ofNullable(source.getDialect());
-    }
-
-    private FileContext initContext() {
+    private FileContext initLazyContext() {
         return FileContext
                 .builder()
-                .languages(languages)
-                .eventListener(eventListener)
-                .cache(cache)
+                .onEvent(onEvent)
+                .onError(onError)
+                .caching(caching)
                 .build();
     }
 
-    private Optional<FileReader> lookupReader(SdmxFileSource source) {
+    private Optional<Reader> lookupReader(FileSource source) {
         return readers.stream()
                 .filter(reader -> reader.canRead(source))
                 .findFirst();

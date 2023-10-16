@@ -40,7 +40,7 @@ public final class FileConnection implements Connection {
     private final FileClient client;
 
     @lombok.NonNull
-    private final Dataflow dataflow;
+    private final Flow flow;
 
     private boolean closed = false;
 
@@ -51,32 +51,32 @@ public final class FileConnection implements Connection {
     }
 
     @Override
-    public @NonNull Collection<Dataflow> getFlows() throws IOException {
+    public @NonNull Collection<Flow> getFlows() throws IOException {
         checkState();
-        return Collections.singleton(dataflow);
+        return Collections.singleton(flow);
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
-        return dataflow;
+        return flow;
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return client.decode().getStructure();
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
         return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
 
@@ -106,8 +106,8 @@ public final class FileConnection implements Connection {
         WebValidators.onDataStructure(info.getStructure()).checkValidity(key);
     }
 
-    private void checkFlowRef(DataflowRef flowRef) throws IOException {
-        if (!this.dataflow.getRef().contains(flowRef)) {
+    private void checkFlowRef(FlowRef flowRef) throws IOException {
+        if (!this.flow.getRef().contains(flowRef)) {
             throw CommonSdmxExceptions.missingFlow(client, flowRef);
         }
     }

@@ -7,18 +7,19 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.11</version>
+        <version>3.0.0-beta.12</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
     <packaging>jar</packaging>
 
     <name>sdmx-dl-cli</name>
-    <description>Download SDMX data - CLI</description>
+    <description>Easily download official statistics - CLI</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <properties>
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
+        <hugo-geekdoc.version>v0.41.2</hugo-geekdoc.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,21 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-dialects</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-px</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -91,34 +107,12 @@
             <version>1.2.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.nbbrd.java-net-proxy</groupId>
-            <artifactId>java-net-proxy</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart</artifactId>
-            <version>8.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>com.github.nbbrd.java-console-properties</groupId>
             <artifactId>java-console-properties</artifactId>
             <version>1.4.0</version>
         </dependency>
 
         <!-- runtime only -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-ri</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
@@ -316,12 +310,10 @@
                         </executions>
                         <configuration>
                             <url>
-                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/v0.37.1/hugo-geekdoc.tar.gz
+                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/${hugo-geekdoc.version}/hugo-geekdoc.tar.gz
                             </url>
                             <unpack>true</unpack>
                             <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
-                            <sha256>c73105401b063c38cfed359f5ee0b4230c3686d4797a67d7b8e80dfb7b2492f1</sha256>
-                            <alwaysVerifyChecksum>true</alwaysVerifyChecksum>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -352,7 +344,7 @@
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>1.5.1</version>
+                        <version>1.8.0</version>
                         <executions>
                             <execution>
                                 <phase>install</phase>
@@ -363,6 +355,9 @@
                         </executions>
                         <configuration>
                             <jreleaser>
+                                <project>
+                                    <description>Easily download official statistics</description>
+                                </project>
                                 <release>
                                     <github>
                                         <skipTag>true</skipTag>
@@ -373,9 +368,6 @@
                                         </changelog>
                                     </github>
                                 </release>
-                                <checksum>
-                                    <individual>true</individual>
-                                </checksum>
                                 <signing>
                                     <active>ALWAYS</active>
                                     <!-- Fix default value -->

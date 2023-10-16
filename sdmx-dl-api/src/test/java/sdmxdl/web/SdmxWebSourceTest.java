@@ -31,18 +31,18 @@ public class SdmxWebSourceTest {
     @Test
     public void testBuilderEndpointOf() {
         assertThatNullPointerException()
-                .isThrownBy(() -> SdmxWebSource.builder().endpointOf(null));
+                .isThrownBy(() -> WebSource.builder().endpointOf(null));
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> SdmxWebSource.builder().endpointOf("h ttp://localhost"));
+                .isThrownBy(() -> WebSource.builder().endpointOf("h ttp://localhost"));
 
-        assertThat(SdmxWebSource.builder().endpointOf("http://localhost").id("").driver("").build().getEndpoint())
+        assertThat(WebSource.builder().endpointOf("http://localhost").id("").driver("").build().getEndpoint())
                 .isEqualTo(URI.create("http://localhost"));
     }
 
     @Test
     public void testBuilderDescription() {
-        SdmxWebSource base = SdmxWebSource.builder().endpointOf("http://localhost").id("").driver("").build();
+        WebSource base = WebSource.builder().endpointOf("http://localhost").id("").driver("").build();
 
         assertThat(
                 base
@@ -68,18 +68,18 @@ public class SdmxWebSourceTest {
     @Test
     public void testBuilderPropertyOf() {
         assertThatNullPointerException()
-                .isThrownBy(() -> SdmxWebSource.builder().propertyOf(null, ""));
+                .isThrownBy(() -> WebSource.builder().propertyOf(null, ""));
 
         assertThatNullPointerException()
-                .isThrownBy(() -> SdmxWebSource.builder().propertyOf("", null));
+                .isThrownBy(() -> WebSource.builder().propertyOf("", null));
 
-        assertThat(SdmxWebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").id("").driver("").build().getProperties())
+        assertThat(WebSource.builder().propertyOf("hello", "world").endpointOf("http://localhost").id("").driver("").build().getProperties())
                 .containsEntry("hello", "world");
     }
 
     @Test
     public void testBuilderWebsiteOf() {
-        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
 
         assertThat(base.toBuilder().websiteOf(null).build().getWebsite())
                 .isNull();
@@ -93,7 +93,7 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testBuilderMonitorOf() {
-        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
 
         assertThat(base.toBuilder().monitorOf(null).build().getMonitor())
                 .isNull();
@@ -107,7 +107,7 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testBuilderMonitorWebsiteOf() {
-        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
 
         assertThat(base.toBuilder().monitorWebsiteOf(null).build().getMonitorWebsite())
                 .isNull();
@@ -121,7 +121,7 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testAlias() {
-        SdmxWebSource estat = SdmxWebSource.builder().id("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
+        WebSource estat = WebSource.builder().id("ESTAT").alias("EUROSTAT").driver("").endpointOf("http://localhost").build();
 
         assertThat(estat.alias("EUROSTAT"))
                 .isEqualTo(estat.toBuilder().id("EUROSTAT").build());
@@ -135,7 +135,7 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testIsAlias() {
-        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
         assertThat(base.isAlias()).isFalse();
         assertThat(base.toBuilder().alias("EUROSTAT").build().isAlias()).isFalse();
         assertThat(base.toBuilder().id("EUROSTAT").alias("EUROSTAT").build().isAlias()).isTrue();
@@ -143,7 +143,7 @@ public class SdmxWebSourceTest {
 
     @Test
     public void testWebsite() {
-        SdmxWebSource base = SdmxWebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
+        WebSource base = WebSource.builder().id("ESTAT").driver("").endpointOf("http://localhost").build();
         assertThat(base.getWebsite()).isNull();
         assertThat(base.toBuilder().websiteOf("http://somewhere").build().getWebsite())
                 .asString()

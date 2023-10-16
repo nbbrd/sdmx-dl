@@ -1,37 +1,30 @@
 package sdmxdl.web;
 
 import lombok.NonNull;
+import sdmxdl.HasExpiration;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class MonitorReports {
+public class MonitorReports implements HasExpiration {
 
-    @lombok.NonNull
-    String uriScheme;
+    @NonNull String uriScheme;
 
     @lombok.Singular
-    List<MonitorReport> reports;
+    @NonNull List<MonitorReport> reports;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    Instant creationTime = Instant.EPOCH;
+    @NonNull Instant creationTime = Instant.EPOCH;
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    Instant expirationTime = Instant.MAX;
-
-    public boolean isExpired(@NonNull Clock clock) {
-        return !clock.instant().isBefore(expirationTime);
-    }
+    @NonNull Instant expirationTime = Instant.MAX;
 
     public static final class Builder {
 
-        public Builder ttl(Instant creationTime, Duration ttl) {
+        public @NonNull Builder ttl(@NonNull Instant creationTime, @NonNull Duration ttl) {
             return creationTime(creationTime).expirationTime(creationTime.plus(ttl));
         }
     }

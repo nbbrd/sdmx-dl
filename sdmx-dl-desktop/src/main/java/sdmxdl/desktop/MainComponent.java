@@ -15,12 +15,12 @@ import net.miginfocom.swing.MigLayout;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
-import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.ext.Registry;
+import sdmxdl.FlowRef;
+import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebDriver;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.Driver;
+import sdmxdl.web.spi.Network;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -39,7 +39,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.Proxy;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,10 +63,10 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
     }
 
     @lombok.Getter
-    private Registry registry = Registry.noOp();
+    private Languages languages = Languages.ANY;
 
-    public void setRegistry(@NonNull Registry registry) {
-        firePropertyChange(REGISTRY_PROPERTY, this.registry, this.registry = registry);
+    public void setLanguages(@NonNull Languages languages) {
+        firePropertyChange(LANGUAGES_PROPERTY, this.languages, this.languages = languages);
     }
 
     public static final String DATA_SOURCES_PROPERTY = "dataSources";
@@ -78,9 +80,9 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final JTree datasetsTree = new JTree();
 
-    private final JList<SdmxWebSource> sourcesList = new JList<>();
+    private final JList<WebSource> sourcesList = new JList<>();
 
-    private final JList<WebDriver> driversList = new JList<>();
+    private final JList<Driver> driversList = new JList<>();
 
     private final JTabbedPane main = new JTabbedPane();
 
@@ -90,20 +92,30 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final FaviconSupport faviconSupport = FaviconSupport.ofServiceLoader()
             .toBuilder()
-            .client(url -> getSdmxManager().getNetwork().getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY))
+            .client(this::openConnection)
             .build();
 
     private final ImageIcon sdmxIcon = new ImageIcon(loadImage());
 
+    private URLConnection openConnection(URL url) throws IOException {
+        try {
+            WebSource source = WebSource.builder().id("").driver("").endpoint(url.toURI()).build();
+            Network network = getSdmxManager().getNetworking().getNetwork(source, null, null);
+            return network.getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY);
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
+    }
+
     private Image loadImage() {
-        try (InputStream stream = Resource.getResourceAsStream(MainComponent.class, "sdmx-logo.png").orElseThrow(RuntimeException::new)) {
+        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
             return ImageIO.read(stream);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    private final Map<DataflowRef, FlowStruct> flowStructs = new HashMap<>();
+    private final Map<FlowRef, FlowStruct> flowStructs = new HashMap<>();
 
     public MainComponent() {
         initComponent();
@@ -167,7 +179,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                         .orElse(null);
             }
         });
-        DynamicTree.enable(datasetsTree, new DataNodeFactory(this::getSdmxManager), new DefaultMutableTreeNode("root"));
+        DynamicTree.enable(datasetsTree, new DataNodeFactory(this::getSdmxManager, this::getLanguages), new DefaultMutableTreeNode("root"));
         datasetsTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -191,13 +203,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         main.putClientProperty(FlatClientProperties.TABBED_PANE_TAB_TYPE, FlatClientProperties.TABBED_PANE_TAB_TYPE_CARD);
 
         sourcesList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getId(), value.getName(LanguagePriorityList.ANY)).render());
+            label.setText(nameDescription(value.getId(), value.getName(Languages.ANY)).render());
             label.setIcon(getDataSourceIcon(value.getId(), 24, sourcesList::repaint));
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 
         driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getId(), value.getDefaultDialect()).render());
+            label.setText(value.getDriverId());
             label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         }));
 
@@ -272,7 +284,6 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                     } else {
                         JDataSet result = new JDataSet();
                         result.setSdmxManager(sdmxManager);
-                        result.setRegistry(registry);
                         result.setModel(dataSetRef);
                         main.addTab(title, getDataSourceIcon(dataSetRef.getDataSourceRef(), main::repaint), result);
                         main.setSelectedComponent(result);
@@ -309,14 +320,14 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
             @Override
             protected Void doInBackground() throws Exception {
                 for (DataSourceRef dataSourceRef : JLists.asList(dataSources)) {
-                    publish(FlowStruct.load(getSdmxManager(), dataSourceRef));
+                    publish(FlowStruct.load(getSdmxManager(), getLanguages(), dataSourceRef));
                 }
                 return null;
             }
 
             @Override
             protected void process(List<FlowStruct> chunks) {
-                chunks.forEach(chunk -> flowStructs.put(chunk.getDataflow().getRef(), chunk));
+                chunks.forEach(chunk -> flowStructs.put(chunk.getFlow().getRef(), chunk));
                 datasetsTree.repaint();
             }
         }.execute();
@@ -327,13 +338,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         public void execute(@NonNull MainComponent c) {
 
             JTextField sourceField = new JTextField("");
-            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(c.getSdmxManager());
+            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(c.getSdmxManager(), c.getLanguages());
             JAutoCompletion sourceAutoCompletion = new JAutoCompletion(sourceField);
             sourceAutoCompletion.setSource(sourceCompletion.getSource());
             sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
 
             JTextField flowField = new JTextField("");
-            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(c.getSdmxManager(), () -> c.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
+            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(c.getSdmxManager(), c.getLanguages(), () -> c.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
             JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
             flowAutoCompletion.setSource(flowCompletion.getSource());
             flowAutoCompletion.getList().setCellRenderer(flowCompletion.getRenderer());
@@ -360,7 +371,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new Object[]{"Add", "Cancel"}, "Add") == 0) {
 
-                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), DataflowRef.parse(flowField.getText()), emptyList()));
+                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), FlowRef.parse(flowField.getText()), emptyList()));
             }
         }
 

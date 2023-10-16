@@ -27,8 +27,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Philippe Charles
  */
 @SealedType({
-        DataStructureRef.class,
-        DataflowRef.class,
+        StructureRef.class,
+        FlowRef.class,
         CodelistRef.class
 })
 public abstract class ResourceRef<T extends ResourceRef<T>> {

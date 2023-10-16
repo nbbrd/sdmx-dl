@@ -7,6 +7,48 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.12] - 2023-10-16
+
+This is the twelfth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings a more flexible configuration system: cache, network and language can be specified by source if
+needed and environment variables are used as default values.  
+The API has been refactored to make it both simpler and more flexible.  
+The ECB endpoint has also been updated.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
+### Added
+
+- ![API] Add support of partial ISO date/time in TimeInterval
+- ![PROVIDER] Allow caching & networking configuration by environment
+  variables [#516](https://github.com/nbbrd/sdmx-dl/issues/516)
+- ![PROVIDER] Allow caching & networking configuration per source [#493](https://github.com/nbbrd/sdmx-dl/issues/493)
+
+### Fixed
+
+- ![PROVIDER] Fix file locking in cache
+
+### Changed
+
+- ![API] Refactor cache API [#500](https://github.com/nbbrd/sdmx-dl/issues/500)
+- ![API] Refactor network API [#503](https://github.com/nbbrd/sdmx-dl/issues/503)
+- ![API] Remove dialect API [#505](https://github.com/nbbrd/sdmx-dl/issues/505)
+- ![API] Refactor listeners API [#506](https://github.com/nbbrd/sdmx-dl/issues/506)
+- ![API] Handle languages per connection instead of per manager [#507](https://github.com/nbbrd/sdmx-dl/issues/507)
+- ![API] Simplify naming and structure [#508](https://github.com/nbbrd/sdmx-dl/issues/508)
+- ![API] Change pattern of drivers properties
+- ![API] Improve support of ISO-8601 duration
+- ![SOURCE] Update ECB endpoint [#495](https://github.com/nbbrd/sdmx-dl/issues/495)
+- ![FORMAT] Refactor file format API [#502](https://github.com/nbbrd/sdmx-dl/issues/502)
+- ![PROVIDER] Move curl backend to an external project
+- ![PROVIDER] Move PxWebDriver to its own module
+- ![PROVIDER] Move dialects drivers to their own module
+- ![CLI] Use environment variables as default values
+- ![GRPC] Migrate gRPC module to Quarkus framework
+
 ## [3.0.0-beta.11] - 2023-06-02
 
 This is the eleventh beta release of **sdmx-dl**.  
@@ -377,7 +419,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...HEAD
+
+[3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12
 
 [3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11
 

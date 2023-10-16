@@ -7,8 +7,8 @@ import nbbrd.io.function.IOConsumer;
 import nbbrd.io.function.IOFunction;
 import org.assertj.core.api.HamcrestCondition;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataDetail;
-import sdmxdl.DataQuery;
+import sdmxdl.Detail;
+import sdmxdl.Query;
 import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.provider.DataRef;
@@ -54,8 +54,8 @@ public class CachedFileClientTest {
         String loadDataKey = base + "/loadData";
 
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
-            for (DataDetail detail : DataDetail.values()) {
-                DataRef ref = DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(detail).build());
+            for (Detail detail : Detail.values()) {
+                DataRef ref = DataRef.of(FLOW_REF, Query.builder().key(key).detail(detail).build());
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> stream = client.loadData(client.decode(), ref)) {
@@ -80,7 +80,7 @@ public class CachedFileClientTest {
         CachedFileClient client = getClient(ctx);
 
         FileInfo info = client.decode();
-        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(DataDetail.SERIES_KEYS_ONLY).build())).close();
+        IOConsumer<Key> x = key -> client.loadData(info, DataRef.of(FLOW_REF, Query.builder().key(key).detail(Detail.SERIES_KEYS_ONLY).build())).close();
 
         ctx.reset();
         x.acceptWithIO(Key.ALL);

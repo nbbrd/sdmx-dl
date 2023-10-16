@@ -51,14 +51,14 @@ public final class TypedId<T> {
         return new TypedId<>(content, loader, storer);
     }
 
-    @lombok.NonNull
+    @NonNull
     @lombok.Getter
     private final URI content;
 
-    @lombok.NonNull
+    @NonNull
     private final Function<DataRepository, T> loader;
 
-    @lombok.NonNull
+    @NonNull
     private final Function<T, DataRepository> storer;
 
     @NonNull
@@ -67,22 +67,22 @@ public final class TypedId<T> {
     }
 
     @Nullable
-    public T peek(@NonNull Cache cache) {
-        DataRepository repo = cache.getRepository(content.toString());
+    public T peek(@NonNull Cache<DataRepository> cache) {
+        DataRepository repo = cache.get(content.toString());
         return repo != null ? loader.apply(repo) : null;
     }
 
     @NonNull
-    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
+    public T load(@NonNull Cache<DataRepository> cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl) throws IOException {
         return load(cache, factory, ttl, o -> true);
     }
 
     @NonNull
-    public T load(@NonNull Cache cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
+    public T load(@NonNull Cache<DataRepository> cache, @NonNull IOSupplier<T> factory, @NonNull Function<? super T, Duration> ttl, @NonNull Predicate<? super T> validator) throws IOException {
         T result = peek(cache);
         if (result == null || !validator.test(result)) {
             result = factory.getWithIO();
-            cache.putRepository(content.toString(), storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
+            cache.put(content.toString(), storer.apply(result).toBuilder().ttl(cache.getClock().instant(), ttl.apply(result)).build());
         }
         return result;
     }

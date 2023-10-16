@@ -18,9 +18,9 @@ package sdmxdl.testing.xml;
 
 import nbbrd.io.xml.Stax;
 import nbbrd.io.xml.Xml;
-import sdmxdl.DataDetail;
-import sdmxdl.DataQuery;
-import sdmxdl.DataflowRef;
+import sdmxdl.Detail;
+import sdmxdl.Query;
+import sdmxdl.FlowRef;
 import sdmxdl.Key;
 import sdmxdl.testing.IntRange;
 import sdmxdl.testing.WebRequest;
@@ -63,7 +63,7 @@ public class XmlSourceQuery {
                             .digest(data.getDigest())
                             .source(source.getName())
                             .flowRef(flow.getRef())
-                            .query(DataQuery.builder().key(data.getKey()).detail(DataDetail.FULL).build())
+                            .query(Query.builder().key(data.getKey()).detail(Detail.FULL).build())
                             .flowCount(source.getMinFlowCount())
                             .dimensionCount(flow.getDimensionCount())
                             .seriesCount(data.getMinSeriesCount())
@@ -118,7 +118,7 @@ public class XmlSourceQuery {
 
     private static FlowNode parseFlow(XMLStreamReader reader) throws XMLStreamException {
         FlowNode.Builder result = FlowNode.builder()
-                .ref(DataflowRef.parse(reader.getAttributeValue(null, "ref")))
+                .ref(FlowRef.parse(reader.getAttributeValue(null, "ref")))
                 .dimensionCount(parseRange(reader.getAttributeValue(null, "dimCount")));
         while (reader.hasNext()) {
             switch (reader.next()) {
@@ -172,7 +172,7 @@ public class XmlSourceQuery {
     private static class FlowNode {
 
         @lombok.NonNull
-        DataflowRef ref;
+        FlowRef ref;
 
         @lombok.NonNull
         IntRange dimensionCount;

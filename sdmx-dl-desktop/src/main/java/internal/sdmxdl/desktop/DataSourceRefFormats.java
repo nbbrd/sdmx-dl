@@ -10,7 +10,7 @@ import static j2html.TagCreator.*;
 public class DataSourceRefFormats {
 
     public static String toText(DataSourceRef ref, FlowStruct fs) {
-        return fs != null ? fs.getDataflow().getName() : ref.getFlow().toString();
+        return fs != null ? fs.getFlow().getName() : ref.getFlow().toString();
     }
 
     public static String toTooltipText(DataSourceRef ref, FlowStruct fs) {
@@ -29,7 +29,7 @@ public class DataSourceRefFormats {
 
     private static DomContent htmlFlow(DataSourceRef ref, FlowStruct fs) {
         return fs != null
-                ? each(text(fs.getDataflow().getRef().toString()), br(), text(fs.getDataflow().getName()))
+                ? each(text(fs.getFlow().getRef().toString()), br(), text(fs.getFlow().getName()))
                 : text(ref.getFlow().toString());
     }
 

@@ -1,6 +1,9 @@
+import sdmxdl.format.spi.Persistence;
+
 module sdmxdl.format.kryo {
 
     requires static lombok;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.checkerframework.checker.qual;
 
@@ -9,5 +12,5 @@ module sdmxdl.format.kryo {
 
     exports sdmxdl.format.kryo;
 
-    provides sdmxdl.format.spi.FileFormatProvider with sdmxdl.format.kryo.KryoProvider;
+    provides Persistence with sdmxdl.format.kryo.KryoProvider;
 }

@@ -37,13 +37,13 @@ public class XMLStreamStructure20Test {
     @Test
     @SuppressWarnings("null")
     public void test() throws Exception {
-        Xml.Parser<List<DataStructure>> p1 = SdmxXmlStreams.struct20(LanguagePriorityList.ANY);
+        Xml.Parser<List<Structure>> p1 = SdmxXmlStreams.struct20(Languages.ANY);
 
         assertThat(p1.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("My first dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
-            assertThat(o.getRef()).isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", null));
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("NBB", "TEST_DATASET", null));
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
                 assertThat(x.getName()).isEqualTo("Subject");
@@ -66,13 +66,13 @@ public class XMLStreamStructure20Test {
             });
         });
 
-        Xml.Parser<List<DataStructure>> p2 = SdmxXmlStreams.struct20(LanguagePriorityList.parse("fr"));
+        Xml.Parser<List<Structure>> p2 = SdmxXmlStreams.struct20(Languages.parse("fr"));
 
         assertThat(p2.parseReader(SdmxXmlSources.NBB_DATA_STRUCTURE::openReader)).singleElement().satisfies(o -> {
             assertThat(o.getName()).isEqualTo("Mon premier dataset");
             assertThat(o.getPrimaryMeasureId()).isEqualTo("OBS_VALUE");
             assertThat(o.getTimeDimensionId()).isEqualTo("TIME");
-            assertThat(o.getRef()).isEqualTo(DataStructureRef.of("NBB", "TEST_DATASET", null));
+            assertThat(o.getRef()).isEqualTo(StructureRef.of("NBB", "TEST_DATASET", null));
             assertThat(o.getDimensions()).hasSize(3).element(0).satisfies(x -> {
                 assertThat(x.getId()).isEqualTo("SUBJECT");
                 assertThat(x.getName()).isEqualTo("Sujet");

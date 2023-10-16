@@ -1,3 +1,5 @@
+import sdmxdl.format.spi.Persistence;
+
 module sdmxdl.format.base {
 
     requires static lombok;
@@ -12,5 +14,5 @@ module sdmxdl.format.base {
     exports sdmxdl.format.time;
     exports sdmxdl.format.spi;
 
-    uses sdmxdl.format.spi.FileFormatProvider;
+    uses Persistence;
 }

@@ -16,8 +16,8 @@
  */
 package sdmxdl.provider;
 
-import sdmxdl.DataQuery;
-import sdmxdl.DataflowRef;
+import sdmxdl.Query;
+import sdmxdl.FlowRef;
 
 /**
  * @author Philippe Charles
@@ -26,8 +26,8 @@ import sdmxdl.DataflowRef;
 public class DataRef {
 
     @lombok.NonNull
-    DataflowRef flowRef;
+    FlowRef flowRef;
 
     @lombok.NonNull
-    DataQuery query;
+    Query query;
 }

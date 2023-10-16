@@ -83,10 +83,8 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
 
         @Override
         public @NonNull Duration getDuration() {
-            return P1Y;
+            return Duration.P1Y;
         }
-
-        private static final Duration P1Y = Duration.parse("P1Y");
 
         // JDK > 8 changed parsing behavior of Year#parse(CharSequence) to accept min 1 digit instead of 4
         private static final DateTimeFormatter STRICT_YEAR = DateTimeFormatter.ofPattern("uuuu", Locale.ROOT);
@@ -123,10 +121,8 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
 
         @Override
         public @NonNull Duration getDuration() {
-            return P1M;
+            return Duration.P1M;
         }
-
-        private static final Duration P1M = Duration.parse("P1M");
     }
 
     @RepresentableAsString
@@ -160,9 +156,7 @@ public abstract class GregorianTimePeriod<T extends Temporal & Comparable<? supe
 
         @Override
         public @NonNull Duration getDuration() {
-            return P1D;
+            return Duration.P1D;
         }
-
-        private static final Duration P1D = Duration.parse("P1D");
     }
 }

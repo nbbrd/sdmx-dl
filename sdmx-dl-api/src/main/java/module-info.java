@@ -1,3 +1,7 @@
+import sdmxdl.file.spi.FileCaching;
+import sdmxdl.file.spi.Reader;
+import sdmxdl.web.spi.*;
+
 module sdmxdl.api {
 
     requires static lombok;
@@ -9,15 +13,16 @@ module sdmxdl.api {
 
     exports sdmxdl;
     exports sdmxdl.ext;
-    exports sdmxdl.ext.spi;
     exports sdmxdl.file;
     exports sdmxdl.file.spi;
     exports sdmxdl.web;
     exports sdmxdl.web.spi;
 
-    uses sdmxdl.ext.spi.Dialect;
-    uses sdmxdl.file.spi.FileReader;
-    uses sdmxdl.web.spi.WebAuthenticator;
-    uses sdmxdl.web.spi.WebDriver;
-    uses sdmxdl.web.spi.WebMonitoring;
+    uses FileCaching;
+    uses Reader;
+    uses Networking;
+    uses Authenticator;
+    uses WebCaching;
+    uses Driver;
+    uses Monitor;
 }

@@ -18,7 +18,6 @@ package sdmxdl;
 
 import lombok.NonNull;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -29,7 +28,7 @@ import java.util.Optional;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class DataRepository {
+public class DataRepository implements HasExpiration {
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -37,11 +36,11 @@ public class DataRepository {
 
     @lombok.NonNull
     @lombok.Singular
-    List<DataStructure> structures;
+    List<Structure> structures;
 
     @lombok.NonNull
     @lombok.Singular
-    List<Dataflow> flows;
+    List<Flow> flows;
 
     @lombok.NonNull
     @lombok.Singular
@@ -55,12 +54,8 @@ public class DataRepository {
     @lombok.Builder.Default
     Instant expirationTime = Instant.MAX;
 
-    public boolean isExpired(@NonNull Clock clock) {
-        return !clock.instant().isBefore(expirationTime);
-    }
-
     @NonNull
-    public Optional<DataStructure> getStructure(@NonNull DataStructureRef ref) {
+    public Optional<Structure> getStructure(@NonNull StructureRef ref) {
         return structures
                 .stream()
                 .filter(ref::equalsRef)
@@ -68,7 +63,7 @@ public class DataRepository {
     }
 
     @NonNull
-    public Optional<Dataflow> getFlow(@NonNull DataflowRef ref) {
+    public Optional<Flow> getFlow(@NonNull FlowRef ref) {
         return flows
                 .stream()
                 .filter(ref::containsRef)
@@ -76,7 +71,7 @@ public class DataRepository {
     }
 
     @NonNull
-    public Optional<DataSet> getDataSet(@NonNull DataflowRef ref) {
+    public Optional<DataSet> getDataSet(@NonNull FlowRef ref) {
         return dataSets
                 .stream()
                 .filter(ref::containsRef)

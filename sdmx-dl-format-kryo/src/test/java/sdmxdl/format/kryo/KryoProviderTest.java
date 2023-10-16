@@ -1,13 +1,13 @@
 package sdmxdl.format.kryo;
 
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.format.FileFormatProviderAssert;
+import tests.sdmxdl.format.FileFormattingAssert;
 
 
 public class KryoProviderTest {
 
     @Test
     public void testCompliance() {
-        FileFormatProviderAssert.assertCompliance(new KryoProvider());
+        FileFormattingAssert.assertCompliance(new KryoProvider());
     }
 }

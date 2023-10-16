@@ -20,14 +20,15 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.spi.WebDriver;
-import tests.sdmxdl.web.MockedDriver;
-import tests.sdmxdl.web.WebDriverAssert;
+import sdmxdl.web.spi.Driver;
+import tests.sdmxdl.web.spi.MockedDriver;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
+import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles
@@ -37,7 +38,7 @@ public class FailsafeDriverTest {
 
     @Test
     public void testCompliance() {
-        WebDriverAssert.assertCompliance(
+        DriverAssert.assertCompliance(
                 FailsafeDriver.wrap(MockedDriver.builder().build())
         );
     }
@@ -45,57 +46,57 @@ public class FailsafeDriverTest {
     @Test
     public void testGetName() {
         failsafe.reset();
-        assertThat(valid.getId()).isEqualTo("valid");
+        assertThat(valid.getDriverId()).isEqualTo("valid");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getId()).isEqualTo(TestDriver.FAILING.getClass().getName());
+        assertThat(failing.getDriverId()).isEqualTo(TestDriver.FAILING.getClass().getName());
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        assertThat(nul.getId()).isEqualTo(TestDriver.NULL.getClass().getName());
+        assertThat(nul.getDriverId()).isEqualTo(TestDriver.NULL.getClass().getName());
         failsafe.assertUnexpectedNull("unexpected null");
     }
 
     @Test
     public void testGetRank() {
         failsafe.reset();
-        assertThat(valid.getRank()).isEqualTo(WebDriver.NATIVE_RANK);
+        assertThat(valid.getDriverRank()).isEqualTo(Driver.NATIVE_DRIVER_RANK);
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getRank()).isEqualTo(WebDriver.UNKNOWN);
+        assertThat(failing.getDriverRank()).isEqualTo(Driver.UNKNOWN_DRIVER_RANK);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     @Test
     public void testIsAvailable() {
         failsafe.reset();
-        assertThat(valid.isAvailable()).isTrue();
+        assertThat(valid.isDriverAvailable()).isTrue();
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.isAvailable()).isFalse();
+        assertThat(failing.isDriverAvailable()).isFalse();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
     }
 
     @Test
     public void testConnect() throws IOException {
         failsafe.reset();
-        assertThat(valid.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+        assertThat(valid.connect(TestDriver.SOURCE, ANY, DriverAssert.noOpWebContext()))
                 .isNotNull()
                 .isInstanceOf(FailsafeConnection.class);
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+                .isThrownBy(() -> failing.connect(TestDriver.SOURCE, ANY, DriverAssert.noOpWebContext()))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, WebDriverAssert.noOpWebContext()))
+                .isThrownBy(() -> nul.connect(TestDriver.SOURCE, ANY, DriverAssert.noOpWebContext()))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -118,15 +119,15 @@ public class FailsafeDriverTest {
     @Test
     public void testGetSupportedProperties() {
         failsafe.reset();
-        assertThat(valid.getSupportedProperties()).containsExactly("hello");
+        assertThat(valid.getDriverProperties()).containsExactly("hello");
         failsafe.assertEmpty();
 
         failsafe.reset();
-        assertThat(failing.getSupportedProperties()).isEmpty();
+        assertThat(failing.getDriverProperties()).isEmpty();
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
-        assertThat(nul.getSupportedProperties()).isEmpty();
+        assertThat(nul.getDriverProperties()).isEmpty();
         failsafe.assertUnexpectedNull("unexpected null");
     }
 

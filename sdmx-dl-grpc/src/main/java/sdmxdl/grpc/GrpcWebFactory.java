@@ -1,20 +1,12 @@
 package sdmxdl.grpc;
 
-import internal.http.curl.CurlHttpURLConnection;
-import lombok.NonNull;
-import sdmxdl.ext.Cache;
-import sdmxdl.format.FileFormat;
-import sdmxdl.format.spi.FileFormatProvider;
-import sdmxdl.format.spi.FileFormatProviderLoader;
-import sdmxdl.provider.ext.FileCache;
-import sdmxdl.web.Network;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.URLConnectionFactory;
+import sdmxdl.web.WebSource;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-import java.net.ProxySelector;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @lombok.experimental.UtilityClass
 class GrpcWebFactory {
@@ -22,41 +14,15 @@ class GrpcWebFactory {
     public static SdmxWebManager loadManager() {
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .network(getNetwork())
-                .cache(getCache())
+                .customSources(getCustomSources())
                 .build();
     }
 
-    private static Network getNetwork() {
-        return new Network() {
-            @Override
-            public @NonNull ProxySelector getProxySelector() {
-                return ProxySelector.getDefault();
-            }
-
-            @Override
-            public @NonNull SSLSocketFactory getSSLSocketFactory() {
-                return HttpsURLConnection.getDefaultSSLSocketFactory();
-            }
-
-            @Override
-            public @NonNull HostnameVerifier getHostnameVerifier() {
-                return HttpsURLConnection.getDefaultHostnameVerifier();
-            }
-
-            @Override
-            public @NonNull URLConnectionFactory getURLConnectionFactory() {
-                return CurlHttpURLConnection::of;
-            }
-        };
-    }
-
-    private static Cache getCache() {
-        FileFormatProvider fileFormatProvider = FileFormatProviderLoader.load().stream().findFirst().orElseThrow(RuntimeException::new);;
-        return FileCache
-                .builder()
-                .repositoryFormat(FileFormat.gzip(fileFormatProvider.getDataRepositoryFormat()))
-                .monitorFormat(FileFormat.gzip(fileFormatProvider.getMonitorReportsFormat()))
-                .build();
+    private static List<WebSource> getCustomSources() {
+        try {
+            return SourceProperties.loadCustomSources();
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
     }
 }

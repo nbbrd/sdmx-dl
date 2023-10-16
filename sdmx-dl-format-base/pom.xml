@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.11</version>
+        <version>3.0.0-beta.12</version>
     </parent>
 
     <artifactId>sdmx-dl-format-base</artifactId>
     <packaging>jar</packaging>
 
     <name>sdmx-dl-format-base</name>
-    <description>Download SDMX data - Format</description>
+    <description>Easily download official statistics - Format</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
     <dependencies>

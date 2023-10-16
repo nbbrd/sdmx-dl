@@ -17,16 +17,16 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.Languages;
 
 /**
  *
  * @author Philippe Charles
  */
-public final class LangsConverter implements CommandLine.ITypeConverter<LanguagePriorityList> {
+public final class LangsConverter implements CommandLine.ITypeConverter<Languages> {
 
     @Override
-    public LanguagePriorityList convert(String string) {
-        return LanguagePriorityList.parse(string);
+    public Languages convert(String string) {
+        return Languages.parse(string);
     }
 }

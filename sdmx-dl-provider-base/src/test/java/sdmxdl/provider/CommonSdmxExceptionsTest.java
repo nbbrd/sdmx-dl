@@ -2,8 +2,8 @@ package sdmxdl.provider;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.CodelistRef;
-import sdmxdl.DataStructureRef;
-import sdmxdl.DataflowRef;
+import sdmxdl.StructureRef;
+import sdmxdl.FlowRef;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -12,9 +12,9 @@ import static sdmxdl.provider.CommonSdmxExceptions.*;
 @SuppressWarnings({"ConstantConditions", "ThrowableNotThrown"})
 public class CommonSdmxExceptionsTest {
 
-    private static final Marker SOURCE = Marker.of("abc");
-    private static final DataflowRef DATAFLOW_REF = DataflowRef.parse("df");
-    private static final DataStructureRef DATA_STRUCTURE_REF = DataStructureRef.parse("ds");
+    private static final Marker SOURCE = Marker.parse("abc");
+    private static final FlowRef DATAFLOW_REF = FlowRef.parse("df");
+    private static final StructureRef DATA_STRUCTURE_REF = StructureRef.parse("ds");
     private static final CodelistRef CODELIST_REF = CodelistRef.parse("cl");
 
     @Test

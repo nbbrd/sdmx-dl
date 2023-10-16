@@ -39,6 +39,14 @@ public class FileFormat<T> {
         );
     }
 
+    public static <T> @NonNull FileFormat<T> lock(@NonNull FileFormat<T> delegate) {
+        return new FileFormat<>(
+                FileParser.onParsingLock(delegate.getParser()),
+                FileFormatter.onFormattingLock(delegate.getFormatter()),
+                delegate.getFileExtension()
+        );
+    }
+
     @MightBePromoted
     private static <T> @NonNull FileParser<T> noOpParser() {
         return FileParser.onParsingStream((resource) -> {

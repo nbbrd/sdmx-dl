@@ -36,17 +36,17 @@ public class WebFlowOptions extends WebSourceOptions {
             converter = DataflowRefConverter.class,
             descriptionKey = "cli.sdmx.flow"
     )
-    private DataflowRef flow;
+    private FlowRef flow;
 
-    public DataStructure loadStructure(SdmxWebManager manager) throws IOException {
-        try (Connection conn = open(manager)) {
+    public Structure loadStructure(SdmxWebManager manager) throws IOException {
+        try (Connection conn = open(manager, getLangs())) {
             return conn.getStructure(getFlow());
         }
     }
 
-    public DataSet loadSeries(SdmxWebManager manager, Key key, DataDetail detail) throws IOException {
-        try (Connection conn = open(manager)) {
-            return conn.getData(getFlow(), DataQuery.builder().key(key).detail(detail).build());
+    public DataSet loadSeries(SdmxWebManager manager, Key key, Detail detail) throws IOException {
+        try (Connection conn = open(manager, getLangs())) {
+            return conn.getData(getFlow(), Query.builder().key(key).detail(detail).build());
         }
     }
 

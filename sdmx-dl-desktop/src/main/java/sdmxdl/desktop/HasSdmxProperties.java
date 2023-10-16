@@ -1,8 +1,8 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
+import sdmxdl.Languages;
 import sdmxdl.SdmxManager;
-import sdmxdl.ext.Registry;
 
 public interface HasSdmxProperties<M extends SdmxManager<?>> {
 
@@ -12,9 +12,9 @@ public interface HasSdmxProperties<M extends SdmxManager<?>> {
 
     void setSdmxManager(@NonNull M sdmxManager);
 
-    String REGISTRY_PROPERTY = "registry";
+    String LANGUAGES_PROPERTY = "languages";
 
-    @NonNull Registry getRegistry();
+    @NonNull Languages getLanguages();
 
-    void setRegistry(@NonNull Registry registry);
+    void setLanguages(@NonNull Languages languages);
 }

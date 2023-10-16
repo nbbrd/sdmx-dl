@@ -18,32 +18,28 @@ package sdmxdl.ext;
 
 import internal.sdmxdl.NoOpCache;
 import lombok.NonNull;
+import nbbrd.design.NotThreadSafe;
 import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRepository;
-import sdmxdl.web.MonitorReports;
+import sdmxdl.HasExpiration;
 
 import java.time.Clock;
 
 /**
  * @author Philippe Charles
  */
-@ThreadSafe
-public interface Cache {
+@NotThreadSafe
+public interface Cache<V extends HasExpiration> {
 
     @NonNull Clock getClock();
 
-    @Nullable DataRepository getRepository(@NonNull String key);
+    @Nullable V get(@NonNull String key);
 
-    void putRepository(@NonNull String key, @NonNull DataRepository value);
+    void put(@NonNull String key, @NonNull V value);
 
-    @Nullable MonitorReports getMonitorReports(@NonNull String key);
-
-    void putMonitorReports(@NonNull String key, @NonNull MonitorReports value);
-
+    @SuppressWarnings("unchecked")
     @StaticFactoryMethod
-    static @NonNull Cache noOp() {
-        return NoOpCache.INSTANCE;
+    static <V extends HasExpiration> @NonNull Cache<V> noOp() {
+        return (Cache<V>) NoOpCache.INSTANCE;
     }
 }

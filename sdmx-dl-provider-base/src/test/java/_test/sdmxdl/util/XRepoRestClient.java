@@ -20,6 +20,7 @@ import lombok.NonNull;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.web.RestClient;
 
@@ -40,28 +41,28 @@ public final class XRepoRestClient implements RestClient {
 
     @Override
     public @NonNull Marker getMarker() {
-        return Marker.of(repository);
+        return HasMarker.of(repository);
     }
 
     @Override
-    public @NonNull List<Dataflow> getFlows() {
+    public @NonNull List<Flow> getFlows() {
         return repository.getFlows();
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef ref) throws IOException {
+    public @NonNull Flow getFlow(@NonNull FlowRef ref) throws IOException {
         return repository.getFlow(ref)
                 .orElseThrow(() -> CommonSdmxExceptions.missingFlow(this, ref));
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataStructureRef ref) throws IOException {
+    public @NonNull Structure getStructure(@NonNull StructureRef ref) throws IOException {
         return repository.getStructure(ref)
                 .orElseThrow(() -> CommonSdmxExceptions.missingStructure(this, ref));
     }
 
     @Override
-    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull DataStructure dsd) throws IOException {
+    public @NonNull Stream<Series> getData(@NonNull DataRef ref, @NonNull Structure dsd) throws IOException {
         return repository
                 .getDataSet(ref.getFlowRef())
                 .map(dataSet -> dataSet.getDataStream(ref.getQuery()))

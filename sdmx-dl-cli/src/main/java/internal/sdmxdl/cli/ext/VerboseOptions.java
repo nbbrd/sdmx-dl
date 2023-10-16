@@ -2,6 +2,8 @@ package internal.sdmxdl.cli.ext;
 
 import picocli.CommandLine;
 
+import java.util.Objects;
+
 @lombok.Getter
 @lombok.Setter
 public class VerboseOptions {
@@ -16,27 +18,28 @@ public class VerboseOptions {
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
 
-    public void reportToErrorStream(String anchor, String message) {
+    public void reportToErrorStream(Anchor anchor, String message) {
         if (verbose) {
             CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
             reportToErrorStream(colorScheme
                     .text("[")
-                    .concat(colorScheme.commandText(anchor))
+                    .concat(colorScheme.commandText(anchor.toString()))
                     .concat(colorScheme.text("] "))
                     .concat(colorScheme.optionText(message))
             );
         }
     }
 
-    public void reportToErrorStream(String anchor, String message, Exception ex) {
+    public void reportToErrorStream(Anchor anchor, String message, Exception ex) {
         CommandLine.Help.ColorScheme colorScheme = spec.commandLine().getColorScheme();
+        String details = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
         reportToErrorStream(colorScheme
                 .text("[")
-                .concat(colorScheme.commandText(anchor))
+                .concat(colorScheme.commandText(anchor.toString()))
                 .concat(colorScheme.text("] "))
                 .concat(colorScheme.optionText(message))
                 .concat(" ")
-                .concat(colorScheme.stackTraceText(ex.getMessage()))
+                .concat(colorScheme.stackTraceText(details))
         );
     }
 

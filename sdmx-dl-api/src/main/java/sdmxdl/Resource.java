@@ -26,8 +26,8 @@ import nbbrd.design.SealedType;
  * @author Philippe Charles
  */
 @SealedType({
-        DataStructure.class,
-        Dataflow.class,
+        Structure.class,
+        Flow.class,
         Codelist.class,
         DataSet.class
 })

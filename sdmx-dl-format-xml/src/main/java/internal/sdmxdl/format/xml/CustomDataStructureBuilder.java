@@ -34,7 +34,7 @@ public final class CustomDataStructureBuilder {
     private final LinkedHashMap<String, Set<String>> dimensions = new LinkedHashMap<>();
     private final LinkedHashMap<String, Set<String>> attributes = new LinkedHashMap<>();
     private MediaType fileType = null;
-    private DataStructureRef ref = null;
+    private StructureRef ref = null;
     private String timeDimensionId = null;
     private String primaryMeasureId = null;
 
@@ -58,11 +58,11 @@ public final class CustomDataStructureBuilder {
 
     @NonNull
     public CustomDataStructureBuilder refId(@NonNull String refId) {
-        return ref(DataStructureRef.of(null, refId, null));
+        return ref(StructureRef.of(null, refId, null));
     }
 
     @NonNull
-    public CustomDataStructureBuilder ref(@NonNull DataStructureRef ref) {
+    public CustomDataStructureBuilder ref(@NonNull StructureRef ref) {
         this.ref = ref;
         return this;
     }
@@ -80,8 +80,8 @@ public final class CustomDataStructureBuilder {
     }
 
     @NonNull
-    public DataStructure build() {
-        return DataStructure.builder()
+    public Structure build() {
+        return Structure.builder()
                 .ref(ref)
                 .dimensions(guessDimensions())
                 .name(ref.getId())

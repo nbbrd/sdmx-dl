@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 import sdmxdl.provider.DataRef;
 import sdmxdl.provider.TypedId;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.api.RepoSamples;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static sdmxdl.LanguagePriorityList.ANY;
+import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.web.CachedRestClient.getBase;
 import static tests.sdmxdl.api.KeyAssert.keys;
 import static tests.sdmxdl.api.RepoSamples.*;
@@ -72,14 +72,14 @@ public class CachedRestClientTest {
 
     @Test
     public void testGetFlows() throws IOException {
-        Method<List<Dataflow>> x = CachedRestClient::getFlows;
+        Method<List<Flow>> x = CachedRestClient::getFlows;
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(hasItem(FLOW)), flowsId, ttl);
     }
 
     @Test
     public void testGetFlow() throws IOException {
-        Method<Dataflow> x = client -> client.getFlow(FLOW_REF);
+        Method<Flow> x = client -> client.getFlow(FLOW_REF);
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(FLOW)), flowId, ttl);
     }
@@ -98,7 +98,7 @@ public class CachedRestClientTest {
 
     @Test
     public void testGetStructure() throws IOException {
-        Method<DataStructure> x = client -> client.getStructure(STRUCT_REF);
+        Method<Structure> x = client -> client.getStructure(STRUCT_REF);
 
         checkCacheHit(this::getClient, x, new HamcrestCondition<>(equalTo(STRUCT)), structId, ttl);
     }
@@ -106,8 +106,8 @@ public class CachedRestClientTest {
     @Test
     public void testGetData() throws IOException {
         for (Key key : keys("all", "M.BE.INDUSTRY", ".BE.INDUSTRY", "A.BE.INDUSTRY")) {
-            for (DataDetail filter : DataDetail.values()) {
-                DataRef ref = DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(filter).build());
+            for (Detail filter : Detail.values()) {
+                DataRef ref = DataRef.of(FLOW_REF, Query.builder().key(key).detail(filter).build());
 
                 Method<Collection<Series>> x = client -> {
                     try (Stream<Series> cursor = client.getData(ref, STRUCT)) {
@@ -136,8 +136,8 @@ public class CachedRestClientTest {
         Context ctx = new Context();
         CachedRestClient client = getClient(ctx);
 
-        for (DataDetail filter : new DataDetail[]{DataDetail.SERIES_KEYS_ONLY, DataDetail.NO_DATA}) {
-            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, DataQuery.builder().key(key).detail(filter).build()), STRUCT).close();
+        for (Detail filter : new Detail[]{Detail.SERIES_KEYS_ONLY, Detail.NO_DATA}) {
+            IOConsumer<Key> method = key -> client.getData(DataRef.of(FLOW_REF, Query.builder().key(key).detail(filter).build()), STRUCT).close();
 
             ctx.reset();
             method.acceptWithIO(Key.ALL);
@@ -183,7 +183,7 @@ public class CachedRestClientTest {
 
     @Test
     public void testGetBase() {
-        SdmxWebSource s1 = SdmxWebSource
+        WebSource s1 = WebSource
                 .builder()
                 .id("id1")
                 .driver("driver1")
@@ -191,9 +191,9 @@ public class CachedRestClientTest {
                 .build();
 
         assertThat(getBase(s1, ANY))
-                .hasToString("cache:rest/id1/-1698165431/*")
+                .hasToString("cache:rest/id1/1032839954/*")
                 .isEqualTo(getBase(s1, ANY))
-                .isNotEqualTo(getBase(s1, LanguagePriorityList.parse("fr")))
+                .isNotEqualTo(getBase(s1, Languages.parse("fr")))
                 .isNotEqualTo(getBase(s1.toBuilder().id("id2").build(), ANY))
                 .isNotEqualTo(getBase(s1.toBuilder().driver("driver2").build(), ANY))
                 .isNotEqualTo(getBase(s1.toBuilder().endpointOf("http://localhost/stuff").build(), ANY))

@@ -20,18 +20,19 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestConnection;
 import org.junit.jupiter.api.Test;
-import sdmxdl.DataQuery;
+import sdmxdl.Query;
 import sdmxdl.Feature;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.web.MockedDriver;
-import tests.sdmxdl.web.WebDriverAssert;
+import tests.sdmxdl.web.spi.MockedDriver;
+import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles
@@ -42,10 +43,10 @@ public class FailsafeConnectionTest {
     @Test
     public void testCompliance() {
         MockedDriver driver = MockedDriver.builder().repo(RepoSamples.REPO, EnumSet.allOf(Feature.class)).build();
-        SdmxWebSource source = driver.getDefaultSources().iterator().next();
+        WebSource source = driver.getDefaultSources().iterator().next();
 
         ConnectionAssert.assertCompliance(
-                () -> FailsafeConnection.wrap(driver.connect(source, WebDriverAssert.noOpWebContext())),
+                () -> FailsafeConnection.wrap(driver.connect(source, ANY, DriverAssert.noOpWebContext())),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)
@@ -134,18 +135,18 @@ public class FailsafeConnectionTest {
     public void testGetData() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getData(RepoSamples.FLOW_REF, DataQuery.ALL));
+                .isThrownBy(() -> valid.getData(RepoSamples.FLOW_REF, Query.ALL));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getData(RepoSamples.FLOW_REF, DataQuery.ALL))
+                .isThrownBy(() -> failing.getData(RepoSamples.FLOW_REF, Query.ALL))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getData(RepoSamples.FLOW_REF, DataQuery.ALL))
+                .isThrownBy(() -> nul.getData(RepoSamples.FLOW_REF, Query.ALL))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -154,18 +155,18 @@ public class FailsafeConnectionTest {
     public void testGetDataStream() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getDataStream(RepoSamples.FLOW_REF, DataQuery.ALL));
+                .isThrownBy(() -> valid.getDataStream(RepoSamples.FLOW_REF, Query.ALL));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getDataStream(RepoSamples.FLOW_REF, DataQuery.ALL))
+                .isThrownBy(() -> failing.getDataStream(RepoSamples.FLOW_REF, Query.ALL))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getDataStream(RepoSamples.FLOW_REF, DataQuery.ALL))
+                .isThrownBy(() -> nul.getDataStream(RepoSamples.FLOW_REF, Query.ALL))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }

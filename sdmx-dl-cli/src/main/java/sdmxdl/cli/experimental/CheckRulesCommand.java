@@ -25,7 +25,7 @@ import sdmxdl.testing.WebResponse;
 import sdmxdl.testing.WebRuleLoader;
 import sdmxdl.testing.xml.XmlSourceQuery;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,15 +107,13 @@ public final class CheckRulesCommand implements Callable<Void> {
                 .build();
     }
 
-    private static RulesConfig configOf(SdmxWebSource source) {
+    private static RulesConfig configOf(WebSource source) {
         try {
-            return RulesConfig
-                    .newBuilder()
-                    .setDriver(source.getDriver())
-                    .setDialect(source.getDialect())
-                    .setProtocol(source.getEndpoint().toURL().getProtocol())
-                    .setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()))
-                    .build();
+            RulesConfig.Builder result = RulesConfig.newBuilder();
+            result.setDriver(source.getDriver());
+            result.setProtocol(source.getEndpoint().toURL().getProtocol());
+            result.setProperties(DEFAULT_MAP_FORMATTER.formatAsString(source.getProperties()));
+            return result.build();
         } catch (MalformedURLException ex) {
             throw new UncheckedIOException(ex);
         }

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @lombok.experimental.UtilityClass
 public class ConnectionSupport {
 
-    public static @NonNull Dataflow getFlowFromFlows(@NonNull DataflowRef flowRef, @NonNull Connection connection, @NonNull HasMarker source) throws IOException, IllegalArgumentException {
+    public static @NonNull Flow getFlowFromFlows(@NonNull FlowRef flowRef, @NonNull Connection connection, @NonNull HasMarker source) throws IOException, IllegalArgumentException {
         return connection
                 .getFlows()
                 .stream()
@@ -18,7 +18,7 @@ public class ConnectionSupport {
                 .orElseThrow(() -> CommonSdmxExceptions.missingFlow(source, flowRef));
     }
 
-    public static @NonNull DataSet getDataSetFromStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query, @NonNull Connection connection) throws IOException, IllegalArgumentException {
+    public static @NonNull DataSet getDataSetFromStream(@NonNull FlowRef flowRef, @NonNull Query query, @NonNull Connection connection) throws IOException, IllegalArgumentException {
         try (Stream<Series> stream = connection.getDataStream(flowRef, query)) {
             return stream.collect(DataSet.toDataSet(flowRef, query));
         }

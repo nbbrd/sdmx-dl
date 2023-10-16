@@ -22,7 +22,7 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.DataDetail;
+import sdmxdl.Detail;
 import sdmxdl.Key;
 
 import java.io.IOException;
@@ -68,8 +68,8 @@ public final class FetchMetaCommand implements Callable<Void> {
                 , BY_FLOW_KEY_CONCEPT);
     }
 
-    private DataDetail getDetail() {
-        return DataDetail.NO_DATA;
+    private Detail getDetail() {
+        return Detail.NO_DATA;
     }
 
     private Stream<MetaResult> getMetaResultStream(sdmxdl.Series series) {

@@ -2,7 +2,7 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.Component;
-import sdmxdl.DataStructure;
+import sdmxdl.Structure;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class WebConceptOptions extends WebFlowOptions {
     private String concept;
 
     public Component loadComponent(SdmxWebManager manager) throws IOException {
-        DataStructure dsd = loadStructure(manager);
+        Structure dsd = loadStructure(manager);
         return Stream.concat(dsd.getDimensions().stream(), dsd.getAttributes().stream())
                 .filter(component -> component.getId().equals(getConcept()))
                 .findFirst()

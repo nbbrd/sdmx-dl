@@ -1,3 +1,16 @@
+import sdmxdl.file.spi.FileCaching;
+import sdmxdl.file.spi.Reader;
+import sdmxdl.provider.ri.authenticators.WinPasswordVaultAuthenticator;
+import sdmxdl.provider.ri.caching.RiCaching;
+import sdmxdl.provider.ri.drivers.FileRiDriver;
+import sdmxdl.provider.ri.drivers.RngRiDriver;
+import sdmxdl.provider.ri.drivers.Sdmx21RiDriver;
+import sdmxdl.provider.ri.monitors.UpptimeMonitor;
+import sdmxdl.provider.ri.monitors.UptimeRobotMonitor;
+import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.provider.ri.readers.XmlReader;
+import sdmxdl.web.spi.*;
+
 module sdmxdl.provider.ri {
 
     requires static lombok;
@@ -11,37 +24,36 @@ module sdmxdl.provider.ri {
     requires com.github.tuupertunut.powershelllibjava;
     requires com.google.gson;
     requires java.logging;
+    requires nl.altindag.ssl;
+    requires nbbrd.io.curl;
+    requires nbbrd.io.http;
+    requires nbbrd.net.proxy;
 
-    provides sdmxdl.web.spi.WebDriver with
-            internal.sdmxdl.provider.ri.web.drivers.BbkDriver,
-            internal.sdmxdl.provider.ri.web.drivers.DotStatDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.EurostatDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.FileDriver,
-            internal.sdmxdl.provider.ri.web.drivers.ImfDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.InseeDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.NbbDriver2,
-            internal.sdmxdl.provider.ri.web.drivers.PxWebDriver,
-            internal.sdmxdl.provider.ri.web.drivers.RngDriver,
-            internal.sdmxdl.provider.ri.web.drivers.Sdmx21Driver2,
-            internal.sdmxdl.provider.ri.web.drivers.StatCanDriver;
+    exports sdmxdl.provider.ri.drivers to sdmxdl.provider.dialects, sdmxdl.provider.px;
 
-    provides sdmxdl.file.spi.FileReader with
-            internal.sdmxdl.provider.ri.file.readers.XmlReader;
+    provides Driver with
+            FileRiDriver,
+            RngRiDriver,
+            Sdmx21RiDriver;
 
-    provides sdmxdl.web.spi.WebAuthenticator with
-            internal.sdmxdl.provider.ri.web.authenticators.WinPasswordVaultAuthenticator;
+    provides Reader with
+            XmlReader;
 
-    provides sdmxdl.web.spi.WebMonitoring with
-            internal.sdmxdl.provider.ri.web.monitors.UpptimeMonitoring,
-            internal.sdmxdl.provider.ri.web.monitors.UptimeRobotMonitoring;
+    provides Authenticator with
+            WinPasswordVaultAuthenticator;
 
-    opens internal.sdmxdl.provider.ri.web.monitors to com.google.gson;
+    provides Monitor with
+            UpptimeMonitor,
+            UptimeRobotMonitor;
 
-    provides sdmxdl.ext.spi.Dialect with
-            internal.sdmxdl.provider.ri.ext.EcbDialect,
-            internal.sdmxdl.provider.ri.ext.InseeDialect,
-            internal.sdmxdl.provider.ri.ext.Sdmx20Dialect,
-            internal.sdmxdl.provider.ri.ext.Sdmx21Dialect;
+    provides Networking with
+            RiNetworking;
 
-    uses sdmxdl.ext.spi.Dialect;
+    provides FileCaching with
+            RiCaching;
+
+    provides WebCaching with
+            RiCaching;
+
+    opens sdmxdl.provider.ri.monitors to com.google.gson;
 }

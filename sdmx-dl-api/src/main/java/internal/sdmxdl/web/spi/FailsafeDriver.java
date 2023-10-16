@@ -19,9 +19,10 @@ package internal.sdmxdl.web.spi;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.Languages;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
-import sdmxdl.web.spi.WebDriver;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -33,16 +34,16 @@ import java.util.function.Consumer;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-public final class FailsafeDriver implements WebDriver {
+public final class FailsafeDriver implements Driver {
 
-    public static WebDriver wrap(WebDriver obj) {
+    public static Driver wrap(Driver obj) {
         if (obj instanceof FailsafeDriver) return obj;
         FailsafeLogging logging = FailsafeLogging.of(FailsafeDriver.class);
         return new FailsafeDriver(obj, logging::logUnexpectedError, logging::logUnexpectedNull);
     }
 
     @lombok.NonNull
-    private final WebDriver delegate;
+    private final Driver delegate;
 
     @lombok.NonNull
     private final BiConsumer<? super String, ? super RuntimeException> onUnexpectedError;
@@ -51,11 +52,11 @@ public final class FailsafeDriver implements WebDriver {
     private final Consumer<? super String> onUnexpectedNull;
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getDriverId() {
         String result;
 
         try {
-            result = delegate.getId();
+            result = delegate.getDriverId();
         } catch (RuntimeException ex) {
             unexpectedError("while getting id", ex);
             return delegate.getClass().getName();
@@ -70,19 +71,19 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public int getRank() {
+    public int getDriverRank() {
         try {
-            return delegate.getRank();
+            return delegate.getDriverRank();
         } catch (RuntimeException ex) {
             unexpectedError("while getting rank", ex);
-            return UNKNOWN;
+            return UNKNOWN_DRIVER_RANK;
         }
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isDriverAvailable() {
         try {
-            return delegate.isAvailable();
+            return delegate.isDriverAvailable();
         } catch (RuntimeException ex) {
             unexpectedError("while getting availability", ex);
             return false;
@@ -90,11 +91,11 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull SdmxWebSource source, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Connection result;
 
         try {
-            result = delegate.connect(source, context);
+            result = delegate.connect(source, languages, context);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -109,8 +110,8 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public @NonNull Collection<SdmxWebSource> getDefaultSources() {
-        Collection<SdmxWebSource> result;
+    public @NonNull Collection<WebSource> getDefaultSources() {
+        Collection<WebSource> result;
 
         try {
             result = delegate.getDefaultSources();
@@ -128,11 +129,11 @@ public final class FailsafeDriver implements WebDriver {
     }
 
     @Override
-    public @NonNull Collection<String> getSupportedProperties() {
+    public @NonNull Collection<String> getDriverProperties() {
         Collection<String> result;
 
         try {
-            result = delegate.getSupportedProperties();
+            result = delegate.getDriverProperties();
         } catch (RuntimeException ex) {
             unexpectedError("while getting supported properties", ex);
             return Collections.emptyList();
@@ -141,25 +142,6 @@ public final class FailsafeDriver implements WebDriver {
         if (result == null) {
             unexpectedNull("null list");
             return Collections.emptyList();
-        }
-
-        return result;
-    }
-
-    @Override
-    public @NonNull String getDefaultDialect() {
-        String result;
-
-        try {
-            result = delegate.getDefaultDialect();
-        } catch (RuntimeException ex) {
-            unexpectedError("while getting default dialect", ex);
-            return NO_DEFAULT_DIALECT;
-        }
-
-        if (result == null) {
-            unexpectedNull("null list");
-            return NO_DEFAULT_DIALECT;
         }
 
         return result;

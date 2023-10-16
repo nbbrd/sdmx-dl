@@ -17,10 +17,10 @@
 package internal.sdmxdl.format.xml;
 
 import lombok.NonNull;
-import sdmxdl.DataStructureRef;
-import sdmxdl.Dataflow;
-import sdmxdl.DataflowRef;
-import sdmxdl.LanguagePriorityList;
+import sdmxdl.StructureRef;
+import sdmxdl.Flow;
+import sdmxdl.FlowRef;
+import sdmxdl.Languages;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -54,18 +54,18 @@ public final class XMLStreamFlow21 {
     private final TextBuilder flowName;
     private final TextBuilder flowDescription;
 
-    public XMLStreamFlow21(LanguagePriorityList languages) {
+    public XMLStreamFlow21(Languages languages) {
         this.flowName = new TextBuilder(languages);
         this.flowDescription = new TextBuilder(languages);
     }
 
     @NonNull
-    public List<Dataflow> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
+    public List<Flow> parse(@NonNull XMLStreamReader reader) throws XMLStreamException {
         if (isNotNamespaceAware(reader)) {
             throw new XMLStreamException("Cannot parse flows");
         }
 
-        List<Dataflow> result = new ArrayList<>();
+        List<Flow> result = new ArrayList<>();
         while (nextTags(reader, "")) {
             switch (reader.getLocalName()) {
                 case HEADER_TAG:
@@ -84,13 +84,13 @@ public final class XMLStreamFlow21 {
         check(Sdmxml.MESSAGE_V21.is(ns), reader, "Invalid namespace '%s'", ns);
     }
 
-    private void parseStructures(XMLStreamReader reader, List<Dataflow> flows) throws XMLStreamException {
+    private void parseStructures(XMLStreamReader reader, List<Flow> flows) throws XMLStreamException {
         if (nextTag(reader, STRUCTURES_TAG, DATAFLOWS_TAG)) {
             parseDataflows(reader, flows);
         }
     }
 
-    private void parseDataflows(XMLStreamReader reader, List<Dataflow> flows) throws XMLStreamException {
+    private void parseDataflows(XMLStreamReader reader, List<Flow> flows) throws XMLStreamException {
         while (nextTags(reader, DATAFLOWS_TAG)) {
             switch (reader.getLocalName()) {
                 case DATAFLOW_TAG:
@@ -108,12 +108,12 @@ public final class XMLStreamFlow21 {
     }
 
     @SuppressWarnings("null")
-    private Dataflow parseDataflow(XMLStreamReader reader) throws XMLStreamException {
+    private Flow parseDataflow(XMLStreamReader reader) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         check(id != null, reader, "Missing Dataflow id");
 
-        DataflowRef flowRef = DataflowRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
-        DataStructureRef structRef = null;
+        FlowRef flowRef = FlowRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
+        StructureRef structRef = null;
         flowName.clear();
         flowDescription.clear();
         while (nextTags(reader, DATAFLOW_TAG)) {
@@ -132,7 +132,7 @@ public final class XMLStreamFlow21 {
 
         check(structRef != null, reader, "Missing DataStructureRef");
 
-        return Dataflow
+        return Flow
                 .builder()
                 .ref(flowRef)
                 .structureRef(structRef)
@@ -141,18 +141,18 @@ public final class XMLStreamFlow21 {
                 .build();
     }
 
-    private DataStructureRef parseStructure(XMLStreamReader reader) throws XMLStreamException {
+    private StructureRef parseStructure(XMLStreamReader reader) throws XMLStreamException {
         if (nextTag(reader, STRUCTURE_TAG, REF_TAG)) {
             return parseRef(reader);
         }
         throw new XMLStreamException("Missing DataStructureRef");
     }
 
-    private DataStructureRef parseRef(XMLStreamReader reader) throws XMLStreamException {
+    private StructureRef parseRef(XMLStreamReader reader) throws XMLStreamException {
         String id = reader.getAttributeValue(null, ID_ATTR);
         check(id != null, reader, "Missing DataStructureRef id");
 
-        return DataStructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
+        return StructureRef.of(reader.getAttributeValue(null, AGENCY_ID_ATTR), id, reader.getAttributeValue(null, VERSION_ATTR));
     }
 
     private void parseTextWithLangAttr(XMLStreamReader reader, TextBuilder langStack) throws XMLStreamException {

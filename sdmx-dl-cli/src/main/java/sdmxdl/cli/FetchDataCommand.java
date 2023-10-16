@@ -70,13 +70,13 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private void writeBody(Csv.Writer w) throws IOException {
-        try (Connection conn = web.loadManager().getConnection(web.getSource())) {
-            DataStructure dsd = conn.getStructure(web.getFlow());
+        try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
+            Structure dsd = conn.getStructure(web.getFlow());
             getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, web), w);
         }
     }
 
-    private static SdmxPicocsvFormatter getBodyFormatter(DataStructure dsd, ObsFormat format) {
+    private static SdmxPicocsvFormatter getBodyFormatter(Structure dsd, ObsFormat format) {
         return SdmxPicocsvFormatter
                 .builder()
                 .ignoreHeader(true)
@@ -96,7 +96,7 @@ public final class FetchDataCommand implements Callable<Void> {
     }
 
     private static DataSet getSortedSeries(Connection conn, WebKeyOptions web) throws IOException {
-        DataQuery query = DataQuery.builder().key(web.getKey()).detail(getDetail()).build();
+        Query query = Query.builder().key(web.getKey()).detail(getDetail()).build();
         try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
             return stream
                     .sorted(WebFlowOptions.SERIES_BY_KEY)
@@ -104,7 +104,7 @@ public final class FetchDataCommand implements Callable<Void> {
         }
     }
 
-    private static DataDetail getDetail() {
-        return DataDetail.FULL;
+    private static Detail getDetail() {
+        return Detail.FULL;
     }
 }

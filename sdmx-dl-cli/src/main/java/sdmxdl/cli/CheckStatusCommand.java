@@ -27,7 +27,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -80,7 +80,7 @@ public final class CheckStatusCommand implements Callable<Void> {
     private static class Status {
 
         static @NonNull Status of(@NonNull SdmxWebManager manager, @NonNull String sourceName) {
-            SdmxWebSource source = manager.getSources().get(sourceName);
+            WebSource source = manager.getSources().get(sourceName);
             if (source == null) {
                 return failure(sourceName, "Cannot find source");
             }

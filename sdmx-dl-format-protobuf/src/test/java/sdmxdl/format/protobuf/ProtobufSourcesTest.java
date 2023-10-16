@@ -1,7 +1,7 @@
 package sdmxdl.format.protobuf;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,7 +9,7 @@ public class ProtobufSourcesTest {
 
     @Test
     public void testSources() {
-        SdmxWebSource min = SdmxWebSource
+        WebSource min = WebSource
                 .builder()
                 .id("ESTAT")
                 .driver("abc")
@@ -19,10 +19,9 @@ public class ProtobufSourcesTest {
                 .extracting(ProtobufSources::toWebSource)
                 .isEqualTo(min);
 
-        SdmxWebSource max = min
+        WebSource max = min
                 .toBuilder()
                 .name("en", "hello")
-                .dialect("OTHER")
                 .property("key", "value")
                 .alias("EUROSTAT")
                 .websiteOf("http://website")

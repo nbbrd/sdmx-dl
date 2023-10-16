@@ -4,8 +4,8 @@ import j2html.tags.DomContent;
 import nbbrd.io.text.Formatter;
 import sdmxdl.Attribute;
 import sdmxdl.AttributeRelationship;
-import sdmxdl.DataStructure;
 import sdmxdl.Obs;
+import sdmxdl.Structure;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -15,7 +15,7 @@ import static j2html.TagCreator.*;
 
 public final class ObsFormats {
 
-    public static Formatter<Obs> getChartTooltipFormatter(DataStructure dsd) {
+    public static Formatter<Obs> getChartTooltipFormatter(Structure dsd) {
         Map<String, Attribute> attributes = dsd.getAttributes().stream()
                 .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))
                 .collect(Collectors.toMap(Attribute::getId, Function.identity()));
@@ -23,10 +23,10 @@ public final class ObsFormats {
     }
 
     private static String getChartToolTipText(Obs obs, Map<String, Attribute> attributes) {
-        return obs.getPeriod() + ": " + obs.getValue();
+        return obs.getPeriod().toShortString() + ": " + obs.getValue();
     }
 
-    public static Formatter<Obs> getHtmlTooltipFormatter(DataStructure dsd) {
+    public static Formatter<Obs> getHtmlTooltipFormatter(Structure dsd) {
         Map<String, Attribute> attributes = dsd.getAttributes().stream()
                 .filter(attribute -> attribute.getRelationship().equals(AttributeRelationship.OBSERVATION))
                 .collect(Collectors.toMap(Attribute::getId, Function.identity()));
@@ -36,7 +36,7 @@ public final class ObsFormats {
     private static String getToolTipText(Obs obs, Map<String, Attribute> attributes) {
         return html(
                 table(
-                        tr(th("Period:").withStyle("text-align:right"), td(text(obs.getPeriod().toString()))),
+                        tr(th("Period:").withStyle("text-align:right"), td(text(obs.getPeriod().toShortString()))),
                         tr(th("Value:").withStyle("text-align:right"), td(text(String.valueOf(obs.getValue())))),
                         tr(th("Meta:").withStyle("text-align:right"), td(metaToHtml(obs.getMeta(), attributes)))
                 )

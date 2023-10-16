@@ -1,25 +1,25 @@
 package sdmxdl.file.spi;
 
-import sdmxdl.LanguagePriorityList;
-import sdmxdl.SdmxManager;
+import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.DataRepository;
+import sdmxdl.ErrorListener;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
-import sdmxdl.file.SdmxFileSource;
-
-import java.util.function.BiConsumer;
+import sdmxdl.file.FileSource;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
 public class FileContext {
 
-    @lombok.NonNull
     @lombok.Builder.Default
-    LanguagePriorityList languages = LanguagePriorityList.ANY;
+    @NonNull FileCaching caching = FileCaching.noOp();
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    Cache cache = Cache.noOp();
+    @Nullable EventListener<? super FileSource> onEvent;
 
-    @lombok.NonNull
-    @lombok.Builder.Default
-    BiConsumer<? super SdmxFileSource, ? super String> eventListener = SdmxManager.NO_OP_EVENT_LISTENER;
+    @Nullable ErrorListener<? super FileSource> onError;
+
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source) {
+        return caching.getReaderCache(source, onEvent, onError);
+    }
 }

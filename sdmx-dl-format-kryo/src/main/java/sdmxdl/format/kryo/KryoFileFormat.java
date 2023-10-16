@@ -120,15 +120,15 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
 
         result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
         result.register(DataRepository.class, new SdmxRepositorySerializer());
-        result.register(DataStructure.class, new DataStructureSerializer());
-        result.register(DataStructureRef.class, new DataStructureRefSerializer());
-        result.register(Dataflow.class, new DataflowSerializer());
-        result.register(DataflowRef.class, new DataflowRefSerializer());
+        result.register(Structure.class, new DataStructureSerializer());
+        result.register(StructureRef.class, new DataStructureRefSerializer());
+        result.register(Flow.class, new DataflowSerializer());
+        result.register(FlowRef.class, new DataflowRefSerializer());
         result.register(Codelist.class, new CodelistSerializer());
         result.register(CodelistRef.class, new CodelistRefSerializer());
         result.register(Key.class, new KeySerializer());
-        result.register(DataQuery.class, new DataQuerySerializer());
-        result.register(DataDetail.class, new DefaultSerializers.EnumSerializer(DataDetail.class));
+        result.register(Query.class, new DataQuerySerializer());
+        result.register(Detail.class, new DefaultSerializers.EnumSerializer(Detail.class));
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
@@ -189,8 +189,8 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
 
     private static final class SdmxRepositorySerializer extends ImmutableSerializer<DataRepository> {
 
-        private final Serializer<Collection<DataStructure>> structures = new CustomCollectionSerializer<>(DataStructure.class);
-        private final Serializer<Collection<Dataflow>> flows = new CustomCollectionSerializer<>(Dataflow.class);
+        private final Serializer<Collection<Structure>> structures = new CustomCollectionSerializer<>(Structure.class);
+        private final Serializer<Collection<Flow>> flows = new CustomCollectionSerializer<>(Flow.class);
         private final Serializer<Collection<DataSet>> dataSets = new CustomCollectionSerializer<>(DataSet.class);
         private final Serializer<Collection<Feature>> features = new CustomCollectionSerializer<>(Feature.class);
 
@@ -219,13 +219,13 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         }
     }
 
-    private static final class DataStructureSerializer extends ImmutableSerializer<DataStructure> {
+    private static final class DataStructureSerializer extends ImmutableSerializer<Structure> {
 
         private final Serializer<Collection<Dimension>> dimensions = new CustomCollectionSerializer<>(Dimension.class);
         private final Serializer<Collection<Attribute>> attributes = new CustomCollectionSerializer<>(Attribute.class);
 
         @Override
-        public void write(Kryo kryo, Output output, DataStructure t) {
+        public void write(Kryo kryo, Output output, Structure t) {
             kryo.writeObject(output, t.getRef());
             kryo.writeObject(output, t.getDimensions(), dimensions);
             kryo.writeObject(output, t.getAttributes(), attributes);
@@ -236,10 +236,10 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public DataStructure read(Kryo kryo, Input input, Class<? extends DataStructure> type) {
-            return DataStructure
+        public Structure read(Kryo kryo, Input input, Class<? extends Structure> type) {
+            return Structure
                     .builder()
-                    .ref(kryo.readObject(input, DataStructureRef.class))
+                    .ref(kryo.readObject(input, StructureRef.class))
                     .dimensions(kryo.readObject(input, ArrayList.class, dimensions))
                     .attributes(kryo.readObject(input, ArrayList.class, attributes))
                     .timeDimensionId(input.readString())
@@ -249,18 +249,18 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         }
     }
 
-    private static final class DataStructureRefSerializer extends ResourceRefSerializer<DataStructureRef> {
+    private static final class DataStructureRefSerializer extends ResourceRefSerializer<StructureRef> {
 
         @Override
-        protected DataStructureRef read(String input) {
-            return DataStructureRef.parse(input);
+        protected StructureRef read(String input) {
+            return StructureRef.parse(input);
         }
     }
 
-    private static final class DataflowSerializer extends ImmutableSerializer<Dataflow> {
+    private static final class DataflowSerializer extends ImmutableSerializer<Flow> {
 
         @Override
-        public void write(Kryo kryo, Output output, Dataflow t) {
+        public void write(Kryo kryo, Output output, Flow t) {
             kryo.writeObject(output, t.getRef());
             kryo.writeObject(output, t.getStructureRef());
             output.writeString(t.getName());
@@ -268,22 +268,22 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         }
 
         @Override
-        public Dataflow read(Kryo kryo, Input input, Class<? extends Dataflow> type) {
-            return Dataflow
+        public Flow read(Kryo kryo, Input input, Class<? extends Flow> type) {
+            return Flow
                     .builder()
-                    .ref(kryo.readObject(input, DataflowRef.class))
-                    .structureRef(kryo.readObject(input, DataStructureRef.class))
+                    .ref(kryo.readObject(input, FlowRef.class))
+                    .structureRef(kryo.readObject(input, StructureRef.class))
                     .name(input.readString())
                     .description(input.readString())
                     .build();
         }
     }
 
-    private static final class DataflowRefSerializer extends ResourceRefSerializer<DataflowRef> {
+    private static final class DataflowRefSerializer extends ResourceRefSerializer<FlowRef> {
 
         @Override
-        protected DataflowRef read(String input) {
-            return DataflowRef.parse(input);
+        protected FlowRef read(String input) {
+            return FlowRef.parse(input);
         }
     }
 
@@ -331,8 +331,8 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         public DataSet read(Kryo kryo, Input input, Class<? extends DataSet> type) {
             return DataSet
                     .builder()
-                    .ref(kryo.readObject(input, DataflowRef.class))
-                    .query(kryo.readObject(input, DataQuery.class))
+                    .ref(kryo.readObject(input, FlowRef.class))
+                    .query(kryo.readObject(input, Query.class))
                     .data(kryo.readObject(input, ArrayList.class, data))
                     .build();
         }
@@ -351,20 +351,20 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         }
     }
 
-    private static final class DataQuerySerializer extends ImmutableSerializer<DataQuery> {
+    private static final class DataQuerySerializer extends ImmutableSerializer<Query> {
 
         @Override
-        public void write(Kryo kryo, Output output, DataQuery t) {
+        public void write(Kryo kryo, Output output, Query t) {
             kryo.writeObject(output, t.getKey());
             kryo.writeObject(output, t.getDetail());
         }
 
         @Override
-        public DataQuery read(Kryo kryo, Input input, Class<? extends DataQuery> type) {
-            return DataQuery
+        public Query read(Kryo kryo, Input input, Class<? extends Query> type) {
+            return Query
                     .builder()
                     .key(kryo.readObject(input, Key.class))
-                    .detail(kryo.readObject(input, DataDetail.class))
+                    .detail(kryo.readObject(input, Detail.class))
                     .build();
         }
     }

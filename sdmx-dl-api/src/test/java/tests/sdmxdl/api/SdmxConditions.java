@@ -25,7 +25,7 @@ public class SdmxConditions {
         );
     }
 
-    public static @NonNull Condition<Dataflow> validDataflow() {
+    public static @NonNull Condition<Flow> validDataflow() {
         return Assertions.allOf(
                 validResource(),
                 validName()

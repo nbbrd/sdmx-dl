@@ -38,59 +38,59 @@ final class RestConnection implements Connection {
     private final RestClient client;
 
     @lombok.NonNull
-    private final Validator<DataflowRef> dataflowRefValidator;
+    private final Validator<FlowRef> dataflowRefValidator;
 
     private final boolean noBatchFlow;
 
     private boolean closed = false;
 
     @Override
-    public @NonNull Collection<Dataflow> getFlows() throws IOException {
+    public @NonNull Collection<Flow> getFlows() throws IOException {
         checkState();
         return client.getFlows();
     }
 
     @Override
-    public @NonNull Dataflow getFlow(@NonNull DataflowRef flowRef) throws IOException {
+    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
         checkState();
         return lookupFlow(flowRef);
     }
 
     @Override
-    public @NonNull DataStructure getStructure(@NonNull DataflowRef flowRef) throws IOException {
+    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
         checkState();
         return client.getStructure(lookupFlow(flowRef).getStructureRef());
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull DataflowRef flowRef, @NonNull DataQuery query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         checkState();
 
-        Dataflow dataflow = lookupFlow(flowRef);
-        DataStructure dsd = client.getStructure(dataflow.getStructureRef());
+        Flow flow = lookupFlow(flowRef);
+        Structure dsd = client.getStructure(flow.getStructureRef());
         checkKey(query.getKey(), dsd);
 
-        DataQuery realQuery = deriveDataQuery(query, getSupportedFeatures(), dsd);
+        Query realQuery = deriveDataQuery(query, getSupportedFeatures(), dsd);
 
-        Stream<Series> result = client.getData(DataRef.of(dataflow.getRef(), realQuery), dsd);
+        Stream<Series> result = client.getData(DataRef.of(flow.getRef(), realQuery), dsd);
 
         return realQuery.equals(query) ? result : query.execute(result);
     }
 
-    private static DataQuery deriveDataQuery(DataQuery query, Set<Feature> features, DataStructure dsd) {
-        return DataQuery
+    private static Query deriveDataQuery(Query query, Set<Feature> features, Structure dsd) {
+        return Query
                 .builder()
                 .key(features.contains(Feature.DATA_QUERY_ALL_KEYWORD) || !Key.ALL.equals(query.getKey()) ? query.getKey() : alternateAllOf(dsd))
-                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : DataDetail.FULL)
+                .detail(features.contains(Feature.DATA_QUERY_DETAIL) ? query.getDetail() : Detail.FULL)
                 .build();
     }
 
-    private static Key alternateAllOf(DataStructure dsd) {
+    private static Key alternateAllOf(Structure dsd) {
         return Key.of(new String[dsd.getDimensions().size()]);
     }
 
@@ -116,7 +116,7 @@ final class RestConnection implements Connection {
         }
     }
 
-    private Dataflow lookupFlow(DataflowRef flowRef) throws IOException, IllegalArgumentException {
+    private Flow lookupFlow(FlowRef flowRef) throws IOException, IllegalArgumentException {
         if (noBatchFlow) {
             checkDataflowRef(flowRef);
             return client.getFlow(flowRef);
@@ -125,11 +125,11 @@ final class RestConnection implements Connection {
         return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
     }
 
-    private void checkDataflowRef(DataflowRef ref) throws IllegalArgumentException {
+    private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
         dataflowRefValidator.checkValidity(ref);
     }
 
-    private void checkKey(Key key, DataStructure dsd) throws IllegalArgumentException {
+    private void checkKey(Key key, Structure dsd) throws IllegalArgumentException {
         WebValidators.onDataStructure(dsd).checkValidity(key);
     }
 }

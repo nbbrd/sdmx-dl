@@ -16,8 +16,9 @@
  */
 package sdmxdl.testing;
 
-import sdmxdl.DataQuery;
-import sdmxdl.DataflowRef;
+import sdmxdl.Query;
+import sdmxdl.FlowRef;
+import sdmxdl.Languages;
 
 /**
  * @author Philippe Charles
@@ -32,10 +33,13 @@ public class WebRequest {
     String source;
 
     @lombok.NonNull
-    DataflowRef flowRef;
+    Languages languages;
 
     @lombok.NonNull
-    DataQuery query;
+    FlowRef flowRef;
+
+    @lombok.NonNull
+    Query query;
 
     @lombok.NonNull
     IntRange flowCount;

@@ -23,14 +23,13 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
 import sdmxdl.*;
-import sdmxdl.ext.Registry;
-import sdmxdl.ext.SeriesMeta;
+import sdmxdl.provider.ext.SeriesMeta;
+import sdmxdl.provider.ext.SeriesMetaFactory;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 import java.time.temporal.TemporalAmount;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static internal.sdmxdl.cli.WebFlowOptions.SERIES_BY_KEY;
@@ -71,16 +70,15 @@ public final class FetchExtraCommand implements Callable<Void> {
 
     private Stream<Extra> getRows() throws IOException {
         SdmxWebManager manager = web.loadManager();
-        Registry registry = Registry.ofServiceLoader();
 
-        try (Connection conn = web.open(manager)) {
-            DataStructure dsd = conn.getStructure(web.getFlow());
+        try (Connection conn = web.open(manager, web.getLangs())) {
+            Structure dsd = conn.getStructure(web.getFlow());
 
-            Function<Series, SeriesMeta> factory = registry.getFactory(manager, web.getSource(), dsd);
+            SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);
 
-            return sort.applySort(conn.getData(web.getFlow(), DataQuery.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(web.getFlow(), Query.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
                     .map(series -> {
-                        SeriesMeta x = factory.apply(series);
+                        SeriesMeta x = factory.get(series);
                         return new Extra(
                                 series.getKey(),
                                 x.getTimeUnit(),
@@ -93,8 +91,8 @@ public final class FetchExtraCommand implements Callable<Void> {
         }
     }
 
-    private DataDetail getDetail() {
-        return DataDetail.NO_DATA;
+    private Detail getDetail() {
+        return Detail.FULL;
     }
 
     @lombok.Value

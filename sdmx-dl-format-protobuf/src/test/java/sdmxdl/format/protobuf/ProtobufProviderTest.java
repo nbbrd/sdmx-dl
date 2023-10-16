@@ -1,12 +1,12 @@
 package sdmxdl.format.protobuf;
 
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.format.FileFormatProviderAssert;
+import tests.sdmxdl.format.FileFormattingAssert;
 
 public class ProtobufProviderTest {
 
     @Test
     public void testCompliance() {
-        FileFormatProviderAssert.assertCompliance(new ProtobufProvider());
+        FileFormattingAssert.assertCompliance(new ProtobufProvider());
     }
 }

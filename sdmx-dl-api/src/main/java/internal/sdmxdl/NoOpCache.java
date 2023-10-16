@@ -18,16 +18,15 @@ package internal.sdmxdl;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRepository;
+import sdmxdl.HasExpiration;
 import sdmxdl.ext.Cache;
-import sdmxdl.web.MonitorReports;
 
 import java.time.Clock;
 
 /**
  * @author Philippe Charles
  */
-public enum NoOpCache implements Cache {
+public enum NoOpCache implements Cache<HasExpiration> {
 
     INSTANCE;
 
@@ -36,21 +35,13 @@ public enum NoOpCache implements Cache {
         return Clock.systemDefaultZone();
     }
 
+    @Nullable
     @Override
-    public DataRepository getRepository(@NonNull String key) {
+    public HasExpiration get(@NonNull String key) {
         return null;
     }
 
     @Override
-    public void putRepository(@NonNull String key, @NonNull DataRepository value) {
-    }
-
-    @Override
-    public @Nullable MonitorReports getMonitorReports(@NonNull String key) {
-        return null;
-    }
-
-    @Override
-    public void putMonitorReports(@NonNull String key, @NonNull MonitorReports value) {
+    public void put(@NonNull String key, @NonNull HasExpiration value) {
     }
 }

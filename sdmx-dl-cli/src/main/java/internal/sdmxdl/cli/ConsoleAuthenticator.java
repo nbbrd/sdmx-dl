@@ -1,8 +1,8 @@
 package internal.sdmxdl.cli;
 
 import lombok.NonNull;
-import sdmxdl.web.SdmxWebSource;
-import sdmxdl.web.spi.WebAuthenticator;
+import sdmxdl.web.WebSource;
+import sdmxdl.web.spi.Authenticator;
 
 import java.io.Console;
 import java.io.IOError;
@@ -10,24 +10,24 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.ConcurrentHashMap;
 
-final class ConsoleAuthenticator implements WebAuthenticator {
+final class ConsoleAuthenticator implements Authenticator {
 
     private final Console console = System.console();
 
-    private final ConcurrentHashMap<SdmxWebSource, PasswordAuthentication> cache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<WebSource, PasswordAuthentication> cache = new ConcurrentHashMap<>();
 
     @Override
-    public @NonNull String getId() {
+    public @NonNull String getAuthenticatorId() {
         return "CONSOLE";
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAuthenticatorAvailable() {
         return isConsoleAvailable();
     }
 
     @Override
-    public PasswordAuthentication getPasswordAuthentication(SdmxWebSource source) throws IOException {
+    public PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException {
         if (!isConsoleAvailable()) {
             throw new IOException("Console is not available");
         }
@@ -46,11 +46,11 @@ final class ConsoleAuthenticator implements WebAuthenticator {
     }
 
     @Override
-    public void invalidate(SdmxWebSource source) {
+    public void invalidateAuthentication(@NonNull WebSource source) {
         cache.remove(source);
     }
 
-    private PasswordAuthentication readPasswordAuthentication(SdmxWebSource source) throws IOError {
+    private PasswordAuthentication readPasswordAuthentication(WebSource source) throws IOError {
         console.format("Enter your credentials for %s\n", source.getId());
         String username = console.readLine("Enter username: ");
         char[] password = console.readPassword("Enter password: ");

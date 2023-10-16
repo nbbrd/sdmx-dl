@@ -18,35 +18,33 @@ package sdmxdl.format.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.SdmxWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static sdmxdl.ext.spi.Dialect.SDMX21_DIALECT;
 
 /**
  * @author Philippe Charles
  */
 public class XmlWebSourceTest {
 
-    private final List<SdmxWebSource> sample = Arrays.asList(
-            SdmxWebSource
+    private final List<WebSource> sample = Arrays.asList(
+            WebSource
                     .builder()
                     .id("ECB")
                     .name("en", "European Central Bank")
                     .driver("ri:sdmx21")
-                    .dialect(SDMX21_DIALECT)
-                    .endpointOf("https://sdw-wsrest.ecb.europa.eu/service")
+                    .endpointOf("https://data-api.ecb.europa.eu/service")
                     .property("detailSupported", "true")
                     .alias("XYZ")
                     .websiteOf("https://sdw.ecb.europa.eu")
                     .monitorOf("ABC:xyz")
                     .monitorWebsiteOf("https://someaddress")
                     .build(),
-            SdmxWebSource
+            WebSource
                     .builder()
                     .id("other")
                     .name("en", "some description")
@@ -62,8 +60,7 @@ public class XmlWebSourceTest {
             + "        <name>ECB</name>\n"
             + "        <description lang=\"en\">European Central Bank</description>\n"
             + "        <driver>ri:sdmx21</driver>\n"
-            + "        <dialect>SDMX21</dialect>\n"
-            + "        <endpoint>https://sdw-wsrest.ecb.europa.eu/service</endpoint>\n"
+            + "        <endpoint>https://data-api.ecb.europa.eu/service</endpoint>\n"
             + "        <property key=\"detailSupported\" value=\"true\"/>\n"
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"

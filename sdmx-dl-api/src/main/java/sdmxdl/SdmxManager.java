@@ -19,13 +19,11 @@ package sdmxdl;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
-import sdmxdl.ext.Cache;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * @author Philippe Charles
@@ -35,20 +33,11 @@ import java.util.function.BiConsumer;
         SdmxWebManager.class
 })
 @ThreadSafe
-public abstract class SdmxManager<SOURCE extends SdmxSource> {
+public abstract class SdmxManager<SOURCE extends Source> {
 
-    public abstract @NonNull Connection getConnection(@NonNull SOURCE source) throws IOException;
+    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 
-    public abstract @NonNull LanguagePriorityList getLanguages();
+    public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
 
-    public abstract @NonNull Cache getCache();
-
-    public abstract @NonNull BiConsumer<? super SOURCE, ? super String> getEventListener();
-
-    public abstract @NonNull Optional<String> getDialect(@NonNull SOURCE source);
-
-    public static final BiConsumer<SdmxSource, String> NO_OP_EVENT_LISTENER = SdmxManager::doNothing;
-
-    private static void doNothing(SdmxSource ignoredSource, String message) {
-    }
+    public abstract @Nullable ErrorListener<? super SOURCE> getOnError();
 }
