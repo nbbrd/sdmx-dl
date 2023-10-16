@@ -7,10 +7,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.12] - 2023-10-16
+
+This is the twelfth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release brings a more flexible configuration system: cache, network and language can be specified by source if
+needed and environment variables are used as default values.  
+The API has been refactored to make it both simpler and more flexible.  
+The ECB endpoint has also been updated.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+production!**
+
 ### Added
 
 - ![API] Add support of partial ISO date/time in TimeInterval
-- ![PROVIDER] Allow caching & networking configuration by environment variables [#516](https://github.com/nbbrd/sdmx-dl/issues/516)
+- ![PROVIDER] Allow caching & networking configuration by environment
+  variables [#516](https://github.com/nbbrd/sdmx-dl/issues/516)
 - ![PROVIDER] Allow caching & networking configuration per source [#493](https://github.com/nbbrd/sdmx-dl/issues/493)
 
 ### Fixed
@@ -405,7 +419,9 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...HEAD
+
+[3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12
 
 [3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11
 
