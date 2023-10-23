@@ -112,19 +112,19 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY))
                 .ikon(MDI_WEB)
                 .toolTipText("Open web site")
-                .buildButton());
+                .build());
 
         contentToolBar.add(new ButtonBuilder()
                 .action(NoOpCommand.INSTANCE.toAction(this))
                 .ikon(MDI_EXPORT)
                 .toolTipText("Export")
-                .buildButton());
+                .build());
 
         contentToolBar.add(new ButtonBuilder()
                 .action(NoOpCommand.INSTANCE.toAction(this))
                 .ikon(MDI_REFRESH)
                 .toolTipText("Refresh")
-                .buildButton());
+                .build());
 
         JTabbedPane content = new JTabbedPane();
         content.addTab("Data", dataPane);

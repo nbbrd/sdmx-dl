@@ -238,25 +238,25 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                 .action(new AddDatasetCommand().toAction(this))
                 .ikon(MDI_DATABASE_PLUS)
                 .toolTipText("Add dataset")
-                .buildButton());
+                .build());
 
         result.add(new ButtonBuilder()
                 .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
                 .ikon(MDI_UNFOLD_MORE)
                 .toolTipText("Expand All")
-                .buildButton());
+                .build());
 
         result.add(new ButtonBuilder()
                 .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
                 .ikon(MDI_UNFOLD_LESS)
                 .toolTipText("Collapse All")
-                .buildButton());
+                .build());
 
         result.add(new ButtonBuilder()
                 .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
                 .ikon(MDI_MENU)
                 .toolTipText("Options")
-                .buildButton());
+                .build());
 
         return result;
     }

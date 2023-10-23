@@ -1,26 +1,28 @@
 package sdmxdl.desktop;
 
 import ec.util.table.swing.JTables;
-import internal.sdmxdl.desktop.BrowseCommand;
-import internal.sdmxdl.desktop.ButtonBuilder;
-import internal.sdmxdl.desktop.PropertyFormats;
+import internal.sdmxdl.desktop.*;
 import net.miginfocom.swing.MigLayout;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.formdev.flatlaf.FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT;
+import static java.util.Collections.emptyMap;
+import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_EXPORT;
+import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_LAUNCH;
 
 public final class JWebSource extends JComponent {
+
+    public static final String BROWSE_WEBSITE_ACTION = "browseWebsite";
+
+    public static final String BROWSE_MONITOR_ACTION = "browseMonitor";
+
+    public static final String EXPORT_MODEL_ACTION = "exportModel";
 
     public static final String MODEL_PROPERTY = "model";
 
@@ -45,54 +47,96 @@ public final class JWebSource extends JComponent {
     }
 
     private void initComponents() {
-        JPanel panel = new JPanel(new MigLayout("ins 20", "[para]0[][100lp, fill][60lp][95lp, fill]", ""));
+        ActionMap am = getActionMap();
+
+        am.put(BROWSE_WEBSITE_ACTION,
+                BrowseCommand.ofURL(JWebSource::getWebsiteOrNull)
+                        .toAction(this)
+                        .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
+
+        am.put(BROWSE_MONITOR_ACTION,
+                BrowseCommand.ofURL(JWebSource::getMonitorWebsiteOrNull)
+                        .toAction(this)
+                        .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
+
+        am.put(EXPORT_MODEL_ACTION,
+                NoOpCommand.INSTANCE
+                        .toAction(this)
+                        .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
         id.setEditable(false);
-        panel.add(new JLabel("ID"), "skip");
-        panel.add(id, "span, growx");
-
+        names.setModel(new MapTableModel("Language", "Name"));
+        JTables.setWidthAsPercentages(names, .2, .8);
         aliases.setEditable(false);
-        panel.add(new JLabel("Aliases"), "skip");
-        panel.add(aliases, "span, growx");
-
-        panel.add(new JLabel("Names"), "skip");
-        panel.add(new JScrollPane(names), "span, growx, h 100");
-
-        driver.setEditable(false);
-        panel.add(new JLabel("Driver"), "skip");
-        panel.add(driver, "span, growx");
-
-        endpoint.setEditable(false);
-        panel.add(new JLabel("Endpoint"), "skip");
-        panel.add(endpoint, "span, growx");
-
-        panel.add(new JLabel("Properties"), "skip");
-        panel.add(new JScrollPane(properties), "span, growx, h 100");
-
         website.setEditable(false);
         website.putClientProperty(
                 TEXT_FIELD_TRAILING_COMPONENT,
                 new ButtonBuilder()
-                        .action(BrowseCommand.ofURL(JWebSource::getWebsite)
-                                .toAction(this)
-                                .withWeakPropertyChangeListener(this, MODEL_PROPERTY))
-                        .ikon(MaterialDesign.MDI_LAUNCH)
-                        .buildButton()
+                        .action(am.get(BROWSE_WEBSITE_ACTION))
+                        .ikon(MDI_LAUNCH)
+                        .toolTipText("Browse website")
+                        .build()
         );
-        panel.add(new JLabel("Website"), "skip");
-        panel.add(website, "span, growx");
-
+        driver.setEditable(false);
+        endpoint.setEditable(false);
+        properties.setModel(new MapTableModel("Name", "Value"));
+        properties.getColumnModel().getColumn(0).setCellRenderer(JTables.cellRendererOf((label, value) -> {
+            if (value instanceof String) {
+                label.setText(PropertyFormats.toText((String) value));
+            }
+        }));
+        JTables.setWidthAsPercentages(properties, .6, .4);
         monitor.setEditable(false);
         monitor.putClientProperty(
                 TEXT_FIELD_TRAILING_COMPONENT,
                 new ButtonBuilder()
-                        .action(BrowseCommand.ofURL(JWebSource::getMonitorWebsite)
-                                .toAction(this)
-                                .withWeakPropertyChangeListener(this, MODEL_PROPERTY))
-                        .ikon(MaterialDesign.MDI_LAUNCH)
-                        .buildButton()
+                        .action(am.get(BROWSE_MONITOR_ACTION))
+                        .ikon(MDI_LAUNCH)
+                        .toolTipText("Browse monitor")
+                        .build()
         );
-        panel.add(new JLabel("Monitor"), "skip");
+
+        JButton extract = new ButtonBuilder()
+                .action(am.get(EXPORT_MODEL_ACTION))
+                .ikon(MDI_EXPORT)
+                .toolTipText("Export source...")
+                .build();
+
+        JPanel panel = new JPanel(new MigLayout(
+                "ins 20",
+                "[para][][]",
+                ""));
+
+        panel.add(new JLabel("Description"), "gapbottom 1, span, split 2, aligny center");
+        panel.add(new JSeparator(), "gapleft rel, growx");
+
+        panel.add(new JLabel("ID"), "skip, align left, sizegroup lbl");
+        panel.add(id, "growx, w 150,  sizegroup ids");
+
+        panel.add(new JLabel("Aliases"), "skip, align left, sizegroup lbl");
+        panel.add(aliases, "growx, w 150, sizegroup ids");
+
+        panel.add(extract, "align trailing, wrap");
+
+        panel.add(new JLabel("Names"), "skip, align left, sizegroup lbl");
+        panel.add(new JScrollPane(names), "span, growx, h 100");
+
+        panel.add(new JLabel("Website"), "skip, align left, sizegroup lbl");
+        panel.add(website, "span, growx, wrap 20px");
+
+        panel.add(new JLabel("Connection"), "gapbottom 1, span, split 2, aligny center");
+        panel.add(new JSeparator(), "gapleft rel, growx");
+
+        panel.add(new JLabel("Driver"), "skip, align left, sizegroup lbl");
+        panel.add(driver, "span, growx");
+
+        panel.add(new JLabel("Endpoint"), "skip, align left, sizegroup lbl");
+        panel.add(endpoint, "span, growx");
+
+        panel.add(new JLabel("Properties"), "skip, align left, sizegroup lbl");
+        panel.add(new JScrollPane(properties), "span, growx, h 100");
+
+        panel.add(new JLabel("Monitor"), "skip, align left, sizegroup lbl");
         panel.add(monitor, "span, growx");
 
         setLayout(new BorderLayout());
@@ -102,67 +146,34 @@ public final class JWebSource extends JComponent {
     }
 
     private void onModelChange(PropertyChangeEvent evt) {
-        id.setText(model.getId());
-        names.setModel(new MapTableModel(model.getNames(), "Language", "Name"));
-        JTables.setWidthAsPercentages(names, .2, .8);
-        driver.setText(model.getDriver());
-        endpoint.setText(model.getEndpoint().toString());
-        properties.setModel(new MapTableModel(model.getProperties(), "Name", "Value"));
-        properties.getColumnModel().getColumn(0).setCellRenderer(JTables.cellRendererOf((label, value) -> {
-            if (value instanceof String) {
-                label.setText(PropertyFormats.toText((String) value));
-            }
-        }));
-        JTables.setWidthAsPercentages(properties, .6, .4);
-        aliases.setText(String.join(", ", model.getAliases()));
-        website.setText(Objects.toString(model.getWebsite()));
-        monitor.setText(Objects.toString(model.getMonitor()));
-    }
-
-    private static final class MapTableModel extends AbstractTableModel {
-        private final List<Map.Entry<String, String>> data;
-        private final String keyLabel;
-        private final String valueLabel;
-
-        public MapTableModel(Map<String, String> map, String keyLabel, String valueLabel) {
-            this.data = map.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .collect(Collectors.toList());
-            this.keyLabel = keyLabel;
-            this.valueLabel = valueLabel;
-        }
-
-        @Override
-        public int getRowCount() {
-            return data.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 2;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Map.Entry<String, String> row = data.get(rowIndex);
-            return columnIndex == 0 ? row.getKey() : row.getValue();
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return column == 0 ? keyLabel : valueLabel;
+        if (model != null) {
+            id.setText(model.getId());
+            ((MapTableModel) names.getModel()).setData(model.getNames());
+            driver.setText(model.getDriver());
+            endpoint.setText(model.getEndpoint().toString());
+            ((MapTableModel) properties.getModel()).setData(model.getProperties());
+            aliases.setText(String.join(", ", model.getAliases()));
+            website.setText(Objects.toString(model.getWebsite()));
+            monitor.setText(Objects.toString(model.getMonitor()));
+        } else {
+            id.setText("");
+            ((MapTableModel) names.getModel()).setData(emptyMap());
+            driver.setText("");
+            endpoint.setText("");
+            ((MapTableModel) properties.getModel()).setData(emptyMap());
+            aliases.setText("");
+            website.setText("");
+            monitor.setText("");
         }
     }
 
-    private static URL getWebsite(JWebSource c) {
+    private static URL getWebsiteOrNull(JWebSource c) {
         WebSource source = c.getModel();
-        if (source == null) return null;
-        return source.getWebsite();
+        return source == null ? null : source.getWebsite();
     }
 
-    private static URL getMonitorWebsite(JWebSource c) {
-        WebSource model = c.getModel();
-        if (model == null) return null;
-        return model.getMonitorWebsite();
+    private static URL getMonitorWebsiteOrNull(JWebSource c) {
+        WebSource source = c.getModel();
+        return source == null ? null : source.getMonitorWebsite();
     }
 }

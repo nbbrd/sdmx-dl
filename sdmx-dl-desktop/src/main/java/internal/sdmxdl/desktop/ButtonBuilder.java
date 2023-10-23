@@ -9,13 +9,13 @@ import java.util.function.Supplier;
 
 public final class ButtonBuilder {
 
-    private AbstractAction action;
+    private Action action;
 
     private Ikon ikon;
 
     private String toolTipText;
 
-    public ButtonBuilder action(AbstractAction action) {
+    public ButtonBuilder action(Action action) {
         this.action = action;
         return this;
     }
@@ -31,11 +31,11 @@ public final class ButtonBuilder {
     }
 
 
-    public JButton buildButton() {
-        return build(JButton::new);
+    public JButton build() {
+        return buildWith(JButton::new);
     }
 
-    public <T extends AbstractButton> T build(Supplier<T> factory) {
+    public <T extends AbstractButton> T buildWith(Supplier<T> factory) {
         T result = factory.get();
         result.setAction(action);
         result.setIcon(FontIcon.of(ikon, 16, UIManager.getColor(FlatIconColors.ACTIONS_GREYINLINE.key)));
