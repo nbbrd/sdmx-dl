@@ -19,6 +19,7 @@ public final class JEditorTabs extends JComponent {
         main.putClientProperty(TABBED_PANE_TAB_CLOSABLE, true);
         main.putClientProperty(TABBED_PANE_TAB_CLOSE_CALLBACK, (IntConsumer) main::removeTabAt);
         main.putClientProperty(TABBED_PANE_TAB_TYPE, TABBED_PANE_TAB_TYPE_CARD);
+        main.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
         setLayout(new BorderLayout());
         add(main, BorderLayout.CENTER);

@@ -1,6 +1,7 @@
 package sdmxdl.desktop;
 
 import ec.util.list.swing.JLists;
+import internal.sdmxdl.desktop.PropertyFormats;
 import net.miginfocom.swing.MigLayout;
 import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
@@ -46,6 +47,7 @@ public final class JDriver extends JComponent {
         panel.add(new JLabel("Sources"), "skip");
         panel.add(new JScrollPane(sources), "span, growx, h 100");
 
+        properties.setCellRenderer(JLists.cellRendererOf((label, property) -> label.setText(PropertyFormats.toText(property))));
         panel.add(new JLabel("Properties"), "skip");
         panel.add(new JScrollPane(properties), "span, growx, h 100");
 

@@ -8,7 +8,6 @@ import ec.util.chart.swing.SwingColorSchemeSupport;
 import ec.util.grid.swing.AbstractGridModel;
 import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
-import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.*;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
@@ -109,7 +107,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         contentToolBar.add(Box.createHorizontalGlue());
 
         contentToolBar.add(new ButtonBuilder()
-                .action(OpenWebsiteCommand.INSTANCE
+                .action(BrowseCommand.ofURL(JDataSet::getWebsite)
                         .toAction(this)
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY))
                 .ikon(MDI_WEB)
@@ -282,97 +280,11 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         };
     }
 
-    private static final class OpenWebsiteCommand extends JCommand<JDataSet> {
-
-        public static final OpenWebsiteCommand INSTANCE = new OpenWebsiteCommand();
-
-        @Override
-        public boolean isEnabled(@NonNull JDataSet component) {
-            return Desktop.isDesktopSupported()
-                    && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-                    && getWebsite(component) != null;
-        }
-
-        @Override
-        public void execute(@NonNull JDataSet component) throws Exception {
-            URL website = getWebsite(component);
-            Desktop.getDesktop().browse(requireNonNull(website).toURI());
-        }
-
-        private URL getWebsite(JDataSet c) {
-            DataSetRef model = c.getModel();
-            if (model == null) return null;
-            WebSource source = c.getSdmxManager().getSources().get(model.getDataSourceRef().getSource());
-            return source != null ? source.getWebsite() : null;
-        }
+    private static URL getWebsite(JDataSet c) {
+        DataSetRef model = c.getModel();
+        if (model == null) return null;
+        WebSource source = c.getSdmxManager().getSources().get(model.getDataSourceRef().getSource());
+        if (source == null) return null;
+        return source.getWebsite();
     }
-
-//    private static final class CustomTooltip extends JLabel {
-//
-//        private Popup popup;
-//
-//        public CustomTooltip() {
-//            this.popup = null;
-//            setEnabled(false);
-//        }
-//
-//        public void enable(final JTimeSeriesChart chart) {
-//            updateColors(chart);
-//            chart.addPropertyChangeListener(evt -> {
-//                switch (evt.getPropertyName()) {
-//                    case JTimeSeriesChart.TOOLTIP_TRIGGER_PROPERTY:
-//                        if (popup != null) {
-//                            popup.hide();
-//                        }
-//                        break;
-//                    case JTimeSeriesChart.HOVERED_OBS_PROPERTY:
-//                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.SELECTION) {
-//                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getHoveredObs()));
-//                        }
-//                        break;
-//                    case JTimeSeriesChart.SELECTED_OBS_PROPERTY:
-//                        if (isEnabled() && chart.getTooltipTrigger() != TimeSeriesChart.DisplayTrigger.HOVERING) {
-//                            updateCustomTooltip(chart, chart.getObsExistPredicate().apply(chart.getSelectedObs()));
-//                        }
-//                        break;
-//                    case JTimeSeriesChart.COLOR_SCHEME_SUPPORT_PROPERTY:
-//                        updateColors(chart);
-//                        break;
-//                }
-//            });
-//        }
-//
-//        private void updateColors(JTimeSeriesChart chart) {
-//            ColorSchemeSupport<? extends Color> csc = chart.getColorSchemeSupport();
-//            setOpaque(true);
-//            setBackground(csc.getBackColor());
-//            setForeground(csc.getTextColor());
-//            setBorder(createCompoundBorder(createLineBorder(csc.getGridColor(), 1), createEmptyBorder(5, 5, 5, 5)));
-//        }
-//
-//        private void updateCustomTooltip(JTimeSeriesChart chart, boolean visible) {
-//            if (popup != null) {
-//                popup.hide();
-//            }
-//            if (visible) {
-//                Point p = MouseInfo.getPointerInfo().getLocation();
-//                popup = PopupFactory.getSharedInstance().getPopup(chart, getCustomTooltip(chart), p.x + 5, p.y + 5);
-//                popup.show();
-//            }
-//        }
-//
-//        private Component getCustomTooltip(JTimeSeriesChart chart) {
-//            ObsIndex o = chart.getHoveredObs();
-//            String serie = chart.getSeriesFormatter().apply(o.getSeries());
-//            String value = chart.getValueFormatter().apply(o);
-//            String period = chart.getPeriodFormatter().apply(o);
-//            boolean forecast = chart.getDashPredicate().apply(o);
-//            Color color = chart.getColorSchemeSupport().getLineColor(o.getSeries());
-////            setText("<html><b>" + serie + "</b><br>" + period + ": " + value);
-//            SingleSeries fixmeItem = (SingleSeries) chart.getClientProperty("fixme_item");
-//            setText(ObsFormats.getHtmlTooltipFormatter(fixmeItem.getDsd()).formatAsString(fixmeItem.getSeries().getObsList().get(o.getObs())));
-//            return this;
-//        }
-//    }
-
 }
