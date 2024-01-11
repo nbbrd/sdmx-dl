@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![PROVIDER] Add support of databases in PxWebDriver
+
 ## [3.0.0-beta.12] - 2023-10-16
 
 This is the twelfth beta release of **sdmx-dl**.  

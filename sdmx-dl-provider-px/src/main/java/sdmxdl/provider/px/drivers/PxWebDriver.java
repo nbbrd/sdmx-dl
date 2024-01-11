@@ -69,15 +69,14 @@ public final class PxWebDriver implements Driver {
                     .name("sv", "Statistikcentralen")
                     .name("fi", "Tilastokeskus")
                     .driver(PX_PXWEB)
-                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/StatFin/")
-                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/StatFin/")
+                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/")
+                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/")
                     .build())
             .build();
 
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
-                source.getId().toLowerCase(Locale.ROOT),
                 source.getEndpoint().toURL(),
                 RiHttpUtils.newClient(source, context)
         );
@@ -116,7 +115,7 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            return client.getMeta(flowRef.getId());
+            return client.getMeta(flowRef.getAgency(), flowRef.getId());
         }
 
         @Override
@@ -126,8 +125,8 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            Structure dsd = client.getMeta(flowRef.getId());
-            DataCursor dataCursor = client.getData(flowRef.getId(), dsd, query.getKey());
+            Structure dsd = client.getMeta(flowRef.getAgency(), flowRef.getId());
+            DataCursor dataCursor = client.getData(flowRef.getAgency(), flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -147,9 +146,9 @@ public final class PxWebDriver implements Driver {
 
         @NonNull List<Flow> getTables() throws IOException;
 
-        @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException;
+        @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
 
-        @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+        @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
     }
 
     @lombok.AllArgsConstructor
@@ -158,9 +157,6 @@ public final class PxWebDriver implements Driver {
         @lombok.Getter
         @lombok.NonNull
         private final Marker marker;
-
-        @lombok.NonNull
-        private final String dbId;
 
         @lombok.NonNull
         private final URL baseURL;
@@ -185,47 +181,74 @@ public final class PxWebDriver implements Driver {
             return Config.JSON_PARSER;
         }
 
-        @Override
-        public @NonNull List<Flow> getTables() throws IOException {
+        private List<Database> getDatabases() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, "?query=*&filter=*"))
+                    .query(baseURL)
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getTablesParser(response.getContentType())
+                return getDatabasesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
+        private TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
+            return Database.JSON_PARSER.andThen(Arrays::asList);
+        }
+
+        private List<Flow> getTables(Database db) throws IOException {
+            HttpRequest request = HttpRequest
+                    .builder()
+                    .query(new URL(baseURL, db.getDbId() + "/?query=*&filter=*"))
+                    .build();
+
+            try (HttpResponse response = client.send(request)) {
+                return getTablesParser(db.getDbId(), response.getContentType())
+                        .parseReader(response::getBodyAsReader);
+            }
+        }
+
+        @Override
+        public @NonNull List<Flow> getTables() throws IOException {
+            List<Flow> result = new ArrayList<>();
+            for (Database database : getDatabases()) {
+                try {
+                    result.addAll(getTables(database));
+                } catch (IOException ignore) {
+                }
+            }
+            return result;
+        }
+
+        private TextParser<List<Flow>> getTablesParser(String dbId, MediaType ignore) {
             return Table.JSON_PARSER
                     .andThen(tables -> Stream.of(tables).map(table -> table.toDataflow(dbId)).collect(toList()));
         }
 
         @Override
-        public @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, tableId))
+                    .query(new URL(baseURL, dbId + "/" + tableId))
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getMetaParser(tableId, response.getContentType())
+                return getMetaParser(dbId, tableId, response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
+        private TextParser<Structure> getMetaParser(String dbId, String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
                     .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(dbId, tableId, null)));
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, tableId))
+                    .query(new URL(baseURL, dbId + "/" + tableId))
                     .method(HttpMethod.POST)
                     .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
                     .build();
@@ -301,13 +324,13 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Structure getMeta(@NonNull String tableId) throws IOException, IllegalArgumentException {
-            return getIdOfMeta().with(tableId).load(cache, () -> delegate.getMeta(tableId), o -> ttl);
+        public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
+            return getIdOfMeta().with(dbId).with(tableId).load(cache, () -> delegate.getMeta(dbId, tableId), o -> ttl);
         }
 
         @Override
-        public @NonNull DataCursor getData(@NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
-            return delegate.getData(tableId, dsd, key);
+        public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
+            return delegate.getData(dbId, tableId, dsd, key);
         }
     }
 
@@ -416,21 +439,39 @@ public final class PxWebDriver implements Driver {
 
         static final TextParser<Config> JSON_PARSER = GsonIO.GsonParser
                 .builder(Config.class)
-                .deserializer(Config.class, new ConfigDeserializer())
+                .deserializer(Config.class, Config::deserialize)
                 .build();
-    }
 
-    @MightBeGenerated
-    private static final class ConfigDeserializer implements JsonDeserializer<Config> {
-
-        @Override
-        public Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        @MightBeGenerated
+        static Config deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new Config(
                     x.get("maxValues").getAsInt(),
                     x.get("maxCells").getAsInt(),
                     x.get("maxCalls").getAsInt(),
                     x.get("timeWindow").getAsInt()
+            );
+        }
+    }
+
+    @VisibleForTesting
+    @lombok.Value
+    static class Database {
+
+        String dbId;
+        String text;
+
+        static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
+                .builder(Database[].class)
+                .deserializer(Database.class, Database::deserialize)
+                .build();
+
+        @MightBeGenerated
+        static Database deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+            return new Database(
+                    GsonUtil.getAsString(obj, "dbid"),
+                    GsonUtil.getAsString(obj, "text")
             );
         }
     }
@@ -454,15 +495,11 @@ public final class PxWebDriver implements Driver {
 
         static final TextParser<Table[]> JSON_PARSER = GsonIO.GsonParser
                 .builder(Table[].class)
-                .deserializer(Table.class, new TableDeserializer())
+                .deserializer(Table.class, Table::deserialize)
                 .build();
-    }
 
-    @MightBeGenerated
-    private static final class TableDeserializer implements JsonDeserializer<Table> {
-
-        @Override
-        public Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        @MightBeGenerated
+        static Table deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject obj = json.getAsJsonObject();
             return new Table(
                     GsonUtil.getAsString(obj, "id"),
@@ -502,16 +539,12 @@ public final class PxWebDriver implements Driver {
 
         static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
                 .builder(TableMeta.class)
-                .deserializer(TableMeta.class, new TableMetaDeserializer())
-                .deserializer(TableVariable.class, new TableVariableDeserializer())
+                .deserializer(TableMeta.class, TableMeta::deserialize)
+                .deserializer(TableVariable.class, TableVariable::deserialize)
                 .build();
-    }
 
-    @MightBeGenerated
-    private static final class TableMetaDeserializer implements JsonDeserializer<TableMeta> {
-
-        @Override
-        public TableMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        @MightBeGenerated
+        static TableMeta deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             JsonArray y = x.getAsJsonArray("variables");
             return new TableMeta(
@@ -543,13 +576,9 @@ public final class PxWebDriver implements Driver {
                             .build())
                     .build();
         }
-    }
 
-    @MightBeGenerated
-    private static final class TableVariableDeserializer implements JsonDeserializer<TableVariable> {
-
-        @Override
-        public TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        @MightBeGenerated
+        static TableVariable deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject x = json.getAsJsonObject();
             return new TableVariable(
                     GsonUtil.getAsString(x, "code"),
@@ -584,15 +613,11 @@ public final class PxWebDriver implements Driver {
 
         static final TextFormatter<TableQuery> FORMATTER = GsonIO.GsonFormatter
                 .builder(TableQuery.class)
-                .serializer(TableQuery.class, new TableQuerySerializer())
+                .serializer(TableQuery.class, TableQuery::serialize)
                 .build();
-    }
 
-    @MightBeGenerated
-    private static final class TableQuerySerializer implements JsonSerializer<TableQuery> {
-
-        @Override
-        public JsonElement serialize(TableQuery src, Type typeOfSrc, JsonSerializationContext context) {
+        @MightBeGenerated
+        static JsonElement serialize(TableQuery src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject result = new JsonObject();
 
             JsonArray query = new JsonArray();
