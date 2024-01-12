@@ -1,15 +1,12 @@
 package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpMethod;
-import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.HttpResponse;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
+import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.TextFormatter;
@@ -34,6 +31,7 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
@@ -69,7 +67,7 @@ public final class PxWebDriver implements Driver {
                     .name("sv", "Statistikcentralen")
                     .name("fi", "Tilastokeskus")
                     .driver(PX_PXWEB)
-                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1/en/")
+                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1")
                     .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/")
                     .build())
             .build();
@@ -77,7 +75,7 @@ public final class PxWebDriver implements Driver {
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
-                source.getEndpoint().toURL(),
+                getBaseURL(source, languages),
                 RiHttpUtils.newClient(source, context)
         );
 
@@ -90,6 +88,18 @@ public final class PxWebDriver implements Driver {
         );
 
         return new PxWebConnection(cachedClient);
+    }
+
+    @VisibleForTesting
+    static @NonNull URL getBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws MalformedURLException {
+        String language = lookupLanguage(source.getNames().keySet(), languages);
+        return language != null ? URLQueryBuilder.of(source.getEndpoint().toURL()).path(language).build() : source.getEndpoint().toURL();
+    }
+
+    @VisibleForTesting
+    static @Nullable String lookupLanguage(@NonNull Set<String> available, @NonNull Languages requested) {
+        String result = requested.lookupTag(available);
+        return result != null ? result : available.stream().findFirst().orElse(null);
     }
 
     @lombok.AllArgsConstructor
@@ -200,7 +210,12 @@ public final class PxWebDriver implements Driver {
         private List<Flow> getTables(Database db) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, db.getDbId() + "/?query=*&filter=*"))
+                    .query(URLQueryBuilder
+                            .of(baseURL)
+                            .path(db.getDbId())
+                            .param("query", "*")
+                            .param("filter", "*")
+                            .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -230,7 +245,11 @@ public final class PxWebDriver implements Driver {
         public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, dbId + "/" + tableId))
+                    .query(URLQueryBuilder
+                            .of(baseURL)
+                            .path(dbId)
+                            .path(tableId)
+                            .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -248,7 +267,11 @@ public final class PxWebDriver implements Driver {
         public @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, dbId + "/" + tableId))
+                    .query(URLQueryBuilder
+                            .of(baseURL)
+                            .path(dbId)
+                            .path(tableId)
+                            .build())
                     .method(HttpMethod.POST)
                     .bodyOf(TableQuery.FORMATTER.formatToString(TableQuery.fromDataStructureAndKey(dsd, key)))
                     .build();

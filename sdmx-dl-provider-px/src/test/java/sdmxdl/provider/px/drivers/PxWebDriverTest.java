@@ -2,19 +2,24 @@ package sdmxdl.provider.px.drivers;
 
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Languages;
 import sdmxdl.StructureRef;
+import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
+import static sdmxdl.Languages.ANY;
+import static sdmxdl.provider.px.drivers.PxWebDriver.getBaseURL;
+import static sdmxdl.provider.px.drivers.PxWebDriver.lookupLanguage;
 
 public class PxWebDriverTest {
 
@@ -27,6 +32,13 @@ public class PxWebDriverTest {
     public void testConfig() throws IOException {
         assertThat(PxWebDriver.Config.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-config.json", UTF_8))
                 .isEqualTo(new PxWebDriver.Config(120000, 120000, 30, 10));
+    }
+
+    @Test
+    public void testDatabases() throws IOException {
+        assertThat(PxWebDriver.Database.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-databases.json", UTF_8))
+                .contains(new PxWebDriver.Database("SDG", "SDG"))
+                .hasSize(12);
     }
 
     @Test
@@ -75,4 +87,57 @@ public class PxWebDriverTest {
 //        try (Reader reader = getResourceAsBufferedReader(PxWebDriverTest.class, "doris-table-query.json", UTF_8).get()) {
 //        }
     }
+
+    @Test
+    public void testGetBaseURL() throws MalformedURLException {
+        WebSource empty = WebSource
+                .builder().id("").driver("")
+                .endpointOf("https://localhost/api")
+                .build();
+
+        assertThat(getBaseURL(empty, ANY)).hasToString("https://localhost/api");
+        assertThat(getBaseURL(empty, EN)).hasToString("https://localhost/api");
+        assertThat(getBaseURL(empty, FR_BE)).hasToString("https://localhost/api");
+        assertThat(getBaseURL(empty, NL)).hasToString("https://localhost/api");
+
+        WebSource en = empty.toBuilder().name("en", "").build();
+
+        assertThat(getBaseURL(en, ANY)).hasToString("https://localhost/api/en");
+        assertThat(getBaseURL(en, EN)).hasToString("https://localhost/api/en");
+        assertThat(getBaseURL(en, FR_BE)).hasToString("https://localhost/api/en");
+        assertThat(getBaseURL(en, NL)).hasToString("https://localhost/api/en");
+
+        WebSource fr = empty.toBuilder().name("fr", "").build();
+
+        assertThat(getBaseURL(fr, ANY)).hasToString("https://localhost/api/fr");
+        assertThat(getBaseURL(fr, EN)).hasToString("https://localhost/api/fr");
+        assertThat(getBaseURL(fr, FR_BE)).hasToString("https://localhost/api/fr");
+        assertThat(getBaseURL(fr, NL)).hasToString("https://localhost/api/fr");
+    }
+
+    @Test
+    public void testLookupLanguage() {
+        assertThat(lookupLanguage(emptySet(), ANY)).isNull();
+        assertThat(lookupLanguage(emptySet(), EN)).isNull();
+        assertThat(lookupLanguage(emptySet(), FR_BE)).isNull();
+        assertThat(lookupLanguage(emptySet(), NL)).isNull();
+
+        assertThat(lookupLanguage(setOf("en", "fr"), ANY)).isEqualTo("en");
+        assertThat(lookupLanguage(setOf("en", "fr"), EN)).isEqualTo("en");
+        assertThat(lookupLanguage(setOf("en", "fr"), FR_BE)).isEqualTo("fr");
+        assertThat(lookupLanguage(setOf("en", "fr"), NL)).isEqualTo("en");
+
+        assertThat(lookupLanguage(setOf("fr", "en"), ANY)).isEqualTo("fr");
+        assertThat(lookupLanguage(setOf("fr", "en"), EN)).isEqualTo("en");
+        assertThat(lookupLanguage(setOf("fr", "en"), FR_BE)).isEqualTo("fr");
+        assertThat(lookupLanguage(setOf("fr", "en"), NL)).isEqualTo("fr");
+    }
+
+    private static <T> Set<T> setOf(T... values) {
+        return new LinkedHashSet<>(Arrays.asList(values));
+    }
+
+    private static final Languages EN = Languages.parse("en");
+    private static final Languages FR_BE = Languages.parse("fr-BE");
+    private static final Languages NL = Languages.parse("nl");
 }

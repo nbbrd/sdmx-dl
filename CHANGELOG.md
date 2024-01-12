@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - ![PROVIDER] Add support of databases in PxWebDriver
+- ![PROVIDER] Add parsing of language in PxWebDriver
 - ![GRPC] Add webservice transcoding in gRPC
 
 ## [3.0.0-beta.12] - 2023-10-16

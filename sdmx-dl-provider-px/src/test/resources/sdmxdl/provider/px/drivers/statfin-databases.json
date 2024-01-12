@@ -1,0 +1,50 @@
+[
+  {
+    "dbid": "Check",
+    "text": "Check"
+  },
+  {
+    "dbid": "Explorer",
+    "text": "Explorer"
+  },
+  {
+    "dbid": "Hyvinvointialueet",
+    "text": "Hyvinvointialueet"
+  },
+  {
+    "dbid": "Kokeelliset_tilastot",
+    "text": "Kokeelliset_tilastot"
+  },
+  {
+    "dbid": "Kuntien_avainluvut",
+    "text": "Kuntien_avainluvut"
+  },
+  {
+    "dbid": "Kuntien_talous_ja_toiminta",
+    "text": "Kuntien_talous_ja_toiminta"
+  },
+  {
+    "dbid": "Maahanmuuttajat_ja_kotoutuminen",
+    "text": "Maahanmuuttajat_ja_kotoutuminen"
+  },
+  {
+    "dbid": "NOVI-fi",
+    "text": "NOVI-fi"
+  },
+  {
+    "dbid": "Postinumeroalueittainen_avoin_tieto",
+    "text": "Postinumeroalueittainen_avoin_tieto"
+  },
+  {
+    "dbid": "SDG",
+    "text": "SDG"
+  },
+  {
+    "dbid": "StatFin",
+    "text": "StatFin"
+  },
+  {
+    "dbid": "StatFin_Passiivi",
+    "text": "StatFin_Passiivi"
+  }
+]
