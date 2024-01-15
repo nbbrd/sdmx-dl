@@ -1,6 +1,7 @@
 package sdmxdl.grpc;
 
 import io.quarkus.grpc.GrpcService;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
@@ -20,10 +21,13 @@ import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
 
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+
 @Path("/sdmx-dl")
-@Consumes("application/json")
-@Produces("application/json")
+@Consumes(APPLICATION_JSON)
+@Produces(APPLICATION_JSON)
 @GrpcService
+@RegisterForReflection
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     private final SdmxWebManager manager = GrpcWebFactory.loadManager();
