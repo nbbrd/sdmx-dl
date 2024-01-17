@@ -8,7 +8,6 @@ import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -18,8 +17,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 import static sdmxdl.Languages.ANY;
-import static sdmxdl.provider.px.drivers.PxWebDriver.getBaseURL;
-import static sdmxdl.provider.px.drivers.PxWebDriver.lookupLanguage;
+import static sdmxdl.provider.px.drivers.PxWebDriver.*;
 
 public class PxWebDriverTest {
 
@@ -89,30 +87,31 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testGetBaseURL() throws MalformedURLException {
+    public void testGetBaseURL() throws IOException {
         WebSource empty = WebSource
                 .builder().id("").driver("")
-                .endpointOf("https://localhost/api")
+                .endpointOf("https://localhost/_VERSION_/_LANG_")
+                .propertyOf(VERSIONS_PROPERTY, "v1")
                 .build();
 
-        assertThat(getBaseURL(empty, ANY)).hasToString("https://localhost/api");
-        assertThat(getBaseURL(empty, EN)).hasToString("https://localhost/api");
-        assertThat(getBaseURL(empty, FR_BE)).hasToString("https://localhost/api");
-        assertThat(getBaseURL(empty, NL)).hasToString("https://localhost/api");
+        assertThat(getBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
 
-        WebSource en = empty.toBuilder().name("en", "").build();
+        WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
 
-        assertThat(getBaseURL(en, ANY)).hasToString("https://localhost/api/en");
-        assertThat(getBaseURL(en, EN)).hasToString("https://localhost/api/en");
-        assertThat(getBaseURL(en, FR_BE)).hasToString("https://localhost/api/en");
-        assertThat(getBaseURL(en, NL)).hasToString("https://localhost/api/en");
+        assertThat(getBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(en, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getBaseURL(en, NL)).hasToString("https://localhost/v1/en");
 
-        WebSource fr = empty.toBuilder().name("fr", "").build();
+        WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
 
-        assertThat(getBaseURL(fr, ANY)).hasToString("https://localhost/api/fr");
-        assertThat(getBaseURL(fr, EN)).hasToString("https://localhost/api/fr");
-        assertThat(getBaseURL(fr, FR_BE)).hasToString("https://localhost/api/fr");
-        assertThat(getBaseURL(fr, NL)).hasToString("https://localhost/api/fr");
+        assertThat(getBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
+        assertThat(getBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
+        assertThat(getBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
+        assertThat(getBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
     }
 
     @Test

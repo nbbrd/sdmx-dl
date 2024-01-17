@@ -4,13 +4,14 @@ import com.google.gson.*;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBeGenerated;
+import nbbrd.design.MightBePromoted;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
+import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
-import nbbrd.io.text.BooleanProperty;
-import nbbrd.io.text.TextFormatter;
-import nbbrd.io.text.TextParser;
+import nbbrd.io.text.Formatter;
+import nbbrd.io.text.*;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
@@ -31,14 +32,16 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
@@ -46,10 +49,24 @@ import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 @ServiceProvider
 public final class PxWebDriver implements Driver {
 
-    private static final String PX_PXWEB = "px:pxweb";
+    static final String PX_PXWEB = "px:pxweb";
 
-    private static final BooleanProperty ENABLE =
+    static final Property<List<String>> VERSIONS_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".versions", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
+
+    static final Property<List<String>> LANGUAGES_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".languages", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
+
+    static final BooleanProperty ENABLE =
             BooleanProperty.of("enablePxWebDriver", false);
+
+    static final String DEFAULT_VERSION = "v1";
+
+    static final String VERSION_VARIABLE = UriTemplate.getVariable("version");
+
+    static final String DEFAULT_LANG = "en";
+
+    static final String LANGUAGE_VARIABLE = UriTemplate.getVariable("lang");
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
@@ -59,18 +76,25 @@ public final class PxWebDriver implements Driver {
             .availability(ENABLE::get)
             .connector(PxWebDriver::newConnection)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
+            .propertyOf(VERSIONS_PROPERTY)
+            .propertyOf(LANGUAGES_PROPERTY)
             .propertyOf(CACHE_TTL_PROPERTY)
-            .source(WebSource
-                    .builder()
-                    .id("STATFIN")
-                    .name("en", "Statistics Finland")
-                    .name("sv", "Statistikcentralen")
-                    .name("fi", "Tilastokeskus")
-                    .driver(PX_PXWEB)
-                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1")
-                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/")
-                    .build())
+//            .source(WebSource
+//                    .builder()
+//                    .id("STATFIN")
+//                    .name("en", "Statistics Finland")
+//                    .name("sv", "Statistikcentralen")
+//                    .name("fi", "Tilastokeskus")
+//                    .driver(PX_PXWEB)
+//                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1")
+//                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/")
+//                    .build())
+            .sources(IOSupplier.unchecked(PxWebDriver::loadDefaultSources).get())
             .build();
+
+    private static List<WebSource> loadDefaultSources() throws IOException {
+        return PxWebSource.getParser().parseResource(PxWebSource.class, "api.json", UTF_8);
+    }
 
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
@@ -91,13 +115,26 @@ public final class PxWebDriver implements Driver {
     }
 
     @VisibleForTesting
-    static @NonNull URL getBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws MalformedURLException {
-        String language = lookupLanguage(source.getNames().keySet(), languages);
-        return language != null ? URLQueryBuilder.of(source.getEndpoint().toURL()).path(language).build() : source.getEndpoint().toURL();
+    static @NonNull URL getBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+        try {
+            return UriTemplate.expand(source.getEndpoint(), getUriTemplateVariables(source, languages)).toURL();
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private static Map<String, String> getUriTemplateVariables(WebSource source, Languages languages) {
+        List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+        List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
+        String language = availableLanguages != null ? lookupLanguage(availableLanguages, languages) : null;
+        Map<String, String> result = new HashMap<>();
+        result.put(VERSION_VARIABLE, versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION);
+        result.put(LANGUAGE_VARIABLE, language != null ? language : DEFAULT_LANG);
+        return result;
     }
 
     @VisibleForTesting
-    static @Nullable String lookupLanguage(@NonNull Set<String> available, @NonNull Languages requested) {
+    static @Nullable String lookupLanguage(@NonNull Collection<String> available, @NonNull Languages requested) {
         String result = requested.lookupTag(available);
         return result != null ? result : available.stream().findFirst().orElse(null);
     }
@@ -178,7 +215,7 @@ public final class PxWebDriver implements Driver {
         public @NonNull Config getConfig() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
-                    .query(new URL(baseURL, "?config"))
+                    .query(URLQueryBuilder.of(baseURL).param("config").build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
@@ -663,5 +700,15 @@ public final class PxWebDriver implements Driver {
 
             return result;
         }
+    }
+
+    @MightBePromoted
+    private static Stream<String> split(CharSequence text) {
+        return Stream.of(text.toString().split(",", -1));
+    }
+
+    @MightBePromoted
+    private static String join(Stream<CharSequence> stream) {
+        return stream.collect(Collectors.joining(","));
     }
 }
