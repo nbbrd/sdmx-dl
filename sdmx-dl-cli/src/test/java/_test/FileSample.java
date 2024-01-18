@@ -1,8 +1,9 @@
 package _test;
 
+import sdmxdl.format.WebSources;
+import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.web.WebSource;
-import sdmxdl.format.xml.XmlWebSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -10,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import static java.util.Collections.singletonList;
 
 @lombok.experimental.UtilityClass
 public class FileSample {
@@ -28,7 +27,7 @@ public class FileSample {
         SdmxXmlSources.ECB_DATA_STRUCTURE.copyTo(struct);
 
         File source = Files.createFile(temp.resolve("source.xml")).toFile();
-        XmlWebSource.getFormatter().formatFile(singletonList(sourceOf("sample", data, struct)), source);
+        XmlWebSource.getFormatter().formatFile(WebSources.builder().source(sourceOf("sample", data, struct)).build(), source);
 
         return source;
     }

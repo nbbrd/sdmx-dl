@@ -5,6 +5,7 @@ import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
+import sdmxdl.format.WebSources;
 import sdmxdl.web.MonitorReports;
 
 @lombok.Builder(toBuilder = true)
@@ -29,6 +30,12 @@ public final class PersistenceSupport implements Persistence {
     private final FileFormatter<DataRepository> dataRepositoryFormatter;
 
     @lombok.NonNull
+    private final FileParser<WebSources> webSourcesParser;
+
+    @lombok.NonNull
+    private final FileFormatter<WebSources> webSourcesFormatter;
+
+    @lombok.NonNull
     private final String fileExtension;
 
     @Override
@@ -43,11 +50,16 @@ public final class PersistenceSupport implements Persistence {
 
     @Override
     public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
-        return new FileFormat<>(monitorReportsParser, monitorReportsFormatter, fileExtension);
+        return FileFormat.of(monitorReportsParser, monitorReportsFormatter, fileExtension);
     }
 
     @Override
     public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
-        return new FileFormat<>(dataRepositoryParser, dataRepositoryFormatter, fileExtension);
+        return FileFormat.of(dataRepositoryParser, dataRepositoryFormatter, fileExtension);
+    }
+
+    @Override
+    public @NonNull FileFormat<WebSources> getWebSourcesFormat() throws IllegalArgumentException {
+        return FileFormat.of(webSourcesParser, webSourcesFormatter, fileExtension);
     }
 }

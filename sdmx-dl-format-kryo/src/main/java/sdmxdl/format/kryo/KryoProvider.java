@@ -5,6 +5,7 @@ import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
+import sdmxdl.format.WebSources;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 
@@ -34,5 +35,10 @@ public final class KryoProvider implements Persistence {
     @Override
     public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
         return FileFormat.of(new KryoFileFormat<>(DataRepository.class), ".kryo");
+    }
+
+    @Override
+    public @NonNull FileFormat<WebSources> getWebSourcesFormat() throws IllegalArgumentException {
+        return FileFormat.of(new KryoFileFormat<>(WebSources.class), ".kryo");
     }
 }

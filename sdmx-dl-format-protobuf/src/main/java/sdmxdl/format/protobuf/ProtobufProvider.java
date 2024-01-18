@@ -4,6 +4,7 @@ import com.google.protobuf.MessageLite;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.format.protobuf.web.MonitorReports;
+import sdmxdl.format.protobuf.web.WebSources;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
 
@@ -26,6 +27,8 @@ public final class ProtobufProvider implements Persistence {
             .monitorReportsFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufMonitors::fromMonitorReports))
             .dataRepositoryParser(onParsingStream(DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository))
             .dataRepositoryFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufRepositories::fromDataRepository))
+            .webSourcesParser(onParsingStream(WebSources::parseFrom).andThen(ProtobufSources::toWebSources))
+            .webSourcesFormatter(onFormattingStream(this::writeProtobuf).compose(ProtobufSources::fromWebSources))
             .fileExtension(".protobuf")
             .build();
 

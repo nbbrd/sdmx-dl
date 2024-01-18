@@ -124,7 +124,7 @@ public class DiskCacheTest {
 
     private static FileFormat<DataRepository> newFakeFileFormat() {
         Map<String, DataRepository> content = new HashMap<>();
-        return new FileFormat<>(
+        return FileFormat.of(
                 FileParser.onParsingStream(stream -> parseFake(content, stream)),
                 FileFormatter.onFormattingStream((value, stream) -> formatFake(content, stream, value)),
                 ".dat"

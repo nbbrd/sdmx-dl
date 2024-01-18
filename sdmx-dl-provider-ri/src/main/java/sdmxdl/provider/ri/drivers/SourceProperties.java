@@ -24,6 +24,6 @@ public class SourceProperties {
     @ReturnNew
     public static List<WebSource> loadCustomSources() throws IOException {
         File sourcesFile = SourceProperties.SOURCES.get(key -> PropertiesSupport.getProperty(emptyMap(), key));
-        return sourcesFile != null ? XmlWebSource.getParser().parseFile(sourcesFile) : emptyList();
+        return sourcesFile != null ? XmlWebSource.getParser().parseFile(sourcesFile).getSources() : emptyList();
     }
 }

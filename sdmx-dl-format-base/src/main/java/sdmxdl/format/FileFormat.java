@@ -1,5 +1,6 @@
 package sdmxdl.format;
 
+import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.FileFormatter;
@@ -8,6 +9,7 @@ import nbbrd.io.FileParser;
 import java.io.IOException;
 
 @lombok.Value
+@lombok.RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileFormat<T> {
 
     @lombok.NonNull
@@ -18,6 +20,10 @@ public class FileFormat<T> {
 
     @lombok.NonNull
     String fileExtension;
+
+    public static <T> @NonNull FileFormat<T> of(@NonNull FileParser<T> parser, @NonNull FileFormatter<T> formatter, @NonNull String fileExtension) {
+        return new FileFormat<>(parser, formatter, fileExtension);
+    }
 
     public static <T, F extends FileParser<T> & FileFormatter<T>> @NonNull FileFormat<T> of(@NonNull F fileFormat, @NonNull String fileExtension) {
         return new FileFormat<>(fileFormat, fileFormat, fileExtension);

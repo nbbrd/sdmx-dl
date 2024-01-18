@@ -7,7 +7,8 @@ import com.google.gson.JsonParseException;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.text.TextParser;
+import nbbrd.io.FileParser;
+import sdmxdl.format.WebSources;
 import sdmxdl.web.WebSource;
 
 import java.lang.reflect.Type;
@@ -17,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
 
@@ -26,8 +28,8 @@ public final class PxWebSource {
         // static class
     }
 
-    public static TextParser<List<WebSource>> getParser() {
-        return PARSER.andThen(Apis::toSources);
+    public static FileParser<WebSources> getParser() {
+        return PARSER.andThen(Apis::toSources).asFileParser(UTF_8);
     }
 
     private static final GsonIO.GsonParser<Apis> PARSER =
@@ -43,11 +45,13 @@ public final class PxWebSource {
         Map<String, Api> apis;
         Map<String, Api> local_apis;
 
-        @NonNull List<WebSource> toSources() {
-            return apis.entrySet()
+        @NonNull WebSources toSources() {
+            WebSources.Builder result = WebSources.builder();
+            apis.entrySet()
                     .stream()
-                    .map(apiById -> apiById.getValue().toSource(apiById.getKey()))
-                    .collect(toList());
+                    .map(apiByHost -> apiByHost.getValue().toSource(apiByHost.getKey()))
+                    .forEach(result::source);
+            return result.build();
         }
     }
 

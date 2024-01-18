@@ -1,18 +1,20 @@
 package sdmxdl.provider.px.drivers;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.format.WebSources;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
 public class PxWebSourceTest {
 
     @Test
     public void test() throws IOException {
-        assertThat(PxWebSource.getParser().parseResource(PxWebSource.class, "api.json", UTF_8))
+        assertThat(PxWebSource.getParser().parseResource(PxWebSource.class, "api.json"))
+                .extracting(WebSources::getSources, list(WebSource.class))
                 .hasSize(30)
                 .element(0)
                 .isEqualTo(WebSource

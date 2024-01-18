@@ -40,7 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
@@ -93,7 +92,7 @@ public final class PxWebDriver implements Driver {
             .build();
 
     private static List<WebSource> loadDefaultSources() throws IOException {
-        return PxWebSource.getParser().parseResource(PxWebSource.class, "api.json", UTF_8);
+        return PxWebSource.getParser().parseResource(PxWebSource.class, "api.json").getSources();
     }
 
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {

@@ -4,8 +4,9 @@ import _test.CommandWatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
-import sdmxdl.web.WebSource;
+import sdmxdl.format.WebSources;
 import sdmxdl.format.xml.XmlWebSource;
+import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static picocli.CommandLine.ExitCode.OK;
 import static picocli.CommandLine.ExitCode.SOFTWARE;
@@ -59,7 +59,7 @@ public class WebOptionsTest {
     private File newValidFile(Path temp) throws IOException {
         File result = Files.createFile(temp.resolve("validFile")).toFile();
         WebSource source = WebSource.builder().id("xyz").driver("dummy").endpointOf("http://localhost").build();
-        XmlWebSource.getFormatter().formatFile(singletonList(source), result);
+        XmlWebSource.getFormatter().formatFile(WebSources.builder().source(source).build(), result);
         return result;
     }
 }

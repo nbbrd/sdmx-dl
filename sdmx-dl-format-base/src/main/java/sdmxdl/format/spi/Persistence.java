@@ -8,6 +8,7 @@ import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import sdmxdl.DataRepository;
 import sdmxdl.format.FileFormat;
+import sdmxdl.format.WebSources;
 import sdmxdl.web.MonitorReports;
 
 @ServiceDefinition(
@@ -24,6 +25,8 @@ public interface Persistence {
     @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException;
 
     @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException;
+
+    @NonNull FileFormat<WebSources> getWebSourcesFormat() throws IllegalArgumentException;
 
     int UNKNOWN_PERSISTENCE_RANK = -1;
 

@@ -18,6 +18,7 @@ package sdmxdl.format.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
 import org.junit.jupiter.api.Test;
+import sdmxdl.format.WebSources;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
 /**
  * @author Philippe Charles
@@ -78,12 +80,13 @@ public class XmlWebSourceTest {
     @Test
     public void testParser() throws IOException {
         assertThat(XmlWebSource.getParser().parseChars(stringSample))
+                .extracting(WebSources::getSources, list(WebSource.class))
                 .containsExactlyElementsOf(sample);
     }
 
     @Test
     public void testFormatter() throws IOException {
-        assertThat(XmlStringPrettyFormatter.xmlPrettyFormat(XmlWebSource.getFormatter().formatToString(sample)))
+        assertThat(XmlStringPrettyFormatter.xmlPrettyFormat(XmlWebSource.getFormatter().formatToString(WebSources.builder().sources(sample).build())))
                 .isEqualToIgnoringNewLines(stringSample);
     }
 }
