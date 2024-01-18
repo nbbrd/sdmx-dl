@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 import sdmxdl.format.WebSources;
-import sdmxdl.format.xml.XmlWebSource;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.WebSource;
 
 import java.io.File;
@@ -53,13 +53,16 @@ public class WebOptionsTest {
     }
 
     private File newInvalidFile(Path temp) throws IOException {
-        return Files.createFile(temp.resolve("invalidFile")).toFile();
+        return Files.createFile(temp.resolve("invalidFile.boom")).toFile();
     }
 
     private File newValidFile(Path temp) throws IOException {
-        File result = Files.createFile(temp.resolve("validFile")).toFile();
+        File result = Files.createFile(temp.resolve("validFile.xml")).toFile();
         WebSource source = WebSource.builder().id("xyz").driver("dummy").endpointOf("http://localhost").build();
-        XmlWebSource.getFormatter().formatFile(WebSources.builder().source(source).build(), result);
+        SourceProperties
+                .getFileFormat(result)
+                .orElseThrow(IOException::new)
+                .formatPath(WebSources.builder().source(source).build(), result.toPath());
         return result;
     }
 }

@@ -1,13 +1,12 @@
 package sdmxdl.format.spi;
 
 import lombok.NonNull;
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
 import sdmxdl.DataRepository;
-import sdmxdl.format.FileFormat;
+import sdmxdl.format.ServiceSupport;
 import sdmxdl.format.WebSources;
 import sdmxdl.web.MonitorReports;
 
+@ServiceSupport
 @lombok.Builder(toBuilder = true)
 public final class PersistenceSupport implements Persistence {
 
@@ -18,25 +17,16 @@ public final class PersistenceSupport implements Persistence {
     private final int rank = UNKNOWN_PERSISTENCE_RANK;
 
     @lombok.NonNull
-    private final FileParser<MonitorReports> monitorReportsParser;
+    @lombok.Builder.Default
+    private final FileFormat<MonitorReports> monitor = FileFormat.noOp();
 
     @lombok.NonNull
-    private final FileFormatter<MonitorReports> monitorReportsFormatter;
+    @lombok.Builder.Default
+    private final FileFormat<DataRepository> repository = FileFormat.noOp();
 
     @lombok.NonNull
-    private final FileParser<DataRepository> dataRepositoryParser;
-
-    @lombok.NonNull
-    private final FileFormatter<DataRepository> dataRepositoryFormatter;
-
-    @lombok.NonNull
-    private final FileParser<WebSources> webSourcesParser;
-
-    @lombok.NonNull
-    private final FileFormatter<WebSources> webSourcesFormatter;
-
-    @lombok.NonNull
-    private final String fileExtension;
+    @lombok.Builder.Default
+    private final FileFormat<WebSources> sources = FileFormat.noOp();
 
     @Override
     public @NonNull String getPersistenceId() {
@@ -49,17 +39,17 @@ public final class PersistenceSupport implements Persistence {
     }
 
     @Override
-    public @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException {
-        return FileFormat.of(monitorReportsParser, monitorReportsFormatter, fileExtension);
+    public @NonNull FileFormat<MonitorReports> getMonitorFormat() {
+        return monitor;
     }
 
     @Override
-    public @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException {
-        return FileFormat.of(dataRepositoryParser, dataRepositoryFormatter, fileExtension);
+    public @NonNull FileFormat<DataRepository> getRepositoryFormat() {
+        return repository;
     }
 
     @Override
-    public @NonNull FileFormat<WebSources> getWebSourcesFormat() throws IllegalArgumentException {
-        return FileFormat.of(webSourcesParser, webSourcesFormatter, fileExtension);
+    public @NonNull FileFormat<WebSources> getSourcesFormat() {
+        return sources;
     }
 }

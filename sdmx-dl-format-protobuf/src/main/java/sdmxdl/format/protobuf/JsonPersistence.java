@@ -3,6 +3,7 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.util.JsonFormat;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.format.spi.FileFormatSupport;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceSupport;
 
@@ -15,7 +16,7 @@ import static nbbrd.io.text.TextParser.onParsingReader;
 
 @DirectImpl
 @ServiceProvider
-public final class JsonProvider implements Persistence {
+public final class JsonPersistence implements Persistence {
 
     private final JsonFormat.Parser parser = JsonFormat.parser();
 
@@ -26,13 +27,30 @@ public final class JsonProvider implements Persistence {
             .builder()
             .id("JSON")
             .rank(200)
-            .monitorReportsParser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
-            .monitorReportsFormatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
-            .dataRepositoryParser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
-            .dataRepositoryFormatter(onFormattingWriter(formatter::appendTo).compose(ProtobufRepositories::fromDataRepository).asFileFormatter(UTF_8))
-            .webSourcesParser(onParsingReader(this::parseJsonSources).andThen(ProtobufSources::toWebSources).asFileParser(UTF_8))
-            .webSourcesFormatter(onFormattingWriter(formatter::appendTo).compose(ProtobufSources::fromWebSources).asFileFormatter(UTF_8))
-            .fileExtension(".json")
+            .monitor(FileFormatSupport
+                    .builder(sdmxdl.web.MonitorReports.class)
+                    .parsing(true)
+                    .parser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
+                    .formatting(true)
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
+                    .extension(".json")
+                    .build())
+            .repository(FileFormatSupport
+                    .builder(sdmxdl.DataRepository.class)
+                    .parsing(true)
+                    .parser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
+                    .formatting(true)
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufRepositories::fromDataRepository).asFileFormatter(UTF_8))
+                    .extension(".json")
+                    .build())
+            .sources(FileFormatSupport
+                    .builder(sdmxdl.format.WebSources.class)
+                    .parsing(true)
+                    .parser(onParsingReader(this::parseJsonSources).andThen(ProtobufSources::toWebSources).asFileParser(UTF_8))
+                    .formatting(true)
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufSources::fromWebSources).asFileFormatter(UTF_8))
+                    .extension(".json")
+                    .build())
             .build();
 
     private sdmxdl.format.protobuf.web.MonitorReports parseJsonReports(Reader reader) throws IOException {

@@ -7,8 +7,9 @@ import com.google.gson.JsonParseException;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
-import nbbrd.io.FileParser;
 import sdmxdl.format.WebSources;
+import sdmxdl.format.spi.FileFormat;
+import sdmxdl.format.spi.FileFormatSupport;
 import sdmxdl.web.WebSource;
 
 import java.lang.reflect.Type;
@@ -22,21 +23,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static sdmxdl.provider.px.drivers.PxWebDriver.*;
 
-public final class PxWebSource {
+final class PxWebSourcesFormat implements FileFormat<WebSources> {
 
-    private PxWebSource() {
-        // static class
-    }
+    public static final PxWebSourcesFormat INSTANCE = new PxWebSourcesFormat();
 
-    public static FileParser<WebSources> getParser() {
-        return PARSER.andThen(Apis::toSources).asFileParser(UTF_8);
-    }
-
-    private static final GsonIO.GsonParser<Apis> PARSER =
-            GsonIO.GsonParser
-                    .builder(Apis.class)
-                    .deserializer(Api.class, Api::deserialize)
-                    .build();
+    @lombok.experimental.Delegate
+    private final FileFormat<WebSources> support = FileFormatSupport
+            .builder(WebSources.class)
+            .parsing(true)
+            .parser(Apis.JSON_PARSER.andThen(Apis::toSources).asFileParser(UTF_8))
+            .extension(".json")
+            .build();
 
     @VisibleForTesting
     @lombok.Value
@@ -53,6 +50,12 @@ public final class PxWebSource {
                     .forEach(result::source);
             return result.build();
         }
+
+        private static final GsonIO.GsonParser<Apis> JSON_PARSER =
+                GsonIO.GsonParser
+                        .builder(Apis.class)
+                        .deserializer(Api.class, Api::deserialize)
+                        .build();
     }
 
     @VisibleForTesting

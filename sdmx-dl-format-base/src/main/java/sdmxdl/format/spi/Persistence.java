@@ -2,12 +2,12 @@ package sdmxdl.format.spi;
 
 import internal.sdmxdl.format.NoOpPersistence;
 import lombok.NonNull;
+import nbbrd.design.StaticFactoryMethod;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import sdmxdl.DataRepository;
-import sdmxdl.format.FileFormat;
 import sdmxdl.format.WebSources;
 import sdmxdl.web.MonitorReports;
 
@@ -22,14 +22,15 @@ public interface Persistence {
     @ServiceSorter(reverse = true)
     int getPersistenceRank();
 
-    @NonNull FileFormat<MonitorReports> getMonitorReportsFormat() throws IllegalArgumentException;
+    @NonNull FileFormat<MonitorReports> getMonitorFormat();
 
-    @NonNull FileFormat<DataRepository> getDataRepositoryFormat() throws IllegalArgumentException;
+    @NonNull FileFormat<DataRepository> getRepositoryFormat();
 
-    @NonNull FileFormat<WebSources> getWebSourcesFormat() throws IllegalArgumentException;
+    @NonNull FileFormat<WebSources> getSourcesFormat();
 
     int UNKNOWN_PERSISTENCE_RANK = -1;
 
+    @StaticFactoryMethod
     static @NonNull Persistence noOp() {
         return NoOpPersistence.INSTANCE;
     }

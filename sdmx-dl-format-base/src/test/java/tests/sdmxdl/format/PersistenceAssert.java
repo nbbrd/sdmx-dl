@@ -16,11 +16,10 @@
  */
 package tests.sdmxdl.format;
 
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;
-import sdmxdl.format.FileFormat;
+import sdmxdl.format.WebSources;
+import sdmxdl.format.spi.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.api.RepoSamples;
@@ -29,19 +28,22 @@ import tests.sdmxdl.api.TckUtil;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.time.Duration;
 
 @lombok.experimental.UtilityClass
-public class FileFormattingAssert {
+public class PersistenceAssert {
 
     public void assertCompliance(Persistence formatting) {
         TckUtil.run(s -> assertCompliance(s, formatting));
     }
 
     public void assertCompliance(SoftAssertions s, Persistence formatting) throws Exception {
-        checkDataRepository(s, formatting.getDataRepositoryFormat());
-        checkMonitorReports(s, formatting.getMonitorReportsFormat());
+        checkDataRepository(s, formatting.getRepositoryFormat());
+        checkMonitorReports(s, formatting.getMonitorFormat());
+        checkWebSources(s, formatting.getSourcesFormat());
     }
 
     private void checkDataRepository(SoftAssertions s, FileFormat<DataRepository> fileFormat) throws IOException {
@@ -76,17 +78,60 @@ public class FileFormattingAssert {
         assertValid(s, fileFormat, normal);
     }
 
-    private static <T> void assertValid(SoftAssertions s, FileFormat<T> fileFormat, T data) throws IOException {
-        s.assertThat(storeLoad(fileFormat.getParser(), fileFormat.getFormatter(), data))
-                .isEqualTo(data)
-                .isNotSameAs(data);
+    private void checkWebSources(SoftAssertions s, FileFormat<WebSources> fileFormat) throws IOException {
+        assertValid(s, fileFormat, WebSources.builder().build());
+        assertValid(s, fileFormat, WebSources.builder()
+                .source(RepoSamples.BASIC_SOURCE)
+                .source(RepoSamples.FULL_SOURCE)
+                .build());
     }
 
-    private static <T> T storeLoad(FileParser<T> parser, FileFormatter<T> formatter, T data) throws IOException {
+    private static <T> void assertValid(SoftAssertions s, FileFormat<T> fileFormat, T data) throws IOException {
+        if (fileFormat.isFormattingSupported()) {
+            if (fileFormat.isParsingSupported()) {
+                // path
+                s.assertThat(storeLoadPath(fileFormat, data))
+                        .isEqualTo(data)
+                        .isNotSameAs(data);
+                // stream
+                s.assertThat(storeLoadStream(fileFormat, data))
+                        .isEqualTo(data)
+                        .isNotSameAs(data);
+            } else {
+                // path
+                Path tmpFile = Files.createTempFile("store", "load");
+                try {
+                    s.assertThatCode(() -> fileFormat.formatPath(data, tmpFile)).doesNotThrowAnyException();
+                    s.assertThatIOException().isThrownBy(() -> fileFormat.parsePath(tmpFile));
+                } finally {
+                    Files.deleteIfExists(tmpFile);
+                }
+                // stream
+                try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+                    s.assertThatCode(() -> fileFormat.formatStream(data, output)).doesNotThrowAnyException();
+                    try (ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray())) {
+                        s.assertThatIOException().isThrownBy(() -> fileFormat.parseStream(input));
+                    }
+                }
+            }
+        }
+    }
+
+    private static <T> T storeLoadPath(FileFormat<T> fileFormat, T data) throws IOException {
+        Path tmpFile = Files.createTempFile("store", "load");
+        try {
+            fileFormat.formatPath(data, tmpFile);
+            return fileFormat.parsePath(tmpFile);
+        } finally {
+            Files.deleteIfExists(tmpFile);
+        }
+    }
+
+    private static <T> T storeLoadStream(FileFormat<T> fileFormat, T data) throws IOException {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            formatter.formatStream(data, output);
+            fileFormat.formatStream(data, output);
             try (ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray())) {
-                return parser.parseStream(input);
+                return fileFormat.parseStream(input);
             }
         }
     }

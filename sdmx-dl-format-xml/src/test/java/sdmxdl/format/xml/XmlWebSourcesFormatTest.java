@@ -21,17 +21,20 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.format.WebSources;
 import sdmxdl.web.WebSource;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
 /**
  * @author Philippe Charles
  */
-public class XmlWebSourceTest {
+public class XmlWebSourcesFormatTest {
 
     private final List<WebSource> sample = Arrays.asList(
             WebSource
@@ -79,14 +82,19 @@ public class XmlWebSourceTest {
 
     @Test
     public void testParser() throws IOException {
-        assertThat(XmlWebSource.getParser().parseChars(stringSample))
-                .extracting(WebSources::getSources, list(WebSource.class))
-                .containsExactlyElementsOf(sample);
+        try (ByteArrayInputStream stream = new ByteArrayInputStream(stringSample.getBytes(UTF_8))) {
+            assertThat(XmlWebSourcesFormat.INSTANCE.parseStream(stream))
+                    .extracting(WebSources::getSources, list(WebSource.class))
+                    .containsExactlyElementsOf(sample);
+        }
     }
 
     @Test
     public void testFormatter() throws IOException {
-        assertThat(XmlStringPrettyFormatter.xmlPrettyFormat(XmlWebSource.getFormatter().formatToString(WebSources.builder().sources(sample).build())))
-                .isEqualToIgnoringNewLines(stringSample);
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+            XmlWebSourcesFormat.INSTANCE.formatStream(WebSources.builder().sources(sample).build(), stream);
+            assertThat(XmlStringPrettyFormatter.xmlPrettyFormat(new String(stream.toByteArray(), UTF_8)))
+                    .isEqualToIgnoringNewLines(stringSample);
+        }
     }
 }

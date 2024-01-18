@@ -9,7 +9,7 @@ import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.format.spi.FileFormat;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
+
+import static sdmxdl.format.spi.FileFormatSupport.*;
 
 @ServiceSupport(FileCaching.class)
 @ServiceSupport(WebCaching.class)
@@ -34,10 +36,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     private final @NonNull Path root = DiskCache.SDMXDL_TMP_DIR;
 
     @lombok.Builder.Default
-    private final @NonNull FileFormat<DataRepository> repositoryFormat = FileFormat.noOp();
+    private final @NonNull FileFormat<DataRepository> repository = FileFormat.noOp();
 
     @lombok.Builder.Default
-    private final @NonNull FileFormat<MonitorReports> monitorFormat = FileFormat.noOp();
+    private final @NonNull FileFormat<MonitorReports> monitor = FileFormat.noOp();
 
     @lombok.Builder.Default
     private final @NonNull Clock clock = Clock.systemDefaultZone();
@@ -70,7 +72,7 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
                 .root(root)
-                .format(FileFormat.lock(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat)))
+                .format(decorateFormat(repository))
                 .namePrefix("R")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getFileCachingId()) : null)
@@ -83,7 +85,7 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
                 .root(root)
-                .format(FileFormat.lock(noCompression ? repositoryFormat : FileFormat.gzip(repositoryFormat)))
+                .format(decorateFormat(repository))
                 .namePrefix("D")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
@@ -96,7 +98,7 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         return new LockingCache<>(DiskCache
                 .<MonitorReports>builder()
                 .root(root)
-                .format(FileFormat.lock(noCompression ? monitorFormat : FileFormat.gzip(monitorFormat)))
+                .format(decorateFormat(monitor))
                 .namePrefix("M")
                 .clock(clock)
                 .onRead(onEvent != null ? onEvent.asConsumer(source, getWebCachingId()) : null)
@@ -114,12 +116,7 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         return Collections.emptyList();
     }
 
-    public static final class Builder {
-
-        public @NonNull Builder persistence(@NonNull Persistence persistence) {
-            repositoryFormat(persistence.getDataRepositoryFormat());
-            monitorFormat(persistence.getMonitorReportsFormat());
-            return this;
-        }
+    private <T> FileFormat<T> decorateFormat(FileFormat<T> format) {
+        return lock(noCompression ? wrap(format) : gzip(wrap(format)));
     }
 }

@@ -17,8 +17,9 @@
 package sdmxdl.format.xml;
 
 import nbbrd.io.xml.Stax;
-import nbbrd.io.xml.Xml;
 import sdmxdl.format.WebSources;
+import sdmxdl.format.spi.FileFormat;
+import sdmxdl.format.spi.FileFormatSupport;
 import sdmxdl.web.WebSource;
 
 import javax.xml.stream.XMLStreamException;
@@ -32,19 +33,19 @@ import java.util.Map;
  * @author Philippe Charles
  */
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
-@lombok.experimental.UtilityClass
-public final class XmlWebSource {
+final class XmlWebSourcesFormat implements FileFormat<WebSources> {
 
-    public static Xml.Parser<WebSources> getParser() {
-        return PARSER;
-    }
+    public static final XmlWebSourcesFormat INSTANCE = new XmlWebSourcesFormat();
 
-    public static Xml.Formatter<WebSources> getFormatter() {
-        return FORMATTER;
-    }
-
-    private static final Xml.Parser<WebSources> PARSER = Stax.StreamParser.valueOf(XmlWebSource::parseXml);
-    private static final Xml.Formatter<WebSources> FORMATTER = Stax.StreamFormatter.of(XmlWebSource::formatXml);
+    @lombok.experimental.Delegate
+    private final FileFormat<WebSources> support = FileFormatSupport
+            .builder(WebSources.class)
+            .parsing(true)
+            .parser(Stax.StreamParser.valueOf(XmlWebSourcesFormat::parseXml))
+            .formatting(true)
+            .formatter(Stax.StreamFormatter.of(XmlWebSourcesFormat::formatXml))
+            .extension(".xml")
+            .build();
 
     private static final String SOURCES_TAG = "sources";
     private static final String SOURCE_TAG = "source";

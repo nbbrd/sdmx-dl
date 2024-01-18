@@ -31,6 +31,7 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static nbbrd.io.Resource.newInputStream;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 @DirectImpl
@@ -92,7 +94,9 @@ public final class PxWebDriver implements Driver {
             .build();
 
     private static List<WebSource> loadDefaultSources() throws IOException {
-        return PxWebSource.getParser().parseResource(PxWebSource.class, "api.json").getSources();
+        try (InputStream stream = newInputStream(PxWebDriver.class, "api.json")) {
+            return PxWebSourcesFormat.INSTANCE.parseStream(stream).getSources();
+        }
     }
 
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {

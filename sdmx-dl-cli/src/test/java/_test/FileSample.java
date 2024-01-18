@@ -1,8 +1,8 @@
 package _test;
 
 import sdmxdl.format.WebSources;
-import sdmxdl.format.xml.XmlWebSource;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
+import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
@@ -20,16 +20,19 @@ public class FileSample {
     }
 
     public static File create(Path temp) throws IOException {
-        File data = Files.createFile(temp.resolve("data.xml")).toFile();
+        Path data = Files.createFile(temp.resolve("data.xml"));
         SdmxXmlSources.ECB_DATA.copyTo(data);
 
-        File struct = Files.createFile(temp.resolve("struct.xml")).toFile();
+        Path struct = Files.createFile(temp.resolve("struct.xml"));
         SdmxXmlSources.ECB_DATA_STRUCTURE.copyTo(struct);
 
-        File source = Files.createFile(temp.resolve("source.xml")).toFile();
-        XmlWebSource.getFormatter().formatFile(WebSources.builder().source(sourceOf("sample", data, struct)).build(), source);
+        Path source = Files.createFile(temp.resolve("source.xml"));
+        SourceProperties
+                .getFileFormat(source.toFile())
+                .orElseThrow(IOException::new)
+                .formatPath(WebSources.builder().source(sourceOf("sample", data.toFile(), struct.toFile())).build(), source);
 
-        return source;
+        return source.toFile();
     }
 
     private static WebSource sourceOf(String name, File data, File struct) {

@@ -23,17 +23,22 @@ import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.esotericsoftware.kryo.kryo5.serializers.*;
 import com.esotericsoftware.kryo.kryo5.util.Pool;
 import lombok.AccessLevel;
-import nbbrd.io.FileFormatter;
-import nbbrd.io.FileParser;
+import lombok.NonNull;
 import sdmxdl.*;
+import sdmxdl.format.WebSources;
+import sdmxdl.format.spi.FileFormat;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,13 +47,25 @@ import java.util.*;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
+final class KryoFileFormat<T> implements FileFormat<T> {
 
     @lombok.NonNull
     private final Class<T> type;
 
     @Override
-    public T parseStream(InputStream resource) throws IOException {
+    public boolean isParsingSupported() {
+        return true;
+    }
+
+    @Override
+    public @NonNull T parsePath(@NonNull Path source) throws IOException {
+        try (InputStream stream = Files.newInputStream(source)) {
+            return parseStream(stream);
+        }
+    }
+
+    @Override
+    public @NonNull T parseStream(@NonNull InputStream resource) throws IOException {
         Kryo kryo = KRYO_POOL.obtain();
         Input input = INPUT_POOL.obtain();
         try {
@@ -64,7 +81,19 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
     }
 
     @Override
-    public void formatStream(T value, OutputStream resource) throws IOException {
+    public boolean isFormattingSupported() {
+        return true;
+    }
+
+    @Override
+    public void formatPath(@NonNull T value, @NonNull Path target) throws IOException {
+        try (OutputStream stream = Files.newOutputStream(target)) {
+            formatStream(value, stream);
+        }
+    }
+
+    @Override
+    public void formatStream(@NonNull T value, @NonNull OutputStream resource) throws IOException {
         Kryo kryo = KRYO_POOL.obtain();
         Output output = OUTPUT_POOL.obtain();
         try {
@@ -78,6 +107,11 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
             OUTPUT_POOL.free(output);
             KRYO_POOL.free(kryo);
         }
+    }
+
+    @Override
+    public @NonNull String getFileExtension() {
+        return ".kryo";
     }
 
     static {
@@ -140,14 +174,70 @@ final class KryoFileFormat<T> implements FileParser<T>, FileFormatter<T> {
         result.register(MonitorReports.class, new SdmxWebMonitorReportsSerializer());
         result.register(MonitorReport.class, new SdmxWebMonitorReportSerializer());
         result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
+        result.register(WebSources.class, new WebSourcesSerializer());
+        result.register(WebSource.class, new WebSourceSerializer());
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
         result.register(Instant.class, new TimeSerializers.InstantSerializer());
-        result.register(HashSet.class, new CollectionSerializer());
+        result.register(HashSet.class, new CollectionSerializer<>());
         result.register(URL.class, new DefaultSerializers.URLSerializer());
+        result.register(URI.class, new DefaultSerializers.URISerializer());
 
         return result;
+    }
+
+    private static final class WebSourcesSerializer extends ImmutableSerializer<WebSources> {
+
+        private final Serializer<Collection<WebSource>> sources = new CustomCollectionSerializer<>(WebSource.class);
+
+        @Override
+        public void write(Kryo kryo, Output output, WebSources t) {
+            kryo.writeObject(output, t.getSources(), sources);
+        }
+
+        @Override
+        public WebSources read(Kryo kryo, Input input, Class<? extends WebSources> type) {
+            return WebSources
+                    .builder()
+                    .sources(kryo.readObject(input, ArrayList.class, sources))
+                    .build();
+        }
+    }
+
+    private static final class WebSourceSerializer extends ImmutableSerializer<WebSource> {
+        private final Serializer<Map<String, String>> names = new StringMapSerializer();
+        private final Serializer<Map<String, String>> properties = new StringMapSerializer();
+        private final Serializer<Collection<String>> aliases = new CustomCollectionSerializer<>(String.class);
+
+        @Override
+        public void write(Kryo kryo, Output output, WebSource t) {
+            output.writeString(t.getId());
+            kryo.writeObject(output, t.getNames(), names);
+            output.writeString(t.getDriver());
+            kryo.writeObject(output, t.getEndpoint());
+            kryo.writeObject(output, t.getProperties(), properties);
+            kryo.writeObject(output, t.getAliases(), aliases);
+            kryo.writeObjectOrNull(output, t.getWebsite(), URL.class);
+            kryo.writeObjectOrNull(output, t.getMonitor(), URI.class);
+            kryo.writeObjectOrNull(output, t.getMonitorWebsite(), URL.class);
+        }
+
+        @Override
+        public WebSource read(Kryo kryo, Input input, Class<? extends WebSource> type) {
+            return WebSource
+                    .builder()
+                    .id(input.readString())
+                    .names(kryo.readObject(input, HashMap.class, names))
+                    .driver(input.readString())
+                    .endpoint(kryo.readObject(input, URI.class))
+                    .properties(kryo.readObject(input, HashMap.class, properties))
+                    .aliases(kryo.readObject(input, HashSet.class, aliases))
+                    .website(kryo.readObjectOrNull(input, URL.class))
+                    .monitor(kryo.readObjectOrNull(input, URI.class))
+                    .monitorWebsite(kryo.readObjectOrNull(input, URL.class))
+                    .build();
+        }
     }
 
     private static final class CustomCollectionSerializer<T> extends CollectionSerializer<Collection<T>> {

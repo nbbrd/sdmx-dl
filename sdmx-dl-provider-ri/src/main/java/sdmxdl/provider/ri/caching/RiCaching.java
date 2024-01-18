@@ -19,6 +19,7 @@ import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.MemCache;
+import sdmxdl.format.spi.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceLoader;
 import sdmxdl.provider.PropertiesSupport;
@@ -30,6 +31,7 @@ import sdmxdl.web.spi.WebCaching;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import static nbbrd.io.text.BaseProperty.keysOf;
@@ -50,14 +52,23 @@ public final class RiCaching implements FileCaching, WebCaching {
 
     @Slow
     private DiskCachingSupport initLazyDelegate() {
+        List<Persistence> list = PersistenceLoader.load();
         return DiskCachingSupport
                 .builder()
                 .id("RI_CACHING")
                 .rank(100)
-                .persistence(PersistenceLoader.load()
+                .repository(list
                         .stream()
+                        .map(Persistence::getRepositoryFormat)
+                        .filter(format -> format.isFormattingSupported() && format.isParsingSupported())
                         .findFirst()
-                        .orElseGet(Persistence::noOp))
+                        .orElseGet(FileFormat::noOp))
+                .monitor(list
+                        .stream()
+                        .map(Persistence::getMonitorFormat)
+                        .filter(format -> format.isFormattingSupported() && format.isParsingSupported())
+                        .findFirst()
+                        .orElseGet(FileFormat::noOp))
                 .build();
     }
 
