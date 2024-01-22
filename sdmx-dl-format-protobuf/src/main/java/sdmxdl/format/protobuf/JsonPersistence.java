@@ -3,9 +3,10 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.util.JsonFormat;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.format.spi.FileFormatSupport;
-import sdmxdl.format.spi.Persistence;
-import sdmxdl.format.spi.PersistenceSupport;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.ext.Persistence;
+import sdmxdl.format.FileFormatSupport;
+import sdmxdl.format.PersistenceSupport;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,31 +28,44 @@ public final class JsonPersistence implements Persistence {
             .builder()
             .id("JSON")
             .rank(200)
-            .monitor(FileFormatSupport
-                    .builder(sdmxdl.web.MonitorReports.class)
-                    .parsing(true)
-                    .parser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
-                    .formatting(true)
-                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
-                    .extension(".json")
-                    .build())
-            .repository(FileFormatSupport
+            .support(this::isSupported)
+            .factory(this::create)
+            .build();
+
+    private boolean isSupported(Class<?> type) {
+        return sdmxdl.DataRepository.class.equals(type)
+                || sdmxdl.web.MonitorReports.class.equals(type)
+                || sdmxdl.web.WebSources.class.equals(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> FileFormat<T> create(Class<T> type) {
+        if (sdmxdl.DataRepository.class.equals(type)) {
+            return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.DataRepository.class)
-                    .parsing(true)
                     .parser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
-                    .formatting(true)
                     .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufRepositories::fromDataRepository).asFileFormatter(UTF_8))
                     .extension(".json")
-                    .build())
-            .sources(FileFormatSupport
-                    .builder(sdmxdl.format.WebSources.class)
-                    .parsing(true)
+                    .build();
+        }
+        if (sdmxdl.web.MonitorReports.class.equals(type)) {
+            return (FileFormat<T>) FileFormatSupport
+                    .builder(sdmxdl.web.MonitorReports.class)
+                    .parser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
+                    .extension(".json")
+                    .build();
+        }
+        if (sdmxdl.web.WebSources.class.equals(type)) {
+            return (FileFormat<T>) FileFormatSupport
+                    .builder(sdmxdl.web.WebSources.class)
                     .parser(onParsingReader(this::parseJsonSources).andThen(ProtobufSources::toWebSources).asFileParser(UTF_8))
-                    .formatting(true)
                     .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufSources::fromWebSources).asFileFormatter(UTF_8))
                     .extension(".json")
-                    .build())
-            .build();
+                    .build();
+        }
+        return FileFormat.noOp();
+    }
 
     private sdmxdl.format.protobuf.web.MonitorReports parseJsonReports(Reader reader) throws IOException {
         sdmxdl.format.protobuf.web.MonitorReports.Builder builder = sdmxdl.format.protobuf.web.MonitorReports.newBuilder();

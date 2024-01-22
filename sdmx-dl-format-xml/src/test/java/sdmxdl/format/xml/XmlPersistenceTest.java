@@ -1,7 +1,7 @@
 package sdmxdl.format.xml;
 
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.format.PersistenceAssert;
+import tests.sdmxdl.ext.PersistenceAssert;
 
 
 public class XmlPersistenceTest {

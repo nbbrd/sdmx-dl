@@ -1,7 +1,7 @@
-package internal.sdmxdl.format;
+package internal.sdmxdl;
 
 import lombok.NonNull;
-import sdmxdl.format.spi.FileFormat;
+import sdmxdl.ext.FileFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +11,6 @@ import java.nio.file.Path;
 public final class NoOpFileFormat<T> implements FileFormat<T> {
 
     @Override
-    public boolean isParsingSupported() {
-        return false;
-    }
-
-    @Override
     public @NonNull T parsePath(@NonNull Path source) throws IOException {
         throw new IOException("Cannot parse file");
     }
@@ -23,11 +18,6 @@ public final class NoOpFileFormat<T> implements FileFormat<T> {
     @Override
     public @NonNull T parseStream(@NonNull InputStream resource) throws IOException {
         throw new IOException("Cannot parse stream");
-    }
-
-    @Override
-    public boolean isFormattingSupported() {
-        return false;
     }
 
     @Override

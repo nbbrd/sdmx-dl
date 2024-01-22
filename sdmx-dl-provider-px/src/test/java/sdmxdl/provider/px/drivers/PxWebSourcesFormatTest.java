@@ -1,7 +1,7 @@
 package sdmxdl.provider.px.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.WebSources;
+import sdmxdl.web.WebSources;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;

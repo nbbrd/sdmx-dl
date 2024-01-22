@@ -18,7 +18,7 @@ package sdmxdl.format.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.WebSources;
+import sdmxdl.web.WebSources;
 import sdmxdl.web.WebSource;
 
 import java.io.ByteArrayInputStream;

@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class DataRepository implements HasExpiration {
+public class DataRepository implements HasPersistence, HasExpiration {
 
     @lombok.NonNull
     @lombok.Builder.Default

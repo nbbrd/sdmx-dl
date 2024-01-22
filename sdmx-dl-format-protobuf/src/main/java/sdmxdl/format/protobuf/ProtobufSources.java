@@ -38,14 +38,14 @@ public class ProtobufSources {
                 .build();
     }
 
-    public static WebSources fromWebSources(sdmxdl.format.WebSources value) {
+    public static WebSources fromWebSources(sdmxdl.web.WebSources value) {
         WebSources.Builder result = WebSources.newBuilder();
         result.addAllWebSources(value.getSources().stream().map(ProtobufSources::fromWebSource).collect(toList()));
         return result.build();
     }
 
-    public static sdmxdl.format.WebSources toWebSources(WebSources value) {
-        return sdmxdl.format.WebSources
+    public static sdmxdl.web.WebSources toWebSources(WebSources value) {
+        return sdmxdl.web.WebSources
                 .builder()
                 .sources(value.getWebSourcesList().stream().map(ProtobufSources::toWebSource).collect(toList()))
                 .build();

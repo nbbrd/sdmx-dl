@@ -1,5 +1,5 @@
 import sdmxdl.format.kryo.KryoPersistence;
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.ext.Persistence;
 
 module sdmxdl.format.kryo {
 

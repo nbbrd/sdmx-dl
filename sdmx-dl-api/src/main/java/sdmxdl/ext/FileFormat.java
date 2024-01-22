@@ -1,23 +1,21 @@
-package sdmxdl.format.spi;
+package sdmxdl.ext;
 
-import internal.sdmxdl.format.NoOpFileFormat;
+import internal.sdmxdl.NoOpFileFormat;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.design.ThreadSafe;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
+@ThreadSafe
 public interface FileFormat<T> {
-
-    boolean isParsingSupported();
 
     @NonNull T parsePath(@NonNull Path source) throws IOException;
 
     @NonNull T parseStream(@NonNull InputStream resource) throws IOException;
-
-    boolean isFormattingSupported();
 
     void formatPath(@NonNull T value, @NonNull Path target) throws IOException;
 

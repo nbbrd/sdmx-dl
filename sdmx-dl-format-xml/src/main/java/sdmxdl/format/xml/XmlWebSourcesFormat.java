@@ -17,9 +17,9 @@
 package sdmxdl.format.xml;
 
 import nbbrd.io.xml.Stax;
-import sdmxdl.format.WebSources;
-import sdmxdl.format.spi.FileFormat;
-import sdmxdl.format.spi.FileFormatSupport;
+import sdmxdl.web.WebSources;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.format.FileFormatSupport;
 import sdmxdl.web.WebSource;
 
 import javax.xml.stream.XMLStreamException;
@@ -40,9 +40,7 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
     @lombok.experimental.Delegate
     private final FileFormat<WebSources> support = FileFormatSupport
             .builder(WebSources.class)
-            .parsing(true)
             .parser(Stax.StreamParser.valueOf(XmlWebSourcesFormat::parseXml))
-            .formatting(true)
             .formatter(Stax.StreamFormatter.of(XmlWebSourcesFormat::formatXml))
             .extension(".xml")
             .build();

@@ -25,8 +25,8 @@ import com.esotericsoftware.kryo.kryo5.util.Pool;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.format.WebSources;
-import sdmxdl.format.spi.FileFormat;
+import sdmxdl.web.WebSources;
+import sdmxdl.ext.FileFormat;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
@@ -53,11 +53,6 @@ final class KryoFileFormat<T> implements FileFormat<T> {
     private final Class<T> type;
 
     @Override
-    public boolean isParsingSupported() {
-        return true;
-    }
-
-    @Override
     public @NonNull T parsePath(@NonNull Path source) throws IOException {
         try (InputStream stream = Files.newInputStream(source)) {
             return parseStream(stream);
@@ -78,11 +73,6 @@ final class KryoFileFormat<T> implements FileFormat<T> {
             INPUT_POOL.free(input);
             KRYO_POOL.free(kryo);
         }
-    }
-
-    @Override
-    public boolean isFormattingSupported() {
-        return true;
     }
 
     @Override

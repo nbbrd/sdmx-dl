@@ -1,7 +1,7 @@
 package sdmxdl.format.kryo;
 
 import org.junit.jupiter.api.Test;
-import tests.sdmxdl.format.PersistenceAssert;
+import tests.sdmxdl.ext.PersistenceAssert;
 
 
 public class KryoPersistenceTest {

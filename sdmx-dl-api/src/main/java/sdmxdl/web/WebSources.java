@@ -1,12 +1,12 @@
-package sdmxdl.format;
+package sdmxdl.web;
 
-import sdmxdl.web.WebSource;
+import sdmxdl.HasPersistence;
 
 import java.util.List;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class WebSources {
+public class WebSources implements HasPersistence {
 
     @lombok.NonNull
     @lombok.Singular

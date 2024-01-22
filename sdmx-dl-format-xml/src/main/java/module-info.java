@@ -1,4 +1,4 @@
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.ext.Persistence;
 import sdmxdl.format.xml.XmlPersistence;
 
 module sdmxdl.format.xml {

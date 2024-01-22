@@ -4,13 +4,12 @@ import nbbrd.design.ReturnNew;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
-import sdmxdl.format.WebSources;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.ext.PersistenceLoader;
 import sdmxdl.format.design.PropertyDefinition;
-import sdmxdl.format.spi.FileFormat;
-import sdmxdl.format.spi.Persistence;
-import sdmxdl.format.spi.PersistenceLoader;
 import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +39,8 @@ public class SourceProperties {
     public static Optional<FileFormat<WebSources>> getFileFormat(File sourcesFile) {
         return PersistenceLoader.load()
                 .stream()
-                .map(Persistence::getSourcesFormat)
-                .filter(FileFormat::isParsingSupported)
+                .filter(persistence -> persistence.isFormatSupported(WebSources.class))
+                .map(persistence -> persistence.getFormat(WebSources.class))
                 .filter(format -> sourcesFile.toString().endsWith(format.getFileExtension()))
                 .findFirst();
     }

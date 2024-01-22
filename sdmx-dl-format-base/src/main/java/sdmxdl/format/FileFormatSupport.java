@@ -1,10 +1,11 @@
-package sdmxdl.format.spi;
+package sdmxdl.format;
 
 import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
+import sdmxdl.ext.FileFormat;
 import sdmxdl.format.design.ServiceSupport;
 
 import java.io.IOException;
@@ -12,19 +13,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
+import static nbbrd.io.FileFormatter.*;
+import static nbbrd.io.FileParser.*;
+
 @ServiceSupport
 @lombok.Builder
 public final class FileFormatSupport<T> implements FileFormat<T> {
 
-    @lombok.Builder.Default
-    private final boolean parsing = false;
-
     @lombok.NonNull
     @lombok.Builder.Default
     private final FileParser<T> parser = noOpParser();
-
-    @lombok.Builder.Default
-    private final boolean formatting = false;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -34,11 +32,6 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     private final String extension;
 
     @Override
-    public boolean isParsingSupported() {
-        return parsing;
-    }
-
-    @Override
     public @NonNull T parsePath(@NonNull Path source) throws IOException {
         return parser.parsePath(source);
     }
@@ -46,11 +39,6 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     @Override
     public @NonNull T parseStream(@NonNull InputStream resource) throws IOException {
         return parser.parseStream(resource);
-    }
-
-    @Override
-    public boolean isFormattingSupported() {
-        return formatting;
     }
 
     @Override
@@ -77,8 +65,8 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
         return delegate instanceof FileFormatSupport
                 ? (FileFormatSupport<T>) delegate
                 : new FileFormatSupport<>(
-                delegate.isParsingSupported(), FileParser.onParsingStream(delegate::parseStream),
-                delegate.isFormattingSupported(), FileFormatter.onFormattingStream(delegate::formatStream),
+                onParsingStream(delegate::parseStream),
+                onFormattingStream(delegate::formatStream),
                 delegate.getFileExtension()
         );
     }
@@ -86,8 +74,8 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     @StaticFactoryMethod
     public static <T> @NonNull FileFormatSupport<T> gzip(@NonNull FileFormatSupport<T> delegate) {
         return new FileFormatSupport<>(
-                delegate.isParsingSupported(), FileParser.onParsingGzip(delegate.parser),
-                delegate.isFormattingSupported(), FileFormatter.onFormattingGzip(delegate.formatter),
+                onParsingGzip(delegate.parser),
+                onFormattingGzip(delegate.formatter),
                 delegate.getFileExtension() + ".gz"
         );
     }
@@ -95,22 +83,22 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     @StaticFactoryMethod
     public static <T> @NonNull FileFormatSupport<T> lock(@NonNull FileFormatSupport<T> delegate) {
         return new FileFormatSupport<>(
-                delegate.isParsingSupported(), FileParser.onParsingLock(delegate.parser),
-                delegate.isFormattingSupported(), FileFormatter.onFormattingLock(delegate.formatter),
+                onParsingLock(delegate.parser),
+                onFormattingLock(delegate.formatter),
                 delegate.getFileExtension()
         );
     }
 
     @MightBePromoted
     private static <T> @NonNull FileParser<T> noOpParser() {
-        return FileParser.onParsingStream((resource) -> {
+        return onParsingStream((resource) -> {
             throw new IOException("Cannot parse stream");
         });
     }
 
     @MightBePromoted
     private static <T> @NonNull FileFormatter<T> noOpFormatter() {
-        return FileFormatter.onFormattingStream((value, resource) -> {
+        return onFormattingStream((value, resource) -> {
             throw new IOException("Cannot format stream");
         });
     }

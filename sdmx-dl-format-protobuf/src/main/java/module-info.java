@@ -1,6 +1,6 @@
 import sdmxdl.format.protobuf.JsonPersistence;
 import sdmxdl.format.protobuf.ProtobufPersistence;
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.ext.Persistence;
 
 module sdmxdl.format.protobuf {
 

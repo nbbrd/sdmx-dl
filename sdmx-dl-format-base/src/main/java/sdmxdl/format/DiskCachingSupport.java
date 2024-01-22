@@ -8,11 +8,11 @@ import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Source;
 import sdmxdl.ext.Cache;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.ServiceSupport;
-import sdmxdl.format.spi.FileFormat;
-import sdmxdl.format.spi.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebCaching;
@@ -21,10 +21,9 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
-import static sdmxdl.format.spi.FileFormatSupport.*;
+import static sdmxdl.format.FileFormatSupport.*;
 
 @ServiceSupport(FileCaching.class)
 @ServiceSupport(WebCaching.class)
@@ -71,7 +70,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source, @Nullable EventListener<? super FileSource> onEvent, @Nullable ErrorListener<? super FileSource> onError) {
-        FileFormat<DataRepository> repository = getFormat(Persistence::getRepositoryFormat);
+        FileFormat<DataRepository> repository = formats.stream()
+                .filter(persistence -> persistence.isFormatSupported(DataRepository.class))
+                .map(persistence -> persistence.getFormat(DataRepository.class))
+                .findFirst().orElseGet(FileFormat::noOp);
         logConfig(source, onEvent, repository);
         return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
@@ -86,7 +88,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
-        FileFormat<DataRepository> repository = getFormat(Persistence::getRepositoryFormat);
+        FileFormat<DataRepository> repository = formats.stream()
+                .filter(persistence -> persistence.isFormatSupported(DataRepository.class))
+                .map(persistence -> persistence.getFormat(DataRepository.class))
+                .findFirst().orElseGet(FileFormat::noOp);
         logConfig(source, onEvent, repository);
         return new LockingCache<>(DiskCache
                 .<DataRepository>builder()
@@ -101,7 +106,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
-        FileFormat<MonitorReports> monitor = getFormat(Persistence::getMonitorFormat);
+        FileFormat<MonitorReports> monitor = formats.stream()
+                .filter(persistence -> persistence.isFormatSupported(MonitorReports.class))
+                .map(persistence -> persistence.getFormat(MonitorReports.class))
+                .findFirst().orElseGet(FileFormat::noOp);
         logConfig(source, onEvent, monitor);
         return new LockingCache<>(DiskCache
                 .<MonitorReports>builder()
@@ -122,14 +130,6 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     @Override
     public @NonNull Collection<String> getWebCachingProperties() {
         return emptyList();
-    }
-
-    private <T> FileFormat<T> getFormat(Function<Persistence, FileFormat<T>> extractor) {
-        return formats.stream()
-                .map(extractor)
-                .filter(format -> format.isFormattingSupported() && format.isParsingSupported())
-                .findFirst()
-                .orElseGet(FileFormat::noOp);
     }
 
     private <T> FileFormat<T> decorateFormat(FileFormat<T> format) {

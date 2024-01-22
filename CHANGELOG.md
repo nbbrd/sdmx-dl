@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- ![API] Move FileFormat and Persistence to API
 - ![PROVIDER] Add support of databases in PxWebDriver
 - ![PROVIDER] Add parsing of language in PxWebDriver
 - ![GRPC] Add webservice transcoding in gRPC

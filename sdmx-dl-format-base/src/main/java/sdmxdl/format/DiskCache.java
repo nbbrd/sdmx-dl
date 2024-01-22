@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.HasExpiration;
 import sdmxdl.ext.Cache;
-import sdmxdl.format.spi.FileFormat;
+import sdmxdl.ext.FileFormat;
 
 import java.io.IOException;
 import java.nio.file.Files;

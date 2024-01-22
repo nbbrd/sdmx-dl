@@ -21,7 +21,6 @@ import nbbrd.io.FileParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import sdmxdl.DataRepository;
-import sdmxdl.format.spi.FileFormatSupport;
 import sdmxdl.web.MonitorReports;
 import tests.sdmxdl.ext.FakeClock;
 
@@ -127,9 +126,7 @@ public class DiskCacheTest {
         Map<String, DataRepository> content = new HashMap<>();
         return FileFormatSupport
                 .builder(DataRepository.class)
-                .parsing(true)
                 .parser(FileParser.onParsingStream(stream -> parseFake(content, stream)))
-                .formatting(true)
                 .formatter(FileFormatter.onFormattingStream((value, stream) -> formatFake(content, stream, value)))
                 .extension(".dat")
                 .build();

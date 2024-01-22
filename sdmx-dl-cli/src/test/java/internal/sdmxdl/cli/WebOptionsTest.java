@@ -4,7 +4,7 @@ import _test.CommandWatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
-import sdmxdl.format.WebSources;
+import sdmxdl.web.WebSources;
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.WebSource;
 

@@ -1,6 +1,6 @@
 package _test;
 
-import sdmxdl.format.WebSources;
+import sdmxdl.web.WebSources;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.WebSource;

@@ -1,4 +1,4 @@
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.ext.Persistence;
 
 module sdmxdl.format.base {
 
@@ -13,7 +13,6 @@ module sdmxdl.format.base {
     exports sdmxdl.format;
     exports sdmxdl.format.design;
     exports sdmxdl.format.time;
-    exports sdmxdl.format.spi;
 
     uses Persistence;
 }

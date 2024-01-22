@@ -7,9 +7,9 @@ import com.google.gson.JsonParseException;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
-import sdmxdl.format.WebSources;
-import sdmxdl.format.spi.FileFormat;
-import sdmxdl.format.spi.FileFormatSupport;
+import sdmxdl.web.WebSources;
+import sdmxdl.ext.FileFormat;
+import sdmxdl.format.FileFormatSupport;
 import sdmxdl.web.WebSource;
 
 import java.lang.reflect.Type;
@@ -30,7 +30,6 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
     @lombok.experimental.Delegate
     private final FileFormat<WebSources> support = FileFormatSupport
             .builder(WebSources.class)
-            .parsing(true)
             .parser(Apis.JSON_PARSER.andThen(Apis::toSources).asFileParser(UTF_8))
             .extension(".json")
             .build();

@@ -1,15 +1,13 @@
-package sdmxdl.format.spi;
+package sdmxdl.ext;
 
-import internal.sdmxdl.format.NoOpPersistence;
+import internal.sdmxdl.NoOpPersistence;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
-import sdmxdl.DataRepository;
-import sdmxdl.format.WebSources;
-import sdmxdl.web.MonitorReports;
+import sdmxdl.HasPersistence;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE
@@ -22,11 +20,9 @@ public interface Persistence {
     @ServiceSorter(reverse = true)
     int getPersistenceRank();
 
-    @NonNull FileFormat<MonitorReports> getMonitorFormat();
+    boolean isFormatSupported(@NonNull Class<? extends HasPersistence> type);
 
-    @NonNull FileFormat<DataRepository> getRepositoryFormat();
-
-    @NonNull FileFormat<WebSources> getSourcesFormat();
+    @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type);
 
     int UNKNOWN_PERSISTENCE_RANK = -1;
 
