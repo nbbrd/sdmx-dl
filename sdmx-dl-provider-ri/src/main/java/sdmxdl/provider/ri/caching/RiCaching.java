@@ -19,6 +19,7 @@ import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
 import sdmxdl.format.MemCache;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.spi.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceLoader;
@@ -41,10 +42,12 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 @ServiceProvider(WebCaching.class)
 public final class RiCaching implements FileCaching, WebCaching {
 
+    @PropertyDefinition
     public static final BooleanProperty NO_CACHE_PROPERTY
             = BooleanProperty.of("sdmxdl.caching.noCache", false);
 
-    public static final Property<File> CACHE_FOLDER
+    @PropertyDefinition
+    public static final Property<File> CACHE_FOLDER_PROPERTY
             = Property.of("sdmxdl.caching.cacheFolder", null, Parser.onFile(), Formatter.onFile());
 
     @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
@@ -110,7 +113,7 @@ public final class RiCaching implements FileCaching, WebCaching {
             return Cache.noOp();
         }
 
-        File root = CACHE_FOLDER.get(function);
+        File root = CACHE_FOLDER_PROPERTY.get(function);
         if (root == null) root = DiskCache.SDMXDL_TMP_DIR.toFile();
         if (onEvent != null) onEvent.accept(source, getWebCachingId(), "Using cache folder '" + root + "'");
 
@@ -130,7 +133,7 @@ public final class RiCaching implements FileCaching, WebCaching {
             return Cache.noOp();
         }
 
-        File root = CACHE_FOLDER.get(function);
+        File root = CACHE_FOLDER_PROPERTY.get(function);
         if (root == null) root = DiskCache.SDMXDL_TMP_DIR.toFile();
         if (onEvent != null) onEvent.accept(source, getWebCachingId(), "Using cache folder '" + root + "'");
 
@@ -139,7 +142,7 @@ public final class RiCaching implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Collection<String> getWebCachingProperties() {
-        return keysOf(NO_CACHE_PROPERTY, CACHE_FOLDER);
+        return keysOf(NO_CACHE_PROPERTY, CACHE_FOLDER_PROPERTY);
     }
 
     @Override
@@ -165,7 +168,7 @@ public final class RiCaching implements FileCaching, WebCaching {
             return Cache.noOp();
         }
 
-        File root = CACHE_FOLDER.get(function);
+        File root = CACHE_FOLDER_PROPERTY.get(function);
         if (root == null) root = DiskCache.SDMXDL_TMP_DIR.toFile();
         if (onEvent != null) onEvent.accept(source, getWebCachingId(), "Using cache folder '" + root + "'");
 
@@ -174,6 +177,6 @@ public final class RiCaching implements FileCaching, WebCaching {
 
     @Override
     public @NonNull Collection<String> getFileCachingProperties() {
-        return keysOf(NO_CACHE_PROPERTY, CACHE_FOLDER);
+        return keysOf(NO_CACHE_PROPERTY, CACHE_FOLDER_PROPERTY);
     }
 }

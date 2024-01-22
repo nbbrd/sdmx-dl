@@ -33,6 +33,7 @@ import sdmxdl.Feature;
 import sdmxdl.Languages;
 import sdmxdl.format.MessageFooter;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.format.xml.XmlMediaTypes;
 import sdmxdl.provider.HasMarker;
@@ -69,9 +70,11 @@ import static sdmxdl.provider.ri.drivers.Sdmx21RestParsers.withCharset;
 @ServiceProvider
 public final class EstatDialectDriver implements Driver {
 
+    @PropertyDefinition
     public static final IntProperty ASYNC_MAX_RETRIES_PROPERTY =
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncMaxRetries", 10);
 
+    @PropertyDefinition
     public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
             LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 

@@ -5,7 +5,7 @@ import nbbrd.design.MightBePromoted;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
-import sdmxdl.format.ServiceSupport;
+import sdmxdl.format.design.ServiceSupport;
 
 import java.io.IOException;
 import java.io.InputStream;

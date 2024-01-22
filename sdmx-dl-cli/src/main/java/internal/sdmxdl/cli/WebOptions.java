@@ -27,6 +27,7 @@ import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -135,12 +136,12 @@ public class WebOptions {
     private List<WebSource> loadCustomSources() throws IOException {
         if (isNoConfig()) return emptyList();
         if (sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile()) {
-            System.setProperty(SourceProperties.SOURCES.getKey(), sourcesFile.toString());
+            System.setProperty(SourceProperties.SOURCES_PROPERTY.getKey(), sourcesFile.toString());
             if (verboseOptions.isVerbose()) {
                 verboseOptions.reportToErrorStream(Anchor.CFG, "Using source file '" + sourcesFile + "'");
             }
         } else {
-            System.clearProperty(SourceProperties.SOURCES.getKey());
+            System.clearProperty(SourceProperties.SOURCES_PROPERTY.getKey());
         }
         return SourceProperties.loadCustomSources();
     }
@@ -197,6 +198,7 @@ public class WebOptions {
         }
     }
 
+    @PropertyDefinition
     public static final BooleanProperty PARALLEL_RESOURCE_LOADING_PROPERTY
             = BooleanProperty.of("parallelResourceLoading", true);
 

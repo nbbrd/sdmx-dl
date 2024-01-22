@@ -11,6 +11,7 @@ module sdmxdl.format.base {
     requires transitive nbbrd.io.base;
 
     exports sdmxdl.format;
+    exports sdmxdl.format.design;
     exports sdmxdl.format.time;
     exports sdmxdl.format.spi;
 

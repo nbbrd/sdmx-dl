@@ -29,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
@@ -62,12 +63,14 @@ public class RiHttpUtils {
     );
 
     // TODO: document these options?
+    @PropertyDefinition
     @VisibleForTesting
     static final Property<File> SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY =
             Property.of("sdmxdl.ri.web.dump.folder", null, Parser.onFile(), Formatter.onFile());
 
+    @PropertyDefinition
     @VisibleForTesting
-    static final Property<String> HTTP_AGENT =
+    static final Property<String> HTTP_AGENT_PROPERTY =
             Property.of("http.agent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
 
     public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull Languages langs) {
@@ -107,7 +110,7 @@ public class RiHttpUtils {
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
                 .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
-                .userAgent(HTTP_AGENT.get(System.getProperties()))
+                .userAgent(HTTP_AGENT_PROPERTY.get(System.getProperties()))
                 .build();
     }
 

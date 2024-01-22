@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
-import sdmxdl.format.ServiceSupport;
+import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
 import sdmxdl.web.spi.Networking;

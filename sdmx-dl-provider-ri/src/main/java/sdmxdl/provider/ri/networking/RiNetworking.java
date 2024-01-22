@@ -7,6 +7,7 @@ import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Network;
@@ -21,15 +22,19 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 @ServiceProvider
 public final class RiNetworking implements Networking {
 
+    @PropertyDefinition
     public static final BooleanProperty AUTO_PROXY_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.autoProxy", false);
 
+    @PropertyDefinition
     public static final BooleanProperty NO_SYSTEM_SSL_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.noSystemSSL", false);
 
+    @PropertyDefinition
     public static final BooleanProperty NO_DEFAULT_SSL_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.noDefaultSSL", false);
 
+    @PropertyDefinition
     public static final BooleanProperty CURL_BACKEND_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.curlBackend", false);
 

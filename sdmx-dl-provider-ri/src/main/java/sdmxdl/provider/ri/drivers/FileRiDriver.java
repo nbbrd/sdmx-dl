@@ -14,6 +14,7 @@ import sdmxdl.ext.Cache;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -30,12 +31,14 @@ import java.util.Collection;
 @ServiceProvider
 public final class FileRiDriver implements Driver {
 
+    @PropertyDefinition
     public static final Property<URI> STRUCTURE_URI_PROPERTY
             = Property.of(DRIVER_PROPERTY_PREFIX + ".structureURI", null, Parser.onURI(), Formatter.onURI());
 
     private static final String RI_FILE = "ri:file";
 
-    private static final BooleanProperty ENABLE =
+    @PropertyDefinition
+    private static final BooleanProperty ENABLE_PROPERTY =
             BooleanProperty.of("enableFileDriver", false);
 
     @lombok.experimental.Delegate
@@ -43,7 +46,7 @@ public final class FileRiDriver implements Driver {
             .builder()
             .id(RI_FILE)
             .rank(NATIVE_DRIVER_RANK)
-            .availability(ENABLE::get)
+            .availability(ENABLE_PROPERTY::get)
             .connector(this::newConnection)
             .propertyOf(STRUCTURE_URI_PROPERTY)
             .build();

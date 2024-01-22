@@ -2,7 +2,7 @@ package sdmxdl.format.spi;
 
 import lombok.NonNull;
 import sdmxdl.DataRepository;
-import sdmxdl.format.ServiceSupport;
+import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.format.WebSources;
 import sdmxdl.web.MonitorReports;
 

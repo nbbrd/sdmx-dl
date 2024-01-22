@@ -19,6 +19,7 @@ package sdmxdl.provider.web;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.IntProperty;
 import nbbrd.io.text.LongProperty;
+import sdmxdl.format.design.PropertyDefinition;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +36,7 @@ public class DriverProperties {
      * URL connection. A timeout of zero is interpreted as an infinite timeout.
      * Default value is 2 minutes.
      */
+    @PropertyDefinition
     public static final IntProperty CONNECT_TIMEOUT_PROPERTY =
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".connectTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
@@ -43,6 +45,7 @@ public class DriverProperties {
      * input stream from a URL connection. A timeout of zero is interpreted as
      * an infinite timeout. Default value is 2 minutes.
      */
+    @PropertyDefinition
     public static final IntProperty READ_TIMEOUT_PROPERTY =
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".readTimeout", (int) TimeUnit.MINUTES.toMillis(2));
 
@@ -51,6 +54,7 @@ public class DriverProperties {
      * A duration of zero is interpreted as an infinite duration. Default value
      * is 5 minutes.
      */
+    @PropertyDefinition
     public static final LongProperty CACHE_TTL_PROPERTY =
             LongProperty.of(DRIVER_PROPERTY_PREFIX + ".cacheTtl", TimeUnit.MINUTES.toMillis(5));
 
@@ -58,24 +62,28 @@ public class DriverProperties {
      * Defines the max number of redirects to be followed by HTTP client. This
      * limit is intended to prevent infinite loop. Default value is 5.
      */
+    @PropertyDefinition
     public static final IntProperty MAX_REDIRECTS_PROPERTY =
             IntProperty.of(DRIVER_PROPERTY_PREFIX + ".maxRedirects", 5);
 
     /**
      * Defines if detail query is supported. Default value is false.
      */
+    @PropertyDefinition
     public static final BooleanProperty DETAIL_SUPPORTED_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".detailSupported", false);
 
     /**
      * Defines if trailing slash is required in queries. Default value is false.
      */
+    @PropertyDefinition
     public static final BooleanProperty TRAILING_SLASH_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".trailingSlash", false);
 
     /**
      * Defines if preemptive authentication should be used. Default value is false.
      */
+    @PropertyDefinition
     public static final BooleanProperty PREEMPTIVE_AUTH_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".preemptiveAuth", false);
 }

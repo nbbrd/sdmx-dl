@@ -9,6 +9,7 @@ import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
+import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.format.spi.FileFormat;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;

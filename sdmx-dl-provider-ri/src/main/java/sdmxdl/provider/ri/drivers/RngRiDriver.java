@@ -8,6 +8,7 @@ import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
 import sdmxdl.provider.Marker;
@@ -40,7 +41,8 @@ public final class RngRiDriver implements Driver {
 
     private static final String RI_RNG = "ri:rng";
 
-    private static final BooleanProperty ENABLE =
+    @PropertyDefinition
+    private static final BooleanProperty ENABLE_PROPERTY =
             BooleanProperty.of("enableRngDriver", false);
 
     @lombok.experimental.Delegate
@@ -48,7 +50,7 @@ public final class RngRiDriver implements Driver {
             .builder()
             .id(RI_RNG)
             .rank(NATIVE_DRIVER_RANK)
-            .availability(ENABLE::get)
+            .availability(ENABLE_PROPERTY::get)
             .connector(RngRiDriver::newConnection)
             .source(WebSource
                     .builder()

@@ -5,6 +5,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import sdmxdl.format.WebSources;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.spi.FileFormat;
 import sdmxdl.format.spi.Persistence;
 import sdmxdl.format.spi.PersistenceLoader;
@@ -22,12 +23,13 @@ import static java.util.Collections.emptyMap;
 @lombok.experimental.UtilityClass
 public class SourceProperties {
 
-    public static final Property<File> SOURCES =
+    @PropertyDefinition
+    public static final Property<File> SOURCES_PROPERTY =
             Property.of("sdmxdl.sources", null, Parser.onFile(), Formatter.onFile());
 
     @ReturnNew
     public static List<WebSource> loadCustomSources() throws IOException {
-        File sourcesFile = SourceProperties.SOURCES.get(key -> PropertiesSupport.getProperty(emptyMap(), key));
+        File sourcesFile = SourceProperties.SOURCES_PROPERTY.get(key -> PropertiesSupport.getProperty(emptyMap(), key));
         if (sourcesFile == null) return emptyList();
         return getFileFormat(sourcesFile)
                 .orElseThrow(() -> new IOException("Cannot read source file '" + sourcesFile + "'"))

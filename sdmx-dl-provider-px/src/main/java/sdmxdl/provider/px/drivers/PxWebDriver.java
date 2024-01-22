@@ -18,6 +18,7 @@ import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
@@ -52,13 +53,16 @@ public final class PxWebDriver implements Driver {
 
     static final String PX_PXWEB = "px:pxweb";
 
+    @PropertyDefinition
     static final Property<List<String>> VERSIONS_PROPERTY =
             Property.of(DRIVER_PROPERTY_PREFIX + ".versions", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
 
+    @PropertyDefinition
     static final Property<List<String>> LANGUAGES_PROPERTY =
             Property.of(DRIVER_PROPERTY_PREFIX + ".languages", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
 
-    static final BooleanProperty ENABLE =
+    @PropertyDefinition
+    static final BooleanProperty ENABLE_PROPERTY =
             BooleanProperty.of("enablePxWebDriver", false);
 
     static final String DEFAULT_VERSION = "v1";
@@ -74,7 +78,7 @@ public final class PxWebDriver implements Driver {
             .builder()
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
-            .availability(ENABLE::get)
+            .availability(ENABLE_PROPERTY::get)
             .connector(PxWebDriver::newConnection)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(VERSIONS_PROPERTY)

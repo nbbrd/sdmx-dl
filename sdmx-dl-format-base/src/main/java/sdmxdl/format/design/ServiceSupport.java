@@ -1,4 +1,4 @@
-package sdmxdl.format;
+package sdmxdl.format.design;
 
 import java.lang.annotation.*;
 
