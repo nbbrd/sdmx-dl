@@ -1,6 +1,7 @@
 package tests.sdmxdl.ext;
 
 import org.assertj.core.api.SoftAssertions;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 
 import java.io.ByteArrayInputStream;
@@ -13,7 +14,7 @@ import java.nio.file.Path;
 public class FileFormatAssert {
 
     @SuppressWarnings("DataFlowIssue")
-    public <T> void assertCompliance(SoftAssertions s, FileFormat<T> fileFormat, T data, boolean supported) throws IOException {
+    public <T extends HasPersistence> void assertCompliance(SoftAssertions s, FileFormat<T> fileFormat, T data, boolean supported) throws IOException {
         s.assertThat(fileFormat.getFileExtension())
                 .isNotNull();
 
@@ -53,12 +54,12 @@ public class FileFormatAssert {
         }
     }
 
-    private static <T> T storeLoadPath(FileFormat<T> fileFormat, T data, Path tmpFile) throws IOException {
+    private static <T extends HasPersistence> T storeLoadPath(FileFormat<T> fileFormat, T data, Path tmpFile) throws IOException {
         fileFormat.formatPath(data, tmpFile);
         return fileFormat.parsePath(tmpFile);
     }
 
-    private static <T> T storeLoadStream(FileFormat<T> fileFormat, T data) throws IOException {
+    private static <T extends HasPersistence> T storeLoadStream(FileFormat<T> fileFormat, T data) throws IOException {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             fileFormat.formatStream(data, output);
             try (ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray())) {

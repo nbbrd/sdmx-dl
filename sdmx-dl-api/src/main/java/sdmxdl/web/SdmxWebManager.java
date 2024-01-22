@@ -23,6 +23,8 @@ import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.*;
+import sdmxdl.ext.Persistence;
+import sdmxdl.ext.PersistenceLoader;
 import sdmxdl.web.spi.*;
 
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .monitors(MonitorLoader.load())
                 .networking(NetworkingLoader.load())
                 .caching(WebCachingLoader.load())
+                .persistences(PersistenceLoader.load())
                 .authenticators(AuthenticatorLoader.load())
                 .build();
     }
@@ -78,6 +81,9 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @Nullable EventListener<? super WebSource> onEvent;
 
     @Nullable ErrorListener<? super WebSource> onError;
+
+    @lombok.Singular
+    @NonNull List<Persistence> persistences;
 
     @lombok.Singular
     @NonNull List<Authenticator> authenticators;
@@ -170,6 +176,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .networking(networking)
                 .onEvent(onEvent)
                 .onError(onError)
+                .persistences(persistences)
                 .authenticators(authenticators)
                 .build();
     }

@@ -11,8 +11,9 @@ import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
-import sdmxdl.file.SdmxFileManager;
+import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
+import sdmxdl.file.SdmxFileManager;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.web.DriverSupport;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Collection;
+import java.util.List;
 
 @DirectImpl
 @ServiceProvider
@@ -84,8 +86,12 @@ public final class FileRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource ignoreSource, @Nullable EventListener<? super FileSource> ignoreEvent, @Nullable ErrorListener<? super FileSource> ignoreError) {
-            return new FileCacheAdapter(delegate.getDriverCache(webSource, onWebEvent, onWebError));
+        public @NonNull Cache<DataRepository> getReaderCache(
+                @NonNull FileSource ignoreSource,
+                @NonNull List<Persistence> persistences,
+                @Nullable EventListener<? super FileSource> ignoreEvent,
+                @Nullable ErrorListener<? super FileSource> ignoreError) {
+            return new FileCacheAdapter(delegate.getDriverCache(webSource, persistences, onWebEvent, onWebError));
         }
 
         @Override

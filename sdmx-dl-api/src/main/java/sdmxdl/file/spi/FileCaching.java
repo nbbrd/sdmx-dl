@@ -12,9 +12,11 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
+import sdmxdl.ext.Persistence;
 import sdmxdl.file.FileSource;
 
 import java.util.Collection;
+import java.util.List;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
@@ -31,6 +33,7 @@ public interface FileCaching {
 
     @NonNull Cache<DataRepository> getReaderCache(
             @NonNull FileSource source,
+            @NonNull List<Persistence> persistences,
             @Nullable EventListener<? super FileSource> onEvent,
             @Nullable ErrorListener<? super FileSource> onError);
 

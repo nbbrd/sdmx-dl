@@ -5,6 +5,7 @@ import nbbrd.design.MightBePromoted;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.FileFormatter;
 import nbbrd.io.FileParser;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.format.design.ServiceSupport;
 
@@ -18,7 +19,7 @@ import static nbbrd.io.FileParser.*;
 
 @ServiceSupport
 @lombok.Builder
-public final class FileFormatSupport<T> implements FileFormat<T> {
+public final class FileFormatSupport<T extends HasPersistence> implements FileFormat<T> {
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -56,12 +57,12 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
         return extension;
     }
 
-    public static @NonNull <T> Builder<T> builder(@NonNull Class<T> ignore) {
+    public static @NonNull <T extends HasPersistence> Builder<T> builder(@NonNull Class<T> ignore) {
         return new Builder<T>();
     }
 
     @StaticFactoryMethod
-    public static <T> @NonNull FileFormatSupport<T> wrap(@NonNull FileFormat<T> delegate) {
+    public static <T extends HasPersistence> @NonNull FileFormatSupport<T> wrap(@NonNull FileFormat<T> delegate) {
         return delegate instanceof FileFormatSupport
                 ? (FileFormatSupport<T>) delegate
                 : new FileFormatSupport<>(
@@ -72,7 +73,7 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     }
 
     @StaticFactoryMethod
-    public static <T> @NonNull FileFormatSupport<T> gzip(@NonNull FileFormatSupport<T> delegate) {
+    public static <T extends HasPersistence> @NonNull FileFormatSupport<T> gzip(@NonNull FileFormatSupport<T> delegate) {
         return new FileFormatSupport<>(
                 onParsingGzip(delegate.parser),
                 onFormattingGzip(delegate.formatter),
@@ -81,7 +82,7 @@ public final class FileFormatSupport<T> implements FileFormat<T> {
     }
 
     @StaticFactoryMethod
-    public static <T> @NonNull FileFormatSupport<T> lock(@NonNull FileFormatSupport<T> delegate) {
+    public static <T extends HasPersistence> @NonNull FileFormatSupport<T> lock(@NonNull FileFormatSupport<T> delegate) {
         return new FileFormatSupport<>(
                 onParsingLock(delegate.parser),
                 onFormattingLock(delegate.formatter),

@@ -1,6 +1,7 @@
 package internal.sdmxdl;
 
 import lombok.NonNull;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
-public final class NoOpFileFormat<T> implements FileFormat<T> {
+public final class NoOpFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
     @Override
     public @NonNull T parsePath(@NonNull Path source) throws IOException {

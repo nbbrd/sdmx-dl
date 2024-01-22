@@ -4,6 +4,7 @@ import internal.sdmxdl.NoOpFileFormat;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.ThreadSafe;
+import sdmxdl.HasPersistence;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +12,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 
 @ThreadSafe
-public interface FileFormat<T> {
+public interface FileFormat<T extends HasPersistence> {
 
     @NonNull T parsePath(@NonNull Path source) throws IOException;
 
@@ -24,7 +25,7 @@ public interface FileFormat<T> {
     @NonNull String getFileExtension();
 
     @StaticFactoryMethod
-    static <T> @NonNull FileFormat<T> noOp() {
+    static <T extends HasPersistence> @NonNull FileFormat<T> noOp() {
         return new NoOpFileFormat<>();
     }
 }

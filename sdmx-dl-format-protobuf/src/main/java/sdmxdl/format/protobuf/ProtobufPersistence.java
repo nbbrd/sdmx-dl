@@ -3,6 +3,7 @@ package sdmxdl.format.protobuf;
 import com.google.protobuf.MessageLite;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.FileFormatSupport;
@@ -36,7 +37,7 @@ public final class ProtobufPersistence implements Persistence {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> FileFormat<T> create(Class<T> type) {
+    private <T extends HasPersistence> FileFormat<T> create(Class<T> type) {
         if (sdmxdl.DataRepository.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.DataRepository.class)

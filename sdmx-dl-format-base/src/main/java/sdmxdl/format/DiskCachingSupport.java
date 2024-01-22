@@ -3,10 +3,7 @@ package sdmxdl.format;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.DataRepository;
-import sdmxdl.ErrorListener;
-import sdmxdl.EventListener;
-import sdmxdl.Source;
+import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
@@ -21,6 +18,7 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static sdmxdl.format.FileFormatSupport.*;
@@ -40,13 +38,13 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     private final @NonNull Path root = DiskCache.SDMXDL_TMP_DIR;
 
     @lombok.Builder.Default
-    private final @NonNull List<Persistence> formats = emptyList();
-
-    @lombok.Builder.Default
     private final @NonNull Clock clock = Clock.systemDefaultZone();
 
     @lombok.Builder.Default
     private final boolean noCompression = false;
+
+    @lombok.Builder.Default
+    private final @NonNull String persistenceId = "";
 
     @Override
     public @NonNull String getFileCachingId() {
@@ -69,13 +67,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source, @Nullable EventListener<? super FileSource> onEvent, @Nullable ErrorListener<? super FileSource> onError) {
-        FileFormat<DataRepository> repository = formats.stream()
-                .filter(persistence -> persistence.isFormatSupported(DataRepository.class))
-                .map(persistence -> persistence.getFormat(DataRepository.class))
-                .findFirst().orElseGet(FileFormat::noOp);
+    public @NonNull Cache<DataRepository> getReaderCache(@NonNull FileSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super FileSource> onEvent, @Nullable ErrorListener<? super FileSource> onError) {
+        FileFormat<DataRepository> repository = lookupFileFormat(DataRepository.class, persistences);
         logConfig(source, onEvent, repository);
-        return new LockingCache<>(DiskCache
+        return decorateCache(DiskCache
                 .<DataRepository>builder()
                 .root(root)
                 .format(decorateFormat(repository))
@@ -87,13 +82,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
-        FileFormat<DataRepository> repository = formats.stream()
-                .filter(persistence -> persistence.isFormatSupported(DataRepository.class))
-                .map(persistence -> persistence.getFormat(DataRepository.class))
-                .findFirst().orElseGet(FileFormat::noOp);
+    public @NonNull Cache<DataRepository> getDriverCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
+        FileFormat<DataRepository> repository = lookupFileFormat(DataRepository.class, persistences);
         logConfig(source, onEvent, repository);
-        return new LockingCache<>(DiskCache
+        return decorateCache(DiskCache
                 .<DataRepository>builder()
                 .root(root)
                 .format(decorateFormat(repository))
@@ -105,13 +97,10 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
     }
 
     @Override
-    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
-        FileFormat<MonitorReports> monitor = formats.stream()
-                .filter(persistence -> persistence.isFormatSupported(MonitorReports.class))
-                .map(persistence -> persistence.getFormat(MonitorReports.class))
-                .findFirst().orElseGet(FileFormat::noOp);
+    public @NonNull Cache<MonitorReports> getMonitorCache(@NonNull WebSource source, @NonNull List<Persistence> persistences, @Nullable EventListener<? super WebSource> onEvent, @Nullable ErrorListener<? super WebSource> onError) {
+        FileFormat<MonitorReports> monitor = lookupFileFormat(MonitorReports.class, persistences);
         logConfig(source, onEvent, monitor);
-        return new LockingCache<>(DiskCache
+        return decorateCache(DiskCache
                 .<MonitorReports>builder()
                 .root(root)
                 .format(decorateFormat(monitor))
@@ -132,8 +121,35 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
         return emptyList();
     }
 
-    private <T> FileFormat<T> decorateFormat(FileFormat<T> format) {
+    private <T extends HasPersistence> FileFormat<T> lookupFileFormat(Class<T> type, List<Persistence> persistences) {
+        return persistences
+                .stream()
+                .filter(getPersistenceFilter(type))
+                .map(persistence -> persistence.getFormat(type))
+                .findFirst()
+                .orElseGet(FileFormat::noOp);
+    }
+
+    private Predicate<Persistence> getPersistenceFilter(Class<? extends HasPersistence> type) {
+        return persistenceId.isEmpty()
+                ? (persistence -> persistence.isFormatSupported(type))
+                : (persistence -> persistence.getPersistenceId().equals(persistenceId));
+    }
+
+    private <T extends HasPersistence> FileFormat<T> decorateFormat(FileFormat<T> format) {
         return lock(noCompression ? wrap(format) : gzip(wrap(format)));
+    }
+
+    private <T extends HasExpiration> Cache<T> decorateCache(Cache<T> delegate) {
+        return dry(new LockingByKeyCache<>(delegate));
+    }
+
+    private static <V extends HasExpiration> Cache<V> dry(Cache<V> cache) {
+        return new DualCache<>(
+                MemCache.<V>builder().clock(cache.getClock()).build(),
+                cache,
+                cache.getClock()
+        );
     }
 
     private <T extends Source> void logConfig(T source, EventListener<? super T> onEvent, FileFormat<?> format) {

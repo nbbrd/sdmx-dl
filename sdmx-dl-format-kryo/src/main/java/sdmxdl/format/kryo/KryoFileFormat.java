@@ -25,12 +25,8 @@ import com.esotericsoftware.kryo.kryo5.util.Pool;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.*;
-import sdmxdl.web.WebSources;
 import sdmxdl.ext.FileFormat;
-import sdmxdl.web.MonitorReport;
-import sdmxdl.web.MonitorReports;
-import sdmxdl.web.MonitorStatus;
-import sdmxdl.web.WebSource;
+import sdmxdl.web.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +43,7 @@ import java.util.*;
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class KryoFileFormat<T> implements FileFormat<T> {
+final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
     @lombok.NonNull
     private final Class<T> type;

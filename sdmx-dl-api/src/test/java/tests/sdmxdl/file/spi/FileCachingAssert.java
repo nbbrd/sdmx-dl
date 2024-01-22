@@ -7,6 +7,7 @@ import tests.sdmxdl.ext.CacheAssert;
 
 import java.io.File;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.file.spi.FileCaching.FILE_CACHING_PROPERTY_PREFIX;
@@ -27,14 +28,17 @@ public class FileCachingAssert {
                 .doesNotHaveDuplicates();
 
         assertThatNullPointerException()
-                .isThrownBy(() -> caching.getReaderCache(null, null, null));
+                .isThrownBy(() -> caching.getReaderCache(null, emptyList(), null, null));
 
         FileSource validSource = FileSource
                 .builder()
                 .data(new File("hello.xml"))
                 .build();
 
-        assertThat(caching.getReaderCache(validSource, null, null))
+        assertThatNullPointerException()
+                .isThrownBy(() -> caching.getReaderCache(validSource, null, null, null));
+
+        assertThat(caching.getReaderCache(validSource, emptyList(), null, null))
                 .isNotNull()
                 .satisfies(CacheAssert::assertRepositoryCompliance);
     }

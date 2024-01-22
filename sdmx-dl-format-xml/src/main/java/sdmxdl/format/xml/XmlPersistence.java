@@ -3,6 +3,7 @@ package sdmxdl.format.xml;
 import lombok.experimental.Delegate;
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.PersistenceSupport;
@@ -22,7 +23,7 @@ public final class XmlPersistence implements Persistence {
             .build();
 
     @SuppressWarnings("unchecked")
-    private static <T> FileFormat<T> create(Class<T> type) {
+    private static <T extends HasPersistence> FileFormat<T> create(Class<T> type) {
         if (WebSources.class.equals(type)) {
             return (FileFormat<T>) XmlWebSourcesFormat.INSTANCE;
         }

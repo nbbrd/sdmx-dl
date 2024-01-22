@@ -22,6 +22,7 @@ import nbbrd.io.sys.SystemProperties;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.About;
 import sdmxdl.HasExpiration;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;
 
@@ -40,7 +41,7 @@ import static java.util.Objects.requireNonNull;
  * @author Philippe Charles
  */
 @lombok.Builder(toBuilder = true)
-public final class DiskCache<V extends HasExpiration> implements Cache<V> {
+public final class DiskCache<V extends HasExpiration & HasPersistence> implements Cache<V> {
 
     @lombok.Builder.Default
     private final @NonNull Path root = SDMXDL_TMP_DIR;

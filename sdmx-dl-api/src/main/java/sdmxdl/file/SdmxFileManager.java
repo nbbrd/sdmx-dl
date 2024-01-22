@@ -23,6 +23,8 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
+import sdmxdl.ext.Persistence;
+import sdmxdl.ext.PersistenceLoader;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
@@ -44,6 +46,7 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
         return builder()
                 .readers(ReaderLoader.load())
                 .caching(FileCachingLoader.load())
+                .persistences(PersistenceLoader.load())
                 .build();
     }
 
@@ -58,6 +61,9 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
     @Nullable EventListener<? super FileSource> onEvent;
 
     @Nullable ErrorListener<? super FileSource> onError;
+
+    @lombok.Singular
+    @NonNull List<Persistence> persistences;
 
     @lombok.Singular
     @NonNull List<Reader> readers;
@@ -79,6 +85,7 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
                 .onEvent(onEvent)
                 .onError(onError)
                 .caching(caching)
+                .persistences(persistences)
                 .build();
     }
 
