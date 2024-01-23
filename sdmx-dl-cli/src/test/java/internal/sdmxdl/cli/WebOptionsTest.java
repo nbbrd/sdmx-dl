@@ -4,35 +4,35 @@ import _test.CommandWatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
-import sdmxdl.web.WebSources;
-import sdmxdl.provider.ri.drivers.SourceProperties;
+import sdmxdl.format.xml.XmlPersistence;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static picocli.CommandLine.ExitCode.OK;
-import static picocli.CommandLine.ExitCode.SOFTWARE;
 
 public class WebOptionsTest {
 
     @CommandLine.Command
-    static class Holder implements Callable<Void> {
+    static class Holder implements Callable<List<WebSource>> {
 
         @CommandLine.Mixin
         WebOptions options;
 
         @Override
-        public Void call() throws Exception {
-            options.loadManager();
-            return null;
+        public List<WebSource> call() throws Exception {
+            return options.loadManager().getCustomSources();
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testSourceFile(@TempDir Path temp) throws IOException {
         CommandLine cmd = new CommandLine(new Holder());
@@ -42,14 +42,38 @@ public class WebOptionsTest {
         assertThat(cmd.execute()).isEqualTo(OK);
 
         watcher.reset();
-        File invalid = newInvalidFile(temp);
-        assertThat(cmd.execute("-s", invalid.getPath())).isEqualTo(SOFTWARE);
-        assertThat(watcher.getExecutionException()).isInstanceOf(IOException.class).hasMessageContaining(invalid.getPath());
-
-        watcher.reset();
-        File valid = newValidFile(temp);
-        assertThat(cmd.execute("-s", valid.getPath())).isEqualTo(OK);
+        assertThat(cmd.execute("--no-config")).isEqualTo(OK);
+        assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
         assertThat(watcher.getExecutionException()).isNull();
+        assertThat(watcher.getErr()).isEmpty();
+
+        assertThat(newInvalidFile(temp)).satisfies(invalid -> {
+            watcher.reset();
+            assertThat(cmd.execute("-v", "-s", invalid.getPath())).isEqualTo(OK);
+            assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
+            assertThat(watcher.getExecutionException()).isNull();
+            assertThat(watcher.getErr()).contains("[CFG] Failed to load source file '" + invalid.getPath() + "'");
+
+            watcher.reset();
+            assertThat(cmd.execute("--no-config", "-v", "-s", invalid.getPath())).isEqualTo(OK);
+            assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
+            assertThat(watcher.getExecutionException()).isNull();
+            assertThat(watcher.getErr()).isEmpty();
+        });
+
+        assertThat(newValidFile(temp)).satisfies(valid -> {
+            watcher.reset();
+            assertThat(cmd.execute("-v", "-s", valid.getPath())).isEqualTo(OK);
+            assertThat((List<WebSource>) cmd.getExecutionResult()).isNotEmpty();
+            assertThat(watcher.getExecutionException()).isNull();
+            assertThat(watcher.getErr()).contains("[CFG] Using source file '" + valid.getPath() + "'");
+
+            watcher.reset();
+            assertThat(cmd.execute("--no-config", "-v", "-s", valid.getPath())).isEqualTo(OK);
+            assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
+            assertThat(watcher.getExecutionException()).isNull();
+            assertThat(watcher.getErr()).isEmpty();
+        });
     }
 
     private File newInvalidFile(Path temp) throws IOException {
@@ -59,9 +83,7 @@ public class WebOptionsTest {
     private File newValidFile(Path temp) throws IOException {
         File result = Files.createFile(temp.resolve("validFile.xml")).toFile();
         WebSource source = WebSource.builder().id("xyz").driver("dummy").endpointOf("http://localhost").build();
-        SourceProperties
-                .getFileFormat(result)
-                .orElseThrow(IOException::new)
+        new XmlPersistence().getFormat(WebSources.class)
                 .formatPath(WebSources.builder().source(source).build(), result.toPath());
         return result;
     }

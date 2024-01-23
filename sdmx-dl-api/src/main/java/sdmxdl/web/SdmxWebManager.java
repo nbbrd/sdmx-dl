@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -58,6 +60,7 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .caching(WebCachingLoader.load())
                 .persistences(PersistenceLoader.load())
                 .authenticators(AuthenticatorLoader.load())
+                .registry(RegistryLoader.load())
                 .build();
     }
 
@@ -88,8 +91,15 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @lombok.Singular
     @NonNull List<Authenticator> authenticators;
 
-    @lombok.Singular
-    @NonNull List<WebSource> customSources;
+    @lombok.Builder.Default
+    @NonNull Registry registry = Registry.noOp();
+
+    @Nullable Consumer<CharSequence> onRegistryEvent;
+
+    @Nullable BiConsumer<CharSequence, IOException> onRegistryError;
+
+    @lombok.Getter(lazy = true)
+    @NonNull List<WebSource> customSources = initLazyCustomSources(getRegistry(), getPersistences(), getOnRegistryEvent(), getOnRegistryError());
 
     @lombok.Getter(lazy = true)
     @NonNull List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
@@ -179,6 +189,10 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .persistences(persistences)
                 .authenticators(authenticators)
                 .build();
+    }
+
+    private static List<WebSource> initLazyCustomSources(Registry registry, List<Persistence> persistences, Consumer<CharSequence> onEvent, BiConsumer<CharSequence, IOException> onError) {
+        return registry.getSources(persistences, onEvent, onError).getSources();
     }
 
     private static List<WebSource> initLazyDefaultSources(List<Driver> drivers) {

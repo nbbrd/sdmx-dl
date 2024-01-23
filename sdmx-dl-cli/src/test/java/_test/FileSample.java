@@ -1,9 +1,9 @@
 package _test;
 
-import sdmxdl.web.WebSources;
+import sdmxdl.format.xml.XmlPersistence;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
-import sdmxdl.provider.ri.drivers.SourceProperties;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -27,9 +27,7 @@ public class FileSample {
         SdmxXmlSources.ECB_DATA_STRUCTURE.copyTo(struct);
 
         Path source = Files.createFile(temp.resolve("source.xml"));
-        SourceProperties
-                .getFileFormat(source.toFile())
-                .orElseThrow(IOException::new)
+        new XmlPersistence().getFormat(WebSources.class)
                 .formatPath(WebSources.builder().source(sourceOf("sample", data.toFile(), struct.toFile())).build(), source);
 
         return source.toFile();

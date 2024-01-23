@@ -3,6 +3,7 @@ package sdmxdl.ext;
 import internal.sdmxdl.NoOpPersistence;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
+import nbbrd.design.ThreadSafe;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 import nbbrd.service.ServiceId;
@@ -12,6 +13,7 @@ import sdmxdl.HasPersistence;
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE
 )
+@ThreadSafe
 public interface Persistence {
 
     @ServiceId

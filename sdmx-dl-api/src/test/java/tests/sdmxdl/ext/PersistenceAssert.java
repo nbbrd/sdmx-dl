@@ -75,7 +75,7 @@ public class PersistenceAssert {
     }
 
     private void checkWebSources(SoftAssertions s, FileFormat<WebSources> fileFormat, boolean supported) throws IOException {
-        FileFormatAssert.assertCompliance(s, fileFormat, WebSources.builder().build(), supported);
+        FileFormatAssert.assertCompliance(s, fileFormat, WebSources.EMPTY, supported);
         FileFormatAssert.assertCompliance(s, fileFormat, WebSources.builder()
                 .source(RepoSamples.BASIC_SOURCE)
                 .source(RepoSamples.FULL_SOURCE)

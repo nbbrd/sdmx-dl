@@ -27,4 +27,5 @@ module sdmxdl.api {
     uses Driver;
     uses Monitor;
     uses Persistence;
+    uses Registry;
 }

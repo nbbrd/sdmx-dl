@@ -30,7 +30,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 @RegisterForReflection
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
-    private final SdmxWebManager manager = GrpcWebFactory.loadManager();
+    private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
     private final Languages languages = Languages.ANY;
 
     @RequestBody(
