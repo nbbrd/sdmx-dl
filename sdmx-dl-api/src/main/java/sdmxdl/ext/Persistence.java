@@ -11,7 +11,8 @@ import nbbrd.service.ServiceSorter;
 import sdmxdl.HasPersistence;
 
 @ServiceDefinition(
-        quantifier = Quantifier.MULTIPLE
+        quantifier = Quantifier.MULTIPLE,
+        loaderName = "internal.util.PersistenceLoader"
 )
 @ThreadSafe
 public interface Persistence {

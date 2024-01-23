@@ -24,7 +24,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.*;
 import sdmxdl.ext.Persistence;
-import sdmxdl.ext.PersistenceLoader;
 import sdmxdl.web.spi.*;
 
 import java.io.IOException;

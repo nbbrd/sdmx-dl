@@ -16,12 +16,14 @@
  */
 package tests.sdmxdl.ext;
 
+import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSources;
+import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.RepoSamples;
 import tests.sdmxdl.api.TckUtil;
 
@@ -29,14 +31,30 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 
+import static java.util.Collections.emptyList;
+import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
+
 @lombok.experimental.UtilityClass
 public class PersistenceAssert {
+
+    @MightBeGenerated
+    private static final ExtensionPoint<Persistence> EXTENSION_POINT = ExtensionPoint
+            .<Persistence>builder()
+            .id(Persistence::getPersistenceId)
+            .idPattern(SCREAMING_SNAKE_CASE)
+            .rank(Persistence::getPersistenceRank)
+            .rankLowerBound(Persistence.UNKNOWN_PERSISTENCE_RANK)
+            .properties(ignore -> emptyList())
+            .propertiesPrefix("")
+            .build();
 
     public void assertCompliance(Persistence persistence) {
         TckUtil.run(s -> assertCompliance(s, persistence));
     }
 
     public void assertCompliance(SoftAssertions s, Persistence persistence) throws Exception {
+        EXTENSION_POINT.assertCompliance(s, persistence);
+
         checkDataRepository(s, persistence.getFormat(DataRepository.class), persistence.isFormatSupported(DataRepository.class));
         checkMonitorReports(s, persistence.getFormat(MonitorReports.class), persistence.isFormatSupported(MonitorReports.class));
         checkWebSources(s, persistence.getFormat(WebSources.class), persistence.isFormatSupported(WebSources.class));

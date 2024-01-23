@@ -1,27 +1,34 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
+import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.spi.Registry;
+import tests.sdmxdl.api.ExtensionPoint;
+import tests.sdmxdl.api.TckUtil;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.web.spi.Registry.REGISTRY_PROPERTY_PREFIX;
 import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
-import static tests.sdmxdl.api.TckUtil.startingWith;
 
 @lombok.experimental.UtilityClass
 public class RegistryAssert {
 
+    @MightBeGenerated
+    private static final ExtensionPoint<Registry> EXTENSION_POINT = ExtensionPoint
+            .<Registry>builder()
+            .id(Registry::getRegistryId)
+            .idPattern(SCREAMING_SNAKE_CASE)
+            .rank(Registry::getRegistryRank)
+            .rankLowerBound(Registry.UNKNOWN_REGISTRY_RANK)
+            .properties(Registry::getRegistryProperties)
+            .propertiesPrefix(REGISTRY_PROPERTY_PREFIX)
+            .build();
+
     @SuppressWarnings("DataFlowIssue")
     public static void assertCompliance(@NonNull Registry registry) {
-        assertThat(registry.getRegistryId())
-                .containsPattern(SCREAMING_SNAKE_CASE)
-                .isNotBlank();
-
-        assertThat(registry.getRegistryProperties())
-                .are(startingWith(REGISTRY_PROPERTY_PREFIX))
-                .doesNotHaveDuplicates();
+        TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, registry));
 
         assertThatNullPointerException()
                 .isThrownBy(() -> registry.getSources(null, null, null));

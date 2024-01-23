@@ -1,16 +1,31 @@
 package tests.sdmxdl.file.spi;
 
+import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
 import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
+import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
+import static java.util.Collections.emptyList;
 import static sdmxdl.Languages.ANY;
+import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class ReaderAssert {
+
+    @MightBeGenerated
+    private static final ExtensionPoint<Reader> EXTENSION_POINT = ExtensionPoint
+            .<Reader>builder()
+            .id(Reader::getReaderId)
+            .idPattern(SCREAMING_SNAKE_CASE)
+            .rank(Reader::getReaderRank)
+            .rankLowerBound(Reader.UNKNOWN_READER_RANK)
+            .properties(ignore -> emptyList())
+            .propertiesPrefix("")
+            .build();
 
     public FileContext noOpFileContext() {
         return FileContext.builder().build();
@@ -31,6 +46,7 @@ public class ReaderAssert {
     }
 
     public void assertCompliance(SoftAssertions s, Reader reader, Sample sample) {
+        EXTENSION_POINT.assertCompliance(s, reader);
         checkCanRead(s, reader, sample);
         checkRead(s, reader, sample);
     }

@@ -17,6 +17,7 @@
 package sdmxdl.file;
 
 import internal.util.FileCachingLoader;
+import internal.util.PersistenceLoader;
 import internal.util.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -24,7 +25,6 @@ import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Persistence;
-import sdmxdl.ext.PersistenceLoader;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
