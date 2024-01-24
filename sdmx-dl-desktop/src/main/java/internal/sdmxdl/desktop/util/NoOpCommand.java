@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import ec.util.various.swing.JCommand;
 import lombok.NonNull;

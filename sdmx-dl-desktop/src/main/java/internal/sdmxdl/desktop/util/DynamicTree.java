@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -9,7 +9,11 @@ import javax.swing.tree.ExpandVetoException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class DynamicTree {
+public final class DynamicTree {
+
+    private DynamicTree() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     public static void enable(JTree tree, NodeFactory nodeFactory, Object root) {
         tree.addTreeWillExpandListener(new TreeWillExpandListener() {

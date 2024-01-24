@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import ec.util.chart.impl.AndroidColorScheme;
 import lombok.NonNull;
@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
-public class SystemLafColorScheme extends AndroidColorScheme.AndroidDarkColorScheme {
+public final class SystemLafColorScheme extends AndroidColorScheme.AndroidDarkColorScheme {
     
     @Override
     public int getPlotColor() {

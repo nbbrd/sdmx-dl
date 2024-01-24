@@ -1,6 +1,7 @@
 package internal.sdmxdl.desktop;
 
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import internal.sdmxdl.desktop.util.Colors;
 import j2html.attributes.Attr;
 
 import java.awt.*;

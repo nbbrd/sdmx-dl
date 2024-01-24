@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

@@ -6,23 +6,16 @@ import ec.util.completion.swing.JAutoCompletion;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.*;
+import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
-import nbbrd.desktop.favicon.DomainName;
-import nbbrd.desktop.favicon.FaviconRef;
-import nbbrd.desktop.favicon.FaviconSupport;
-import nbbrd.io.Resource;
 import net.miginfocom.swing.MigLayout;
 import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
-import org.kordamp.ikonli.swing.FontIcon;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
-import sdmxdl.web.spi.Network;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -31,21 +24,15 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.Proxy;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static internal.sdmxdl.desktop.Actions.onActionPerformed;
-import static internal.sdmxdl.desktop.Html4Swing.nameDescription;
-import static internal.sdmxdl.desktop.MouseListeners.onDoubleClick;
+import static internal.sdmxdl.desktop.SdmxRenderers.*;
+import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
+import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
+import static internal.sdmxdl.desktop.util.UIConstants.TREE_ICON_LEAF_COLOR;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -89,30 +76,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
     private final ListDataListener dataSourcesListener = JLists.dataListenerOf(this::contentsChanged);
 
-    private final FaviconSupport faviconSupport = FaviconSupport.ofServiceLoader()
-            .toBuilder()
-            .client(this::openConnection)
-            .build();
-
-    private final ImageIcon sdmxIcon = new ImageIcon(loadImage());
-
-    private URLConnection openConnection(URL url) throws IOException {
-        try {
-            WebSource source = WebSource.builder().id("").driver("").endpoint(url.toURI()).build();
-            Network network = getSdmxManager().getNetworking().getNetwork(source, null, null);
-            return network.getURLConnectionFactory().openConnection(url, Proxy.NO_PROXY);
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
-    }
-
-    private Image loadImage() {
-        try (InputStream stream = Resource.newInputStream(MainComponent.class, "sdmx-logo.png")) {
-            return ImageIO.read(stream);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
+    private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
 
     private final Map<FlowRef, FlowStruct> flowStructs = new HashMap<>();
 
@@ -120,18 +84,6 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         initComponent();
     }
 
-    private Icon getDataSourceIcon(DataSourceRef dataSourceRef, Runnable onUpdate) {
-        return getDataSourceIcon(dataSourceRef.getSource(), 16, onUpdate);
-    }
-
-    private Icon getDataSourceIcon(String source, int size, Runnable onUpdate) {
-        return getDataSourceIcon(getSdmxManager().getSources().get(source), size, onUpdate);
-    }
-
-    private Icon getDataSourceIcon(WebSource source, int size, Runnable onUpdate) {
-        URL website = source.getWebsite();
-        return website != null ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, sdmxIcon) : sdmxIcon;
-    }
 
     private void initComponent() {
         datasetsTree.setRootVisible(false);
@@ -149,25 +101,25 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                         FlowStruct fs = getFlowStruct(ref);
                         label.setText(DataSourceRefFormats.toText(ref, fs));
                         label.setToolTipText(DataSourceRefFormats.toTooltipText(ref, fs));
-                        label.setIcon(getDataSourceIcon(ref, tree::repaint));
+                        label.setIcon(iconSupport.getIcon(ref, 16, tree::repaint));
                     } else if (userObject instanceof DataSetRef) {
                         DataSetRef ref = (DataSetRef) userObject;
                         FlowStruct fs = getFlowStruct(ref.getDataSourceRef());
                         label.setText(DataSetRefFormats.toText(ref, fs));
                         label.setToolTipText(DataSetRefFormats.toTooltipText(ref, fs));
                         if (ref.getKey().isSeries()) {
-                            label.setIcon(FontIcon.of(MaterialDesign.MDI_CHART_LINE, 16, UIManager.getColor("Tree.icon.leafColor")));
+                            label.setIcon(Ikons.of(MDI_CHART_LINE, 16, TREE_ICON_LEAF_COLOR));
                         } else {
                             label.setIcon(UIManager.getIcon(expanded ? "Tree.openIcon" : "Tree.closedIcon"));
                         }
                     } else if (userObject instanceof SwingWorker) {
                         label.setText("Loading");
                         label.setToolTipText(null);
-                        label.setIcon(FontIcon.of(MaterialDesign.MDI_CLOUD_DOWNLOAD, 16, UIManager.getColor("Tree.icon.leafColor")));
+                        label.setIcon(Ikons.of(MDI_CLOUD_DOWNLOAD, 16, TREE_ICON_LEAF_COLOR));
                     } else if (userObject instanceof Exception) {
                         label.setText("Error " + userObject.getClass().getSimpleName());
                         label.setToolTipText(((Exception) userObject).getMessage());
-                        label.setIcon(FontIcon.of(MaterialDesign.MDI_CLOSE_NETWORK, 16, UIManager.getColor("Tree.icon.leafColor")));
+                        label.setIcon(Ikons.of(MDI_CLOSE_NETWORK, 16, TREE_ICON_LEAF_COLOR));
                     }
                 }
                 return label;
@@ -186,20 +138,14 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         datasetsTree.addMouseListener(onDoubleClick(this::openCurrentDataSetRef));
         datasetsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         datasetsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDataSetRef));
+        datasetsTree.setComponentPopupMenu(newDatasetsMenu().getPopupMenu());
 
-        sourcesList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(nameDescription(value.getId(), value.getName(Languages.ANY)).render());
-            label.setIcon(getDataSourceIcon(value.getId(), 24, sourcesList::repaint));
-            label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        }));
+        sourcesList.setCellRenderer(JLists.cellRendererOf(this::renderWebSource));
         sourcesList.addMouseListener(onDoubleClick(this::openCurrentSource));
         sourcesList.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         sourcesList.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentSource));
 
-        driversList.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(value.getDriverId());
-            label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        }));
+        driversList.setCellRenderer(JLists.cellRendererOf(this::renderDriver));
         driversList.addMouseListener(onDoubleClick(this::openCurrentDriver));
         driversList.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         driversList.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDriver));
@@ -227,7 +173,24 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         JTabbedPane tool = new JTabbedPane();
         tool.addTab(name, component);
         tool.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
-        toolToolBar.addToolWindow(name, FontIcon.of(ikon, 16, UIManager.getColor(FlatIconColors.ACTIONS_GREYINLINE.key)), tool);
+        toolToolBar.addToolWindow(name, Ikons.of(ikon, 24, FlatIconColors.ACTIONS_GREYINLINE.key), tool);
+    }
+
+    private JMenu newDatasetsMenu() {
+        JMenu result = new JMenu();
+
+        JMenuItem item;
+
+        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
+        item.setText("Pin dataset");
+
+        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
+        item.setText("Open DSD");
+
+        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
+        item.setText("Open web site");
+
+        return result;
     }
 
     private JToolBar newDatasetsToolBar() {
@@ -241,13 +204,13 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                 .build());
 
         result.add(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .action(Actions.onActionPerformed(() -> JTrees.expandOrCollapseAll(datasetsTree, true)))
                 .ikon(MDI_UNFOLD_MORE)
                 .toolTipText("Expand All")
                 .build());
 
         result.add(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(datasetsTree))
+                .action(Actions.onActionPerformed(() -> JTrees.expandOrCollapseAll(datasetsTree, false)))
                 .ikon(MDI_UNFOLD_LESS)
                 .toolTipText("Collapse All")
                 .build());
@@ -269,14 +232,9 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                 DataSetRef dataSetRef = (DataSetRef) userObject;
                 if (dataSetRef.getKey().isSeries()) {
                     main.addIfAbsent(dataSetRef,
-                            o -> "<html>" + o.getDataSourceRef().getFlow().getId() + "/" + o.getKey(),
-                            o -> getDataSourceIcon(o.getDataSourceRef(), main::repaint),
-                            o -> {
-                                JDataSet result = new JDataSet();
-                                result.setSdmxManager(sdmxManager);
-                                result.setModel(o);
-                                return result;
-                            });
+                            SdmxRenderers::dataSetRefToHeader,
+                            o -> dataSetRefToIcon(o, iconSupport, main::repaint),
+                            o -> dataSetRefToView(o, sdmxManager));
                 }
             }
         }
@@ -286,13 +244,9 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         WebSource source = sourcesList.getSelectedValue();
         if (source != null) {
             main.addIfAbsent(source,
-                    o -> "<html>" + o.getId(),
-                    o -> getDataSourceIcon(o, 16, main::repaint),
-                    o -> {
-                        JWebSource result = new JWebSource();
-                        result.setModel(o);
-                        return result;
-                    });
+                    SdmxRenderers::webSourceToHeader,
+                    o -> webSourceToIcon(o, iconSupport, main::repaint),
+                    SdmxRenderers::webSourceToView);
         }
     }
 
@@ -300,13 +254,9 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
         Driver driver = driversList.getSelectedValue();
         if (driver != null) {
             main.addIfAbsent(driver,
-                    o -> "<html>" + o.getDriverId(),
-                    o -> null,
-                    o -> {
-                        JDriver result = new JDriver();
-                        result.setModel(o);
-                        return result;
-                    });
+                    SdmxRenderers::driverToHeader,
+                    SdmxRenderers::driverToIcon,
+                    SdmxRenderers::driverToView);
         }
     }
 
@@ -348,6 +298,16 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
                 datasetsTree.repaint();
             }
         }.execute();
+    }
+
+    private void renderWebSource(JLabel label, WebSource value) {
+        label.setText(webSourceToText(value));
+        label.setIcon(webSourceToIcon(value, iconSupport, sourcesList::repaint));
+    }
+
+    private void renderDriver(JLabel label, Driver value) {
+        label.setText(driverToText(value));
+        label.setIcon(driverToIcon(value));
     }
 
     private static final class AddDatasetCommand extends JCommand<MainComponent> {

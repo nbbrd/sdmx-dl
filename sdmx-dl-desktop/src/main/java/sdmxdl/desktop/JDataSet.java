@@ -8,7 +8,11 @@ import ec.util.chart.swing.SwingColorSchemeSupport;
 import ec.util.grid.swing.AbstractGridModel;
 import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
-import internal.sdmxdl.desktop.*;
+import ec.util.table.swing.JTables;
+import internal.sdmxdl.desktop.ObsFormats;
+import internal.sdmxdl.desktop.SeriesMetaFormats;
+import internal.sdmxdl.desktop.util.*;
+import lombok.Getter;
 import lombok.NonNull;
 import nbbrd.io.text.Formatter;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -39,14 +43,14 @@ import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
 
 public final class JDataSet extends JComponent implements HasSdmxProperties<SdmxWebManager> {
 
-    @lombok.Getter
+    @Getter
     private SdmxWebManager sdmxManager = SdmxWebManager.noOp();
 
     public void setSdmxManager(@NonNull SdmxWebManager sdmxManager) {
         firePropertyChange(SDMX_MANAGER_PROPERTY, this.sdmxManager, this.sdmxManager = sdmxManager);
     }
 
-    @lombok.Getter
+    @Getter
     private Languages languages = Languages.ANY;
 
     public void setLanguages(@NonNull Languages languages) {
@@ -55,7 +59,7 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
 
     public static final String MODEL_PROPERTY = "model";
 
-    @lombok.Getter
+    @Getter
     private DataSetRef model;
 
     public void setModel(DataSetRef model) {
@@ -164,6 +168,10 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
     private void displayData(SingleSeries item) {
         grid.setModel(asGridModel(item));
         grid.setDefaultRenderer(Object.class, new CustomCellRenderer(grid, item));
+        grid.setCornerRenderer(JTables.cellRendererOf((label, value) -> {
+            label.setText(item.getDuration() != null ? item.getDuration().toString() : null);
+            label.setHorizontalAlignment(JLabel.CENTER);
+        }));
         chart.setDataset(asChartModel(item));
         chart.setTitle(item.getMeta().getName());
         chart.setObsFormatter(asObsFunction(item));

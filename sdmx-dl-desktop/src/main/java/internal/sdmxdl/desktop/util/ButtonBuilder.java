@@ -1,8 +1,7 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import com.formdev.flatlaf.FlatIconColors;
 import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import java.util.function.Supplier;
@@ -30,7 +29,6 @@ public final class ButtonBuilder {
         return this;
     }
 
-
     public JButton build() {
         return buildWith(JButton::new);
     }
@@ -38,8 +36,8 @@ public final class ButtonBuilder {
     public <T extends AbstractButton> T buildWith(Supplier<T> factory) {
         T result = factory.get();
         result.setAction(action);
-        result.setIcon(FontIcon.of(ikon, 16, UIManager.getColor(FlatIconColors.ACTIONS_GREYINLINE.key)));
-        result.setRolloverIcon(FontIcon.of(ikon, 16, UIManager.getColor(FlatIconColors.ACTIONS_GREY.key)));
+        result.setIcon(Ikons.of(ikon, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
+        result.setRolloverIcon(Ikons.of(ikon, 16, FlatIconColors.ACTIONS_GREY.key));
         result.setToolTipText(toolTipText);
         return result;
     }

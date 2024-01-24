@@ -1,10 +1,14 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import internal.RGB;
 
 import java.awt.*;
 
-public class Colors {
+public final class Colors {
+
+    private Colors() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Check if a color is more dark than light. Useful if an entity of this

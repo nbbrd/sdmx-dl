@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import ec.util.chart.ObsIndex;
 import ec.util.chart.swing.JTimeSeriesChart;
@@ -8,8 +8,11 @@ import ec.util.grid.swing.JGrid;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-@lombok.experimental.UtilityClass
-public class GridChart {
+public final class GridChart {
+
+    private GridChart() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     public static void enableSync(JGrid grid, JTimeSeriesChart chart) {
         PropertyChangeListener listener = new PropertyChangeListener() {

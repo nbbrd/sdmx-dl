@@ -1,4 +1,4 @@
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public final class JTrees {
 
     private JTrees() {
-        // static class
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
     public static Stream<TreeNode> childStreamOf(TreeNode node) {

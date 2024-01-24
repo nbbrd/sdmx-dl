@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package internal.sdmxdl.desktop;
+package internal.sdmxdl.desktop.util;
 
 import lombok.NonNull;
 
@@ -86,7 +86,6 @@ public class JFileChoosers {
 
     private void loadCurrentDir(JFileChooser fileChooser, Preferences prefs) {
         Optional.ofNullable(prefs.get(CURRENT_DIRECTORY_KEY, null))
-                .filter(Objects::nonNull)
                 .map(File::new)
                 .ifPresent(fileChooser::setCurrentDirectory);
     }

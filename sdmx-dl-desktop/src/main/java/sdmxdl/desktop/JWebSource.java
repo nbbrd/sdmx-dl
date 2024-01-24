@@ -2,6 +2,10 @@ package sdmxdl.desktop;
 
 import ec.util.table.swing.JTables;
 import internal.sdmxdl.desktop.*;
+import internal.sdmxdl.desktop.util.BrowseCommand;
+import internal.sdmxdl.desktop.util.ButtonBuilder;
+import internal.sdmxdl.desktop.util.MapTableModel;
+import internal.sdmxdl.desktop.util.NoOpCommand;
 import net.miginfocom.swing.MigLayout;
 import sdmxdl.web.WebSource;
 

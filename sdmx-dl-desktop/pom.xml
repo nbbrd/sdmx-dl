@@ -20,6 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
+        <flatlaf.version>3.3</flatlaf.version>
     </properties>
 
     <dependencyManagement>
@@ -78,7 +79,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>3.3</version>
+            <version>${flatlaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>${flatlaf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>

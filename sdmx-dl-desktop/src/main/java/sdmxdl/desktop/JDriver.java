@@ -2,8 +2,8 @@ package sdmxdl.desktop;
 
 import ec.util.list.swing.JLists;
 import internal.sdmxdl.desktop.PropertyFormats;
+import internal.sdmxdl.desktop.SdmxRenderers;
 import net.miginfocom.swing.MigLayout;
-import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 
@@ -39,9 +39,7 @@ public final class JDriver extends JComponent {
         panel.add(id, "span, growx");
 
         sources.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText("<html><a href='#'>[" + value.getId() + "]</a> " + value.getName(Languages.ANY));
-//            label.setIcon(getDataSourceIcon(value.getId(), 24, sourcesList::repaint));
-//            label.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+            label.setText(SdmxRenderers.webSourceToText(value));
         }));
 
         panel.add(new JLabel("Sources"), "skip");

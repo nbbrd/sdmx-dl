@@ -1,12 +1,18 @@
 package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import ec.util.various.swing.BasicSwingLauncher;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 @lombok.experimental.UtilityClass
 public class Main {
@@ -17,7 +23,15 @@ public class Main {
                 .content(Main::create)
                 .size(900, 600)
                 .title("sdmx-dl")
+                .icons(Main::getIcons)
                 .launch();
+    }
+
+    private static List<Image> getIcons() {
+        return IntStream.of(256, 128, 64, 48, 32, 16)
+                .mapToObj(size -> new FlatSVGIcon("sdmxdl/desktop/SDMX_logo.svg", size, size))
+                .map(FlatSVGIcon::getImage)
+                .collect(toList());
     }
 
     static JComponent create() {
