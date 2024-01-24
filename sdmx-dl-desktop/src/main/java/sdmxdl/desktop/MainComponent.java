@@ -152,7 +152,7 @@ public final class MainComponent extends JComponent implements HasSdmxProperties
 
         splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setRightComponent(main);
-        splitPane.setResizeWeight(.3);
+        splitPane.setResizeWeight(.25);
 
         JToolWindowBar toolWindowBar = new JToolWindowBar(splitPane);
         addTool(toolWindowBar, "Datasets", MDI_FILE_TREE, new JScrollPane(datasetsTree), newDatasetsToolBar());

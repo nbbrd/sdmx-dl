@@ -103,6 +103,11 @@ public final class JDataSet extends JComponent implements HasSdmxProperties<Sdmx
         JSplitPane dataPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, grid, chart);
         dataPane.setResizeWeight(.3);
 
+        grid.addPropertyChangeListener(JGrid.MODEL_PROPERTY, evt -> {
+            dataPane.setDividerLocation(grid.getColumnModel().getTotalColumnWidth()*2
+                    + UIManager.getInt("ScrollBar.width"));
+        });
+
         JScrollPane metaPane = new JScrollPane(metaTable);
 
         JScrollPane idPane = new JScrollPane(idTable);

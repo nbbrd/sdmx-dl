@@ -46,14 +46,16 @@ public final class JToolWindowBar extends JComponent {
     }
 
     private void onSelectionChange(PropertyChangeEvent evt) {
-        int oldValue = (int) evt.getOldValue();
-        int newValue = (int) evt.getNewValue();
-        if (newValue != NO_SELECTION) {
-            splitPane.setLeftComponent(windows.get(newValue));
-            if (oldValue == NO_SELECTION) {
-                splitPane.setDividerSize(dividerSize);
-                splitPane.setDividerLocation(dividerLocation);
+        int oldIndex = (int) evt.getOldValue();
+        int newIndex = (int) evt.getNewValue();
+        if (newIndex != NO_SELECTION) {
+            if (oldIndex != NO_SELECTION) {
+                dividerSize = splitPane.getDividerSize();
+                dividerLocation = splitPane.getDividerLocation();
             }
+            splitPane.setLeftComponent(windows.get(newIndex));
+            splitPane.setDividerSize(dividerSize);
+            splitPane.setDividerLocation(dividerLocation);
         } else {
             dividerSize = splitPane.getDividerSize();
             dividerLocation = splitPane.getDividerLocation();
