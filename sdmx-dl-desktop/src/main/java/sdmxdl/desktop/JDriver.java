@@ -1,8 +1,6 @@
 package sdmxdl.desktop;
 
 import ec.util.list.swing.JLists;
-import internal.sdmxdl.desktop.PropertyFormats;
-import internal.sdmxdl.desktop.SdmxRenderers;
 import net.miginfocom.swing.MigLayout;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -12,9 +10,10 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 
-public final class JDriver extends JComponent {
+import static sdmxdl.desktop.Renderer.PROPERTY_RENDERER;
+import static sdmxdl.desktop.Renderer.WEB_SOURCE_RENDERER;
 
-    public static final String MODEL_PROPERTY = "model";
+public final class JDriver extends JComponent implements HasModel<Driver> {
 
     @lombok.Getter
     private Driver model;
@@ -38,14 +37,11 @@ public final class JDriver extends JComponent {
         panel.add(new JLabel("ID"), "skip");
         panel.add(id, "span, growx");
 
-        sources.setCellRenderer(JLists.cellRendererOf((label, value) -> {
-            label.setText(SdmxRenderers.webSourceToText(value));
-        }));
-
+        sources.setCellRenderer(WEB_SOURCE_RENDERER.asListCellRenderer(sources::repaint));
         panel.add(new JLabel("Sources"), "skip");
         panel.add(new JScrollPane(sources), "span, growx, h 100");
 
-        properties.setCellRenderer(JLists.cellRendererOf((label, property) -> label.setText(PropertyFormats.toText(property))));
+        properties.setCellRenderer(PROPERTY_RENDERER.asListCellRenderer(properties::repaint));
         panel.add(new JLabel("Properties"), "skip");
         panel.add(new JScrollPane(properties), "span, growx, h 100");
 

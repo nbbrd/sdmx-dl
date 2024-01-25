@@ -13,7 +13,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add registry API to load custom web sources
 - ![PROVIDER] Add support of databases in PxWebDriver
 - ![PROVIDER] Add parsing of language in PxWebDriver
+- ![DESKTOP] Improve desktop UI
 - ![GRPC] Add webservice transcoding in gRPC
+
+### Changed
+
+- ![PROVIDER] Rename source file property from `sdmxdl.sources` to `sdmxdl.registry.sourcesFile`
 
 ## [3.0.0-beta.12] - 2023-10-16
 

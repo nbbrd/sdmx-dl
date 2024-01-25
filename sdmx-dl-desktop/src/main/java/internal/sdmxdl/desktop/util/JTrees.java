@@ -5,13 +5,25 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public final class JTrees {
 
     private JTrees() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static <T> Collector<T, ?, DefaultMutableTreeNode> toDefaultMutableTreeNode(Object userObject) {
+        return Collectors.collectingAndThen(toList(), list -> {
+            DefaultMutableTreeNode result = new DefaultMutableTreeNode(userObject);
+            list.forEach(item -> result.add(new DefaultMutableTreeNode(item)));
+            return result;
+        });
     }
 
     public static Stream<TreeNode> childStreamOf(TreeNode node) {

@@ -35,9 +35,8 @@ public class Main {
     }
 
     static JComponent create() {
-        MainComponent mainComponent = new MainComponent();
-        mainComponent.setSdmxManager(loadManager());
-        return mainComponent;
+        Sdmxdl.INSTANCE.setSdmxManager(loadManager());
+        return new MainComponent();
     }
 
     private static SdmxWebManager loadManager() {

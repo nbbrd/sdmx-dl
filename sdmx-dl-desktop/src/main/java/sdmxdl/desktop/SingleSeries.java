@@ -7,11 +7,11 @@ import sdmxdl.provider.ext.SeriesMetaFactory;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import static internal.sdmxdl.desktop.Collectors2.single;
 
 @lombok.Value
-class SingleSeries {
+public class SingleSeries {
 
     @NonNull Structure dsd;
 
@@ -33,7 +33,13 @@ class SingleSeries {
     }
 
     private Duration computeGlobalDuration() {
-        List<Duration> collect = getSeries().getObs().stream().map(Obs::getPeriod).map(TimeInterval::getDuration).distinct().collect(Collectors.toList());
-        return collect.size() == 1 ? collect.get(0) : null;
+        return getSeries()
+                .getObs()
+                .stream()
+                .map(Obs::getPeriod)
+                .map(TimeInterval::getDuration)
+                .distinct()
+                .collect(single())
+                .orElse(null);
     }
 }

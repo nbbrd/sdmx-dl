@@ -1,7 +1,7 @@
 package sdmxdl.desktop;
 
 import ec.util.table.swing.JTables;
-import internal.sdmxdl.desktop.*;
+import internal.sdmxdl.desktop.PropertyFormats;
 import internal.sdmxdl.desktop.util.BrowseCommand;
 import internal.sdmxdl.desktop.util.ButtonBuilder;
 import internal.sdmxdl.desktop.util.MapTableModel;
@@ -20,15 +20,13 @@ import static java.util.Collections.emptyMap;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_EXPORT;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_LAUNCH;
 
-public final class JWebSource extends JComponent {
+public final class JWebSourceSettings extends JComponent implements HasModel<WebSource> {
 
     public static final String BROWSE_WEBSITE_ACTION = "browseWebsite";
 
     public static final String BROWSE_MONITOR_ACTION = "browseMonitor";
 
     public static final String EXPORT_MODEL_ACTION = "exportModel";
-
-    public static final String MODEL_PROPERTY = "model";
 
     @lombok.Getter
     private WebSource model;
@@ -46,7 +44,7 @@ public final class JWebSource extends JComponent {
     private final JTextField website = new JTextField();
     private final JTextField monitor = new JTextField();
 
-    public JWebSource() {
+    public JWebSourceSettings() {
         initComponents();
     }
 
@@ -54,12 +52,12 @@ public final class JWebSource extends JComponent {
         ActionMap am = getActionMap();
 
         am.put(BROWSE_WEBSITE_ACTION,
-                BrowseCommand.ofURL(JWebSource::getWebsiteOrNull)
+                BrowseCommand.ofURL(JWebSourceSettings::getWebsiteOrNull)
                         .toAction(this)
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
         am.put(BROWSE_MONITOR_ACTION,
-                BrowseCommand.ofURL(JWebSource::getMonitorWebsiteOrNull)
+                BrowseCommand.ofURL(JWebSourceSettings::getMonitorWebsiteOrNull)
                         .toAction(this)
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
@@ -171,12 +169,12 @@ public final class JWebSource extends JComponent {
         }
     }
 
-    private static URL getWebsiteOrNull(JWebSource c) {
+    private static URL getWebsiteOrNull(JWebSourceSettings c) {
         WebSource source = c.getModel();
         return source == null ? null : source.getWebsite();
     }
 
-    private static URL getMonitorWebsiteOrNull(JWebSource c) {
+    private static URL getMonitorWebsiteOrNull(JWebSourceSettings c) {
         WebSource source = c.getModel();
         return source == null ? null : source.getMonitorWebsite();
     }
