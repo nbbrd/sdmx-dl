@@ -53,7 +53,7 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 @ServiceProvider
 public final class ImfDialectDriver implements Driver {
 
-    private static final String DIALECTS_IMF = "dialects:imf";
+    private static final String DIALECTS_IMF = "DIALECTS_IMF";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

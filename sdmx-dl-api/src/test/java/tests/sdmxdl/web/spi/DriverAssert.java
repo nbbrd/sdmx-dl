@@ -25,8 +25,7 @@ public class DriverAssert {
     private static final ExtensionPoint<Driver> EXTENSION_POINT = ExtensionPoint
             .<Driver>builder()
             .id(Driver::getDriverId)
-//            .idPattern(SCREAMING_SNAKE_CASE)
-            .idPattern(Pattern.compile(""))
+            .idPattern(SCREAMING_SNAKE_CASE)
             .rank(Driver::getDriverRank)
             .rankLowerBound(Driver.UNKNOWN_DRIVER_RANK)
             .properties(Driver::getDriverProperties)

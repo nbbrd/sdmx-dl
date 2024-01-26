@@ -33,7 +33,7 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class EurostatDriver implements Driver {
 
-    private static final String CONNECTORS_EUROSTAT = "connectors:eurostat";
+    private static final String CONNECTORS_EUROSTAT = "CONNECTORS_EUROSTAT";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

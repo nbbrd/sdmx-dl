@@ -56,7 +56,7 @@ import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 @ServiceProvider
 public final class StatCanDialectDriver implements Driver {
 
-    private static final String DIALECTS_STATCAN = "dialects:statcan";
+    private static final String DIALECTS_STATCAN = "DIALECTS_STATCAN";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

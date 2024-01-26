@@ -22,6 +22,7 @@ import tests.sdmxdl.web.spi.DriverAssert;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static sdmxdl.Languages.ANY;
+import static sdmxdl.provider.connectors.drivers.Sdmx20Driver.CONNECTORS_SDMX_20;
 
 /**
  * @author Philippe Charles
@@ -35,7 +36,7 @@ public class Sdmx20DriverTest {
 
     @Test
     public void testConnect() {
-        WebSource x = WebSource.builder().id("localhost").driver("connectors:sdmx20").endpointOf("http://localhost").build();
+        WebSource x = WebSource.builder().id("localhost").driver(CONNECTORS_SDMX_20).endpointOf("http://localhost").build();
 
         assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, DriverAssert.noOpWebContext()).close())
                 .doesNotThrowAnyException();

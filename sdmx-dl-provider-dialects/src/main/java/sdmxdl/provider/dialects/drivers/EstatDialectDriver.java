@@ -78,12 +78,12 @@ public final class EstatDialectDriver implements Driver {
     public static final LongProperty ASYNC_SLEEP_TIME_PROPERTY =
             LongProperty.of(DRIVER_PROPERTY_PREFIX + ".asyncSleepTime", 6000);
 
-    private static final String DIALECTS_EUROSTAT = "dialects:estat";
+    private static final String DIALECTS_ESTAT = "DIALECTS_ESTAT";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
             .builder()
-            .id(DIALECTS_EUROSTAT)
+            .id(DIALECTS_ESTAT)
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(EstatDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
@@ -96,7 +96,7 @@ public final class EstatDialectDriver implements Driver {
                     .name("en", "Eurostat")
                     .name("de", "Eurostat")
                     .name("fr", "Eurostat")
-                    .driver(DIALECTS_EUROSTAT)
+                    .driver(DIALECTS_ESTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/data/database")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT")
@@ -106,7 +106,7 @@ public final class EstatDialectDriver implements Driver {
                     .builder()
                     .id("ESTAT_COMEXT")
                     .name("en", "Eurostat - International trade in goods statistics (ITGS)")
-                    .driver(DIALECTS_EUROSTAT)
+                    .driver(DIALECTS_ESTAT)
                     .endpointOf("https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1")
                     .websiteOf("https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ESTAT_COMEXT")
@@ -116,7 +116,7 @@ public final class EstatDialectDriver implements Driver {
                     .builder()
                     .id("EC_DG_COMP")
                     .name("en", "European Commission - Directorate General for Competition")
-                    .driver(DIALECTS_EUROSTAT)
+                    .driver(DIALECTS_ESTAT)
                     .endpointOf("https://webgate.ec.europa.eu/comp/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=comp")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_COMP")
@@ -126,7 +126,7 @@ public final class EstatDialectDriver implements Driver {
                     .builder()
                     .id("EC_DG_EMPL")
                     .name("en", "European Commission - Directorate General for Employment, Social Affairs and inclusion")
-                    .driver(DIALECTS_EUROSTAT)
+                    .driver(DIALECTS_ESTAT)
                     .endpointOf("https://webgate.ec.europa.eu/empl/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=empl")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_EMPL")
@@ -136,7 +136,7 @@ public final class EstatDialectDriver implements Driver {
                     .builder()
                     .id("EC_DG_GROW")
                     .name("en", "European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs")
-                    .driver(DIALECTS_EUROSTAT)
+                    .driver(DIALECTS_ESTAT)
                     .endpointOf("https://webgate.ec.europa.eu/grow/redisstat/api/dissemination/sdmx/2.1")
                     .websiteOf("https://data.europa.eu/data/datasets?catalog=grow")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/EC_DG_GROW")

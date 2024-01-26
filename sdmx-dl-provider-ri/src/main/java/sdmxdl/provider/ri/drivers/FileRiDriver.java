@@ -37,7 +37,7 @@ public final class FileRiDriver implements Driver {
     public static final Property<URI> STRUCTURE_URI_PROPERTY
             = Property.of(DRIVER_PROPERTY_PREFIX + ".structureURI", null, Parser.onURI(), Formatter.onURI());
 
-    private static final String RI_FILE = "ri:file";
+    private static final String RI_FILE = "RI_FILE";
 
     @PropertyDefinition
     private static final BooleanProperty ENABLE_PROPERTY =

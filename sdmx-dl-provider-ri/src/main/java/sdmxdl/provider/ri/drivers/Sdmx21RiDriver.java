@@ -42,7 +42,7 @@ import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
 @ServiceProvider
 public final class Sdmx21RiDriver implements Driver {
 
-    private static final String RI_SDMX_21 = "ri:sdmx21";
+    private static final String RI_SDMX_21 = "RI_SDMX21";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

@@ -39,7 +39,7 @@ import static java.util.Collections.singleton;
 @ServiceProvider
 public final class RngRiDriver implements Driver {
 
-    private static final String RI_RNG = "ri:rng";
+    private static final String RI_RNG = "RI_RNG";
 
     @PropertyDefinition
     private static final BooleanProperty ENABLE_PROPERTY =

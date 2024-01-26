@@ -10,6 +10,7 @@ import java.io.InputStream;
 import static nbbrd.io.Resource.newInputStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
+import static sdmxdl.provider.px.drivers.PxWebDriver.PX_PXWEB;
 
 public class PxWebSourcesFormatTest {
 
@@ -24,7 +25,7 @@ public class PxWebSourcesFormatTest {
                             .builder()
                             .id("SCB")
                             .name("en", "Statistics Sweden")
-                            .driver("px:pxweb")
+                            .driver(PX_PXWEB)
                             .endpointOf("https://api.scb.se/OV0104/_VERSION_/doris/_LANG_")
                             .propertyOf("sdmxdl.driver.versions", "v1")
                             .propertyOf("sdmxdl.driver.languages", "en,sv")

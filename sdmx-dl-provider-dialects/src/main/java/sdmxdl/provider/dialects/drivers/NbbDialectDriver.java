@@ -59,7 +59,7 @@ import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 @ServiceProvider
 public final class NbbDialectDriver implements Driver {
 
-    private static final String DIALECTS_NBB = "dialects:nbb";
+    private static final String DIALECTS_NBB = "DIALECTS_NBB";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

@@ -37,7 +37,7 @@ public class FileSample {
         return WebSource
                 .builder()
                 .id(name)
-                .driver("ri:file")
+                .driver("RI_FILE")
                 .endpoint(data.toURI())
                 .propertyOf(FileRiDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
                 .build();

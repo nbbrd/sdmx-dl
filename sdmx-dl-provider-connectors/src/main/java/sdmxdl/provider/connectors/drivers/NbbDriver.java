@@ -33,7 +33,7 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class NbbDriver implements Driver {
 
-    private static final String CONNECTORS_NBB = "connectors:nbb";
+    private static final String CONNECTORS_NBB = "CONNECTORS_NBB";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

@@ -44,7 +44,7 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 @ServiceProvider
 public final class DotStatDialectDriver implements Driver {
 
-    private static final String DIALECTS_DOTSTAT = "dialects:dotstat";
+    private static final String DIALECTS_DOTSTAT = "DIALECTS_DOTSTAT";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

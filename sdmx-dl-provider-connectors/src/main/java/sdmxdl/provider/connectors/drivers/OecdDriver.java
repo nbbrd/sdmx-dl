@@ -33,7 +33,7 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class OecdDriver implements Driver {
 
-    private static final String CONNECTORS_OECD = "connectors:oecd";
+    private static final String CONNECTORS_OECD = "CONNECTORS_OECD";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

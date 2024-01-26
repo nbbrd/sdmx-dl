@@ -51,7 +51,8 @@ import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 @ServiceProvider
 public final class PxWebDriver implements Driver {
 
-    static final String PX_PXWEB = "px:pxweb";
+    @VisibleForTesting
+    static final String PX_PXWEB = "PX_PXWEB";
 
     @PropertyDefinition
     static final Property<List<String>> VERSIONS_PROPERTY =

@@ -46,7 +46,7 @@ public class ListDriversCommandTest {
 
         assertThat(FileSample.readAll(out))
                 .contains("Name,SupportedProperties", atIndex(0))
-                .contains("ri:file,sdmxdl.driver.structureURI")
+                .contains("RI_FILE,sdmxdl.driver.structureURI")
                 .hasSizeGreaterThan(2);
     }
 }

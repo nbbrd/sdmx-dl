@@ -16,8 +16,9 @@
  */
 package sdmxdl.provider.connectors.drivers;
 
-import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.RestSdmx20Client;
+import nbbrd.design.DirectImpl;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
@@ -36,7 +37,8 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class Sdmx20Driver implements Driver {
 
-    private static final String CONNECTORS_SDMX_20 = "connectors:sdmx20";
+    @VisibleForTesting
+    static final String CONNECTORS_SDMX_20 = "CONNECTORS_SDMX20";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

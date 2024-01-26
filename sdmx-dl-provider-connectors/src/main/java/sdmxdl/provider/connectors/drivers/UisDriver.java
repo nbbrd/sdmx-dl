@@ -37,7 +37,7 @@ import static sdmxdl.provider.SdmxFix.Category.ENDPOINT;
 @ServiceProvider
 public final class UisDriver implements Driver {
 
-    private static final String CONNECTORS_UIS = "connectors:uis";
+    private static final String CONNECTORS_UIS = "CONNECTORS_UIS";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
