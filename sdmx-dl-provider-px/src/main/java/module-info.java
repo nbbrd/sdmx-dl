@@ -14,6 +14,7 @@ module sdmxdl.provider.px {
     requires sdmxdl.provider.base;
     requires com.google.gson;
     requires nbbrd.io.http;
+    requires nbbrd.io.picocsv;
 
     provides Driver with
             PxWebDriver;

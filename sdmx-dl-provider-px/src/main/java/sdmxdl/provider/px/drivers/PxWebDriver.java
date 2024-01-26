@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
@@ -85,22 +86,17 @@ public final class PxWebDriver implements Driver {
             .propertyOf(VERSIONS_PROPERTY)
             .propertyOf(LANGUAGES_PROPERTY)
             .propertyOf(CACHE_TTL_PROPERTY)
-//            .source(WebSource
-//                    .builder()
-//                    .id("STATFIN")
-//                    .name("en", "Statistics Finland")
-//                    .name("sv", "Statistikcentralen")
-//                    .name("fi", "Tilastokeskus")
-//                    .driver(PX_PXWEB)
-//                    .endpointOf("https://statfin.stat.fi/PXWeb/api/v1")
-//                    .websiteOf("https://statfin.stat.fi/PxWeb/pxweb/en/")
-//                    .build())
             .sources(IOSupplier.unchecked(PxWebDriver::loadDefaultSources).get())
             .build();
 
     private static List<WebSource> loadDefaultSources() throws IOException {
+        Map<String, URL> websiteByHost = Websites.PARSER.parseResource(PxWebDriver.class, "websites.csv", UTF_8);
         try (InputStream stream = newInputStream(PxWebDriver.class, "api.json")) {
-            return PxWebSourcesFormat.INSTANCE.parseStream(stream).getSources();
+            return PxWebSourcesFormat.INSTANCE.parseStream(stream)
+                    .getSources()
+                    .stream()
+                    .map(source -> source.toBuilder().website(websiteByHost.get(source.getEndpoint().getHost())).build())
+                    .collect(toList());
         }
     }
 
