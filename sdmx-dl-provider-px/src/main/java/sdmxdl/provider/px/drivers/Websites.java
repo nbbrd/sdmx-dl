@@ -14,7 +14,14 @@ final class Websites {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static final Picocsv.Parser<Map<String, URL>> PARSER = Picocsv.Parser.builder(Websites::parseCsv).build();
+    public static final Picocsv.Parser<Map<String, URL>> PARSER =
+            Picocsv.Parser
+                    .builder(Websites::parseCsv)
+                    .options(Csv.ReaderOptions.DEFAULT
+                            .toBuilder()
+                            .lenientSeparator(true)
+                            .build())
+                    .build();
 
     private static Map<String, URL> parseCsv(Csv.Reader reader) throws IOException {
         Map<String, URL> result = new HashMap<>();
