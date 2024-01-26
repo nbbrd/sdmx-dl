@@ -6,7 +6,7 @@ import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.design.ServiceSupport;
 
-import java.util.function.Predicate;
+import java.util.Set;
 
 @ServiceSupport
 @lombok.Builder(toBuilder = true)
@@ -18,9 +18,8 @@ public final class PersistenceSupport implements Persistence {
     @lombok.Builder.Default
     private final int rank = UNKNOWN_PERSISTENCE_RANK;
 
-    @lombok.Builder.Default
-    private final Predicate<Class<? extends HasPersistence>> support = Persistence.noOp()::isFormatSupported;
-    ;
+    @lombok.Singular
+    private final Set<Class<? extends HasPersistence>> types;
 
     @lombok.NonNull
     @lombok.Builder.Default
@@ -37,8 +36,8 @@ public final class PersistenceSupport implements Persistence {
     }
 
     @Override
-    public boolean isFormatSupported(@NonNull Class<? extends HasPersistence> type) {
-        return support.test(type);
+    public @NonNull Set<Class<? extends HasPersistence>> getFormatSupportedTypes() {
+        return types;
     }
 
     @Override

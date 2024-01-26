@@ -18,7 +18,7 @@ public final class XmlPersistence implements Persistence {
             .builder()
             .id("XML")
             .rank(100)
-            .support(WebSources.class::equals)
+            .type(WebSources.class)
             .factory(XmlPersistence::create)
             .build();
 

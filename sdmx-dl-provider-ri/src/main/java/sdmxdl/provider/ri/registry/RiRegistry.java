@@ -75,7 +75,7 @@ public final class RiRegistry implements Registry {
     private static WebSources loadCustomSources(File sourcesFile, List<Persistence> persistences) throws IOException {
         return persistences
                 .stream()
-                .filter(persistence -> persistence.isFormatSupported(WebSources.class))
+                .filter(persistence -> persistence.getFormatSupportedTypes().contains(WebSources.class))
                 .map(persistence -> persistence.getFormat(WebSources.class))
                 .filter(format -> sourcesFile.toString().endsWith(format.getFileExtension()))
                 .findFirst()

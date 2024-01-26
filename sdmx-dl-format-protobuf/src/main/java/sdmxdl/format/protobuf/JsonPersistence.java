@@ -29,15 +29,11 @@ public final class JsonPersistence implements Persistence {
             .builder()
             .id("JSON")
             .rank(200)
-            .support(this::isSupported)
+            .type(sdmxdl.DataRepository.class)
+            .type(sdmxdl.web.MonitorReports.class)
+            .type(sdmxdl.web.WebSources.class)
             .factory(this::create)
             .build();
-
-    private boolean isSupported(Class<?> type) {
-        return sdmxdl.DataRepository.class.equals(type)
-                || sdmxdl.web.MonitorReports.class.equals(type)
-                || sdmxdl.web.WebSources.class.equals(type);
-    }
 
     @SuppressWarnings("unchecked")
     private <T extends HasPersistence> FileFormat<T> create(Class<T> type) {

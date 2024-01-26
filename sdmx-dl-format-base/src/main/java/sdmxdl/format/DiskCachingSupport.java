@@ -132,7 +132,7 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     private Predicate<Persistence> getPersistenceFilter(Class<? extends HasPersistence> type) {
         return persistenceId.isEmpty()
-                ? (persistence -> persistence.isFormatSupported(type))
+                ? (persistence -> persistence.getFormatSupportedTypes().contains(type))
                 : (persistence -> persistence.getPersistenceId().equals(persistenceId));
     }
 

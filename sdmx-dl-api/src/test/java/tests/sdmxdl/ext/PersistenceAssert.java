@@ -19,6 +19,7 @@ package tests.sdmxdl.ext;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;
+import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.MonitorReports;
@@ -30,6 +31,7 @@ import tests.sdmxdl.api.TckUtil;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
@@ -55,9 +57,12 @@ public class PersistenceAssert {
     public void assertCompliance(SoftAssertions s, Persistence persistence) throws Exception {
         EXTENSION_POINT.assertCompliance(s, persistence);
 
-        checkDataRepository(s, persistence.getFormat(DataRepository.class), persistence.isFormatSupported(DataRepository.class));
-        checkMonitorReports(s, persistence.getFormat(MonitorReports.class), persistence.isFormatSupported(MonitorReports.class));
-        checkWebSources(s, persistence.getFormat(WebSources.class), persistence.isFormatSupported(WebSources.class));
+        Set<Class<? extends HasPersistence>> supportedTypes = persistence.getFormatSupportedTypes();
+        s.assertThat(supportedTypes).isNotNull();
+
+        checkDataRepository(s, persistence.getFormat(DataRepository.class), supportedTypes.contains(DataRepository.class));
+        checkMonitorReports(s, persistence.getFormat(MonitorReports.class), supportedTypes.contains(MonitorReports.class));
+        checkWebSources(s, persistence.getFormat(WebSources.class), supportedTypes.contains(WebSources.class));
     }
 
     private void checkDataRepository(SoftAssertions s, FileFormat<DataRepository> fileFormat, boolean supported) throws IOException {

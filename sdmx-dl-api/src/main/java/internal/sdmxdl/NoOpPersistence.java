@@ -5,6 +5,9 @@ import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 
+import java.util.Collections;
+import java.util.Set;
+
 public enum NoOpPersistence implements Persistence {
 
     INSTANCE;
@@ -20,8 +23,8 @@ public enum NoOpPersistence implements Persistence {
     }
 
     @Override
-    public boolean isFormatSupported(@NonNull Class<? extends HasPersistence> type) {
-        return false;
+    public @NonNull Set<Class<? extends HasPersistence>> getFormatSupportedTypes() {
+        return Collections.emptySet();
     }
 
     @Override

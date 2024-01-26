@@ -10,6 +10,8 @@ import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import sdmxdl.HasPersistence;
 
+import java.util.Set;
+
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
         loaderName = "internal.util.PersistenceLoader"
@@ -23,7 +25,7 @@ public interface Persistence {
     @ServiceSorter(reverse = true)
     int getPersistenceRank();
 
-    boolean isFormatSupported(@NonNull Class<? extends HasPersistence> type);
+    @NonNull Set<Class<? extends HasPersistence>> getFormatSupportedTypes();
 
     @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type);
 

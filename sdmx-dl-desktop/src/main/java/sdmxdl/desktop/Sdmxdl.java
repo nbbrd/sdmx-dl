@@ -42,7 +42,7 @@ enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
         Optional<FileFormat<T>> dsdFormat = getSdmxManager()
                 .getPersistences()
                 .stream()
-                .filter(persistence -> persistence.isFormatSupported(type))
+                .filter(persistence -> persistence.getFormatSupportedTypes().contains(type))
                 .map(persistence -> persistence.getFormat(type))
                 .filter(format -> format.getFileExtension().equals(".json"))
                 .findFirst();

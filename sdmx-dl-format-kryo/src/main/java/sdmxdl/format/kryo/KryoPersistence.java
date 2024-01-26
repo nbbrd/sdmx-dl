@@ -14,7 +14,9 @@ public final class KryoPersistence implements Persistence {
             .builder()
             .id("KRYO")
             .rank(400)
-            .support(ignore -> true)
+            .type(sdmxdl.DataRepository.class)
+            .type(sdmxdl.web.MonitorReports.class)
+            .type(sdmxdl.web.WebSources.class)
             .factory(KryoFileFormat::new)
             .build();
 }
