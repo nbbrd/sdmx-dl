@@ -19,6 +19,7 @@ public final class JEditorTabs extends JComponent {
         main.putClientProperty(TABBED_PANE_TAB_CLOSABLE, true);
         main.putClientProperty(TABBED_PANE_TAB_CLOSE_CALLBACK, (IntConsumer) main::removeTabAt);
         main.putClientProperty(TABBED_PANE_TAB_TYPE, TABBED_PANE_TAB_TYPE_CARD);
+        main.putClientProperty(TABBED_PANE_MAXIMUM_TAB_WIDTH, 180);
         main.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
         setLayout(new BorderLayout());
@@ -31,7 +32,11 @@ public final class JEditorTabs extends JComponent {
         if (index != -1) {
             main.setSelectedIndex(index);
         } else {
-            main.addTab(title, tabFactory.getIcon(id, this), tabFactory.getComponent(id, this));
+            main.addTab(title,
+                    tabFactory.getIcon(id, this),
+                    tabFactory.getComponent(id, this),
+                    tabFactory.getTip(id, this)
+            );
             main.setSelectedIndex(main.getTabCount() - 1);
         }
     }
@@ -43,14 +48,17 @@ public final class JEditorTabs extends JComponent {
         Icon getIcon(ID id, JEditorTabs source);
 
         Component getComponent(ID id, JEditorTabs source);
+
+        String getTip(ID id, JEditorTabs source);
     }
 
     @lombok.Builder
     public static final class TabFactorySupport<ID> implements TabFactory<ID> {
 
-        BiFunction<? super ID, ? super JEditorTabs, ? extends String> titleFactory;
-        BiFunction<? super ID, ? super JEditorTabs, ? extends Icon> iconFactory;
-        BiFunction<? super ID, ? super JEditorTabs, ? extends Component> componentFactory;
+        final BiFunction<? super ID, ? super JEditorTabs, ? extends String> titleFactory;
+        final BiFunction<? super ID, ? super JEditorTabs, ? extends Icon> iconFactory;
+        final BiFunction<? super ID, ? super JEditorTabs, ? extends Component> componentFactory;
+        final BiFunction<? super ID, ? super JEditorTabs, ? extends String> tipFactory;
 
         @Override
         public String getTitle(ID id, JEditorTabs source) {
@@ -65,6 +73,11 @@ public final class JEditorTabs extends JComponent {
         @Override
         public Component getComponent(ID id, JEditorTabs source) {
             return componentFactory.apply(id, source);
+        }
+
+        @Override
+        public String getTip(ID id, JEditorTabs source) {
+            return tipFactory.apply(id, source);
         }
     }
 }

@@ -43,9 +43,10 @@ public interface Renderer<T> {
     default JEditorTabs.TabFactory<T> asTabFactory() {
         return JEditorTabs.TabFactorySupport
                 .<T>builder()
-                .titleFactory((id, source) -> toText(id))
+                .titleFactory((id, source) -> toHeader(id))
                 .iconFactory((id, source) -> toIcon(id, source::repaint))
                 .componentFactory((id, source) -> toView(id))
+                .tipFactory((id, source) -> toText(id))
                 .build();
     }
 
