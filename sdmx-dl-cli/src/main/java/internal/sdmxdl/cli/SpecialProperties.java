@@ -5,6 +5,7 @@ import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.sys.SystemProperties;
 import sdmxdl.About;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class SpecialProperties {
 
     public static void enableHttpDump(Properties properties) {
         Path dumpFolder = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("dump");
-        properties.setProperty("sdmxdl.ri.web.dump.folder", dumpFolder.toString());
+        properties.setProperty(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey(), dumpFolder.toString());
     }
 
     public static void disableAnsi(Properties properties) {

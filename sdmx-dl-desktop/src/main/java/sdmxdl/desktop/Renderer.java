@@ -52,7 +52,7 @@ public interface Renderer<T> {
     Renderer<WebSource> WEB_SOURCE_RENDERER = new Renderer<WebSource>() {
         @Override
         public String toHeader(WebSource value) {
-            return "<html>" + value.getId();
+            return value.getId();
         }
 
         @Override
@@ -133,7 +133,7 @@ public interface Renderer<T> {
     Renderer<DataSetRef> DATA_SET_REF_RENDERER = new Renderer<DataSetRef>() {
         @Override
         public String toHeader(DataSetRef value) {
-            return "<html>" + value.getDataSourceRef().getFlow().getId() + "/" + value.getKey();
+            return value.getDataSourceRef().getFlow().getId() + "/" + value.getKey();
         }
 
         @Override
@@ -261,7 +261,10 @@ public interface Renderer<T> {
 
         @Override
         public JComponent toView(Registry value) {
-            return new JLabel(toText(value));
+            JPluginProperties<Registry> result = new JPluginProperties<>();
+            result.setModel(value);
+            result.setExtractor(Registry::getRegistryProperties);
+            return result;
         }
     };
 
@@ -283,7 +286,10 @@ public interface Renderer<T> {
 
         @Override
         public JComponent toView(Networking value) {
-            return new JLabel(toText(value));
+            JPluginProperties<Networking> result = new JPluginProperties<>();
+            result.setModel(value);
+            result.setExtractor(Networking::getNetworkingProperties);
+            return result;
         }
     };
 

@@ -20,7 +20,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - ![API] Force use of screaming-snake-case pattern on driver ID
-- ![PROVIDER] Rename source file property from `sdmxdl.sources` to `sdmxdl.registry.sourcesFile`
+- ![PROVIDER] Rename source-file property from `sdmxdl.sources` to `sdmxdl.registry.sourcesFile`
+- ![PROVIDER] Rename user-agent property from `http.agent` to `sdmxdl.driver.userAgent`
+- ![PROVIDER] Rename dump-folder property from `sdmxdl.ri.web.dump.folder` to `sdmxdl.driver.dumpFolder`
+- ![PROVIDER] Replace curl-backend property `sdmxdl.networking.curlBackend` with url-backend property `sdmxdl.networking.urlBackend`
 
 ## [3.0.0-beta.12] - 2023-10-16
 

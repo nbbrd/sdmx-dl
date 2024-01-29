@@ -16,9 +16,8 @@
  */
 package sdmxdl.provider.web;
 
-import nbbrd.io.text.BooleanProperty;
-import nbbrd.io.text.IntProperty;
-import nbbrd.io.text.LongProperty;
+import nbbrd.io.text.*;
+import sdmxdl.About;
 import sdmxdl.format.design.PropertyDefinition;
 
 import java.util.concurrent.TimeUnit;
@@ -86,4 +85,11 @@ public class DriverProperties {
     @PropertyDefinition
     public static final BooleanProperty PREEMPTIVE_AUTH_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".preemptiveAuth", false);
+
+    /**
+     * Defines the user-agent request header. Default value is library name and version.
+     */
+    @PropertyDefinition
+    public static final Property<String> USER_AGENT_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".userAgent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
 }

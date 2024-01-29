@@ -3,6 +3,9 @@ package sdmxdl.provider.ri.networking;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.text.BooleanProperty;
+import nbbrd.io.text.Formatter;
+import nbbrd.io.text.Parser;
+import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.ErrorListener;
@@ -35,8 +38,8 @@ public final class RiNetworking implements Networking {
             = BooleanProperty.of("sdmxdl.networking.noDefaultSSL", false);
 
     @PropertyDefinition
-    public static final BooleanProperty CURL_BACKEND_PROPERTY
-            = BooleanProperty.of("sdmxdl.networking.curlBackend", false);
+    public static final Property<String> URL_BACKEND_PROPERTY
+            = Property.of("sdmxdl.networking.urlBackend", RiNetwork.DEFAULT_URL_BACKEND, Parser.onString(), Formatter.onString());
 
     @Override
     public @NonNull String getNetworkingId() {
@@ -59,7 +62,7 @@ public final class RiNetworking implements Networking {
                 AUTO_PROXY_PROPERTY,
                 NO_SYSTEM_SSL_PROPERTY,
                 NO_DEFAULT_SSL_PROPERTY,
-                CURL_BACKEND_PROPERTY
+                URL_BACKEND_PROPERTY
         );
     }
 
@@ -79,7 +82,12 @@ public final class RiNetworking implements Networking {
                 .autoProxy(AUTO_PROXY_PROPERTY.get(properties))
                 .noDefaultSSL(NO_DEFAULT_SSL_PROPERTY.get(properties))
                 .noSystemSSL(NO_SYSTEM_SSL_PROPERTY.get(properties))
-                .curlBackend(CURL_BACKEND_PROPERTY.get(properties))
+                .urlBackend(getUrlBackend(properties))
                 .build();
+    }
+
+    private static String getUrlBackend(Function<? super String, ? extends CharSequence> properties) {
+        String result = URL_BACKEND_PROPERTY.get(properties);
+        return result != null ? result : RiNetwork.DEFAULT_URL_BACKEND;
     }
 }

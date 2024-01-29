@@ -18,13 +18,11 @@ public class NetworkingOptions {
     private boolean autoProxy;
 
     @CommandLine.Option(
-            names = "--curl",
-            negatable = true,
-            defaultValue = "${env:SDMXDL_NETWORKING_CURLBACKEND:-false}",
-            fallbackValue = "true",
+            names = "--url-backend",
+            defaultValue = "${env:SDMXDL_NETWORKING_URLBACKEND}",
             descriptionKey = "cli.sdmx.curl"
     )
-    private boolean curlBackend;
+    private String urlBackend;
 
     @CommandLine.Option(
             names = {"--no-default-ssl"},
@@ -48,7 +46,12 @@ public class NetworkingOptions {
         System.setProperty(RiNetworking.AUTO_PROXY_PROPERTY.getKey(), Boolean.toString(isAutoProxy()));
         System.setProperty(RiNetworking.NO_DEFAULT_SSL_PROPERTY.getKey(), Boolean.toString(isNoDefaultSsl()));
         System.setProperty(RiNetworking.NO_SYSTEM_SSL_PROPERTY.getKey(), Boolean.toString(isNoSystemSsl()));
-        System.setProperty(RiNetworking.CURL_BACKEND_PROPERTY.getKey(), Boolean.toString(isCurlBackend()));
+        String urlBackend = getUrlBackend();
+        if (urlBackend == null) {
+            System.clearProperty(RiNetworking.URL_BACKEND_PROPERTY.getKey());
+        } else {
+            System.setProperty(RiNetworking.URL_BACKEND_PROPERTY.getKey(), urlBackend);
+        }
         return new RiNetworking();
     }
 }

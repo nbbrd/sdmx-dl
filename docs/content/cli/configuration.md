@@ -43,9 +43,9 @@ There are several types of system properties: some are defined by the platform, 
 
 {{< expand "sdmx-dl properties" >}}
 
-| Property                    | Description                               |
-|-----------------------------|-------------------------------------------|
-| `sdmxdl.ri.web.dump.folder` | Folder used to dump body of web responses |
+| Property                   | Description                               |
+|----------------------------|-------------------------------------------|
+| `sdmxdl.driver.dumpFolder` | Folder used to dump body of web responses |
 
 {{< /expand >}}
 
