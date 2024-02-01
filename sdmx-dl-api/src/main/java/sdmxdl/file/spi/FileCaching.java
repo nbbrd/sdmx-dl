@@ -25,7 +25,7 @@ import java.util.List;
 )
 public interface FileCaching {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getFileCachingId();
 
     @ServiceSorter(reverse = true)

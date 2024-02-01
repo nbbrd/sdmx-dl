@@ -17,7 +17,7 @@ import java.io.IOException;
 @ThreadSafe
 public interface Monitor {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getMonitorId();
 
     @NonNull String getMonitorUriScheme();

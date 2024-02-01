@@ -1,5 +1,6 @@
 package tests.sdmxdl.web.spi;
 
+import internal.util.NetworkingLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
@@ -10,7 +11,6 @@ import tests.sdmxdl.api.TckUtil;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.web.spi.Networking.NETWORKING_PROPERTY_PREFIX;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class NetworkingAssert {
@@ -19,7 +19,7 @@ public class NetworkingAssert {
     private static final ExtensionPoint<Networking> EXTENSION_POINT = ExtensionPoint
             .<Networking>builder()
             .id(Networking::getNetworkingId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(NetworkingLoader.ID_PATTERN)
             .rank(Networking::getNetworkingRank)
             .rankLowerBound(Networking.UNKNOWN_NETWORKING_RANK)
             .properties(Networking::getNetworkingProperties)

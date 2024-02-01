@@ -26,7 +26,7 @@ import java.util.List;
 )
 public interface WebCaching {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getWebCachingId();
 
     @ServiceSorter(reverse = true)

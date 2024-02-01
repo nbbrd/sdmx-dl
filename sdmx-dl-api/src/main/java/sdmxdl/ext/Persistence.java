@@ -19,7 +19,7 @@ import java.util.Set;
 @ThreadSafe
 public interface Persistence {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getPersistenceId();
 
     @ServiceSorter(reverse = true)

@@ -20,7 +20,7 @@ import java.util.Collection;
 @ThreadSafe
 public interface Networking {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getNetworkingId();
 
     @ServiceSorter(reverse = true)

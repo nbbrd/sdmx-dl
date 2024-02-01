@@ -16,6 +16,7 @@
  */
 package tests.sdmxdl.ext;
 
+import internal.util.PersistenceLoader;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;
@@ -34,7 +35,6 @@ import java.time.Duration;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class PersistenceAssert {
@@ -43,7 +43,7 @@ public class PersistenceAssert {
     private static final ExtensionPoint<Persistence> EXTENSION_POINT = ExtensionPoint
             .<Persistence>builder()
             .id(Persistence::getPersistenceId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(PersistenceLoader.ID_PATTERN)
             .rank(Persistence::getPersistenceRank)
             .rankLowerBound(Persistence.UNKNOWN_PERSISTENCE_RANK)
             .properties(ignore -> emptyList())

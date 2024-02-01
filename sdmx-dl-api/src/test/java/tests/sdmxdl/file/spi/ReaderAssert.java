@@ -1,5 +1,6 @@
 package tests.sdmxdl.file.spi;
 
+import internal.util.ReaderLoader;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
@@ -11,7 +12,6 @@ import tests.sdmxdl.api.TckUtil;
 
 import static java.util.Collections.emptyList;
 import static sdmxdl.Languages.ANY;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class ReaderAssert {
@@ -20,7 +20,7 @@ public class ReaderAssert {
     private static final ExtensionPoint<Reader> EXTENSION_POINT = ExtensionPoint
             .<Reader>builder()
             .id(Reader::getReaderId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(ReaderLoader.ID_PATTERN)
             .rank(Reader::getReaderRank)
             .rankLowerBound(Reader.UNKNOWN_READER_RANK)
             .properties(ignore -> emptyList())

@@ -38,7 +38,7 @@ import java.util.Collection;
 @ThreadSafe
 public interface Driver {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getDriverId();
 
     @ServiceSorter(reverse = true)

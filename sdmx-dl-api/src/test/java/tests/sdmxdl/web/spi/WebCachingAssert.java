@@ -1,5 +1,6 @@
 package tests.sdmxdl.web.spi;
 
+import internal.util.WebCachingLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
@@ -11,7 +12,6 @@ import tests.sdmxdl.ext.CacheAssert;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class WebCachingAssert {
@@ -20,7 +20,7 @@ public class WebCachingAssert {
     private static final ExtensionPoint<WebCaching> EXTENSION_POINT = ExtensionPoint
             .<WebCaching>builder()
             .id(WebCaching::getWebCachingId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(WebCachingLoader.ID_PATTERN)
             .rank(WebCaching::getWebCachingRank)
             .rankLowerBound(WebCaching.UNKNOWN_WEB_CACHING_RANK)
             .properties(WebCaching::getWebCachingProperties)

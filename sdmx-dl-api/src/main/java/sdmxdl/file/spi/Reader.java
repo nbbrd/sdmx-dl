@@ -35,7 +35,7 @@ import java.io.IOException;
 @ThreadSafe
 public interface Reader {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getReaderId();
 
     @ServiceSorter(reverse = true)

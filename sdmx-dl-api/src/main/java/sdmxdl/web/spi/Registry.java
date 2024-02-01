@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 @ThreadSafe
 public interface Registry {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getRegistryId();
 
     @ServiceSorter(reverse = true)

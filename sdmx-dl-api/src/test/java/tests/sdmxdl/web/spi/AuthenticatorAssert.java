@@ -1,5 +1,6 @@
 package tests.sdmxdl.web.spi;
 
+import internal.util.AuthenticatorLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
@@ -10,7 +11,6 @@ import tests.sdmxdl.api.TckUtil;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @SuppressWarnings("ConstantConditions")
 @lombok.experimental.UtilityClass
@@ -26,7 +26,7 @@ public class AuthenticatorAssert {
     private static final ExtensionPoint<Authenticator> EXTENSION_POINT = ExtensionPoint
             .<Authenticator>builder()
             .id(Authenticator::getAuthenticatorId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(AuthenticatorLoader.ID_PATTERN)
             .rank(ignore -> -1)
             .rankLowerBound(-1)
             .properties(ignore -> emptyList())

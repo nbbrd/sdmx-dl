@@ -1,5 +1,6 @@
 package tests.sdmxdl.web.spi;
 
+import internal.util.DriverLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
@@ -8,11 +9,8 @@ import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.api.ExtensionPoint;
 import tests.sdmxdl.api.TckUtil;
 
-import java.util.regex.Pattern;
-
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class DriverAssert {
@@ -25,7 +23,7 @@ public class DriverAssert {
     private static final ExtensionPoint<Driver> EXTENSION_POINT = ExtensionPoint
             .<Driver>builder()
             .id(Driver::getDriverId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(DriverLoader.ID_PATTERN)
             .rank(Driver::getDriverRank)
             .rankLowerBound(Driver.UNKNOWN_DRIVER_RANK)
             .properties(Driver::getDriverProperties)

@@ -1,5 +1,6 @@
 package tests.sdmxdl.web.spi;
 
+import internal.util.ReaderLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.spi.Registry;
@@ -10,7 +11,6 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static sdmxdl.web.spi.Registry.REGISTRY_PROPERTY_PREFIX;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
 
 @lombok.experimental.UtilityClass
 public class RegistryAssert {
@@ -19,7 +19,7 @@ public class RegistryAssert {
     private static final ExtensionPoint<Registry> EXTENSION_POINT = ExtensionPoint
             .<Registry>builder()
             .id(Registry::getRegistryId)
-            .idPattern(SCREAMING_SNAKE_CASE)
+            .idPattern(ReaderLoader.ID_PATTERN)
             .rank(Registry::getRegistryRank)
             .rankLowerBound(Registry.UNKNOWN_REGISTRY_RANK)
             .properties(Registry::getRegistryProperties)

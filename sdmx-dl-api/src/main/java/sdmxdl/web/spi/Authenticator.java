@@ -19,7 +19,7 @@ import java.net.PasswordAuthentication;
 @ThreadSafe
 public interface Authenticator {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getAuthenticatorId();
 
     @ServiceFilter
