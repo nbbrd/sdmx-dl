@@ -33,7 +33,7 @@ import java.util.Collection;
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
         wrapper = FailsafeDriver.class,
-        loaderName = "internal.util.DriverLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Driver {

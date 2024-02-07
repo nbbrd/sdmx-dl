@@ -1,6 +1,6 @@
 package tests.sdmxdl.web.spi;
 
-import internal.util.WebCachingLoader;
+import internal.sdmxdl.web.spi.WebCachingLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;

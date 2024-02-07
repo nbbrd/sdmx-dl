@@ -16,9 +16,9 @@
  */
 package sdmxdl.file;
 
-import internal.util.FileCachingLoader;
-import internal.util.PersistenceLoader;
-import internal.util.ReaderLoader;
+import internal.sdmxdl.ext.PersistenceLoader;
+import internal.sdmxdl.file.spi.FileCachingLoader;
+import internal.sdmxdl.file.spi.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;

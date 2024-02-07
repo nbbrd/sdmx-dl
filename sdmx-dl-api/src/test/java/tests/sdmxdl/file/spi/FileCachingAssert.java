@@ -1,6 +1,6 @@
 package tests.sdmxdl.file.spi;
 
-import internal.util.FileCachingLoader;
+import internal.sdmxdl.file.spi.FileCachingLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.file.FileSource;

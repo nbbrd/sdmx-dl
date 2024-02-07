@@ -21,8 +21,8 @@ import java.util.List;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.WebCachingLoader",
-        fallback = NoOpCaching.class
+        fallback = NoOpCaching.class,
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 public interface WebCaching {
 

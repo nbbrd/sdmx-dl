@@ -14,8 +14,8 @@ import java.util.Collection;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.NetworkingLoader",
-        fallback = DefaultNetworking.class
+        fallback = DefaultNetworking.class,
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Networking {

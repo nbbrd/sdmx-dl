@@ -1,6 +1,6 @@
 package tests.sdmxdl.file.spi;
 
-import internal.util.ReaderLoader;
+import internal.sdmxdl.file.spi.ReaderLoader;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.MonitorLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Monitor {

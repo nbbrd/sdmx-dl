@@ -180,7 +180,13 @@ public enum OtherRules {
 
         @Override
         public Stream<WebRule> getProviders() {
-            return Stream.of(OtherRules.values()).map(item -> WebRule.of(item.name(), response -> item.isInvalid(response) ? item.name() : null));
+            return Stream.of(OtherRules.values())
+                    .map(item -> WebRuleSupport
+                            .builder()
+                            .id(item.name())
+                            .validator(response -> item.isInvalid(response) ? item.name() : null)
+                            .build()
+                    );
         }
     }
 }

@@ -16,7 +16,7 @@
  */
 package tests.sdmxdl.ext;
 
-import internal.util.PersistenceLoader;
+import internal.sdmxdl.ext.PersistenceLoader;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.DataRepository;

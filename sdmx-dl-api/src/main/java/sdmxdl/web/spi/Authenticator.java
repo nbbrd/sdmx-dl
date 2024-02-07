@@ -14,7 +14,7 @@ import java.net.PasswordAuthentication;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.AuthenticatorLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Authenticator {

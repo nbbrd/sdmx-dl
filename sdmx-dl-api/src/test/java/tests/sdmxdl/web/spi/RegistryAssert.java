@@ -1,6 +1,6 @@
 package tests.sdmxdl.web.spi;
 
-import internal.util.ReaderLoader;
+import internal.sdmxdl.file.spi.ReaderLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.spi.Registry;

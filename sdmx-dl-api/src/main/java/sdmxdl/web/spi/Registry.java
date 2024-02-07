@@ -20,8 +20,8 @@ import java.util.function.Consumer;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.RegistryLoader",
-        fallback = NoOpRegistry.class
+        fallback = NoOpRegistry.class,
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Registry {

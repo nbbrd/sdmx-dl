@@ -14,7 +14,7 @@ import java.util.Set;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.PersistenceLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Persistence {

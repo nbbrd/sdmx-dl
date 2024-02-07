@@ -2,9 +2,9 @@ package sdmxdl.testing;
 
 import nbbrd.design.DirectImpl;
 import nbbrd.service.ServiceProvider;
-import sdmxdl.Structure;
 import sdmxdl.Flow;
 import sdmxdl.Series;
+import sdmxdl.Structure;
 import sdmxdl.provider.Validator;
 
 import java.util.Collection;
@@ -79,7 +79,13 @@ public enum RangeRules {
 
         @Override
         public Stream<WebRule> getProviders() {
-            return Stream.of(RangeRules.values()).map(item -> WebRule.of(item.name(), item::validateRange));
+            return Stream.of(RangeRules.values())
+                    .map(item -> WebRuleSupport
+                            .builder()
+                            .id(item.name())
+                            .validator(item::validateRange)
+                            .build()
+                    );
         }
     }
 }

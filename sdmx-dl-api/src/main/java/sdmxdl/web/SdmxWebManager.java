@@ -16,7 +16,8 @@
  */
 package sdmxdl.web;
 
-import internal.util.*;
+import internal.sdmxdl.ext.PersistenceLoader;
+import internal.sdmxdl.web.spi.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
