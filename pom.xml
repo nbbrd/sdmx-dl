@@ -36,6 +36,8 @@
     </scm>
 
     <properties>
+        <project.build.outputTimestamp>2024-01-01T00:00:00Z</project.build.outputTimestamp>
+
         <slf4j.version>2.0.12</slf4j.version>
         <protobuf.version>3.25.2</protobuf.version>
     </properties>
