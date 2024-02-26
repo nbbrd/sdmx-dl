@@ -27,7 +27,9 @@ public class SingleSeries {
         try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), languages)) {
             return new SingleSeries(
                     conn.getStructure(ref.getDataSourceRef().getFlow()),
-                    conn.getDataStream(ref.getDataSourceRef().getFlow(), Query.builder().key(ref.getKey()).build()).findFirst().orElseThrow(RuntimeException::new)
+                    conn.getDataStream(ref.getDataSourceRef().getFlow(), Query.builder().key(ref.getKey()).build())
+                            .findFirst()
+                            .orElseGet(() -> Series.builder().key(ref.getKey()).build())
             );
         }
     }

@@ -89,7 +89,7 @@ public final class JDataSet extends JComponent implements HasModel<DataSetRef> {
                 try {
                     displayData(get());
                 } catch (InterruptedException | ExecutionException ex) {
-                    reportError(ex);
+                    reportError(ex.getCause());
                 }
             }
         }.execute();
@@ -97,18 +97,21 @@ public final class JDataSet extends JComponent implements HasModel<DataSetRef> {
 
     private void reportLoading() {
         // TODO
+        dataPanel.setNoModelMessage("Loading");
     }
 
     private void displayData(SingleSeries item) {
+        dataPanel.setNoModelMessage("No data");
         dataPanel.setModel(item);
         metaPanel.setModel(item);
         idTable.setModel(asIdTableModel(item));
         dsdTextArea.setModel(DataRepository.builder().structure(item.getDsd()).build());
     }
 
-    private void reportError(Exception ex) {
-        ex.printStackTrace();
+    private void reportError(Throwable ex) {
         // TODO
+        ex.printStackTrace();
+        dataPanel.setNoModelMessage(ex.getClass().getSimpleName() + ": " + ex.getMessage());
     }
 
     private TableModel asIdTableModel(SingleSeries item) {

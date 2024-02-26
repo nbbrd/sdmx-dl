@@ -7,6 +7,7 @@ import ec.util.chart.swing.SwingColorSchemeSupport;
 import ec.util.grid.swing.AbstractGridModel;
 import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
+import ec.util.grid.swing.XTable;
 import ec.util.table.swing.JTables;
 import internal.sdmxdl.desktop.ObsFormats;
 import internal.sdmxdl.desktop.SeriesMetaFormats;
@@ -34,6 +35,15 @@ public final class JSeriesDataPanel extends JComponent implements HasModel<Singl
 
     public void setModel(SingleSeries model) {
         firePropertyChange(MODEL_PROPERTY, this.model, this.model = model);
+    }
+
+    public static final String NO_MODEL_MESSAGE = "noModelMessage";
+
+    @Getter
+    private String noModelMessage = "No data";
+
+    public void setNoModelMessage(String noModelMessage) {
+        firePropertyChange(NO_MODEL_MESSAGE, this.noModelMessage, this.noModelMessage = noModelMessage);
     }
 
     private final JGrid grid = new JGrid();
@@ -72,6 +82,7 @@ public final class JSeriesDataPanel extends JComponent implements HasModel<Singl
         add(BorderLayout.CENTER, dataPane);
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
+        addPropertyChangeListener(NO_MODEL_MESSAGE, this::onNoModelChange);
     }
 
     private void onModelChange(PropertyChangeEvent evt) {
@@ -91,6 +102,11 @@ public final class JSeriesDataPanel extends JComponent implements HasModel<Singl
             grid.setModel(null);
             chart.setDataset(null);
         }
+    }
+
+    private void onNoModelChange(PropertyChangeEvent evt) {
+        grid.setNoDataRenderer(new XTable.DefaultNoDataRenderer(noModelMessage));
+        chart.setNoDataMessage(noModelMessage);
     }
 
     private GridModel asGridModel(SingleSeries item) {
