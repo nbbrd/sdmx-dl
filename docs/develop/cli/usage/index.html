@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2023-07-10T09:12:23+02:00"
+      content="2024-02-28T15:32:58+01:00"
     />
 
 
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2023-07-10T09:12:23.00Z",
+      "dateModified": "2024-02-28T15:32:58.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1091,7 +1091,7 @@ flowchart TB
 
 
 <p>Download time series observations.</p>
-<p>Example: <code>sdmx-dl fetch data ECB EXR M.USD+CHF.EUR.SP00.A</code></p>
+<p>Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1203,7 +1203,7 @@ flowchart TB
 
 
 <p>Download time series metadata.</p>
-<p>Example: <code>sdmx-dl fetch meta ECB EXR M.USD+CHF.EUR.SP00.A</code></p>
+<p>Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1320,7 +1320,7 @@ flowchart TB
 
 
 <p>Download time series keys.</p>
-<p>Example: <code>sdmx-dl fetch keys ECB EXR .USD+CHF.EUR.SP00.A</code></p>
+<p>Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1409,7 +1409,7 @@ flowchart TB
 
 
 <p>List data source names and properties.</p>
-<p>Example: <code>sdmx-dl list sources</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list sources</font></code></p>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1567,7 +1567,7 @@ flowchart TB
 
 
 <p>List data flows.</p>
-<p>Example: <code>sdmx-dl list flows ECB</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1661,7 +1661,7 @@ flowchart TB
 
 
 <p>List data flow dimensions.</p>
-<p>Example: <code>sdmx-dl list dimensions ECB EXR</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1779,7 +1779,7 @@ flowchart TB
 
 
 <p>List data flow attributes.</p>
-<p>Example: <code>sdmx-dl list attributes ECB EXR</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1885,7 +1885,7 @@ flowchart TB
 
 
 <p>List codes from data flow concept.</p>
-<p>Example: <code>sdmx-dl list codes ECB EXR FREQ</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -1979,7 +1979,7 @@ flowchart TB
 
 
 <p>List available dimension codes.</p>
-<p>Example: <code>sdmx-dl list availability ECB EXR M.CHF... 4</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF&hellip;</abbr> <abbr title="index">4</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -2066,7 +2066,7 @@ flowchart TB
 
 
 <p>List supported features of a data source.</p>
-<p>Example: <code>sdmx-dl list features ECB</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -2138,7 +2138,7 @@ flowchart TB
 
 
 <p>List driver names and properties.</p>
-<p>Example: <code>sdmx-dl list drivers</code></p>
+<p>Example: <code>sdmx-dl <font color="#859900">list drivers</font></code></p>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -2201,7 +2201,7 @@ flowchart TB
 
 
 <p>Check service availability.</p>
-<p>Example: <code>sdmx-dl check status ECB</code></p>
+<p>Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -2301,7 +2301,7 @@ flowchart TB
 
 
 <p>Check service accessibility.</p>
-<p>Example: <code>sdmx-dl check access ECB</code></p>
+<p>Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
 <ul>
 <li><a
@@ -2395,7 +2395,7 @@ flowchart TB
 
 
 <p>Check sdmx-dl configuration.</p>
-<p>Example: <code>sdmx-dl check config</code></p>
+<p>Example: <code>sdmx-dl <font color="#268bd2">check config</font></code></p>
 <p>Other options:
 <a
   class="gdoc-markdown__link--code"
