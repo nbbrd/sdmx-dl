@@ -115,7 +115,7 @@ Subcommands:
 
 Download time series observations.
 
-Example: `sdmx-dl fetch data ECB EXR M.USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -153,7 +153,7 @@ Output format:
 
 Download time series metadata.  
 
-Example: `sdmx-dl fetch meta ECB EXR M.USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -193,7 +193,7 @@ Output format:
 
 Download time series keys.  
 
-Example: `sdmx-dl fetch keys ECB EXR .USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -229,7 +229,7 @@ Output format:
 
 List data source names and properties.  
 
-Example: `sdmx-dl list sources`  
+Example: <code>sdmx-dl <font color="#859900">list sources</font></code>  
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -265,7 +265,7 @@ Output format:
 
 List data flows.  
 
-Example: `sdmx-dl list flows ECB`  
+Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -300,7 +300,7 @@ Output format:
 
 List data flow dimensions.  
 
-Example: `sdmx-dl list dimensions ECB EXR`  
+Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -339,7 +339,7 @@ Output format:
 
 List data flow attributes.
 
-Example: `sdmx-dl list attributes ECB EXR`
+Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -376,7 +376,7 @@ Output format:
 
 List codes from data flow concept.  
 
-Example: `sdmx-dl list codes ECB EXR FREQ`  
+Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -412,7 +412,7 @@ Output format:
 
 List available dimension codes.
 
-Example: `sdmx-dl list availability ECB EXR M.CHF... 4`
+Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF...</abbr> <abbr title="index">4</abbr></code>
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -447,7 +447,7 @@ Output format:
 
 List supported features of a data source.  
 
-Example: `sdmx-dl list features ECB`  
+Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
 - [`source`](../datatypes#source) - Data source name.
@@ -478,7 +478,7 @@ Output format:
 
 List driver names and properties.  
 
-Example: `sdmx-dl list drivers`  
+Example: <code>sdmx-dl <font color="#859900">list drivers</font></code>  
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -505,7 +505,7 @@ Output format:
 
 Check service availability.  
 
-Example: `sdmx-dl check status ECB`  
+Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
 - [`sources`](../datatypes#list) - Data source names.
@@ -541,7 +541,7 @@ Output format:
 
 Check service accessibility.  
 
-Example: `sdmx-dl check access ECB`  
+Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
 - [`sources`](../datatypes#list) - Data source names.
@@ -576,7 +576,7 @@ Output format:
 
 Check sdmx-dl configuration.
 
-Example: `sdmx-dl check config`  
+Example: <code>sdmx-dl <font color="#268bd2">check config</font></code>  
 
 Other options: 
 [`CSV`](../options#csv)
