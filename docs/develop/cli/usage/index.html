@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-02-29T08:10:46+01:00"
+      content="2024-02-29T09:29:56+01:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit.",
-      "wordCount" : "1263",
+      "wordCount" : "1276",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-02-29T08:10:46.00Z",
+      "dateModified": "2024-02-29T09:29:56.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1092,8 +1092,22 @@ flowchart TB
 
 <p>Download time series observations.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-data"
+      id="tabs-fetch-data-0"
+      checked="checked"
+    />
+    <label for="tabs-fetch-data-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1107,7 +1121,20 @@ flowchart TB
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-data"
+      id="tabs-fetch-data-1"
+      
+    />
+    <label for="tabs-fetch-data-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1127,34 +1154,51 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-data"
+      id="tabs-fetch-data-2"
+      
+    />
+    <label for="tabs-fetch-data-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
-><code>Series:key</code></a>,
-<a
+><code>Series:key</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#map"
-><code>ObsAttributes:map</code></a>,
-<a
+><code>ObsAttributes:map</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#datetime"
-><code>ObsPeriod:datetime</code></a>,
-<a
+><code>ObsPeriod:datetime</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#number"
-><code>ObsValue:number</code></a>
-]</p>
+><code>ObsValue:number</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="af109440-7">
+  <label class="gdoc-expand__head flex justify-between" for="ec2473c8-8">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="af109440-7" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ec2473c8-8" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Series</th>
@@ -1190,6 +1234,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1204,8 +1250,22 @@ flowchart TB
 
 <p>Download time series metadata.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-meta"
+      id="tabs-fetch-meta-0"
+      checked="checked"
+    />
+    <label for="tabs-fetch-meta-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1219,7 +1279,20 @@ flowchart TB
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-meta"
+      id="tabs-fetch-meta-1"
+      
+    />
+    <label for="tabs-fetch-meta-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1243,30 +1316,47 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-meta"
+      id="tabs-fetch-meta-2"
+      
+    />
+    <label for="tabs-fetch-meta-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
-><code>Series:key</code></a>,
-<a
+><code>Series:key</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Concept:string</code></a>,
-<a
+><code>Concept:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Value:string</code></a>
-]</p>
+><code>Value:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="dfd9617c-9">
+  <label class="gdoc-expand__head flex justify-between" for="ce3f0310-11">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="dfd9617c-9" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ce3f0310-11" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Series</th>
@@ -1307,6 +1397,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1321,8 +1413,22 @@ flowchart TB
 
 <p>Download time series keys.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-keys"
+      id="tabs-fetch-keys-0"
+      checked="checked"
+    />
+    <label for="tabs-fetch-keys-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1336,7 +1442,20 @@ flowchart TB
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-keys"
+      id="tabs-fetch-keys-1"
+      
+    />
+    <label for="tabs-fetch-keys-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1360,22 +1479,39 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-fetch-keys"
+      id="tabs-fetch-keys-2"
+      
+    />
+    <label for="tabs-fetch-keys-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
-><code>Series:key</code></a>
-]</p>
+><code>Series:key</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="7979c92d-11">
+  <label class="gdoc-expand__head flex justify-between" for="ecf3f083-14">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="7979c92d-11" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ecf3f083-14" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Series</th>
@@ -1396,6 +1532,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1410,7 +1548,38 @@ flowchart TB
 
 <p>List data source names and properties.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list sources</font></code></p>
-<p>Main options:</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-sources"
+      id="tabs-list-sources-0"
+      checked="checked"
+    />
+    <label for="tabs-list-sources-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ul>
+<li><em>no parameters</em></li>
+</ul>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-sources"
+      id="tabs-list-sources-1"
+      
+    />
+    <label for="tabs-list-sources-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1422,58 +1591,75 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#csv"
 ><code>CSV</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-sources"
+      id="tabs-list-sources-2"
+      
+    />
+    <label for="tabs-list-sources-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
-><code>Name:source</code></a>,
-<a
+><code>Name:source</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Description:string</code></a>,
-<a
+><code>Description:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
-><code>Aliases:list</code></a>,
-<a
+><code>Aliases:list</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Driver:string</code></a>,
-<a
+><code>Driver:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#uri"
-><code>Endpoint:uri</code></a>,
-<a
+><code>Endpoint:uri</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
-><code>Properties:map</code></a>,
-<a
+><code>Properties:map</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#url"
-><code>Website:url</code></a>,
-<a
+><code>Website:url</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#uri"
-><code>Monitor:uri</code></a>,
-<a
+><code>Monitor:uri</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#url"
-><code>MonitorWebsite:url</code></a>,
-<a
+><code>MonitorWebsite:url</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
-><code>Languages:list</code></a>
-]</p>
+><code>Languages:list</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="c688f62a-13">
+  <label class="gdoc-expand__head flex justify-between" for="7585fd65-17">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="c688f62a-13" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="7585fd65-17" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Name</th>
@@ -1554,6 +1740,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1568,14 +1756,41 @@ flowchart TB
 
 <p>List data flows.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-flows"
+      id="tabs-list-flows-0"
+      checked="checked"
+    />
+    <label for="tabs-list-flows-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
 ><code>source</code></a> - Data source name.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-flows"
+      id="tabs-list-flows-1"
+      
+    />
+    <label for="tabs-list-flows-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1599,30 +1814,47 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-flows"
+      id="tabs-list-flows-2"
+      
+    />
+    <label for="tabs-list-flows-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#flow"
-><code>Ref:flow</code></a>,
-<a
+><code>Ref:flow</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Name:string</code></a>,
-<a
+><code>Name:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Description:string</code></a>
-]</p>
+><code>Description:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="e0bda5e9-15">
+  <label class="gdoc-expand__head flex justify-between" for="e3696fec-20">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="e0bda5e9-15" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="e3696fec-20" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Ref</th>
@@ -1648,6 +1880,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1662,8 +1896,22 @@ flowchart TB
 
 <p>List data flow dimensions.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-dimensions"
+      id="tabs-list-dimensions-0"
+      checked="checked"
+    />
+    <label for="tabs-list-dimensions-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1673,7 +1921,20 @@ flowchart TB
   href="../datatypes#flow"
 ><code>flow</code></a> - Data flow reference.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-dimensions"
+      id="tabs-list-dimensions-1"
+      
+    />
+    <label for="tabs-list-dimensions-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1697,34 +1958,51 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-dimensions"
+      id="tabs-list-dimensions-2"
+      
+    />
+    <label for="tabs-list-dimensions-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Name:string</code></a>,
-<a
+><code>Name:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Label:string</code></a>,
-<a
+><code>Label:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#bool"
-><code>Coded:bool</code></a>,
-<a
+><code>Coded:bool</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#int"
-><code>Index:int</code></a>
-]</p>
+><code>Index:int</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="0e6fa7fd-17">
+  <label class="gdoc-expand__head flex justify-between" for="4b181ca5-23">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="0e6fa7fd-17" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="4b181ca5-23" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Name</th>
@@ -1766,6 +2044,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1780,8 +2060,22 @@ flowchart TB
 
 <p>List data flow attributes.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-attributes"
+      id="tabs-list-attributes-0"
+      checked="checked"
+    />
+    <label for="tabs-list-attributes-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1791,7 +2085,20 @@ flowchart TB
   href="../datatypes#flow"
 ><code>flow</code></a> - Data flow reference.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-attributes"
+      id="tabs-list-attributes-1"
+      
+    />
+    <label for="tabs-list-attributes-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1815,34 +2122,51 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-attributes"
+      id="tabs-list-attributes-2"
+      
+    />
+    <label for="tabs-list-attributes-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Name:string</code></a>,
-<a
+><code>Name:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Label:string</code></a>,
-<a
+><code>Label:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#bool"
-><code>Coded:bool</code></a>,
-<a
+><code>Coded:bool</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>Relationship:enum</code></a>
-]</p>
+><code>Relationship:enum</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="b05f5a83-19">
+  <label class="gdoc-expand__head flex justify-between" for="5fe7624c-26">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="b05f5a83-19" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="5fe7624c-26" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Concept</th>
@@ -1872,6 +2196,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1886,8 +2212,22 @@ flowchart TB
 
 <p>List codes from data flow concept.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-codes"
+      id="tabs-list-codes-0"
+      checked="checked"
+    />
+    <label for="tabs-list-codes-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1901,7 +2241,20 @@ flowchart TB
   href="../datatypes#string"
 ><code>concept</code></a> - Concept name.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-codes"
+      id="tabs-list-codes-1"
+      
+    />
+    <label for="tabs-list-codes-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -1925,26 +2278,43 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-codes"
+      id="tabs-list-codes-2"
+      
+    />
+    <label for="tabs-list-codes-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Code:string</code></a>,
-<a
+><code>Code:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Label:string</code></a>
-]</p>
+><code>Label:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="f8add7f3-21">
+  <label class="gdoc-expand__head flex justify-between" for="f93dfa8a-29">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="f8add7f3-21" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="f93dfa8a-29" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Code</th>
@@ -1966,6 +2336,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -1980,8 +2352,22 @@ flowchart TB
 
 <p>List available dimension codes.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF&hellip;</abbr> <abbr title="index">4</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-availability"
+      id="tabs-list-availability-0"
+      checked="checked"
+    />
+    <label for="tabs-list-availability-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1999,7 +2385,20 @@ flowchart TB
   href="../datatypes#int"
 ><code>index</code></a> - Zero-based index of key dimension.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-availability"
+      id="tabs-list-availability-1"
+      
+    />
+    <label for="tabs-list-availability-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -2023,22 +2422,39 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-availability"
+      id="tabs-list-availability-2"
+      
+    />
+    <label for="tabs-list-availability-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Code:string</code></a>
-]</p>
+><code>Code:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="6bf1eec1-23">
+  <label class="gdoc-expand__head flex justify-between" for="0bdf0d97-32">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="6bf1eec1-23" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="0bdf0d97-32" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Code</th>
@@ -2053,6 +2469,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -2067,14 +2485,41 @@ flowchart TB
 
 <p>List supported features of a data source.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-features"
+      id="tabs-list-features-0"
+      checked="checked"
+    />
+    <label for="tabs-list-features-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
 ><code>source</code></a> - Data source name.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-features"
+      id="tabs-list-features-1"
+      
+    />
+    <label for="tabs-list-features-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -2098,22 +2543,39 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-features"
+      id="tabs-list-features-2"
+      
+    />
+    <label for="tabs-list-features-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>SupportedFeature:enum</code></a>
-]</p>
+><code>SupportedFeature:enum</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="85a89837-25">
+  <label class="gdoc-expand__head flex justify-between" for="39e4eaea-35">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="85a89837-25" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="39e4eaea-35" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>SupportedFeature</th>
@@ -2125,6 +2587,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -2139,7 +2603,38 @@ flowchart TB
 
 <p>List driver names and properties.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list drivers</font></code></p>
-<p>Main options:</p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-drivers"
+      id="tabs-list-drivers-0"
+      checked="checked"
+    />
+    <label for="tabs-list-drivers-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ul>
+<li><em>no parameters</em></li>
+</ul>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-drivers"
+      id="tabs-list-drivers-1"
+      
+    />
+    <label for="tabs-list-drivers-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -2151,22 +2646,39 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#csv"
 ><code>CSV</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-drivers"
+      id="tabs-list-drivers-2"
+      
+    />
+    <label for="tabs-list-drivers-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>SupportedFeature:enum</code></a>
-]</p>
+><code>SupportedFeature:enum</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="3127b2b1-27">
+  <label class="gdoc-expand__head flex justify-between" for="5443d473-38">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="3127b2b1-27" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="5443d473-38" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Name</th>
@@ -2188,6 +2700,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -2202,14 +2716,41 @@ flowchart TB
 
 <p>Check service availability.</p>
 <p>Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-status"
+      id="tabs-check-status-0"
+      checked="checked"
+    />
+    <label for="tabs-check-status-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
 ><code>sources</code></a> - Data source names.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-status"
+      id="tabs-check-status-1"
+      
+    />
+    <label for="tabs-check-status-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -2237,38 +2778,55 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-status"
+      id="tabs-check-status-2"
+      
+    />
+    <label for="tabs-check-status-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
-><code>Source:source</code></a>,
-<a
+><code>Source:source</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>Status:enum</code></a>,
-<a
+><code>Status:enum</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#double"
-><code>UptimeRatio:double</code></a>,
-<a
+><code>UptimeRatio:double</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#double"
-><code>AverageResponseTime:double</code></a>,
-<a
+><code>AverageResponseTime:double</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>ErrorMessage:string</code></a>
-]</p>
+><code>ErrorMessage:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="32baf9d5-29">
+  <label class="gdoc-expand__head flex justify-between" for="4f1ef8ac-41">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="32baf9d5-29" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="4f1ef8ac-41" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Source</th>
@@ -2288,6 +2846,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -2302,14 +2862,41 @@ flowchart TB
 
 <p>Check service accessibility.</p>
 <p>Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code></p>
-<p>Parameters:</p>
-<ol>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-access"
+      id="tabs-check-access-0"
+      checked="checked"
+    />
+    <label for="tabs-check-access-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
 ><code>sources</code></a> - Data source names.</li>
 </ol>
-<p>Main options:</p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-access"
+      id="tabs-check-access-1"
+      
+    />
+    <label for="tabs-check-access-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
 <ul>
 <li><a
   class="gdoc-markdown__link--code"
@@ -2337,34 +2924,51 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#network"
 ><code>Network</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-access"
+      id="tabs-check-access-2"
+      
+    />
+    <label for="tabs-check-access-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
-><code>Source:source</code></a>,
-<a
+><code>Source:source</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>Accessible:enum</code></a>,
-<a
+><code>Accessible:enum</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#int"
-><code>DurationInMillis:int</code></a>,
-<a
+><code>DurationInMillis:int</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>ErrorMessage:string</code></a>
-]</p>
+><code>ErrorMessage:string</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="d42689a7-31">
+  <label class="gdoc-expand__head flex justify-between" for="fca11f9d-44">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="d42689a7-31" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="fca11f9d-44" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Source</th>
@@ -2382,6 +2986,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
@@ -2396,39 +3002,91 @@ flowchart TB
 
 <p>Check sdmx-dl configuration.</p>
 <p>Example: <code>sdmx-dl <font color="#268bd2">check config</font></code></p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-config"
+      id="tabs-check-config-0"
+      checked="checked"
+    />
+    <label for="tabs-check-config-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ul>
+<li><em>no parameters</em></li>
+</ul>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-config"
+      id="tabs-check-config-1"
+      
+    />
+    <label for="tabs-check-config-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
+<ul>
+<li><em>no options</em></li>
+</ul>
 <p>Other options:
 <a
   class="gdoc-markdown__link--code"
   href="../options#csv"
 ><code>CSV</code></a></p>
-<p>Output format:
-[
-<a
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-config"
+      id="tabs-check-config-2"
+      
+    />
+    <label for="tabs-check-config-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>Scope:enum</code></a>,
-<a
+><code>Scope:enum</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>PropertyKey:string</code></a>,
-<a
+><code>PropertyKey:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>PropertyValue:string</code></a>,
-<a
+><code>PropertyValue:string</code></a></li>
+<li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#enum"
-><code>Category:enum</code></a>
-]</p>
+><code>Category:enum</code></a></li>
+</ol>
+    </div>
+</div>
+
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="63fdc4ef-33">
+  <label class="gdoc-expand__head flex justify-between" for="53aa2f82-47">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="63fdc4ef-33" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="53aa2f82-47" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
-    <div class="table-wrap"> <table>
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
 <thead>
 <tr>
 <th>Scope</th>
@@ -2464,6 +3122,8 @@ flowchart TB
 </tr>
 </tbody>
 </table> </div>
+</div>
+</small>
 
   </div>
 </div>
