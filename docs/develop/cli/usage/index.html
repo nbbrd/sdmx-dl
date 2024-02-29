@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.123.4">
+<meta name="generator" content="Hugo 0.123.6">
 
 
   <meta name="description" content="By default, all commands print the result on the standard output.
@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-02-28T15:32:58+01:00"
+      content="2024-02-29T08:10:46+01:00"
     />
 
 
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-02-28T15:32:58.00Z",
+      "dateModified": "2024-02-29T08:10:46.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1093,7 +1093,7 @@ flowchart TB
 <p>Download time series observations.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1106,7 +1106,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1205,7 +1205,7 @@ flowchart TB
 <p>Download time series metadata.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1218,7 +1218,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1322,7 +1322,7 @@ flowchart TB
 <p>Download time series keys.</p>
 <p>Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1335,7 +1335,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#key"
 ><code>key</code></a> - Data key.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1569,12 +1569,12 @@ flowchart TB
 <p>List data flows.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
 ><code>source</code></a> - Data source name.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1663,7 +1663,7 @@ flowchart TB
 <p>List data flow dimensions.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1672,7 +1672,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#flow"
 ><code>flow</code></a> - Data flow reference.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1781,7 +1781,7 @@ flowchart TB
 <p>List data flow attributes.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1790,7 +1790,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#flow"
 ><code>flow</code></a> - Data flow reference.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1887,7 +1887,7 @@ flowchart TB
 <p>List codes from data flow concept.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1900,7 +1900,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
 ><code>concept</code></a> - Concept name.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -1981,7 +1981,7 @@ flowchart TB
 <p>List available dimension codes.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF&hellip;</abbr> <abbr title="index">4</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
@@ -1998,7 +1998,7 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../datatypes#int"
 ><code>index</code></a> - Zero-based index of key dimension.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -2068,12 +2068,12 @@ flowchart TB
 <p>List supported features of a data source.</p>
 <p>Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#source"
 ><code>source</code></a> - Data source name.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -2203,12 +2203,12 @@ flowchart TB
 <p>Check service availability.</p>
 <p>Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
 ><code>sources</code></a> - Data source names.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
@@ -2303,12 +2303,12 @@ flowchart TB
 <p>Check service accessibility.</p>
 <p>Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code></p>
 <p>Parameters:</p>
-<ul>
+<ol>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#list"
 ><code>sources</code></a> - Data source names.</li>
-</ul>
+</ol>
 <p>Main options:</p>
 <ul>
 <li><a
