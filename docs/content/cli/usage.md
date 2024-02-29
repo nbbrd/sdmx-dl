@@ -118,9 +118,9 @@ Download time series observations.
 Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -156,9 +156,9 @@ Download time series metadata.
 Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -196,9 +196,9 @@ Download time series keys.
 Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -268,7 +268,7 @@ List data flows.
 Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
+1. [`source`](../datatypes#source) - Data source name.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -303,8 +303,8 @@ List data flow dimensions.
 Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -342,8 +342,8 @@ List data flow attributes.
 Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -379,9 +379,9 @@ List codes from data flow concept.
 Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`concept`](../datatypes#string) - Concept name.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`concept`](../datatypes#string) - Concept name.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -415,10 +415,10 @@ List available dimension codes.
 Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF...</abbr> <abbr title="index">4</abbr></code>
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
-- [`index`](../datatypes#int) - Zero-based index of key dimension.
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+4. [`index`](../datatypes#int) - Zero-based index of key dimension.
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -450,7 +450,7 @@ List supported features of a data source.
 Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
-- [`source`](../datatypes#source) - Data source name.
+1. [`source`](../datatypes#source) - Data source name.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -508,7 +508,7 @@ Check service availability.
 Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
-- [`sources`](../datatypes#list) - Data source names.
+1. [`sources`](../datatypes#list) - Data source names.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -544,7 +544,7 @@ Check service accessibility.
 Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code>  
 
 Parameters:
-- [`sources`](../datatypes#list) - Data source names.
+1. [`sources`](../datatypes#list) - Data source names.
 
 Main options:  
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
