@@ -10,8 +10,8 @@ module sdmxdl.format.protobuf {
     requires static org.checkerframework.checker.qual;
 
     requires transitive sdmxdl.format.base;
-    requires transitive protobuf.java;
-    requires transitive protobuf.java.util;
+    requires transitive com.google.protobuf;
+    requires transitive com.google.protobuf.util;
 
     exports sdmxdl.format.protobuf;
     exports sdmxdl.format.protobuf.web;
