@@ -76,7 +76,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>8.3.5</version>
+            <version>8.3.6</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
