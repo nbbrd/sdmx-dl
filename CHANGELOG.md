@@ -26,6 +26,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Replace curl-backend property `sdmxdl.networking.curlBackend` with url-backend property `sdmxdl.networking.urlBackend`
 - ![CLI] Replace `list drivers` command with `list plugins` command
 
+### Fixed
+
+- ![SOURCE] Update OECD source [#543](https://github.com/nbbrd/sdmx-dl/issues/543)
+
 ## [3.0.0-beta.12] - 2023-10-16
 
 This is the twelfth beta release of **sdmx-dl**.  
