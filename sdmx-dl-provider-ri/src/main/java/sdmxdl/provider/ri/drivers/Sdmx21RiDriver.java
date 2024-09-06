@@ -115,7 +115,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("es", "Organzación Internacional de Trabajo")
                     .name("fr", "Organisation Internationale du Travail")
                     .driver(RI_SDMX_21)
-                    .endpointOf("https://www.ilo.org/sdmx/rest")
+                    .endpointOf("https://sdmx.ilo.org/rest/")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://ilostat.ilo.org/data/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
