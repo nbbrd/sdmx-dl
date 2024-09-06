@@ -29,6 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![SOURCE] Update OECD source [#543](https://github.com/nbbrd/sdmx-dl/issues/543)
+- ![SOURCE] Update INEGI source [#639](https://github.com/nbbrd/sdmx-dl/issues/639)
 
 ## [3.0.0-beta.12] - 2023-10-16
 

@@ -139,7 +139,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "National Institute of Statistics, Geography and Informatics")
                     .name("es", "Instituto Nacional de Estadística, Geografía e Informática")
                     .driver(RI_SDMX_21)
-                    .endpointOf("https://sdmx.snieg.mx/service/Rest")
+                    .endpointOf("https://sdmx.snieg.mx/ServiceV6/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://sdmx.snieg.mx")
