@@ -1,5 +1,4 @@
-| Name       | SupportedProperties                                                                                    |
-|------------|--------------------------------------------------------------------------------------------------------|
-| ri:dotstat | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
-| ri:nbb     | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
-| ri:sdmx21  | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication,detailSupported,trailingSlashRequired |
+| Name         | SupportedProperties                                                                                                                                                                                                       |
+|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| RI_SDMX21    | sdmxdl.driver.connectTimeout,sdmxdl.driver.readTimeout,sdmxdl.driver.maxRedirects,sdmxdl.driver.preemptiveAuth,sdmxdl.driver.userAgent,sdmxdl.driver.dumpFolder,sdmxdl.driver.detailSupported,sdmxdl.driver.trailingSlash |
+| DIALECTS_BBK | sdmxdl.driver.connectTimeout,sdmxdl.driver.readTimeout,sdmxdl.driver.maxRedirects,sdmxdl.driver.preemptiveAuth,sdmxdl.driver.userAgent,sdmxdl.driver.dumpFolder                                                           |

@@ -527,7 +527,8 @@ Other options:
 {{< tab "Output" >}}
 
 CSV columns:
-1. [`SupportedFeature:enum`](../datatypes#enum)
+1. [`Name:string`](../datatypes#string)
+1. [`SupportedProperties:string`](../datatypes#string)
 
 {{< /tab >}}
 {{< /tabs >}}

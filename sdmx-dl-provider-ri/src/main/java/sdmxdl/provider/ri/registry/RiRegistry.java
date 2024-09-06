@@ -30,6 +30,7 @@ public final class RiRegistry implements Registry {
 
     public static final File NO_SOURCES_FILE = new File("");
 
+    // Set data source definitions file
     @PropertyDefinition
     public static final Property<File> SOURCES_FILE_PROPERTY =
             Property.of("sdmxdl.registry.sourcesFile", NO_SOURCES_FILE, Parser.onFile(), Formatter.onFile());

@@ -25,18 +25,22 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 @ServiceProvider
 public final class RiNetworking implements Networking {
 
+    // Enable automatic proxy detection
     @PropertyDefinition
     public static final BooleanProperty AUTO_PROXY_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.autoProxy", false);
 
+    // Disable system truststore
     @PropertyDefinition
     public static final BooleanProperty NO_SYSTEM_SSL_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.noSystemSSL", false);
 
+    // Disable default truststore
     @PropertyDefinition
     public static final BooleanProperty NO_DEFAULT_SSL_PROPERTY
             = BooleanProperty.of("sdmxdl.networking.noDefaultSSL", false);
 
+    // Set networking URL backend
     @PropertyDefinition
     public static final Property<String> URL_BACKEND_PROPERTY
             = Property.of("sdmxdl.networking.urlBackend", RiNetwork.DEFAULT_URL_BACKEND, Parser.onString(), Formatter.onString());

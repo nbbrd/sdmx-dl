@@ -34,18 +34,22 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 @ServiceProvider(WebCaching.class)
 public final class RiCaching implements FileCaching, WebCaching {
 
+    // Disable caching
     @PropertyDefinition
     public static final BooleanProperty NO_CACHE_PROPERTY
             = BooleanProperty.of("sdmxdl.caching.noCache", false);
 
+    // Set cache folder
     @PropertyDefinition
     public static final Property<File> CACHE_FOLDER_PROPERTY
             = Property.of("sdmxdl.caching.cacheFolder", null, Parser.onFile(), Formatter.onFile());
 
+    // Disable cache compression
     @PropertyDefinition
     public static final BooleanProperty NO_COMPRESSION_PROPERTY
             = BooleanProperty.of("sdmxdl.caching.noCompression", false);
 
+    // Set cache persistence backend
     @PropertyDefinition
     public static final Property<String> PERSISTENCE_ID_PROPERTY
             = Property.of("sdmxdl.caching.persistenceId", null, Parser.onString(), Formatter.onString());
