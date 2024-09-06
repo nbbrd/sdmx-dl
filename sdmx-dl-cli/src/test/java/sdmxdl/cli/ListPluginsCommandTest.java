@@ -4,7 +4,6 @@ import _test.CommandWatcher;
 import _test.FileSample;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -14,11 +13,11 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class ListDriversCommandTest {
+public class ListPluginsCommandTest {
 
     @Test
     public void testDefault(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListDriversCommand());
+        CommandLine cmd = new CommandLine(new ListPluginsCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File out = temp.resolve("testDefault.csv").toFile();
@@ -28,10 +27,9 @@ public class ListDriversCommandTest {
         assertThat(watcher.getErr()).isEmpty();
     }
 
-    @SetSystemProperty(key = "enableFileDriver", value = "true")
     @Test
     public void testContent(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListDriversCommand());
+        CommandLine cmd = new CommandLine(new ListPluginsCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
@@ -45,8 +43,8 @@ public class ListDriversCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Name,SupportedProperties", atIndex(0))
-                .contains("RI_FILE,sdmxdl.driver.structureURI")
-                .hasSizeGreaterThan(2);
+                .contains("Type,Id,Properties", atIndex(0))
+                .contains("Registry,RI_REGISTRY,sdmxdl.registry.sourcesFile")
+                .hasSizeGreaterThan(3);
     }
 }

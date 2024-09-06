@@ -25,7 +25,7 @@ The commands follow a **verb+noun hierarchy**.
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
-    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & drivers
+    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & plugins
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
 
@@ -40,7 +40,7 @@ flowchart TB
     click keys "#fetch-keys" "fetch keys command"
    
     classDef lx fill:#859900
-    class l,sources,flows,dimensions,attributes,codes,availability,features,drivers lx;
+    class l,sources,flows,dimensions,attributes,codes,availability,features,plugins lx;
     click l "#list" "list command"
     click sources "#list-sources" "list sources command"
     click flows "#list-flows" "list flows command"
@@ -49,7 +49,7 @@ flowchart TB
     click codes "#list-codes" "list codes command"
     click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
-    click drivers "#list-drivers" "list drivers command"
+    click plugins "#list-plugins" "list plugins command"
    
     classDef cx fill:#268bd2
     class c,status,access,config cx;
@@ -88,7 +88,7 @@ Subcommands:
 [codes](#list-codes),
 [availability](#list-availability),
 [features](#list-features),
-[drivers](#list-drivers)
+[plugins](#list-plugins)
 
 [Examples]({{< relref "examples#list-examples" >}})
 
@@ -503,13 +503,13 @@ CSV columns:
 <small>{{< include file="/tmp/usage/list-features-sample.md" >}}</small>
 {{< /expand >}}
 
-{{< shields_io/badge label="list" message="drivers" color="859900" >}}
+{{< shields_io/badge label="list" message="plugins" color="859900" >}}
 
-List driver names and properties.  
+List plugin names and properties.  
 
-Example: <code>sdmx-dl <font color="#859900">list drivers</font></code>  
+Example: <code>sdmx-dl <font color="#859900">list plugins</font></code>  
 
-{{< tabs "list-drivers" >}}
+{{< tabs "list-plugins" >}}
 {{< tab "Parameters" >}}
 
 - _no parameters_
@@ -527,14 +527,15 @@ Other options:
 {{< tab "Output" >}}
 
 CSV columns:
-1. [`Name:string`](../datatypes#string)
-1. [`SupportedProperties:string`](../datatypes#string)
+1. [`Type:string`](../datatypes#string)
+1. [`Id:string`](../datatypes#string)
+1. [`Properties:string`](../datatypes#string)
 
 {{< /tab >}}
 {{< /tabs >}}
 
 {{< expand "Output sample" >}}
-<small>{{< include file="/tmp/usage/list-drivers-sample.md" >}}</small>
+<small>{{< include file="/tmp/usage/list-plugins-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="status" color="268bd2" >}}

@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![PROVIDER] Rename user-agent property from `http.agent` to `sdmxdl.driver.userAgent`
 - ![PROVIDER] Rename dump-folder property from `sdmxdl.ri.web.dump.folder` to `sdmxdl.driver.dumpFolder`
 - ![PROVIDER] Replace curl-backend property `sdmxdl.networking.curlBackend` with url-backend property `sdmxdl.networking.urlBackend`
+- ![CLI] Replace `list drivers` command with `list plugins` command
 
 ## [3.0.0-beta.12] - 2023-10-16
 
