@@ -3,31 +3,18 @@ package sdmxdl.testing;
 import lombok.NonNull;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceId;
 import sdmxdl.provider.Validator;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
         singleton = true,
-        batch = true
+        batchType = WebRuleBatch.class
 )
 public interface WebRule {
 
-    //    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getId();
 
     @NonNull Validator<WebResponse> getValidator();
-
-    static @NonNull WebRule of(@NonNull String id, @NonNull Validator<WebResponse> validator) {
-        return new WebRule() {
-            @Override
-            public @NonNull String getId() {
-                return id;
-            }
-
-            @Override
-            public @NonNull Validator<WebResponse> getValidator() {
-                return validator;
-            }
-        };
-    }
 }

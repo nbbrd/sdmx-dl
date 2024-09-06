@@ -1,4 +1,6 @@
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.format.protobuf.JsonPersistence;
+import sdmxdl.format.protobuf.ProtobufPersistence;
+import sdmxdl.ext.Persistence;
 
 module sdmxdl.format.protobuf {
 
@@ -15,6 +17,6 @@ module sdmxdl.format.protobuf {
     exports sdmxdl.format.protobuf.web;
 
     provides Persistence with
-            sdmxdl.format.protobuf.JsonProvider,
-            sdmxdl.format.protobuf.ProtobufProvider;
+            JsonPersistence,
+            ProtobufPersistence;
 }

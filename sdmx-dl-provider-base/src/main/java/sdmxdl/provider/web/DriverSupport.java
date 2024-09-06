@@ -20,7 +20,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.format.ServiceSupport;
+import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.12</version>
+        <version>3.0.0-beta.13</version>
     </parent>
 
     <artifactId>sdmx-dl-desktop</artifactId>
@@ -20,6 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
+        <flatlaf.version>3.5.1</flatlaf.version>
     </properties>
 
     <dependencyManagement>
@@ -27,7 +28,7 @@
             <dependency>
                 <groupId>com.github.nbbrd.java-desktop-util</groupId>
                 <artifactId>java-desktop-util-bom</artifactId>
-                <version>2.3.0</version>
+                <version>2.4.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -64,36 +65,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-ri</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-dialects</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-provider-px</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-xml</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-testing</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sdmx-dl-format-csv</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.nbbrd.java-desktop-util</groupId>
             <artifactId>java-desktop-util-swing</artifactId>
         </dependency>
@@ -108,7 +79,12 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>3.2.1</version>
+            <version>${flatlaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>${flatlaf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
@@ -132,6 +108,24 @@
         </dependency>
 
         <!-- runtime only -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-ri</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-dialects</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdmx-dl-provider-px</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-format-protobuf</artifactId>

@@ -20,6 +20,7 @@ import sdmxdl.*;
 import sdmxdl.web.MonitorReport;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.MonitorStatus;
+import sdmxdl.web.WebSource;
 
 import java.time.LocalDate;
 
@@ -119,6 +120,26 @@ public class RepoSamples {
             .builder()
             .uriScheme("abc")
             .report(MonitorReport.builder().source("xyz").status(MonitorStatus.DOWN).uptimeRatio(0.5).averageResponseTime(1234L).build())
+            .build();
+
+    public static final WebSource BASIC_SOURCE = WebSource
+            .builder()
+            .id("ECB")
+            .driver("ri:sdmx21")
+            .endpointOf("https://data-api.ecb.europa.eu/service")
+            .build();
+
+    public static final WebSource FULL_SOURCE = WebSource
+            .builder()
+            .id("ECB")
+            .name("en", "European Central Bank")
+            .driver("ri:sdmx21")
+            .endpointOf("https://data-api.ecb.europa.eu/service")
+            .property("detailSupported", "true")
+            .alias("XYZ")
+            .websiteOf("https://sdw.ecb.europa.eu")
+            .monitorOf("ABC:xyz")
+            .monitorWebsiteOf("https://someaddress")
             .build();
 
     private static TimeInterval periodOf(int year, int month) {

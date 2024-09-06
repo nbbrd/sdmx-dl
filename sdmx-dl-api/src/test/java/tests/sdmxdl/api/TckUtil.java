@@ -6,8 +6,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.description.Description;
 import org.assertj.core.description.TextDescription;
 
-import java.util.regex.Pattern;
-
 @lombok.experimental.UtilityClass
 public class TckUtil {
 
@@ -33,6 +31,4 @@ public class TckUtil {
     public static Description nullDescriptionOf(String method, String parameter) {
         return new TextDescription("Expecting '%s' to raise NPE when called with null %s", method, parameter);
     }
-
-    public static final Pattern SCREAMING_SNAKE_CASE = Pattern.compile("^[A-Z0-9]+(?:_[A-Z0-9]+)*$");
 }

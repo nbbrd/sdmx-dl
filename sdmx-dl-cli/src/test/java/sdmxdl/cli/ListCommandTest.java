@@ -14,7 +14,7 @@ public class ListCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isNotEmpty().contains("sources", "flows", "dimensions", "attributes", "codes", "features", "drivers");
+        assertThat(watcher.getOut()).isNotEmpty().contains("sources", "flows", "dimensions", "attributes", "codes", "features", "plugins");
         assertThat(watcher.getErr()).isEmpty();
     }
 }

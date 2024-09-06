@@ -52,7 +52,7 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class InseeDriver implements Driver {
 
-    private static final String CONNECTORS_INSEE = "connectors:insee";
+    private static final String CONNECTORS_INSEE = "CONNECTORS_INSEE";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

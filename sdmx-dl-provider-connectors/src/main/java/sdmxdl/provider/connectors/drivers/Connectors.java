@@ -25,6 +25,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxResponseException;
 import it.bancaditalia.oss.sdmx.util.LocalizedText;
 import nbbrd.io.text.BooleanProperty;
 import sdmxdl.*;
+import sdmxdl.format.design.PropertyDefinition;
 
 import java.util.List;
 import java.util.Locale;
@@ -170,12 +171,15 @@ public class Connectors {
         return ex instanceof SdmxResponseException && ((SdmxResponseException) ex).getResponseCode() == SdmxResponseException.SDMX_NO_RESULTS_FOUND;
     }
 
+    @PropertyDefinition
     public static final BooleanProperty SUPPORTS_COMPRESSION_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".supportsCompression", false);
 
+    @PropertyDefinition
     public static final BooleanProperty NEEDS_CREDENTIALS_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".needsCredentials", false);
 
+    @PropertyDefinition
     public static final BooleanProperty NEEDS_URL_ENCODING_PROPERTY =
             BooleanProperty.of(DRIVER_PROPERTY_PREFIX + ".needsURLEncoding", false);
 }

@@ -8,8 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ 8, 17 ]
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        java: [ 8, 21 ]
+        os: [ ubuntu-latest, macos-13, windows-latest ]
 
     name: JDK${{ matrix.java }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -22,19 +22,23 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
 
       - name: Pre-download dependencies with Maven
-        run: mvn -U -B -ntp dependency:go-offline
+        uses: nick-fields/retry@v3
+        with:
+          command: mvn -U -B -ntp dependency:go-offline
+          max_attempts: 3
+          timeout_minutes: 5
 
       - name: Build and (headless) test with Maven
         uses: smithki/xvfb-action@v1.1.2
         with:
-          run: mvn -U -B -ntp package
+          run: mvn -U -B -ntp verify
 
   auto-merge-job:
     needs: build-and-test-job
@@ -48,7 +52,11 @@ jobs:
 
     steps:
       - name: Merge PR
-        run: gh pr merge --auto --rebase "$PR_URL"
+        uses: nick-fields/retry@v3
+        with:
+          command: gh pr merge --auto --rebase "$PR_URL"
+          max_attempts: 3
+          timeout_minutes: 5
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -58,7 +66,7 @@ jobs:
     if: startsWith(github.repository, 'nbbrd/') && startsWith(github.ref, 'refs/heads/develop')
     strategy:
       matrix:
-        java: [ 17 ]
+        java: [ 21 ]
         os: [ ubuntu-latest ]
 
     name: Snapshot on develop
@@ -72,7 +80,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -96,7 +104,7 @@ jobs:
 
       - name: Upload JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets-snapshot-log
           path: |
@@ -108,7 +116,7 @@ jobs:
     if: startsWith(github.repository, 'nbbrd/') && startsWith(github.ref, 'refs/tags/v')
     strategy:
       matrix:
-        java: [ 17 ]
+        java: [ 21 ]
         os: [ ubuntu-latest ]
 
     name: Release on tag
@@ -122,7 +130,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -148,7 +156,7 @@ jobs:
 
       - name: Upload JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets-release-log
           path: |

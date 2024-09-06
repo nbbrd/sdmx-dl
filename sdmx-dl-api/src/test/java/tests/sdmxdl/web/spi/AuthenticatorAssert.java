@@ -1,11 +1,16 @@
 package tests.sdmxdl.web.spi;
 
+import internal.sdmxdl.web.spi.AuthenticatorLoader;
 import lombok.NonNull;
+import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
+import tests.sdmxdl.api.ExtensionPoint;
+import tests.sdmxdl.api.TckUtil;
 
-import static org.assertj.core.api.Assertions.*;
-import static tests.sdmxdl.api.TckUtil.SCREAMING_SNAKE_CASE;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("ConstantConditions")
 @lombok.experimental.UtilityClass
@@ -17,9 +22,19 @@ public class AuthenticatorAssert {
         WebSource source;
     }
 
+    @MightBeGenerated
+    private static final ExtensionPoint<Authenticator> EXTENSION_POINT = ExtensionPoint
+            .<Authenticator>builder()
+            .id(Authenticator::getAuthenticatorId)
+            .idPattern(AuthenticatorLoader.ID_PATTERN)
+            .rank(ignore -> -1)
+            .rankLowerBound(-1)
+            .properties(ignore -> emptyList())
+            .propertiesPrefix("")
+            .build();
+
     public void assertCompliance(@NonNull Authenticator authenticator, @NonNull Sample sample) {
-        assertThat(authenticator.getAuthenticatorId())
-                .containsPattern(SCREAMING_SNAKE_CASE);
+        TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, authenticator));
 
         checkGetPasswordAuthentication(authenticator, sample);
         checkInvalidate(authenticator, sample);

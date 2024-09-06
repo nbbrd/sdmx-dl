@@ -33,7 +33,7 @@ public enum TestDriver implements Driver {
     VALID {
         @Override
         public @NonNull String getDriverId() {
-            return "valid";
+            return "VALID";
         }
 
         @Override

@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
@@ -43,7 +43,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: Bump ${{ env.DEP_PROP }} to ${{ steps.lr.outputs.release }}
           title: Bump ${{ env.DEP_PROP }} to ${{ steps.lr.outputs.release }}

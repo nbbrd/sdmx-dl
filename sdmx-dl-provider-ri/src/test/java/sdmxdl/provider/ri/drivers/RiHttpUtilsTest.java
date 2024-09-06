@@ -5,6 +5,7 @@ import nbbrd.io.http.HttpEventListener;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.net.MediaType;
 import org.junit.jupiter.api.Test;
+import sdmxdl.provider.web.DriverProperties;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -39,13 +40,13 @@ public class RiHttpUtilsTest {
         assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        String previous = System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), "hello world");
+        String previous = System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world");
         try {
             assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                     .startsWith("hello world");
         } finally {
             if (previous != null)
-                System.setProperty(RiHttpUtils.HTTP_AGENT.getKey(), previous);
+                System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), previous);
         }
     }
 

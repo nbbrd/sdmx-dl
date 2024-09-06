@@ -122,13 +122,14 @@ public class DiskCacheTest {
                 .isEmpty();
     }
 
-    private static FileFormat<DataRepository> newFakeFileFormat() {
+    private static FileFormatSupport<DataRepository> newFakeFileFormat() {
         Map<String, DataRepository> content = new HashMap<>();
-        return new FileFormat<>(
-                FileParser.onParsingStream(stream -> parseFake(content, stream)),
-                FileFormatter.onFormattingStream((value, stream) -> formatFake(content, stream, value)),
-                ".dat"
-        );
+        return FileFormatSupport
+                .builder(DataRepository.class)
+                .parser(FileParser.onParsingStream(stream -> parseFake(content, stream)))
+                .formatter(FileFormatter.onFormattingStream((value, stream) -> formatFake(content, stream, value)))
+                .extension(".dat")
+                .build();
     }
 
     private static DataRepository parseFake(Map<String, DataRepository> content, InputStream stream) {

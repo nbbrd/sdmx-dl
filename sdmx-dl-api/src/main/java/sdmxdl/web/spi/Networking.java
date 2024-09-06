@@ -14,13 +14,13 @@ import java.util.Collection;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.NetworkingLoader",
-        fallback = DefaultNetworking.class
+        fallback = DefaultNetworking.class,
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Networking {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getNetworkingId();
 
     @ServiceSorter(reverse = true)

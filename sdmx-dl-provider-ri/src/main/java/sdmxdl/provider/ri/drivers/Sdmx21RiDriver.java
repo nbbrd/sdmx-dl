@@ -42,7 +42,7 @@ import static sdmxdl.provider.web.DriverProperties.TRAILING_SLASH_PROPERTY;
 @ServiceProvider
 public final class Sdmx21RiDriver implements Driver {
 
-    private static final String RI_SDMX_21 = "ri:sdmx21";
+    private static final String RI_SDMX_21 = "RI_SDMX21";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
@@ -115,7 +115,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("es", "Organzación Internacional de Trabajo")
                     .name("fr", "Organisation Internationale du Travail")
                     .driver(RI_SDMX_21)
-                    .endpointOf("https://www.ilo.org/sdmx/rest")
+                    .endpointOf("https://sdmx.ilo.org/rest/")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .websiteOf("https://ilostat.ilo.org/data/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
@@ -139,7 +139,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("en", "National Institute of Statistics, Geography and Informatics")
                     .name("es", "Instituto Nacional de Estadística, Geografía e Informática")
                     .driver(RI_SDMX_21)
-                    .endpointOf("https://sdmx.snieg.mx/service/Rest")
+                    .endpointOf("https://sdmx.snieg.mx/ServiceV6/rest")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://sdmx.snieg.mx")
@@ -169,6 +169,20 @@ public final class Sdmx21RiDriver implements Driver {
                     .websiteOf("https://www.norges-bank.no/en/topics/Statistics/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NB")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/nb")
+                    .build())
+            .source(WebSource
+                    .builder()
+                    .id("OECD")
+                    .name("en", "The Organisation for Economic Co-operation and Development")
+                    .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
+                    .name("fr", "Organisation de coopération et de développement économiques")
+                    .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
+                    .driver(RI_SDMX_21)
+                    .endpointOf("https://sdmx.oecd.org/public/rest")
+                    .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
+                    .websiteOf("https://data-explorer.oecd.org/")
+                    .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
+                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
                     .build())
             .source(WebSource
                     .builder()

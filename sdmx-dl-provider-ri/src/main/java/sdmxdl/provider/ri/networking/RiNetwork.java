@@ -17,6 +17,10 @@ import static sdmxdl.provider.Suppliers.memoize;
 @lombok.ToString
 class RiNetwork implements Network {
 
+    public static final String JDK_URL_BACKEND = "JDK";
+    public static final String CURL_URL_BACKEND = "CURL";
+    public static final String DEFAULT_URL_BACKEND = JDK_URL_BACKEND;
+
     @lombok.Builder.Default
     private final boolean autoProxy = false;
 
@@ -27,7 +31,7 @@ class RiNetwork implements Network {
     private final boolean noDefaultSSL = false;
 
     @lombok.Builder.Default
-    private final boolean curlBackend = false;
+    private final @NonNull String urlBackend = DEFAULT_URL_BACKEND;
 
     @Override
     public @NonNull ProxySelector getProxySelector() {
@@ -45,7 +49,7 @@ class RiNetwork implements Network {
 
     @Override
     public @NonNull URLConnectionFactory getURLConnectionFactory() {
-        return curlBackend ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
+        return urlBackend.equals(CURL_URL_BACKEND) ? CurlHttpURLConnection::of : URLConnectionFactory.getDefault();
     }
 
     @Slow

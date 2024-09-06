@@ -1,3 +1,4 @@
+import sdmxdl.ext.Persistence;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.Reader;
 import sdmxdl.web.spi.*;
@@ -25,4 +26,6 @@ module sdmxdl.api {
     uses WebCaching;
     uses Driver;
     uses Monitor;
+    uses Persistence;
+    uses Registry;
 }

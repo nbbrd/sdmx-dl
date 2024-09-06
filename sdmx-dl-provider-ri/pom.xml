@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.12</version>
+        <version>3.0.0-beta.13</version>
     </parent>
 
     <artifactId>sdmx-dl-provider-ri</artifactId>
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>sslcontext-kickstart</artifactId>
-            <version>8.1.7</version>
+            <version>8.3.6</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>

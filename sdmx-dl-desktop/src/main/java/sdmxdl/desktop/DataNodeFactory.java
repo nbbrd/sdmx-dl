@@ -1,6 +1,6 @@
 package sdmxdl.desktop;
 
-import internal.sdmxdl.desktop.DynamicTree;
+import internal.sdmxdl.desktop.util.DynamicTree;
 import sdmxdl.*;
 import sdmxdl.ext.SdmxCubeUtil;
 import sdmxdl.web.SdmxWebManager;

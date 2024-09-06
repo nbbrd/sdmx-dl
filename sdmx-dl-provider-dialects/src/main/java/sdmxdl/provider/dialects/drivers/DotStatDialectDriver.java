@@ -44,7 +44,7 @@ import static sdmxdl.provider.SdmxFix.Category.QUERY;
 @ServiceProvider
 public final class DotStatDialectDriver implements Driver {
 
-    private static final String DIALECTS_DOTSTAT = "dialects:dotstat";
+    private static final String DIALECTS_DOTSTAT = "DIALECTS_DOTSTAT";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport
@@ -53,19 +53,6 @@ public final class DotStatDialectDriver implements Driver {
             .rank(NATIVE_DRIVER_RANK)
             .connector(RestConnector.of(DotStatDialectDriver::newClient))
             .properties(RI_CONNECTION_PROPERTIES)
-            .source(WebSource
-                    .builder()
-                    .id("OECD")
-                    .name("en", "The Organisation for Economic Co-operation and Development")
-                    .name("es", "Organización para la Cooperación y el Desarrollo Económicos")
-                    .name("fr", "Organisation de coopération et de développement économiques")
-                    .name("it", "Organizzazione per la Cooperazione e lo Sviluppo Economico")
-                    .driver(DIALECTS_DOTSTAT)
-                    .endpointOf("https://stats.oecd.org/restsdmx/sdmx.ashx")
-                    .websiteOf("https://stats.oecd.org")
-                    .monitorOf("upptime:/nbbrd/sdmx-upptime/OECD")
-                    .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/oecd")
-                    .build())
             .source(WebSource
                     .builder()
                     .id("SE")

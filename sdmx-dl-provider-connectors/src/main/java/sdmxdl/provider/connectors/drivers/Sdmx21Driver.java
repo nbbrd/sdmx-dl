@@ -38,7 +38,7 @@ import static sdmxdl.provider.web.DriverProperties.DETAIL_SUPPORTED_PROPERTY;
 @ServiceProvider
 public final class Sdmx21Driver implements Driver {
 
-    private static final String CONNECTORS_SDMX_21 = "connectors:sdmx21";
+    private static final String CONNECTORS_SDMX_21 = "CONNECTORS_SDMX21";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

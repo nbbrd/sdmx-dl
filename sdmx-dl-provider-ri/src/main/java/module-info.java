@@ -9,6 +9,7 @@ import sdmxdl.provider.ri.monitors.UpptimeMonitor;
 import sdmxdl.provider.ri.monitors.UptimeRobotMonitor;
 import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.provider.ri.readers.XmlReader;
+import sdmxdl.provider.ri.registry.RiRegistry;
 import sdmxdl.web.spi.*;
 
 module sdmxdl.provider.ri {
@@ -54,6 +55,9 @@ module sdmxdl.provider.ri {
 
     provides WebCaching with
             RiCaching;
+
+    provides Registry with
+            RiRegistry;
 
     opens sdmxdl.provider.ri.monitors to com.google.gson;
 }

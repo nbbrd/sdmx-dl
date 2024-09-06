@@ -7,6 +7,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.13] - 2024-09-06
+
+This is the thirteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release improves the modularity of the API and continues to clean up the configuration.  
+The experimental PxWebDriver has also been improved but is not yet ready for daily use.  
+The OECD, INEGI and ILO endpoints have been updated.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+> production!**
+
+### Added
+
+- ![API] Move FileFormat and Persistence to API
+- ![API] Add registry API to load custom web sources
+- ![PROVIDER] Add support of databases in PxWebDriver
+- ![PROVIDER] Add parsing of language in PxWebDriver
+- ![PROVIDER] Add websites in PxWebDriver
+- ![DESKTOP] Improve desktop UI
+- ![GRPC] Add webservice transcoding in gRPC
+
+### Changed
+
+- ![API] Force use of screaming-snake-case pattern on driver ID
+- ![PROVIDER] Rename source-file property from `sdmxdl.sources` to `sdmxdl.registry.sourcesFile`
+- ![PROVIDER] Rename user-agent property from `http.agent` to `sdmxdl.driver.userAgent`
+- ![PROVIDER] Rename dump-folder property from `sdmxdl.ri.web.dump.folder` to `sdmxdl.driver.dumpFolder`
+- ![PROVIDER] Replace curl-backend property `sdmxdl.networking.curlBackend` with url-backend property `sdmxdl.networking.urlBackend`
+- ![CLI] Replace `list drivers` command with `list plugins` command
+
+### Fixed
+
+- ![SOURCE] Update OECD source [#543](https://github.com/nbbrd/sdmx-dl/issues/543)
+- ![SOURCE] Update INEGI source [#639](https://github.com/nbbrd/sdmx-dl/issues/639)
+- ![SOURCE] Update ILO source [#690](https://github.com/nbbrd/sdmx-dl/issues/690)
+
 ## [3.0.0-beta.12] - 2023-10-16
 
 This is the twelfth beta release of **sdmx-dl**.  
@@ -18,7 +55,7 @@ The API has been refactored to make it both simpler and more flexible.
 The ECB endpoint has also been updated.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -58,7 +95,7 @@ This release adds new sources from Eurostat and the European Commission.
 It also improves performance of several drivers alongside the usual bug fixes.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -104,7 +141,7 @@ This release brings the API closer to the SDMX standard. It fixes an important p
 proof of concept for future use.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -144,7 +181,7 @@ sdmx-dl follows [semantic versioning](https://semver.org/).
 This release brings support of description in data flows. It also updates a few sources alongside the usual bugfixes.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -175,7 +212,7 @@ It finalizes the support of SDMX time formats and attribute relationship in the 
 A new source is also added alongside the usual bugfixes.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -224,7 +261,7 @@ It introduces a mechanism that validates the input parameters to give a better f
 A few sources are also added.
 
 > **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
-production!**
+> production!**
 
 ### Added
 
@@ -419,46 +456,26 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...HEAD
-
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...HEAD
+[3.0.0-beta.13]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...v3.0.0-beta.13
 [3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12
-
 [3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11
-
 [3.0.0-beta.10]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.9...v3.0.0-beta.10
-
 [3.0.0-beta.9]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.8...v3.0.0-beta.9
-
 [3.0.0-beta.8]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.7...v3.0.0-beta.8
-
 [3.0.0-beta.7]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.6...v3.0.0-beta.7
-
 [3.0.0-beta.6]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.5...v3.0.0-beta.6
-
 [3.0.0-beta.5]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.4...v3.0.0-beta.5
-
 [3.0.0-beta.4]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.3...v3.0.0-beta.4
-
 [3.0.0-beta.3]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.2...v3.0.0-beta.3
-
 [3.0.0-beta.2]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.1...v3.0.0-beta.2
-
 [3.0.0-beta.1]: https://github.com/nbbrd/sdmx-dl/releases/tag/v3.0.0-beta.1
-
 [API]: https://img.shields.io/badge/-API-068C09
-
 [BUILD]: https://img.shields.io/badge/-BUILD-e4e669
-
 [CLI]: https://img.shields.io/badge/-CLI-F813F7
-
 [DESKTOP]: https://img.shields.io/badge/-DESKTOP-F813F7
-
 [GRPC]: https://img.shields.io/badge/-GRPC-F813F7
-
 [FORMAT]: https://img.shields.io/badge/-FORMAT-5319E7
-
 [PROVIDER]: https://img.shields.io/badge/-PROVIDER-BC0250
-
 [SOURCE]: https://img.shields.io/badge/-SOURCE-E2BC4A
-
 [DOC]: https://img.shields.io/badge/-DOC-e4e669

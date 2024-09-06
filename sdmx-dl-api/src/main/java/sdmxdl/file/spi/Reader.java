@@ -30,12 +30,12 @@ import java.io.IOException;
  */
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.ReaderLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Reader {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getReaderId();
 
     @ServiceSorter(reverse = true)

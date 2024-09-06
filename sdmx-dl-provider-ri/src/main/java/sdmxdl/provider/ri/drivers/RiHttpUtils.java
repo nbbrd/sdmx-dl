@@ -17,7 +17,6 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
-import nbbrd.design.VisibleForTesting;
 import nbbrd.io.http.*;
 import nbbrd.io.http.ext.DumpingClient;
 import nbbrd.io.net.MediaType;
@@ -26,9 +25,9 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.About;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
+import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.web.WebEvents;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
@@ -47,6 +46,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static sdmxdl.provider.web.DriverProperties.*;
+import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
 
 /**
  * @author Philippe Charles
@@ -54,21 +54,21 @@ import static sdmxdl.provider.web.DriverProperties.*;
 @lombok.experimental.UtilityClass
 public class RiHttpUtils {
 
+    /**
+     * Defines a folder where downloaded assets are copied. Default value is <code>null</code> and disables copying.
+     */
+    @PropertyDefinition
+    public static final Property<File> DUMP_FOLDER_PROPERTY =
+            Property.of(DRIVER_PROPERTY_PREFIX + ".dumpFolder", null, Parser.onFile(), Formatter.onFile());
+
     public static final List<String> RI_CONNECTION_PROPERTIES = BaseProperty.keysOf(
             CONNECT_TIMEOUT_PROPERTY,
             READ_TIMEOUT_PROPERTY,
             MAX_REDIRECTS_PROPERTY,
-            PREEMPTIVE_AUTH_PROPERTY
+            PREEMPTIVE_AUTH_PROPERTY,
+            USER_AGENT_PROPERTY,
+            DUMP_FOLDER_PROPERTY
     );
-
-    // TODO: document these options?
-    @VisibleForTesting
-    static final Property<File> SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY =
-            Property.of("sdmxdl.ri.web.dump.folder", null, Parser.onFile(), Formatter.onFile());
-
-    @VisibleForTesting
-    static final Property<String> HTTP_AGENT =
-            Property.of("http.agent", About.NAME + "/" + About.VERSION, Parser.onString(), Formatter.onString());
 
     public static @NonNull HttpRequest newRequest(@NonNull URL query, @NonNull List<MediaType> mediaTypes, @NonNull Languages langs) {
         return HttpRequest
@@ -85,12 +85,8 @@ public class RiHttpUtils {
 
     public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
         HttpClient result = new DefaultHttpClient(context);
-        File dumpFolder = SDMXDL_RI_WEB_DUMP_FOLDER_PROPERTY.get(System.getProperties());
+        File dumpFolder = DUMP_FOLDER_PROPERTY.get(System.getProperties());
         return dumpFolder != null ? newDumpingClient(context, result, dumpFolder) : result;
-    }
-
-    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
-        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
     public static @NonNull HttpContext newContext(@NonNull WebSource source, @NonNull WebContext context) {
@@ -107,8 +103,12 @@ public class RiHttpUtils {
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
                 .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
-                .userAgent(HTTP_AGENT.get(System.getProperties()))
+                .userAgent(USER_AGENT_PROPERTY.get(System.getProperties()))
                 .build();
+    }
+
+    private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
+        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
     }
 
     @lombok.AllArgsConstructor

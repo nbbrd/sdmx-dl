@@ -17,30 +17,20 @@
 package internal.sdmxdl.cli;
 
 import internal.sdmxdl.cli.ext.Anchor;
-import internal.sdmxdl.cli.ext.CloseableExecutorService;
-import internal.sdmxdl.cli.ext.SameThreadExecutorService;
 import internal.sdmxdl.cli.ext.VerboseOptions;
 import nbbrd.design.ReturnNew;
-import nbbrd.io.text.BooleanProperty;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
-import sdmxdl.provider.ri.drivers.SourceProperties;
+import sdmxdl.provider.ri.registry.RiRegistry;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
-
-import static java.util.Collections.emptyList;
 
 /**
  * @author Philippe Charles
@@ -99,21 +89,28 @@ public class WebOptions {
 
     @ReturnNew
     public SdmxWebManager loadManager() throws IOException {
-        try (CloseableExecutorService executor = new CloseableExecutorService(newResourceExecutor())) {
+        System.setProperty(
+                RiRegistry.SOURCES_FILE_PROPERTY.getKey(),
+                hasSourceFile() ? sourcesFile.toString() : RiRegistry.NO_SOURCES_FILE.toString()
+        );
 
-            Future<SdmxWebManager> defaultWebManager = executor.submit(this::loadDefaultWebManager);
-            Future<List<WebSource>> customSources = executor.submit(this::loadCustomSources);
+        return SdmxWebManager.ofServiceLoader()
+                .toBuilder()
+                .onEvent(getEventListener())
+                .onError(getErrorListener())
+                .onRegistryEvent(message -> {
+                    if (verboseOptions.isVerbose())
+                        verboseOptions.reportToErrorStream(Anchor.CFG, message.toString());
+                })
+                .onRegistryError((message, error) -> {
+                    if (verboseOptions.isVerbose())
+                        verboseOptions.reportToErrorStream(Anchor.CFG, message.toString(), error);
+                })
+                .build();
+    }
 
-            return defaultWebManager.get()
-                    .toBuilder()
-                    .onEvent(getEventListener())
-                    .onError(getErrorListener())
-                    .customSources(customSources.get())
-                    .build();
-
-        } catch (InterruptedException | ExecutionException ex) {
-            throw new IOException(ex);
-        }
+    private boolean hasSourceFile() {
+        return !isNoConfig() && sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile();
     }
 
     private EventListener<? super WebSource> getEventListener() {
@@ -124,25 +121,6 @@ public class WebOptions {
     private ErrorListener<? super WebSource> getErrorListener() {
         ErrorListener<? super WebSource> original = isNoLog() ? null : new LoggingListener()::onSourceError;
         return new VerboseErrorListener(original, verboseOptions)::onSourceError;
-    }
-
-    @ReturnNew
-    private SdmxWebManager loadDefaultWebManager() {
-        return SdmxWebManager.ofServiceLoader();
-    }
-
-    @ReturnNew
-    private List<WebSource> loadCustomSources() throws IOException {
-        if (isNoConfig()) return emptyList();
-        if (sourcesFile != null && sourcesFile.exists() && sourcesFile.isFile()) {
-            System.setProperty(SourceProperties.SOURCES.getKey(), sourcesFile.toString());
-            if (verboseOptions.isVerbose()) {
-                verboseOptions.reportToErrorStream(Anchor.CFG, "Using source file '" + sourcesFile + "'");
-            }
-        } else {
-            System.clearProperty(SourceProperties.SOURCES.getKey());
-        }
-        return SourceProperties.loadCustomSources();
     }
 
     @lombok.extern.java.Log
@@ -195,14 +173,5 @@ public class WebOptions {
                 verboseOptions.reportToErrorStream(Anchor.WEB, source.getId() + ": " + message, error);
             }
         }
-    }
-
-    public static final BooleanProperty PARALLEL_RESOURCE_LOADING_PROPERTY
-            = BooleanProperty.of("parallelResourceLoading", true);
-
-    private static ExecutorService newResourceExecutor() {
-        return PARALLEL_RESOURCE_LOADING_PROPERTY.get(System.getProperties())
-                ? Executors.newFixedThreadPool(2)
-                : new SameThreadExecutorService();
     }
 }

@@ -1,4 +1,5 @@
-import sdmxdl.format.spi.Persistence;
+import sdmxdl.format.kryo.KryoPersistence;
+import sdmxdl.ext.Persistence;
 
 module sdmxdl.format.kryo {
 
@@ -12,5 +13,5 @@ module sdmxdl.format.kryo {
 
     exports sdmxdl.format.kryo;
 
-    provides Persistence with sdmxdl.format.kryo.KryoProvider;
+    provides Persistence with KryoPersistence;
 }

@@ -46,7 +46,7 @@ import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 @ServiceProvider
 public final class BbkDialectDriver implements Driver {
 
-    private static final String DIALECTS_BBK = "dialects:bbk";
+    private static final String DIALECTS_BBK = "DIALECTS_BBK";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

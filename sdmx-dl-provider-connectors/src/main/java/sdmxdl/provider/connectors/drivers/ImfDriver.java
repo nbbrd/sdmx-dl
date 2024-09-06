@@ -33,7 +33,7 @@ import static sdmxdl.provider.connectors.drivers.ConnectorsRestClient.CONNECTORS
 @ServiceProvider
 public final class ImfDriver implements Driver {
 
-    private static final String CONNECTORS_IMF = "connectors:imf";
+    private static final String CONNECTORS_IMF = "CONNECTORS_IMF";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

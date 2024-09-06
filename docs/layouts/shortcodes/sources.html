@@ -2,8 +2,8 @@
 <table>
     <thead>
         <tr>
+            <th>ID</th>
             <th>Name</th>
-            <th>Description</th>
             <th>Status</th>
             <th>Uptime</th>
         </tr>
@@ -12,14 +12,14 @@
     {{ range $i, $r := getCSV "," "tmp/sources.csv" }}
     {{ if ne $i 0 }}
     <tr>
-        {{ $name := index $r 0 }}
-        {{ $description := index $r 1 }}
+        {{ $id := index $r 0 }}
+        {{ $name := index $r 1 }}
         {{ $website := index $r 6 }}
         {{ $domain := (urls.Parse $website).Host }}
         {{ $monitor_website := index $r 8 }}
-        {{ $monitor_name := replace (lower $name) "_" "-" }}
-        <td><code>{{ $name }}</code></td>
-        <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /> <a href="{{ $website }}">{{ $description }}</a></td>
+        {{ $monitor_name := replace (lower $id) "_" "-" }}
+        <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /><code>{{ $id }}</code></td>
+        <td><a href="{{ $website }}">{{ $name }}</a></td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2F{{ $monitor_name }}.yml"></a></td>
         <td><a href="{{ $monitor_website }}"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2F{{ $monitor_name }}%2Fuptime.json"></a></td>
     </tr>

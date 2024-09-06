@@ -2,6 +2,7 @@ package sdmxdl.web;
 
 import lombok.NonNull;
 import sdmxdl.HasExpiration;
+import sdmxdl.HasPersistence;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
-public class MonitorReports implements HasExpiration {
+public class MonitorReports implements HasPersistence, HasExpiration {
 
     @NonNull String uriScheme;
 

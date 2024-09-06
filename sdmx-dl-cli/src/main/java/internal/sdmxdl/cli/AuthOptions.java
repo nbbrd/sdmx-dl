@@ -1,6 +1,6 @@
 package internal.sdmxdl.cli;
 
-import internal.util.AuthenticatorLoader;
+import internal.sdmxdl.web.spi.AuthenticatorLoader;
 import picocli.CommandLine;
 import sdmxdl.web.spi.Authenticator;
 

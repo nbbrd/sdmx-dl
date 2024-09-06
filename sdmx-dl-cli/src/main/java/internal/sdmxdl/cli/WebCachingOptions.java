@@ -31,9 +31,9 @@ public class WebCachingOptions {
         System.setProperty(RiCaching.NO_CACHE_PROPERTY.getKey(), Boolean.toString(isNoCache()));
         File cacheFolder = getCacheFolder();
         if (cacheFolder == null) {
-            System.clearProperty(RiCaching.CACHE_FOLDER.getKey());
+            System.clearProperty(RiCaching.CACHE_FOLDER_PROPERTY.getKey());
         } else {
-            System.setProperty(RiCaching.CACHE_FOLDER.getKey(), cacheFolder.toString());
+            System.setProperty(RiCaching.CACHE_FOLDER_PROPERTY.getKey(), cacheFolder.toString());
         }
         return new RiCaching();
     }

@@ -18,6 +18,13 @@ class GsonUtil {
         throw new NoSuchElementException(memberName);
     }
 
+    public static String[] getAsStringArray(JsonObject obj, String memberName) {
+        if (!obj.has(memberName)) return null;
+        return asStream(obj.getAsJsonArray(memberName))
+                .map(JsonElement::getAsString)
+                .toArray(String[]::new);
+    }
+
     public static Stream<JsonElement> asStream(JsonArray array) {
         return StreamSupport.stream(array.spliterator(), false);
     }

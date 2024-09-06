@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.12</version>
+        <version>3.0.0-beta.13</version>
     </parent>
 
     <artifactId>sdmx-dl-format-xml</artifactId>
@@ -31,6 +31,11 @@
         <dependency>
             <groupId>com.github.nbbrd.java-design-util</groupId>
             <artifactId>java-design-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-service-util</groupId>
+            <artifactId>java-service-processor</artifactId>
             <scope>provided</scope>
         </dependency>
 

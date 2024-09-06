@@ -46,7 +46,7 @@ public class FailsafeDriverTest {
     @Test
     public void testGetName() {
         failsafe.reset();
-        assertThat(valid.getDriverId()).isEqualTo("valid");
+        assertThat(valid.getDriverId()).isEqualTo("VALID");
         failsafe.assertEmpty();
 
         failsafe.reset();

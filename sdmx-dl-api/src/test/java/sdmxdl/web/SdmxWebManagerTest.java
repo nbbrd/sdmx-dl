@@ -20,11 +20,12 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
 import sdmxdl.Feature;
+import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
-import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.api.SdmxManagerAssert;
 import tests.sdmxdl.web.spi.MockedDriver;
+import tests.sdmxdl.web.spi.MockedRegistry;
 
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -137,8 +138,7 @@ public class SdmxWebManagerTest {
         assertThat(
                 SdmxWebManager
                         .builder()
-                        .customSource(nbb)
-                        .customSource(abs)
+                        .registry(MockedRegistry.builder().source(nbb).source(abs).build())
                         .build()
                         .getSources()
         )
@@ -153,7 +153,7 @@ public class SdmxWebManagerTest {
                 SdmxWebManager
                         .builder()
                         .driver(sdmx21)
-                        .customSource(abs)
+                        .registry(MockedRegistry.builder().source(abs).build())
                         .build()
                         .getSources()
         )

@@ -3,7 +3,7 @@ title: "Configuration"
 weight: 2
 ---
 
-**sdmx-dl CLI** is designed to work out-of-the-box but can be configured if needed by using several [properties files](#properties-files).
+**sdmx-dl CLI** is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
 
 {{< toc >}}
 
@@ -17,23 +17,21 @@ All these files are named `sdmx-dl.properties` and are located in 3 different fo
 
 Each of these scopes overwrites properties defined in the previous scope; for example, properties in execution folder overrides those in user profile folder.
 
-## Command options
-
-The default values of [command options](../options) can be overridden in two ways:
+The default values of [command-line options](../options) can be overridden in two ways:
 
 - **Widely** by targeting any command using their option names.  
     ```properties
     # enable verbose mode on all commands
     verbose=true
-    # use UNIX new-line type on all commands
-    new-line=UNIX
+    # set languages on all commands
+    languages=fr,nl,en
     ```
 - **Narrowly** by targeting a specific command using their option names prefixed by the command full path.  
     ```properties
     # enable verbose mode on status command
     sdmx-dl.check.status.verbose=true
-    # use UNIX new-line type on status command
-    sdmx-dl.check.status.new-line=UNIX
+    # set languages on status command
+    sdmx-dl.check.status.languages=fr,nl,en
     ```
 
 ## Execution properties
@@ -41,15 +39,23 @@ The default values of [command options](../options) can be overridden in two way
 Execution properties can be customized using [Java system property](https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html).  
 There are several types of system properties: some are defined by the platform, others by the libraries.
 
-{{< expand "sdmx-dl properties" >}}
+{{< expand "Specific sdmx-dl properties" >}}
 
-| Property                    | Description                               |
-|-----------------------------|-------------------------------------------|
-| `sdmxdl.ri.web.dump.folder` | Folder used to dump body of web responses |
+| Property                         | Description                      |
+|----------------------------------|----------------------------------|
+| `sdmxdl.caching.noCache`         | Disable caching                  |
+| `sdmxdl.caching.cacheFolder`     | Set cache folder                 |
+| `sdmxdl.caching.noCompression`   | Disable cache compression        |
+| `sdmxdl.caching.persistenceId`   | Set cache persistence backend    |
+| `sdmxdl.networking.autoProxy`    | Enable automatic proxy detection |
+| `sdmxdl.networking.noSystemSSL`  | Disable system truststore        |
+| `sdmxdl.networking.noDefaultSSL` | Disable default truststore       |
+| `sdmxdl.networking.urlBackend`   | Set networking URL backend       |
+| `sdmxdl.registry.sourceFile`     | Set data source definitions file |
 
 {{< /expand >}}
 
-{{< expand "Command-line properties" >}}
+{{< expand "Generic command-line properties" >}}
 
 | Property                            | Description                      |
 |-------------------------------------|----------------------------------|
@@ -58,7 +64,7 @@ There are several types of system properties: some are defined by the platform, 
 
 {{< /expand >}}
 
-{{< expand "Networking properties" >}}
+{{< expand "Java networking properties" >}}
 
 | Property             | Description                                                                 |
 |----------------------|-----------------------------------------------------------------------------|
@@ -72,7 +78,7 @@ More on https://docs.oracle.com/javase/8/docs/api/java/net/doc-files/net-propert
 
 {{< /expand >}}
 
-{{< expand "Security properties" >}}
+{{< expand "Java security properties" >}}
 
 | Property                           | Description          |
 |------------------------------------|----------------------|
@@ -87,10 +93,17 @@ More on https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSS
 
 {{< /expand >}}
 
+## Environmental variables
+
+Specific sdmx-dl properties can also be set using environmental variables.
+For each property, the corresponding environmental variable is the same name but uppercase and with dots replaced with underscore.
+
+Example: `sdmxdl.caching.noCache` becomes `SDMXDL_CACHING_NOCACHE`.
+
 ## Troubleshooting
 
 Using properties files is usually error-prone.  
-Fortunately, sdmx-dl CLI includes a [command to pinpoint the problems](../usage#check-properties): `sdmx-dl check properties`
+Fortunately, sdmx-dl CLI includes a [command to pinpoint the problems](../usage#check-config): `sdmx-dl check config`
 
 Common problems:
 

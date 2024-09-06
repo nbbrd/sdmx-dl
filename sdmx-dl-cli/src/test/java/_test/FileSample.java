@@ -1,8 +1,9 @@
 package _test;
 
+import sdmxdl.format.xml.XmlPersistence;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.web.WebSource;
-import sdmxdl.format.xml.XmlWebSource;
+import sdmxdl.web.WebSources;
 import tests.sdmxdl.format.xml.SdmxXmlSources;
 
 import java.io.File;
@@ -10,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import static java.util.Collections.singletonList;
 
 @lombok.experimental.UtilityClass
 public class FileSample {
@@ -21,23 +20,24 @@ public class FileSample {
     }
 
     public static File create(Path temp) throws IOException {
-        File data = Files.createFile(temp.resolve("data.xml")).toFile();
+        Path data = Files.createFile(temp.resolve("data.xml"));
         SdmxXmlSources.ECB_DATA.copyTo(data);
 
-        File struct = Files.createFile(temp.resolve("struct.xml")).toFile();
+        Path struct = Files.createFile(temp.resolve("struct.xml"));
         SdmxXmlSources.ECB_DATA_STRUCTURE.copyTo(struct);
 
-        File source = Files.createFile(temp.resolve("source.xml")).toFile();
-        XmlWebSource.getFormatter().formatFile(singletonList(sourceOf("sample", data, struct)), source);
+        Path source = Files.createFile(temp.resolve("source.xml"));
+        new XmlPersistence().getFormat(WebSources.class)
+                .formatPath(WebSources.builder().source(sourceOf("sample", data.toFile(), struct.toFile())).build(), source);
 
-        return source;
+        return source.toFile();
     }
 
     private static WebSource sourceOf(String name, File data, File struct) {
         return WebSource
                 .builder()
                 .id(name)
-                .driver("ri:file")
+                .driver("RI_FILE")
                 .endpoint(data.toURI())
                 .propertyOf(FileRiDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
                 .build();

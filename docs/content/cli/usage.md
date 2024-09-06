@@ -25,7 +25,7 @@ The commands follow a **verb+noun hierarchy**.
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
-    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & drivers
+    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & plugins
     r --- c([check]) --- status & access & config
     r --- s([setup]) --- completion & launcher
 
@@ -40,7 +40,7 @@ flowchart TB
     click keys "#fetch-keys" "fetch keys command"
    
     classDef lx fill:#859900
-    class l,sources,flows,dimensions,attributes,codes,availability,features,drivers lx;
+    class l,sources,flows,dimensions,attributes,codes,availability,features,plugins lx;
     click l "#list" "list command"
     click sources "#list-sources" "list sources command"
     click flows "#list-flows" "list flows command"
@@ -49,7 +49,7 @@ flowchart TB
     click codes "#list-codes" "list codes command"
     click availability "#list-availability" "list availability command"
     click features "#list-features" "list features command"
-    click drivers "#list-drivers" "list drivers command"
+    click plugins "#list-plugins" "list plugins command"
    
     classDef cx fill:#268bd2
     class c,status,access,config cx;
@@ -88,7 +88,7 @@ Subcommands:
 [codes](#list-codes),
 [availability](#list-availability),
 [features](#list-features),
-[drivers](#list-drivers)
+[plugins](#list-plugins)
 
 [Examples]({{< relref "examples#list-examples" >}})
 
@@ -115,52 +115,59 @@ Subcommands:
 
 Download time series observations.
 
-Example: `sdmx-dl fetch data ECB EXR M.USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+{{< tabs "fetch-data" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 
-Other options: 
+Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format:
-[
-    [`Series:key`](../datatypes#key),
-    [`ObsAttributes:map`](../datatypes#map),
-    [`ObsPeriod:datetime`](../datatypes#datetime),
-    [`ObsValue:number`](../datatypes#number)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Series:key`](../datatypes#key)
+2. [`ObsAttributes:map`](../datatypes#map)
+3. [`ObsPeriod:datetime`](../datatypes#datetime)
+4. [`ObsValue:number`](../datatypes#number)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Series           | ObsAttributes | ObsPeriod           | ObsValue          |
-|------------------|---------------|---------------------|-------------------|
-| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-01-01T00:00:00 | 1.605495          |
-| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-02-01T00:00:00 | 1.59785           |
-| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-03-01T00:00:00 | 1.595430434782609 |
-| M.CHF.EUR.SP00.A | OBS_STATUS=A  | 1999-04-01T00:00:00 | 1.601531818181818 |
-
+<small>{{< include file="/tmp/usage/fetch-data-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="fetch" message="meta" color="dc322f" >}}
 
 Download time series metadata.  
 
-Example: `sdmx-dl fetch meta ECB EXR M.USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+{{< tabs "fetch-meta" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -169,38 +176,38 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Series:key`](../datatypes#key),
-    [`Concept:string`](../datatypes#string),
-    [`Value:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Series:key`](../datatypes#key)
+2. [`Concept:string`](../datatypes#string)
+3. [`Value:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Series           | Concept       | Value            |
-|------------------|---------------|------------------|
-| M.CHF.EUR.SP00.A | COLLECTION    | A                |
-| M.CHF.EUR.SP00.A | UNIT          | CHF              |
-| M.CHF.EUR.SP00.A | DECIMALS      | 4                |
-| M.CHF.EUR.SP00.A | SOURCE_AGENCY | 4F0              |
-| M.CHF.EUR.SP00.A | UNIT_MULT     | 0                |
-| M.CHF.EUR.SP00.A | TITLE         | Swiss franc/Euro |
-
+<small>{{< include file="/tmp/usage/fetch-meta-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="fetch" message="keys" color="dc322f" >}}
 
 Download time series keys.  
 
-Example: `sdmx-dl fetch keys ECB EXR .USD+CHF.EUR.SP00.A`  
+Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.USD+CHF.EUR.SP00.A</abbr></code>
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
+{{< tabs "fetch-keys" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -209,68 +216,76 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Series:key`](../datatypes#key)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Series:key`](../datatypes#key)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Series           |
-|------------------|
-| A.CHF.EUR.SP00.A |
-| D.CHF.EUR.SP00.A |
-| H.CHF.EUR.SP00.A |
-| M.CHF.EUR.SP00.A |
-
+<small>{{< include file="/tmp/usage/fetch-keys-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="sources" color="859900" >}}
 
 List data source names and properties.  
 
-Example: `sdmx-dl list sources`  
+Example: <code>sdmx-dl <font color="#859900">list sources</font></code>  
 
-Main options:  
+{{< tabs "list-sources" >}}
+{{< tab "Parameters" >}}
+
+- _no parameters_
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 
 Other options: 
 [`CSV`](../options#csv)
 
-Output format: 
-[
-    [`Name:source`](../datatypes#source),
-    [`Description:string`](../datatypes#string),
-    [`Aliases:list`](../datatypes#list),
-    [`Driver:string`](../datatypes#string),
-    [`Endpoint:uri`](../datatypes#uri),
-    [`Properties:map`](../datatypes#list),
-    [`Website:url`](../datatypes#url),
-    [`Monitor:uri`](../datatypes#uri),
-    [`MonitorWebsite:url`](../datatypes#url),
-    [`Languages:list`](../datatypes#list)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Name:source`](../datatypes#source)
+2. [`Description:string`](../datatypes#string)
+3. [`Aliases:list`](../datatypes#list)
+4. [`Driver:string`](../datatypes#string)
+5. [`Endpoint:uri`](../datatypes#uri)
+6. [`Properties:map`](../datatypes#list)
+7. [`Website:url`](../datatypes#url)
+8. [`Monitor:uri`](../datatypes#uri)
+9. [`MonitorWebsite:url`](../datatypes#url)
+10. [`Languages:list`](../datatypes#list)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Name  | Description                     | Aliases  | Driver              | Endpoint                                         | Properties           | Website                                     | Monitor                           | MonitorWebsite                                     | Languages |
-|-------|---------------------------------|----------|---------------------|--------------------------------------------------|----------------------|---------------------------------------------|-----------------------------------|----------------------------------------------------|-----------|
-| ABS   | Australian Bureau of Statistics |          | ri:abs              | https://stat.data.abs.gov.au/restsdmx/sdmx.ashx  |                      | https://stat.data.abs.gov.au                | upptime:/nbbrd/sdmx-upptime/ABS   | https://nbbrd.github.io/sdmx-upptime/history/abs   | en        |
-| ECB   | European Central Bank           |          | ri:sdmx21           | https://sdw-wsrest.ecb.europa.eu/service         | detailSupported=true | https://sdw.ecb.europa.eu                   | upptime:/nbbrd/sdmx-upptime/ECB   | https://nbbrd.github.io/sdmx-upptime/history/ecb   | en        |
-| ESTAT | Eurostat                        | EUROSTAT | connectors:eurostat | https://ec.europa.eu/eurostat/SDMX/diss-web/rest |                      | https://ec.europa.eu/eurostat/data/database | upptime:/nbbrd/sdmx-upptime/ESTAT | https://nbbrd.github.io/sdmx-upptime/history/estat | en,de,fr  |
-
+<small>{{< include file="/tmp/usage/list-sources-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="flows" color="859900" >}}
 
 List data flows.  
 
-Example: `sdmx-dl list flows ECB`  
+Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="source">ECB</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
+{{< tabs "list-flows" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -279,34 +294,37 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Ref:flow`](../datatypes#flow),
-    [`Name:string`](../datatypes#string),
-    [`Description:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Ref:flow`](../datatypes#flow)
+2. [`Name:string`](../datatypes#string)
+3. [`Description:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Ref          | Name                           | Description |
-|--------------|--------------------------------|-------------|
-| ECB:AME(1.0) | AMECO                          |             |
-| ECB:BKN(1.0) | Banknotes statistics           |             |
-| ECB:BLS(1.0) | Bank Lending Survey Statistics |             |
-
+<small>{{< include file="/tmp/usage/list-flows-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="dimensions" color="859900" >}}
 
 List data flow dimensions.  
 
-Example: `sdmx-dl list dimensions ECB EXR`  
+Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
+{{< tabs "list-dimensions" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -315,35 +333,36 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Name:string`](../datatypes#string),
-    [`Label:string`](../datatypes#string),
-    [`Coded:bool`](../datatypes#bool),
-    [`Index:int`](../datatypes#int)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Name:string`](../datatypes#string)
+2. [`Label:string`](../datatypes#string)
+3. [`Coded:bool`](../datatypes#bool)
+4. [`Index:int`](../datatypes#int)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Name           | Label                          | Coded | Index |
-|----------------|--------------------------------|-------|-------|
-| FREQ           | Frequency                      | true  | 0     |
-| CURRENCY       | Currency                       | true  | 1     |
-| CURRENCY_DENOM | Currency denominator           | true  | 2     |
-| EXR_TYPE       | Exchange rate type             | true  | 3     |
-| EXR_SUFFIX     | Series variation - EXR context | true  | 4     |
-
+<small>{{< include file="/tmp/usage/list-dimensions-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="attributes" color="859900" >}}
 
 List data flow attributes.
 
-Example: `sdmx-dl list attributes ECB EXR`
+Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr></code>
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
+{{< tabs "list-attributes" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+
+{{< /tab >}}
+{{< tab "Options" >}}
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -354,36 +373,39 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format:
-[
-[`Name:string`](../datatypes#string),
-[`Label:string`](../datatypes#string),
-[`Coded:bool`](../datatypes#bool),
-[`Relationship:enum`](../datatypes#enum)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Name:string`](../datatypes#string)
+2. [`Label:string`](../datatypes#string)
+3. [`Coded:bool`](../datatypes#bool)
+4. [`Relationship:enum`](../datatypes#enum)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Concept     | Label              | Coded | Relationship |
-|-------------|--------------------|-------|--------------|
-| TIME_FORMAT | Time format code   | false | SERIES       |
-| OBS_STATUS  | Observation status | true  | OBSERVATION  |
-| DECIMALS    | Decimals           | true  | GROUP        |
-
+<small>{{< include file="/tmp/usage/list-attributes-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="codes" color="859900" >}}
 
 List codes from data flow concept.  
 
-Example: `sdmx-dl list codes ECB EXR FREQ`  
+Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="concept">FREQ</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`concept`](../datatypes#string) - Concept name.
+{{< tabs "list-codes" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`concept`](../datatypes#string) - Concept name.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -392,33 +414,36 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Code:string`](../datatypes#string),
-    [`Label:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Code:string`](../datatypes#string)
+2. [`Label:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Code | Label                |
-|------|----------------------|
-| A    | Annual               |
-| Q    | Quarterly            |
-| B    | Daily - businessweek |
-
+<small>{{< include file="/tmp/usage/list-codes-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="availability" color="859900" >}}
 
 List available dimension codes.
 
-Example: `sdmx-dl list availability ECB EXR M.CHF... 4`
+Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr title="source">ECB</abbr> <abbr title="flow">EXR</abbr> <abbr title="key">M.CHF...</abbr> <abbr title="index">4</abbr></code>
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
-- [`flow`](../datatypes#flow) - Data flow reference.
-- [`key`](../datatypes#key) - Data key.
-- [`index`](../datatypes#int) - Zero-based index of key dimension.
+{{< tabs "list-availability" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+2. [`flow`](../datatypes#flow) - Data flow reference.
+3. [`key`](../datatypes#key) - Data key.
+4. [`index`](../datatypes#int) - Zero-based index of key dimension.
+
+{{< /tab >}}
+{{< tab "Options" >}}
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
@@ -429,30 +454,34 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format:
-[
-[`Code:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Code:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Code |
-|------|
-| A    |
-| E    |
-
+<small>{{< include file="/tmp/usage/list-availability-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="features" color="859900" >}}
 
 List supported features of a data source.  
 
-Example: `sdmx-dl list features ECB`  
+Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="source">ECB</abbr></code>  
 
-Parameters:
-- [`source`](../datatypes#source) - Data source name.
+{{< tabs "list-features" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`source`](../datatypes#source) - Data source name.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
@@ -461,56 +490,69 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`SupportedFeature:enum`](../datatypes#enum)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`SupportedFeature:enum`](../datatypes#enum)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| SupportedFeature |
-|------------------|
-| SERIES_KEYS_ONLY |
-
+<small>{{< include file="/tmp/usage/list-features-sample.md" >}}</small>
 {{< /expand >}}
 
-{{< shields_io/badge label="list" message="drivers" color="859900" >}}
+{{< shields_io/badge label="list" message="plugins" color="859900" >}}
 
-List driver names and properties.  
+List plugin names and properties.  
 
-Example: `sdmx-dl list drivers`  
+Example: <code>sdmx-dl <font color="#859900">list plugins</font></code>  
 
-Main options:  
+{{< tabs "list-plugins" >}}
+{{< tab "Parameters" >}}
+
+- _no parameters_
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 
 Other options: 
 [`CSV`](../options#csv)
 
-Output format: 
-[
-    [`SupportedFeature:enum`](../datatypes#enum)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Type:string`](../datatypes#string)
+1. [`Id:string`](../datatypes#string)
+1. [`Properties:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Name       | SupportedProperties                                                                                    |
-|------------|--------------------------------------------------------------------------------------------------------|
-| ri:dotstat | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
-| ri:nbb     | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication                                       |
-| ri:sdmx21  | connectTimeout,readTimeout,maxRedirects,preemptiveAuthentication,detailSupported,trailingSlashRequired |
-
+<small>{{< include file="/tmp/usage/list-plugins-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="status" color="268bd2" >}}
 
 Check service availability.  
 
-Example: `sdmx-dl check status ECB`  
+Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="source">ECB</abbr></code>  
 
-Parameters:
-- [`sources`](../datatypes#list) - Data source names.
+{{< tabs "check-status" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`sources`](../datatypes#list) - Data source names.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
@@ -520,33 +562,38 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Source:source`](../datatypes#source),
-    [`Status:enum`](../datatypes#enum),
-    [`UptimeRatio:double`](../datatypes#double),
-    [`AverageResponseTime:double`](../datatypes#double),
-    [`ErrorMessage:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Source:source`](../datatypes#source)
+2. [`Status:enum`](../datatypes#enum)
+3. [`UptimeRatio:double`](../datatypes#double)
+4. [`AverageResponseTime:double`](../datatypes#double)
+5. [`ErrorMessage:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Source | Status | UptimeRatio | AverageResponseTime | ErrorMessage |
-|--------|--------|-------------|---------------------|--------------|
-| ECB    | UP     | 99.691      |                     |              |
-
+<small>{{< include file="/tmp/usage/check-status-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="access" color="268bd2" >}}
 
 Check service accessibility.  
 
-Example: `sdmx-dl check access ECB`  
+Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="source">ECB</abbr></code>  
 
-Parameters:
-- [`sources`](../datatypes#list) - Data source names.
+{{< tabs "check-access" >}}
+{{< tab "Parameters" >}}
 
-Main options:  
+1. [`sources`](../datatypes#list) - Data source names.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
@@ -556,48 +603,57 @@ Other options:
 [`CSV`](../options#csv),
 [`Network`](../options#network)
 
-Output format: 
-[
-    [`Source:source`](../datatypes#source),
-    [`Accessible:enum`](../datatypes#enum),
-    [`DurationInMillis:int`](../datatypes#int),
-    [`ErrorMessage:string`](../datatypes#string)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Source:source`](../datatypes#source)
+2. [`Accessible:enum`](../datatypes#enum)
+3. [`DurationInMillis:int`](../datatypes#int)
+4. [`ErrorMessage:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Source | Accessible | DurationInMillis | ErrorMessage |
-|--------|------------|------------------|--------------|
-| ECB    | YES        | 726              |              |
-
+<small>{{< include file="/tmp/usage/check-access-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="check" message="config" color="268bd2" >}}
 
 Check sdmx-dl configuration.
 
-Example: `sdmx-dl check config`  
+Example: <code>sdmx-dl <font color="#268bd2">check config</font></code>  
+
+{{< tabs "check-config" >}}
+{{< tab "Parameters" >}}
+
+- _no parameters_
+
+{{< /tab >}}
+
+{{< tab "Options" >}}
+Main options:
+
+- _no options_
 
 Other options: 
 [`CSV`](../options#csv)
 
-Output format: 
-[
-    [`Scope:enum`](../datatypes#enum),
-    [`PropertyKey:string`](../datatypes#string),
-    [`PropertyValue:string`](../datatypes#string),
-    [`Category:enum`](../datatypes#enum)
-]
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Scope:enum`](../datatypes#enum)
+2. [`PropertyKey:string`](../datatypes#string)
+3. [`PropertyValue:string`](../datatypes#string)
+4. [`Category:enum`](../datatypes#enum)
+
+{{< /tab >}}
+{{< /tabs >}}
 
 {{< expand "Output sample" >}}
-
-| Scope  | PropertyKey                       | PropertyValue                  | Category      |
-|--------|-----------------------------------|--------------------------------|---------------|
-| SYSTEM | sources                           | C:\temp\some-sources.xml       | WIDE_OPTION   | 
-| SYSTEM | org.fusesource.jansi.Ansi.disable | true                           | OTHER         |
-| GLOBAL | sources                           | C:\Users\ABC\other-sources.xml | WIDE_OPTION   |
-| LOCAL  | sdmx-dl.check.status.verbose      | true                           | NARROW_OPTION |
-
+<small>{{< include file="/tmp/usage/check-config-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="setup" message="completion" color="b58900" >}}<br>

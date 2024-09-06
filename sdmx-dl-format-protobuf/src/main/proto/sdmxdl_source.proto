@@ -14,3 +14,7 @@ message SdmxWebSource {
   optional string monitor = 8;
   optional string monitor_website = 9;
 }
+
+message WebSources {
+  repeated SdmxWebSource web_sources = 1;
+}

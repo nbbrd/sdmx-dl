@@ -14,12 +14,12 @@ import java.net.PasswordAuthentication;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
-        loaderName = "internal.util.AuthenticatorLoader"
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 @ThreadSafe
 public interface Authenticator {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getAuthenticatorId();
 
     @ServiceFilter

@@ -1,14 +1,16 @@
 package tests.sdmxdl.web.spi;
 
+import internal.sdmxdl.web.spi.DriverLoader;
 import lombok.NonNull;
+import nbbrd.design.MightBeGenerated;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
+import tests.sdmxdl.api.ExtensionPoint;
+import tests.sdmxdl.api.TckUtil;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
-import static sdmxdl.web.spi.Driver.DRIVER_PROPERTY_PREFIX;
-import static tests.sdmxdl.api.TckUtil.startingWith;
 
 @lombok.experimental.UtilityClass
 public class DriverAssert {
@@ -17,15 +19,20 @@ public class DriverAssert {
         return WebContext.builder().build();
     }
 
+    @MightBeGenerated
+    private static final ExtensionPoint<Driver> EXTENSION_POINT = ExtensionPoint
+            .<Driver>builder()
+            .id(Driver::getDriverId)
+            .idPattern(DriverLoader.ID_PATTERN)
+            .rank(Driver::getDriverRank)
+            .rankLowerBound(Driver.UNKNOWN_DRIVER_RANK)
+            .properties(Driver::getDriverProperties)
+            .propertiesPrefix(Driver.DRIVER_PROPERTY_PREFIX)
+            .build();
+
     @SuppressWarnings("null")
     public void assertCompliance(@NonNull Driver driver) {
-        assertThat(driver.getDriverId())
-//                .containsPattern(SCREAMING_SNAKE_CASE)
-                .isNotBlank();
-
-        assertThat(driver.getDriverProperties())
-                .are(startingWith(DRIVER_PROPERTY_PREFIX))
-                .doesNotHaveDuplicates();
+        TckUtil.run(s -> EXTENSION_POINT.assertCompliance(s, driver));
 
         WebSource validSource = WebSource
                 .builder()
@@ -38,8 +45,6 @@ public class DriverAssert {
 
         WebContext context = DriverAssert.noOpWebContext();
 
-        assertThat(driver.getDriverId()).isNotBlank();
-
         assertThatNullPointerException().isThrownBy(() -> driver.connect(null, ANY, context));
         assertThatNullPointerException().isThrownBy(() -> driver.connect(validSource, null, context));
         assertThatNullPointerException().isThrownBy(() -> driver.connect(validSource, ANY, null));
@@ -47,8 +52,6 @@ public class DriverAssert {
         assertThatIllegalArgumentException().isThrownBy(() -> driver.connect(invalidSource, ANY, context));
 
         assertThat(driver.getDefaultSources()).allSatisfy(o -> checkSource(o, driver));
-
-        assertThat(driver.getClass()).isFinal();
     }
 
     private void checkSource(WebSource o, Driver d) {

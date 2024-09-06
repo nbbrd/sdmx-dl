@@ -56,7 +56,7 @@ import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
 @ServiceProvider
 public final class InseeDialectDriver implements Driver {
 
-    private static final String DIALECTS_INSEE = "dialects:insee";
+    private static final String DIALECTS_INSEE = "DIALECTS_INSEE";
 
     @lombok.experimental.Delegate
     private final DriverSupport support = DriverSupport

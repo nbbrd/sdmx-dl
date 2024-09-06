@@ -43,32 +43,21 @@ public class NetworkingOptionsTest {
     }
 
     @Nested
-    class CurlBackendOptionTest {
+    class UrlBackendOptionTest {
         @Test
-        @ClearEnvironmentVariable(key = "SDMXDL_NETWORKING_CURLBACKEND")
+        @ClearEnvironmentVariable(key = "SDMXDL_NETWORKING_URLBACKEND")
         public void testWithoutEnv() {
             Holder x = new Holder();
-            assertThat(x.execute().isCurlBackend()).isFalse();
-            assertThat(x.execute("--curl").isCurlBackend()).isTrue();
-            assertThat(x.execute("--no-curl").isCurlBackend()).isFalse();
+            assertThat(x.execute().getUrlBackend()).isNull();
+            assertThat(x.execute("--url-backend", "ABC").getUrlBackend()).isEqualTo("ABC");
         }
 
         @Test
-        @SetEnvironmentVariable(key = "SDMXDL_NETWORKING_CURLBACKEND", value = "false")
-        public void testWithEnvFalse() {
+        @SetEnvironmentVariable(key = "SDMXDL_NETWORKING_URLBACKEND", value = "ZZZ")
+        public void testWithEnv() {
             Holder x = new Holder();
-            assertThat(x.execute().isCurlBackend()).isFalse();
-            assertThat(x.execute("--curl").isCurlBackend()).isTrue();
-            assertThat(x.execute("--no-curl").isCurlBackend()).isFalse();
-        }
-
-        @Test
-        @SetEnvironmentVariable(key = "SDMXDL_NETWORKING_CURLBACKEND", value = "true")
-        public void testWithEnvTrue() {
-            Holder x = new Holder();
-            assertThat(x.execute().isCurlBackend()).isTrue();
-            assertThat(x.execute("--curl").isCurlBackend()).isTrue();
-            assertThat(x.execute("--no-curl").isCurlBackend()).isFalse();
+            assertThat(x.execute().getUrlBackend()).isEqualTo("ZZZ");
+            assertThat(x.execute("--url-backend", "ABC").getUrlBackend()).isEqualTo("ABC");
         }
     }
 

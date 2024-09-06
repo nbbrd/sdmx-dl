@@ -12,19 +12,21 @@ import sdmxdl.DataRepository;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Cache;
+import sdmxdl.ext.Persistence;
 import sdmxdl.web.MonitorReports;
 import sdmxdl.web.WebSource;
 
 import java.util.Collection;
+import java.util.List;
 
 @ServiceDefinition(
         quantifier = Quantifier.SINGLE,
-        loaderName = "internal.util.WebCachingLoader",
-        fallback = NoOpCaching.class
+        fallback = NoOpCaching.class,
+        loaderName = "internal.{{canonicalName}}Loader"
 )
 public interface WebCaching {
 
-    @ServiceId
+    @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
     @NonNull String getWebCachingId();
 
     @ServiceSorter(reverse = true)
@@ -32,11 +34,13 @@ public interface WebCaching {
 
     @NonNull Cache<DataRepository> getDriverCache(
             @NonNull WebSource source,
+            @NonNull List<Persistence> persistences,
             @Nullable EventListener<? super WebSource> onEvent,
             @Nullable ErrorListener<? super WebSource> onError);
 
     @NonNull Cache<MonitorReports> getMonitorCache(
             @NonNull WebSource source,
+            @NonNull List<Persistence> persistences,
             @Nullable EventListener<? super WebSource> onEvent,
             @Nullable ErrorListener<? super WebSource> onError);
 
