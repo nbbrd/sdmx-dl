@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- ![CLI] Fix sources file env variable in CLI
+
 ## [3.0.0-beta.13] - 2024-09-06
 
 This is the thirteenth beta release of **sdmx-dl**.  
