@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
+import sdmxdl.Confidentiality;
 import sdmxdl.web.WebSources;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.format.FileFormatSupport;
@@ -81,6 +82,7 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
                     .builder()
                     .id(sourceId)
                     .driver(PX_PXWEB)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf(normalizeEndpoint(url))
                     .aliases(sourceAliases)
                     .name(DEFAULT_LANG, description)

@@ -257,12 +257,13 @@ CSV columns:
 2. [`Description:string`](../datatypes#string)
 3. [`Aliases:list`](../datatypes#list)
 4. [`Driver:string`](../datatypes#string)
-5. [`Endpoint:uri`](../datatypes#uri)
-6. [`Properties:map`](../datatypes#list)
-7. [`Website:url`](../datatypes#url)
-8. [`Monitor:uri`](../datatypes#uri)
-9. [`MonitorWebsite:url`](../datatypes#url)
-10. [`Languages:list`](../datatypes#list)
+5. [`Confidentiality:enum`](../datatypes#enum)
+6. [`Endpoint:uri`](../datatypes#uri)
+7. [`Properties:map`](../datatypes#list)
+8. [`Website:url`](../datatypes#url)
+9. [`Monitor:uri`](../datatypes#uri)
+10. [`MonitorWebsite:url`](../datatypes#url)
+11. [`Languages:list`](../datatypes#list)
 
 {{< /tab >}}
 {{< /tabs >}}

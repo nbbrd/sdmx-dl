@@ -18,8 +18,9 @@ package sdmxdl.format.xml;
 
 import org.assertj.core.util.xml.XmlStringPrettyFormatter;
 import org.junit.jupiter.api.Test;
-import sdmxdl.web.WebSources;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
+import tests.sdmxdl.api.RepoSamples;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,47 +37,27 @@ import static org.assertj.core.api.InstanceOfAssertFactories.list;
  */
 public class XmlWebSourcesFormatTest {
 
-    private final List<WebSource> sample = Arrays.asList(
-            WebSource
-                    .builder()
-                    .id("ECB")
-                    .name("en", "European Central Bank")
-                    .driver("ri:sdmx21")
-                    .endpointOf("https://data-api.ecb.europa.eu/service")
-                    .property("detailSupported", "true")
-                    .alias("XYZ")
-                    .websiteOf("https://sdw.ecb.europa.eu")
-                    .monitorOf("ABC:xyz")
-                    .monitorWebsiteOf("https://someaddress")
-                    .build(),
-            WebSource
-                    .builder()
-                    .id("other")
-                    .name("en", "some description")
-                    .driver("dummy")
-                    .endpointOf("http://localhost")
-                    .build()
-    );
+    private final List<WebSource> sample = Arrays.asList(RepoSamples.BASIC_SOURCE, RepoSamples.FULL_SOURCE);
 
     private final String stringSample
             = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<sources>\n"
             + "    <source>\n"
             + "        <name>ECB</name>\n"
+            + "        <driver>ri:sdmx21</driver>\n"
+            + "        <endpoint>https://data-api.ecb.europa.eu/service</endpoint>\n"
+            + "    </source>\n"
+            + "    <source>\n"
+            + "        <name>ECB</name>\n"
             + "        <description lang=\"en\">European Central Bank</description>\n"
             + "        <driver>ri:sdmx21</driver>\n"
+            + "        <confidentiality>SECRET</confidentiality>\n"
             + "        <endpoint>https://data-api.ecb.europa.eu/service</endpoint>\n"
             + "        <property key=\"detailSupported\" value=\"true\"/>\n"
             + "        <alias>XYZ</alias>\n"
             + "        <website>https://sdw.ecb.europa.eu</website>\n"
             + "        <monitor>ABC:xyz</monitor>\n"
             + "        <monitorWebsite>https://someaddress</monitorWebsite>\n"
-            + "    </source>\n"
-            + "    <source>\n"
-            + "        <name>other</name>\n"
-            + "        <description lang=\"en\">some description</description>\n"
-            + "        <driver>dummy</driver>\n"
-            + "        <endpoint>http://localhost</endpoint>\n"
             + "    </source>\n"
             + "</sources>\n";
 

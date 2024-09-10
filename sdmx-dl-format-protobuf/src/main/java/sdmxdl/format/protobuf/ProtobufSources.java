@@ -1,6 +1,7 @@
 package sdmxdl.format.protobuf;
 
 
+import sdmxdl.format.protobuf.web.Confidentiality;
 import sdmxdl.format.protobuf.web.SdmxWebSource;
 import sdmxdl.format.protobuf.web.WebSources;
 
@@ -14,6 +15,7 @@ public class ProtobufSources {
         result.setId(value.getId());
         result.putAllNames(value.getNames());
         result.setDriver(value.getDriver());
+        result.setConfidentiality(fromConfidentiality(value.getConfidentiality()));
         result.setEndpoint(value.getEndpoint().toString());
         result.putAllProperties(value.getProperties());
         result.addAllAliases(value.getAliases());
@@ -29,6 +31,7 @@ public class ProtobufSources {
                 .id(value.getId())
                 .names(value.getNamesMap())
                 .driver(value.getDriver())
+                .confidentiality(toConfidentiality(value.getConfidentiality()))
                 .endpointOf(value.getEndpoint())
                 .properties(value.getPropertiesMap())
                 .aliases(value.getAliasesList())
@@ -49,5 +52,13 @@ public class ProtobufSources {
                 .builder()
                 .sources(value.getWebSourcesList().stream().map(ProtobufSources::toWebSource).collect(toList()))
                 .build();
+    }
+
+    public static Confidentiality fromConfidentiality(sdmxdl.Confidentiality value) {
+        return Confidentiality.valueOf(value.name());
+    }
+
+    public static sdmxdl.Confidentiality toConfidentiality(Confidentiality value) {
+        return sdmxdl.Confidentiality.valueOf(value.name());
     }
 }

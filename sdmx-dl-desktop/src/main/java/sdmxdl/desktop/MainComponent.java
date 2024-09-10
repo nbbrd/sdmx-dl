@@ -36,13 +36,13 @@ import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
-import static internal.sdmxdl.desktop.util.UIConstants.TREE_ICON_LEAF_COLOR;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.KeyStroke.getKeyStroke;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
 import static sdmxdl.desktop.Renderer.*;
+import static sdmxdl.desktop.Sdmxdl.lookupWebSource;
 
 public final class MainComponent extends JComponent {
 
@@ -97,7 +97,7 @@ public final class MainComponent extends JComponent {
                         label.setText(DataSetRefFormats.toText(ref, fs));
                         label.setToolTipText(DataSetRefFormats.toTooltipText(ref, fs));
                         if (ref.getKey().isSeries()) {
-                            label.setIcon(Ikons.of(MDI_CHART_LINE, 16, TREE_ICON_LEAF_COLOR));
+                            label.setIcon(Ikons.of(MDI_CHART_LINE, 16, Renderer.getColor(lookupWebSource(ref).getConfidentiality())));
                         } else {
                             label.setIcon(UIManager.getIcon(expanded ? "Tree.openIcon" : "Tree.closedIcon"));
                         }

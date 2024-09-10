@@ -41,17 +41,18 @@ There are several types of system properties: some are defined by the platform, 
 
 {{< expand "Specific sdmx-dl properties" >}}
 
-| Property                         | Description                      |
-|----------------------------------|----------------------------------|
-| `sdmxdl.caching.noCache`         | Disable caching                  |
-| `sdmxdl.caching.cacheFolder`     | Set cache folder                 |
-| `sdmxdl.caching.noCompression`   | Disable cache compression        |
-| `sdmxdl.caching.persistenceId`   | Set cache persistence backend    |
-| `sdmxdl.networking.autoProxy`    | Enable automatic proxy detection |
-| `sdmxdl.networking.noSystemSSL`  | Disable system truststore        |
-| `sdmxdl.networking.noDefaultSSL` | Disable default truststore       |
-| `sdmxdl.networking.urlBackend`   | Set networking URL backend       |
-| `sdmxdl.registry.sourceFile`     | Set data source definitions file |
+| Property                            | Description                      |
+|-------------------------------------|----------------------------------|
+| `sdmxdl.caching.noCache`            | Disable caching                  |
+| `sdmxdl.caching.cacheFolder`        | Set cache folder                 |
+| `sdmxdl.caching.noCompression`      | Disable cache compression        |
+| `sdmxdl.caching.persistenceId`      | Set cache persistence backend    |
+| `sdmxdl.caching.maxConfidentiality` | Set max confidentiality          |
+| `sdmxdl.networking.autoProxy`       | Enable automatic proxy detection |
+| `sdmxdl.networking.noSystemSSL`     | Disable system truststore        |
+| `sdmxdl.networking.noDefaultSSL`    | Disable default truststore       |
+| `sdmxdl.networking.urlBackend`      | Set networking URL backend       |
+| `sdmxdl.registry.sourceFile`        | Set data source definitions file |
 
 {{< /expand >}}
 

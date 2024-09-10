@@ -162,6 +162,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
         result.register(WebSources.class, new WebSourcesSerializer());
         result.register(WebSource.class, new WebSourceSerializer());
+        result.register(Confidentiality.class, new DefaultSerializers.EnumSerializer(Confidentiality.class));
 
         result.register(ArrayList.class, new CollectionSerializer<>());
         result.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
@@ -201,6 +202,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
             output.writeString(t.getId());
             kryo.writeObject(output, t.getNames(), names);
             output.writeString(t.getDriver());
+            kryo.writeObject(output, t.getConfidentiality());
             kryo.writeObject(output, t.getEndpoint());
             kryo.writeObject(output, t.getProperties(), properties);
             kryo.writeObject(output, t.getAliases(), aliases);
@@ -216,6 +218,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
                     .id(input.readString())
                     .names(kryo.readObject(input, HashMap.class, names))
                     .driver(input.readString())
+                    .confidentiality(kryo.readObject(input, Confidentiality.class))
                     .endpoint(kryo.readObject(input, URI.class))
                     .properties(kryo.readObject(input, HashMap.class, properties))
                     .aliases(kryo.readObject(input, HashSet.class, aliases))

@@ -26,6 +26,7 @@ import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Confidentiality;
 import sdmxdl.StructureRef;
 import sdmxdl.Feature;
 import sdmxdl.Languages;
@@ -76,6 +77,7 @@ public final class NbbDialectDriver implements Driver {
                     .name("fr", "Banque Nationale de Belgique")
                     .name("nl", "Nationale Bank van België")
                     .driver(DIALECTS_NBB)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://stat.nbb.be/restsdmx/sdmx.ashx")
                     .websiteOf("https://stat.nbb.be")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/NBB")

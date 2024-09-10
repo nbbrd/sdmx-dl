@@ -58,6 +58,7 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Description", source -> source.getName(languages))
                 .columnOf("Aliases", WebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .columnOf("Driver", WebSource::getDriver)
+                .columnOf("Confidentiality", WebSource::getConfidentiality, Formatter.onEnum())
                 .columnOf("Endpoint", WebSource::getEndpoint, Formatter.onURI())
                 .columnOf("Properties", WebSource::getProperties, DEFAULT_MAP_FORMATTER)
                 .columnOf("Website", WebSource::getWebsite, Formatter.onURL())

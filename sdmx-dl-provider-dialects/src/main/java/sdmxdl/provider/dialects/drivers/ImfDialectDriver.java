@@ -67,6 +67,7 @@ public final class ImfDialectDriver implements Driver {
                     .id("IMF")
                     .name("en", "International Monetary Fund")
                     .driver(DIALECTS_IMF)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")

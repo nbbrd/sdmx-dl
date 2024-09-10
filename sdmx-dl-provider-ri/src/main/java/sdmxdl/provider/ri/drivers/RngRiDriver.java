@@ -57,6 +57,7 @@ public final class RngRiDriver implements Driver {
                     .id("RNG")
                     .name("en", "Random number generator")
                     .driver(RI_RNG)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
             .build();

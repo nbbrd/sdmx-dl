@@ -4,17 +4,20 @@ import ec.util.list.swing.JLists;
 import internal.sdmxdl.desktop.PropertyFormats;
 import internal.sdmxdl.desktop.util.*;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
+import sdmxdl.Confidentiality;
 import sdmxdl.Languages;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Optional;
 
+import static j2html.TagCreator.html;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_WEB;
 
 public interface Renderer<T> {
@@ -50,6 +53,24 @@ public interface Renderer<T> {
                 .build();
     }
 
+    static Color getColor(Confidentiality confidentiality) {
+        switch (confidentiality) {
+            case PUBLIC:
+//                return UIManager.getColor(UIConstants.TREE_ICON_LEAF_COLOR);
+                return AccentColors.LIGHT_GREEN;
+            case UNRESTRICTED:
+                return AccentColors.LIGHT_BLUE;
+            case RESTRICTED:
+                return AccentColors.LIGHT_YELLOW;
+            case CONFIDENTIAL:
+                return AccentColors.LIGHT_ORANGE;
+            case SECRET:
+                return AccentColors.LIGHT_RED;
+            default:
+                throw new RuntimeException();
+        }
+    }
+
     Renderer<WebSource> WEB_SOURCE_RENDERER = new Renderer<WebSource>() {
         @Override
         public String toHeader(WebSource value) {
@@ -58,7 +79,8 @@ public interface Renderer<T> {
 
         @Override
         public String toText(WebSource value) {
-            return "<html><a href='#'>[" + value.getId() + "]</a> " + value.getName(Languages.ANY);
+            return html(Html4Swing.labelTag(value.getId(), getColor(value.getConfidentiality())))
+                    .withText(" " + value.getName(Languages.ANY)).render();
         }
 
         @Override
@@ -82,7 +104,7 @@ public interface Renderer<T> {
             return result;
         }
 
-        public URL getWebsite(JDocument<WebSource> o) {
+        private URL getWebsite(JDocument<WebSource> o) {
             return Optional.ofNullable(o.getModel()).map(WebSource::getWebsite).orElse(null);
         }
     };

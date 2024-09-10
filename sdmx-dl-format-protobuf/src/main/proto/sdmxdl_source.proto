@@ -13,8 +13,17 @@ message SdmxWebSource {
   optional string website = 7;
   optional string monitor = 8;
   optional string monitor_website = 9;
+  Confidentiality confidentiality = 10;
 }
 
 message WebSources {
   repeated SdmxWebSource web_sources = 1;
+}
+
+enum Confidentiality {
+  PUBLIC = 0;
+  UNRESTRICTED = 1;
+  RESTRICTED = 2;
+  CONFIDENTIAL = 3;
+  SECRET = 4;
 }

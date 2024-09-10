@@ -191,7 +191,7 @@ public class CachedRestClientTest {
                 .build();
 
         assertThat(getBase(s1, ANY))
-                .hasToString("cache:rest/id1/1032839954/*")
+                .hasToString("cache:rest/id1/" + s1.hashCode() + "/*")
                 .isEqualTo(getBase(s1, ANY))
                 .isNotEqualTo(getBase(s1, Languages.parse("fr")))
                 .isNotEqualTo(getBase(s1.toBuilder().id("id2").build(), ANY))

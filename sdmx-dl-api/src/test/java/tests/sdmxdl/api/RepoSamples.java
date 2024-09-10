@@ -134,6 +134,7 @@ public class RepoSamples {
             .id("ECB")
             .name("en", "European Central Bank")
             .driver("ri:sdmx21")
+            .confidentiality(Confidentiality.SECRET)
             .endpointOf("https://data-api.ecb.europa.eu/service")
             .property("detailSupported", "true")
             .alias("XYZ")

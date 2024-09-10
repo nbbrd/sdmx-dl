@@ -7,6 +7,7 @@ import internal.sdmxdl.desktop.util.ButtonBuilder;
 import internal.sdmxdl.desktop.util.MapTableModel;
 import internal.sdmxdl.desktop.util.NoOpCommand;
 import net.miginfocom.swing.MigLayout;
+import sdmxdl.Confidentiality;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
     }
 
     private final JTextField id = new JTextField();
+    private final JComboBox<Confidentiality> confidentiality = new JComboBox<>(Confidentiality.values());
     private final JTable names = new JTable();
     private final JTextField driver = new JTextField();
     private final JTextField endpoint = new JTextField();
@@ -67,6 +69,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
         id.setEditable(false);
+        confidentiality.setEnabled(false);
         names.setModel(new MapTableModel("Language", "Name"));
         JTables.setWidthAsPercentages(names, .2, .8);
         aliases.setEditable(false);
@@ -114,11 +117,12 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
 
         panel.add(new JLabel("ID"), "skip, align left, sizegroup lbl");
         panel.add(id, "growx, w 150,  sizegroup ids");
+        panel.add(new JLabel("Confidentiality"), "skip, align left");
+        panel.add(confidentiality, "w 70, sizegroup ids");
+        panel.add(extract, "align trailing, wrap");
 
         panel.add(new JLabel("Aliases"), "skip, align left, sizegroup lbl");
-        panel.add(aliases, "growx, w 150, sizegroup ids");
-
-        panel.add(extract, "align trailing, wrap");
+        panel.add(aliases, "span, growx");
 
         panel.add(new JLabel("Names"), "skip, align left, sizegroup lbl");
         panel.add(new JScrollPane(names), "span, growx, h 100");
@@ -150,6 +154,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
     private void onModelChange(PropertyChangeEvent evt) {
         if (model != null) {
             id.setText(model.getId());
+            confidentiality.setSelectedItem(model.getConfidentiality());
             ((MapTableModel) names.getModel()).setData(model.getNames());
             driver.setText(model.getDriver());
             endpoint.setText(model.getEndpoint().toString());
@@ -159,6 +164,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
             monitor.setText(Objects.toString(model.getMonitor()));
         } else {
             id.setText("");
+            confidentiality.setSelectedItem(Confidentiality.RESTRICTED);
             ((MapTableModel) names.getModel()).setData(emptyMap());
             driver.setText("");
             endpoint.setText("");

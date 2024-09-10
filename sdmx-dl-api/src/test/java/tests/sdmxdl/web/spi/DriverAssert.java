@@ -3,6 +3,7 @@ package tests.sdmxdl.web.spi;
 import internal.sdmxdl.web.spi.DriverLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
+import sdmxdl.Confidentiality;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -59,5 +60,6 @@ public class DriverAssert {
         assertThat(o.getProperties()).isNotNull();
         assertThat(o.getDriver()).isEqualTo(d.getDriverId());
         assertThat(o.getProperties().keySet()).isSubsetOf(d.getDriverProperties());
+        assertThat(o.getConfidentiality()).isEqualTo(Confidentiality.PUBLIC);
     }
 }

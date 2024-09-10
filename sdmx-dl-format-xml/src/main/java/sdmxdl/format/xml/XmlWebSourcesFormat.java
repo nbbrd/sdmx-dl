@@ -17,6 +17,7 @@
 package sdmxdl.format.xml;
 
 import nbbrd.io.xml.Stax;
+import sdmxdl.Confidentiality;
 import sdmxdl.web.WebSources;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.format.FileFormatSupport;
@@ -50,6 +51,7 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
     private static final String NAME_TAG = "name";
     private static final String DESCRIPTION_TAG = "description";
     private static final String DRIVER_TAG = "driver";
+    private static final String CONFIDENTIALITY_TAG = "confidentiality";
     private static final String ENDPOINT_TAG = "endpoint";
     private static final String PROPERTY_TAG = "property";
     private static final String ALIAS_TAG = "alias";
@@ -80,6 +82,9 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
                             break;
                         case DRIVER_TAG:
                             item.driver(reader.getElementText());
+                            break;
+                        case CONFIDENTIALITY_TAG:
+                            item.confidentiality(Confidentiality.valueOf(reader.getElementText()));
                             break;
                         case ENDPOINT_TAG:
                             item.endpointOf(reader.getElementText());
@@ -123,6 +128,9 @@ final class XmlWebSourcesFormat implements FileFormat<WebSources> {
                 writeDescription(writer, description);
             }
             writeTextElement(writer, DRIVER_TAG, source.getDriver());
+            if (source.getConfidentiality() != Confidentiality.RESTRICTED) {
+                writeTextElement(writer, CONFIDENTIALITY_TAG, source.getConfidentiality());
+            }
             writeTextElement(writer, ENDPOINT_TAG, source.getEndpoint().toString());
             for (Map.Entry<String, String> property : source.getProperties().entrySet()) {
                 writeProperty(writer, property);

@@ -1,5 +1,6 @@
 package _test;
 
+import sdmxdl.Confidentiality;
 import sdmxdl.format.xml.XmlPersistence;
 import sdmxdl.provider.ri.drivers.FileRiDriver;
 import sdmxdl.web.WebSource;
@@ -38,6 +39,7 @@ public class FileSample {
                 .builder()
                 .id(name)
                 .driver("RI_FILE")
+                .confidentiality(Confidentiality.PUBLIC)
                 .endpoint(data.toURI())
                 .propertyOf(FileRiDriver.STRUCTURE_URI_PROPERTY, struct.toURI())
                 .build();
