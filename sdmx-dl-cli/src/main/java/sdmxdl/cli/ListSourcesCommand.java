@@ -20,8 +20,10 @@ import internal.sdmxdl.cli.WebOptions;
 import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.CsvUtil;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
+import sdmxdl.Languages;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
@@ -44,15 +46,16 @@ public final class ListSourcesCommand implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        getTable().write(csv, getRows());
+        getTable(web.getLangs()).write(csv, getRows());
         return null;
     }
 
-    private CsvTable<WebSource> getTable() {
+    @VisibleForTesting
+    static CsvTable<WebSource> getTable(Languages languages) {
         return CsvTable
                 .builderOf(WebSource.class)
                 .columnOf("Name", WebSource::getId)
-                .columnOf("Description", this::getDescription)
+                .columnOf("Description", source -> source.getName(languages))
                 .columnOf("Aliases", WebSource::getAliases, CsvUtil.DEFAULT_LIST_FORMATTER)
                 .columnOf("Driver", WebSource::getDriver)
                 .columnOf("Endpoint", WebSource::getEndpoint, Formatter.onURI())
@@ -60,16 +63,8 @@ public final class ListSourcesCommand implements Callable<Void> {
                 .columnOf("Website", WebSource::getWebsite, Formatter.onURL())
                 .columnOf("Monitor", WebSource::getMonitor, Formatter.onURI())
                 .columnOf("MonitorWebsite", WebSource::getMonitorWebsite, Formatter.onURL())
-                .columnOf("Languages", this::getLanguages, CsvUtil.DEFAULT_LIST_FORMATTER)
+                .columnOf("Languages", source -> source.getNames().keySet(), CsvUtil.DEFAULT_LIST_FORMATTER)
                 .build();
-    }
-
-    private String getDescription(WebSource source) {
-        return source.getName(web.getLangs());
-    }
-
-    private Iterable<String> getLanguages(WebSource source) {
-        return source.getNames().keySet();
     }
 
     private Stream<WebSource> getRows() throws IOException {
