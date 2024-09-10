@@ -91,6 +91,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Generates About.java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-aboutSummary</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
