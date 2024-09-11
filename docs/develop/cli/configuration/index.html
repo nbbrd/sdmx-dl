@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.134.1">
+<meta name="generator" content="Hugo 0.134.2">
 
 
   <meta name="description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
@@ -49,7 +49,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-09-06T11:11:21+02:00"
+      content="2024-09-10T13:55:55+02:00"
     />
 
 
@@ -69,7 +69,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/configuration/",
       "headline": "Configuration",
       "description": "sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.\nProperties files Execution properties Environmental variables Troubleshooting Properties files The properties files are just text files that contains a list of key-value pairs.\nAll these files are named sdmx-dl.properties and are located in 3 different folders which are parsed in a specific order to define a scope:",
-      "wordCount" : "458",
+      "wordCount" : "462",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +80,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-09-06T11:11:21.00Z",
+      "dateModified": "2024-09-10T13:55:55.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -932,11 +932,11 @@ All these files are named <code>sdmx-dl.properties</code> and are located in 3 d
 There are several types of system properties: some are defined by the platform, others by the libraries.</p>
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="49c22034-1">
+  <label class="gdoc-expand__head flex justify-between" for="95a87889-1">
     <span>Specific sdmx-dl properties</span>
     <span>↕</span>
   </label>
-  <input id="49c22034-1" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="95a87889-1" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <div class="table-wrap"> <table>
   <thead>
@@ -961,6 +961,10 @@ There are several types of system properties: some are defined by the platform, 
       <tr>
           <td style="text-align: left"><code>sdmxdl.caching.persistenceId</code></td>
           <td style="text-align: left">Set cache persistence backend</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>sdmxdl.caching.maxConfidentiality</code></td>
+          <td style="text-align: left">Set max confidentiality</td>
       </tr>
       <tr>
           <td style="text-align: left"><code>sdmxdl.networking.autoProxy</code></td>

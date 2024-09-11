@@ -9,12 +9,14 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.134.1">
+<meta name="generator" content="Hugo 0.134.2">
 
 
   <meta name="description" content="By default, all commands print the result on the standard output.
 Most commands produce RFC4180 compliant CSV content.
-Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:" />
+Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:
+-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb&#43;noun hierarchy." />
 
     <title>Usage | sdmx-dl</title>
 
@@ -42,14 +44,16 @@ Command arguments are composed of options and positional parameters. Options hav
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="By default, all commands print the result on the standard output.
 Most commands produce RFC4180 compliant CSV content.
-Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:" />
+Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:
+-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb&#43;noun hierarchy." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/" />
 
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-09-06T12:45:33+02:00"
+      content="2024-09-10T13:55:55+02:00"
     />
 
 
@@ -57,7 +61,9 @@ Command arguments are composed of options and positional parameters. Options hav
 <meta name="twitter:title" content="Usage" />
   <meta name="twitter:description" content="By default, all commands print the result on the standard output.
 Most commands produce RFC4180 compliant CSV content.
-Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:" />
+Command arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:
+sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:
+-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb&#43;noun hierarchy." />
 
 
   <script type="application/ld+json">
@@ -68,8 +74,8 @@ Command arguments are composed of options and positional parameters. Options hav
       "name": "Usage",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
-      "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:",
-      "wordCount" : "1276",
+      "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
+      "wordCount" : "1281",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -80,7 +86,7 @@ Command arguments are composed of options and positional parameters. Options hav
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-09-06T12:45:33.00Z",
+      "dateModified": "2024-09-10T13:55:55.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -1618,6 +1624,10 @@ flowchart TB
 ><code>Driver:string</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../datatypes#enum"
+><code>Confidentiality:enum</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../datatypes#uri"
 ><code>Endpoint:uri</code></a></li>
 <li><a
@@ -1646,11 +1656,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="0c8e22c0-17">
+  <label class="gdoc-expand__head flex justify-between" for="98f98e18-17">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="0c8e22c0-17" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="98f98e18-17" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -1660,6 +1670,7 @@ flowchart TB
           <th style="text-align: left">Description</th>
           <th style="text-align: left">Aliases</th>
           <th style="text-align: left">Driver</th>
+          <th style="text-align: left">Confidentiality</th>
           <th style="text-align: left">Endpoint</th>
           <th style="text-align: left">Properties</th>
           <th style="text-align: left">Website</th>
@@ -1674,6 +1685,7 @@ flowchart TB
           <td style="text-align: left">Australian Bureau of Statistics</td>
           <td style="text-align: left"></td>
           <td style="text-align: left">ri:abs</td>
+          <td style="text-align: left">PUBLIC</td>
           <td style="text-align: left"><a
   class="gdoc-markdown__link"
   href="https://stat.data.abs.gov.au/restsdmx/sdmx.ashx"
@@ -1695,6 +1707,7 @@ flowchart TB
           <td style="text-align: left">European Central Bank</td>
           <td style="text-align: left"></td>
           <td style="text-align: left">ri:sdmx21</td>
+          <td style="text-align: left">PUBLIC</td>
           <td style="text-align: left"><a
   class="gdoc-markdown__link"
   href="https://sdw-wsrest.ecb.europa.eu/service"
@@ -1716,6 +1729,7 @@ flowchart TB
           <td style="text-align: left">Eurostat</td>
           <td style="text-align: left">EUROSTAT</td>
           <td style="text-align: left">connectors:eurostat</td>
+          <td style="text-align: left">PUBLIC</td>
           <td style="text-align: left"><a
   class="gdoc-markdown__link"
   href="https://ec.europa.eu/eurostat/SDMX/diss-web/rest"
