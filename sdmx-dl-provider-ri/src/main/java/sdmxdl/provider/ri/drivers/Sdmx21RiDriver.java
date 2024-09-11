@@ -124,7 +124,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://sdmx.ilo.org/rest/")
                     .propertyOf(DETAIL_SUPPORTED_PROPERTY, true)
-                    .websiteOf("https://ilostat.ilo.org/data/")
+                    .websiteOf("https://data.ilo.org/")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/ILO")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/ilo")
                     .build())

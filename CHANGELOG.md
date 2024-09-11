@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add confidentiality property to WebSource [#518](https://github.com/nbbrd/sdmx-dl/issues/518)
 
+### Changed
+
+- ![SOURCE] Update ILO website URL [#780](https://github.com/nbbrd/sdmx-dl/issues/780)
+
 ### Fixed
 
 - ![CLI] Fix sources file env variable in CLI [#779](https://github.com/nbbrd/sdmx-dl/issues/779)
