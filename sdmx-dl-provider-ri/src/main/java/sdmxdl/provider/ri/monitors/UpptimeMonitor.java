@@ -1,9 +1,9 @@
 package sdmxdl.provider.ri.monitors;
 
-import nbbrd.io.http.HttpClient;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.VisibleForTesting;
+import nbbrd.io.http.HttpClient;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.ext.Cache;
@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 
 @DirectImpl
@@ -57,6 +59,11 @@ public final class UpptimeMonitor implements Monitor {
                 .filter(item -> item.getSource().equals(id.getSite()))
                 .findFirst()
                 .orElseThrow(IOException::new);
+    }
+
+    @Override
+    public @NonNull Collection<String> getMonitorProperties() {
+        return Collections.emptyList();
     }
 
     private MonitorReports createReports(HttpClient client, UpptimeId base, Clock clock) throws IOException {

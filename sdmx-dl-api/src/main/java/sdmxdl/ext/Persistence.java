@@ -10,6 +10,7 @@ import nbbrd.service.ServiceId;
 import nbbrd.service.ServiceSorter;
 import sdmxdl.HasPersistence;
 
+import java.util.Collection;
 import java.util.Set;
 
 @ServiceDefinition(
@@ -29,7 +30,11 @@ public interface Persistence {
 
     @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type);
 
+    @NonNull Collection<String> getPersistenceProperties();
+
     int UNKNOWN_PERSISTENCE_RANK = -1;
+
+    String PERSISTENCE_PROPERTY_PREFIX = "sdmxdl.persistence";
 
     @StaticFactoryMethod
     static @NonNull Persistence noOp() {

@@ -30,8 +30,8 @@ public class MonitorAssert {
             .idPattern(MonitorLoader.ID_PATTERN)
             .rank(ignore -> -1)
             .rankLowerBound(-1)
-            .properties(ignore -> emptyList())
-            .propertiesPrefix("")
+            .properties(Monitor::getMonitorProperties)
+            .propertiesPrefix(Monitor.MONITOR_PROPERTY_PREFIX)
             .build();
 
     public void assertCompliance(@NonNull Monitor monitor, @NonNull Sample sample) {

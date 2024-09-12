@@ -9,6 +9,7 @@ import sdmxdl.web.MonitorReport;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
@@ -26,4 +27,8 @@ public interface Monitor {
             @NonNull WebSource source,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
+
+    @NonNull Collection<String> getMonitorProperties();
+
+    String MONITOR_PROPERTY_PREFIX = "sdmxdl.monitor";
 }

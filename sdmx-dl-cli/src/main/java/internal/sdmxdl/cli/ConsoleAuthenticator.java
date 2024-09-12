@@ -8,6 +8,8 @@ import java.io.Console;
 import java.io.IOError;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class ConsoleAuthenticator implements Authenticator {
@@ -48,6 +50,11 @@ final class ConsoleAuthenticator implements Authenticator {
     @Override
     public void invalidateAuthentication(@NonNull WebSource source) {
         cache.remove(source);
+    }
+
+    @Override
+    public @NonNull Collection<String> getAuthenticatorProperties() {
+        return Collections.emptyList();
     }
 
     private PasswordAuthentication readPasswordAuthentication(WebSource source) throws IOError {

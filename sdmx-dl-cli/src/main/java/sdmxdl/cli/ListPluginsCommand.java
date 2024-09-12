@@ -83,15 +83,15 @@ public final class ListPluginsCommand implements Callable<Void> {
         }
 
         static Plugin of(Authenticator o) {
-            return new Plugin("Authenticator", o.getAuthenticatorId(), emptyList());
+            return new Plugin("Authenticator", o.getAuthenticatorId(), o.getAuthenticatorProperties());
         }
 
         static Plugin of(Monitor o) {
-            return new Plugin("Monitor", o.getMonitorId(), emptyList());
+            return new Plugin("Monitor", o.getMonitorId(), o.getMonitorProperties());
         }
 
         static Plugin of(Persistence o) {
-            return new Plugin("Persistence", o.getPersistenceId(), emptyList());
+            return new Plugin("Persistence", o.getPersistenceId(), o.getPersistenceProperties());
         }
 
         static Plugin of(Registry o) {

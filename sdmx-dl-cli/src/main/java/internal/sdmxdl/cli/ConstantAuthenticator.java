@@ -6,6 +6,8 @@ import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Authenticator;
 
 import java.net.PasswordAuthentication;
+import java.util.Collection;
+import java.util.Collections;
 
 @lombok.AllArgsConstructor
 final class ConstantAuthenticator implements Authenticator {
@@ -29,5 +31,10 @@ final class ConstantAuthenticator implements Authenticator {
 
     @Override
     public void invalidateAuthentication(@NonNull WebSource source) {
+    }
+
+    @Override
+    public @NonNull Collection<String> getAuthenticatorProperties() {
+        return Collections.emptyList();
     }
 }

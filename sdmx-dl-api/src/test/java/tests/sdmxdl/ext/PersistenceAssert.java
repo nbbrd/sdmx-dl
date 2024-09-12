@@ -46,8 +46,8 @@ public class PersistenceAssert {
             .idPattern(PersistenceLoader.ID_PATTERN)
             .rank(Persistence::getPersistenceRank)
             .rankLowerBound(Persistence.UNKNOWN_PERSISTENCE_RANK)
-            .properties(ignore -> emptyList())
-            .propertiesPrefix("")
+            .properties(Persistence::getPersistenceProperties)
+            .propertiesPrefix(Persistence.PERSISTENCE_PROPERTY_PREFIX)
             .build();
 
     public void assertCompliance(Persistence persistence) {
