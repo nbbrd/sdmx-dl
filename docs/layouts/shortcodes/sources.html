@@ -14,9 +14,9 @@
     <tr>
         {{ $id := index $r 0 }}
         {{ $name := index $r 1 }}
-        {{ $website := index $r 6 }}
+        {{ $website := index $r 7 }}
         {{ $domain := (urls.Parse $website).Host }}
-        {{ $monitor_website := index $r 8 }}
+        {{ $monitor_website := index $r 9 }}
         {{ $monitor_name := replace (lower $id) "_" "-" }}
         <td><img src="https://www.google.com/s2/favicons?domain={{ $domain }}" /><code>{{ $id }}</code></td>
         <td><a href="{{ $website }}">{{ $name }}</a></td>
