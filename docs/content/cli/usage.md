@@ -26,7 +26,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
     r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & plugins
-    r --- c([check]) --- status & access & config
+    r --- c([check]) --- status & access & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
 
     classDef default fill:#93a1a1,stroke-width:0px 
@@ -52,11 +52,12 @@ flowchart TB
     click plugins "#list-plugins" "list plugins command"
    
     classDef cx fill:#268bd2
-    class c,status,access,config cx;
+    class c,status,access,config,xsources cx;
     click c "#check" "check command"
     click status "#check-status" "check status command"
     click access "#check-access" "check access command"
     click config "#check-config" "check config command"
+    click xsources "#check-sources" "check sources command"
     
     classDef sx fill:#b58900
     class s,completion,launcher sx;
@@ -99,7 +100,8 @@ Check resources and services.
 Subcommands:
 [status](#check-status),
 [access](#check-access),
-[config](#check-config)
+[config](#check-config),
+[sources](#check-sources)
 
 {{< shields_io/badge label="setup" color="b58900" >}}
 
@@ -528,7 +530,7 @@ Other options:
 {{< tab "Output" >}}
 
 CSV columns:
-1. [`Type:string`](../datatypes#string)
+1. [`Type:enum`](../datatypes#string)
 1. [`Id:string`](../datatypes#string)
 1. [`Properties:string`](../datatypes#string)
 
@@ -655,6 +657,43 @@ CSV columns:
 
 {{< expand "Output sample" >}}
 <small>{{< include file="/tmp/usage/check-config-sample.md" >}}</small>
+{{< /expand >}}
+
+{{< shields_io/badge label="check" message="sources" color="268bd2" >}}
+
+Check sources configuration.
+
+Example: <code>sdmx-dl <font color="#268bd2">check sources all</font></code>  
+
+{{< tabs "check-sources" >}}
+{{< tab "Parameters" >}}
+
+1. [`sources`](../datatypes#list) - Data source names.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`ID:string`](../datatypes#string)
+2. [`Issue:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< expand "Output sample" >}}
+<small>{{< include file="/tmp/usage/check-sources-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="setup" message="completion" color="b58900" >}}<br>

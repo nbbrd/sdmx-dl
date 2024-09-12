@@ -1,3 +1,3 @@
 | Type     | Id          | Properties                  |
 |----------|-------------|-----------------------------|
-| Registry | RI_REGISTRY | sdmxdl.registry.sourcesFile |
+| REGISTRY | RI_REGISTRY | sdmxdl.registry.sourcesFile |
