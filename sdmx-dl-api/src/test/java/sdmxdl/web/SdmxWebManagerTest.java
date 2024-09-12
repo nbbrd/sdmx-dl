@@ -29,9 +29,7 @@ import tests.sdmxdl.web.spi.MockedRegistry;
 
 import java.io.IOException;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static sdmxdl.Languages.ANY;
@@ -237,35 +235,6 @@ public class SdmxWebManagerTest {
 
         assertThatCode(() -> manager.getConnection(sampleSource, ANY).close()).doesNotThrowAnyException();
         assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build(), ANY).close()).doesNotThrowAnyException();
-    }
-
-    @SuppressWarnings("EmptyTryBlock")
-    @Test
-    public void testInvalidSourceProperties() throws IOException {
-        List<String> events = new ArrayList<>();
-
-        SdmxWebManager manager = SdmxWebManager
-                .builder()
-                .driver(sampleDriver)
-                .onEvent((source, marker, event) -> events.add(source.getId() + ":" + event))
-                .build();
-
-        WebSource noProp = sampleSource.toBuilder().id("noProp").clearProperties().build();
-        try (Connection ignored = manager.getConnection(noProp, ANY)) {
-        }
-        assertThat(events).isEmpty();
-
-        WebSource validProp = sampleSource.toBuilder().id("validProp").build();
-        try (Connection ignored = manager.getConnection(validProp, ANY)) {
-        }
-        assertThat(events).isEmpty();
-
-        WebSource invalidProp = sampleSource.toBuilder().id("invalidProp").property("boom", "123").build();
-        try (Connection ignored = manager.getConnection(invalidProp, ANY)) {
-        }
-        assertThat(events).singleElement(as(STRING))
-                .contains(invalidProp.getId())
-                .contains("boom");
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();

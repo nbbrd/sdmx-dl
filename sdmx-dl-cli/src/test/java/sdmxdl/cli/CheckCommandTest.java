@@ -14,7 +14,7 @@ public class CheckCommandTest {
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.OK);
-        assertThat(watcher.getOut()).isNotEmpty().contains("status");
+        assertThat(watcher.getOut()).isNotEmpty().contains("status", "access", "config", "sources");
         assertThat(watcher.getErr()).isEmpty();
     }
 }

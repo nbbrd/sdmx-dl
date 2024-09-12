@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
                 CheckStatusCommand.class,
                 CheckAccessCommand.class,
                 CheckConfigCommand.class,
+                CheckSourcesCommand.class,
                 CheckRulesCommand.class
         }
 )

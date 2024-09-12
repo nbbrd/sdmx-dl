@@ -13,29 +13,27 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class ListPluginsCommandTest {
+public class CheckSourcesCommandTest {
 
     @Test
-    public void testDefault(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListPluginsCommand());
+    public void testHelp() {
+        CommandLine cmd = new CommandLine(new CheckSourcesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
-        File out = temp.resolve("testDefault.csv").toFile();
-
-        assertThat(cmd.execute("-o", out.getPath())).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.USAGE);
         assertThat(watcher.getOut()).isEmpty();
-        assertThat(watcher.getErr()).isEmpty();
+        assertThat(watcher.getErr()).isNotEmpty();
     }
 
     @Test
     public void testContent(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListPluginsCommand());
+        CommandLine cmd = new CommandLine(new CheckSourcesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);
         File out = temp.resolve("out.csv").toFile();
 
-        assertThat(cmd.execute("--no-log", "-s", src.getPath(), "-o", out.getPath()))
+        assertThat(cmd.execute("sample", "--no-log", "-s", src.getPath(), "-o", out.getPath()))
                 .isEqualTo(CommandLine.ExitCode.OK);
         assertThat(watcher.getOut())
                 .isEmpty();
@@ -43,8 +41,8 @@ public class ListPluginsCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Type,Id,Properties", atIndex(0))
-                .contains("REGISTRY,RI_REGISTRY,sdmxdl.registry.sourcesFile")
-                .hasSizeGreaterThan(3);
+                .contains("ID,Issue", atIndex(0))
+                .contains("sample,Driver not found", atIndex(1))
+                .hasSize(2);
     }
 }
