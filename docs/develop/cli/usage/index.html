@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-09-10T13:55:55+02:00"
+      content="2024-09-12T16:35:01+02:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount" : "1281",
+      "wordCount" : "1344",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-09-10T13:55:55.00Z",
+      "dateModified": "2024-09-12T16:35:01.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -924,7 +924,7 @@ flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data &amp; meta &amp; keys
     r --- l([list]) --- sources &amp; flows &amp; dimensions &amp; attributes &amp; codes &amp; availability &amp; features &amp; plugins
-    r --- c([check]) --- status &amp; access &amp; config
+    r --- c([check]) --- status &amp; access &amp; config &amp; xsources[sources]
     r --- s([setup]) --- completion &amp; launcher
 
     classDef default fill:#93a1a1,stroke-width:0px 
@@ -950,11 +950,12 @@ flowchart TB
     click plugins &#34;#list-plugins&#34; &#34;list plugins command&#34;
    
     classDef cx fill:#268bd2
-    class c,status,access,config cx;
+    class c,status,access,config,xsources cx;
     click c &#34;#check&#34; &#34;check command&#34;
     click status &#34;#check-status&#34; &#34;check status command&#34;
     click access &#34;#check-access&#34; &#34;check access command&#34;
     click config &#34;#check-config&#34; &#34;check config command&#34;
+    click xsources &#34;#check-sources&#34; &#34;check sources command&#34;
     
     classDef sx fill:#b58900
     class s,completion,launcher sx;
@@ -1054,7 +1055,11 @@ flowchart TB
 <a
   class="gdoc-markdown__link"
   href="#check-config"
->config</a></p>
+>config</a>,
+<a
+  class="gdoc-markdown__link"
+  href="#check-sources"
+>sources</a></p>
 
 
 
@@ -2672,7 +2677,7 @@ flowchart TB
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
-><code>Type:string</code></a></li>
+><code>Type:enum</code></a></li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../datatypes#string"
@@ -2687,11 +2692,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="f75cad0d-38">
+  <label class="gdoc-expand__head flex justify-between" for="9f6ce9ef-38">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="f75cad0d-38" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="9f6ce9ef-38" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2704,7 +2709,7 @@ flowchart TB
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left">Registry</td>
+          <td style="text-align: left">REGISTRY</td>
           <td style="text-align: left">RI_REGISTRY</td>
           <td style="text-align: left">sdmxdl.registry.sourcesFile</td>
       </tr>
@@ -3129,6 +3134,130 @@ flowchart TB
           <td style="text-align: left">sdmx-dl.check.status.verbose</td>
           <td style="text-align: left">true</td>
           <td style="text-align: left">NARROW_OPTION</td>
+      </tr>
+  </tbody>
+</table> </div>
+</div>
+</small>
+
+  </div>
+</div>
+
+
+
+
+
+
+<a id="check-sources" href="#check-sources"><img src="https://img.shields.io/badge/check-sources-268bd2?style=flat-square"/></a>
+
+
+<p>Check sources configuration.</p>
+<p>Example: <code>sdmx-dl <font color="#268bd2">check sources all</font></code></p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-sources"
+      id="tabs-check-sources-0"
+      checked="checked"
+    />
+    <label for="tabs-check-sources-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#list"
+><code>sources</code></a> - Data source names.</li>
+</ol>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-sources"
+      id="tabs-check-sources-1"
+      
+    />
+    <label for="tabs-check-sources-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sources"
+><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#languages"
+><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#no-parallel"
+><code>--no-parallel</code></a> - Disable parallel queries.</li>
+</ul>
+<p>Other options:
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#csv"
+><code>CSV</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#network"
+><code>Network</code></a></p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-check-sources"
+      id="tabs-check-sources-2"
+      
+    />
+    <label for="tabs-check-sources-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>ID:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Issue:string</code></a></li>
+</ol>
+    </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="ded9ccce-50">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="ded9ccce-50" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
+  <thead>
+      <tr>
+          <th style="text-align: left">ID</th>
+          <th style="text-align: left">Issue</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">ECB</td>
+          <td style="text-align: left">No problem</td>
       </tr>
   </tbody>
 </table> </div>
