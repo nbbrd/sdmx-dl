@@ -30,6 +30,7 @@ import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,27 +57,38 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
     }
 
     @lombok.Builder.Default
-    @NonNull FileCaching caching = FileCaching.noOp();
+    @NonNull
+    FileCaching caching = FileCaching.noOp();
 
-    @Nullable EventListener<? super FileSource> onEvent;
+    @Nullable
+    EventListener<? super FileSource> onEvent;
 
-    @Nullable ErrorListener<? super FileSource> onError;
+    @Nullable
+    ErrorListener<? super FileSource> onError;
 
     @lombok.Singular
-    @NonNull List<Persistence> persistences;
+    @NonNull
+    List<Persistence> persistences;
 
     @lombok.Singular
-    @NonNull List<Reader> readers;
+    @NonNull
+    List<Reader> readers;
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    @NonNull FileContext context = initLazyContext();
+    @NonNull
+    FileContext context = initLazyContext();
 
     @Override
-    public @NonNull Connection getConnection(@NonNull FileSource source, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull FileSource source, @NonNull Options options) throws IOException {
         Reader reader = lookupReader(source)
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
-        return reader.read(source, languages, getContext());
+        return reader.read(source, options.getLanguages(), getContext());
+    }
+
+    @Override
+    public @NonNull List<Catalog> getCatalogs(@NonNull FileSource source, @NonNull Languages languages) throws IOException {
+        return Collections.emptyList();
     }
 
     private FileContext initLazyContext() {

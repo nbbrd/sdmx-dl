@@ -26,6 +26,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
+import sdmxdl.Options;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -85,7 +86,7 @@ public final class CheckAccessCommand implements Callable<Void> {
     private static class Access {
 
         static @NonNull Access of(@NonNull SdmxWebManager manager, @NonNull Languages languages, @NonNull String source) {
-            try (Connection conn = manager.getConnection(source, languages)) {
+            try (Connection conn = manager.getConnection(source, Options.of(languages))) {
                 Clock clock = Clock.systemDefaultZone();
                 Instant start = clock.instant();
                 conn.testConnection();

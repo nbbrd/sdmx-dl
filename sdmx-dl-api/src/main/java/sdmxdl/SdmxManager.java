@@ -24,6 +24,7 @@ import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Philippe Charles
@@ -35,7 +36,9 @@ import java.io.IOException;
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends Source> {
 
-    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
+    public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Options options) throws IOException;
+
+    public abstract @NonNull List<Catalog> getCatalogs(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 
     public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
 

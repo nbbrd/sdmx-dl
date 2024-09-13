@@ -18,6 +18,7 @@ package tests.sdmxdl.api;
 
 import org.assertj.core.api.SoftAssertions;
 import sdmxdl.Connection;
+import sdmxdl.Options;
 import sdmxdl.SdmxManager;
 import sdmxdl.Source;
 
@@ -49,7 +50,7 @@ public class SdmxManagerAssert {
     }
 
     private <S extends Source> void checkGetConnection(SoftAssertions s, SdmxManager<S> manager, Sample<S> sample) {
-        s.assertThatThrownBy(() -> manager.getConnection(null, ANY))
+        s.assertThatThrownBy(() -> manager.getConnection(null, Options.DEFAULT))
                 .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "source"))
                 .isInstanceOf(NullPointerException.class);
 
@@ -58,7 +59,7 @@ public class SdmxManagerAssert {
                     .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "languages"))
                     .isInstanceOf(NullPointerException.class);
 
-            try (Connection conn = manager.getConnection(sample.validSource, ANY)) {
+            try (Connection conn = manager.getConnection(sample.validSource, Options.DEFAULT)) {
                 s.assertThat(conn)
                         .as("Expecting 'getConnection(SOURCE,LANGUAGES)' to return a non-null connection")
                         .isNotNull();
@@ -72,7 +73,7 @@ public class SdmxManagerAssert {
                     .as(nullDescriptionOf("getConnection(SOURCE,LANGUAGES)", "languages"))
                     .isInstanceOf(NullPointerException.class);
 
-            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource, ANY))
+            s.assertThatThrownBy(() -> manager.getConnection(sample.invalidSource, Options.DEFAULT))
                     .as("Expecting 'getConnection(SOURCE) to raise IOException on invalid name")
                     .isInstanceOf(IOException.class);
         }

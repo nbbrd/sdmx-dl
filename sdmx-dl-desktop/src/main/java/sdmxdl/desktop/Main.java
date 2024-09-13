@@ -42,7 +42,6 @@ public class Main {
     private static SdmxWebManager loadManager() {
         System.setProperty("enableRngDriver", "true");
         System.setProperty("enableFileDriver", "true");
-        System.setProperty("enablePxWebDriver", "true");
         return SdmxWebManager.ofServiceLoader()
                 .toBuilder()
                 .onEvent(Main::printEvent)

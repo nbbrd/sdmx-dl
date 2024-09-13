@@ -18,8 +18,10 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import sdmxdl.Catalog;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
+import sdmxdl.Options;
 import sdmxdl.format.design.ServiceSupport;
 import sdmxdl.provider.Validator;
 import sdmxdl.web.WebSource;
@@ -28,6 +30,7 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Predicate;
 
@@ -46,6 +49,10 @@ public final class DriverSupport implements Driver {
 
     @NonNull
     private final WebConnector connector;
+
+    @NonNull
+    @lombok.Builder.Default
+    private final WebCataloger cataloger = WebCataloger.noOp();
 
     @lombok.Singular
     private final Collection<WebSource> sources;
@@ -76,10 +83,17 @@ public final class DriverSupport implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
         getLazySourceValidator().checkValidity(source);
 
-        return connector.connect(source, languages, context);
+        return connector.connect(source, options, context);
+    }
+
+    @Override
+    public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        getLazySourceValidator().checkValidity(source);
+
+        return cataloger.getCatalogs(source, languages, context);
     }
 
     @Override

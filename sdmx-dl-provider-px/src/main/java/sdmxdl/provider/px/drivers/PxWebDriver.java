@@ -63,10 +63,6 @@ public final class PxWebDriver implements Driver {
     static final Property<List<String>> LANGUAGES_PROPERTY =
             Property.of(DRIVER_PROPERTY_PREFIX + ".languages", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
 
-    @PropertyDefinition
-    static final BooleanProperty ENABLE_PROPERTY =
-            BooleanProperty.of("enablePxWebDriver", false);
-
     static final String DEFAULT_VERSION = "v1";
 
     static final String VERSION_VARIABLE = UriTemplate.getVariable("version");
@@ -80,8 +76,8 @@ public final class PxWebDriver implements Driver {
             .builder()
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
-            .availability(ENABLE_PROPERTY::get)
             .connector(PxWebDriver::newConnection)
+            .cataloger(PxWebDriver::loadCatalogs)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(VERSIONS_PROPERTY)
             .propertyOf(LANGUAGES_PROPERTY)
@@ -100,22 +96,33 @@ public final class PxWebDriver implements Driver {
         }
     }
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
                 getBaseURL(source, languages),
                 RiHttpUtils.newClient(source, context)
         );
 
-        PxWebClient cachedClient = CachedPxWebClient.of(
+        return CachedPxWebClient.of(
                 client,
                 context.getDriverCache(source),
                 CACHE_TTL_PROPERTY.get(source.getProperties()),
                 source,
                 languages
         );
+    }
 
-        return new PxWebConnection(cachedClient);
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
+        String dbId = options.getCatalogId();
+        if (dbId == null) {
+            throw new IOException("Catalog ID is required");
+        }
+
+        return new PxWebConnection(newClient(source, options.getLanguages(), context), dbId);
+    }
+
+    private static @NonNull List<Catalog> loadCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+        return newClient(source, languages, context).getDataBases();
     }
 
     @VisibleForTesting
@@ -146,8 +153,11 @@ public final class PxWebDriver implements Driver {
     @lombok.AllArgsConstructor
     private static final class PxWebConnection implements Connection {
 
-        @lombok.NonNull
+        @NonNull
         private final PxWebClient client;
+
+        @NonNull
+        private final String dbId;
 
         @Override
         public void testConnection() throws IOException {
@@ -156,7 +166,7 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull Collection<Flow> getFlows() throws IOException {
-            return client.getTables();
+            return client.getTables(dbId);
         }
 
         @Override
@@ -193,13 +203,20 @@ public final class PxWebDriver implements Driver {
 
     private interface PxWebClient extends HasMarker {
 
-        @NonNull Config getConfig() throws IOException;
+        @NonNull
+        Config getConfig() throws IOException;
 
-        @NonNull List<Flow> getTables() throws IOException;
+        @NonNull
+        List<Catalog> getDataBases() throws IOException;
 
-        @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
+        @NonNull
+        List<Flow> getTables(@NonNull String dbId) throws IOException;
 
-        @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+        @NonNull
+        Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
+
+        @NonNull
+        DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
     }
 
     @lombok.AllArgsConstructor
@@ -228,11 +245,8 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<Config> getConfigParser(MediaType ignore) {
-            return Config.JSON_PARSER;
-        }
-
-        private List<Database> getDatabases() throws IOException {
+        @Override
+        public @NonNull List<Catalog> getDataBases() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(baseURL)
@@ -244,37 +258,31 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
-            return Database.JSON_PARSER.andThen(Arrays::asList);
+        private TextParser<Config> getConfigParser(MediaType ignore) {
+            return Config.JSON_PARSER;
         }
 
-        private List<Flow> getTables(Database db) throws IOException {
+        private TextParser<List<Catalog>> getDatabasesParser(MediaType ignore) {
+            return Database.JSON_PARSER
+                    .andThen(tables -> Stream.of(tables).map(Database::toCatalog).collect(toList()));
+        }
+
+        @Override
+        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
                             .of(baseURL)
-                            .path(db.getDbId())
+                            .path(dbId)
                             .param("query", "*")
                             .param("filter", "*")
                             .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getTablesParser(db.getDbId(), response.getContentType())
+                return getTablesParser(dbId, response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
-        }
-
-        @Override
-        public @NonNull List<Flow> getTables() throws IOException {
-            List<Flow> result = new ArrayList<>();
-            for (Database database : getDatabases()) {
-                try {
-                    result.addAll(getTables(database));
-                } catch (IOException ignore) {
-                }
-            }
-            return result;
         }
 
         private TextParser<List<Flow>> getTablesParser(String dbId, MediaType ignore) {
@@ -383,8 +391,13 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Flow> getTables() throws IOException {
-            return getIdOfTables().load(cache, delegate::getTables, o -> ttl);
+        public @NonNull List<Catalog> getDataBases() throws IOException {
+            return delegate.getDataBases();
+        }
+
+        @Override
+        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
+            return getIdOfTables().load(cache, () -> delegate.getTables(dbId), o -> ttl);
         }
 
         @Override
@@ -524,6 +537,10 @@ public final class PxWebDriver implements Driver {
 
         String dbId;
         String text;
+
+        Catalog toCatalog() {
+            return new Catalog(dbId, text);
+        }
 
         static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
                 .builder(Database[].class)

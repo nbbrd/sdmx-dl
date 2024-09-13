@@ -18,10 +18,7 @@ package sdmxdl.testing;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.Connection;
-import sdmxdl.Flow;
-import sdmxdl.Structure;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -64,7 +61,7 @@ public class WebResponse {
                 .request(request)
                 .source(manager.getSources().get(request.getSource()));
 
-        try (Connection conn = manager.getConnection(request.getSource(), request.getLanguages())) {
+        try (Connection conn = manager.getConnection(request.getSource(), Options.of(request.getLanguages()))) {
             result
                     .flows(conn.getFlows())
                     .flow(conn.getFlow(request.getFlowRef()))

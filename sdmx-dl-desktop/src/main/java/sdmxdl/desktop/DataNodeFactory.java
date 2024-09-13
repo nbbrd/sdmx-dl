@@ -1,7 +1,10 @@
 package sdmxdl.desktop;
 
 import internal.sdmxdl.desktop.util.DynamicTree;
-import sdmxdl.*;
+import sdmxdl.Connection;
+import sdmxdl.Dimension;
+import sdmxdl.Key;
+import sdmxdl.Structure;
 import sdmxdl.ext.SdmxCubeUtil;
 import sdmxdl.web.SdmxWebManager;
 
@@ -16,7 +19,6 @@ import java.util.stream.IntStream;
 class DataNodeFactory implements DynamicTree.NodeFactory {
 
     private final Supplier<SdmxWebManager> manager;
-    private final Supplier<Languages> languages;
 
     @Override
     public boolean isLeaf(Object userObject) {
@@ -27,16 +29,16 @@ class DataNodeFactory implements DynamicTree.NodeFactory {
     public List<? extends Object> getChildren(Object userObject) throws Exception {
         if (userObject instanceof DataSourceRef) {
             DataSourceRef dataSourceRef = (DataSourceRef) userObject;
-            return getChildren(manager.get(), languages.get(), dataSourceRef, Key.ALL);
+            return getChildren(manager.get(), dataSourceRef, Key.ALL);
         } else if (userObject instanceof DataSetRef) {
             DataSetRef dataSetRef = (DataSetRef) userObject;
-            return getChildren(manager.get(), languages.get(), dataSetRef.getDataSourceRef(), dataSetRef.getKey());
+            return getChildren(manager.get(), dataSetRef.getDataSourceRef(), dataSetRef.getKey());
         }
         return Collections.emptyList();
     }
 
-    private static List<DataSetRef> getChildren(SdmxWebManager manager, Languages languages, DataSourceRef dataSourceRef, Key key) throws IOException {
-        try (Connection conn = manager.getConnection(dataSourceRef.getSource(), languages)) {
+    private static List<DataSetRef> getChildren(SdmxWebManager manager, DataSourceRef dataSourceRef, Key key) throws IOException {
+        try (Connection conn = manager.getConnection(dataSourceRef.getSource(), dataSourceRef.toOptions())) {
             Structure dsd = conn.getStructure(dataSourceRef.getFlow());
             List<sdmxdl.Dimension> dimensionList = dsd.getDimensionList();
             Key.Builder builder = Key.builder(dsd);

@@ -13,18 +13,21 @@ import static internal.sdmxdl.desktop.Collectors2.single;
 @lombok.Value
 public class SingleSeries {
 
-    @NonNull Structure dsd;
+    @NonNull
+    Structure dsd;
 
-    @NonNull Series series;
+    @NonNull
+    Series series;
 
     @lombok.Getter(lazy = true)
-    @NonNull SeriesMeta meta = SeriesMetaFactory.getDefault(getDsd()).get(getSeries());
+    @NonNull
+    SeriesMeta meta = SeriesMetaFactory.getDefault(getDsd()).get(getSeries());
 
     @lombok.Getter(lazy = true)
     Duration duration = computeGlobalDuration();
 
-    public static SingleSeries load(SdmxWebManager manager, Languages languages, DataSetRef ref) throws IOException {
-        try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), languages)) {
+    public static SingleSeries load(SdmxWebManager manager, DataSetRef ref) throws IOException {
+        try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), ref.getDataSourceRef().toOptions())) {
             return new SingleSeries(
                     conn.getStructure(ref.getDataSourceRef().getFlow()),
                     conn.getDataStream(ref.getDataSourceRef().getFlow(), Query.builder().key(ref.getKey()).build())

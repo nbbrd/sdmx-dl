@@ -2,10 +2,7 @@ package sdmxdl.ext;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Connection;
-import sdmxdl.Feature;
-import sdmxdl.Key;
-import sdmxdl.Series;
+import sdmxdl.*;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import tests.sdmxdl.web.spi.MockedDriver;
@@ -51,7 +48,7 @@ public class SdmxCubeUtilTest {
         for (Driver driver : getDrivers()) {
             WebSource source = driver.getDefaultSources().iterator().next();
 
-            try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection c = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeries(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeries(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeries(c, FLOW_REF, null));
@@ -77,7 +74,7 @@ public class SdmxCubeUtilTest {
         for (Driver driver : getDrivers()) {
             WebSource source = driver.getDefaultSources().iterator().next();
 
-            try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection c = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeriesWithData(null, FLOW_REF, ALL));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeriesWithData(c, null, ALL));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getAllSeriesWithData(c, FLOW_REF, null));
@@ -103,7 +100,7 @@ public class SdmxCubeUtilTest {
         for (Driver driver : getDrivers()) {
             WebSource source = driver.getDefaultSources().iterator().next();
 
-            try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection c = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeries(null, FLOW_REF, K1));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeries(c, null, K1));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeries(c, FLOW_REF, null));
@@ -123,7 +120,7 @@ public class SdmxCubeUtilTest {
         for (Driver driver : getDrivers()) {
             WebSource source = driver.getDefaultSources().iterator().next();
 
-            try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection c = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeriesWithData(null, FLOW_REF, K1));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeriesWithData(c, null, K1));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getSeriesWithData(c, FLOW_REF, null));
@@ -143,7 +140,7 @@ public class SdmxCubeUtilTest {
         for (Driver driver : getDrivers()) {
             WebSource source = driver.getDefaultSources().iterator().next();
 
-            try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection c = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getChildren(null, FLOW_REF, ALL, 0));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getChildren(c, null, ALL, 0));
                 assertThatNullPointerException().isThrownBy(() -> SdmxCubeUtil.getChildren(c, FLOW_REF, null, 0));

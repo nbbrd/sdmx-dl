@@ -121,7 +121,7 @@ public final class MainComponent extends JComponent {
                         .orElse(null);
             }
         });
-        DynamicTree.enable(datasetsTree, new DataNodeFactory(Sdmxdl.INSTANCE::getSdmxManager, Sdmxdl.INSTANCE::getLanguages), new DefaultMutableTreeNode("root"));
+        DynamicTree.enable(datasetsTree, new DataNodeFactory(Sdmxdl.INSTANCE::getSdmxManager), new DefaultMutableTreeNode("root"));
         datasetsTree.addMouseListener(onDoubleClick(this::openCurrentDataSetRef));
         datasetsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         datasetsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDataSetRef));
@@ -350,7 +350,7 @@ public final class MainComponent extends JComponent {
             @Override
             protected Void doInBackground() throws Exception {
                 for (DataSourceRef dataSourceRef : JLists.asList(dataSources)) {
-                    publish(FlowStruct.load(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(), dataSourceRef));
+                    publish(FlowStruct.load(Sdmxdl.INSTANCE.getSdmxManager(), dataSourceRef));
                 }
                 return null;
             }
@@ -389,8 +389,19 @@ public final class MainComponent extends JComponent {
             sourceAutoCompletion.setSource(sourceCompletion.getSource());
             sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
 
+            JTextField catalogField = new JTextField("");
+            SdmxAutoCompletion catalogCompletion = SdmxAutoCompletion.onCatalog(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
+                    () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
+                    new ConcurrentHashMap<>());
+            JAutoCompletion catalogAutoCompletion = new JAutoCompletion(catalogField);
+            catalogAutoCompletion.setSource(catalogCompletion.getSource());
+            catalogAutoCompletion.getList().setCellRenderer(catalogCompletion.getRenderer());
+
             JTextField flowField = new JTextField("");
-            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(), () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()), new ConcurrentHashMap<>());
+            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
+                    () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
+                    () -> catalogField.getText(),
+                    new ConcurrentHashMap<>());
             JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
             flowAutoCompletion.setSource(flowCompletion.getSource());
             flowAutoCompletion.getList().setCellRenderer(flowCompletion.getRenderer());
@@ -398,12 +409,18 @@ public final class MainComponent extends JComponent {
             JTextField dimensionsField = new JTextField("");
             dimensionsField.setEnabled(false);
 
+            JTextField languagesField = new JTextField(Sdmxdl.INSTANCE.getLanguages().toString());
+            languagesField.setEnabled(false);
+
             JPanel panel = new JPanel(new MigLayout("ins 20", "[para]0[][100lp, fill][60lp][95lp, fill]", ""));
 
             addSeparator(panel, "Source");
 
             panel.add(new JLabel("Provider"), "skip");
             panel.add(sourceField, "span, growx");
+
+            panel.add(new JLabel("Catalog"), "skip");
+            panel.add(catalogField, "span, growx");
 
             panel.add(new JLabel("Dataflow"), "skip");
             panel.add(flowField, "span, growx");
@@ -413,11 +430,14 @@ public final class MainComponent extends JComponent {
             panel.add(new JLabel("Dimensions"), "skip");
             panel.add(dimensionsField, "span, growx");
 
+            panel.add(new JLabel("Languages"), "skip");
+            panel.add(languagesField, "span, growx");
+
             if (JOptionPane.showOptionDialog(c, panel, "Add dataset",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new Object[]{"Add", "Cancel"}, "Add") == 0) {
 
-                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), FlowRef.parse(flowField.getText()), emptyList()));
+                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), catalogField.getText(), FlowRef.parse(flowField.getText()), emptyList(), Sdmxdl.INSTANCE.getLanguages()));
             }
         }
 

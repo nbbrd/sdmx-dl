@@ -23,6 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.picocsv.Csv;
 import picocli.CommandLine;
 import sdmxdl.Connection;
+import sdmxdl.Options;
 import sdmxdl.ext.SdmxCubeUtil;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public final class ListAvailabilityCommand implements Callable<Void> {
     }
 
     private void writeBody(Csv.Writer w) throws IOException {
-        try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
+        try (Connection conn = web.loadManager().getConnection(web.getSource(), Options.of(web.getLangs()))) {
             try (Stream<String> children = SdmxCubeUtil.getChildren(conn, web.getFlow(), web.getKey(), dimensionIndex)) {
                 Iterator<String> iterator = sort.applySort(children, Comparator.naturalOrder()).iterator();
                 while (iterator.hasNext()) {

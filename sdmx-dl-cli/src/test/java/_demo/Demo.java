@@ -20,7 +20,7 @@ public class Demo {
                 .onEvent(Demo::printEvent)
                 .build();
 
-        try (Connection ecb = manager.getConnection("ECB", ANY)) {
+        try (Connection ecb = manager.getConnection("ECB", Options.of(ANY))) {
             FlowRef exr = FlowRef.parse("EXR");
             printFlow(ecb.getFlow(exr));
 

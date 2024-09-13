@@ -125,19 +125,34 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @NonNull
     WebContext context = initLazyContext();
 
-    public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull String name, @NonNull Options options) throws IOException {
         WebSource source = lookupSource(name)
                 .orElseThrow(() -> newMissingSource(name));
 
-        return getConnection(source, languages);
+        return getConnection(source, options);
     }
 
     @Override
-    public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+    public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Options options) throws IOException {
         Driver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
 
-        return driver.connect(source, languages, getContext());
+        return driver.connect(source, options, getContext());
+    }
+
+    public @NonNull List<Catalog> getCatalogs(@NonNull String name, @NonNull Languages languages) throws IOException {
+        WebSource source = lookupSource(name)
+                .orElseThrow(() -> newMissingSource(name));
+
+        return getCatalogs(source, languages);
+    }
+
+    @Override
+    public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+        Driver driver = lookupDriverById(source.getDriver())
+                .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
+
+        return driver.getCatalogs(source, languages, getContext());
     }
 
     public @NonNull MonitorReport getMonitorReport(@NonNull String name) throws IOException {

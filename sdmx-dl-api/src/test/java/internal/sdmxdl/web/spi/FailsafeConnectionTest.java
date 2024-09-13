@@ -20,6 +20,7 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestConnection;
 import org.junit.jupiter.api.Test;
+import sdmxdl.Options;
 import sdmxdl.Query;
 import sdmxdl.Feature;
 import sdmxdl.web.WebSource;
@@ -46,7 +47,7 @@ public class FailsafeConnectionTest {
         WebSource source = driver.getDefaultSources().iterator().next();
 
         ConnectionAssert.assertCompliance(
-                () -> FailsafeConnection.wrap(driver.connect(source, ANY, DriverAssert.noOpWebContext())),
+                () -> FailsafeConnection.wrap(driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())),
                 ConnectionAssert.Sample
                         .builder()
                         .validFlow(RepoSamples.FLOW_REF)

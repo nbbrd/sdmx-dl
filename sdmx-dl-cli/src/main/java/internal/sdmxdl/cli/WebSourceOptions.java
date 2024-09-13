@@ -17,12 +17,10 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.Connection;
-import sdmxdl.Flow;
-import sdmxdl.Feature;
-import sdmxdl.Languages;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -42,8 +40,15 @@ public class WebSourceOptions extends WebNetOptions {
     )
     private String source;
 
+    @CommandLine.Option(
+            names = {"-c", "--catalog"},
+            paramLabel = "<catalog>",
+            descriptionKey = "cli.sdmx.catalog"
+    )
+    private String catalog;
+
     public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
-        return manager.getConnection(getSource(), languages);
+        return manager.getConnection(getSource(), Options.builder().languages(languages).catalogId(getCatalog()).build());
     }
 
     public Set<Feature> loadFeatures(SdmxWebManager manager, Languages languages) throws IOException {

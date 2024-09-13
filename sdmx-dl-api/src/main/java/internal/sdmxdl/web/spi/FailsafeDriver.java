@@ -18,8 +18,10 @@ package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import sdmxdl.Catalog;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
+import sdmxdl.Options;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -27,6 +29,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -91,11 +94,11 @@ public final class FailsafeDriver implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         Connection result;
 
         try {
-            result = delegate.connect(source, languages, context);
+            result = delegate.connect(source, options, context);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -107,6 +110,25 @@ public final class FailsafeDriver implements Driver {
         }
 
         return FailsafeConnection.wrap(result);
+    }
+
+    @Override
+    public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        List<Catalog> result;
+
+        try {
+            result = delegate.getCatalogs(source, languages, context);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            throw newUnexpectedError("while getting catalogs", ex);
+        }
+
+        if (result == null) {
+            throw newUnexpectedNull("null connection");
+        }
+
+        return result;
     }
 
     @Override

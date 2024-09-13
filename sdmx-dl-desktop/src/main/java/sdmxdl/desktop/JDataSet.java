@@ -81,7 +81,7 @@ public final class JDataSet extends JComponent implements HasModel<DataSetRef> {
         new SwingWorker<SingleSeries, Void>() {
             @Override
             protected SingleSeries doInBackground() throws Exception {
-                return SingleSeries.load(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(), model);
+                return SingleSeries.load(Sdmxdl.INSTANCE.getSdmxManager(), model);
             }
 
             @Override
@@ -119,8 +119,11 @@ public final class JDataSet extends JComponent implements HasModel<DataSetRef> {
         result.addColumn("Name");
         result.addColumn("Value");
         result.addRow(new Object[]{"Source", getModel().getDataSourceRef().getSource()});
+        result.addRow(new Object[]{"Catalog", getModel().getDataSourceRef().getCatalog()});
         result.addRow(new Object[]{"Flow", getModel().getDataSourceRef().getFlow()});
         result.addRow(new Object[]{"Key", item.getSeries().getKey()});
+        result.addRow(new Object[]{"Languages", getModel().getDataSourceRef().getLanguages()});
+        result.addRow(new Object[]{"Dimensions", getModel().getDataSourceRef().getDimensions().toString()});
         return result;
     }
 

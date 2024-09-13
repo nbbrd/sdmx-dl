@@ -17,11 +17,11 @@
 package sdmxdl.file;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Options;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static sdmxdl.Languages.ANY;
 
 /**
  * @author Philippe Charles
@@ -42,7 +42,7 @@ public class SdmxFileManagerTest {
     @SuppressWarnings({"null", "ConstantConditions"})
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, ANY));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, Options.DEFAULT));
     }
 
     private final FileSource source = FileSource.builder().data(new File("hello")).build();

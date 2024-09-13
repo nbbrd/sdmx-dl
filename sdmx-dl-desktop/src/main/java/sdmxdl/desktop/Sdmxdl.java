@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
+public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
 
     INSTANCE;
 

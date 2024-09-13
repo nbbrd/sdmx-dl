@@ -4,6 +4,7 @@ import internal.sdmxdl.web.spi.DriverLoader;
 import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import sdmxdl.Confidentiality;
+import sdmxdl.Options;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -46,11 +47,11 @@ public class DriverAssert {
 
         WebContext context = DriverAssert.noOpWebContext();
 
-        assertThatNullPointerException().isThrownBy(() -> driver.connect(null, ANY, context));
+        assertThatNullPointerException().isThrownBy(() -> driver.connect(null, Options.of(ANY), context));
         assertThatNullPointerException().isThrownBy(() -> driver.connect(validSource, null, context));
-        assertThatNullPointerException().isThrownBy(() -> driver.connect(validSource, ANY, null));
+        assertThatNullPointerException().isThrownBy(() -> driver.connect(validSource, Options.of(ANY), null));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> driver.connect(invalidSource, ANY, context));
+        assertThatIllegalArgumentException().isThrownBy(() -> driver.connect(invalidSource, Options.of(ANY), context));
 
         assertThat(driver.getDefaultSources()).allSatisfy(o -> checkSource(o, driver));
     }

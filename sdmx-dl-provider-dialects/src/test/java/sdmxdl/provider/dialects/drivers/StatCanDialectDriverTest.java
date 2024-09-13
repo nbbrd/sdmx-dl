@@ -37,7 +37,7 @@ public class StatCanDialectDriverTest {
     public void testConnectionArgs() throws IOException {
         StatCanDialectDriver driver = new StatCanDialectDriver();
         WebSource source = driver.getDefaultSources().iterator().next();
-        try (Connection connection = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
+        try (Connection connection = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
             FlowRef badFlowRef = FlowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 

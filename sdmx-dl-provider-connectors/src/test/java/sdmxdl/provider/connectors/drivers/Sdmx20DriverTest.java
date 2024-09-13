@@ -17,6 +17,7 @@
 package sdmxdl.provider.connectors.drivers;
 
 import org.junit.jupiter.api.Test;
+import sdmxdl.Options;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
@@ -38,7 +39,7 @@ public class Sdmx20DriverTest {
     public void testConnect() {
         WebSource x = WebSource.builder().id("localhost").driver(CONNECTORS_SDMX_20).endpointOf("http://localhost").build();
 
-        assertThatCode(() -> new Sdmx20Driver().connect(x, ANY, DriverAssert.noOpWebContext()).close())
+        assertThatCode(() -> new Sdmx20Driver().connect(x, Options.of(ANY), DriverAssert.noOpWebContext()).close())
                 .doesNotThrowAnyException();
     }
 }

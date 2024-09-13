@@ -81,18 +81,18 @@ public final class StatCanDialectDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
         StatCanClient client = new DefaultStatCanClient(
                 HasMarker.of(source),
                 source.getEndpoint().toURL(),
-                languages,
+                options.getLanguages(),
                 newClient(source, context)
         );
 
         StatCanClient cachedClient = CachedStatCanClient.of(
                 client,
                 context.getDriverCache(source), CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source, languages
+                source, options.getLanguages()
         );
 
         return new StatCanConnection(cachedClient);

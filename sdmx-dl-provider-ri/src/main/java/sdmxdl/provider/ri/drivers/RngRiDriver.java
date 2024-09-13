@@ -62,7 +62,7 @@ public final class RngRiDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(HasMarker.of(source), config);

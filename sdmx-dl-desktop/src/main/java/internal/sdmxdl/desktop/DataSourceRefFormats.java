@@ -1,9 +1,12 @@
 package internal.sdmxdl.desktop;
 
+import internal.sdmxdl.desktop.util.Html4Swing;
 import j2html.tags.DomContent;
-import j2html.tags.Text;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.FlowStruct;
+import sdmxdl.desktop.Renderer;
+import sdmxdl.desktop.Sdmxdl;
+import sdmxdl.web.WebSource;
 
 import static j2html.TagCreator.*;
 
@@ -23,8 +26,11 @@ public class DataSourceRefFormats {
         ).render();
     }
 
-    private static Text htmlSource(DataSourceRef ref) {
-        return text(ref.getSource());
+    private static DomContent htmlSource(DataSourceRef ref) {
+        WebSource webSource = Sdmxdl.lookupWebSource(ref);
+        return webSource != null
+                ? join(Html4Swing.labelTag(webSource.getId(), Renderer.getColor(webSource.getConfidentiality())), text(" / " + ref.toOptions()))
+                : text(ref.getSource() + " / " + ref.toOptions());
     }
 
     private static DomContent htmlFlow(DataSourceRef ref, FlowStruct fs) {

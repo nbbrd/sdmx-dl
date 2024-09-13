@@ -7,10 +7,7 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +25,9 @@ public final class MockedDriver implements Driver {
 
     @lombok.Singular
     private final Map<DataRepository, Set<Feature>> repos;
+
+    @lombok.Singular
+    private final List<Catalog> catalogs;
 
     @lombok.Singular
     private final Collection<WebSource> customSources;
@@ -48,7 +48,7 @@ public final class MockedDriver implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
         return repos
@@ -58,6 +58,11 @@ public final class MockedDriver implements Driver {
                 .map(entry -> new MockedConnection(entry.getKey(), entry.getValue()))
                 .findFirst()
                 .orElseThrow(() -> missingSource(source.toString(), WebSource.class));
+    }
+
+    @Override
+    public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        return catalogs;
     }
 
     @Override

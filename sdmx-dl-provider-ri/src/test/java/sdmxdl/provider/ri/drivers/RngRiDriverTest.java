@@ -2,6 +2,7 @@ package sdmxdl.provider.ri.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
+import sdmxdl.Options;
 import sdmxdl.Query;
 import sdmxdl.Flow;
 import sdmxdl.web.WebSource;
@@ -23,7 +24,7 @@ public class RngRiDriverTest {
 
         for (WebSource source : x.getDefaultSources()) {
             System.out.println(source);
-            try (Connection conn = x.connect(source, ANY, DriverAssert.noOpWebContext())) {
+            try (Connection conn = x.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
                 for (Flow flow : conn.getFlows()) {
                     System.out.println(flow);
                     System.out.println(conn.getStructure(flow.getRef()));
