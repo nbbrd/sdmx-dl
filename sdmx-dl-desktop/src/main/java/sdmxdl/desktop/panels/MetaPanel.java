@@ -1,7 +1,8 @@
-package sdmxdl.desktop;
+package sdmxdl.desktop.panels;
 
 import lombok.Getter;
 import sdmxdl.Attribute;
+import sdmxdl.desktop.SingleSeries;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +14,9 @@ import java.util.Map;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-public final class JSeriesMetaPanel extends JComponent implements HasModel<SingleSeries> {
+public final class MetaPanel extends JComponent {
+
+    public static final String MODEL_PROPERTY = "model";
 
     @Getter
     private SingleSeries model;
@@ -24,7 +27,7 @@ public final class JSeriesMetaPanel extends JComponent implements HasModel<Singl
 
     private final JTable table = new JTable();
 
-    public JSeriesMetaPanel() {
+    public MetaPanel() {
         initComponents();
     }
 

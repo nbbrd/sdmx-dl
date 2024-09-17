@@ -1,7 +1,6 @@
-package sdmxdl.desktop;
+package sdmxdl.desktop.panels;
 
 import ec.util.table.swing.JTables;
-import internal.sdmxdl.desktop.PropertyFormats;
 import internal.sdmxdl.desktop.util.BrowseCommand;
 import internal.sdmxdl.desktop.util.ButtonBuilder;
 import internal.sdmxdl.desktop.util.MapTableModel;
@@ -21,7 +20,9 @@ import static java.util.Collections.emptyMap;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_EXPORT;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.MDI_LAUNCH;
 
-public final class JWebSourceSettings extends JComponent implements HasModel<WebSource> {
+public final class WebSourcePanel extends JComponent {
+
+    public static final String MODEL_PROPERTY = "model";
 
     public static final String BROWSE_WEBSITE_ACTION = "browseWebsite";
 
@@ -46,7 +47,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
     private final JTextField website = new JTextField();
     private final JTextField monitor = new JTextField();
 
-    public JWebSourceSettings() {
+    public WebSourcePanel() {
         initComponents();
     }
 
@@ -54,12 +55,12 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
         ActionMap am = getActionMap();
 
         am.put(BROWSE_WEBSITE_ACTION,
-                BrowseCommand.ofURL(JWebSourceSettings::getWebsiteOrNull)
+                BrowseCommand.ofURL(WebSourcePanel::getWebsiteOrNull)
                         .toAction(this)
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
         am.put(BROWSE_MONITOR_ACTION,
-                BrowseCommand.ofURL(JWebSourceSettings::getMonitorWebsiteOrNull)
+                BrowseCommand.ofURL(WebSourcePanel::getMonitorWebsiteOrNull)
                         .toAction(this)
                         .withWeakPropertyChangeListener(this, MODEL_PROPERTY));
 
@@ -85,11 +86,7 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
         driver.setEditable(false);
         endpoint.setEditable(false);
         properties.setModel(new MapTableModel("Name", "Value"));
-        properties.getColumnModel().getColumn(0).setCellRenderer(JTables.cellRendererOf((label, value) -> {
-            if (value instanceof String) {
-                label.setText(PropertyFormats.toText((String) value));
-            }
-        }));
+        properties.getColumnModel().getColumn(0).setCellRenderer(PropertyRenderer.INSTANCE.asTableCellRenderer(properties::repaint));
         JTables.setWidthAsPercentages(properties, .6, .4);
         monitor.setEditable(false);
         monitor.putClientProperty(
@@ -175,12 +172,12 @@ public final class JWebSourceSettings extends JComponent implements HasModel<Web
         }
     }
 
-    private static URL getWebsiteOrNull(JWebSourceSettings c) {
+    private static URL getWebsiteOrNull(WebSourcePanel c) {
         WebSource source = c.getModel();
         return source == null ? null : source.getWebsite();
     }
 
-    private static URL getMonitorWebsiteOrNull(JWebSourceSettings c) {
+    private static URL getMonitorWebsiteOrNull(WebSourcePanel c) {
         WebSource source = c.getModel();
         return source == null ? null : source.getMonitorWebsite();
     }

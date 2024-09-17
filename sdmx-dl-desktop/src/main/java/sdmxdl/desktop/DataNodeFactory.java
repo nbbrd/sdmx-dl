@@ -39,14 +39,14 @@ class DataNodeFactory implements DynamicTree.NodeFactory {
 
     private static List<DataSetRef> getChildren(SdmxWebManager manager, DataSourceRef dataSourceRef, Key key) throws IOException {
         try (Connection conn = manager.getConnection(dataSourceRef.getSource(), dataSourceRef.toOptions())) {
-            Structure dsd = conn.getStructure(dataSourceRef.getFlow());
+            Structure dsd = conn.getStructure(dataSourceRef.toFlowRef());
             List<sdmxdl.Dimension> dimensionList = dsd.getDimensionList();
             Key.Builder builder = Key.builder(dsd);
             for (int i = 0; i < key.size(); i++) {
                 builder.put(dimensionList.get(i).getId(), key.get(i));
             }
             int dimensionIndex = getDimensionIndex(dataSourceRef.getDimensions(), dimensionList, getLevel(key));
-            return SdmxCubeUtil.getChildren(conn, dataSourceRef.getFlow(), key, dimensionIndex)
+            return SdmxCubeUtil.getChildren(conn, dataSourceRef.toFlowRef(), key, dimensionIndex)
                     .sorted()
                     .map(child -> new DataSetRef(dataSourceRef, builder.put(dimensionList.get(dimensionIndex).getId(), child).build(), dimensionIndex))
                     .collect(Collectors.toList());

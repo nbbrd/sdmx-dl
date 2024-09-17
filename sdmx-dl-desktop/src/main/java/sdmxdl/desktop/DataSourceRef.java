@@ -9,18 +9,31 @@ import sdmxdl.Options;
 import java.util.List;
 
 @lombok.Value
+@lombok.Builder(toBuilder = true)
 public class DataSourceRef {
 
-    @NonNull String source;
+    @NonNull
+    String source;
 
+    @lombok.Builder.Default
     @Nullable
-    String catalog;
+    String catalog = null;
 
-    @NonNull FlowRef flow;
+    @lombok.Builder.Default
+    @NonNull
+    String flow = "";
 
-    @NonNull List<String> dimensions;
+    @lombok.Singular
+    @NonNull
+    List<String> dimensions;
 
-    @NonNull Languages languages;
+    @lombok.Builder.Default
+    @NonNull
+    Languages languages = Sdmxdl.INSTANCE.getLanguages();
+
+    public FlowRef toFlowRef() {
+        return FlowRef.parse(flow);
+    }
 
     public Options toOptions() {
         return Options.builder().languages(languages).catalogId(catalog).build();

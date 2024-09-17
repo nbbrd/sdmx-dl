@@ -29,8 +29,8 @@ public class SingleSeries {
     public static SingleSeries load(SdmxWebManager manager, DataSetRef ref) throws IOException {
         try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), ref.getDataSourceRef().toOptions())) {
             return new SingleSeries(
-                    conn.getStructure(ref.getDataSourceRef().getFlow()),
-                    conn.getDataStream(ref.getDataSourceRef().getFlow(), Query.builder().key(ref.getKey()).build())
+                    conn.getStructure(ref.getDataSourceRef().toFlowRef()),
+                    conn.getDataStream(ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
                             .findFirst()
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build())
             );

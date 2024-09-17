@@ -7,7 +7,11 @@ import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -36,7 +40,33 @@ public class Main {
 
     static JComponent create() {
         Sdmxdl.INSTANCE.setSdmxManager(loadManager());
-        return new MainComponent();
+        MainComponent result = new MainComponent();
+        result.load();
+
+        result.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(result);
+                frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        result.store();
+                        frame.dispose();
+                    }
+                });
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+            }
+        });
+
+        return result;
     }
 
     private static SdmxWebManager loadManager() {

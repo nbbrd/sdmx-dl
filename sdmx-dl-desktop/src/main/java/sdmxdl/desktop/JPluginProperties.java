@@ -2,6 +2,7 @@ package sdmxdl.desktop;
 
 import ec.util.list.swing.JLists;
 import lombok.Getter;
+import sdmxdl.desktop.panels.PropertyRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
 
-public final class JPluginProperties<T> extends JComponent implements HasModel<T> {
+public final class JPluginProperties<T> extends JComponent {
+
+    public static final String MODEL_PROPERTY = "model";
 
     @Getter
     private T model = null;
@@ -35,7 +38,7 @@ public final class JPluginProperties<T> extends JComponent implements HasModel<T
     }
 
     private void initComponents() {
-        properties.setCellRenderer(Renderer.PROPERTY_RENDERER.asListCellRenderer(properties::repaint));
+        properties.setCellRenderer(PropertyRenderer.INSTANCE.asListCellRenderer(properties::repaint));
 
         setLayout(new BorderLayout());
         add(new JScrollPane(properties), BorderLayout.CENTER);

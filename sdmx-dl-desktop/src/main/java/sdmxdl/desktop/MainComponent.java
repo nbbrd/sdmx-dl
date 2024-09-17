@@ -2,17 +2,13 @@ package sdmxdl.desktop;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
-import ec.util.completion.swing.JAutoCompletion;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
-import internal.sdmxdl.desktop.DataSetRefFormats;
-import internal.sdmxdl.desktop.DataSourceRefFormats;
-import internal.sdmxdl.desktop.SdmxAutoCompletion;
+import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
-import net.miginfocom.swing.MigLayout;
 import org.kordamp.ikonli.Ikon;
-import sdmxdl.FlowRef;
+import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -26,23 +22,19 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+import java.util.prefs.Preferences;
 
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
 import static java.awt.event.KeyEvent.VK_ENTER;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.KeyStroke.getKeyStroke;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
-import static sdmxdl.desktop.Renderer.*;
-import static sdmxdl.desktop.Sdmxdl.lookupWebSource;
 
 public final class MainComponent extends JComponent {
 
@@ -67,12 +59,9 @@ public final class MainComponent extends JComponent {
 
     private final ListDataListener dataSourcesListener = JLists.dataListenerOf(this::contentsChanged);
 
-    private final Map<FlowRef, FlowStruct> flowStructs = new HashMap<>();
-
     public MainComponent() {
         initComponent();
     }
-
 
     private void initComponent() {
         datasetsTree.setRootVisible(false);
@@ -86,39 +75,16 @@ public final class MainComponent extends JComponent {
                 if (value instanceof DefaultMutableTreeNode) {
                     Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
                     if (userObject instanceof DataSourceRef) {
-                        DataSourceRef ref = (DataSourceRef) userObject;
-                        FlowStruct fs = getFlowStruct(ref);
-                        label.setText(DataSourceRefFormats.toText(ref, fs));
-                        label.setToolTipText(DataSourceRefFormats.toTooltipText(ref, fs));
-                        label.setIcon(Sdmxdl.INSTANCE.getIconSupport().getIcon(ref, 16, tree::repaint));
+                        DataSourceRefRenderer.INSTANCE.render(label, (DataSourceRef) userObject, tree::repaint);
                     } else if (userObject instanceof DataSetRef) {
-                        DataSetRef ref = (DataSetRef) userObject;
-                        FlowStruct fs = getFlowStruct(ref.getDataSourceRef());
-                        label.setText(DataSetRefFormats.toText(ref, fs));
-                        label.setToolTipText(DataSetRefFormats.toTooltipText(ref, fs));
-                        if (ref.getKey().isSeries()) {
-                            label.setIcon(Ikons.of(MDI_CHART_LINE, 16, Renderer.getColor(lookupWebSource(ref).getConfidentiality())));
-                        } else {
-                            label.setIcon(UIManager.getIcon(expanded ? "Tree.openIcon" : "Tree.closedIcon"));
-                        }
+                        DataSetRefRenderer.INSTANCE.render(label, (DataSetRef) userObject, tree::repaint);
                     } else if (userObject instanceof SwingWorker) {
-                        SWING_WORKER_RENDERER.render(label, (SwingWorker<?, ?>) userObject);
-                        label.setToolTipText(null);
+                        SwingWorkerRenderer.INSTANCE.render(label, (SwingWorker<?, ?>) userObject, tree::repaint);
                     } else if (userObject instanceof Exception) {
-                        ERROR_RENDERER.render(label, (Exception) userObject);
-                        label.setToolTipText(((Exception) userObject).getMessage());
+                        ExceptionRenderer.INSTANCE.render(label, (Exception) userObject, tree::repaint);
                     }
                 }
                 return label;
-            }
-
-            private FlowStruct getFlowStruct(DataSourceRef ref) {
-                return flowStructs.entrySet()
-                        .stream()
-                        .filter(entry -> ref.getFlow().contains(entry.getKey()))
-                        .findFirst()
-                        .map(Map.Entry::getValue)
-                        .orElse(null);
             }
         });
         DynamicTree.enable(datasetsTree, new DataNodeFactory(Sdmxdl.INSTANCE::getSdmxManager), new DefaultMutableTreeNode("root"));
@@ -127,7 +93,7 @@ public final class MainComponent extends JComponent {
         datasetsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDataSetRef));
         datasetsTree.setComponentPopupMenu(newDatasetsMenu().getPopupMenu());
 
-        sourcesList.setCellRenderer(WEB_SOURCE_RENDERER.asListCellRenderer(sourcesList::repaint));
+        sourcesList.setCellRenderer(WebSourceRenderer.INSTANCE.asListCellRenderer(sourcesList::repaint));
         sourcesList.addMouseListener(onDoubleClick(e -> sourcesList.getActionMap().get("SELECT_ACTION").actionPerformed(null)));
         sourcesList.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         sourcesList.getActionMap().put("SELECT_ACTION",
@@ -135,7 +101,7 @@ public final class MainComponent extends JComponent {
                         .withWeakListSelectionListener(sourcesList.getSelectionModel()));
         sourcesList.setComponentPopupMenu(newSourcesMenu().getPopupMenu());
 
-        pluginsTree.setCellRenderer(JTrees.cellRendererOf(Object.class, this::renderPlugin));
+        pluginsTree.setCellRenderer(JTrees.cellRendererOf(Object.class, (label, value) -> renderPlugin(label, value, pluginsTree::repaint)));
         pluginsTree.addMouseListener(onDoubleClick(this::openCurrentPlugin));
         pluginsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         pluginsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentPlugin));
@@ -196,7 +162,7 @@ public final class MainComponent extends JComponent {
         item.setText("<html><b>Open</b>");
         item.setAccelerator(getKeyStroke(VK_ENTER, 0));
 
-        item = result.add(new AddDatasetCommand().toAction(this));
+        item = result.add(new AddDatasetCommand(() -> DataSourceRef.builder().source(getSelectedSource(sourcesList)).build()).toAction(this));
         item.setText("Add dataset");
 
         item = result.add(BrowseCommand.ofURL(MainComponent::getSelectedWebsite).toAction(sourcesList).withWeakListSelectionListener(sourcesList.getSelectionModel()));
@@ -213,7 +179,7 @@ public final class MainComponent extends JComponent {
         result.add(Box.createHorizontalGlue());
 
         result.add(new ButtonBuilder()
-                .action(new AddDatasetCommand().toAction(this))
+                .action(new AddDatasetCommand(() -> DataSourceRef.builder().source("").build()).toAction(this))
                 .ikon(MDI_DATABASE_PLUS)
                 .toolTipText("Add dataset")
                 .build());
@@ -265,8 +231,10 @@ public final class MainComponent extends JComponent {
             if (userObject instanceof DataSetRef) {
                 DataSetRef dataSetRef = (DataSetRef) userObject;
                 if (dataSetRef.getKey().isSeries()) {
-                    main.addIfAbsent(dataSetRef, DATA_SET_REF_RENDERER.asTabFactory());
+                    main.addIfAbsent(dataSetRef, DataSetRefRenderer.INSTANCE.asTabFactory(this));
                 }
+            } else if (userObject instanceof Exception) {
+                main.addIfAbsent((Exception) userObject, ExceptionRenderer.INSTANCE.asTabFactory(this));
             }
         }
     }
@@ -276,44 +244,42 @@ public final class MainComponent extends JComponent {
         if (node != null) {
             Object userObject = node.getUserObject();
             if (userObject instanceof Driver) {
-                main.addIfAbsent((Driver) userObject, DRIVER_RENDERER.asTabFactory());
+                main.addIfAbsent((Driver) userObject, DriverRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof Authenticator) {
-                main.addIfAbsent((Authenticator) userObject, AUTHENTICATOR_RENDERER.asTabFactory());
+                main.addIfAbsent((Authenticator) userObject, AuthenticatorRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof Monitor) {
-                main.addIfAbsent((Monitor) userObject, MONITOR_RENDERER.asTabFactory());
+                main.addIfAbsent((Monitor) userObject, MonitorRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof Persistence) {
-                main.addIfAbsent((Persistence) userObject, PERSISTENCE_RENDERER.asTabFactory());
+                main.addIfAbsent((Persistence) userObject, PersistenceRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof Registry) {
-                main.addIfAbsent((Registry) userObject, REGISTRY_RENDERER.asTabFactory());
+                main.addIfAbsent((Registry) userObject, RegistryRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof WebCaching) {
-                main.addIfAbsent((WebCaching) userObject, WEB_CACHING_RENDERER.asTabFactory());
+                main.addIfAbsent((WebCaching) userObject, WebCachingRenderer.INSTANCE.asTabFactory(this));
             } else if (userObject instanceof Networking) {
-                main.addIfAbsent((Networking) userObject, NETWORKING_RENDERER.asTabFactory());
+                main.addIfAbsent((Networking) userObject, NetworkingRenderer.INSTANCE.asTabFactory(this));
             }
         }
     }
 
-    private void renderPlugin(JLabel label, Object value) {
+    private void renderPlugin(JLabel label, Object value, Runnable onUpdate) {
         if (value instanceof Driver) {
-            DRIVER_RENDERER.render(label, (Driver) value);
+            DriverRenderer.INSTANCE.render(label, (Driver) value, onUpdate);
         } else if (value instanceof Authenticator) {
-            AUTHENTICATOR_RENDERER.render(label, (Authenticator) value);
+            AuthenticatorRenderer.INSTANCE.render(label, (Authenticator) value, onUpdate);
         } else if (value instanceof Monitor) {
-            MONITOR_RENDERER.render(label, (Monitor) value);
+            MonitorRenderer.INSTANCE.render(label, (Monitor) value, onUpdate);
         } else if (value instanceof Persistence) {
-            PERSISTENCE_RENDERER.render(label, (Persistence) value);
+            PersistenceRenderer.INSTANCE.render(label, (Persistence) value, onUpdate);
         } else if (value instanceof Registry) {
-            REGISTRY_RENDERER.render(label, (Registry) value);
+            RegistryRenderer.INSTANCE.render(label, (Registry) value, onUpdate);
         } else if (value instanceof WebCaching) {
-            WEB_CACHING_RENDERER.render(label, (WebCaching) value);
+            WebCachingRenderer.INSTANCE.render(label, (WebCaching) value, onUpdate);
         } else if (value instanceof Networking) {
-            NETWORKING_RENDERER.render(label, (Networking) value);
-        } else {
-            label.setIcon(Ikons.of(MDI_CUBE_OUTLINE, 16, UIConstants.TREE_ICON_LEAF_COLOR));
+            NetworkingRenderer.INSTANCE.render(label, (Networking) value, onUpdate);
         }
     }
 
-    private void onSdmxWebManagerChange(PropertyChangeEvent evt) {
+    private void onSdmxWebManagerChange(PropertyChangeEvent ignore) {
         SdmxWebManager manager = Sdmxdl.INSTANCE.getSdmxManager();
         sourcesList.setModel(JLists.modelOf(manager.getSources().values().stream().filter(o -> !o.isAlias()).collect(toList())));
         DefaultMutableTreeNode plugins = new DefaultMutableTreeNode();
@@ -345,22 +311,6 @@ public final class MainComponent extends JComponent {
         root.removeAllChildren();
         JLists.stream(dataSources).forEach(dataSourceRef -> root.add(new DynamicTree.CustomNode(dataSourceRef, false)));
         datasetsTree.setModel(new DefaultTreeModel(root));
-        flowStructs.clear();
-        new SwingWorker<Void, FlowStruct>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                for (DataSourceRef dataSourceRef : JLists.asList(dataSources)) {
-                    publish(FlowStruct.load(Sdmxdl.INSTANCE.getSdmxManager(), dataSourceRef));
-                }
-                return null;
-            }
-
-            @Override
-            protected void process(List<FlowStruct> chunks) {
-                chunks.forEach(chunk -> flowStructs.put(chunk.getFlow().getRef(), chunk));
-                datasetsTree.repaint();
-            }
-        }.execute();
     }
 
     private static final class OpenCurrentSourceCommand extends JCommand<MainComponent> {
@@ -374,82 +324,24 @@ public final class MainComponent extends JComponent {
         public void execute(@NonNull MainComponent component) throws Exception {
             component.main.addIfAbsent(
                     component.sourcesList.getSelectedValue(),
-                    WEB_SOURCE_RENDERER.asTabFactory()
+                    WebSourceRenderer.INSTANCE.asTabFactory(component)
             );
         }
     }
 
+    @lombok.AllArgsConstructor
     private static final class AddDatasetCommand extends JCommand<MainComponent> {
+
+        private final @NonNull Supplier<DataSourceRef> base;
+
         @Override
         public void execute(@NonNull MainComponent c) {
-
-            JTextField sourceField = new JTextField("");
-            SdmxAutoCompletion sourceCompletion = SdmxAutoCompletion.onWebSource(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages());
-            JAutoCompletion sourceAutoCompletion = new JAutoCompletion(sourceField);
-            sourceAutoCompletion.setSource(sourceCompletion.getSource());
-            sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
-
-            JTextField catalogField = new JTextField("");
-            SdmxAutoCompletion catalogCompletion = SdmxAutoCompletion.onCatalog(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
-                    () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
-                    new ConcurrentHashMap<>());
-            JAutoCompletion catalogAutoCompletion = new JAutoCompletion(catalogField);
-            catalogAutoCompletion.setSource(catalogCompletion.getSource());
-            catalogAutoCompletion.getList().setCellRenderer(catalogCompletion.getRenderer());
-
-            JTextField flowField = new JTextField("");
-            SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
-                    () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
-                    () -> catalogField.getText(),
-                    new ConcurrentHashMap<>());
-            JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
-            flowAutoCompletion.setSource(flowCompletion.getSource());
-            flowAutoCompletion.getList().setCellRenderer(flowCompletion.getRenderer());
-
-            JTextField dimensionsField = new JTextField("");
-            dimensionsField.setEnabled(false);
-
-            JTextField languagesField = new JTextField(Sdmxdl.INSTANCE.getLanguages().toString());
-            languagesField.setEnabled(false);
-
-            JPanel panel = new JPanel(new MigLayout("ins 20", "[para]0[][100lp, fill][60lp][95lp, fill]", ""));
-
-            addSeparator(panel, "Source");
-
-            panel.add(new JLabel("Provider"), "skip");
-            panel.add(sourceField, "span, growx");
-
-            panel.add(new JLabel("Catalog"), "skip");
-            panel.add(catalogField, "span, growx");
-
-            panel.add(new JLabel("Dataflow"), "skip");
-            panel.add(flowField, "span, growx");
-
-            addSeparator(panel, "Options");
-
-            panel.add(new JLabel("Dimensions"), "skip");
-            panel.add(dimensionsField, "span, growx");
-
-            panel.add(new JLabel("Languages"), "skip");
-            panel.add(languagesField, "span, growx");
-
-            if (JOptionPane.showOptionDialog(c, panel, "Add dataset",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                    new Object[]{"Add", "Cancel"}, "Add") == 0) {
-
-                c.getDataSources().addElement(new DataSourceRef(sourceField.getText(), catalogField.getText(), FlowRef.parse(flowField.getText()), emptyList(), Sdmxdl.INSTANCE.getLanguages()));
-            }
+            c.addDataSource(base.get());
         }
+    }
 
-        static final Color LABEL_COLOR = new Color(0, 70, 213);
-
-        private void addSeparator(JPanel panel, String text) {
-            JLabel l = new JLabel(text);
-            l.setForeground(LABEL_COLOR);
-
-            panel.add(l, "gapbottom 1, span, split 2, aligny center");
-            panel.add(new JSeparator(), "gapleft rel, growx");
-        }
+    private static String getSelectedSource(JList<WebSource> x) {
+        return getSingle(x.getSelectedValuesList()).map(WebSource::getId).orElse(null);
     }
 
     private static URL getSelectedWebsite(JList<WebSource> x) {
@@ -459,4 +351,43 @@ public final class MainComponent extends JComponent {
     private static URL getSelectedMonitorWebsite(JList<WebSource> x) {
         return getSingle(x.getSelectedValuesList()).map(WebSource::getMonitorWebsite).orElse(null);
     }
+
+    public void addDataSource(DataSourceRef base) {
+        DataSourceRefPanel panel = new DataSourceRefPanel();
+        panel.setModel(base);
+        if (JOptionPane.showOptionDialog(this, panel, "Add dataset",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                new Object[]{"Add", "Cancel"}, "Add") == 0) {
+            getDataSources().addElement(panel.getModel());
+        }
+    }
+
+    public void load() {
+        String latest = MainComponent.PREFERENCES.get("LATEST", null);
+        if (latest != null) {
+            getDataSources().clear();
+            try {
+                XmlDataSourceRef.PARSER.parseChars(latest).forEach(getDataSources()::addElement);
+            } catch (Exception ex) {
+                reportException(ex);
+            }
+        }
+    }
+
+    public void store() {
+        try {
+            PREFERENCES.put("LATEST", XmlDataSourceRef.FORMATTER.formatToString(JLists.asList(getDataSources())));
+        } catch (Exception ex) {
+            reportException(ex);
+        }
+    }
+
+    private static void reportException(Exception ex) {
+        ExceptionPanel panel = new ExceptionPanel();
+        panel.setPreferredSize(new Dimension(500, 300));
+        panel.setException(ex);
+        JOptionPane.showMessageDialog(null, panel, ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+    }
+
+    private static final Preferences PREFERENCES = Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());
 }

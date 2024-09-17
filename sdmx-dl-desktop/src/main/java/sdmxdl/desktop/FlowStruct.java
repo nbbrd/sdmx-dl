@@ -19,7 +19,7 @@ public class FlowStruct {
 
     public static FlowStruct load(SdmxWebManager manager, DataSourceRef ref) throws IOException {
         try (Connection conn = manager.getConnection(ref.getSource(), ref.toOptions())) {
-            return new FlowStruct(conn.getFlow(ref.getFlow()), conn.getStructure(ref.getFlow()));
+            return new FlowStruct(conn.getFlow(ref.toFlowRef()), conn.getStructure(ref.toFlowRef()));
         }
     }
 }
