@@ -36,6 +36,10 @@ public class DataRepository implements HasPersistence, HasExpiration {
 
     @lombok.NonNull
     @lombok.Singular
+    List<Catalog> catalogs;
+
+    @lombok.NonNull
+    @lombok.Singular
     List<Structure> structures;
 
     @lombok.NonNull

@@ -114,7 +114,7 @@ public final class PxWebDriver implements Driver {
 
     private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
         String dbId = options.getCatalogId();
-        if (dbId == null) {
+        if (dbId == null || dbId.isEmpty()) {
             throw new IOException("Catalog ID is required");
         }
 
@@ -361,10 +361,20 @@ public final class PxWebDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
+        private final TypedId<List<Catalog>> idOfDatabases = initIdOfDatabases(base);
+
+        @lombok.Getter(lazy = true)
         private final TypedId<List<Flow>> idOfTables = initIdOfTables(base);
 
         @lombok.Getter(lazy = true)
         private final TypedId<Structure> idOfMeta = initIdOfMeta(base);
+
+        private static TypedId<List<Catalog>> initIdOfDatabases(URI base) {
+            return TypedId.of(base,
+                    DataRepository::getCatalogs,
+                    catalogs -> DataRepository.builder().catalogs(catalogs).build()
+            ).with("databases");
+        }
 
         private static TypedId<List<Flow>> initIdOfTables(URI base) {
             return TypedId.of(base,
@@ -392,17 +402,23 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public @NonNull List<Catalog> getDataBases() throws IOException {
-            return delegate.getDataBases();
+            return getIdOfDatabases()
+                    .load(cache, delegate::getDataBases, ignore -> ttl);
         }
 
         @Override
         public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
-            return getIdOfTables().load(cache, () -> delegate.getTables(dbId), o -> ttl);
+            return getIdOfTables()
+                    .with(dbId)
+                    .load(cache, () -> delegate.getTables(dbId), ignore -> ttl);
         }
 
         @Override
         public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
-            return getIdOfMeta().with(dbId).with(tableId).load(cache, () -> delegate.getMeta(dbId, tableId), o -> ttl);
+            return getIdOfMeta()
+                    .with(dbId)
+                    .with(tableId)
+                    .load(cache, () -> delegate.getMeta(dbId, tableId), ignore -> ttl);
         }
 
         @Override

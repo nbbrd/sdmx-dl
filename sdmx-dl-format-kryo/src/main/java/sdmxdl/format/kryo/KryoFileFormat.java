@@ -139,15 +139,16 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.setRegistrationRequired(true);
 
         result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
-        result.register(DataRepository.class, new SdmxRepositorySerializer());
-        result.register(Structure.class, new DataStructureSerializer());
-        result.register(StructureRef.class, new DataStructureRefSerializer());
-        result.register(Flow.class, new DataflowSerializer());
-        result.register(FlowRef.class, new DataflowRefSerializer());
+        result.register(DataRepository.class, new DataRepositorySerializer());
+        result.register(Catalog.class, new CatalogSerializer());
+        result.register(Structure.class, new StructureSerializer());
+        result.register(StructureRef.class, new StructureRefSerializer());
+        result.register(Flow.class, new FlowSerializer());
+        result.register(FlowRef.class, new FlowRefSerializer());
         result.register(Codelist.class, new CodelistSerializer());
         result.register(CodelistRef.class, new CodelistRefSerializer());
         result.register(Key.class, new KeySerializer());
-        result.register(Query.class, new DataQuerySerializer());
+        result.register(Query.class, new QuerySerializer());
         result.register(Detail.class, new DefaultSerializers.EnumSerializer(Detail.class));
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
@@ -157,8 +158,8 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.register(Dimension.class, new DimensionSerializer());
         result.register(Attribute.class, new AttributeSerializer());
         result.register(AttributeRelationship.class, new DefaultSerializers.EnumSerializer(AttributeRelationship.class));
-        result.register(MonitorReports.class, new SdmxWebMonitorReportsSerializer());
-        result.register(MonitorReport.class, new SdmxWebMonitorReportSerializer());
+        result.register(MonitorReports.class, new MonitorReportsSerializer());
+        result.register(MonitorReport.class, new MonitorReportSerializer());
         result.register(MonitorStatus.class, new DefaultSerializers.EnumSerializer(MonitorStatus.class));
         result.register(WebSources.class, new WebSourcesSerializer());
         result.register(WebSource.class, new WebSourceSerializer());
@@ -266,8 +267,9 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class SdmxRepositorySerializer extends ImmutableSerializer<DataRepository> {
+    private static final class DataRepositorySerializer extends ImmutableSerializer<DataRepository> {
 
+        private final Serializer<Collection<Catalog>> catalogs = new CustomCollectionSerializer<>(Catalog.class);
         private final Serializer<Collection<Structure>> structures = new CustomCollectionSerializer<>(Structure.class);
         private final Serializer<Collection<Flow>> flows = new CustomCollectionSerializer<>(Flow.class);
         private final Serializer<Collection<DataSet>> dataSets = new CustomCollectionSerializer<>(DataSet.class);
@@ -276,6 +278,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         @Override
         public void write(Kryo kryo, Output output, DataRepository t) {
             output.writeString(t.getName());
+            kryo.writeObject(output, t.getCatalogs(), catalogs);
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
@@ -289,6 +292,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
             return DataRepository
                     .builder()
                     .name(input.readString())
+                    .catalogs(kryo.readObject(input, ArrayList.class, catalogs))
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
@@ -298,7 +302,21 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class DataStructureSerializer extends ImmutableSerializer<Structure> {
+    private static final class CatalogSerializer extends ImmutableSerializer<Catalog> {
+
+        @Override
+        public void write(Kryo kryo, Output output, Catalog t) {
+            output.writeString(t.getId());
+            output.writeString(t.getName());
+        }
+
+        @Override
+        public Catalog read(Kryo kryo, Input input, Class<? extends Catalog> type) {
+            return new Catalog(input.readString(), input.readString());
+        }
+    }
+
+    private static final class StructureSerializer extends ImmutableSerializer<Structure> {
 
         private final Serializer<Collection<Dimension>> dimensions = new CustomCollectionSerializer<>(Dimension.class);
         private final Serializer<Collection<Attribute>> attributes = new CustomCollectionSerializer<>(Attribute.class);
@@ -328,7 +346,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class DataStructureRefSerializer extends ResourceRefSerializer<StructureRef> {
+    private static final class StructureRefSerializer extends ResourceRefSerializer<StructureRef> {
 
         @Override
         protected StructureRef read(String input) {
@@ -336,7 +354,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class DataflowSerializer extends ImmutableSerializer<Flow> {
+    private static final class FlowSerializer extends ImmutableSerializer<Flow> {
 
         @Override
         public void write(Kryo kryo, Output output, Flow t) {
@@ -358,7 +376,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class DataflowRefSerializer extends ResourceRefSerializer<FlowRef> {
+    private static final class FlowRefSerializer extends ResourceRefSerializer<FlowRef> {
 
         @Override
         protected FlowRef read(String input) {
@@ -430,7 +448,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class DataQuerySerializer extends ImmutableSerializer<Query> {
+    private static final class QuerySerializer extends ImmutableSerializer<Query> {
 
         @Override
         public void write(Kryo kryo, Output output, Query t) {
@@ -570,7 +588,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class SdmxWebMonitorReportsSerializer extends ImmutableSerializer<MonitorReports> {
+    private static final class MonitorReportsSerializer extends ImmutableSerializer<MonitorReports> {
 
         private final Serializer<Collection<MonitorReport>> reports = new CustomCollectionSerializer<>(MonitorReport.class);
 
@@ -594,7 +612,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class SdmxWebMonitorReportSerializer extends ImmutableSerializer<MonitorReport> {
+    private static final class MonitorReportSerializer extends ImmutableSerializer<MonitorReport> {
 
         @Override
         public void write(Kryo kryo, Output output, MonitorReport t) {

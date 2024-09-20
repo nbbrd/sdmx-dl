@@ -11,6 +11,7 @@ public class ProtobufRepositories {
         return DataRepository
                 .newBuilder()
                 .setName(value.getName())
+                .addAllCatalogs(fromCollection(value.getCatalogs(), ProtobufRepositories::fromCatalog))
                 .addAllStructures(fromCollection(value.getStructures(), ProtobufRepositories::fromDataStructure))
                 .addAllFlows(fromCollection(value.getFlows(), ProtobufRepositories::fromDataflow))
                 .addAllDataSets(fromCollection(value.getDataSets(), ProtobufRepositories::fromDataSet))
@@ -23,12 +24,25 @@ public class ProtobufRepositories {
         return sdmxdl.DataRepository
                 .builder()
                 .name(value.getName())
+                .catalogs(toCollection(value.getCatalogsList(), ProtobufRepositories::toCatalog))
                 .structures(toCollection(value.getStructuresList(), ProtobufRepositories::toDataStructure))
                 .flows(toCollection(value.getFlowsList(), ProtobufRepositories::toDataflow))
                 .dataSets(toCollection(value.getDataSetsList(), ProtobufRepositories::toDataSet))
                 .creationTime(toInstant(value.getCreationTime()))
                 .expirationTime(toInstant(value.getExpirationTime()))
                 .build();
+    }
+
+    public static Catalog fromCatalog(sdmxdl.Catalog value) {
+        return Catalog
+                .newBuilder()
+                .setId(value.getId())
+                .setName(value.getName())
+                .build();
+    }
+
+    public static sdmxdl.Catalog toCatalog(Catalog value) {
+        return new sdmxdl.Catalog(value.getId(), value.getName());
     }
 
     public static DataStructure fromDataStructure(Structure value) {

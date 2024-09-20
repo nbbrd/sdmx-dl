@@ -3,6 +3,11 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf;
 
+message Catalog {
+  string id = 1;
+  string name = 2;
+}
+
 message Attribute {
   string id = 1;
   string name = 2;
@@ -44,11 +49,12 @@ message DataQuery {
 
 message DataRepository {
   string name = 1;
-  repeated DataStructure structures = 2;
-  repeated Dataflow flows = 3;
-  repeated DataSet dataSets = 4;
-  string creation_time = 5;
-  string expiration_time = 6;
+  repeated Catalog catalogs = 2;
+  repeated DataStructure structures = 3;
+  repeated Dataflow flows = 4;
+  repeated DataSet dataSets = 5;
+  string creation_time = 6;
+  string expiration_time = 7;
 }
 
 message DataSet {

@@ -104,11 +104,14 @@ public class RepoSamples {
             .series(S3)
             .build();
 
+    public static final Catalog CATALOG = new Catalog("IIF", "Invest in Finland");
+
     public static final DataRepository EMPTY_REPO = DataRepository.builder().build();
 
     public static final DataRepository REPO = DataRepository
             .builder()
             .name("repoName")
+            .catalog(CATALOG)
             .structure(STRUCT)
             .flow(FLOW)
             .dataSet(DATA_SET)
