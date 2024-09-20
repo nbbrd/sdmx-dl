@@ -17,7 +17,7 @@
 package sdmxdl.file;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.Options;
+import sdmxdl.Languages;
 
 import java.io.File;
 
@@ -42,7 +42,7 @@ public class SdmxFileManagerTest {
     @SuppressWarnings({"null", "ConstantConditions"})
     public void test() {
         SdmxFileManager m = SdmxFileManager.ofServiceLoader();
-        assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, Options.DEFAULT));
+        assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, Languages.ANY));
     }
 
     private final FileSource source = FileSource.builder().data(new File("hello")).build();

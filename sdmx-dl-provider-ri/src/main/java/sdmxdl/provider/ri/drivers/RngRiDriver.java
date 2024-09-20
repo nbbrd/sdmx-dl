@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 @DirectImpl
@@ -62,7 +63,7 @@ public final class RngRiDriver implements Driver {
                     .build())
             .build();
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) {
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) {
         RngDriverId config = RngDriverId.parse(source.getEndpoint());
 
         return new RngConnection(HasMarker.of(source), config);
@@ -117,18 +118,23 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() {
+        public @NonNull Collection<Catalog> getCatalogs() {
+            return emptyList();
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) {
             return singleton(Flow.builder().ref(FlowRef.parse("RNG")).structureRef(StructureRef.parse("STRUCT_RNG")).name("RNG").build());
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
-            return ConnectionSupport.getFlowFromFlows(flowRef, this, this);
+        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+            return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, this);
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
-            Flow flow = getFlow(flowRef);
+        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+            Flow flow = getFlow(catalog, flowRef);
             return Structure
                     .builder()
                     .ref(flow.getStructureRef())
@@ -164,12 +170,12 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+            return ConnectionSupport.getDataSetFromStream(catalog, flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
             return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
         }
 

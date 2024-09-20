@@ -16,9 +16,11 @@
  */
 package sdmxdl.testing;
 
-import sdmxdl.Query;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import sdmxdl.CatalogRef;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;
+import sdmxdl.Query;
 
 /**
  * @author Philippe Charles
@@ -34,6 +36,10 @@ public class WebRequest {
 
     @lombok.NonNull
     Languages languages;
+
+    @lombok.Builder.Default
+    @NonNull
+    CatalogRef catalog = CatalogRef.NO_CATALOG;
 
     @lombok.NonNull
     FlowRef flowRef;

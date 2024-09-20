@@ -17,18 +17,14 @@
 package _test.sdmxdl;
 
 import lombok.NonNull;
-import sdmxdl.Catalog;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.Options;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Philippe Charles
@@ -51,13 +47,8 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return TestConnection.TEST_VALID;
-        }
-
-        @Override
-        public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-            return Collections.emptyList();
         }
 
         @Override
@@ -86,12 +77,7 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IllegalArgumentException {
-            throw new CustomException();
-        }
-
-        @Override
-        public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             throw new CustomException();
         }
 
@@ -121,12 +107,7 @@ public enum TestDriver implements Driver {
         }
 
         @Override
-        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IllegalArgumentException {
-            return null;
-        }
-
-        @Override
-        public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+        public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IllegalArgumentException {
             return null;
         }
 

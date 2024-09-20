@@ -27,10 +27,10 @@ public class SingleSeries {
     Duration duration = computeGlobalDuration();
 
     public static SingleSeries load(SdmxWebManager manager, DataSetRef ref) throws IOException {
-        try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), ref.getDataSourceRef().toOptions())) {
+        try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), ref.getDataSourceRef().getLanguages())) {
             return new SingleSeries(
-                    conn.getStructure(ref.getDataSourceRef().toFlowRef()),
-                    conn.getDataStream(ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
+                    conn.getStructure(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef()),
+                    conn.getDataStream(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
                             .findFirst()
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build())
             );

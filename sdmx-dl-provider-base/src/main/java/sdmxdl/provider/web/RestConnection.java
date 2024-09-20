@@ -25,6 +25,7 @@ import sdmxdl.provider.Validator;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -45,33 +46,44 @@ final class RestConnection implements Connection {
     private boolean closed = false;
 
     @Override
-    public @NonNull Collection<Flow> getFlows() throws IOException {
+    public @NonNull Collection<Catalog> getCatalogs() throws IOException {
         checkState();
+        return Collections.emptyList();
+    }
+
+    @Override
+    public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
+        checkState();
+        checkCatalog(catalog);
         return client.getFlows();
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
         checkState();
-        return lookupFlow(flowRef);
+        checkCatalog(catalog);
+        return lookupFlow(catalog, flowRef);
     }
 
     @Override
-    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
         checkState();
-        return client.getStructure(lookupFlow(flowRef).getStructureRef());
+        checkCatalog(catalog);
+        return client.getStructure(lookupFlow(catalog, flowRef).getStructureRef());
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-        return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+    public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        checkCatalog(catalog);
+        return ConnectionSupport.getDataSetFromStream(catalog, flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         checkState();
+        checkCatalog(catalog);
 
-        Flow flow = lookupFlow(flowRef);
+        Flow flow = lookupFlow(catalog, flowRef);
         Structure dsd = client.getStructure(flow.getStructureRef());
         checkKey(query.getKey(), dsd);
 
@@ -116,13 +128,13 @@ final class RestConnection implements Connection {
         }
     }
 
-    private Flow lookupFlow(FlowRef flowRef) throws IOException, IllegalArgumentException {
+    private Flow lookupFlow(CatalogRef catalog, FlowRef flowRef) throws IOException, IllegalArgumentException {
         if (noBatchFlow) {
             checkDataflowRef(flowRef);
             return client.getFlow(flowRef);
         }
 
-        return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
+        return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, client);
     }
 
     private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
@@ -131,5 +143,11 @@ final class RestConnection implements Connection {
 
     private void checkKey(Key key, Structure dsd) throws IllegalArgumentException {
         WebValidators.onDataStructure(dsd).checkValidity(key);
+    }
+
+    private void checkCatalog(CatalogRef catalog) throws IOException {
+        if (!catalog.equals(CatalogRef.NO_CATALOG)) {
+            throw new IOException("Catalog ID is not supported");
+        }
     }
 }

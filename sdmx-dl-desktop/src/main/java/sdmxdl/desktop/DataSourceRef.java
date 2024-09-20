@@ -1,10 +1,9 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.CatalogRef;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;
-import sdmxdl.Options;
 
 import java.util.List;
 
@@ -16,8 +15,8 @@ public class DataSourceRef {
     String source;
 
     @lombok.Builder.Default
-    @Nullable
-    String catalog = null;
+    @NonNull
+    CatalogRef catalog = CatalogRef.NO_CATALOG;
 
     @lombok.Builder.Default
     @NonNull
@@ -33,9 +32,5 @@ public class DataSourceRef {
 
     public FlowRef toFlowRef() {
         return FlowRef.parse(flow);
-    }
-
-    public Options toOptions() {
-        return Options.builder().languages(languages).catalogId(catalog).build();
     }
 }

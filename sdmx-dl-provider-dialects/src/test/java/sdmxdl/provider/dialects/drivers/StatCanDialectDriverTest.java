@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.CatalogRef.NO_CATALOG;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
 
@@ -37,24 +38,24 @@ public class StatCanDialectDriverTest {
     public void testConnectionArgs() throws IOException {
         StatCanDialectDriver driver = new StatCanDialectDriver();
         WebSource source = driver.getDefaultSources().iterator().next();
-        try (Connection connection = driver.connect(source, Options.of(ANY), DriverAssert.noOpWebContext())) {
+        try (Connection connection = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
             FlowRef badFlowRef = FlowRef.parse("F_10100001");
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getFlow(badFlowRef))
+                    .isThrownBy(() -> connection.getFlow(NO_CATALOG, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getStructure(badFlowRef))
+                    .isThrownBy(() -> connection.getStructure(NO_CATALOG, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getData(badFlowRef, Query.ALL))
+                    .isThrownBy(() -> connection.getData(NO_CATALOG, badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getDataStream(badFlowRef, Query.ALL))
+                    .isThrownBy(() -> connection.getDataStream(NO_CATALOG, badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
         }
     }

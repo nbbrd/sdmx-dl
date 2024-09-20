@@ -20,7 +20,6 @@ import picocli.CommandLine;
 import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,12 +42,17 @@ public class WebSourceOptions extends WebNetOptions {
     @CommandLine.Option(
             names = {"-c", "--catalog"},
             paramLabel = "<catalog>",
+            converter = CatalogRefConverter.class,
             descriptionKey = "cli.sdmx.catalog"
     )
-    private String catalog;
+    private CatalogRef catalog;
+
+    public CatalogRef getCatalog() {
+        return catalog == null ? CatalogRef.NO_CATALOG : catalog;
+    }
 
     public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
-        return manager.getConnection(getSource(), Options.builder().languages(languages).catalogId(getCatalog()).build());
+        return manager.getConnection(getSource(), languages);
     }
 
     public Set<Feature> loadFeatures(SdmxWebManager manager, Languages languages) throws IOException {
@@ -59,7 +63,7 @@ public class WebSourceOptions extends WebNetOptions {
 
     public Collection<Flow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
         try (Connection conn = open(manager, languages)) {
-            return conn.getFlows();
+            return conn.getFlows(getCatalog());
         }
     }
 

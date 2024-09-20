@@ -4,7 +4,7 @@ package sdmxdl;
 public class Catalog implements HasName {
 
     @lombok.NonNull
-    String id;
+    CatalogRef id;
 
     @lombok.NonNull
     String name;

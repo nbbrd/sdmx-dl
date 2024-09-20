@@ -2,6 +2,7 @@ package internal.sdmxdl.desktop;
 
 import nbbrd.io.xml.Xml;
 import nbbrd.io.xml.bind.Jaxb;
+import sdmxdl.CatalogRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
 
@@ -51,7 +52,7 @@ public final class XmlDataSourceRef {
         static DataSourceBean from(DataSourceRef ref) {
             DataSourceBean result = new DataSourceBean();
             result.source = ref.getSource();
-            result.catalog = ref.getCatalog();
+            result.catalog = ref.getCatalog().toString();
             result.flow = ref.getFlow();
             result.dimensions = ref.getDimensions();
             result.languages = ref.getLanguages().toString();
@@ -62,7 +63,7 @@ public final class XmlDataSourceRef {
             return DataSourceRef
                     .builder()
                     .source(source)
-                    .catalog(catalog)
+                    .catalog(CatalogRef.parse(catalog))
                     .flow(flow)
                     .dimensions(dimensions != null ? dimensions : emptyList())
                     .languages(Languages.parse(languages))

@@ -55,13 +55,13 @@ public final class FileRiDriver implements Driver {
 
     private final SdmxFileManager fileManager = SdmxFileManager.ofServiceLoader();
 
-    private @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException, IllegalArgumentException {
+    private @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
         return fileManager
                 .toBuilder()
                 .onEvent(context.getOnEvent() != null ? (fileSource, marker, message) -> context.getOnEvent().accept(source, marker, message) : null)
                 .caching(new FileCachingAdapter(context.getCaching(), source, context.getOnEvent(), context.getOnError()))
                 .build()
-                .getConnection(toFileSource(source), options);
+                .getConnection(toFileSource(source), languages);
     }
 
     @lombok.AllArgsConstructor

@@ -1,9 +1,9 @@
 package sdmxdl.desktop.panels;
 
 import j2html.tags.DomContent;
+import sdmxdl.CatalogRef;
 import sdmxdl.Confidentiality;
 import sdmxdl.Languages;
-import sdmxdl.Options;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.FlowStruct;
 import sdmxdl.desktop.Sdmxdl;
@@ -24,7 +24,7 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
         String text = flowStruct != null ? flowStruct.getFlow().getName() : value.getFlow();
 
         WebSource webSource = Sdmxdl.lookupWebSource(value);
-        return html(small(webSource != null ? id(webSource, value.toOptions()) : id(value.getSource(), value.toOptions())), text(" "), text(text)).render();
+        return html(small(webSource != null ? id(webSource, value.getCatalog(), value.getLanguages()) : id(value.getSource(), value.getCatalog(), value.getLanguages())), text(" "), text(text)).render();
     }
 
     @Override
@@ -42,32 +42,32 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
     private static DomContent htmlSource(DataSourceRef ref) {
         WebSource webSource = Sdmxdl.lookupWebSource(ref);
         return webSource != null
-                ? idAndName(webSource, ref.toOptions())
-                : id(ref.getSource(), ref.toOptions());
+                ? idAndName(webSource, ref.getCatalog(), ref.getLanguages())
+                : id(ref.getSource(), ref.getCatalog(), ref.getLanguages());
     }
 
-    private static DomContent id(String value, Options options) {
+    private static DomContent id(String value, CatalogRef catalogId, Languages languages) {
         return labelTag(value
-                        + (options.getCatalogId() != null && !options.getCatalogId().isEmpty() ? "/" + options.getCatalogId() : "")
-                        + (!options.getLanguages().equals(Languages.ANY) ? " (" + options.getLanguages() + ")" : ""),
+                        + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
+                        + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
                 WebSourceRenderer.getColor(Confidentiality.SECRET)
         );
     }
 
-    private static DomContent idAndName(WebSource value, Options options) {
-        return join(id(value, options), text(" "), name(value, options));
+    private static DomContent idAndName(WebSource value, CatalogRef catalogId, Languages languages) {
+        return join(id(value, catalogId, languages), text(" "), name(value, catalogId, languages));
     }
 
-    private static DomContent id(WebSource value, Options options) {
+    private static DomContent id(WebSource value, CatalogRef catalogId, Languages languages) {
         return labelTag(value.getId()
-                        + (options.getCatalogId() != null && !options.getCatalogId().isEmpty() ? "/" + options.getCatalogId() : "")
-                        + (!options.getLanguages().equals(Languages.ANY) ? " (" + options.getLanguages() + ")" : ""),
+                        + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
+                        + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
                 WebSourceRenderer.getColor(value.getConfidentiality())
         );
     }
 
-    private static DomContent name(WebSource value, Options options) {
-        return text(value.getName(options.getLanguages()));
+    private static DomContent name(WebSource value, CatalogRef catalogId, Languages languages) {
+        return text(value.getName(languages));
     }
 
     private static DomContent htmlFlow(DataSourceRef ref, FlowStruct fs) {

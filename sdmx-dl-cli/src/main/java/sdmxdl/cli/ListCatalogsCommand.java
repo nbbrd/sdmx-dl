@@ -23,6 +23,7 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.design.VisibleForTesting;
 import picocli.CommandLine;
 import sdmxdl.Catalog;
+import sdmxdl.Connection;
 import sdmxdl.Languages;
 
 import java.io.IOException;
@@ -54,14 +55,14 @@ public final class ListCatalogsCommand implements Callable<Void> {
     static CsvTable<Catalog> getTable(Languages languages) {
         return CsvTable
                 .builderOf(Catalog.class)
-                .columnOf("Id", Catalog::getId)
+                .columnOf("Id", catalog -> catalog.getId().toString())
                 .columnOf("Name", Catalog::getName)
                 .build();
     }
 
     private Stream<Catalog> getRows() throws IOException {
-        return web.loadManager()
-                .getCatalogs(web.getSource(), web.getLangs())
-                .stream();
+        try (Connection c = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
+            return c.getCatalogs().stream();
+        }
     }
 }

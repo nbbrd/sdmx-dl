@@ -141,6 +141,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
         result.register(DataRepository.class, new DataRepositorySerializer());
         result.register(Catalog.class, new CatalogSerializer());
+        result.register(CatalogRef.class, new CatalogRefSerializer());
         result.register(Structure.class, new StructureSerializer());
         result.register(StructureRef.class, new StructureRefSerializer());
         result.register(Flow.class, new FlowSerializer());
@@ -306,13 +307,29 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
         @Override
         public void write(Kryo kryo, Output output, Catalog t) {
-            output.writeString(t.getId());
+            kryo.writeObject(output, t.getId());
             output.writeString(t.getName());
         }
 
         @Override
         public Catalog read(Kryo kryo, Input input, Class<? extends Catalog> type) {
-            return new Catalog(input.readString(), input.readString());
+            return new Catalog(
+                    kryo.readObject(input, CatalogRef.class),
+                    input.readString()
+            );
+        }
+    }
+
+    private static final class CatalogRefSerializer extends ImmutableSerializer<CatalogRef> {
+
+        @Override
+        public void write(Kryo kryo, Output output, CatalogRef t) {
+            output.writeString(t.getId());
+        }
+
+        @Override
+        public CatalogRef read(Kryo kryo, Input input, Class<? extends CatalogRef> type) {
+            return CatalogRef.parse(input.readString());
         }
     }
 

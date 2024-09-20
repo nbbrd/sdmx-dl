@@ -71,15 +71,15 @@ public abstract class SdmxAutoCompletion {
         return new CatalogCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<String> catalog, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, ConcurrentMap cache) {
         return new DataflowCompletion<>(manager, languages, source, catalog, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<String> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
         return new DimensionCompletion<>(manager, languages, source, catalog, flowRef, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<String> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
         return new AttributeCompletion<>(manager, languages, source, catalog, flowRef, cache);
     }
 
@@ -159,7 +159,7 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(SYNC)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(Catalog::getId)
+                    .valueToString(catalog -> catalog.getId().toString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
         }
@@ -180,7 +180,9 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Catalog> load(String term) throws IOException {
-            return manager.getCatalogs(source.get(), languages);
+            try (Connection c = manager.getConnection(source.get(), languages)) {
+                return new ArrayList<>(c.getCatalogs());
+            }
         }
 
         private List<Catalog> filterAndSort(List<Catalog> list, String term) {
@@ -190,7 +192,7 @@ public abstract class SdmxAutoCompletion {
         private Predicate<Catalog> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return value -> filter.test(value.getName())
-                    || filter.test(value.getId());
+                    || filter.test(value.getId().toString());
         }
 
         private String getCacheKey(String term) {
@@ -211,7 +213,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<String> catalog;
+        private final Supplier<CatalogRef> catalog;
 
         @lombok.NonNull
         private final ConcurrentMap cache;
@@ -233,8 +235,8 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Flow> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), Options.builder().languages(languages).catalogId(catalog.get()).build())) {
-                return new ArrayList<>(c.getFlows());
+            try (Connection c = manager.getConnection(source.get(), languages)) {
+                return new ArrayList<>(c.getFlows(catalog.get()));
             }
         }
 
@@ -268,7 +270,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<String> catalog;
+        private final Supplier<CatalogRef> catalog;
 
         @lombok.NonNull
         private final Supplier<FlowRef> flowRef;
@@ -293,8 +295,8 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Dimension> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), Options.builder().languages(languages).catalogId(catalog.get()).build())) {
-                return new ArrayList<>(c.getStructure(flowRef.get()).getDimensions());
+            try (Connection c = manager.getConnection(source.get(), languages)) {
+                return new ArrayList<>(c.getStructure(catalog.get(), flowRef.get()).getDimensions());
             }
         }
 
@@ -328,7 +330,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<String> catalog;
+        private final Supplier<CatalogRef> catalog;
 
         @lombok.NonNull
         private final Supplier<FlowRef> flowRef;
@@ -353,8 +355,8 @@ public abstract class SdmxAutoCompletion {
         }
 
         private List<Attribute> load(String term) throws Exception {
-            try (Connection c = manager.getConnection(source.get(), Options.builder().languages(languages).catalogId(catalog.get()).build())) {
-                return new ArrayList<>(c.getStructure(flowRef.get()).getAttributes());
+            try (Connection c = manager.getConnection(source.get(), languages)) {
+                return new ArrayList<>(c.getStructure(catalog.get(), flowRef.get()).getAttributes());
             }
         }
 

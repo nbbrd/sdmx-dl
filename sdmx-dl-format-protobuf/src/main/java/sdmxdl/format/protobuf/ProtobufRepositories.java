@@ -36,13 +36,13 @@ public class ProtobufRepositories {
     public static Catalog fromCatalog(sdmxdl.Catalog value) {
         return Catalog
                 .newBuilder()
-                .setId(value.getId())
+                .setId(value.getId().getId())
                 .setName(value.getName())
                 .build();
     }
 
     public static sdmxdl.Catalog toCatalog(Catalog value) {
-        return new sdmxdl.Catalog(value.getId(), value.getName());
+        return new sdmxdl.Catalog(sdmxdl.CatalogRef.parse(value.getId()), value.getName());
     }
 
     public static DataStructure fromDataStructure(Structure value) {

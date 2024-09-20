@@ -18,7 +18,10 @@ package sdmxdl.testing;
 
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.*;
+import sdmxdl.Connection;
+import sdmxdl.Flow;
+import sdmxdl.Series;
+import sdmxdl.Structure;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -61,12 +64,12 @@ public class WebResponse {
                 .request(request)
                 .source(manager.getSources().get(request.getSource()));
 
-        try (Connection conn = manager.getConnection(request.getSource(), Options.of(request.getLanguages()))) {
+        try (Connection conn = manager.getConnection(request.getSource(), request.getLanguages())) {
             result
-                    .flows(conn.getFlows())
-                    .flow(conn.getFlow(request.getFlowRef()))
-                    .structure(conn.getStructure(request.getFlowRef()))
-                    .data(conn.getData(request.getFlowRef(), request.getQuery()).getData());
+                    .flows(conn.getFlows(request.getCatalog()))
+                    .flow(conn.getFlow(request.getCatalog(), request.getFlowRef()))
+                    .structure(conn.getStructure(request.getCatalog(), request.getFlowRef()))
+                    .data(conn.getData(request.getCatalog(), request.getFlowRef(), request.getQuery()).getData());
         } catch (Exception ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));

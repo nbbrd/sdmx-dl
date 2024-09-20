@@ -8,6 +8,7 @@ import internal.sdmxdl.desktop.util.Ikons;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.Formatter;
 import net.miginfocom.swing.MigLayout;
+import sdmxdl.CatalogRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.Sdmxdl;
@@ -67,7 +68,7 @@ public final class DataSourceRefPanel extends JComponent {
         flowField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, flowButton);
         SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
                 () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
-                () -> catalogField.getText(),
+                () -> CatalogRef.parse(catalogField.getText()),
                 new ConcurrentHashMap<>());
         JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
         flowAutoCompletion.setSource(flowCompletion.getSource());
@@ -113,7 +114,7 @@ public final class DataSourceRefPanel extends JComponent {
         if (!updating) {
             DataSourceRef newModel = (DataSourceRef) event.getNewValue();
             sourceField.setText(newModel.getSource());
-            catalogField.setText(newModel.getCatalog());
+            catalogField.setText(newModel.getCatalog().toString());
             flowField.setText(newModel.getFlow());
             dimensionsField.setText(Formatter.onStringList(DataSourceRefPanel::join).formatAsString(newModel.getDimensions()));
             languagesField.setText(newModel.getLanguages().toString());
@@ -124,7 +125,7 @@ public final class DataSourceRefPanel extends JComponent {
         return e -> updateModel(dataSourceRef -> dataSourceRef
                 .toBuilder()
                 .source(sourceField.getText())
-                .catalog(catalogField.getText())
+                .catalog(CatalogRef.parse(catalogField.getText()))
                 .flow(flowField.getText())
 //                .dimensions(Parser.onStringList(JDataSourceRef::split).parse(dimensionsField.getText()))
                 .languages(languagesField.getText().isEmpty() ? Languages.ANY : Languages.parse(languagesField.getText()))

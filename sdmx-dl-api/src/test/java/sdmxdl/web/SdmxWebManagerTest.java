@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
 import sdmxdl.DataRepository;
 import sdmxdl.Feature;
-import sdmxdl.Options;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.Networking;
 import sdmxdl.web.spi.WebCaching;
@@ -187,13 +186,13 @@ public class SdmxWebManagerTest {
     public void testGetConnection() throws IOException {
         SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null, Options.DEFAULT));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((String) null, ANY));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection("ko", Options.DEFAULT))
+                .isThrownBy(() -> manager.getConnection("ko", ANY))
                 .as("Invalid source name");
 
-        assertThatCode(() -> manager.getConnection(sampleSource.getId(), Options.DEFAULT).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.getId(), ANY).close()).doesNotThrowAnyException();
 
         Driver driver1 = MockedDriver
                 .builder()
@@ -213,7 +212,7 @@ public class SdmxWebManagerTest {
                 .customSource(WebSource.builder().id("source").driver("d2").endpointOf(sample.getName()).build())
                 .build();
 
-        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source", Options.DEFAULT)) {
+        try (Connection c = SdmxWebManager.builder().driver(driver2).driver(driver1).build().getConnection("source", ANY)) {
             // TODO: create code that verifies that driver2 is selected
 //            assertThat(c.getDriver()).isEqualTo(driver2.getName());
         }
@@ -224,18 +223,18 @@ public class SdmxWebManagerTest {
     public void testGetConnectionOfSource() {
         SdmxWebManager manager = SdmxWebManager.builder().driver(sampleDriver).build();
 
-        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((WebSource) null, Options.DEFAULT));
+        assertThatNullPointerException().isThrownBy(() -> manager.getConnection((WebSource) null, ANY));
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build(), Options.DEFAULT))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().endpointOf("http://ko").build(), ANY))
                 .as("Invalid source endpoint");
 
         assertThatIOException()
-                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build(), Options.DEFAULT))
+                .isThrownBy(() -> manager.getConnection(sampleSource.toBuilder().driver("ko").build(), ANY))
                 .as("Invalid source driver");
 
-        assertThatCode(() -> manager.getConnection(sampleSource, Options.DEFAULT).close()).doesNotThrowAnyException();
-        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build(), Options.DEFAULT).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource, ANY).close()).doesNotThrowAnyException();
+        assertThatCode(() -> manager.getConnection(sampleSource.toBuilder().id("other").build(), ANY).close()).doesNotThrowAnyException();
     }
 
     private final DataRepository sample = DataRepository.builder().name("repo").build();

@@ -104,7 +104,7 @@ public class RepoSamples {
             .series(S3)
             .build();
 
-    public static final Catalog CATALOG = new Catalog("IIF", "Invest in Finland");
+    public static final Catalog CATALOG = new Catalog(CatalogRef.parse("IIF"), "Invest in Finland");
 
     public static final DataRepository EMPTY_REPO = DataRepository.builder().build();
 

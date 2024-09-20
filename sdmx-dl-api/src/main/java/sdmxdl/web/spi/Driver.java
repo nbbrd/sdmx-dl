@@ -20,15 +20,12 @@ import internal.sdmxdl.web.spi.FailsafeDriver;
 import lombok.NonNull;
 import nbbrd.design.ThreadSafe;
 import nbbrd.service.*;
-import sdmxdl.Catalog;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
-import sdmxdl.Options;
 import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Philippe Charles
@@ -42,7 +39,8 @@ import java.util.List;
 public interface Driver {
 
     @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
-    @NonNull String getDriverId();
+    @NonNull
+    String getDriverId();
 
     @ServiceSorter(reverse = true)
     int getDriverRank();
@@ -50,21 +48,18 @@ public interface Driver {
     @ServiceFilter
     boolean isDriverAvailable();
 
-    @NonNull Connection connect(
-            @NonNull WebSource source,
-            @NonNull Options options,
-            @NonNull WebContext context
-    ) throws IOException, IllegalArgumentException;
-
-    @NonNull List<Catalog> getCatalogs(
+    @NonNull
+    Connection connect(
             @NonNull WebSource source,
             @NonNull Languages languages,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 
-    @NonNull Collection<WebSource> getDefaultSources();
+    @NonNull
+    Collection<WebSource> getDefaultSources();
 
-    @NonNull Collection<String> getDriverProperties();
+    @NonNull
+    Collection<String> getDriverProperties();
 
     int NATIVE_DRIVER_RANK = Byte.MAX_VALUE;
     int WRAPPED_DRIVER_RANK = 0;

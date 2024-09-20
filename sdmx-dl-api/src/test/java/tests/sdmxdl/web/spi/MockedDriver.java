@@ -48,7 +48,7 @@ public final class MockedDriver implements Driver {
     }
 
     @Override
-    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
+    public @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
         checkSource(source);
 
         return repos
@@ -58,11 +58,6 @@ public final class MockedDriver implements Driver {
                 .map(entry -> new MockedConnection(entry.getKey(), entry.getValue()))
                 .findFirst()
                 .orElseThrow(() -> missingSource(source.toString(), WebSource.class));
-    }
-
-    @Override
-    public @NonNull List<Catalog> getCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException, IllegalArgumentException {
-        return catalogs;
     }
 
     @Override
@@ -113,13 +108,19 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() throws IOException {
+        public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+            checkState();
+            return repo.getCatalogs();
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
             checkState();
             return repo.getFlows();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             return repo
@@ -128,20 +129,20 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            StructureRef structRef = getFlow(flowRef).getStructureRef();
+            StructureRef structRef = getFlow(catalog, flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
                     .orElseThrow(() -> missingStructure(repo.getName(), structRef));
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
+            checkKey(query.getKey(), getStructure(catalog, flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
@@ -149,10 +150,10 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
+            checkKey(query.getKey(), getStructure(catalog, flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))

@@ -77,7 +77,6 @@ public final class PxWebDriver implements Driver {
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
             .connector(PxWebDriver::newConnection)
-            .cataloger(PxWebDriver::loadCatalogs)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(VERSIONS_PROPERTY)
             .propertyOf(LANGUAGES_PROPERTY)
@@ -112,17 +111,8 @@ public final class PxWebDriver implements Driver {
         );
     }
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Options options, @NonNull WebContext context) throws IOException {
-        String dbId = options.getCatalogId();
-        if (dbId == null || dbId.isEmpty()) {
-            throw new IOException("Catalog ID is required");
-        }
-
-        return new PxWebConnection(newClient(source, options.getLanguages(), context), dbId);
-    }
-
-    private static @NonNull List<Catalog> loadCatalogs(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
-        return newClient(source, languages, context).getDataBases();
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+        return new PxWebConnection(newClient(source, languages, context));
     }
 
     @VisibleForTesting
@@ -156,38 +146,45 @@ public final class PxWebDriver implements Driver {
         @NonNull
         private final PxWebClient client;
 
-        @NonNull
-        private final String dbId;
-
         @Override
         public void testConnection() throws IOException {
             client.getConfig();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() throws IOException {
-            return client.getTables(dbId);
+        public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+            return client.getDataBases();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
+        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
+            checkCatalog(catalog);
+            return client.getTables(catalog.getId());
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkCatalog(catalog);
+            return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, client);
+        }
+
+        @Override
+        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkCatalog(catalog);
             return client.getMeta(flowRef.getAgency(), flowRef.getId());
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkCatalog(catalog);
+            return ConnectionSupport.getDataSetFromStream(catalog, flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            Structure dsd = client.getMeta(flowRef.getAgency(), flowRef.getId());
-            DataCursor dataCursor = client.getData(flowRef.getAgency(), flowRef.getId(), dsd, query.getKey());
+        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkCatalog(catalog);
+            Structure dsd = client.getMeta(catalog.getId(), flowRef.getId());
+            DataCursor dataCursor = client.getData(catalog.getId(), flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -198,6 +195,12 @@ public final class PxWebDriver implements Driver {
 
         @Override
         public void close() {
+        }
+
+        private void checkCatalog(CatalogRef catalog) throws IOException {
+            if (catalog.equals(CatalogRef.NO_CATALOG)) {
+                throw new IOException("Catalog ID is required");
+            }
         }
     }
 
@@ -555,7 +558,7 @@ public final class PxWebDriver implements Driver {
         String text;
 
         Catalog toCatalog() {
-            return new Catalog(dbId, text);
+            return new Catalog(CatalogRef.parse(dbId), text);
         }
 
         static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
