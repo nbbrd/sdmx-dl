@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutionException;
 
 import static j2html.TagCreator.*;
 import static org.kordamp.ikonli.materialdesign.MaterialDesign.*;
-import static sdmxdl.desktop.Sdmxdl.lookupWebSource;
 
 public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
@@ -32,7 +31,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     @Override
     public Icon toIcon(DataSetRef value, Runnable onUpdate) {
-        return value.getKey().isSeries() ? Ikons.of(MDI_CHART_LINE, 16, WebSourceRenderer.getColor(lookupWebSource(value).getConfidentiality())) : null;
+        return value.getKey().isSeries() ? Ikons.of(MDI_CHART_LINE, 16, WebSourceRenderer.getColor(value.getDataSourceRef().toWebSource(Sdmxdl.INSTANCE.getSdmxManager()).getConfidentiality())) : null;
         //UIManager.getIcon(expanded ? "Tree.openIcon" : "Tree.closedIcon")
     }
 
@@ -131,7 +130,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
     private static URL getWebsite(JDocument<DataSetRef> c) {
         DataSetRef model = c.getModel();
         if (model == null) return null;
-        WebSource source = Sdmxdl.INSTANCE.getSdmxManager().getSources().get(model.getDataSourceRef().getSource());
+        WebSource source = model.getDataSourceRef().toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         if (source == null) return null;
         return source.getWebsite();
     }

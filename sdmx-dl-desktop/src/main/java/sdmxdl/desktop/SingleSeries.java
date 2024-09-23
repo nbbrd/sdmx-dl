@@ -27,7 +27,7 @@ public class SingleSeries {
     Duration duration = computeGlobalDuration();
 
     public static SingleSeries load(SdmxWebManager manager, DataSetRef ref) throws IOException {
-        try (Connection conn = manager.getConnection(ref.getDataSourceRef().getSource(), ref.getDataSourceRef().getLanguages())) {
+        try (Connection conn = ref.getDataSourceRef().getConnection(manager)) {
             return new SingleSeries(
                     conn.getStructure(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef()),
                     conn.getDataStream(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())

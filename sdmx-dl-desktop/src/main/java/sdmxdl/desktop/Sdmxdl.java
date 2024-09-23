@@ -8,7 +8,6 @@ import sdmxdl.HasPersistence;
 import sdmxdl.Languages;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.web.SdmxWebManager;
-import sdmxdl.web.WebSource;
 
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayOutputStream;
@@ -61,13 +60,5 @@ public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
         } else {
             return "Cannot format DSD";
         }
-    }
-
-    public static WebSource lookupWebSource(DataSetRef ref) {
-        return lookupWebSource(ref.getDataSourceRef());
-    }
-
-    public static WebSource lookupWebSource(DataSourceRef ref) {
-        return Sdmxdl.INSTANCE.getSdmxManager().getSources().get(ref.getSource());
     }
 }

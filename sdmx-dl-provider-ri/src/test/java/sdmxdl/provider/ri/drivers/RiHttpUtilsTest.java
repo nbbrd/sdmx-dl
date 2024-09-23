@@ -1,6 +1,7 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
+import nbbrd.io.http.HttpContext;
 import nbbrd.io.http.HttpEventListener;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.net.MediaType;
@@ -25,7 +26,9 @@ public class RiHttpUtilsTest {
     @Test
     public void testFactory() {
         assertThatNullPointerException()
-                .isThrownBy(() -> RiHttpUtils.newClient(null));
+                .isThrownBy(() -> RiHttpUtils.newClient(null, (WebContext) null));
+        assertThatNullPointerException()
+                .isThrownBy(() -> RiHttpUtils.newClient(null, (HttpContext) null));
     }
 
     WebSource source = WebSource

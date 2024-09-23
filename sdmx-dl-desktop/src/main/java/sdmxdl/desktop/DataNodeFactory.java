@@ -38,7 +38,7 @@ class DataNodeFactory implements DynamicTree.NodeFactory {
     }
 
     private static List<DataSetRef> getChildren(SdmxWebManager manager, DataSourceRef dataSourceRef, Key key) throws IOException {
-        try (Connection conn = manager.getConnection(dataSourceRef.getSource(), dataSourceRef.getLanguages())) {
+        try (Connection conn = dataSourceRef.getConnection(manager)) {
             Structure dsd = conn.getStructure(dataSourceRef.getCatalog(), dataSourceRef.toFlowRef());
             List<sdmxdl.Dimension> dimensionList = dsd.getDimensionList();
             Key.Builder builder = Key.builder(dsd);

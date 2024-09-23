@@ -7,9 +7,11 @@ import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
+import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.*;
@@ -21,13 +23,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 
 import static internal.sdmxdl.desktop.Collectors2.getSingle;
+import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
@@ -45,6 +52,15 @@ public final class MainComponent extends JComponent {
 
     public void setDataSources(@NonNull DefaultListModel<DataSourceRef> dataSources) {
         firePropertyChange(DATA_SOURCES_PROPERTY, this.dataSources, this.dataSources = dataSources);
+    }
+
+    public static final String SELECTED_DATA_REF_PROPERTY = "selectedDataRef";
+
+    @lombok.Getter
+    private Object selectedDataRef = null;
+
+    private void setSelectedDataRef(Object selectedDataRef) {
+        firePropertyChange(SELECTED_DATA_REF_PROPERTY, this.selectedDataRef, this.selectedDataRef = selectedDataRef);
     }
 
     private final JTree datasetsTree = new JTree();
@@ -92,6 +108,12 @@ public final class MainComponent extends JComponent {
         datasetsTree.getInputMap().put(getKeyStroke(VK_ENTER, 0), "SELECT_ACTION");
         datasetsTree.getActionMap().put("SELECT_ACTION", onActionPerformed(this::openCurrentDataSetRef));
         datasetsTree.setComponentPopupMenu(newDatasetsMenu().getPopupMenu());
+        datasetsTree.getSelectionModel().addTreeSelectionListener(ignore -> {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) datasetsTree.getLastSelectedPathComponent();
+            if (node != null) {
+                setSelectedDataRef(node.getUserObject());
+            }
+        });
 
         sourcesList.setCellRenderer(WebSourceRenderer.INSTANCE.asListCellRenderer(sourcesList::repaint));
         sourcesList.addMouseListener(onDoubleClick(e -> sourcesList.getActionMap().get("SELECT_ACTION").actionPerformed(null)));
@@ -135,20 +157,34 @@ public final class MainComponent extends JComponent {
 
     private JMenu newDatasetsMenu() {
         JMenu result = new JMenu();
-
         JMenuItem item;
 
-        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
-        item.setText("Pin dataset");
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::editDataSource).build().toAction(this)));
+        item.setText("Edit");
 
-        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
-        item.setText("Open DSD");
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::duplicateDataSource).build().toAction(this)));
+        item.setText("Duplicate");
 
-        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
-        item.setText("Open web site");
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::removeDataSource).build().toAction(this)));
+        item.setText("Remove");
 
-        item = result.add(NoOpCommand.INSTANCE.toAction(datasetsTree));
-        item.setText("Automate");
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openWebsite).predicate(MainComponent::hasWebsite).build().toAction(this)));
+        item.setText("Open website");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openMonitor).predicate(MainComponent::hasMonitor).build().toAction(this)));
+        item.setText("Open monitor");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openDumpFolder).predicate(MainComponent::hasDumpFolder).build().toAction(this)));
+        item.setText("Open dump folder");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::openDataSet).predicate((c, ref) -> ref.getKey().isSeries()).build().toAction(this)));
+        item.setText("<html><b>Open");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::openException).build().toAction(this)));
+        item.setText("<html><b>Open");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::copyException).build().toAction(this)));
+        item.setText("Copy");
 
         return result;
     }
@@ -225,17 +261,14 @@ public final class MainComponent extends JComponent {
     }
 
     private void openCurrentDataSetRef() {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) datasetsTree.getLastSelectedPathComponent();
-        if (node != null) {
-            Object userObject = node.getUserObject();
-            if (userObject instanceof DataSetRef) {
-                DataSetRef dataSetRef = (DataSetRef) userObject;
-                if (dataSetRef.getKey().isSeries()) {
-                    main.addIfAbsent(dataSetRef, DataSetRefRenderer.INSTANCE.asTabFactory(this));
-                }
-            } else if (userObject instanceof Exception) {
-                main.addIfAbsent((Exception) userObject, ExceptionRenderer.INSTANCE.asTabFactory(this));
+        Object userObject = getSelectedDataRef();
+        if (userObject instanceof DataSetRef) {
+            DataSetRef dataSetRef = (DataSetRef) userObject;
+            if (dataSetRef.getKey().isSeries()) {
+                openDataSet(dataSetRef);
             }
+        } else if (userObject instanceof Exception) {
+            openException((Exception) userObject);
         }
     }
 
@@ -321,7 +354,7 @@ public final class MainComponent extends JComponent {
         }
 
         @Override
-        public void execute(@NonNull MainComponent component) throws Exception {
+        public void execute(@NonNull MainComponent component) {
             component.main.addIfAbsent(
                     component.sourcesList.getSelectedValue(),
                     WebSourceRenderer.INSTANCE.asTabFactory(component)
@@ -340,6 +373,45 @@ public final class MainComponent extends JComponent {
         }
     }
 
+    @lombok.Builder
+    private static final class DataRefCommand<T> extends JCommand<MainComponent> {
+
+        public static <T> Builder<T> of(Class<T> type) {
+            return DataRefCommand.<T>builder().type(type);
+        }
+
+        private final Class<T> type;
+
+        @lombok.Builder.Default
+        private final IOBiConsumer<MainComponent, T> execution = DataRefCommand::noExecution;
+
+        @lombok.Builder.Default
+        private final BiPredicate<MainComponent, T> predicate = DataRefCommand::noPredicate;
+
+        @Override
+        public boolean isEnabled(@NonNull MainComponent c) {
+            if (!type.isInstance(c.getSelectedDataRef())) return false;
+            return predicate.test(c, type.cast(c.getSelectedDataRef()));
+        }
+
+        @Override
+        public void execute(@NonNull MainComponent c) throws IOException {
+            execution.acceptWithIO(c, type.cast(c.getSelectedDataRef()));
+        }
+
+        @Override
+        public JCommand<MainComponent>.@NonNull ActionAdapter toAction(@NonNull MainComponent c) {
+            return super.toAction(c).withWeakPropertyChangeListener(c, SELECTED_DATA_REF_PROPERTY);
+        }
+
+        private static void noExecution(MainComponent c, Object ref) {
+        }
+
+        private static boolean noPredicate(MainComponent c, Object ref) {
+            return true;
+        }
+    }
+
     private static String getSelectedSource(JList<WebSource> x) {
         return getSingle(x.getSelectedValuesList()).map(WebSource::getId).orElse(null);
     }
@@ -355,10 +427,95 @@ public final class MainComponent extends JComponent {
     public void addDataSource(DataSourceRef base) {
         DataSourceRefPanel panel = new DataSourceRefPanel();
         panel.setModel(base);
-        if (JOptionPane.showOptionDialog(this, panel, "Add dataset",
+        if (JOptionPane.showOptionDialog(this, panel, "Add datasource",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                 new Object[]{"Add", "Cancel"}, "Add") == 0) {
             getDataSources().addElement(panel.getModel());
+        }
+    }
+
+    public void removeDataSource(DataSourceRef base) {
+        if (JOptionPane.showConfirmDialog(this, "Remove datasource ?") == 0) {
+            getDataSources().removeElement(base);
+        }
+    }
+
+    public void editDataSource(DataSourceRef base) {
+        DataSourceRefPanel panel = new DataSourceRefPanel();
+        panel.setModel(base);
+        if (JOptionPane.showOptionDialog(this, panel, "Edit datasource",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                new Object[]{"Edit", "Cancel"}, "Add") == 0) {
+            getDataSources().removeElement(base);
+            getDataSources().addElement(panel.getModel());
+        }
+    }
+
+    public void duplicateDataSource(DataSourceRef base) {
+        DataSourceRefPanel panel = new DataSourceRefPanel();
+        panel.setModel(base);
+        if (JOptionPane.showOptionDialog(this, panel, "Duplicate datasource",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                new Object[]{"Duplicate", "Cancel"}, "Add") == 0) {
+            getDataSources().addElement(panel.getModel());
+        }
+    }
+
+    private void openDataSet(DataSetRef dataSetRef) {
+        main.addIfAbsent(dataSetRef, DataSetRefRenderer.INSTANCE.asTabFactory(this));
+    }
+
+    private void openException(Exception userObject) {
+        main.addIfAbsent(userObject, ExceptionRenderer.INSTANCE.asTabFactory(this));
+    }
+
+    private void copyException(Exception userObject) {
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+                .setContents(new StringSelection(userObject.toString()), null);
+    }
+
+    private boolean hasWebsite(DataSourceRef ref) {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        return source != null && source.getWebsite() != null;
+    }
+
+    private void openWebsite(DataSourceRef ref) throws IOException {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        if (source != null && source.getWebsite() != null) {
+            try {
+                Desktop.getDesktop().browse(source.getWebsite().toURI());
+            } catch (URISyntaxException ex) {
+                throw new IOException(ex);
+            }
+        }
+    }
+
+    private boolean hasMonitor(DataSourceRef ref) {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        return source != null && source.getMonitorWebsite() != null;
+    }
+
+    private void openMonitor(DataSourceRef ref) throws IOException {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        if (source != null && source.getMonitorWebsite() != null) {
+            try {
+                Desktop.getDesktop().browse(source.getMonitorWebsite().toURI());
+            } catch (URISyntaxException ex) {
+                throw new IOException(ex);
+            }
+        }
+    }
+
+    private boolean hasDumpFolder(DataSourceRef ref) {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        return source != null && source.getProperties().containsKey(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey())
+                && ec.util.desktop.DesktopManager.get().isSupported(ec.util.desktop.Desktop.Action.SHOW_IN_FOLDER);
+    }
+
+    private void openDumpFolder(DataSourceRef ref) throws IOException {
+        WebSource source = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        if (source != null && source.getProperties().containsKey(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey())) {
+            ec.util.desktop.DesktopManager.get().showInFolder(Objects.requireNonNull(RiHttpUtils.DUMP_FOLDER_PROPERTY.get(source.getProperties())));
         }
     }
 

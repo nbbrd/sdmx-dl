@@ -41,6 +41,7 @@ public final class DataSourceRefPanel extends JComponent {
     private final JTextField flowField = new JTextField();
     private final JTextField dimensionsField = new JTextField();
     private final JTextField languagesField = new JTextField();
+    private final JCheckBox debugBox = new JCheckBox();
     private boolean updating = false;
 
     public DataSourceRefPanel() {
@@ -76,8 +77,6 @@ public final class DataSourceRefPanel extends JComponent {
 
         dimensionsField.setEnabled(false);
 
-        languagesField.setEnabled(false);
-
         JPanel panel = new JPanel(new MigLayout("ins 20", "[para]0[][100lp, fill][60lp][95lp, fill]", ""));
 
         addSeparator(panel, "Source");
@@ -99,15 +98,19 @@ public final class DataSourceRefPanel extends JComponent {
         panel.add(new JLabel("Languages"), "skip");
         panel.add(languagesField, "span, growx");
 
+        panel.add(new JLabel("Debug"), "skip");
+        panel.add(debugBox, "span, growx");
+
         setLayout(new BorderLayout());
         add(BorderLayout.CENTER, new JScrollPane(panel));
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
-        sourceField.getDocument().addDocumentListener(onDocumentChange());
-        catalogField.getDocument().addDocumentListener(onDocumentChange());
-        flowField.getDocument().addDocumentListener(onDocumentChange());
-        dimensionsField.getDocument().addDocumentListener(onDocumentChange());
-        languagesField.getDocument().addDocumentListener(onDocumentChange());
+        sourceField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        catalogField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        flowField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        dimensionsField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        languagesField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        debugBox.addChangeListener(ignore -> updateModel());
     }
 
     private void onModelChange(PropertyChangeEvent event) {
@@ -118,17 +121,19 @@ public final class DataSourceRefPanel extends JComponent {
             flowField.setText(newModel.getFlow());
             dimensionsField.setText(Formatter.onStringList(DataSourceRefPanel::join).formatAsString(newModel.getDimensions()));
             languagesField.setText(newModel.getLanguages().toString());
+            debugBox.setSelected(newModel.isDebug());
         }
     }
 
-    private DocumentAdapter onDocumentChange() {
-        return e -> updateModel(dataSourceRef -> dataSourceRef
+    private void updateModel() {
+        updateModel(dataSourceRef -> dataSourceRef
                 .toBuilder()
                 .source(sourceField.getText())
                 .catalog(CatalogRef.parse(catalogField.getText()))
                 .flow(flowField.getText())
 //                .dimensions(Parser.onStringList(JDataSourceRef::split).parse(dimensionsField.getText()))
                 .languages(languagesField.getText().isEmpty() ? Languages.ANY : Languages.parse(languagesField.getText()))
+                .debug(debugBox.isSelected())
                 .build());
     }
 

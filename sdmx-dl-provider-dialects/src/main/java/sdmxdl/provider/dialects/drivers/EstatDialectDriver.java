@@ -171,7 +171,7 @@ public final class EstatDialectDriver implements Driver {
         int asyncMaxRetries = ASYNC_MAX_RETRIES_PROPERTY.get(s.getProperties());
         long asyncSleepTime = ASYNC_SLEEP_TIME_PROPERTY.get(s.getProperties());
         return new InterceptingClient(
-                RiHttpUtils.newClient(RiHttpUtils.newContext(s, c)),
+                RiHttpUtils.newClient(s, RiHttpUtils.newContext(s, c)),
                 (client, request, response) -> checkCodesInMessageFooter(client, response, asyncSleepTime, asyncMaxRetries)
         );
     }

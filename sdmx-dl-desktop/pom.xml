@@ -77,6 +77,10 @@
             <artifactId>java-desktop-util-chart</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.nbbrd.java-desktop-util</groupId>
+            <artifactId>java-desktop-util-os</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
             <version>${flatlaf.version}</version>
@@ -116,7 +120,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>sdmx-dl-provider-ri</artifactId>
             <version>${project.version}</version>
-            <scope>runtime</scope>
+<!--            <scope>runtime</scope>-->
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

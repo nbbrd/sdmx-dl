@@ -87,6 +87,7 @@ public class Main {
 
     private static void printError(WebSource source, String marker, CharSequence message, IOException error) {
         System.err.println("[" + source.getId() + "] (" + marker + ") " + message + ": " + error.getMessage());
+        error.printStackTrace(System.err);
     }
 
     private static void printRegistryEvent(CharSequence message) {

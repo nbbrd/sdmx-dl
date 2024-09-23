@@ -48,6 +48,7 @@ public final class XmlDataSourceRef {
         String flow;
         List<String> dimensions;
         String languages;
+        boolean debug;
 
         static DataSourceBean from(DataSourceRef ref) {
             DataSourceBean result = new DataSourceBean();
@@ -56,6 +57,7 @@ public final class XmlDataSourceRef {
             result.flow = ref.getFlow();
             result.dimensions = ref.getDimensions();
             result.languages = ref.getLanguages().toString();
+            result.debug = ref.isDebug();
             return result;
         }
 
@@ -67,6 +69,7 @@ public final class XmlDataSourceRef {
                     .flow(flow)
                     .dimensions(dimensions != null ? dimensions : emptyList())
                     .languages(Languages.parse(languages))
+                    .debug(debug)
                     .build();
         }
     }

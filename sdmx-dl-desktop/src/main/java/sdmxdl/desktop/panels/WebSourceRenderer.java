@@ -41,7 +41,7 @@ public enum WebSourceRenderer implements Renderer<WebSource> {
 
     @Override
     public Icon toIcon(WebSource value, Runnable onUpdate) {
-        return Sdmxdl.INSTANCE.getIconSupport().getIcon(value.getId(), 16, onUpdate);
+        return Sdmxdl.INSTANCE.getIconSupport().getIcon(value, 16, onUpdate);
     }
 
     @Override

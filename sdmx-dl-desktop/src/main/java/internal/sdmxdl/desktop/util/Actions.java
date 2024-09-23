@@ -4,6 +4,7 @@ import lombok.NonNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
 import java.util.function.Consumer;
 
 public final class Actions {
@@ -16,6 +17,7 @@ public final class Actions {
         return onActionPerformed(ignore -> action.run());
     }
 
+
     public static @NonNull Action onActionPerformed(@NonNull Consumer<? super ActionEvent> action) {
         return new AbstractAction() {
             @Override
@@ -24,4 +26,16 @@ public final class Actions {
             }
         };
     }
+
+    public static <C extends AbstractButton> @NonNull C hideWhenDisabled(@NonNull C c) {
+        c.setVisible(c.isEnabled());
+        c.addPropertyChangeListener(HIDE);
+        return c;
+    }
+
+    private static final PropertyChangeListener HIDE = evt -> {
+        if ("enabled".equals(evt.getPropertyName()) && evt.getSource() instanceof JComponent) {
+            ((JComponent) evt.getSource()).setVisible((Boolean) evt.getNewValue());
+        }
+    };
 }

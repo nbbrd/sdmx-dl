@@ -23,8 +23,8 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
         FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
         String text = flowStruct != null ? flowStruct.getFlow().getName() : value.getFlow();
 
-        WebSource webSource = Sdmxdl.lookupWebSource(value);
-        return html(small(webSource != null ? id(webSource, value.getCatalog(), value.getLanguages()) : id(value.getSource(), value.getCatalog(), value.getLanguages())), text(" "), text(text)).render();
+        WebSource webSource = value.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        return html(small(htmlDebug(value)), small(webSource != null ? id(webSource, value.getCatalog(), value.getLanguages()) : id(value.getSource(), value.getCatalog(), value.getLanguages())), text(" "), text(text)).render();
     }
 
     @Override
@@ -36,11 +36,15 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
     @Override
     public String toTooltip(DataSourceRef value, Runnable onUpdate) {
         FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
-        return html(htmlSource(value), br(), htmlFlow(value, flowStruct), br(), htmlDimensions(value)).render();
+        return html(htmlDebug(value), htmlSource(value), br(), htmlFlow(value, flowStruct), br(), htmlDimensions(value)).render();
+    }
+
+    private static DomContent htmlDebug(DataSourceRef value) {
+        return value.isDebug() ? labelTag("DEBUG", UIManager.getColor("Tree.icon.leafColor")) : text("");
     }
 
     private static DomContent htmlSource(DataSourceRef ref) {
-        WebSource webSource = Sdmxdl.lookupWebSource(ref);
+        WebSource webSource = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         return webSource != null
                 ? idAndName(webSource, ref.getCatalog(), ref.getLanguages())
                 : id(ref.getSource(), ref.getCatalog(), ref.getLanguages());

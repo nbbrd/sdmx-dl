@@ -50,12 +50,8 @@ public final class SdmxIconSupport {
         return new FlatSVGIcon("sdmxdl/desktop/SDMX_logo.svg", 16, 16);
     }
 
-    public Icon getIcon(String source, int size, Runnable onUpdate) {
-        return getIcon(properties.getSdmxManager().getSources().get(source), size, onUpdate);
-    }
-
     public Icon getIcon(DataSourceRef dataSourceRef, int size, Runnable onUpdate) {
-        return getIcon(dataSourceRef.getSource(), size, onUpdate);
+        return getIcon(dataSourceRef.toWebSource(properties.getSdmxManager()), size, onUpdate);
     }
 
     public Icon getIcon(WebSource source, int size, Runnable onUpdate) {

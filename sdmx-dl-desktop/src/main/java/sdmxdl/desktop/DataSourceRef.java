@@ -1,11 +1,19 @@
 package sdmxdl.desktop;
 
 import lombok.NonNull;
-import sdmxdl.CatalogRef;
-import sdmxdl.FlowRef;
-import sdmxdl.Languages;
+import nbbrd.io.sys.SystemProperties;
+import sdmxdl.*;
+import sdmxdl.provider.ri.caching.RiCaching;
+import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.web.SdmxWebManager;
+import sdmxdl.web.WebSource;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true)
@@ -30,7 +38,31 @@ public class DataSourceRef {
     @NonNull
     Languages languages = Sdmxdl.INSTANCE.getLanguages();
 
+    @lombok.Singular
+    Map<String, String> properties;
+
+    @lombok.Builder.Default
+    boolean debug = false;
+
     public FlowRef toFlowRef() {
         return FlowRef.parse(flow);
+    }
+
+    public WebSource toWebSource(SdmxWebManager manager) {
+        WebSource result = manager.getSources().get(source);
+        if (result == null) return null;
+        WebSource.Builder builder = result.toBuilder().properties(properties);
+        if (debug) {
+            Path tmp = requireNonNull(SystemProperties.DEFAULT.getJavaIoTmpdir()).resolve(About.NAME).resolve("debug_" + source);
+            builder.property(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey(), tmp.resolve("dump").toString());
+            builder.property(RiCaching.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
+            builder.property(RiCaching.NO_COMPRESSION_PROPERTY.getKey(), "true");
+            builder.property(RiCaching.PERSISTENCE_ID_PROPERTY.getKey(), "JSON");
+        }
+        return builder.build();
+    }
+
+    public Connection getConnection(SdmxWebManager manager) throws IOException {
+        return manager.getConnection(toWebSource(manager), languages);
     }
 }
