@@ -43,14 +43,8 @@ public class RiHttpUtilsTest {
         assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        String previous = System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world");
-        try {
-            assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
-                    .startsWith("hello world");
-        } finally {
-            if (previous != null)
-                System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), previous);
-        }
+        assertThat(RiHttpUtils.newContext(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext()).getUserAgent())
+                .startsWith("hello world");
     }
 
     @Test
