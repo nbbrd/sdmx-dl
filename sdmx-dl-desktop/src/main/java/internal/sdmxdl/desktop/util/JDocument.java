@@ -23,7 +23,7 @@ public final class JDocument<T> extends JComponent {
 
     private final JToolBar toolBar = new JToolBar();
 
-    private final JTabbedPane content = new JTabbedPane();
+    private final JTabbedPane tabs = new JTabbedPane();
 
     private final List<Item<T>> items = new ArrayList<>();
 
@@ -33,11 +33,11 @@ public final class JDocument<T> extends JComponent {
 
     private void initComponents() {
         toolBar.add(Box.createHorizontalGlue());
-        content.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
+        tabs.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
 //        content.setTabPlacement(JTabbedPane.BOTTOM);
 
         setLayout(new BorderLayout());
-        add(content, BorderLayout.CENTER);
+        add(tabs, BorderLayout.CENTER);
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
     }
@@ -47,7 +47,8 @@ public final class JDocument<T> extends JComponent {
     }
 
     private void updateContent() {
-        content.removeAll();
+        tabs.removeAll();
+        removeAll();
         switch (items.size()) {
             case 0:
                 break;
@@ -55,8 +56,8 @@ public final class JDocument<T> extends JComponent {
                 add(items.get(0).component, BorderLayout.CENTER);
                 break;
             default:
-                add(content, BorderLayout.CENTER);
-                items.forEach(item -> content.addTab(item.title, item.component));
+                add(tabs, BorderLayout.CENTER);
+                items.forEach(item -> tabs.addTab(item.title, item.component));
                 break;
         }
     }

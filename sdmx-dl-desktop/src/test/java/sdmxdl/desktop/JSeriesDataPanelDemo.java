@@ -1,6 +1,7 @@
 package sdmxdl.desktop;
 
 import ec.util.various.swing.BasicSwingLauncher;
+import internal.sdmxdl.desktop.util.AccentColors;
 import sdmxdl.desktop.panels.DataPanel;
 import tests.sdmxdl.api.RepoSamples;
 
@@ -17,7 +18,7 @@ public class JSeriesDataPanelDemo {
                     AbstractAction load = new AbstractAction("Load") {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            panel.setModel(new SingleSeries(RepoSamples.STRUCT, RepoSamples.S1));
+                            panel.setModel(new SingleSeries(RepoSamples.STRUCT, RepoSamples.S1, AccentColors.DARK_BLUE));
                         }
                     };
                     AbstractAction clear = new AbstractAction("Clear") {

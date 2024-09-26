@@ -6,6 +6,7 @@ import sdmxdl.provider.ext.SeriesMeta;
 import sdmxdl.provider.ext.SeriesMetaFactory;
 import sdmxdl.web.SdmxWebManager;
 
+import java.awt.*;
 import java.io.IOException;
 
 import static internal.sdmxdl.desktop.Collectors2.single;
@@ -19,6 +20,9 @@ public class SingleSeries {
     @NonNull
     Series series;
 
+    @NonNull
+    Color accentColor;
+
     @lombok.Getter(lazy = true)
     @NonNull
     SeriesMeta meta = SeriesMetaFactory.getDefault(getDsd()).get(getSeries());
@@ -26,13 +30,14 @@ public class SingleSeries {
     @lombok.Getter(lazy = true)
     Duration duration = computeGlobalDuration();
 
-    public static SingleSeries load(SdmxWebManager manager, DataSetRef ref) throws IOException {
+    public static SingleSeries load(SdmxWebManager manager, DataSetRef ref, Color accentColor) throws IOException {
         try (Connection conn = ref.getDataSourceRef().getConnection(manager)) {
             return new SingleSeries(
                     conn.getStructure(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef()),
                     conn.getDataStream(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
                             .findFirst()
-                            .orElseGet(() -> Series.builder().key(ref.getKey()).build())
+                            .orElseGet(() -> Series.builder().key(ref.getKey()).build()),
+                    accentColor
             );
         }
     }

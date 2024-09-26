@@ -5,6 +5,7 @@ import nbbrd.io.xml.bind.Jaxb;
 import sdmxdl.CatalogRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
+import sdmxdl.desktop.Toggle;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -49,6 +50,7 @@ public final class XmlDataSourceRef {
         List<String> dimensions;
         String languages;
         boolean debug;
+        Toggle curlBackend;
 
         static DataSourceBean from(DataSourceRef ref) {
             DataSourceBean result = new DataSourceBean();
@@ -58,6 +60,7 @@ public final class XmlDataSourceRef {
             result.dimensions = ref.getDimensions();
             result.languages = ref.getLanguages().toString();
             result.debug = ref.isDebug();
+            result.curlBackend = ref.getCurlBackend();
             return result;
         }
 
@@ -70,6 +73,7 @@ public final class XmlDataSourceRef {
                     .dimensions(dimensions != null ? dimensions : emptyList())
                     .languages(Languages.parse(languages))
                     .debug(debug)
+                    .curlBackend(curlBackend)
                     .build();
         }
     }

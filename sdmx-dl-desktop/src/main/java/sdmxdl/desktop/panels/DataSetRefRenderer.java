@@ -85,7 +85,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
         new SwingWorker<SingleSeries, Void>() {
             @Override
             protected SingleSeries doInBackground() throws Exception {
-                return SingleSeries.load(Sdmxdl.INSTANCE.getSdmxManager(), value);
+                return SingleSeries.load(Sdmxdl.INSTANCE.getSdmxManager(), value, WebSourceRenderer.getColor(value.getDataSourceRef().toWebSource(Sdmxdl.INSTANCE.getSdmxManager()).getConfidentiality()));
             }
 
             @Override

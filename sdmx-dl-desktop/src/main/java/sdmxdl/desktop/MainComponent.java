@@ -177,8 +177,14 @@ public final class MainComponent extends JComponent {
         item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::openDumpFolder).predicate(MainComponent::hasDumpFolder).build().toAction(this)));
         item.setText("Open dump folder");
 
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::copyPath).build().toAction(this)));
+        item.setText("Copy path");
+
         item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::openDataSet).predicate((c, ref) -> ref.getKey().isSeries()).build().toAction(this)));
         item.setText("<html><b>Open");
+
+        item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::copyPath).build().toAction(this)));
+        item.setText("Copy path");
 
         item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::openException).build().toAction(this)));
         item.setText("<html><b>Open");
@@ -517,6 +523,16 @@ public final class MainComponent extends JComponent {
         if (source != null && source.getProperties().containsKey(RiHttpUtils.DUMP_FOLDER_PROPERTY.getKey())) {
             ec.util.desktop.DesktopManager.get().showInFolder(Objects.requireNonNull(RiHttpUtils.DUMP_FOLDER_PROPERTY.get(source.getProperties())));
         }
+    }
+
+    private void copyPath(DataSourceRef ref) throws IOException {
+        String path = ref.getSource() + "/" + ref.getCatalog() + "/" + ref.getFlow();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
+    }
+
+    private void copyPath(DataSetRef ref) throws IOException {
+        String path = ref.getDataSourceRef().getSource() + "/" + ref.getDataSourceRef().getCatalog() + "/" + ref.getDataSourceRef().getFlow() + "/" + ref.getKey();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
     }
 
     public void load() {

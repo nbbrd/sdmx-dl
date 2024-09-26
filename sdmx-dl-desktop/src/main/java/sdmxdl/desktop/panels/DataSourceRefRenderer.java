@@ -1,8 +1,13 @@
 package sdmxdl.desktop.panels;
 
+import com.formdev.flatlaf.util.ColorFunctions;
+import internal.Colors;
+import internal.sdmxdl.desktop.util.AccentColors;
 import j2html.tags.DomContent;
+import j2html.tags.specialized.KbdTag;
 import sdmxdl.CatalogRef;
-import sdmxdl.Confidentiality;
+import sdmxdl.Flow;
+import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.FlowStruct;
@@ -10,6 +15,7 @@ import sdmxdl.desktop.Sdmxdl;
 import sdmxdl.web.WebSource;
 
 import javax.swing.*;
+import java.awt.*;
 
 import static internal.sdmxdl.desktop.util.Html4Swing.labelTag;
 import static j2html.TagCreator.*;
@@ -20,11 +26,7 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
 
     @Override
     public String toText(DataSourceRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
-        String text = flowStruct != null ? flowStruct.getFlow().getName() : value.getFlow();
-
-        WebSource webSource = value.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
-        return html(small(htmlDebug(value)), small(webSource != null ? id(webSource, value.getCatalog(), value.getLanguages()) : id(value.getSource(), value.getCatalog(), value.getLanguages())), text(" "), text(text)).render();
+        return html(small(sourceId(value)), text(" "), flowName(value, onUpdate)).render();
     }
 
     @Override
@@ -35,38 +37,56 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
 
     @Override
     public String toTooltip(DataSourceRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
-        return html(htmlDebug(value), htmlSource(value), br(), htmlFlow(value, flowStruct), br(), htmlDimensions(value)).render();
+        return html(sourceIdAndName(value), br(), flowRefAndName(value, onUpdate), br(), htmlDimensions(value)).render();
     }
 
-    private static DomContent htmlDebug(DataSourceRef value) {
-        return value.isDebug() ? labelTag("DEBUG", UIManager.getColor("Tree.icon.leafColor")) : text("");
+    private static DomContent sourceId(DataSourceRef ref) {
+        WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        if (s != null) {
+            DomContent sourceId = sourceId(s, ref.getCatalog(), ref.getLanguages());
+            return ref.isDebug()
+                    ? each(debugPrefix(getPrefixColor(getColor(s))), sourceId)
+                    : sourceId;
+        } else {
+            DomContent sourceId = sourceId(ref.getSource(), ref.getCatalog(), ref.getLanguages());
+            return ref.isDebug()
+                    ? each(debugPrefix(getFallbackColor()), sourceId)
+                    : sourceId;
+        }
     }
 
-    private static DomContent htmlSource(DataSourceRef ref) {
-        WebSource webSource = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
-        return webSource != null
-                ? idAndName(webSource, ref.getCatalog(), ref.getLanguages())
-                : id(ref.getSource(), ref.getCatalog(), ref.getLanguages());
+    private static DomContent sourceIdAndName(DataSourceRef ref) {
+        WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        if (s != null) {
+            DomContent sourceIdAndName = sourceIdAndName(s, ref.getCatalog(), ref.getLanguages());
+            return ref.isDebug()
+                    ? each(debugPrefix(getPrefixColor(getColor(s))), sourceIdAndName)
+                    : sourceIdAndName;
+        } else {
+            DomContent sourceId = sourceId(ref.getSource(), ref.getCatalog(), ref.getLanguages());
+            return ref.isDebug()
+                    ? each(debugPrefix(getFallbackColor()), sourceId)
+                    : sourceId;
+        }
     }
 
-    private static DomContent id(String value, CatalogRef catalogId, Languages languages) {
+    private static DomContent sourceId(String value, CatalogRef catalogId, Languages languages) {
         return labelTag(value
                         + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
                         + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
-                WebSourceRenderer.getColor(Confidentiality.SECRET)
+                getFallbackColor()
         );
     }
 
-    private static DomContent idAndName(WebSource value, CatalogRef catalogId, Languages languages) {
-        return join(id(value, catalogId, languages), text(" "), name(value, catalogId, languages));
+    private static DomContent sourceIdAndName(WebSource value, CatalogRef catalogId, Languages languages) {
+        return join(sourceId(value, catalogId, languages), name(value, catalogId, languages));
     }
 
-    private static DomContent id(WebSource value, CatalogRef catalogId, Languages languages) {
+    private static DomContent sourceId(WebSource value, CatalogRef catalogId, Languages languages) {
         return labelTag(value.getId()
                         + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
                         + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
-                WebSourceRenderer.getColor(value.getConfidentiality())
+                getColor(value)
         );
     }
 
@@ -74,13 +94,50 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
         return text(value.getName(languages));
     }
 
-    private static DomContent htmlFlow(DataSourceRef ref, FlowStruct fs) {
-        return fs != null
-                ? join(labelTag(fs.getFlow().getRef().toString(), UIManager.getColor("Tree.icon.leafColor")), text(" "), text(fs.getFlow().getName()))
-                : labelTag(ref.getFlow(), UIManager.getColor("Tree.icon.leafColor"));
+    private DomContent flowName(DataSourceRef value, Runnable onUpdate) {
+        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
+        return text(flowStruct != null ? flowStruct.getFlow().getName() : value.getFlow());
+    }
+
+    private static DomContent flowRefAndName(DataSourceRef ref, Runnable onUpdate) {
+        FlowStruct fs = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(ref, onUpdate);
+        WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
+        Color color = s != null ? getColor(s) : getFallbackColor();
+        return fs != null ? flowRefAndName(fs.getFlow(), color) : flowRef(ref, color);
+    }
+
+    private static DomContent flowRefAndName(Flow flow, Color color) {
+        return join(flowRef(flow.getRef(), color), text(flow.getName()));
+    }
+
+    private static DomContent flowRef(DataSourceRef ref, Color color) {
+        return flowRef(ref.toFlowRef(), color);
+    }
+
+    private static DomContent flowRef(FlowRef ref, Color color) {
+        Color secondary = getFallbackColor();
+        return each(labelTag(ref.getAgency(), secondary), labelTag(ref.getId(), color), labelTag(ref.getVersion(), secondary));
     }
 
     private static DomContent htmlDimensions(DataSourceRef ref) {
         return each(ref.getDimensions(), dimension -> each(text(dimension), br()));
+    }
+
+    private static Color getColor(WebSource s) {
+        return WebSourceRenderer.getColor(s.getConfidentiality());
+    }
+
+    private static Color getFallbackColor() {
+        return UIManager.getColor("Tree.icon.leafColor");
+    }
+
+    private static KbdTag debugPrefix(Color color) {
+        return labelTag("⏵", color);
+    }
+
+    private static Color getPrefixColor(Color color) {
+        return Colors.isDark(color)
+                ? ColorFunctions.lighten(color, .25f)
+                : ColorFunctions.darken(color, .25f);
     }
 }

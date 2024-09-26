@@ -3,6 +3,7 @@ package sdmxdl.desktop.panels;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatIconColors;
 import ec.util.completion.swing.JAutoCompletion;
+import ec.util.list.swing.JLists;
 import internal.sdmxdl.desktop.SdmxAutoCompletion;
 import internal.sdmxdl.desktop.util.Ikons;
 import nbbrd.design.MightBePromoted;
@@ -12,6 +13,7 @@ import sdmxdl.CatalogRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.Sdmxdl;
+import sdmxdl.desktop.Toggle;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -42,6 +44,7 @@ public final class DataSourceRefPanel extends JComponent {
     private final JTextField dimensionsField = new JTextField();
     private final JTextField languagesField = new JTextField();
     private final JCheckBox debugBox = new JCheckBox();
+    private final JComboBox<Toggle> curlBackendBox = new JComboBox<>(Toggle.values());
     private boolean updating = false;
 
     public DataSourceRefPanel() {
@@ -101,6 +104,9 @@ public final class DataSourceRefPanel extends JComponent {
         panel.add(new JLabel("Debug"), "skip");
         panel.add(debugBox, "span, growx");
 
+        panel.add(new JLabel("CURL backend"), "skip");
+        panel.add(curlBackendBox, "span, growx");
+
         setLayout(new BorderLayout());
         add(BorderLayout.CENTER, new JScrollPane(panel));
 
@@ -111,6 +117,7 @@ public final class DataSourceRefPanel extends JComponent {
         dimensionsField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
         languagesField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
         debugBox.addChangeListener(ignore -> updateModel());
+        curlBackendBox.getModel().addListDataListener(JLists.dataListenerOf(ignore -> updateModel()));
     }
 
     private void onModelChange(PropertyChangeEvent event) {
@@ -122,6 +129,7 @@ public final class DataSourceRefPanel extends JComponent {
             dimensionsField.setText(Formatter.onStringList(DataSourceRefPanel::join).formatAsString(newModel.getDimensions()));
             languagesField.setText(newModel.getLanguages().toString());
             debugBox.setSelected(newModel.isDebug());
+            curlBackendBox.setSelectedItem(newModel.getCurlBackend());
         }
     }
 
@@ -134,6 +142,7 @@ public final class DataSourceRefPanel extends JComponent {
 //                .dimensions(Parser.onStringList(JDataSourceRef::split).parse(dimensionsField.getText()))
                 .languages(languagesField.getText().isEmpty() ? Languages.ANY : Languages.parse(languagesField.getText()))
                 .debug(debugBox.isSelected())
+                .curlBackend((Toggle) curlBackendBox.getSelectedItem())
                 .build());
     }
 

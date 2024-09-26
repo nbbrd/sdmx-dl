@@ -5,6 +5,7 @@ import nbbrd.io.sys.SystemProperties;
 import sdmxdl.*;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.provider.ri.networking.RiNetworking;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -44,6 +45,10 @@ public class DataSourceRef {
     @lombok.Builder.Default
     boolean debug = false;
 
+    @lombok.Builder.Default
+    @NonNull
+    Toggle curlBackend = Toggle.DEFAULT;
+
     public FlowRef toFlowRef() {
         return FlowRef.parse(flow);
     }
@@ -58,6 +63,9 @@ public class DataSourceRef {
             builder.property(RiCaching.CACHE_FOLDER_PROPERTY.getKey(), tmp.resolve("cache").toString());
             builder.property(RiCaching.NO_COMPRESSION_PROPERTY.getKey(), "true");
             builder.property(RiCaching.PERSISTENCE_ID_PROPERTY.getKey(), "JSON");
+        }
+        if (curlBackend != Toggle.DEFAULT) {
+            builder.property(RiNetworking.URL_BACKEND_PROPERTY.getKey(), curlBackend.equals(Toggle.ENABLE) ? "CURL" : "JDK");
         }
         return builder.build();
     }

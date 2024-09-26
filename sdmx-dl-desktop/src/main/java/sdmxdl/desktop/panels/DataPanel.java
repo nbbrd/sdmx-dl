@@ -9,6 +9,7 @@ import ec.util.grid.swing.GridModel;
 import ec.util.grid.swing.JGrid;
 import ec.util.grid.swing.XTable;
 import ec.util.table.swing.JTables;
+import internal.sdmxdl.desktop.util.AccentColorScheme;
 import internal.sdmxdl.desktop.util.GridChart;
 import internal.sdmxdl.desktop.util.SystemLafColorScheme;
 import j2html.tags.DomContent;
@@ -39,6 +40,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static internal.sdmxdl.desktop.util.Html4Swing.labelTag;
 import static j2html.TagCreator.*;
 
 public final class DataPanel extends JComponent {
@@ -105,7 +107,7 @@ public final class DataPanel extends JComponent {
             grid.setModel(asGridModel(model));
             grid.setDefaultRenderer(Object.class, new CustomCellRenderer(grid, model));
             grid.setCornerRenderer(JTables.cellRendererOf((label, value) -> {
-                label.setText(model.getDuration() != null ? model.getDuration().toString() : null);
+                label.setText(model.getDuration() != null ? html(small(labelTag(model.getDuration().toString(), model.getAccentColor()))).render() : null);
                 label.setHorizontalAlignment(JLabel.CENTER);
             }));
             chart.setDataset(asChartModel(model));
@@ -113,6 +115,7 @@ public final class DataPanel extends JComponent {
             chart.setObsFormatter(asObsFunction(model));
             chart.setPeriodFormat(getDateFormat(model.getMeta()));
             chart.putClientProperty("fixme_item", model);
+            chart.setColorSchemeSupport(SwingColorSchemeSupport.from(new AccentColorScheme(model.getAccentColor())));
         } else {
             grid.setModel(null);
             chart.setDataset(null);
@@ -144,7 +147,7 @@ public final class DataPanel extends JComponent {
 
             @Override
             public String getColumnName(int column) {
-                return item.getDsd().getPrimaryMeasureId();
+                return html(small(labelTag(item.getDsd().getPrimaryMeasureId(), model.getAccentColor()))).render();
             }
 
             @Override
