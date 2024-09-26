@@ -98,16 +98,15 @@ public final class PxWebDriver implements Driver {
     private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
-                getBaseURL(source, languages),
+                getDefaultClientBaseURL(source, languages),
                 RiHttpUtils.newClient(source, context)
         );
 
-        return CachedPxWebClient.of(
+        return new CachedPxWebClient(
                 client,
                 context.getDriverCache(source),
-                CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source,
-                languages
+                getCachedClientBaseURI(source, languages),
+                Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
         );
     }
 
@@ -115,23 +114,15 @@ public final class PxWebDriver implements Driver {
         return new PxWebConnection(newClient(source, languages, context));
     }
 
-    @VisibleForTesting
-    static @NonNull URL getBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
-        try {
-            return UriTemplate.expand(source.getEndpoint(), getUriTemplateVariables(source, languages)).toURL();
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
+    private static String resolveVersion(WebSource source) {
+        List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+        return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
     }
 
-    private static Map<String, String> getUriTemplateVariables(WebSource source, Languages languages) {
-        List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+    private static String resolveLanguage(WebSource source, Languages requested) {
         List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
-        String language = availableLanguages != null ? lookupLanguage(availableLanguages, languages) : null;
-        Map<String, String> result = new HashMap<>();
-        result.put(VERSION_VARIABLE, versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION);
-        result.put(LANGUAGE_VARIABLE, language != null ? language : DEFAULT_LANG);
-        return result;
+        String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
+        return language != null ? language : DEFAULT_LANG;
     }
 
     @VisibleForTesting
@@ -220,6 +211,18 @@ public final class PxWebDriver implements Driver {
 
         @NonNull
         DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+    }
+
+    @VisibleForTesting
+    static @NonNull URL getDefaultClientBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+        Map<String, String> variables = new HashMap<>();
+        variables.put(VERSION_VARIABLE, resolveVersion(source));
+        variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
+        try {
+            return UriTemplate.expand(source.getEndpoint(), variables).toURL();
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -338,18 +341,13 @@ public final class PxWebDriver implements Driver {
         }
     }
 
+    @VisibleForTesting
+    static URI getCachedClientBaseURI(WebSource source, Languages languages) {
+        return TypedId.resolveURI(URI.create("cache:pxweb"), source.getEndpoint().getHost(), resolveLanguage(source, languages));
+    }
+
     @lombok.AllArgsConstructor
     private static final class CachedPxWebClient implements PxWebClient {
-
-        static @NonNull CachedPxWebClient of(
-                @NonNull PxWebClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull WebSource source, @NonNull Languages languages) {
-            return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
-        }
-
-        private static URI getBase(WebSource source, Languages languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
-        }
 
         @lombok.NonNull
         private final PxWebClient delegate;
@@ -358,19 +356,19 @@ public final class PxWebDriver implements Driver {
         private final Cache<DataRepository> cache;
 
         @lombok.NonNull
-        private final URI base;
+        private final URI baseURI;
 
         @lombok.NonNull
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Catalog>> idOfDatabases = initIdOfDatabases(base);
+        private final TypedId<List<Catalog>> idOfDatabases = initIdOfDatabases(baseURI);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Flow>> idOfTables = initIdOfTables(base);
+        private final TypedId<List<Flow>> idOfTables = initIdOfTables(baseURI);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<Structure> idOfMeta = initIdOfMeta(base);
+        private final TypedId<Structure> idOfMeta = initIdOfMeta(baseURI);
 
         private static TypedId<List<Catalog>> initIdOfDatabases(URI base) {
             return TypedId.of(base,

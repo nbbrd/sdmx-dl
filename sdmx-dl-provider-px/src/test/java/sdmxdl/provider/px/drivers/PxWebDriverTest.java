@@ -87,31 +87,59 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testGetBaseURL() throws IOException {
+    public void testGetDefaultClientBaseURL() throws IOException {
         WebSource empty = WebSource
                 .builder().id("").driver("")
                 .endpointOf("https://localhost/_VERSION_/_LANG_")
                 .propertyOf(VERSIONS_PROPERTY, "v1")
                 .build();
 
-        assertThat(getBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
 
         WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
 
-        assertThat(getBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, NL)).hasToString("https://localhost/v1/en");
 
         WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
 
-        assertThat(getBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
+    }
+
+    @Test
+    public void testGetCachedClientBaseURI() throws IOException {
+        WebSource empty = WebSource
+                .builder().id("").driver("")
+                .endpointOf("https://localhost/_VERSION_/_LANG_")
+                .propertyOf(VERSIONS_PROPERTY, "v1")
+                .build();
+
+        assertThat(getCachedClientBaseURI(empty, ANY)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(empty, EN)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(empty, FR_BE)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(empty, NL)).hasToString("cache:pxweb/localhost/en");
+
+        WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
+
+        assertThat(getCachedClientBaseURI(en, ANY)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(en, EN)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(en, FR_BE)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(en, NL)).hasToString("cache:pxweb/localhost/en");
+
+        WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
+
+        assertThat(getCachedClientBaseURI(fr, ANY)).hasToString("cache:pxweb/localhost/fr");
+        assertThat(getCachedClientBaseURI(fr, EN)).hasToString("cache:pxweb/localhost/fr");
+        assertThat(getCachedClientBaseURI(fr, FR_BE)).hasToString("cache:pxweb/localhost/fr");
+        assertThat(getCachedClientBaseURI(fr, NL)).hasToString("cache:pxweb/localhost/fr");
     }
 
     @Test
