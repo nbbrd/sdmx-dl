@@ -90,9 +90,9 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
             @Override
             protected void done() {
+                result.clearComponents();
                 try {
                     SingleSeries singleSeries = get();
-                    result.clearComponents();
                     DataPanel dataPanel = new DataPanel();
                     dataPanel.setModel(singleSeries);
                     result.addComponent("Data", dataPanel);
@@ -106,7 +106,9 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
                     dsdTextArea.setModel(DataRepository.builder().structure(singleSeries.getDsd()).build());
                     result.addComponent("DSD", dsdTextArea);
                 } catch (InterruptedException | ExecutionException ex) {
-//                    reportError(ex.getCause());
+                    ExceptionPanel exceptionPanel = new ExceptionPanel();
+                    exceptionPanel.setException(ex.getCause());
+                    result.addComponent("ERROR", exceptionPanel);
                 }
             }
         }.execute();

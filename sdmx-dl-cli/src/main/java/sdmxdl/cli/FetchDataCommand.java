@@ -30,6 +30,7 @@ import sdmxdl.format.csv.SdmxCsvFieldWriter;
 import sdmxdl.format.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -101,6 +102,8 @@ public final class FetchDataCommand implements Callable<Void> {
             return stream
                     .sorted(WebFlowOptions.SERIES_BY_KEY)
                     .collect(toDataSet(web.getFlow(), query));
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 

@@ -8,6 +8,7 @@ import sdmxdl.web.SdmxWebManager;
 
 import java.awt.*;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static internal.sdmxdl.desktop.Collectors2.single;
 
@@ -39,6 +40,8 @@ public class SingleSeries {
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build()),
                     accentColor
             );
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 

@@ -21,6 +21,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import sdmxdl.*;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -61,6 +62,8 @@ public class SdmxCubeUtil {
         }
         try (Stream<Series> stream = request(conn, catalog, flow, leaf, NO_DATA)) {
             return stream.findFirst();
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 
@@ -70,6 +73,8 @@ public class SdmxCubeUtil {
         }
         try (Stream<Series> stream = request(conn, catalog, flow, leaf, FULL)) {
             return stream.findFirst();
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 
@@ -120,6 +125,8 @@ public class SdmxCubeUtil {
     private Map<Key, Series> dataByKey(Connection conn, @NonNull CatalogRef catalog, FlowRef flow, Key key) throws IOException {
         try (Stream<Series> cursor = request(conn, catalog, flow, key, FULL)) {
             return cursor.collect(Collectors.toMap(Series::getKey, Function.identity()));
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 

@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add confidentiality property to WebSource [#518](https://github.com/nbbrd/sdmx-dl/issues/518)
 - ![API] Add missing properties methods in extensions points [#781](https://github.com/nbbrd/sdmx-dl/issues/781)
+- ![API] Add support of catalogs
 - ![CLI] Add check sources command [#515](https://github.com/nbbrd/sdmx-dl/issues/515)
 
 ### Changed
@@ -19,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![PROVIDER] Fix hidden IO exception when using data stream
 - ![CLI] Fix sources file env variable in CLI [#779](https://github.com/nbbrd/sdmx-dl/issues/779)
 
 ## [3.0.0-beta.13] - 2024-09-06

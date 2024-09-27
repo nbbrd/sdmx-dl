@@ -34,7 +34,7 @@ public final class ExceptionPanel extends JComponent {
 
     public static final String EXCEPTION_PROPERTY = "exception";
 
-    private Exception exception;
+    private Throwable exception;
 
     private final JEditorPane editorPane;
 
@@ -69,13 +69,13 @@ public final class ExceptionPanel extends JComponent {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters">
-    public void setException(Exception exception) {
-        Exception old = this.exception;
+    public void setException(Throwable exception) {
+        Throwable old = this.exception;
         this.exception = exception;
         firePropertyChange(EXCEPTION_PROPERTY, old, this.exception);
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return exception;
     }
     //</editor-fold>
