@@ -9,6 +9,7 @@ import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
 import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
+import sdmxdl.CatalogRef;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
@@ -24,10 +25,12 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
@@ -38,6 +41,7 @@ import static internal.sdmxdl.desktop.util.Actions.hideWhenDisabled;
 import static internal.sdmxdl.desktop.util.Actions.onActionPerformed;
 import static internal.sdmxdl.desktop.util.JTrees.toDefaultMutableTreeNode;
 import static internal.sdmxdl.desktop.util.MouseListeners.onDoubleClick;
+import static j2html.TagCreator.*;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.KeyStroke.getKeyStroke;
@@ -178,13 +182,13 @@ public final class MainComponent extends JComponent {
         item.setText("Open dump folder");
 
         item = hideWhenDisabled(result.add(DataRefCommand.of(DataSourceRef.class).execution(MainComponent::copyPath).build().toAction(this)));
-        item.setText("Copy path");
+        item.setText("Copy Path/Reference...");
 
         item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::openDataSet).predicate((c, ref) -> ref.getKey().isSeries()).build().toAction(this)));
         item.setText("<html><b>Open");
 
         item = hideWhenDisabled(result.add(DataRefCommand.of(DataSetRef.class).execution(MainComponent::copyPath).build().toAction(this)));
-        item.setText("Copy path");
+        item.setText("Copy Path/Reference...");
 
         item = hideWhenDisabled(result.add(DataRefCommand.of(Exception.class).execution(MainComponent::openException).build().toAction(this)));
         item.setText("<html><b>Open");
@@ -526,13 +530,25 @@ public final class MainComponent extends JComponent {
     }
 
     private void copyPath(DataSourceRef ref) throws IOException {
-        String path = ref.getSource() + "/" + ref.getCatalog() + "/" + ref.getFlow();
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
+        String uri = "sdmxdl:/" + ref.getSource() + "/" + ref.getFlow() + (!ref.getCatalog().equals(CatalogRef.NO_CATALOG) ? "?c=" + ref.getCatalog() : "");
+        String command = "sdmx-dl fetch keys " + ref.getSource() + " " + ref.getFlow() + " all" + (!ref.getCatalog().equals(CatalogRef.NO_CATALOG) ? " -c" + ref.getCatalog() : "");
+        String xml = XmlDataSourceRef.FORMATTER2.formatToString(Collections.singletonList(ref));
+
+        JMenu menu = new JMenu();
+        menu.add(copyToClipboard(uri)).setText(html(text("SDMX-DL URI: "), code(uri)).render());
+        menu.add(copyToClipboard(command)).setText(html(text("CLI command: "), code(command)).render());
+        menu.add(copyToClipboard(xml)).setText(html(text("XML reference")).render());
+        showMenuAsPopup(menu);
     }
 
     private void copyPath(DataSetRef ref) throws IOException {
-        String path = ref.getDataSourceRef().getSource() + "/" + ref.getDataSourceRef().getCatalog() + "/" + ref.getDataSourceRef().getFlow() + "/" + ref.getKey();
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
+        String uri = "sdmxdl:/" + ref.getDataSourceRef().getSource() + "/" + ref.getDataSourceRef().getFlow() + "/" + ref.getKey() + (!ref.getDataSourceRef().getCatalog().equals(CatalogRef.NO_CATALOG) ? "?c=" + ref.getDataSourceRef().getCatalog() : "");
+        String command = "sdmx-dl fetch data " + ref.getDataSourceRef().getSource() + " " + ref.getDataSourceRef().getFlow() + " " + ref.getKey() + (!ref.getDataSourceRef().getCatalog().equals(CatalogRef.NO_CATALOG) ? " -c" + ref.getDataSourceRef().getCatalog() : "");
+
+        JMenu menu = new JMenu();
+        menu.add(copyToClipboard(uri)).setText(html(text("SDMX-DL URI: "), code(uri)).render());
+        menu.add(copyToClipboard(command)).setText(html(text("CLI command: "), code(command)).render());
+        showMenuAsPopup(menu);
     }
 
     public void load() {
@@ -560,6 +576,21 @@ public final class MainComponent extends JComponent {
         panel.setPreferredSize(new Dimension(500, 300));
         panel.setException(ex);
         JOptionPane.showMessageDialog(null, panel, ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+    }
+
+    private static AbstractAction copyToClipboard(String text) {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+            }
+        };
+    }
+
+    private void showMenuAsPopup(JMenu menu) {
+        Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(mousePosition, this);
+        menu.getPopupMenu().show(this, mousePosition.x, mousePosition.y);
     }
 
     private static final Preferences PREFERENCES = Preferences.userNodeForPackage(MainComponent.class).node(MainComponent.class.getSimpleName());

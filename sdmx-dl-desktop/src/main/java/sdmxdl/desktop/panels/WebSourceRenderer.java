@@ -65,7 +65,7 @@ public enum WebSourceRenderer implements Renderer<WebSource> {
 
     private static DomContent dom(WebSource value, Languages languages) {
         return join(
-                labelTag(value.getId(), getColor(value.getConfidentiality())),
+                small(labelTag(value.getId(), getColor(value.getConfidentiality()))),
                 text(" " + value.getName(languages))
         );
     }

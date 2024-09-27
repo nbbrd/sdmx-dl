@@ -21,6 +21,7 @@ public final class XmlDataSourceRef {
 
     public static final Xml.Parser<List<DataSourceRef>> PARSER = Jaxb.Parser.of(DataSourceBeans.class).andThen(DataSourceBeans::to);
     public static final Xml.Formatter<List<DataSourceRef>> FORMATTER = Jaxb.Formatter.of(DataSourceBeans.class).compose(DataSourceBeans::from);
+    public static final Xml.Formatter<List<DataSourceRef>> FORMATTER2 = Jaxb.Formatter.of(DataSourceBeans.class).withFormatted(true).compose(DataSourceBeans::from);
 
     @XmlRootElement
     @lombok.Data

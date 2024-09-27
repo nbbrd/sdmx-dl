@@ -60,7 +60,9 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
     public JDocument<DataSetRef> toView(MainComponent main, DataSetRef value) {
         JDocument<DataSetRef> result = new JDocument<>();
         result.setModel(value);
-        result.addComponent("...", new JLabel("loading"));
+        XLabel loading = new XLabel();
+        loading.setText("<html><center><b>Loading</b><br>" + toHeaderText(value, null));
+        result.addComponent("...", loading);
 
         result.addToolBarItem(new ButtonBuilder()
                 .action(BrowseCommand.ofURL(DataSetRefRenderer::getWebsite)
