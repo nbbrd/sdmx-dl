@@ -498,19 +498,23 @@ public final class PxWebDriver implements Driver {
             return dsd
                     .toBuilder()
                     .clearDimensions()
-                    .dimension(FREQ_DIMENSION)
+                    .dimension(MANDATORY_FREQ_AS_FIRST_DIMENSION)
                     .dimensions(dsd.getDimensionList()
                             .stream()
-                            .map(PxWebSdmxDataCursor::fixDimensionCode)
+                            .map(dimension -> dimension
+                                    .toBuilder()
+                                    .id(removeInvalidCharactersFromDimensionName(dimension.getName()))
+                                    .build())
                             .collect(toList()))
                     .build();
         }
 
-        private static Dimension fixDimensionCode(Dimension dimension) {
-            return dimension.toBuilder().id(dimension.getName().replace(" ", "")).build();
+        @VisibleForTesting
+        static String removeInvalidCharactersFromDimensionName(String name) {
+            return name.replaceAll("[\\s()]", "");
         }
 
-        private static final Dimension FREQ_DIMENSION = Dimension
+        private static final Dimension MANDATORY_FREQ_AS_FIRST_DIMENSION = Dimension
                 .builder()
                 .id("FREQ")
                 .name("")

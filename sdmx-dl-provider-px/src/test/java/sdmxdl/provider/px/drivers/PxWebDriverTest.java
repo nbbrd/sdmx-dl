@@ -160,6 +160,18 @@ public class PxWebDriverTest {
         assertThat(lookupLanguage(setOf("fr", "en"), NL)).isEqualTo("fr");
     }
 
+    @Test
+    public void testRemoveInvalidCharactersFromDimensionName() {
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Tuotteet toimialoittain (CPA 2015)"))
+                .isEqualTo("TuotteettoimialoittainCPA2015");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Palvelun kohde"))
+                .isEqualTo("Palvelunkohde");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Tiedot"))
+                .isEqualTo("Tiedot");
+    }
+
     private static <T> Set<T> setOf(T... values) {
         return new LinkedHashSet<>(Arrays.asList(values));
     }
