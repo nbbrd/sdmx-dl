@@ -21,6 +21,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![PROVIDER] Fix hidden IO exception when using data stream
+- ![PROVIDER] Fix cache key in PxWebDriver
+- ![PROVIDER] Fix invalid characters in dimension names in PxWebDriver
 - ![CLI] Fix sources file env variable in CLI [#779](https://github.com/nbbrd/sdmx-dl/issues/779)
 
 ## [3.0.0-beta.13] - 2024-09-06

@@ -8,6 +8,8 @@ import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.Toggle;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,11 +21,22 @@ public final class XmlDataSourceRef {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static final Xml.Parser<List<DataSourceRef>> PARSER = Jaxb.Parser.of(DataSourceBeans.class).andThen(DataSourceBeans::to);
-    public static final Xml.Formatter<List<DataSourceRef>> FORMATTER = Jaxb.Formatter.of(DataSourceBeans.class).compose(DataSourceBeans::from);
-    public static final Xml.Formatter<List<DataSourceRef>> FORMATTER2 = Jaxb.Formatter.of(DataSourceBeans.class).withFormatted(true).compose(DataSourceBeans::from);
+    public static final Xml.Parser<List<DataSourceRef>> LIST_PARSER = Jaxb.Parser.of(DataSourceBeans.class).andThen(DataSourceBeans::to);
+    public static final Xml.Formatter<List<DataSourceRef>> LIST_FORMATTER = Jaxb.Formatter.of(DataSourceBeans.class).compose(DataSourceBeans::from);
 
-    @XmlRootElement
+    public static String formatToString(DataSourceRef ref) {
+        try {
+            return Jaxb.Formatter
+                    .of(DataSourceBean.class)
+                    .withFormatted(true)
+                    .compose(DataSourceBean::from)
+                    .formatToString(ref);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @XmlRootElement(name = "dataSourceRefs")
     @lombok.Data
     public static class DataSourceBeans {
 
@@ -41,7 +54,7 @@ public final class XmlDataSourceRef {
     }
 
 
-    @XmlRootElement
+    @XmlRootElement(name = "dataSourceRef")
     @lombok.Data
     public static class DataSourceBean {
 
