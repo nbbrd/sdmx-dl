@@ -161,15 +161,24 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testRemoveInvalidCharactersFromDimensionName() {
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Tuotteet toimialoittain (CPA 2015)"))
+    public void testConvertDimensionNameToId() {
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tuotteet toimialoittain (CPA 2015)"))
                 .isEqualTo("TuotteettoimialoittainCPA2015");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Palvelun kohde"))
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Palvelun kohde"))
                 .isEqualTo("Palvelunkohde");
 
-        assertThat(PxWebDriver.PxWebSdmxDataCursor.removeInvalidCharactersFromDimensionName("Tiedot"))
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tiedot"))
                 .isEqualTo("Tiedot");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Koulutusala ja koulutuksen sisältö"))
+                .isEqualTo("Koulutusalajakoulutuksensislt");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Industries_luok"))
+                .isEqualTo("Industries_luok");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Underlying cause of death (86-group short list)"))
+                .isEqualTo("Underlyingcauseofdeath86-groupshortlist");
     }
 
     private static <T> Set<T> setOf(T... values) {

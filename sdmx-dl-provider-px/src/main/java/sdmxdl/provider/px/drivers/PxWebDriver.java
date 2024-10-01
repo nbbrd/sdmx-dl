@@ -503,15 +503,25 @@ public final class PxWebDriver implements Driver {
                             .stream()
                             .map(dimension -> dimension
                                     .toBuilder()
-                                    .id(removeInvalidCharactersFromDimensionName(dimension.getName()))
+                                    .id(convertDimensionNameToId(dimension.getName()))
                                     .build())
                             .collect(toList()))
                     .build();
         }
 
+        /**
+         * Convert a PxWeb variable text to an SDMX dimension ID.
+         * <p>
+         * Surprisingly, PxWeb variable code is not used as SDMX dimension ID when getting data.
+         * The PxWeb variable text is used instead after being normalized to a valid SDMX ID.
+         * Note that the PxWeb variable text is dependent of the requested language.
+         *
+         * @param name the name to be converted
+         * @return the converted ID
+         */
         @VisibleForTesting
-        static String removeInvalidCharactersFromDimensionName(String name) {
-            return name.replaceAll("[\\s()]", "");
+        static String convertDimensionNameToId(String name) {
+            return name.replaceAll("[^a-zA-Z0-9_\\-]", "");
         }
 
         private static final Dimension MANDATORY_FREQ_AS_FIRST_DIMENSION = Dimension
