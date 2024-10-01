@@ -47,7 +47,7 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testTableMeta() throws IOException {
+    public void testTableMetaWithTime() throws IOException {
         PxWebDriver.TableMeta meta = PxWebDriver.TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
         assertThat(meta.getVariables())
                 .hasSize(4)
@@ -70,6 +70,15 @@ public class PxWebDriverTest {
                 .satisfies(o -> {
                     assertThat(o.getDimensions()).hasSize(3);
                 });
+    }
+
+    @Test
+    public void testGetTimeVariable() throws IOException {
+        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8).getTimeVariable())
+                .returns("Vuosi", TableVariable::getCode);
+
+        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "grande-region-a301-table-meta.json", UTF_8).getTimeVariable())
+                .returns("Année", TableVariable::getCode);
     }
 
     @Test

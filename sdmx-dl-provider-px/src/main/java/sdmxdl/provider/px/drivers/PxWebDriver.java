@@ -20,6 +20,7 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
@@ -46,6 +47,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 @DirectImpl
@@ -625,29 +627,44 @@ public final class PxWebDriver implements Driver {
     @lombok.Value
     static class TableMeta {
 
+        private static final String DEFAULT_PRIMARY_MEASURE = "";
+        private static final String DEFAULT_NAME = "";
+
         List<TableVariable> variables;
 
         Structure toDataStructure(StructureRef ref) {
+            TableVariable timeVariable = getTimeVariable();
             return Structure
                     .builder()
                     .ref(ref)
-                    .timeDimensionId(toTimeDimensionId())
-                    .primaryMeasureId("")
-                    .name("")
-                    .dimensions(toDimensionList())
+                    .timeDimensionId(timeVariable.getCode())
+                    .primaryMeasureId(DEFAULT_PRIMARY_MEASURE)
+                    .name(DEFAULT_NAME)
+                    .dimensions(toDimensionList(timeVariable))
                     .build();
         }
 
-        List<Dimension> toDimensionList() {
+        @VisibleForTesting
+        TableVariable getTimeVariable() {
+            return variables
+                    .stream()
+                    .filter(TableVariable::isTime)
+                    .findFirst()
+                    .orElseGet(() -> variables
+                            .stream()
+                            .filter(variable -> variable.getValueTexts().stream().map(TIME_PERIOD_PARSER::parse).allMatch(Objects::nonNull))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException("Time variable not found")));
+        }
+
+        List<Dimension> toDimensionList(TableVariable timeVariable) {
             return CollectionUtil.indexedStreamOf(variables)
-                    .filter(item -> !item.getElement().isTime())
+                    .filter(item -> !timeVariable.equals(item.getElement()))
                     .map(item -> item.getElement().toDimension(item.getIndex() + 1))
                     .collect(Collectors.toList());
         }
 
-        private String toTimeDimensionId() {
-            return variables.stream().filter(TableVariable::isTime).findFirst().orElseThrow(IllegalArgumentException::new).getCode();
-        }
+        static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats.getObservationalTimePeriod(IGNORE_ERROR);
 
         static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
                 .builder(TableMeta.class)
