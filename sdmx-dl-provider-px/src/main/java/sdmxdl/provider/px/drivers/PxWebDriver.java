@@ -164,7 +164,7 @@ public final class PxWebDriver implements Driver {
         @Override
         public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             checkCatalog(catalog);
-            return client.getMeta(flowRef.getAgency(), flowRef.getId());
+            return client.getMeta(catalog.getId(), flowRef.getId());
         }
 
         @Override
@@ -288,14 +288,14 @@ public final class PxWebDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getTablesParser(dbId, response.getContentType())
+                return getTablesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<List<Flow>> getTablesParser(String dbId, MediaType ignore) {
+        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
             return Table.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(table -> table.toDataflow(dbId)).collect(toList()));
+                    .andThen(tables -> Stream.of(tables).map(Table::toDataflow).collect(toList()));
         }
 
         @Override
@@ -310,14 +310,14 @@ public final class PxWebDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getMetaParser(dbId, tableId, response.getContentType())
+                return getMetaParser(tableId, response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<Structure> getMetaParser(String dbId, String tableId, MediaType ignore) {
+        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(dbId, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(null, tableId, null)));
         }
 
         @Override
@@ -598,11 +598,11 @@ public final class PxWebDriver implements Driver {
         String path;
         String title;
 
-        Flow toDataflow(String dbId) {
+        Flow toDataflow() {
             return Flow
                     .builder()
-                    .ref(FlowRef.of(dbId, id, null))
-                    .structureRef(StructureRef.of(dbId, id, null))
+                    .ref(FlowRef.of(null, id, null))
+                    .structureRef(StructureRef.of(null, id, null))
                     .name(title)
                     .build();
         }
