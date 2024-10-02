@@ -47,8 +47,10 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testTableMetaWithTime() throws IOException {
+    public void testTableMeta() throws IOException {
         PxWebDriver.TableMeta meta = PxWebDriver.TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
+        assertThat(meta.getTitle())
+                .isEqualTo("Accommodation establishment capacity by municipality by Municipality, Type of establishment, Year and Information");
         assertThat(meta.getVariables())
                 .hasSize(4)
                 .satisfies(o -> {
@@ -66,7 +68,7 @@ public class PxWebDriverTest {
                     assertThat(o.isTime()).isTrue();
                 }, Index.atIndex(2));
 
-        assertThat(meta.toDataStructure(StructureRef.parse("hello")))
+        assertThat(meta.toStructure(StructureRef.parse("hello")))
                 .satisfies(o -> {
                     assertThat(o.getDimensions()).hasSize(3);
                 });

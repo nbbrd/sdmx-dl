@@ -317,7 +317,7 @@ public final class PxWebDriver implements Driver {
 
         private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(null, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toStructure(StructureRef.of(null, tableId, null)));
         }
 
         @Override
@@ -455,14 +455,14 @@ public final class PxWebDriver implements Driver {
 
         @Override
         @Nullable
-        public String getSeriesAttribute(@NonNull String key) throws IllegalStateException {
-            return null;
+        public String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException {
+            return delegate.getSeriesAttribute(key);
         }
 
         @Override
         @NonNull
-        public Map<String, String> getSeriesAttributes() throws IllegalStateException {
-            return Collections.emptyMap();
+        public Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException {
+            return delegate.getSeriesAttributes();
         }
 
         @Override
@@ -627,20 +627,19 @@ public final class PxWebDriver implements Driver {
     @lombok.Value
     static class TableMeta {
 
-        private static final String DEFAULT_PRIMARY_MEASURE = "";
-        private static final String DEFAULT_NAME = "";
-
+        String title;
         List<TableVariable> variables;
 
-        Structure toDataStructure(StructureRef ref) {
+        Structure toStructure(StructureRef ref) {
             TableVariable timeVariable = getTimeVariable();
             return Structure
                     .builder()
                     .ref(ref)
                     .timeDimensionId(timeVariable.getCode())
                     .primaryMeasureId(DEFAULT_PRIMARY_MEASURE)
-                    .name(DEFAULT_NAME)
+                    .name(title)
                     .dimensions(toDimensionList(timeVariable))
+                    .attribute(UNIT_MEASURE_ATTRIBUTE)
                     .build();
         }
 
@@ -664,6 +663,15 @@ public final class PxWebDriver implements Driver {
                     .collect(Collectors.toList());
         }
 
+        static final String DEFAULT_PRIMARY_MEASURE = "OBS_VALUE";
+
+        static final Attribute UNIT_MEASURE_ATTRIBUTE = Attribute
+                .builder()
+                .id("UNIT_MEASURE")
+                .name("Unit measure")
+                .relationship(AttributeRelationship.SERIES)
+                .build();
+
         static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats.getObservationalTimePeriod(IGNORE_ERROR);
 
         static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
@@ -677,6 +685,7 @@ public final class PxWebDriver implements Driver {
             JsonObject x = json.getAsJsonObject();
             JsonArray y = x.getAsJsonArray("variables");
             return new TableMeta(
+                    x.get("title").getAsString(),
                     GsonUtil.asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
             );
         }
