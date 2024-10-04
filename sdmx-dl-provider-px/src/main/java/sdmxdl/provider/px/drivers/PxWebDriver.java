@@ -345,7 +345,7 @@ public final class PxWebDriver implements Driver {
 
     @VisibleForTesting
     static URI getCachedClientBaseURI(WebSource source, Languages languages) {
-        return TypedId.resolveURI(URI.create("cache:pxweb"), source.getEndpoint().getHost(), resolveLanguage(source, languages));
+        return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
     }
 
     @lombok.AllArgsConstructor

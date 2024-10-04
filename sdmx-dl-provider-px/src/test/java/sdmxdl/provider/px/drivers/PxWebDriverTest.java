@@ -133,24 +133,24 @@ public class PxWebDriverTest {
                 .propertyOf(VERSIONS_PROPERTY, "v1")
                 .build();
 
-        assertThat(getCachedClientBaseURI(empty, ANY)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(empty, EN)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(empty, FR_BE)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(empty, NL)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(empty, ANY)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, EN)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, FR_BE)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, NL)).hasToString("cache:pxweb/_ca7ff5d/en");
 
         WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
 
-        assertThat(getCachedClientBaseURI(en, ANY)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(en, EN)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(en, FR_BE)).hasToString("cache:pxweb/localhost/en");
-        assertThat(getCachedClientBaseURI(en, NL)).hasToString("cache:pxweb/localhost/en");
+        assertThat(getCachedClientBaseURI(en, ANY)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, EN)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, FR_BE)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, NL)).hasToString("cache:pxweb/_dee2f11/en");
 
         WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
 
-        assertThat(getCachedClientBaseURI(fr, ANY)).hasToString("cache:pxweb/localhost/fr");
-        assertThat(getCachedClientBaseURI(fr, EN)).hasToString("cache:pxweb/localhost/fr");
-        assertThat(getCachedClientBaseURI(fr, FR_BE)).hasToString("cache:pxweb/localhost/fr");
-        assertThat(getCachedClientBaseURI(fr, NL)).hasToString("cache:pxweb/localhost/fr");
+        assertThat(getCachedClientBaseURI(fr, ANY)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, EN)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, FR_BE)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, NL)).hasToString("cache:pxweb/_c3c36b2/fr");
     }
 
     @Test

@@ -280,7 +280,7 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private static URI getBase(WebSource source, Languages languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return TypedId.resolveURI(URI.create("cache:statcan"), TypedId.getUniqueID(source), languages.toString());
         }
 
         @lombok.NonNull
