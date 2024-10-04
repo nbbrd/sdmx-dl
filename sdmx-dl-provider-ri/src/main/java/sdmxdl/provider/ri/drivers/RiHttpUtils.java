@@ -108,7 +108,7 @@ public class RiHttpUtils {
     }
 
     private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
-        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
+        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping " + file.toUri()));
     }
 
     @lombok.AllArgsConstructor
