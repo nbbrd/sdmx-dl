@@ -257,7 +257,7 @@
                                 <argument>list</argument>
                                 <argument>sources</argument>
                                 <argument>-o</argument>
-                                <argument>${project.parent.basedir}/docs/tmp/sources.csv</argument>
+                                <argument>${project.parent.basedir}/docs/assets/sources.csv</argument>
                                 <argument>--no-config</argument>
                             </arguments>
                         </configuration>
