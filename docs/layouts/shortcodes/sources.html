@@ -9,7 +9,7 @@
         </tr>
     </thead>
     <tbody>
-    {{ range $i, $r := getCSV "," "tmp/sources.csv" }}
+    {{ range $i, $r := resources.Get "sources.csv" | transform.Unmarshal (dict "delimiter" ",") }}
     {{ if ne $i 0 }}
     <tr>
         {{ $id := index $r 0 }}
