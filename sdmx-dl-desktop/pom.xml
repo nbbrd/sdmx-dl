@@ -20,7 +20,7 @@
     <properties>
         <project.x.mainClass>sdmxdl.desktop.Main</project.x.mainClass>
         <ikonli.version>2.6.0</ikonli.version>
-        <flatlaf.version>3.5.2</flatlaf.version>
+        <flatlaf.version>3.5.3</flatlaf.version>
     </properties>
 
     <dependencyManagement>
