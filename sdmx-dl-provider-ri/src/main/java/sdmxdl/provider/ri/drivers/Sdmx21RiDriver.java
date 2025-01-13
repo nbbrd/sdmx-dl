@@ -306,7 +306,7 @@ public final class Sdmx21RiDriver implements Driver {
                     .name("es", "Solución Comercial Integrada Mundial")
                     .driver(RI_SDMX_21)
                     .confidentiality(Confidentiality.PUBLIC)
-                    .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
+                    .endpointOf("https://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .propertyOf(TRAILING_SLASH_PROPERTY, true)
                     .websiteOf("https://wits.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")

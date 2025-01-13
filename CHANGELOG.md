@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- ![SOURCE] Fix WITS endpoint [#860](https://github.com/nbbrd/sdmx-dl/issues/860)
 - ![PROVIDER] Fix hidden IO exception when using data stream
 - ![PROVIDER] Fix cache key in PxWebDriver
 - ![PROVIDER] Fix dimension IDs in PxWebDriver

@@ -255,7 +255,7 @@ public final class Sdmx21Driver implements Driver {
                     .name("en", "World Integrated Trade Solutions")
                     .driver(CONNECTORS_SDMX_21)
                     .confidentiality(Confidentiality.PUBLIC)
-                    .endpointOf("http://wits.worldbank.org/API/V1/SDMX/V21/rest")
+                    .endpointOf("https://wits.worldbank.org/API/V1/SDMX/V21/rest")
                     .websiteOf("https://wits.worldbank.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/WITS")
                     .monitorWebsiteOf("https://nbbrd.github.io/sdmx-upptime/history/wits")
