@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.135.0">
+<meta name="generator" content="Hugo 0.140.2">
 
 
   <meta name="description" content="sdmx-dl CLI is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.
@@ -868,6 +868,7 @@ All these files are named sdmx-dl.properties and are located in 3 different fold
     class="gdoc-markdown gdoc-markdown__align--left"
   >
     <h1>Configuration</h1>
+    
     <p><strong>sdmx-dl CLI</strong> is designed to work out-of-the-box but can be configured if needed by using command-line options, properties files, execution properties and environmental variables.</p>
 <div class="gdoc-toc gdoc-toc__level--6">
       <nav id="TableOfContents"><ul>
@@ -941,50 +942,50 @@ There are several types of system properties: some are defined by the platform, 
     <div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th style="text-align: left">Property</th>
-          <th style="text-align: left">Description</th>
+          <th>Property</th>
+          <th>Description</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.caching.noCache</code></td>
-          <td style="text-align: left">Disable caching</td>
+          <td><code>sdmxdl.caching.noCache</code></td>
+          <td>Disable caching</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.caching.cacheFolder</code></td>
-          <td style="text-align: left">Set cache folder</td>
+          <td><code>sdmxdl.caching.cacheFolder</code></td>
+          <td>Set cache folder</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.caching.noCompression</code></td>
-          <td style="text-align: left">Disable cache compression</td>
+          <td><code>sdmxdl.caching.noCompression</code></td>
+          <td>Disable cache compression</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.caching.persistenceId</code></td>
-          <td style="text-align: left">Set cache persistence backend</td>
+          <td><code>sdmxdl.caching.persistenceId</code></td>
+          <td>Set cache persistence backend</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.caching.maxConfidentiality</code></td>
-          <td style="text-align: left">Set max confidentiality</td>
+          <td><code>sdmxdl.caching.maxConfidentiality</code></td>
+          <td>Set max confidentiality</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.networking.autoProxy</code></td>
-          <td style="text-align: left">Enable automatic proxy detection</td>
+          <td><code>sdmxdl.networking.autoProxy</code></td>
+          <td>Enable automatic proxy detection</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.networking.noSystemSSL</code></td>
-          <td style="text-align: left">Disable system truststore</td>
+          <td><code>sdmxdl.networking.noSystemSSL</code></td>
+          <td>Disable system truststore</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.networking.noDefaultSSL</code></td>
-          <td style="text-align: left">Disable default truststore</td>
+          <td><code>sdmxdl.networking.noDefaultSSL</code></td>
+          <td>Disable default truststore</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.networking.urlBackend</code></td>
-          <td style="text-align: left">Set networking URL backend</td>
+          <td><code>sdmxdl.networking.urlBackend</code></td>
+          <td>Set networking URL backend</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>sdmxdl.registry.sourceFile</code></td>
-          <td style="text-align: left">Set data source definitions file</td>
+          <td><code>sdmxdl.registry.sourceFile</code></td>
+          <td>Set data source definitions file</td>
       </tr>
   </tbody>
 </table> </div>
@@ -1003,18 +1004,18 @@ There are several types of system properties: some are defined by the platform, 
     <div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th style="text-align: left">Property</th>
-          <th style="text-align: left">Description</th>
+          <th>Property</th>
+          <th>Description</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left"><code>picocli.ansi</code></td>
-          <td style="text-align: left">Disables ANSI colors on output</td>
+          <td><code>picocli.ansi</code></td>
+          <td>Disables ANSI colors on output</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>org.fusesource.jansi.Ansi.disable</code></td>
-          <td style="text-align: left">Disables ANSI support of Windows</td>
+          <td><code>org.fusesource.jansi.Ansi.disable</code></td>
+          <td>Disables ANSI support of Windows</td>
       </tr>
   </tbody>
 </table> </div>
@@ -1033,30 +1034,30 @@ There are several types of system properties: some are defined by the platform, 
     <div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th style="text-align: left">Property</th>
-          <th style="text-align: left">Description</th>
+          <th>Property</th>
+          <th>Description</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left"><code>https.proxyHost</code></td>
-          <td style="text-align: left">The hostname, or address, of the proxy server</td>
+          <td><code>https.proxyHost</code></td>
+          <td>The hostname, or address, of the proxy server</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>https.proxyPort</code></td>
-          <td style="text-align: left">The port number of the proxy server</td>
+          <td><code>https.proxyPort</code></td>
+          <td>The port number of the proxy server</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>http.proxyHost</code></td>
-          <td style="text-align: left">The hostname, or address, of the proxy server</td>
+          <td><code>http.proxyHost</code></td>
+          <td>The hostname, or address, of the proxy server</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>http.proxyPort</code></td>
-          <td style="text-align: left">The port number of the proxy server</td>
+          <td><code>http.proxyPort</code></td>
+          <td>The port number of the proxy server</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>http.nonProxyHosts</code></td>
-          <td style="text-align: left">Indicates the hosts that should be accessed without going through the proxy</td>
+          <td><code>http.nonProxyHosts</code></td>
+          <td>Indicates the hosts that should be accessed without going through the proxy</td>
       </tr>
   </tbody>
 </table> </div>
@@ -1078,34 +1079,34 @@ There are several types of system properties: some are defined by the platform, 
     <div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th style="text-align: left">Property</th>
-          <th style="text-align: left">Description</th>
+          <th>Property</th>
+          <th>Description</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.trustStore</code></td>
-          <td style="text-align: left">Trust Store Path</td>
+          <td><code>javax.net.ssl.trustStore</code></td>
+          <td>Trust Store Path</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.trustStorePassword</code></td>
-          <td style="text-align: left">Trust Store Password</td>
+          <td><code>javax.net.ssl.trustStorePassword</code></td>
+          <td>Trust Store Password</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.trustStoreType</code></td>
-          <td style="text-align: left">Trust Store Type</td>
+          <td><code>javax.net.ssl.trustStoreType</code></td>
+          <td>Trust Store Type</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.keyStore</code></td>
-          <td style="text-align: left">Key Store Path</td>
+          <td><code>javax.net.ssl.keyStore</code></td>
+          <td>Key Store Path</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.keyStorePassword</code></td>
-          <td style="text-align: left">Key Store Password</td>
+          <td><code>javax.net.ssl.keyStorePassword</code></td>
+          <td>Key Store Password</td>
       </tr>
       <tr>
-          <td style="text-align: left"><code>javax.net.ssl.keyStoreType</code></td>
-          <td style="text-align: left">Key Store Type</td>
+          <td><code>javax.net.ssl.keyStoreType</code></td>
+          <td>Key Store Type</td>
       </tr>
   </tbody>
 </table> </div>
@@ -1146,18 +1147,18 @@ Fortunately, sdmx-dl CLI includes a <a
 <div class="table-wrap"> <table>
   <thead>
       <tr>
-          <th style="text-align: left">Problem</th>
-          <th style="text-align: left">Cause</th>
+          <th>Problem</th>
+          <th>Cause</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left">Property is not available in the output</td>
-          <td style="text-align: left">The property file is either not in the right folder or is misspelled</td>
+          <td>Property is not available in the output</td>
+          <td>The property file is either not in the right folder or is misspelled</td>
       </tr>
       <tr>
-          <td style="text-align: left">Property doesn&rsquo;t have the right type</td>
-          <td style="text-align: left">The property name is misspelled</td>
+          <td>Property doesn&rsquo;t have the right type</td>
+          <td>The property name is misspelled</td>
       </tr>
   </tbody>
 </table> </div>
