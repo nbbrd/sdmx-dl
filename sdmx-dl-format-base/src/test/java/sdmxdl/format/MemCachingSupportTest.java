@@ -8,6 +8,7 @@ import sdmxdl.file.FileSource;
 import sdmxdl.web.WebSource;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -63,7 +64,7 @@ public class MemCachingSupportTest {
         abstract MemCache<?> f(MemCachingSupport z);
     }
 
-    private final static FileSource FILE_SOURCE = FileSource.builder().data(new File("")).build();
+    private final static FileSource FILE_SOURCE = FileSource.builder().data(Paths.get("").toFile()).build();
 
     private final static WebSource WEB_SOURCE = WebSource.builder().id("").driver("").endpoint(Parser.onURI().parseValue("http://localhost").orElseThrow(RuntimeException::new)).build();
 }

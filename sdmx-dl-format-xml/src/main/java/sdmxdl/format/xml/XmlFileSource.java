@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 
 @lombok.experimental.UtilityClass
 public class XmlFileSource {
@@ -67,8 +68,8 @@ public class XmlFileSource {
         }
 
         return FileSource.builder()
-                .data(new File(data))
-                .structure(!isNullOrEmpty(structure) ? new File(structure) : null)
+                .data(Paths.get(data).toFile())
+                .structure(!isNullOrEmpty(structure) ? Paths.get(structure).toFile() : null)
                 .build();
     }
 

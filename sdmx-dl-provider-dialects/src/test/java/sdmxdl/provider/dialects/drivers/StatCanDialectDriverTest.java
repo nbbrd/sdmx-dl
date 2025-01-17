@@ -138,7 +138,7 @@ public class StatCanDialectDriverTest {
         @Test
         public void testToSdmxRepository(@TempDir File tmp) throws IOException {
             String fileName = "statcan-10100001.zip";
-            File x = new File(tmp, fileName);
+            File x = tmp.toPath().resolve(fileName).toFile();
             Files.copy(StatCanDialectDriverTest.class.getResourceAsStream(fileName), x.toPath());
 
             Map<Languages, String> labels = new HashMap<>();
@@ -176,7 +176,7 @@ public class StatCanDialectDriverTest {
         @Test
         public void testRevisions(@TempDir File tmp) throws IOException {
             String fileName = "statcan-34100158.zip";
-            File x = new File(tmp, fileName);
+            File x = tmp.toPath().resolve(fileName).toFile();
             try (InputStream stream = Resource.newInputStream(StatCanDialectDriverTest.class, fileName)) {
                 Files.copy(stream, x.toPath());
             }

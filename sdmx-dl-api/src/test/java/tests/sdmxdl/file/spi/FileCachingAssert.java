@@ -10,6 +10,7 @@ import tests.sdmxdl.api.TckUtil;
 import tests.sdmxdl.ext.CacheAssert;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +39,7 @@ public class FileCachingAssert {
 
         FileSource validSource = FileSource
                 .builder()
-                .data(new File("hello.xml"))
+                .data(Paths.get("hello.xml").toFile())
                 .build();
 
         assertThatNullPointerException()

@@ -23,6 +23,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class JFileChoosers {
             if (filter instanceof FileNameExtensionFilter) {
                 String[] exts = ((FileNameExtensionFilter) filter).getExtensions();
                 if (exts.length > 0 && !anyMatch(file, exts)) {
-                    return new File(file.getPath() + "." + exts[0]);
+                    return Paths.get(file.getPath() + "." + exts[0]).toFile();
                 }
             }
         }

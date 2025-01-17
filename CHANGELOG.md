@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - ![SOURCE] Update ILO website URL [#780](https://github.com/nbbrd/sdmx-dl/issues/780)
+- ![BUILD] Modernize use of NIO API
 
 ### Fixed
 
