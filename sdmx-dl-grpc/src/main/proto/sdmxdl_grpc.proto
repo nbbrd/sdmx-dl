@@ -9,6 +9,8 @@ import "sdmxdl_source.proto";
 
 service SdmxWebManager {
 
+  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.About);
+
   rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.SdmxWebSource);
 
   rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);

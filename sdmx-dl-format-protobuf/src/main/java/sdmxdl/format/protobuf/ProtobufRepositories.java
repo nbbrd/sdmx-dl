@@ -7,6 +7,14 @@ import static sdmxdl.format.protobuf.WellKnownTypes.*;
 @lombok.experimental.UtilityClass
 public class ProtobufRepositories {
 
+    public static About fromAbout() {
+        return About
+                .newBuilder()
+                .setName(sdmxdl.About.NAME)
+                .setVersion(sdmxdl.About.VERSION)
+                .build();
+    }
+
     public static DataRepository fromDataRepository(sdmxdl.DataRepository value) {
         return DataRepository
                 .newBuilder()

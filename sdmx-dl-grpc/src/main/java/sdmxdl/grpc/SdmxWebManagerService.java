@@ -12,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import sdmxdl.*;
+import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
 import sdmxdl.format.protobuf.Series;
 import sdmxdl.format.protobuf.*;
@@ -32,6 +33,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
     private final Languages languages = Languages.ANY;
+
 
     @RequestBody(
             content = @Content(
@@ -135,6 +137,14 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
+    }
+
+    @POST
+    @Path("/about")
+    @Override
+    public Uni<About> getAbout(Empty request) {
+        return Uni.createFrom()
+                .item(About.newBuilder().setName(sdmxdl.About.NAME).setVersion(sdmxdl.About.VERSION).build());
     }
 
     @POST

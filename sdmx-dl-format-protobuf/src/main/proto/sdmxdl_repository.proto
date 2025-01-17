@@ -3,6 +3,11 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf;
 
+message About {
+  string name = 1;
+  string version = 2;
+}
+
 message Catalog {
   string id = 1;
   string name = 2;
