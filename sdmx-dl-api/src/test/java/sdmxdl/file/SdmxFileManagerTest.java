@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import sdmxdl.Languages;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -45,5 +46,5 @@ public class SdmxFileManagerTest {
         assertThatNullPointerException().isThrownBy(() -> m.getConnection(null, Languages.ANY));
     }
 
-    private final FileSource source = FileSource.builder().data(new File("hello")).build();
+    private final FileSource source = FileSource.builder().data(Paths.get("hello").toFile()).build();
 }

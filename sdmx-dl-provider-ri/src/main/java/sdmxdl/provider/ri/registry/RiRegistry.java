@@ -15,6 +15,7 @@ import sdmxdl.web.spi.Registry;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -28,7 +29,7 @@ import static nbbrd.io.text.BaseProperty.keysOf;
 @ServiceProvider
 public final class RiRegistry implements Registry {
 
-    public static final File NO_SOURCES_FILE = new File("");
+    public static final File NO_SOURCES_FILE = Paths.get("").toFile();
 
     // Set data source definitions file
     @PropertyDefinition

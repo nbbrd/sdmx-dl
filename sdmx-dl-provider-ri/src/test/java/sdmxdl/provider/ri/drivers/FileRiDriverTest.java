@@ -39,7 +39,7 @@ public class FileRiDriverTest {
     public void testToFile() throws IOException {
         assertThat(FileRiDriver.toFile(URI.create("file:/C:/temp/x.xml"))).isNotNull();
 
-        URI illegal = URI.create("file://C:/temp/x.xml");
+        URI illegal = URI.create("file://C:temp/x.xml");
         assertThatIOException()
                 .isThrownBy(() -> FileRiDriver.toFile(illegal))
                 .withMessageStartingWith("Invalid file name: ")
