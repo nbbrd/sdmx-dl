@@ -58,7 +58,7 @@ public class WebOptionsTest {
             assertThat(cmd.execute("--no-config", "-v", "-s", invalid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).isEmpty();
+            assertThat(watcher.getErr()).hasLineCount(1).contains("[CFG] Using default sources");
         });
 
         assertThat(newValidFile(temp)).satisfies(valid -> {
@@ -66,13 +66,13 @@ public class WebOptionsTest {
             assertThat(cmd.execute("-v", "-s", valid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isNotEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).contains("[CFG] Using source file '" + valid.getPath() + "'");
+            assertThat(watcher.getErr()).contains("[CFG] Using 1 custom sources from file '" + valid.getPath() + "'");
 
             watcher.reset();
             assertThat(cmd.execute("--no-config", "-v", "-s", valid.getPath())).isEqualTo(OK);
             assertThat((List<WebSource>) cmd.getExecutionResult()).isEmpty();
             assertThat(watcher.getExecutionException()).isNull();
-            assertThat(watcher.getErr()).isEmpty();
+            assertThat(watcher.getErr()).hasLineCount(1).contains("[CFG] Using default sources");
         });
     }
 

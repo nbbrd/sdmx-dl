@@ -55,16 +55,18 @@ public final class RiRegistry implements Registry {
         Function<? super String, ? extends CharSequence> properties = key -> PropertiesSupport.getProperty(emptyMap(), key);
 
         File sourcesFile = SOURCES_FILE_PROPERTY.get(properties);
-        if (sourcesFile == null || sourcesFile.equals(NO_SOURCES_FILE)) return WebSources.EMPTY;
+        if (sourcesFile == null || sourcesFile.equals(NO_SOURCES_FILE)) {
+            if (onEvent != null) onEvent.accept("Using default sources");
+            return WebSources.EMPTY;
+        }
 
         try {
             WebSources result = loadCustomSources(sourcesFile, persistences);
             if (onEvent != null)
-                onEvent.accept("Using source file '" + sourcesFile + "'");
+                onEvent.accept("Using " + result.getSources().size() + " custom sources from file '" + sourcesFile + "'");
             return result;
         } catch (IOException ex) {
-            if (onError != null)
-                onError.accept("Failed to load source file '" + sourcesFile + "'", ex);
+            if (onError != null) onError.accept("Failed to load source file '" + sourcesFile + "'", ex);
             return WebSources.EMPTY;
         }
     }
