@@ -55,6 +55,8 @@ public final class OnDemandMenuBuilder {
     }
 
     public static void showMenuAsPopup(Component invoker, JMenu menu) {
+        if (invoker == null)
+            invoker = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(mousePosition, invoker);
         menu.getPopupMenu().show(invoker, mousePosition.x, mousePosition.y);
