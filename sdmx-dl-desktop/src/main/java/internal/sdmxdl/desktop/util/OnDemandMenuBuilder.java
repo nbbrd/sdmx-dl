@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
+import java.util.Optional;
 
 import static j2html.TagCreator.*;
 
@@ -27,7 +28,7 @@ public final class OnDemandMenuBuilder {
     public static void addCopyToClipboard(JMenu menu, String textMenu, String clipboardContent) {
         JMenuItem item = menu.add(copyToClipboard(clipboardContent));
         item.setText(html(text(textMenu), SEPARATOR, preview(clipboardContent)).render());
-        item.setToolTipText(html(clipboardContent).render());
+        item.setToolTipText(clipboardContent);
     }
 
     public OnDemandMenuBuilder openFolder(String textMenu, File folder) {
@@ -38,7 +39,7 @@ public final class OnDemandMenuBuilder {
     public static void addOpenFolder(JMenu menu, String textMenu, File folder) {
         JMenuItem item = menu.add(openFolder(folder));
         item.setText(html(text(textMenu), SEPARATOR, preview(folder.getPath())).render());
-        item.setToolTipText(html(folder.getPath()).render());
+        item.setToolTipText(folder.getPath());
     }
 
     public OnDemandMenuBuilder addSeparator() {
@@ -63,8 +64,12 @@ public final class OnDemandMenuBuilder {
     }
 
     private static DomContent preview(String text) {
-        return TagCreator.span(text.length() > CHAR_LIMIT ? text.substring(0, CHAR_LIMIT) + "…" : text)
-                .withStyle("color:" + Colors.getHexString(AccentColors.DARK_BLUE));
+        String content = text.length() > CHAR_LIMIT
+                ? text.substring(0, CHAR_LIMIT - 1) + "…"
+                : String.format("%1$" + CHAR_LIMIT + "s", text);
+
+        Color color = Optional.ofNullable(UIManager.getColor("MenuItem.acceleratorForeground")).orElse(AccentColors.DARK_BLUE);
+        return TagCreator.span(content).withStyle("color:" + Colors.getHexString(color));
     }
 
     private static final int CHAR_LIMIT = 30;
