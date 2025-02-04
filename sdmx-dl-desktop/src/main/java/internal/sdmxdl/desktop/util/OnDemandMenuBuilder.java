@@ -1,8 +1,9 @@
 package internal.sdmxdl.desktop.util;
 
-import j2html.TagCreator;
+import internal.Colors;
 import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
+import j2html.tags.specialized.SpanTag;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,16 +65,18 @@ public final class OnDemandMenuBuilder {
     }
 
     private static DomContent preview(String text) {
-        String content = text.length() > CHAR_LIMIT
-                ? text.substring(0, CHAR_LIMIT - 1) + "…"
-                : String.format("%1$" + CHAR_LIMIT + "s", text);
+        SpanTag result = span(text.length() > CHAR_LIMIT ? text.substring(0, CHAR_LIMIT - 1) + "…" : text);
+        return getPreviewColorAsHexString()
+                .map(color -> result.withStyle("color:" + color))
+                .orElse(result);
+    }
 
-        Color color = Optional.ofNullable(UIManager.getColor("MenuItem.acceleratorForeground")).orElse(AccentColors.DARK_BLUE);
-        return TagCreator.span(content).withStyle("color:" + Colors.getHexString(color));
+    private static Optional<String> getPreviewColorAsHexString() {
+        return Optional.ofNullable(UIManager.getColor("MenuItem.acceleratorForeground")).map(Colors::toHex);
     }
 
     private static final int CHAR_LIMIT = 30;
-    private static final UnescapedText SEPARATOR = rawHtml("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+    private static final UnescapedText SEPARATOR = rawHtml("&emsp;⇒&emsp;");
 
     private static AbstractAction copyToClipboard(String text) {
         return new AbstractAction() {
