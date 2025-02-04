@@ -1,6 +1,5 @@
 package internal.sdmxdl.desktop.util;
 
-import internal.Colors;
 import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
 import j2html.tags.specialized.SpanTag;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static j2html.TagCreator.*;
 
@@ -66,13 +66,20 @@ public final class OnDemandMenuBuilder {
 
     private static DomContent preview(String text) {
         SpanTag result = span(text.length() > CHAR_LIMIT ? text.substring(0, CHAR_LIMIT - 1) + "…" : text);
-        return getPreviewColorAsHexString()
-                .map(color -> result.withStyle("color:" + color))
+        return lookupColor("MenuItem.acceleratorForeground", "MenuItem.disabledForeground", "Label.disabledForeground")
+                .map(color -> result.withStyle("color:" + getHexString(color)))
                 .orElse(result);
     }
 
-    private static Optional<String> getPreviewColorAsHexString() {
-        return Optional.ofNullable(UIManager.getColor("MenuItem.acceleratorForeground")).map(Colors::toHex);
+    private static Optional<Color> lookupColor(String... keys) {
+        return Stream.of(keys)
+                .map(UIManager::getColor)
+                .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    private static String getHexString(Color color) {
+        return Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1);
     }
 
     private static final int CHAR_LIMIT = 30;
