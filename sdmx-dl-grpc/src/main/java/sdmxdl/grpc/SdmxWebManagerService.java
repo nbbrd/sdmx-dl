@@ -8,9 +8,12 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
@@ -34,6 +37,21 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
     private final Languages languages = Languages.ANY;
 
+    public record ErrorResponse(String type, String message) {
+        private static ErrorResponse of(Exception x) {
+            return new ErrorResponse(x.getClass().getSimpleName(), x.getMessage());
+        }
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ErrorResponse> mapException(IllegalArgumentException x) {
+        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ErrorResponse> mapException(IOException x) {
+        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+    }
 
     @RequestBody(
             content = @Content(
