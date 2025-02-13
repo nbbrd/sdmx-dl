@@ -207,7 +207,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                             value = """
                                     {
                                       "source": "ECB",
-                                      "flow": "EXR";
+                                      "flow": "EXR",
                                       "key": "M.USD+CHF.EUR.SP00.A"
                                     }
                                     """
