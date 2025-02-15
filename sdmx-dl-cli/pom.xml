@@ -19,7 +19,7 @@
 
     <properties>
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
-        <hugo-geekdoc.version>v1.3.0</hugo-geekdoc.version>
+        <hugo-geekdoc.version>v1.4.1</hugo-geekdoc.version>
     </properties>
 
     <dependencies>
