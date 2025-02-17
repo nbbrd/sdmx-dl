@@ -65,6 +65,10 @@ public final class PxWebDriver implements Driver {
     static final Property<List<String>> LANGUAGES_PROPERTY =
             Property.of(DRIVER_PROPERTY_PREFIX + ".languages", emptyList(), Parser.onStringList(PxWebDriver::split), Formatter.onStringList(PxWebDriver::join));
 
+    @PropertyDefinition
+    static final BooleanProperty ENABLE_PROPERTY =
+            BooleanProperty.of("enablePxWebDriver", false);
+
     static final String DEFAULT_VERSION = "v1";
 
     static final String VERSION_VARIABLE = UriTemplate.getVariable("version");
@@ -78,6 +82,7 @@ public final class PxWebDriver implements Driver {
             .builder()
             .id(PX_PXWEB)
             .rank(NATIVE_DRIVER_RANK)
+            .availability(ENABLE_PROPERTY::get)
             .connector(PxWebDriver::newConnection)
             .properties(RiHttpUtils.RI_CONNECTION_PROPERTIES)
             .propertyOf(VERSIONS_PROPERTY)
