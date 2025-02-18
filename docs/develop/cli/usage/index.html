@@ -53,7 +53,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
 <meta property="article:section" content="CLI" />
     <meta
       property="article:modified_time"
-      content="2024-09-12T16:35:01+02:00"
+      content="2025-02-18T12:54:15+01:00"
     />
 
 
@@ -75,7 +75,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/cli/usage/",
       "headline": "Usage",
       "description": "By default, all commands print the result on the standard output.\nMost commands produce RFC4180 compliant CSV content.\nCommand arguments are composed of options and positional parameters. Options have a name, positional parameters are usually the values that follow the options, but they may be mixed. The general pattern is:\nsdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters options All commands share the following options:\n-h, --help - Show an help message and exit. -v, --verbose - Enable verbose mode. Commands summary The commands follow a verb\u002bnoun hierarchy.",
-      "wordCount" : "1344",
+      "wordCount" : "1467",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -86,7 +86,7 @@ sdmx-dl fetch data ECB EXR M.CHF.EUR.SP00.A -o chf.csv command parameters option
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2024-09-12T16:35:01.00Z",
+      "dateModified": "2025-02-18T12:54:15.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -925,7 +925,7 @@ sdmx-dl <u>fetch data</u> <u>ECB EXR M.CHF.EUR.SP00.A</u> <u>-o chf.csv</u>
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data &amp; meta &amp; keys
-    r --- l([list]) --- sources &amp; flows &amp; dimensions &amp; attributes &amp; codes &amp; availability &amp; features &amp; plugins
+    r --- l([list]) --- sources &amp; databases &amp; flows &amp; dimensions &amp; attributes &amp; codes &amp; availability &amp; features &amp; plugins
     r --- c([check]) --- status &amp; access &amp; config &amp; xsources[sources]
     r --- s([setup]) --- completion &amp; launcher
 
@@ -940,9 +940,10 @@ flowchart TB
     click keys &#34;#fetch-keys&#34; &#34;fetch keys command&#34;
    
     classDef lx fill:#859900
-    class l,sources,flows,dimensions,attributes,codes,availability,features,plugins lx;
+    class l,sources,databases,flows,dimensions,attributes,codes,availability,features,plugins lx;
     click l &#34;#list&#34; &#34;list command&#34;
     click sources &#34;#list-sources&#34; &#34;list sources command&#34;
+    click databases &#34;#list-databases&#34; &#34;list databases command&#34;
     click flows &#34;#list-flows&#34; &#34;list flows command&#34;
     click dimensions &#34;#list-dimensions&#34; &#34;list dimensions command&#34;
     click attributes &#34;#list-attributes&#34; &#34;list attributes command&#34;
@@ -1004,6 +1005,10 @@ flowchart TB
   class="gdoc-markdown__link"
   href="#list-sources"
 >sources</a>,
+<a
+  class="gdoc-markdown__link"
+  href="#list-databases"
+>databases</a>,
 <a
   class="gdoc-markdown__link"
   href="#list-flows"
@@ -1147,6 +1152,10 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#sources"
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../options#languages"
@@ -1305,6 +1314,10 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#sources"
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../options#languages"
@@ -1468,6 +1481,10 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#sources"
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../options#languages"
@@ -1766,6 +1783,130 @@ flowchart TB
 
 
 
+<a id="list-databases" href="#list-databases"><img src="https://img.shields.io/badge/list-databases-859900?style=flat-square"/></a>
+
+
+<p>List databases.</p>
+<p>Example: <code>sdmx-dl <font color="#859900">list databases</font> <abbr title="source">STATFI</abbr></code></p>
+
+
+
+<div class="gdoc-tabs">
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-databases"
+      id="tabs-list-databases-0"
+      checked="checked"
+    />
+    <label for="tabs-list-databases-0" class="gdoc-tabs__label">
+      Parameters
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <ol>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#source"
+><code>source</code></a> - Data source name.</li>
+</ol>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-databases"
+      id="tabs-list-databases-1"
+      
+    />
+    <label for="tabs-list-databases-1" class="gdoc-tabs__label">
+      Options
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>Main options:</p>
+<ul>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sources"
+><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#languages"
+><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#sort"
+><code>--sort</code></a> - Sort output.</li>
+</ul>
+<p>Other options:
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#csv"
+><code>CSV</code></a>,
+<a
+  class="gdoc-markdown__link--code"
+  href="../options#network"
+><code>Network</code></a></p>
+
+    </div>
+    <input
+      type="radio"
+      class="gdoc-tabs__control hidden"
+      name="tabs-list-databases"
+      id="tabs-list-databases-2"
+      
+    />
+    <label for="tabs-list-databases-2" class="gdoc-tabs__label">
+      Output
+    </label>
+    <div class="gdoc-markdown--nested gdoc-tabs__content">
+      <p>CSV columns:</p>
+<ol>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Id:string</code></a></li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../datatypes#string"
+><code>Name:string</code></a></li>
+</ol>
+    </div>
+</div>
+
+
+<div class="gdoc-expand">
+  <label class="gdoc-expand__head flex justify-between" for="5b94ceda-20">
+    <span>Output sample</span>
+    <span>↕</span>
+  </label>
+  <input id="5b94ceda-20" type="checkbox" class="gdoc-expand__control hidden" />
+  <div class="gdoc-markdown--nested gdoc-expand__content">
+    <small>
+<div class="gdoc-include"><div class="table-wrap"> <table>
+  <thead>
+      <tr>
+          <th>Id</th>
+          <th>Name</th>
+      </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table> </div>
+</div>
+</small>
+
+  </div>
+</div>
+
+
+
+
+
+
 <a id="list-flows" href="#list-flows"><img src="https://img.shields.io/badge/list-flows-859900?style=flat-square"/></a>
 
 
@@ -1811,6 +1952,10 @@ flowchart TB
   class="gdoc-markdown__link--code"
   href="../options#sources"
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
+<li><a
+  class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
 <li><a
   class="gdoc-markdown__link--code"
   href="../options#languages"
@@ -1862,11 +2007,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="428854f8-20">
+  <label class="gdoc-expand__head flex justify-between" for="428854f8-23">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="428854f8-20" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="428854f8-23" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -1957,6 +2102,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2010,11 +2159,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="90ab8b6b-23">
+  <label class="gdoc-expand__head flex justify-between" for="90ab8b6b-26">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="90ab8b6b-23" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="90ab8b6b-26" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2121,6 +2270,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2174,11 +2327,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="9895b333-26">
+  <label class="gdoc-expand__head flex justify-between" for="9895b333-29">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="9895b333-26" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="9895b333-29" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2277,6 +2430,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2322,11 +2479,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="26983447-29">
+  <label class="gdoc-expand__head flex justify-between" for="26983447-32">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="26983447-29" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="26983447-32" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2421,6 +2578,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2462,11 +2623,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="e77dc34d-32">
+  <label class="gdoc-expand__head flex justify-between" for="e77dc34d-35">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="e77dc34d-32" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="e77dc34d-35" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2542,6 +2703,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2583,11 +2748,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="00539508-35">
+  <label class="gdoc-expand__head flex justify-between" for="00539508-38">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="00539508-35" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="00539508-38" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2694,11 +2859,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="620cd4ef-38">
+  <label class="gdoc-expand__head flex justify-between" for="620cd4ef-41">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="620cd4ef-38" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="620cd4ef-41" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2775,6 +2940,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2836,11 +3005,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="c39e5766-41">
+  <label class="gdoc-expand__head flex justify-between" for="c39e5766-44">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="c39e5766-41" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="c39e5766-44" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -2921,6 +3090,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -2978,11 +3151,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="893b7bef-44">
+  <label class="gdoc-expand__head flex justify-between" for="893b7bef-47">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="893b7bef-44" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="893b7bef-47" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3096,11 +3269,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="f610a75b-47">
+  <label class="gdoc-expand__head flex justify-between" for="f610a75b-50">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="f610a75b-47" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="f610a75b-50" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
@@ -3197,6 +3370,10 @@ flowchart TB
 ><code>-s, --sources&lt;file&gt;</code></a> - File that provides data source definitions.</li>
 <li><a
   class="gdoc-markdown__link--code"
+  href="../options#database"
+><code>-d, --database&lt;database&gt;</code></a> - Database ID.</li>
+<li><a
+  class="gdoc-markdown__link--code"
   href="../options#languages"
 ><code>-l, --languages&lt;langs&gt;</code></a> - Language priority list.</li>
 <li><a
@@ -3242,11 +3419,11 @@ flowchart TB
 
 
 <div class="gdoc-expand">
-  <label class="gdoc-expand__head flex justify-between" for="ef323227-50">
+  <label class="gdoc-expand__head flex justify-between" for="ef323227-53">
     <span>Output sample</span>
     <span>↕</span>
   </label>
-  <input id="ef323227-50" type="checkbox" class="gdoc-expand__control hidden" />
+  <input id="ef323227-53" type="checkbox" class="gdoc-expand__control hidden" />
   <div class="gdoc-markdown--nested gdoc-expand__content">
     <small>
 <div class="gdoc-include"><div class="table-wrap"> <table>
