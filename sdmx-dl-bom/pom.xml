@@ -17,6 +17,10 @@
     <description>Easily download official statistics - Bill of Materials</description>
     <url>https://github.com/nbbrd/sdmx-dl</url>
 
+    <properties>
+        <hugo-geekdoc.version>v1.4.1</hugo-geekdoc.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -100,6 +104,21 @@
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-cli</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-desktop</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>sdmx-dl-grpc</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -125,4 +144,195 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>setup-docs</id>
+            <build>
+                <plugins>
+                    <!-- Clean Hugo theme for documentation -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>clean-hugo-theme</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.parent.basedir}/docs/themes/hugo-geekdoc</directory>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Download Hugo theme for documentation -->
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <version>1.13.0</version>
+                        <executions>
+                            <execution>
+                                <id>download-hugo-theme</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <url>
+                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/${hugo-geekdoc.version}/hugo-geekdoc.tar.gz
+                            </url>
+                            <unpack>true</unpack>
+                            <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>full-release</id>
+            <build>
+                <plugins>
+                    <!-- Extract changelog for release -->
+                    <plugin>
+                        <groupId>com.github.nbbrd.heylogs</groupId>
+                        <artifactId>heylogs-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>extract-changelog</id>
+                                <goals>
+                                    <goal>extract</goal>
+                                </goals>
+                                <configuration>
+                                    <inputFile>${project.parent.basedir}/CHANGELOG.md</inputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Gather binaries -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-binaries</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <artifactId>sdmx-dl-cli</artifactId>
+                                            <groupId>${project.groupId}</groupId>
+                                            <type>jar</type>
+                                            <classifier>bin</classifier>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <artifactId>sdmx-dl-grpc</artifactId>
+                                            <groupId>${project.groupId}</groupId>
+                                            <type>jar</type>
+                                            <classifier>runner</classifier>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Release assets -->
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>full-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <jreleaser>
+                                <project>
+                                    <description>Easily download official statistics</description>
+                                </project>
+                                <release>
+                                    <github>
+                                        <skipTag>true</skipTag>
+                                        <!-- Fix default value -->
+                                        <branch>master</branch>
+                                        <changelog>
+                                            <external>${project.build.directory}/CHANGELOG.md</external>
+                                        </changelog>
+                                    </github>
+                                </release>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <!-- Fix default value -->
+                                    <armored>true</armored>
+                                </signing>
+                                <distributions>
+                                    <!-- Name is here ! -->
+                                    <sdmx-dl>
+                                        <type>SINGLE_JAR</type>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>
+                                                    ${project.build.directory}/sdmx-dl-cli-${project.version}-bin.jar
+                                                </path>
+                                            </artifact>
+                                        </artifacts>
+                                        <java>
+                                            <mainClass>sdmxdl.cli.MainCommand</mainClass>
+                                            <artifactId>sdmx-dl-cli</artifactId>
+                                            <version>8</version>
+                                        </java>
+                                        <scoop>
+                                            <active>RELEASE</active>
+                                        </scoop>
+                                        <brew>
+                                            <active>RELEASE</active>
+                                            <extraProperties>
+                                                <skipJava>true</skipJava>
+                                            </extraProperties>
+                                        </brew>
+                                        <jbang>
+                                            <active>RELEASE</active>
+                                        </jbang>
+                                    </sdmx-dl>
+                                    <sdmx-dl-grpc>
+                                        <type>SINGLE_JAR</type>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>
+                                                    ${project.build.directory}/sdmx-dl-grpc-${project.version}-runner.jar
+                                                </path>
+                                            </artifact>
+                                        </artifacts>
+                                        <java>
+                                            <mainClass>io.quarkus.runner.GeneratedMain</mainClass>
+                                            <artifactId>sdmx-dl-grpc</artifactId>
+                                            <version>17</version>
+                                        </java>
+                                    </sdmx-dl-grpc>
+                                </distributions>
+                            </jreleaser>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

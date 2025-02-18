@@ -334,12 +334,20 @@
         <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
-        <module>sdmx-dl-bom</module>
         <module>sdmx-dl-standalone</module>
     </modules>
 
     <profiles>
         <!-- Java17 modules -->
+        <profile>
+            <id>java8-modules</id>
+            <activation>
+                <jdk>(,17)</jdk>
+            </activation>
+            <modules>
+                <module>sdmx-dl-bom</module>
+            </modules>
+        </profile>
         <profile>
             <id>java17-modules</id>
             <activation>
@@ -347,6 +355,7 @@
             </activation>
             <modules>
                 <module>sdmx-dl-grpc</module>
+                <module>sdmx-dl-bom</module>
             </modules>
         </profile>
 

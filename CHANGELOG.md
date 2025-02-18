@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![API] Add support of catalogs
 - ![CLI] Add check sources command [#515](https://github.com/nbbrd/sdmx-dl/issues/515)
 - ![GRPC] Add error mapping in rest service
+- ![GRPC] Add gRPC uber-jar to distribution binaries
 
 ### Changed
 
