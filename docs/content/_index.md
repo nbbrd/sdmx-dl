@@ -17,9 +17,10 @@ sdmx-dl - **Easily download official statistics**<br>
 **[sdmx-dl](https://github.com/nbbrd/sdmx-dl) is a tool designed to easily download official statistics.**  
 It is mainly based on the [SDMX standard](https://sdmx.org/?page_id=3425) but can be extended with other APIs as well.
 
-This project has two parts:
+This project has three parts:
 - [a Java library](api) that can be incorporated into other projects
 - [a command-line tool](cli) that allows to easily browse and download data
+- [a web service](ws) that serves as a bridge to any application or language
 
 Its **documentation** is available at https://nbbrd.github.io/sdmx-dl/docs/.
 
@@ -29,11 +30,11 @@ While being in the information age, it is surprisingly difficult to get free qua
 
 There are many reasons to that situation:
 
-- **Big tech:** the huge data collected by big tech companies are locked behind paywalls and the only bits freely available are often redacted to the point of being useless.
-- **APIs:** NGOs and governmental agencies that adhere to the open data principles don't necessarily share a common design for their APIs and therefore require a separate development for each one.
-- **Handling:** data retrieval often implies tedious and error-prone manual steps.
-- **Native support:** there are several open standards available but few-to-none are natively supported by mainstream applications.
-- **Catalog:** there are no central catalog to discover data sources.
+- **Big tech lockup:** the huge data collected by big tech companies are locked behind paywalls and the only bits freely available are often redacted to the point of being useless.
+- **Too many APIs:** NGOs and governmental agencies that adhere to the open data principles don't necessarily share a common design for their APIs and therefore require a separate development for each one.
+- **Time-consuming handling:** data retrieval often implies tedious and error-prone manual steps.
+- **No native support:** there are several open standards available but few-to-none are natively supported by mainstream applications.
+- **No catalog:** there are no central catalog to discover data sources.
 
 sdmx-dl is a SDMX-focused attempt to tackle these problems.
 

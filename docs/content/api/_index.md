@@ -5,7 +5,7 @@ weight: 1
 
 ![_work-in-progress_](https://img.shields.io/badge/-work_in_progress-E2BC4A)
 
-**sdmx-dl library** is designed as a facade for the SDMX model and APIs.
+**sdmx-dl API** is a library designed as a facade for the SDMX model and APIs.
 
 ## Structure overview
 
