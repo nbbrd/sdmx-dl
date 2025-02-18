@@ -12,11 +12,11 @@
 <meta name="generator" content="Hugo 0.144.1">
 
 
-  <meta name="description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-It is also bundled with the following pre-configured web services:
-ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesbank BIS Bank for International Settlements CAMSTAT National Institute of Statistics of Cambodia ECB European Central Bank EC_DG_COMP European Commission - Directorate General for Competition EC_DG_EMPL European Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP Economic and Social Commission for Asia and the Pacific ESTAT Eurostat ESTAT_COMEXT Eurostat - International trade in goods statistics (ITGS) ILO International Labour Organization IMF International Monetary Fund IMF_SDMX_CENTRAL International Monetary Fund (SDMX Central) INEGI National Institute of Statistics, Geography and Informatics INSEE National Institute of Statistics and Economic Studies ISTAT Italian National Institute of Statistics NB Norges Bank NBB National Bank of Belgium OECD The Organisation for Economic Co-operation and Development SE Statistics Estonia SGR SDMX Global Registry SIMEL El Salvador Labor Market Information System SPC Pacific Data Hub STATCAN Statistics Canada STATEC National Institute of statistics and economic studies of the Grand Duchy of Luxembourg TNSO National Statistical Office of Thailand UIS Unesco Institute for Statistics UKDS UK Data Service UNDATA Data access system to UN databases UNICEF UN International Children&#39;s Emergency Fund WB World Bank WITS World Integrated Trade Solution " />
+  <meta name="description" content="sdmx-dl WS is a web service that serves as a bridge to any other application or language.
+This service has two endpoints:
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
 
-    <title>Data sources | sdmx-dl</title>
+    <title>Web service | sdmx-dl</title>
 
     <link rel="icon" type="image/svg+xml" href="/sdmx-dl/docs/develop/favicon/favicon.svg" />
 <link
@@ -37,16 +37,17 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
     
   <meta
     property="og:title"
-    content="Data sources"
+    content="Web service"
   />
   <meta property="og:site_name" content="sdmx-dl" />
-  <meta property="og:description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-It is also bundled with the following pre-configured web services:
-ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesbank BIS Bank for International Settlements CAMSTAT National Institute of Statistics of Cambodia ECB European Central Bank EC_DG_COMP European Commission - Directorate General for Competition EC_DG_EMPL European Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP Economic and Social Commission for Asia and the Pacific ESTAT Eurostat ESTAT_COMEXT Eurostat - International trade in goods statistics (ITGS) ILO International Labour Organization IMF International Monetary Fund IMF_SDMX_CENTRAL International Monetary Fund (SDMX Central) INEGI National Institute of Statistics, Geography and Informatics INSEE National Institute of Statistics and Economic Studies ISTAT Italian National Institute of Statistics NB Norges Bank NBB National Bank of Belgium OECD The Organisation for Economic Co-operation and Development SE Statistics Estonia SGR SDMX Global Registry SIMEL El Salvador Labor Market Information System SPC Pacific Data Hub STATCAN Statistics Canada STATEC National Institute of statistics and economic studies of the Grand Duchy of Luxembourg TNSO National Statistical Office of Thailand UIS Unesco Institute for Statistics UKDS UK Data Service UNDATA Data access system to UN databases UNICEF UN International Children&#39;s Emergency Fund WB World Bank WITS World Integrated Trade Solution " />
+  <meta property="og:description" content="
+sdmx-dl WS is a web service that serves as a bridge to any other application or language.
+This service has two endpoints:
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/sources/" />
+<meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/" />
 
-<meta property="article:section" content="Sources" />
+<meta property="article:section" content="Ws" />
     <meta
       property="article:modified_time"
       content="2025-02-18T15:44:34+01:00"
@@ -54,27 +55,28 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
 
 
   <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Data sources" />
-  <meta name="twitter:description" content="sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.
-It is also bundled with the following pre-configured web services:
-ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesbank BIS Bank for International Settlements CAMSTAT National Institute of Statistics of Cambodia ECB European Central Bank EC_DG_COMP European Commission - Directorate General for Competition EC_DG_EMPL European Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP Economic and Social Commission for Asia and the Pacific ESTAT Eurostat ESTAT_COMEXT Eurostat - International trade in goods statistics (ITGS) ILO International Labour Organization IMF International Monetary Fund IMF_SDMX_CENTRAL International Monetary Fund (SDMX Central) INEGI National Institute of Statistics, Geography and Informatics INSEE National Institute of Statistics and Economic Studies ISTAT Italian National Institute of Statistics NB Norges Bank NBB National Bank of Belgium OECD The Organisation for Economic Co-operation and Development SE Statistics Estonia SGR SDMX Global Registry SIMEL El Salvador Labor Market Information System SPC Pacific Data Hub STATCAN Statistics Canada STATEC National Institute of statistics and economic studies of the Grand Duchy of Luxembourg TNSO National Statistical Office of Thailand UIS Unesco Institute for Statistics UKDS UK Data Service UNDATA Data access system to UN databases UNICEF UN International Children&#39;s Emergency Fund WB World Bank WITS World Integrated Trade Solution " />
+<meta name="twitter:title" content="Web service" />
+  <meta name="twitter:description" content="
+sdmx-dl WS is a web service that serves as a bridge to any other application or language.
+This service has two endpoints:
+a gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines." />
 
 
   <script type="application/ld+json">
   {
       "@context": "http://schema.org",
       "@type": "TechArticle",
-      "articleSection": "Sources",
-      "name": "Data sources",
-      "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/sources/",
-      "headline": "Data sources",
-      "description": "sdmx-dl supports any SDMX 2.1 RESTful web service as well as a few variants.\nIt is also bundled with the following pre-configured web services:\nID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesbank BIS Bank for International Settlements CAMSTAT National Institute of Statistics of Cambodia ECB European Central Bank EC_DG_COMP European Commission - Directorate General for Competition EC_DG_EMPL European Commission - Directorate General for Employment, Social Affairs and inclusion EC_DG_GROW European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs ESCAP Economic and Social Commission for Asia and the Pacific ESTAT Eurostat ESTAT_COMEXT Eurostat - International trade in goods statistics (ITGS) ILO International Labour Organization IMF International Monetary Fund IMF_SDMX_CENTRAL International Monetary Fund (SDMX Central) INEGI National Institute of Statistics, Geography and Informatics INSEE National Institute of Statistics and Economic Studies ISTAT Italian National Institute of Statistics NB Norges Bank NBB National Bank of Belgium OECD The Organisation for Economic Co-operation and Development SE Statistics Estonia SGR SDMX Global Registry SIMEL El Salvador Labor Market Information System SPC Pacific Data Hub STATCAN Statistics Canada STATEC National Institute of statistics and economic studies of the Grand Duchy of Luxembourg TNSO National Statistical Office of Thailand UIS Unesco Institute for Statistics UKDS UK Data Service UNDATA Data access system to UN databases UNICEF UN International Children\u0027s Emergency Fund WB World Bank WITS World Integrated Trade Solution ",
-      "wordCount" : "229",
+      "articleSection": "Ws",
+      "name": "Web service",
+      "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/",
+      "headline": "Web service",
+      "description": "\nsdmx-dl WS is a web service that serves as a bridge to any other application or language.\nThis service has two endpoints:\na gRPC endpoint which has the best performances but a limited set of clients a REST endpoint which has a wider range of clients but is less efficient These endpoints also provides specifications (.proto files and OpenAPI respectively) that can be used to generate client code. They are designed to operate locally as well as on remote machines.",
+      "wordCount" : "220",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/sources/"
+          "@id": "https://nbbrd.github.io/sdmx-dl/docs/develop/ws/"
       },
       "copyrightHolder" : "sdmx-dl",
       "copyrightYear" : "0001",
@@ -158,7 +160,7 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
   href="/sdmx-dl/docs/develop/custom.css"
   media="all"
 />
-  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/sources/" rel="canonical" type="text/html" />
+  <link href="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/" rel="canonical" type="text/html" />
 
 <!-- Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc -->
 
@@ -727,7 +729,7 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/ws/"
-                    class="gdoc-nav__entry"
+                    class="gdoc-nav__entry is-active"
                   >
                     Web service
                   </a>
@@ -815,7 +817,7 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
                 <span class="flex">
                   <a
                     href="/sdmx-dl/docs/develop/sources/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry"
                   >
                     Data sources
                   </a>
@@ -888,7 +890,7 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Data sources</span><meta itemprop='position' content='5' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/sdmx-dl/docs/develop/' href='/sdmx-dl/docs/develop/'><span itemprop='name'>sdmx-dl</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Web service</span><meta itemprop='position' content='5' /></li>
   
 
   
@@ -904,525 +906,127 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
   <article
     class="gdoc-markdown gdoc-markdown__align--left"
   >
-    <h1>Data sources</h1>
-    <p><strong>sdmx-dl</strong> supports any <a
+    <h1>Web service</h1>
+    <p><img
+  src="https://img.shields.io/badge/-work_in_progress-E2BC4A"
+  alt="work-in-progress"
+  
+/></p>
+<p><strong>sdmx-dl WS</strong> is a web service that serves as a bridge to any other application or language.<br>
+This service has two endpoints:</p>
+<ul>
+<li>a <a
   class="gdoc-markdown__link"
-  href="https://github.com/sdmx-twg/sdmx-rest/wiki"
->SDMX 2.1 RESTful web service</a> as well as a few variants.</p>
-<p>It is also bundled with the following pre-configured web services:</p>
-
+  href="#grpc-endpoint"
+>gRPC endpoint</a> which has the <strong>best performances</strong> but a limited set of clients</li>
+<li>a <a
+  class="gdoc-markdown__link"
+  href="#rest-endpoint"
+>REST endpoint</a> which has a <strong>wider range of clients</strong> but is less efficient</li>
+</ul>
+<p>These endpoints also provides specifications (<a
+  class="gdoc-markdown__link"
+  href="https://grpc.io/docs/what-is-grpc/introduction/#working-with-protocol-buffers"
+>.proto files</a> and <a
+  class="gdoc-markdown__link"
+  href="https://en.wikipedia.org/wiki/OpenAPI_Specification"
+>OpenAPI</a> respectively) that can be used to generate client code.
+They are designed to operate locally as well as on remote machines.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="getting-started"
+    >
+        Getting started
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/#getting-started" class="gdoc-page__anchor clip flex align-center" title="Anchor to: Getting started" aria-label="Anchor to: Getting started" href="#getting-started">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>An uber-jar (aka fat-jar) is available on the <a
+  class="gdoc-markdown__link"
+  href="https://github.com/nbbrd/sdmx-dl/releases/"
+>GitHub release page</a> and on <a
+  class="gdoc-markdown__link"
+  href="https://search.maven.org/artifact/com.github.nbbrd.sdmx-dl/sdmx-dl-grpc"
+>Maven Central</a>.<br>
+<a
+  class="gdoc-markdown__link"
+  href="https://whichjdk.com/"
+>Java 17+</a> is required to run it.</p>
+<p>To run it, just use the following command: <code>java -jar sdmx-dl-grpc-VERSION-runner.jar</code></p>
+<p>Custom config:</p>
 <div class="table-wrap"> <table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Uptime</th>
-        </tr>
-    </thead>
-    <tbody>
-    
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=explore.data.abs.gov.au" /><code>ABS</code></td>
-        <td><a href="https://explore.data.abs.gov.au">Australian Bureau of Statistics</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/abs"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fabs.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/abs"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fabs%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=www.bundesbank.de" /><code>BBK</code></td>
-        <td><a href="https://www.bundesbank.de/en/statistics/time-series-databases">Deutsche Bundesbank</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bbk"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fbbk.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bbk"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fbbk%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=stats.bis.org" /><code>BIS</code></td>
-        <td><a href="https://stats.bis.org/statx/toc/LBS.html">Bank for International Settlements</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bis"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fbis.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/bis"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fbis%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=camstat.nis.gov.kh" /><code>CAMSTAT</code></td>
-        <td><a href="http://camstat.nis.gov.kh/?locale=en&amp;start=0">National Institute of Statistics of Cambodia</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/camstat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fcamstat.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/camstat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fcamstat%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.ecb.europa.eu" /><code>ECB</code></td>
-        <td><a href="https://data.ecb.europa.eu/">European Central Bank</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ecb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fecb.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ecb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fecb%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_COMP</code></td>
-        <td><a href="https://data.europa.eu/data/datasets?catalog=comp">European Commission - Directorate General for Competition</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-comp.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_comp"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-comp%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_EMPL</code></td>
-        <td><a href="https://data.europa.eu/data/datasets?catalog=empl">European Commission - Directorate General for Employment, Social Affairs and inclusion</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-empl.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_empl"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-empl%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.europa.eu" /><code>EC_DG_GROW</code></td>
-        <td><a href="https://data.europa.eu/data/datasets?catalog=grow">European Commission - Directorate General for Internal Market, Industry, Entrepreneurship and SMEs</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fec-dg-grow.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ec_dg_grow"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fec-dg-grow%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=dataexplorer.unescap.org" /><code>ESCAP</code></td>
-        <td><a href="https://dataexplorer.unescap.org/">Economic and Social Commission for Asia and the Pacific</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/escap"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fescap.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/escap"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fescap%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=ec.europa.eu" /><code>ESTAT</code></td>
-        <td><a href="https://ec.europa.eu/eurostat/data/database">Eurostat</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Festat.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Festat%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=ec.europa.eu" /><code>ESTAT_COMEXT</code></td>
-        <td><a href="https://ec.europa.eu/eurostat/web/international-trade-in-goods/overview">Eurostat - International trade in goods statistics (ITGS)</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat_comext"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Festat-comext.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/estat_comext"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Festat-comext%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.ilo.org" /><code>ILO</code></td>
-        <td><a href="https://data.ilo.org/">International Labour Organization</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ilo"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Filo.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ilo"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Filo%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.imf.org" /><code>IMF</code></td>
-        <td><a href="https://data.imf.org">International Monetary Fund</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fimf.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fimf%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.imf.org" /><code>IMF_SDMX_CENTRAL</code></td>
-        <td><a href="https://data.imf.org">International Monetary Fund (SDMX Central)</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fimf-sdmx-central.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/imf-sdmx-central"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fimf-sdmx-central%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=sdmx.snieg.mx" /><code>INEGI</code></td>
-        <td><a href="https://sdmx.snieg.mx">National Institute of Statistics, Geography and Informatics</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/inegi"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Finegi.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/inegi"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Finegi%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=www.insee.fr" /><code>INSEE</code></td>
-        <td><a href="https://www.insee.fr/fr/statistiques">National Institute of Statistics and Economic Studies</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/insee"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Finsee.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/insee"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Finsee%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=esploradati.istat.it" /><code>ISTAT</code></td>
-        <td><a href="https://esploradati.istat.it/databrowser/">Italian National Institute of Statistics</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/istat"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fistat.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/istat"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fistat%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=www.norges-bank.no" /><code>NB</code></td>
-        <td><a href="https://www.norges-bank.no/en/topics/Statistics/">Norges Bank</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fnb.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fnb%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=stat.nbb.be" /><code>NBB</code></td>
-        <td><a href="https://stat.nbb.be">National Bank of Belgium</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nbb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fnbb.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/nbb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fnbb%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data-explorer.oecd.org" /><code>OECD</code></td>
-        <td><a href="https://data-explorer.oecd.org/">The Organisation for Economic Co-operation and Development</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/oecd"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Foecd.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/oecd"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Foecd%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=andmebaas.stat.ee" /><code>SE</code></td>
-        <td><a href="http://andmebaas.stat.ee">Statistics Estonia</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/se"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fse.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/se"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fse%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=registry.sdmx.org" /><code>SGR</code></td>
-        <td><a href="https://registry.sdmx.org/overview.html">SDMX Global Registry</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/sgr"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fsgr.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/sgr"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fsgr%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=datasimel.mtps.gob.sv" /><code>SIMEL</code></td>
-        <td><a href="https://datasimel.mtps.gob.sv/">El Salvador Labor Market Information System</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/simel"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fsimel.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/simel"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fsimel%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=stats.pacificdata.org" /><code>SPC</code></td>
-        <td><a href="https://stats.pacificdata.org/?locale=en">Pacific Data Hub</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/spc"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fspc.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/spc"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fspc%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=www150.statcan.gc.ca" /><code>STATCAN</code></td>
-        <td><a href="https://www150.statcan.gc.ca/n1/en/type/data?MM=1">Statistics Canada</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatcan.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statcan"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatcan%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=lustat.statec.lu" /><code>STATEC</code></td>
-        <td><a href="https://lustat.statec.lu">National Institute of statistics and economic studies of the Grand Duchy of Luxembourg</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statec"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fstatec.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/statec"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fstatec%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=oshub.nso.go.th" /><code>TNSO</code></td>
-        <td><a href="https://oshub.nso.go.th/?lc=en">National Statistical Office of Thailand</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/tnso"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Ftnso.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/tnso"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Ftnso%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.uis.unesco.org" /><code>UIS</code></td>
-        <td><a href="http://data.uis.unesco.org">Unesco Institute for Statistics</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/uis"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fuis.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/uis"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fuis%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=stats2.digitalresources.jisc.ac.uk" /><code>UKDS</code></td>
-        <td><a href="https://stats2.digitalresources.jisc.ac.uk/">UK Data Service</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ukds"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fukds.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/ukds"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fukds%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.un.org" /><code>UNDATA</code></td>
-        <td><a href="https://data.un.org/SdmxBrowser/start">Data access system to UN databases</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/undata"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fundata.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/undata"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fundata%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.unicef.org" /><code>UNICEF</code></td>
-        <td><a href="https://data.unicef.org/">UN International Children&#39;s Emergency Fund</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/unicef"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Funicef.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/unicef"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Funicef%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=data.worldbank.org" /><code>WB</code></td>
-        <td><a href="https://data.worldbank.org">World Bank</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wb"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fwb.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wb"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fwb%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    
-    <tr>
-        
-        
-        
-        
-        
-        
-        <td><img src="https://www.google.com/s2/favicons?domain=wits.worldbank.org" /><code>WITS</code></td>
-        <td><a href="https://wits.worldbank.org">World Integrated Trade Solution</a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wits"><img src="https://img.shields.io/badge/dynamic/yaml?label=status&query=%24.status&url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fhistory%2Fwits.yml"></a></td>
-        <td><a href="https://nbbrd.github.io/sdmx-upptime/history/wits"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnbbrd%2Fsdmx-upptime%2Fmaster%2Fapi%2Fwits%2Fuptime.json"></a></td>
-    </tr>
-    
-    
-    </tbody>
+  <thead>
+      <tr>
+          <th>Option</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>quarkus.grpc.server.port</code></td>
+          <td><a
+  class="gdoc-markdown__link"
+  href="https://quarkus.io/guides/all-config#quarkus-grpc_quarkus-grpc-server-port"
+>The gRPC server port</a></td>
+      </tr>
+      <tr>
+          <td><code>quarkus.http.port</code></td>
+          <td><a
+  class="gdoc-markdown__link"
+  href="https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus-http-port"
+>The HTTP port</a></td>
+      </tr>
+  </tbody>
 </table> </div>
-
-
+<p>More info at Quarkus <a
+  class="gdoc-markdown__link"
+  href="https://quarkus.io/guides/all-config"
+>all configuration options page</a> and <a
+  class="gdoc-markdown__link"
+  href="https://quarkus.io/guides/http-reference"
+>HTTP reference page</a>.</p>
+<div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="grpc-endpoint"
+    >
+        gRPC endpoint
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/#grpc-endpoint" class="gdoc-page__anchor clip flex align-center" title="Anchor to: gRPC endpoint" aria-label="Anchor to: gRPC endpoint" href="#grpc-endpoint">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>The gRPC endpoint is the most efficient way to interact with the web service.<br>
+Its default port is <code>4557</code>. For convenience, the <a
+  class="gdoc-markdown__link"
+  href="https://grpc.io/docs/guides/reflection/"
+>reflection protocol</a> is enabled.</p>
+<p>Call example using <a
+  class="gdoc-markdown__link"
+  href="https://github.com/fullstorydev/grpcurl"
+>gRPCurl</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">grpcurl -d <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span> -plaintext localhost:4556 sdmxdl.grpc.SdmxWebManager.GetFlows
+</span></span></code></pre></div><div class="flex align-center gdoc-page__anchorwrap">
+    <h2 id="rest-endpoint"
+    >
+        REST endpoint
+    </h2>
+    <a data-clipboard-text="https://nbbrd.github.io/sdmx-dl/docs/develop/ws/#rest-endpoint" class="gdoc-page__anchor clip flex align-center" title="Anchor to: REST endpoint" aria-label="Anchor to: REST endpoint" href="#rest-endpoint">
+        <svg class="gdoc-icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+    </a>
+</div>
+<p>The REST endpoint has the best compatibility with a wide range of clients.<br>
+Its default port is <code>4559</code>. For convenience, an <a
+  class="gdoc-markdown__link"
+  href="https://swagger.io/tools/swagger-ui/"
+>OpenAPI UI</a> is available at <a
+  class="gdoc-markdown__link"
+  href="http://localhost:4559/q/swagger-ui"
+>http://localhost:4559/q/swagger-ui</a>.</p>
+<p>Call example using <a
+  class="gdoc-markdown__link"
+  href="https://curl.se/"
+>curl</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST -H <span class="s2">&#34;Content-Type: application/json&#34;</span> localhost:4559/sdmx-dl/flows --data <span class="s2">&#34;{\&#34;source\&#34;:\&#34;ECB\&#34;}&#34;</span>
+</span></span></code></pre></div>
   </article>
 
 
@@ -1739,38 +1343,8 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
         
 
         
-
-        
           
-        
-
-        
-        
-      
-    
-
-  
-    
-
-    
-      
-    
-
-    
-      
-      
-
-      
-        
-        
-        
-        
-
-        
-        
-
-        
-
+          
         
 
         
@@ -1803,10 +1377,45 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
         
 
         
+          
+            
+            
+          
+        
+
+        
 
         
           
-          
+        
+
+        
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
         
 
         
@@ -1827,15 +1436,24 @@ ID Name Status Uptime ABS Australian Bureau of Statistics BBK Deutsche Bundesban
   
     <a
       class="gdoc-page__nav--prev flex align-center"
-      href="/sdmx-dl/docs/develop/formats/"
-      title="Data formats"
+      href="/sdmx-dl/docs/develop/cli/examples/"
+      title="Examples"
     >
       <i class="gdoc-icon">gdoc_arrow_left_alt</i>
-      Data formats
+      Examples
     </a>
   
 </span>
 <span class="gdoc-page__nav">
+  
+    <a
+      class="gdoc-page__nav--next flex align-center"
+      href="/sdmx-dl/docs/develop/formats/"
+      title="Data formats"
+    >
+      Data formats
+      <i class="gdoc-icon">gdoc_arrow_right_alt</i>
+    </a>
   
 </span>
 

@@ -9,10 +9,10 @@
 <meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light dark" />
-<meta name="generator" content="Hugo 0.144.0">
+<meta name="generator" content="Hugo 0.144.1">
 
 
-  <meta name="description" content="sdmx-dl library is designed as a facade for the SDMX model and APIs.
+  <meta name="description" content="sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used in projects with conflicting versions of its dependencies." />
 
     <title>Java library | sdmx-dl</title>
@@ -40,7 +40,7 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
   />
   <meta property="og:site_name" content="sdmx-dl" />
   <meta property="og:description" content="
-sdmx-dl library is designed as a facade for the SDMX model and APIs.
+sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used in projects with conflicting versions of its dependencies." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://nbbrd.github.io/sdmx-dl/docs/develop/api/" />
@@ -48,14 +48,14 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
 <meta property="article:section" content="API" />
     <meta
       property="article:modified_time"
-      content="2023-09-12T12:47:49+02:00"
+      content="2025-02-18T15:44:34+01:00"
     />
 
 
   <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Java library" />
   <meta name="twitter:description" content="
-sdmx-dl library is designed as a facade for the SDMX model and APIs.
+sdmx-dl API is a library designed as a facade for the SDMX model and APIs.
 Structure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --&gt; api providers --&gt; formats testing ---&gt; api applications --&gt; providers &amp; testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used in projects with conflicting versions of its dependencies." />
 
 
@@ -67,8 +67,8 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
       "name": "Java library",
       "url" : "https://nbbrd.github.io/sdmx-dl/docs/develop/api/",
       "headline": "Java library",
-      "description": "\nsdmx-dl library is designed as a facade for the SDMX model and APIs.\nStructure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --\u003e api providers --\u003e formats testing ---\u003e api applications --\u003e providers \u0026 testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used in projects with conflicting versions of its dependencies.",
-      "wordCount" : "140",
+      "description": "\nsdmx-dl API is a library designed as a facade for the SDMX model and APIs.\nStructure overview flowchart BT api subgraph formats format-base[base] csv kryo protobuf xml end subgraph providers provider-base[base] connectors ri dialects px end subgraph applications cli desktop grpc end testing formats --\u003e api providers --\u003e formats testing ---\u003e api applications --\u003e providers \u0026 testing Dependencies setup sdmx-dl is distributed in two flavours: a standard JAR hierarchy, and a standalone uber JAR containing all the implementations and their dependencies. Most of the standalone JAR’s dependencies are shaded i.e. they are hidden in alternative packages. This allows sdmx-dl to be used in projects with conflicting versions of its dependencies.",
+      "wordCount" : "142",
       "inLanguage": "en",
       "isFamilyFriendly": "true",
       "mainEntityOfPage": {
@@ -79,7 +79,7 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
       "copyrightYear" : "0001",
       "dateCreated": "0001-01-01T00:00:00.00Z",
       "datePublished": "0001-01-01T00:00:00.00Z",
-      "dateModified": "2023-09-12T12:47:49.00Z",
+      "dateModified": "2025-02-18T15:44:34.00Z",
       "publisher":{
           "@type":"Organization",
           "name": "sdmx-dl",
@@ -725,6 +725,50 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
               
                 <span class="flex">
                   <a
+                    href="/sdmx-dl/docs/develop/ws/"
+                    class="gdoc-nav__entry"
+                  >
+                    Web service
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
                     href="/sdmx-dl/docs/develop/formats/"
                     class="gdoc-nav__entry"
                   >
@@ -865,7 +909,7 @@ Structure overview flowchart BT api subgraph formats format-base[base] csv kryo 
   alt="work-in-progress"
   
 /></p>
-<p><strong>sdmx-dl library</strong> is designed as a facade for the SDMX model and APIs.</p>
+<p><strong>sdmx-dl API</strong> is a library designed as a facade for the SDMX model and APIs.</p>
 <div class="flex align-center gdoc-page__anchorwrap">
     <h2 id="structure-overview"
     >
@@ -1248,6 +1292,39 @@ This allows sdmx-dl to be used in projects with conflicting versions of its depe
 
   
 
+        
+      
+    
+
+  
+    
+
+    
+      
+    
+
+    
+      
+      
+
+      
+        
+        
+        
+        
+
+        
+        
+
+        
+
+        
+
+        
+          
+        
+
+        
         
       
     
