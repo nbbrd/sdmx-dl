@@ -34,8 +34,8 @@ public class SingleSeries {
     public static SingleSeries load(SdmxWebManager manager, DataSetRef ref, Color accentColor) throws IOException {
         try (Connection conn = ref.getDataSourceRef().getConnection(manager)) {
             return new SingleSeries(
-                    conn.getStructure(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef()),
-                    conn.getDataStream(ref.getDataSourceRef().getCatalog(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
+                    conn.getStructure(ref.getDataSourceRef().getDatabase(), ref.getDataSourceRef().toFlowRef()),
+                    conn.getDataStream(ref.getDataSourceRef().getDatabase(), ref.getDataSourceRef().toFlowRef(), Query.builder().key(ref.getKey()).build())
                             .findFirst()
                             .orElseGet(() -> Series.builder().key(ref.getKey()).build()),
                     accentColor

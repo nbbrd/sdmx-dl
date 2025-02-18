@@ -1,6 +1,5 @@
 package sdmxdl.ext;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
 import sdmxdl.Feature;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.CatalogRef.NO_CATALOG;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Key.ALL;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.ext.SdmxCubeUtil.*;
@@ -54,21 +53,21 @@ public class SdmxCubeUtilTest {
             WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                assertThatNullPointerException().isThrownBy(() -> getAllSeries(null, NO_CATALOG, FLOW_REF, ALL));
-                assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, null, ALL));
-                assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeries(null, NO_DATABASE, FLOW_REF, ALL));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, null, ALL));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
-                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
                 if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, ALL))).containsExactly(noData(S1), noData(S2), noData(S3));
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M__))).containsExactly(noData(S1), noData(S2), noData(S3));
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_BE_))).containsExactly(noData(S1), noData(S2));
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, ALL))).containsExactly(noData(S1), noData(S2), noData(S3));
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M__))).containsExactly(noData(S1), noData(S2), noData(S3));
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_BE_))).containsExactly(noData(S1), noData(S2));
                 } else {
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, ALL))).containsExactly(noMetaNoData(S1), noMetaNoData(S2), noMetaNoData(S3), FAKE_S4);
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M__))).containsExactly(noMetaNoData(S1), noMetaNoData(S2), noMetaNoData(S3), FAKE_S4);
-                    assertThat(listOf(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_BE_))).containsExactly(noMetaNoData(S1), noMetaNoData(S2));
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, ALL))).containsExactly(noMetaNoData(S1), noMetaNoData(S2), noMetaNoData(S3), FAKE_S4);
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M__))).containsExactly(noMetaNoData(S1), noMetaNoData(S2), noMetaNoData(S3), FAKE_S4);
+                    assertThat(listOf(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_BE_))).containsExactly(noMetaNoData(S1), noMetaNoData(S2));
                 }
             }
         }
@@ -80,21 +79,21 @@ public class SdmxCubeUtilTest {
             WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(null, NO_CATALOG, FLOW_REF, ALL));
-                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, NO_CATALOG, null, ALL));
-                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(null, NO_DATABASE, FLOW_REF, ALL));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, NO_DATABASE, null, ALL));
+                assertThatNullPointerException().isThrownBy(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
-                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_CATALOG, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_BE_INDUSTRY)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getAllSeries(c, NO_DATABASE, FLOW_REF, M_FR_XXX)).withMessageContaining("node");
 
                 if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, ALL))).containsExactly(S1, S2, S3);
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, M__))).containsExactly(S1, S2, S3);
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, M_BE_))).containsExactly(S1, S2);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, ALL))).containsExactly(S1, S2, S3);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, M__))).containsExactly(S1, S2, S3);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, M_BE_))).containsExactly(S1, S2);
                 } else {
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, ALL))).containsExactly(S1, S2, S3, FAKE_S4);
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, M__))).containsExactly(S1, S2, S3, FAKE_S4);
-                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_CATALOG, FLOW_REF, M_BE_))).containsExactly(S1, S2);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, ALL))).containsExactly(S1, S2, S3, FAKE_S4);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, M__))).containsExactly(S1, S2, S3, FAKE_S4);
+                    assertThat(listOf(() -> getAllSeriesWithData(c, NO_DATABASE, FLOW_REF, M_BE_))).containsExactly(S1, S2);
                 }
             }
         }
@@ -106,16 +105,16 @@ public class SdmxCubeUtilTest {
             WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                assertThatNullPointerException().isThrownBy(() -> getSeries(null, NO_CATALOG, FLOW_REF, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeries(c, NO_CATALOG, null, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeries(c, NO_CATALOG, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getSeries(null, NO_DATABASE, FLOW_REF, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeries(c, NO_DATABASE, null, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeries(c, NO_DATABASE, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_CATALOG, FLOW_REF, ALL)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_CATALOG, FLOW_REF, M__)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_CATALOG, FLOW_REF, M_BE_)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_DATABASE, FLOW_REF, ALL)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_DATABASE, FLOW_REF, M__)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeries(c, NO_DATABASE, FLOW_REF, M_BE_)).withMessageContaining("leaf");
 
-                assertThat(getSeries(c, NO_CATALOG, FLOW_REF, M_BE_INDUSTRY)).contains(noData(S1));
-                assertThat(getSeries(c, NO_CATALOG, FLOW_REF, M_FR_XXX)).isEmpty();
+                assertThat(getSeries(c, NO_DATABASE, FLOW_REF, M_BE_INDUSTRY)).contains(noData(S1));
+                assertThat(getSeries(c, NO_DATABASE, FLOW_REF, M_FR_XXX)).isEmpty();
             }
         }
     }
@@ -126,16 +125,16 @@ public class SdmxCubeUtilTest {
             WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(null, NO_CATALOG, FLOW_REF, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, NO_CATALOG, null, K1));
-                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, NO_CATALOG, FLOW_REF, null));
+                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(null, NO_DATABASE, FLOW_REF, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, NO_DATABASE, null, K1));
+                assertThatNullPointerException().isThrownBy(() -> getSeriesWithData(c, NO_DATABASE, FLOW_REF, null));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_CATALOG, FLOW_REF, ALL)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_CATALOG, FLOW_REF, M__)).withMessageContaining("leaf");
-                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_CATALOG, FLOW_REF, M_BE_)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_DATABASE, FLOW_REF, ALL)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_DATABASE, FLOW_REF, M__)).withMessageContaining("leaf");
+                assertThatIllegalArgumentException().isThrownBy(() -> getSeriesWithData(c, NO_DATABASE, FLOW_REF, M_BE_)).withMessageContaining("leaf");
 
-                assertThat(getSeriesWithData(c, NO_CATALOG, FLOW_REF, M_BE_INDUSTRY)).contains(S1);
-                assertThat(getSeriesWithData(c, NO_CATALOG, FLOW_REF, M_FR_XXX)).isEmpty();
+                assertThat(getSeriesWithData(c, NO_DATABASE, FLOW_REF, M_BE_INDUSTRY)).contains(S1);
+                assertThat(getSeriesWithData(c, NO_DATABASE, FLOW_REF, M_FR_XXX)).isEmpty();
             }
         }
     }
@@ -146,27 +145,27 @@ public class SdmxCubeUtilTest {
             WebSource source = driver.getDefaultSources().iterator().next();
 
             try (Connection c = driver.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                assertThatNullPointerException().isThrownBy(() -> getChildren(null, NO_CATALOG, FLOW_REF, ALL, 0));
-                assertThatNullPointerException().isThrownBy(() -> getChildren(c, NO_CATALOG, null, ALL, 0));
-                assertThatNullPointerException().isThrownBy(() -> getChildren(c, NO_CATALOG, FLOW_REF, null, 0));
+                assertThatNullPointerException().isThrownBy(() -> getChildren(null, NO_DATABASE, FLOW_REF, ALL, 0));
+                assertThatNullPointerException().isThrownBy(() -> getChildren(c, NO_DATABASE, null, ALL, 0));
+                assertThatNullPointerException().isThrownBy(() -> getChildren(c, NO_DATABASE, FLOW_REF, null, 0));
 
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_CATALOG, FLOW_REF, ALL, -1)).withMessageContaining("dimensionIndex");
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_CATALOG, FLOW_REF, M_BE_INDUSTRY, 0)).withMessageContaining("node");
-                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_CATALOG, FLOW_REF, M_BE_, 0)).withMessageContaining("dimensionIndex");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_DATABASE, FLOW_REF, ALL, -1)).withMessageContaining("dimensionIndex");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_DATABASE, FLOW_REF, M_BE_INDUSTRY, 0)).withMessageContaining("node");
+                assertThatIllegalArgumentException().isThrownBy(() -> getChildren(c, NO_DATABASE, FLOW_REF, M_BE_, 0)).withMessageContaining("dimensionIndex");
 
-                assertThat(getChildren(c, NO_CATALOG, FLOW_REF, ALL, 0)).containsExactly("M");
-                assertThat(getChildren(c, NO_CATALOG, FLOW_REF, ALL, 1)).containsExactly("BE", "FR");
-                assertThat(getChildren(c, NO_CATALOG, FLOW_REF, ALL, 2)).containsExactly("INDUSTRY", "XXX");
+                assertThat(getChildren(c, NO_DATABASE, FLOW_REF, ALL, 0)).containsExactly("M");
+                assertThat(getChildren(c, NO_DATABASE, FLOW_REF, ALL, 1)).containsExactly("BE", "FR");
+                assertThat(getChildren(c, NO_DATABASE, FLOW_REF, ALL, 2)).containsExactly("INDUSTRY", "XXX");
 
-                assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M__, 1)).containsExactly("BE", "FR");
-                assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M__, 2)).containsExactly("INDUSTRY", "XXX");
+                assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M__, 1)).containsExactly("BE", "FR");
+                assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M__, 2)).containsExactly("INDUSTRY", "XXX");
 
                 if (c.getSupportedFeatures().contains(Feature.DATA_QUERY_DETAIL)) {
-                    assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
-                    assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY");
+                    assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY");
                 } else {
-                    assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
-                    assertThat(getChildren(c, NO_CATALOG, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M_BE_, 2)).containsExactly("INDUSTRY", "XXX");
+                    assertThat(getChildren(c, NO_DATABASE, FLOW_REF, M_FR_, 2)).containsExactly("INDUSTRY", "XXX");
                 }
             }
         }

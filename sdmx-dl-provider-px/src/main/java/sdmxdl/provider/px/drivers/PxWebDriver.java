@@ -150,39 +150,39 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+        public @NonNull Collection<sdmxdl.Database> getDatabases() throws IOException {
             return client.getDataBases();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
-            checkCatalog(catalog);
-            return client.getTables(catalog.getId());
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
+            checkDatabase(database);
+            return client.getTables(database.getId());
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            checkCatalog(catalog);
-            return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, client);
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            checkCatalog(catalog);
-            return client.getMeta(catalog.getId(), flowRef.getId());
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return client.getMeta(database.getId(), flowRef.getId());
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            checkCatalog(catalog);
-            return ConnectionSupport.getDataSetFromStream(catalog, flowRef, query, this);
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            checkCatalog(catalog);
-            Structure dsd = client.getMeta(catalog.getId(), flowRef.getId());
-            DataCursor dataCursor = client.getData(catalog.getId(), flowRef.getId(), dsd, query.getKey());
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            Structure dsd = client.getMeta(database.getId(), flowRef.getId());
+            DataCursor dataCursor = client.getData(database.getId(), flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -195,9 +195,9 @@ public final class PxWebDriver implements Driver {
         public void close() {
         }
 
-        private void checkCatalog(CatalogRef catalog) throws IOException {
-            if (catalog.equals(CatalogRef.NO_CATALOG)) {
-                throw new IOException("Catalog ID is required");
+        private void checkDatabase(DatabaseRef database) throws IOException {
+            if (database.equals(DatabaseRef.NO_DATABASE)) {
+                throw new IOException("Database ID is required");
             }
         }
     }
@@ -208,7 +208,7 @@ public final class PxWebDriver implements Driver {
         Config getConfig() throws IOException;
 
         @NonNull
-        List<Catalog> getDataBases() throws IOException;
+        List<sdmxdl.Database> getDataBases() throws IOException;
 
         @NonNull
         List<Flow> getTables(@NonNull String dbId) throws IOException;
@@ -259,7 +259,7 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Catalog> getDataBases() throws IOException {
+        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(baseURL)
@@ -275,9 +275,9 @@ public final class PxWebDriver implements Driver {
             return Config.JSON_PARSER;
         }
 
-        private TextParser<List<Catalog>> getDatabasesParser(MediaType ignore) {
-            return Database.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(Database::toCatalog).collect(toList()));
+        private TextParser<List<sdmxdl.Database>> getDatabasesParser(MediaType ignore) {
+            return PxWebDriver.Database.JSON_PARSER
+                    .andThen(tables -> Stream.of(tables).map(PxWebDriver.Database::toDatabase).collect(toList()));
         }
 
         @Override
@@ -369,7 +369,7 @@ public final class PxWebDriver implements Driver {
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Catalog>> idOfDatabases = initIdOfDatabases(baseURI);
+        private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(baseURI);
 
         @lombok.Getter(lazy = true)
         private final TypedId<List<Flow>> idOfTables = initIdOfTables(baseURI);
@@ -377,10 +377,10 @@ public final class PxWebDriver implements Driver {
         @lombok.Getter(lazy = true)
         private final TypedId<Structure> idOfMeta = initIdOfMeta(baseURI);
 
-        private static TypedId<List<Catalog>> initIdOfDatabases(URI base) {
+        private static TypedId<List<sdmxdl.Database>> initIdOfDatabases(URI base) {
             return TypedId.of(base,
-                    DataRepository::getCatalogs,
-                    catalogs -> DataRepository.builder().catalogs(catalogs).build()
+                    DataRepository::getDatabases,
+                    databases -> DataRepository.builder().databases(databases).build()
             ).with("databases");
         }
 
@@ -409,7 +409,7 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Catalog> getDataBases() throws IOException {
+        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
             return getIdOfDatabases()
                     .load(cache, delegate::getDataBases, ignore -> ttl);
         }
@@ -576,13 +576,13 @@ public final class PxWebDriver implements Driver {
         String dbId;
         String text;
 
-        Catalog toCatalog() {
-            return new Catalog(CatalogRef.parse(dbId), text);
+        sdmxdl.Database toDatabase() {
+            return new sdmxdl.Database(DatabaseRef.parse(dbId), text);
         }
 
         static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
                 .builder(Database[].class)
-                .deserializer(Database.class, Database::deserialize)
+                .deserializer(Database.class, PxWebDriver.Database::deserialize)
                 .build();
 
         @MightBeGenerated

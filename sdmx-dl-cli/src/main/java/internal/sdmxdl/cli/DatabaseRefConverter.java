@@ -18,17 +18,17 @@ package internal.sdmxdl.cli;
 
 import nbbrd.io.text.Parser;
 import picocli.CommandLine;
-import sdmxdl.CatalogRef;
+import sdmxdl.DatabaseRef;
 
 /**
  * @author Philippe Charles
  */
-public final class CatalogRefConverter implements CommandLine.ITypeConverter<CatalogRef> {
+public final class DatabaseRefConverter implements CommandLine.ITypeConverter<DatabaseRef> {
 
-    private final Parser<CatalogRef> parser = Parser.of(CatalogRef::parse);
+    private final Parser<DatabaseRef> parser = Parser.of(DatabaseRef::parse);
 
     @Override
-    public CatalogRef convert(String string) {
+    public DatabaseRef convert(String string) {
         return parser.parse(string);
     }
 }

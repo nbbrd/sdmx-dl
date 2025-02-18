@@ -46,44 +46,44 @@ final class RestConnection implements Connection {
     private boolean closed = false;
 
     @Override
-    public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+    public @NonNull Collection<Database> getDatabases() throws IOException {
         checkState();
         return Collections.emptyList();
     }
 
     @Override
-    public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
+    public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
         checkState();
-        checkCatalog(catalog);
+        checkDatabase(database);
         return client.getFlows();
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
         checkState();
-        checkCatalog(catalog);
-        return lookupFlow(catalog, flowRef);
+        checkDatabase(database);
+        return lookupFlow(database, flowRef);
     }
 
     @Override
-    public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
         checkState();
-        checkCatalog(catalog);
-        return client.getStructure(lookupFlow(catalog, flowRef).getStructureRef());
+        checkDatabase(database);
+        return client.getStructure(lookupFlow(database, flowRef).getStructureRef());
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-        checkCatalog(catalog);
-        return ConnectionSupport.getDataSetFromStream(catalog, flowRef, query, this);
+    public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        checkDatabase(database);
+        return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         checkState();
-        checkCatalog(catalog);
+        checkDatabase(database);
 
-        Flow flow = lookupFlow(catalog, flowRef);
+        Flow flow = lookupFlow(database, flowRef);
         Structure dsd = client.getStructure(flow.getStructureRef());
         checkKey(query.getKey(), dsd);
 
@@ -128,13 +128,13 @@ final class RestConnection implements Connection {
         }
     }
 
-    private Flow lookupFlow(CatalogRef catalog, FlowRef flowRef) throws IOException, IllegalArgumentException {
+    private Flow lookupFlow(DatabaseRef database, FlowRef flowRef) throws IOException, IllegalArgumentException {
         if (noBatchFlow) {
             checkDataflowRef(flowRef);
             return client.getFlow(flowRef);
         }
 
-        return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, client);
+        return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
     }
 
     private void checkDataflowRef(FlowRef ref) throws IllegalArgumentException {
@@ -145,9 +145,9 @@ final class RestConnection implements Connection {
         WebValidators.onDataStructure(dsd).checkValidity(key);
     }
 
-    private void checkCatalog(CatalogRef catalog) throws IOException {
-        if (!catalog.equals(CatalogRef.NO_CATALOG)) {
-            throw new IOException("Catalog ID is not supported");
+    private void checkDatabase(DatabaseRef database) throws IOException {
+        if (!database.equals(DatabaseRef.NO_DATABASE)) {
+            throw new IOException("Database ID is not supported");
         }
     }
 }

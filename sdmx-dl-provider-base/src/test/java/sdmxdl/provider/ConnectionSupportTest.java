@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
-import static sdmxdl.CatalogRef.NO_CATALOG;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Query.ALL;
 import static sdmxdl.provider.ConnectionSupport.getDataSetFromStream;
 
@@ -22,15 +22,15 @@ class ConnectionSupportTest {
     @Test
     void testGetDataSetFromStream() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> getDataSetFromStream(NO_CATALOG, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::illegalArgument)))
+                .isThrownBy(() -> getDataSetFromStream(NO_DATABASE, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::illegalArgument)))
                 .withMessageContaining("illegalArgument");
 
         assertThatIOException()
-                .isThrownBy(() -> getDataSetFromStream(NO_CATALOG, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::uncheckedIO)))
+                .isThrownBy(() -> getDataSetFromStream(NO_DATABASE, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::uncheckedIO)))
                 .withMessageContaining("uncheckedIO");
 
         assertThatRuntimeException()
-                .isThrownBy(() -> getDataSetFromStream(NO_CATALOG, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::runtime)))
+                .isThrownBy(() -> getDataSetFromStream(NO_DATABASE, noFlowRef, ALL, new FailingDataStreamConnection(ConnectionSupportTest::runtime)))
                 .withMessageContaining("runtime");
     }
 
@@ -64,32 +64,32 @@ class ConnectionSupportTest {
         }
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+        public @NonNull Collection<Database> getDatabases() throws IOException {
             return Collections.emptyList();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
             return Collections.emptyList();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             throw new IllegalArgumentException("");
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
             throw new IllegalArgumentException("");
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             throw new IllegalArgumentException("");
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             return streamSupplier.get();
         }
 

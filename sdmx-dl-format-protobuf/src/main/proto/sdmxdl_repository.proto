@@ -8,7 +8,7 @@ message About {
   string version = 2;
 }
 
-message Catalog {
+message Database {
   string id = 1;
   string name = 2;
 }
@@ -54,7 +54,7 @@ message DataQuery {
 
 message DataRepository {
   string name = 1;
-  repeated Catalog catalogs = 2;
+  repeated Database databases = 2;
   repeated DataStructure structures = 3;
   repeated Dataflow flows = 4;
   repeated DataSet dataSets = 5;

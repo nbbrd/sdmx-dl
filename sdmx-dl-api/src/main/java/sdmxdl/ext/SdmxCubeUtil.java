@@ -38,47 +38,47 @@ import static sdmxdl.Detail.*;
 @lombok.experimental.UtilityClass
 public class SdmxCubeUtil {
 
-    public @NonNull Stream<Series> getAllSeries(@NonNull Connection conn, @NonNull CatalogRef catalog, @NonNull FlowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getAllSeries(@NonNull Connection conn, @NonNull DatabaseRef database, @NonNull FlowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
         return isDataQueryDetailSupported(conn)
-                ? request(conn, catalog, flow, node, NO_DATA)
-                : computeKeys(conn, catalog, flow, node);
+                ? request(conn, database, flow, node, NO_DATA)
+                : computeKeys(conn, database, flow, node);
     }
 
-    public @NonNull Stream<Series> getAllSeriesWithData(@NonNull Connection conn, @NonNull CatalogRef catalog, @NonNull FlowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getAllSeriesWithData(@NonNull Connection conn, @NonNull DatabaseRef database, @NonNull FlowRef flow, @NonNull Key node) throws IOException, IllegalArgumentException {
         if (node.isSeries()) {
             throw new IllegalArgumentException("Expecting node");
         }
         return isDataQueryDetailSupported(conn)
-                ? request(conn, catalog, flow, node, FULL)
-                : computeKeysAndRequestData(conn, catalog, flow, node);
+                ? request(conn, database, flow, node, FULL)
+                : computeKeysAndRequestData(conn, database, flow, node);
     }
 
-    public @NonNull Optional<Series> getSeries(@NonNull Connection conn, @NonNull CatalogRef catalog, @NonNull FlowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
+    public @NonNull Optional<Series> getSeries(@NonNull Connection conn, @NonNull DatabaseRef database, @NonNull FlowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
-        try (Stream<Series> stream = request(conn, catalog, flow, leaf, NO_DATA)) {
+        try (Stream<Series> stream = request(conn, database, flow, leaf, NO_DATA)) {
             return stream.findFirst();
         } catch (UncheckedIOException ex) {
             throw ex.getCause();
         }
     }
 
-    public @NonNull Optional<Series> getSeriesWithData(@NonNull Connection conn, @NonNull CatalogRef catalog, @NonNull FlowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
+    public @NonNull Optional<Series> getSeriesWithData(@NonNull Connection conn, @NonNull DatabaseRef database, @NonNull FlowRef flow, @NonNull Key leaf) throws IOException, IllegalArgumentException {
         if (!leaf.isSeries()) {
             throw new IllegalArgumentException("Expecting leaf");
         }
-        try (Stream<Series> stream = request(conn, catalog, flow, leaf, FULL)) {
+        try (Stream<Series> stream = request(conn, database, flow, leaf, FULL)) {
             return stream.findFirst();
         } catch (UncheckedIOException ex) {
             throw ex.getCause();
         }
     }
 
-    public @NonNull Stream<String> getChildren(@NonNull Connection conn, @NonNull CatalogRef catalog, @NonNull FlowRef flow, @NonNull Key node, @NonNegative int dimensionIndex) throws IOException {
+    public @NonNull Stream<String> getChildren(@NonNull Connection conn, @NonNull DatabaseRef database, @NonNull FlowRef flow, @NonNull Key node, @NonNegative int dimensionIndex) throws IOException {
         if (dimensionIndex < 0) {
             throw new IllegalArgumentException("Expecting dimensionIndex >= 0");
         }
@@ -89,8 +89,8 @@ public class SdmxCubeUtil {
             throw new IllegalArgumentException("Expecting wildcard on dimensionIndex");
         }
         return isDataQueryDetailSupported(conn)
-                ? request(conn, catalog, flow, node, SERIES_KEYS_ONLY).map(series -> series.getKey().get(dimensionIndex)).distinct()
-                : computeAllPossibleChildren(conn.getStructure(catalog, flow).getDimensionList(), dimensionIndex);
+                ? request(conn, database, flow, node, SERIES_KEYS_ONLY).map(series -> series.getKey().get(dimensionIndex)).distinct()
+                : computeAllPossibleChildren(conn.getStructure(database, flow).getDimensionList(), dimensionIndex);
     }
 
     public @NonNull Optional<Dimension> getDimensionById(@NonNull Structure dsd, @NonNull String id) {
@@ -107,23 +107,23 @@ public class SdmxCubeUtil {
         return OptionalInt.empty();
     }
 
-    private Stream<Series> request(Connection conn, @NonNull CatalogRef catalog, FlowRef flow, Key key, Detail detail) throws IOException {
-        return conn.getDataStream(catalog, flow, Query.builder().key(key).detail(detail).build());
+    private Stream<Series> request(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key, Detail detail) throws IOException {
+        return conn.getDataStream(database, flow, Query.builder().key(key).detail(detail).build());
     }
 
-    private Stream<Series> computeKeys(Connection conn, @NonNull CatalogRef catalog, FlowRef flow, Key key) throws IOException {
-        return computeAllPossibleSeries(conn.getStructure(catalog, flow), key)
+    private Stream<Series> computeKeys(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key) throws IOException {
+        return computeAllPossibleSeries(conn.getStructure(database, flow), key)
                 .map(SdmxCubeUtil::emptySeriesOf);
     }
 
-    private Stream<Series> computeKeysAndRequestData(Connection conn, @NonNull CatalogRef catalog, FlowRef flow, Key key) throws IOException {
-        Map<Key, Series> dataByKey = dataByKey(conn, catalog, flow, key);
-        return computeAllPossibleSeries(conn.getStructure(catalog, flow), key)
+    private Stream<Series> computeKeysAndRequestData(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key) throws IOException {
+        Map<Key, Series> dataByKey = dataByKey(conn, database, flow, key);
+        return computeAllPossibleSeries(conn.getStructure(database, flow), key)
                 .map(seriesKey -> dataByKey.computeIfAbsent(seriesKey, SdmxCubeUtil::emptySeriesOf));
     }
 
-    private Map<Key, Series> dataByKey(Connection conn, @NonNull CatalogRef catalog, FlowRef flow, Key key) throws IOException {
-        try (Stream<Series> cursor = request(conn, catalog, flow, key, FULL)) {
+    private Map<Key, Series> dataByKey(Connection conn, @NonNull DatabaseRef database, FlowRef flow, Key key) throws IOException {
+        try (Stream<Series> cursor = request(conn, database, flow, key, FULL)) {
             return cursor.collect(Collectors.toMap(Series::getKey, Function.identity()));
         } catch (UncheckedIOException ex) {
             throw ex.getCause();

@@ -66,10 +66,10 @@ public class WebResponse {
 
         try (Connection conn = manager.getConnection(request.getSource(), request.getLanguages())) {
             result
-                    .flows(conn.getFlows(request.getCatalog()))
-                    .flow(conn.getFlow(request.getCatalog(), request.getFlowRef()))
-                    .structure(conn.getStructure(request.getCatalog(), request.getFlowRef()))
-                    .data(conn.getData(request.getCatalog(), request.getFlowRef(), request.getQuery()).getData());
+                    .flows(conn.getFlows(request.getDatabase()))
+                    .flow(conn.getFlow(request.getDatabase(), request.getFlowRef()))
+                    .structure(conn.getStructure(request.getDatabase(), request.getFlowRef()))
+                    .data(conn.getData(request.getDatabase(), request.getFlowRef(), request.getQuery()).getData());
         } catch (Exception ex) {
             log.log(Level.WARNING, "While getting response", ex);
             result.error(toError(ex));

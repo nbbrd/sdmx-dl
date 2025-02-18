@@ -67,20 +67,20 @@ public abstract class SdmxAutoCompletion {
         return new WebSourceCompletion(manager, languages);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onCatalog(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
-        return new CatalogCompletion<>(manager, languages, source, cache);
+    public static <S extends Source> SdmxAutoCompletion onDatabase(SdmxManager<S> manager, Languages languages, Supplier<S> source, ConcurrentMap cache) {
+        return new DatabaseCompletion<>(manager, languages, source, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, ConcurrentMap cache) {
-        return new DataflowCompletion<>(manager, languages, source, catalog, cache);
+    public static <S extends Source> SdmxAutoCompletion onDataflow(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, ConcurrentMap cache) {
+        return new DataflowCompletion<>(manager, languages, source, database, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
-        return new DimensionCompletion<>(manager, languages, source, catalog, flowRef, cache);
+    public static <S extends Source> SdmxAutoCompletion onDimension(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+        return new DimensionCompletion<>(manager, languages, source, database, flowRef, cache);
     }
 
-    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<CatalogRef> catalog, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
-        return new AttributeCompletion<>(manager, languages, source, catalog, flowRef, cache);
+    public static <S extends Source> SdmxAutoCompletion onAttribute(SdmxManager<S> manager, Languages languages, Supplier<S> source, Supplier<DatabaseRef> database, Supplier<FlowRef> flowRef, ConcurrentMap cache) {
+        return new AttributeCompletion<>(manager, languages, source, database, flowRef, cache);
     }
 
     @lombok.AllArgsConstructor
@@ -139,7 +139,7 @@ public abstract class SdmxAutoCompletion {
     }
 
     @lombok.AllArgsConstructor
-    private static final class CatalogCompletion<S extends Source> extends SdmxAutoCompletion {
+    private static final class DatabaseCompletion<S extends Source> extends SdmxAutoCompletion {
 
         @lombok.NonNull
         private final SdmxManager<S> manager;
@@ -159,44 +159,44 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(SYNC)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(catalog -> catalog.getId().toString())
+                    .valueToString(database -> database.getId().toString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
         }
 
         @Override
         public ListCellRenderer getRenderer() {
-            return new CustomListCellRenderer<Catalog>() {
+            return new CustomListCellRenderer<Database>() {
                 @Override
-                protected String getValueAsString(Catalog value) {
+                protected String getValueAsString(Database value) {
                     return value.getId() + ": " + value.getName();
                 }
 
                 @Override
-                protected Icon toIcon(String term, JList list, Catalog value, int index, boolean isSelected, boolean cellHasFocus) {
+                protected Icon toIcon(String term, JList list, Database value, int index, boolean isSelected, boolean cellHasFocus) {
                     return null;
                 }
             };
         }
 
-        private List<Catalog> load(String term) throws IOException {
+        private List<Database> load(String term) throws IOException {
             try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getCatalogs());
+                return new ArrayList<>(c.getDatabases());
             }
         }
 
-        private List<Catalog> filterAndSort(List<Catalog> list, String term) {
+        private List<Database> filterAndSort(List<Database> list, String term) {
             return list.stream().filter(getFilter(term)).collect(toList());
         }
 
-        private Predicate<Catalog> getFilter(String term) {
+        private Predicate<Database> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return value -> filter.test(value.getName())
                     || filter.test(value.getId().toString());
         }
 
         private String getCacheKey(String term) {
-            return "Catalog" + source.get() + languages;
+            return "Database" + source.get() + languages;
         }
     }
 
@@ -213,7 +213,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<CatalogRef> catalog;
+        private final Supplier<DatabaseRef> database;
 
         @lombok.NonNull
         private final ConcurrentMap cache;
@@ -236,7 +236,7 @@ public abstract class SdmxAutoCompletion {
 
         private List<Flow> load(String term) throws Exception {
             try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getFlows(catalog.get()));
+                return new ArrayList<>(c.getFlows(database.get()));
             }
         }
 
@@ -253,7 +253,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Dataflow" + source.get() + catalog.get() + languages;
+            return "Dataflow" + source.get() + database.get() + languages;
         }
     }
 
@@ -270,7 +270,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<CatalogRef> catalog;
+        private final Supplier<DatabaseRef> database;
 
         @lombok.NonNull
         private final Supplier<FlowRef> flowRef;
@@ -296,7 +296,7 @@ public abstract class SdmxAutoCompletion {
 
         private List<Dimension> load(String term) throws Exception {
             try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getStructure(catalog.get(), flowRef.get()).getDimensions());
+                return new ArrayList<>(c.getStructure(database.get(), flowRef.get()).getDimensions());
             }
         }
 
@@ -313,7 +313,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Dimension" + source.get() + catalog.get() + flowRef.get() + languages;
+            return "Dimension" + source.get() + database.get() + flowRef.get() + languages;
         }
     }
 
@@ -330,7 +330,7 @@ public abstract class SdmxAutoCompletion {
         private final Supplier<S> source;
 
         @lombok.NonNull
-        private final Supplier<CatalogRef> catalog;
+        private final Supplier<DatabaseRef> database;
 
         @lombok.NonNull
         private final Supplier<FlowRef> flowRef;
@@ -356,7 +356,7 @@ public abstract class SdmxAutoCompletion {
 
         private List<Attribute> load(String term) throws Exception {
             try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getStructure(catalog.get(), flowRef.get()).getAttributes());
+                return new ArrayList<>(c.getStructure(database.get(), flowRef.get()).getAttributes());
             }
         }
 
@@ -373,7 +373,7 @@ public abstract class SdmxAutoCompletion {
         }
 
         private String getCacheKey(String term) {
-            return "Attribute" + source.get() + catalog.get() + flowRef.get() + languages;
+            return "Attribute" + source.get() + database.get() + flowRef.get() + languages;
         }
     }
 

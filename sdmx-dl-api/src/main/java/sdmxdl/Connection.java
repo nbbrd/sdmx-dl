@@ -34,22 +34,22 @@ public interface Connection extends Closeable {
     void testConnection() throws IOException;
 
     @NonNull
-    Collection<Catalog> getCatalogs() throws IOException;
+    Collection<Database> getDatabases() throws IOException;
 
     @NonNull
-    Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException;
+    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException;
 
     @NonNull
-    Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
     @NonNull
-    DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+    DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
     @NonNull
-    Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+    Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
     @NonNull
     Set<Feature> getSupportedFeatures() throws IOException;

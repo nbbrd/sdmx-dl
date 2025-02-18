@@ -530,24 +530,24 @@ public final class MainComponent extends JComponent {
 
     private void copyPath(DataSourceRef ref) {
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSourceURI(ref.getSource(), ref.toFlowRef(), ref.getCatalog()))
+                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSourceURI(ref.getSource(), ref.toFlowRef(), ref.getDatabase()))
                 .copyToClipboard("XML reference", XmlDataSourceRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(ref.getCatalog(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(ref.getCatalog(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(ref.getCatalog(), ref.getSource(), ref.getFlow(), Key.ALL))
+                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
+                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
+                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(ref.getDatabase(), ref.getSource(), ref.getFlow(), Key.ALL))
                 .showMenuAsPopup(this);
     }
 
     private void copyPath(DataSetRef ref) {
         DataSourceRef src = ref.getDataSourceRef();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSetURI(src.getSource(), src.toFlowRef(), ref.getKey(), src.getCatalog()))
+                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSetURI(src.getSource(), src.toFlowRef(), ref.getKey(), src.getDatabase()))
                 .copyToClipboard("XML reference", XmlDataSetRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(src.getCatalog(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(src.getCatalog(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(src.getCatalog(), src.getSource(), src.getFlow(), ref.getKey()))
+                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
+                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
+                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
                 .showMenuAsPopup(this);
     }
 

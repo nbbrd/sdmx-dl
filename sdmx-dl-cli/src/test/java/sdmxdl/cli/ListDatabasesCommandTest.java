@@ -14,11 +14,11 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
 
-public class ListCatalogsCommandTest {
+public class ListDatabasesCommandTest {
 
     @Test
     public void testHelp() {
-        CommandLine cmd = new CommandLine(new ListCatalogsCommand());
+        CommandLine cmd = new CommandLine(new ListDatabasesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         assertThat(cmd.execute()).isEqualTo(CommandLine.ExitCode.USAGE);
@@ -29,7 +29,7 @@ public class ListCatalogsCommandTest {
     @SetSystemProperty(key = "enableFileDriver", value = "true")
     @Test
     public void testContent(@TempDir Path temp) throws IOException {
-        CommandLine cmd = new CommandLine(new ListCatalogsCommand());
+        CommandLine cmd = new CommandLine(new ListDatabasesCommand());
         CommandWatcher watcher = CommandWatcher.on(cmd);
 
         File src = FileSample.create(temp);

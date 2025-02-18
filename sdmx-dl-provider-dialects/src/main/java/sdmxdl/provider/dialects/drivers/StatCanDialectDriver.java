@@ -105,23 +105,23 @@ public final class StatCanDialectDriver implements Driver {
         private final StatCanClient client;
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() throws IOException {
+        public @NonNull Collection<Database> getDatabases() throws IOException {
             return Collections.emptyList();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) throws IOException {
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
             return client.getFlows();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return ConnectionSupport.getFlowFromFlows(catalog, flowRef, this, client);
+            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             int productId = Converter.fromDataflowRef(flowRef);
             StructureRef dsdRef = Converter.toDataStructureRef(productId);
             return client.getStructAndData(productId)
@@ -140,14 +140,14 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
                     .orElseGet(() -> emptyDataSet(flowRef, query));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseGet(Stream::empty);

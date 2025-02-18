@@ -19,7 +19,7 @@ public class ProtobufRepositories {
         return DataRepository
                 .newBuilder()
                 .setName(value.getName())
-                .addAllCatalogs(fromCollection(value.getCatalogs(), ProtobufRepositories::fromCatalog))
+                .addAllDatabases(fromCollection(value.getDatabases(), ProtobufRepositories::fromDatabase))
                 .addAllStructures(fromCollection(value.getStructures(), ProtobufRepositories::fromDataStructure))
                 .addAllFlows(fromCollection(value.getFlows(), ProtobufRepositories::fromDataflow))
                 .addAllDataSets(fromCollection(value.getDataSets(), ProtobufRepositories::fromDataSet))
@@ -32,7 +32,7 @@ public class ProtobufRepositories {
         return sdmxdl.DataRepository
                 .builder()
                 .name(value.getName())
-                .catalogs(toCollection(value.getCatalogsList(), ProtobufRepositories::toCatalog))
+                .databases(toCollection(value.getDatabasesList(), ProtobufRepositories::toDatabase))
                 .structures(toCollection(value.getStructuresList(), ProtobufRepositories::toDataStructure))
                 .flows(toCollection(value.getFlowsList(), ProtobufRepositories::toDataflow))
                 .dataSets(toCollection(value.getDataSetsList(), ProtobufRepositories::toDataSet))
@@ -41,19 +41,19 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static Catalog fromCatalog(sdmxdl.Catalog value) {
-        return Catalog
+    public static Database fromDatabase(sdmxdl.Database value) {
+        return Database
                 .newBuilder()
                 .setId(value.getId().getId())
                 .setName(value.getName())
                 .build();
     }
 
-    public static sdmxdl.Catalog toCatalog(Catalog value) {
-        return new sdmxdl.Catalog(sdmxdl.CatalogRef.parse(value.getId()), value.getName());
+    public static sdmxdl.Database toDatabase(Database value) {
+        return new sdmxdl.Database(DatabaseRef.parse(value.getId()), value.getName());
     }
 
-    public static DataStructure fromDataStructure(Structure value) {
+    public static DataStructure fromDataStructure(sdmxdl.Structure value) {
         DataStructure.Builder result = DataStructure
                 .newBuilder()
                 .setRef(value.getRef().toString())
@@ -68,7 +68,7 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static Structure toDataStructure(DataStructure value) {
+    public static sdmxdl.Structure toDataStructure(DataStructure value) {
         return Structure
                 .builder()
                 .ref(StructureRef.parse(value.getRef()))

@@ -40,15 +40,15 @@ public class WebSourceOptions extends WebNetOptions {
     private String source;
 
     @CommandLine.Option(
-            names = {"-c", "--catalog"},
-            paramLabel = "<catalog>",
-            converter = CatalogRefConverter.class,
-            descriptionKey = "cli.sdmx.catalog"
+            names = {"-d", "--database"},
+            paramLabel = "<database>",
+            converter = DatabaseRefConverter.class,
+            descriptionKey = "cli.sdmx.database"
     )
-    private CatalogRef catalog;
+    private DatabaseRef database;
 
-    public CatalogRef getCatalog() {
-        return catalog == null ? CatalogRef.NO_CATALOG : catalog;
+    public DatabaseRef getDatabase() {
+        return database == null ? DatabaseRef.NO_DATABASE : database;
     }
 
     public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
@@ -63,7 +63,7 @@ public class WebSourceOptions extends WebNetOptions {
 
     public Collection<Flow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
         try (Connection conn = open(manager, languages)) {
-            return conn.getFlows(getCatalog());
+            return conn.getFlows(getDatabase());
         }
     }
 

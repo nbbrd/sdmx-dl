@@ -140,8 +140,8 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
         result.register(Feature.class, new DefaultSerializers.EnumSerializer(Feature.class));
         result.register(DataRepository.class, new DataRepositorySerializer());
-        result.register(Catalog.class, new CatalogSerializer());
-        result.register(CatalogRef.class, new CatalogRefSerializer());
+        result.register(Database.class, new DatabaseSerializer());
+        result.register(DatabaseRef.class, new DatabaseRefSerializer());
         result.register(Structure.class, new StructureSerializer());
         result.register(StructureRef.class, new StructureRefSerializer());
         result.register(Flow.class, new FlowSerializer());
@@ -270,7 +270,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
     private static final class DataRepositorySerializer extends ImmutableSerializer<DataRepository> {
 
-        private final Serializer<Collection<Catalog>> catalogs = new CustomCollectionSerializer<>(Catalog.class);
+        private final Serializer<Collection<Database>> databases = new CustomCollectionSerializer<>(Database.class);
         private final Serializer<Collection<Structure>> structures = new CustomCollectionSerializer<>(Structure.class);
         private final Serializer<Collection<Flow>> flows = new CustomCollectionSerializer<>(Flow.class);
         private final Serializer<Collection<DataSet>> dataSets = new CustomCollectionSerializer<>(DataSet.class);
@@ -279,7 +279,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         @Override
         public void write(Kryo kryo, Output output, DataRepository t) {
             output.writeString(t.getName());
-            kryo.writeObject(output, t.getCatalogs(), catalogs);
+            kryo.writeObject(output, t.getDatabases(), databases);
             kryo.writeObject(output, t.getStructures(), structures);
             kryo.writeObject(output, t.getFlows(), flows);
             kryo.writeObject(output, t.getDataSets(), dataSets);
@@ -293,7 +293,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
             return DataRepository
                     .builder()
                     .name(input.readString())
-                    .catalogs(kryo.readObject(input, ArrayList.class, catalogs))
+                    .databases(kryo.readObject(input, ArrayList.class, databases))
                     .structures(kryo.readObject(input, ArrayList.class, structures))
                     .flows(kryo.readObject(input, ArrayList.class, flows))
                     .dataSets(kryo.readObject(input, ArrayList.class, dataSets))
@@ -303,33 +303,33 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         }
     }
 
-    private static final class CatalogSerializer extends ImmutableSerializer<Catalog> {
+    private static final class DatabaseSerializer extends ImmutableSerializer<Database> {
 
         @Override
-        public void write(Kryo kryo, Output output, Catalog t) {
+        public void write(Kryo kryo, Output output, Database t) {
             kryo.writeObject(output, t.getId());
             output.writeString(t.getName());
         }
 
         @Override
-        public Catalog read(Kryo kryo, Input input, Class<? extends Catalog> type) {
-            return new Catalog(
-                    kryo.readObject(input, CatalogRef.class),
+        public Database read(Kryo kryo, Input input, Class<? extends Database> type) {
+            return new Database(
+                    kryo.readObject(input, DatabaseRef.class),
                     input.readString()
             );
         }
     }
 
-    private static final class CatalogRefSerializer extends ImmutableSerializer<CatalogRef> {
+    private static final class DatabaseRefSerializer extends ImmutableSerializer<DatabaseRef> {
 
         @Override
-        public void write(Kryo kryo, Output output, CatalogRef t) {
+        public void write(Kryo kryo, Output output, DatabaseRef t) {
             output.writeString(t.getId());
         }
 
         @Override
-        public CatalogRef read(Kryo kryo, Input input, Class<? extends CatalogRef> type) {
-            return CatalogRef.parse(input.readString());
+        public DatabaseRef read(Kryo kryo, Input input, Class<? extends DatabaseRef> type) {
+            return DatabaseRef.parse(input.readString());
         }
     }
 

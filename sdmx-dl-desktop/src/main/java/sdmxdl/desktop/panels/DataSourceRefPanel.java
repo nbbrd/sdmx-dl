@@ -9,7 +9,7 @@ import internal.sdmxdl.desktop.util.Ikons;
 import nbbrd.design.MightBePromoted;
 import nbbrd.io.text.Formatter;
 import net.miginfocom.swing.MigLayout;
-import sdmxdl.CatalogRef;
+import sdmxdl.DatabaseRef;
 import sdmxdl.Languages;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.Sdmxdl;
@@ -39,7 +39,7 @@ public final class DataSourceRefPanel extends JComponent {
     }
 
     private final JTextField sourceField = new JTextField();
-    private final JTextField catalogField = new JTextField();
+    private final JTextField databaseField = new JTextField();
     private final JTextField flowField = new JTextField();
     private final JTextField dimensionsField = new JTextField();
     private final JTextField languagesField = new JTextField();
@@ -59,20 +59,20 @@ public final class DataSourceRefPanel extends JComponent {
         sourceAutoCompletion.setSource(sourceCompletion.getSource());
         sourceAutoCompletion.getList().setCellRenderer(sourceCompletion.getRenderer());
 
-        JButton catalogButton = new JButton(Ikons.of(MDI_MENU_DOWN, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
-        catalogField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, catalogButton);
-        SdmxAutoCompletion catalogCompletion = SdmxAutoCompletion.onCatalog(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
+        JButton databaseButton = new JButton(Ikons.of(MDI_MENU_DOWN, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
+        databaseField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, databaseButton);
+        SdmxAutoCompletion databaseCompletion = SdmxAutoCompletion.onDatabase(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
                 () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
                 new ConcurrentHashMap<>());
-        JAutoCompletion catalogAutoCompletion = new JAutoCompletion(catalogField);
-        catalogAutoCompletion.setSource(catalogCompletion.getSource());
-        catalogAutoCompletion.getList().setCellRenderer(catalogCompletion.getRenderer());
+        JAutoCompletion databaseAutoCompletion = new JAutoCompletion(databaseField);
+        databaseAutoCompletion.setSource(databaseCompletion.getSource());
+        databaseAutoCompletion.getList().setCellRenderer(databaseCompletion.getRenderer());
 
         JButton flowButton = new JButton(Ikons.of(MDI_MENU_DOWN, 16, FlatIconColors.ACTIONS_GREYINLINE.key));
         flowField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, flowButton);
         SdmxAutoCompletion flowCompletion = SdmxAutoCompletion.onDataflow(Sdmxdl.INSTANCE.getSdmxManager(), Sdmxdl.INSTANCE.getLanguages(),
                 () -> Sdmxdl.INSTANCE.getSdmxManager().getSources().get(sourceField.getText()),
-                () -> CatalogRef.parse(catalogField.getText()),
+                () -> DatabaseRef.parse(databaseField.getText()),
                 new ConcurrentHashMap<>());
         JAutoCompletion flowAutoCompletion = new JAutoCompletion(flowField);
         flowAutoCompletion.setSource(flowCompletion.getSource());
@@ -87,8 +87,8 @@ public final class DataSourceRefPanel extends JComponent {
         panel.add(new JLabel("Provider"), "skip");
         panel.add(sourceField, "span, growx");
 
-        panel.add(new JLabel("Catalog"), "skip");
-        panel.add(catalogField, "span, growx");
+        panel.add(new JLabel("Database"), "skip");
+        panel.add(databaseField, "span, growx");
 
         panel.add(new JLabel("Dataflow"), "skip");
         panel.add(flowField, "span, growx");
@@ -112,7 +112,7 @@ public final class DataSourceRefPanel extends JComponent {
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
         sourceField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
-        catalogField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
+        databaseField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
         flowField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
         dimensionsField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
         languagesField.getDocument().addDocumentListener((DocumentAdapter) ignore -> updateModel());
@@ -124,7 +124,7 @@ public final class DataSourceRefPanel extends JComponent {
         if (!updating) {
             DataSourceRef newModel = (DataSourceRef) event.getNewValue();
             sourceField.setText(newModel.getSource());
-            catalogField.setText(newModel.getCatalog().toString());
+            databaseField.setText(newModel.getDatabase().toString());
             flowField.setText(newModel.getFlow());
             dimensionsField.setText(Formatter.onStringList(DataSourceRefPanel::join).formatAsString(newModel.getDimensions()));
             languagesField.setText(newModel.getLanguages().toString());
@@ -137,7 +137,7 @@ public final class DataSourceRefPanel extends JComponent {
         updateModel(dataSourceRef -> dataSourceRef
                 .toBuilder()
                 .source(sourceField.getText())
-                .catalog(CatalogRef.parse(catalogField.getText()))
+                .database(DatabaseRef.parse(databaseField.getText()))
                 .flow(flowField.getText())
 //                .dimensions(Parser.onStringList(JDataSourceRef::split).parse(dimensionsField.getText()))
                 .languages(languagesField.getText().isEmpty() ? Languages.ANY : Languages.parse(languagesField.getText()))

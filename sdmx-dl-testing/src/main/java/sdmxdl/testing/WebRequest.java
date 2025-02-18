@@ -17,7 +17,7 @@
 package sdmxdl.testing;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import sdmxdl.CatalogRef;
+import sdmxdl.DatabaseRef;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;
 import sdmxdl.Query;
@@ -39,7 +39,7 @@ public class WebRequest {
 
     @lombok.Builder.Default
     @NonNull
-    CatalogRef catalog = CatalogRef.NO_CATALOG;
+    DatabaseRef database = DatabaseRef.NO_DATABASE;
 
     @lombok.NonNull
     FlowRef flowRef;

@@ -36,32 +36,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() {
-            return RepoSamples.REPO.getCatalogs();
+        public @NonNull Collection<Database> getDatabases() {
+            return RepoSamples.REPO.getDatabases();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) {
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) {
             return RepoSamples.REPO.getFlows();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             return RepoSamples.FLOW;
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             return RepoSamples.STRUCT;
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET;
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET.getData().stream();
         }
 
@@ -81,32 +81,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() {
+        public @NonNull Collection<Database> getDatabases() {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) {
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             throw new CustomException();
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             throw new CustomException();
         }
 
@@ -126,32 +126,32 @@ public enum TestConnection implements Connection {
         }
 
         @Override
-        public @NonNull Collection<Catalog> getCatalogs() {
+        public @NonNull Collection<Database> getDatabases() {
             return null;
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows(@NonNull CatalogRef catalog) {
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) {
             return null;
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             return null;
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef) {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) {
             return null;
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return null;
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull CatalogRef catalog, @NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return null;
         }
 

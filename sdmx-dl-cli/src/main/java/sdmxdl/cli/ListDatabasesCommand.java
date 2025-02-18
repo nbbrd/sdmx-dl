@@ -22,7 +22,7 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.design.VisibleForTesting;
 import picocli.CommandLine;
-import sdmxdl.Catalog;
+import sdmxdl.Database;
 import sdmxdl.Connection;
 import sdmxdl.Languages;
 
@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 /**
  * @author Philippe Charles
  */
-@CommandLine.Command(name = "catalogs")
-public final class ListCatalogsCommand implements Callable<Void> {
+@CommandLine.Command(name = "databases")
+public final class ListDatabasesCommand implements Callable<Void> {
 
     @CommandLine.Mixin
     private WebSourceOptions web;
@@ -52,17 +52,17 @@ public final class ListCatalogsCommand implements Callable<Void> {
     }
 
     @VisibleForTesting
-    static CsvTable<Catalog> getTable(Languages languages) {
+    static CsvTable<Database> getTable(Languages languages) {
         return CsvTable
-                .builderOf(Catalog.class)
-                .columnOf("Id", catalog -> catalog.getId().toString())
-                .columnOf("Name", Catalog::getName)
+                .builderOf(Database.class)
+                .columnOf("Id", database -> database.getId().toString())
+                .columnOf("Name", Database::getName)
                 .build();
     }
 
-    private Stream<Catalog> getRows() throws IOException {
+    private Stream<Database> getRows() throws IOException {
         try (Connection c = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            return c.getCatalogs().stream();
+            return c.getDatabases().stream();
         }
     }
 }

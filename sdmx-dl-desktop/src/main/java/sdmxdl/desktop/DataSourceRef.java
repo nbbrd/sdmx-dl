@@ -25,7 +25,7 @@ public class DataSourceRef {
 
     @lombok.Builder.Default
     @NonNull
-    CatalogRef catalog = CatalogRef.NO_CATALOG;
+    DatabaseRef database = DatabaseRef.NO_DATABASE;
 
     @lombok.Builder.Default
     @NonNull

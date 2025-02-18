@@ -1,10 +1,10 @@
 package sdmxdl;
 
 @lombok.Value
-public class Catalog implements HasName {
+public class Database implements HasName {
 
     @lombok.NonNull
-    CatalogRef id;
+    DatabaseRef id;
 
     @lombok.NonNull
     String name;

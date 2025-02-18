@@ -72,11 +72,11 @@ public final class FetchExtraCommand implements Callable<Void> {
         SdmxWebManager manager = web.loadManager();
 
         try (Connection conn = web.open(manager, web.getLangs())) {
-            Structure dsd = conn.getStructure(web.getCatalog(), web.getFlow());
+            Structure dsd = conn.getStructure(web.getDatabase(), web.getFlow());
 
             SeriesMetaFactory factory = SeriesMetaFactory.getDefault(dsd);
 
-            return sort.applySort(conn.getData(web.getCatalog(), web.getFlow(), Query.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
+            return sort.applySort(conn.getData(web.getDatabase(), web.getFlow(), Query.builder().key(web.getKey()).detail(getDetail()).build()).getData(), SERIES_BY_KEY)
                     .map(series -> {
                         SeriesMeta x = factory.get(series);
                         return new Extra(

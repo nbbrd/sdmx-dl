@@ -1,7 +1,7 @@
 package internal.sdmxdl.desktop;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.CatalogRef;
+import sdmxdl.DatabaseRef;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +14,7 @@ class SdmxCommandTest {
                 .parameter("fetch")
                 .parameter("keys")
                 .parameter("all")
-                .option("c", CatalogRef.parse("hello_world").toString())
+                .option("c", DatabaseRef.parse("hello_world").toString())
                 .build()
                 .toText())
                 .isEqualTo("sdmx-dl fetch keys all -c hello_world");

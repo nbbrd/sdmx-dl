@@ -2,10 +2,9 @@ package sdmxdl.desktop.panels;
 
 import com.formdev.flatlaf.util.ColorFunctions;
 import internal.Colors;
-import internal.sdmxdl.desktop.util.AccentColors;
 import j2html.tags.DomContent;
 import j2html.tags.specialized.KbdTag;
-import sdmxdl.CatalogRef;
+import sdmxdl.DatabaseRef;
 import sdmxdl.Flow;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;
@@ -43,12 +42,12 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
     private static DomContent sourceId(DataSourceRef ref) {
         WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         if (s != null) {
-            DomContent sourceId = sourceId(s, ref.getCatalog(), ref.getLanguages());
+            DomContent sourceId = sourceId(s, ref.getDatabase(), ref.getLanguages());
             return ref.isDebug()
                     ? each(debugPrefix(getPrefixColor(getColor(s))), sourceId)
                     : sourceId;
         } else {
-            DomContent sourceId = sourceId(ref.getSource(), ref.getCatalog(), ref.getLanguages());
+            DomContent sourceId = sourceId(ref.getSource(), ref.getDatabase(), ref.getLanguages());
             return ref.isDebug()
                     ? each(debugPrefix(getFallbackColor()), sourceId)
                     : sourceId;
@@ -58,39 +57,39 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
     private static DomContent sourceIdAndName(DataSourceRef ref) {
         WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         if (s != null) {
-            DomContent sourceIdAndName = sourceIdAndName(s, ref.getCatalog(), ref.getLanguages());
+            DomContent sourceIdAndName = sourceIdAndName(s, ref.getDatabase(), ref.getLanguages());
             return ref.isDebug()
                     ? each(debugPrefix(getPrefixColor(getColor(s))), sourceIdAndName)
                     : sourceIdAndName;
         } else {
-            DomContent sourceId = sourceId(ref.getSource(), ref.getCatalog(), ref.getLanguages());
+            DomContent sourceId = sourceId(ref.getSource(), ref.getDatabase(), ref.getLanguages());
             return ref.isDebug()
                     ? each(debugPrefix(getFallbackColor()), sourceId)
                     : sourceId;
         }
     }
 
-    private static DomContent sourceId(String value, CatalogRef catalogId, Languages languages) {
+    private static DomContent sourceId(String value, DatabaseRef database, Languages languages) {
         return labelTag(value
-                        + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
+                        + (!database.equals(DatabaseRef.NO_DATABASE) ? "/" + database : "")
                         + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
                 getFallbackColor()
         );
     }
 
-    private static DomContent sourceIdAndName(WebSource value, CatalogRef catalogId, Languages languages) {
-        return join(sourceId(value, catalogId, languages), name(value, catalogId, languages));
+    private static DomContent sourceIdAndName(WebSource value, DatabaseRef database, Languages languages) {
+        return join(sourceId(value, database, languages), name(value, database, languages));
     }
 
-    private static DomContent sourceId(WebSource value, CatalogRef catalogId, Languages languages) {
+    private static DomContent sourceId(WebSource value, DatabaseRef database, Languages languages) {
         return labelTag(value.getId()
-                        + (!catalogId.equals(CatalogRef.NO_CATALOG) ? "/" + catalogId : "")
+                        + (!database.equals(DatabaseRef.NO_DATABASE) ? "/" + database : "")
                         + (!languages.equals(Languages.ANY) ? " (" + languages + ")" : ""),
                 getColor(value)
         );
     }
 
-    private static DomContent name(WebSource value, CatalogRef catalogId, Languages languages) {
+    private static DomContent name(WebSource value, DatabaseRef database, Languages languages) {
         return text(value.getName(languages));
     }
 

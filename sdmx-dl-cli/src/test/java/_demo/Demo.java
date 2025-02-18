@@ -6,7 +6,7 @@ import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 
-import static sdmxdl.CatalogRef.NO_CATALOG;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Detail.DATA_ONLY;
 import static sdmxdl.Languages.ANY;
 
@@ -22,11 +22,11 @@ public class Demo {
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
             FlowRef exr = FlowRef.parse("EXR");
-            printFlow(ecb.getFlow(NO_CATALOG, exr));
+            printFlow(ecb.getFlow(NO_DATABASE, exr));
 
             Key chf = Key.parse("M.CHF.EUR.SP00.A");
             Query chfData = Query.builder().key(chf).detail(DATA_ONLY).build();
-            ecb.getData(NO_CATALOG, exr, chfData)
+            ecb.getData(NO_DATABASE, exr, chfData)
                     .getData()
                     .forEach(Demo::printSeries);
         }

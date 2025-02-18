@@ -8,7 +8,7 @@ import nbbrd.design.StaticFactoryMethod;
 @RepresentableAsString
 @lombok.Value
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class CatalogRef {
+public class DatabaseRef {
 
     @NonNull
     String id;
@@ -19,9 +19,9 @@ public class CatalogRef {
     }
 
     @StaticFactoryMethod
-    public static @NonNull CatalogRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
-        return new CatalogRef(input.toString());
+    public static @NonNull DatabaseRef parse(@NonNull CharSequence input) throws IllegalArgumentException {
+        return new DatabaseRef(input.toString());
     }
 
-    public static final CatalogRef NO_CATALOG = CatalogRef.parse("");
+    public static final DatabaseRef NO_DATABASE = DatabaseRef.parse("");
 }

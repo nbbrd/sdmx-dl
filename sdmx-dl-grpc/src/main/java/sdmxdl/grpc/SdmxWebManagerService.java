@@ -97,7 +97,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Dataflow> getFlow(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getFlow(CatalogRef.NO_CATALOG, FlowRef.parse(request.getFlow())))
+                    .item(connection.getFlow(DatabaseRef.NO_DATABASE, FlowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -123,7 +123,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataStructure> getStructure(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getStructure(CatalogRef.NO_CATALOG, FlowRef.parse(request.getFlow())))
+                    .item(connection.getStructure(DatabaseRef.NO_DATABASE, FlowRef.parse(request.getFlow())))
                     .map(ProtobufRepositories::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -150,7 +150,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataSet> getData(KeyRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getData(CatalogRef.NO_CATALOG, getFlowRef(request), getDataQuery(request)))
+                    .item(connection.getData(DatabaseRef.NO_DATABASE, getFlowRef(request), getDataQuery(request)))
                     .map(ProtobufRepositories::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -193,7 +193,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Dataflow> getFlows(SourceRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getFlows(CatalogRef.NO_CATALOG).stream())
+                    .items(connection.getFlows(DatabaseRef.NO_DATABASE).stream())
                     .map(ProtobufRepositories::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -220,7 +220,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Series> getDataStream(KeyRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getData(CatalogRef.NO_CATALOG, getFlowRef(request), getDataQuery(request)).getData().stream())
+                    .items(connection.getData(DatabaseRef.NO_DATABASE, getFlowRef(request), getDataQuery(request)).getData().stream())
                     .map(ProtobufRepositories::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

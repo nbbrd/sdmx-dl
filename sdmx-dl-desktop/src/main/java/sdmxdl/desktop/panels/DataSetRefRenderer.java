@@ -123,7 +123,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
         result.addColumn("Name");
         result.addColumn("Value");
         result.addRow(new Object[]{"Source", ref.getDataSourceRef().getSource()});
-        result.addRow(new Object[]{"Catalog", ref.getDataSourceRef().getCatalog()});
+        result.addRow(new Object[]{"Database", ref.getDataSourceRef().getDatabase()});
         result.addRow(new Object[]{"Flow", ref.getDataSourceRef().getFlow()});
         result.addRow(new Object[]{"Key", item.getSeries().getKey()});
         result.addRow(new Object[]{"Languages", ref.getDataSourceRef().getLanguages()});

@@ -11,7 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add confidentiality property to WebSource [#518](https://github.com/nbbrd/sdmx-dl/issues/518)
 - ![API] Add missing properties methods in extensions points [#781](https://github.com/nbbrd/sdmx-dl/issues/781)
-- ![API] Add support of catalogs
+- ![API] Add support of databases [#875](https://github.com/nbbrd/sdmx-dl/issues/875)
 - ![CLI] Add check sources command [#515](https://github.com/nbbrd/sdmx-dl/issues/515)
 - ![GRPC] Add error mapping in rest service
 - ![GRPC] Add gRPC uber-jar to distribution binaries
