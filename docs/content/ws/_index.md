@@ -5,7 +5,7 @@ weight: 3
 
 ![_work-in-progress_](https://img.shields.io/badge/-work_in_progress-E2BC4A)
 
-**sdmx-dl WS** is a web service that serves as a bridge to any other application or language.  
+**sdmx-dl WS** is a web service that serves as a bridge to any application or language.  
 This service has two endpoints:
 
 - a [gRPC endpoint](#grpc-endpoint) which has the **best performances** but a limited set of clients
@@ -37,7 +37,7 @@ Its default port is `4557`. For convenience, the [reflection protocol](https://g
 
 Call example using [gRPCurl](https://github.com/fullstorydev/grpcurl):
 ```shell
-grpcurl -d "{\"source\":\"ECB\"}" -plaintext localhost:4556 sdmxdl.grpc.SdmxWebManager.GetFlows
+grpcurl -d "{\"source\":\"ECB\"}" -plaintext localhost:4557 sdmxdl.grpc.SdmxWebManager.GetFlows
 ```
 
 ## REST endpoint
