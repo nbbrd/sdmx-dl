@@ -69,6 +69,16 @@
             <groupId>com.github.nbbrd.sdmx-dl</groupId>
             <artifactId>sdmx-dl-format-protobuf</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>protobuf-java-util</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
