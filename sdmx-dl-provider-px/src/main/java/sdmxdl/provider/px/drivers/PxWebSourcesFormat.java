@@ -8,10 +8,10 @@ import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import nbbrd.design.VisibleForTesting;
 import sdmxdl.Confidentiality;
-import sdmxdl.web.WebSources;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.format.FileFormatSupport;
 import sdmxdl.web.WebSource;
+import sdmxdl.web.WebSources;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -42,7 +42,8 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
         Map<String, Api> apis;
         Map<String, Api> local_apis;
 
-        @NonNull WebSources toSources() {
+        @NonNull
+        WebSources toSources() {
             WebSources.Builder result = WebSources.builder();
             apis.entrySet()
                     .stream()
@@ -54,8 +55,18 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
         private static final GsonIO.GsonParser<Apis> JSON_PARSER =
                 GsonIO.GsonParser
                         .builder(Apis.class)
+                        .deserializer(Apis.class, Apis::deserialize)
                         .deserializer(Api.class, Api::deserialize)
                         .build();
+
+        @MightBeGenerated
+        static Apis deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject obj = json.getAsJsonObject();
+            return new Apis(
+                    GsonUtil.getAsMap(obj, "apis", context, Api.class),
+                    GsonUtil.getAsMap(obj, "local_apis", context, Api.class)
+            );
+        }
     }
 
     @VisibleForTesting
@@ -68,7 +79,8 @@ final class PxWebSourcesFormat implements FileFormat<WebSources> {
         String[] version;
         String[] lang;
 
-        @NonNull WebSource toSource(@NonNull String host) {
+        @NonNull
+        WebSource toSource(@NonNull String host) {
             String sourceId;
             List<String> sourceAliases;
             if (alias != null && alias.length > 0) {
