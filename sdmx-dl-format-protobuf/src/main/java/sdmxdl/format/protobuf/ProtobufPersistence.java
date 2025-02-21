@@ -37,24 +37,24 @@ public final class ProtobufPersistence implements Persistence {
         if (sdmxdl.DataRepository.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.DataRepository.class)
-                    .parser(onParsingStream(DataRepository::parseFrom).andThen(ProtobufRepositories::toDataRepository))
-                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtobufRepositories::fromDataRepository))
+                    .parser(onParsingStream(DataRepository::parseFrom).andThen(ProtoApi::toDataRepository))
+                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoApi::fromDataRepository))
                     .extension(".protobuf")
                     .build();
         }
         if (sdmxdl.web.MonitorReports.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.web.MonitorReports.class)
-                    .parser(onParsingStream(MonitorReports::parseFrom).andThen(ProtobufMonitors::toMonitorReports))
-                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtobufMonitors::fromMonitorReports))
+                    .parser(onParsingStream(MonitorReports::parseFrom).andThen(ProtoWeb::toMonitorReports))
+                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoWeb::fromMonitorReports))
                     .extension(".protobuf")
                     .build();
         }
         if (sdmxdl.web.WebSources.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.web.WebSources.class)
-                    .parser(onParsingStream(WebSources::parseFrom).andThen(ProtobufSources::toWebSources))
-                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtobufSources::fromWebSources))
+                    .parser(onParsingStream(WebSources::parseFrom).andThen(ProtoWeb::toWebSources))
+                    .formatter(onFormattingStream(ProtobufPersistence::writeProtobuf).compose(ProtoWeb::fromWebSources))
                     .extension(".protobuf")
                     .build();
         }

@@ -5,7 +5,7 @@ import sdmxdl.web.WebSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProtobufSourcesTest {
+public class ProtoWebTest {
 
     @Test
     public void testSources() {
@@ -15,8 +15,8 @@ public class ProtobufSourcesTest {
                 .driver("abc")
                 .endpointOf("http://endpoint")
                 .build();
-        assertThat(ProtobufSources.fromWebSource(min))
-                .extracting(ProtobufSources::toWebSource)
+        assertThat(ProtoWeb.fromWebSource(min))
+                .extracting(ProtoWeb::toWebSource)
                 .isEqualTo(min);
 
         WebSource max = min
@@ -28,8 +28,8 @@ public class ProtobufSourcesTest {
                 .monitorOf("monitor:ESTAT")
                 .monitorWebsiteOf("http://monitorwebsite")
                 .build();
-        assertThat(ProtobufSources.fromWebSource(max))
-                .extracting(ProtobufSources::toWebSource)
+        assertThat(ProtoWeb.fromWebSource(max))
+                .extracting(ProtoWeb::toWebSource)
                 .isEqualTo(max);
     }
 }

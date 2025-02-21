@@ -40,24 +40,24 @@ public final class JsonPersistence implements Persistence {
         if (sdmxdl.DataRepository.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.DataRepository.class)
-                    .parser(onParsingReader(this::parseJsonRepository).andThen(ProtobufRepositories::toDataRepository).asFileParser(UTF_8))
-                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufRepositories::fromDataRepository).asFileFormatter(UTF_8))
+                    .parser(onParsingReader(this::parseJsonRepository).andThen(ProtoApi::toDataRepository).asFileParser(UTF_8))
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoApi::fromDataRepository).asFileFormatter(UTF_8))
                     .extension(".json")
                     .build();
         }
         if (sdmxdl.web.MonitorReports.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.web.MonitorReports.class)
-                    .parser(onParsingReader(this::parseJsonReports).andThen(ProtobufMonitors::toMonitorReports).asFileParser(UTF_8))
-                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufMonitors::fromMonitorReports).asFileFormatter(UTF_8))
+                    .parser(onParsingReader(this::parseJsonReports).andThen(ProtoWeb::toMonitorReports).asFileParser(UTF_8))
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoWeb::fromMonitorReports).asFileFormatter(UTF_8))
                     .extension(".json")
                     .build();
         }
         if (sdmxdl.web.WebSources.class.equals(type)) {
             return (FileFormat<T>) FileFormatSupport
                     .builder(sdmxdl.web.WebSources.class)
-                    .parser(onParsingReader(this::parseJsonSources).andThen(ProtobufSources::toWebSources).asFileParser(UTF_8))
-                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtobufSources::fromWebSources).asFileFormatter(UTF_8))
+                    .parser(onParsingReader(this::parseJsonSources).andThen(ProtoWeb::toWebSources).asFileParser(UTF_8))
+                    .formatter(onFormattingWriter(formatter::appendTo).compose(ProtoWeb::fromWebSources).asFileFormatter(UTF_8))
                     .extension(".json")
                     .build();
         }

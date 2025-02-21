@@ -1,11 +1,9 @@
 package sdmxdl.format.protobuf;
 
-import sdmxdl.*;
-
 import static sdmxdl.format.protobuf.WellKnownTypes.*;
 
 @lombok.experimental.UtilityClass
-public class ProtobufRepositories {
+public class ProtoApi {
 
     public static About fromAbout() {
         return About
@@ -19,10 +17,10 @@ public class ProtobufRepositories {
         return DataRepository
                 .newBuilder()
                 .setName(value.getName())
-                .addAllDatabases(fromCollection(value.getDatabases(), ProtobufRepositories::fromDatabase))
-                .addAllStructures(fromCollection(value.getStructures(), ProtobufRepositories::fromDataStructure))
-                .addAllFlows(fromCollection(value.getFlows(), ProtobufRepositories::fromDataflow))
-                .addAllDataSets(fromCollection(value.getDataSets(), ProtobufRepositories::fromDataSet))
+                .addAllDatabases(fromCollection(value.getDatabases(), ProtoApi::fromDatabase))
+                .addAllStructures(fromCollection(value.getStructures(), ProtoApi::fromDataStructure))
+                .addAllFlows(fromCollection(value.getFlows(), ProtoApi::fromDataflow))
+                .addAllDataSets(fromCollection(value.getDataSets(), ProtoApi::fromDataSet))
                 .setCreationTime(fromInstant(value.getCreationTime()))
                 .setExpirationTime(fromInstant(value.getExpirationTime()))
                 .build();
@@ -32,10 +30,10 @@ public class ProtobufRepositories {
         return sdmxdl.DataRepository
                 .builder()
                 .name(value.getName())
-                .databases(toCollection(value.getDatabasesList(), ProtobufRepositories::toDatabase))
-                .structures(toCollection(value.getStructuresList(), ProtobufRepositories::toDataStructure))
-                .flows(toCollection(value.getFlowsList(), ProtobufRepositories::toDataflow))
-                .dataSets(toCollection(value.getDataSetsList(), ProtobufRepositories::toDataSet))
+                .databases(toCollection(value.getDatabasesList(), ProtoApi::toDatabase))
+                .structures(toCollection(value.getStructuresList(), ProtoApi::toDataStructure))
+                .flows(toCollection(value.getFlowsList(), ProtoApi::toDataflow))
+                .dataSets(toCollection(value.getDataSetsList(), ProtoApi::toDataSet))
                 .creationTime(toInstant(value.getCreationTime()))
                 .expirationTime(toInstant(value.getExpirationTime()))
                 .build();
@@ -44,21 +42,21 @@ public class ProtobufRepositories {
     public static Database fromDatabase(sdmxdl.Database value) {
         return Database
                 .newBuilder()
-                .setId(value.getId().getId())
+                .setRef(value.getId().getId())
                 .setName(value.getName())
                 .build();
     }
 
     public static sdmxdl.Database toDatabase(Database value) {
-        return new sdmxdl.Database(DatabaseRef.parse(value.getId()), value.getName());
+        return new sdmxdl.Database(sdmxdl.DatabaseRef.parse(value.getRef()), value.getName());
     }
 
-    public static DataStructure fromDataStructure(sdmxdl.Structure value) {
-        DataStructure.Builder result = DataStructure
+    public static Structure fromDataStructure(sdmxdl.Structure value) {
+        Structure.Builder result = Structure
                 .newBuilder()
                 .setRef(value.getRef().toString())
-                .addAllDimensions(fromCollection(value.getDimensions(), ProtobufRepositories::fromDimension))
-                .addAllAttributes(fromCollection(value.getAttributes(), ProtobufRepositories::fromAttribute));
+                .addAllDimensions(fromCollection(value.getDimensions(), ProtoApi::fromDimension))
+                .addAllAttributes(fromCollection(value.getAttributes(), ProtoApi::fromAttribute));
         if (value.getTimeDimensionId() != null) {
             result.setTimeDimensionId(value.getTimeDimensionId());
         }
@@ -68,12 +66,12 @@ public class ProtobufRepositories {
                 .build();
     }
 
-    public static sdmxdl.Structure toDataStructure(DataStructure value) {
-        return Structure
+    public static sdmxdl.Structure toDataStructure(Structure value) {
+        return sdmxdl.Structure
                 .builder()
-                .ref(StructureRef.parse(value.getRef()))
-                .dimensions(toCollection(value.getDimensionsList(), ProtobufRepositories::toDimension))
-                .attributes(toCollection(value.getAttributesList(), ProtobufRepositories::toAttribute))
+                .ref(sdmxdl.StructureRef.parse(value.getRef()))
+                .dimensions(toCollection(value.getDimensionsList(), ProtoApi::toDimension))
+                .attributes(toCollection(value.getAttributesList(), ProtoApi::toAttribute))
                 .timeDimensionId(value.hasTimeDimensionId() ? value.getTimeDimensionId() : null)
                 .primaryMeasureId(value.getPrimaryMeasureId())
                 .name(value.getName())
@@ -111,7 +109,7 @@ public class ProtobufRepositories {
     public sdmxdl.Codelist toCodelist(Codelist value) {
         return sdmxdl.Codelist
                 .builder()
-                .ref(CodelistRef.parse(value.getRef()))
+                .ref(sdmxdl.CodelistRef.parse(value.getRef()))
                 .codes(value.getCodesMap())
                 .build();
     }
@@ -146,8 +144,8 @@ public class ProtobufRepositories {
         return sdmxdl.AttributeRelationship.valueOf(value.name());
     }
 
-    public static Dataflow fromDataflow(Flow value) {
-        Dataflow.Builder result = Dataflow
+    public static Flow fromDataflow(sdmxdl.Flow value) {
+        Flow.Builder result = Flow
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setStructureRef(value.getStructureRef().toString())
@@ -158,11 +156,11 @@ public class ProtobufRepositories {
         return result.build();
     }
 
-    public static Flow toDataflow(Dataflow value) {
-        return Flow
+    public static sdmxdl.Flow toDataflow(Flow value) {
+        return sdmxdl.Flow
                 .builder()
-                .ref(FlowRef.parse(value.getRef()))
-                .structureRef(StructureRef.parse(value.getStructureRef()))
+                .ref(sdmxdl.FlowRef.parse(value.getRef()))
+                .structureRef(sdmxdl.StructureRef.parse(value.getStructureRef()))
                 .name(value.getName())
                 .description(value.hasDescription() ? value.getDescription() : null)
                 .build();
@@ -173,41 +171,41 @@ public class ProtobufRepositories {
                 .newBuilder()
                 .setRef(value.getRef().toString())
                 .setQuery(fromDataQuery(value.getQuery()))
-                .addAllData(fromCollection(value.getData(), ProtobufRepositories::fromSeries))
+                .addAllData(fromCollection(value.getData(), ProtoApi::fromSeries))
                 .build();
     }
 
     public static sdmxdl.DataSet toDataSet(DataSet value) {
         return sdmxdl.DataSet
                 .builder()
-                .ref(FlowRef.parse(value.getRef()))
+                .ref(sdmxdl.FlowRef.parse(value.getRef()))
                 .query(toDataQuery(value.getQuery()))
-                .data(toCollection(value.getDataList(), ProtobufRepositories::toSeries))
+                .data(toCollection(value.getDataList(), ProtoApi::toSeries))
                 .build();
     }
 
-    public static DataQuery fromDataQuery(Query value) {
-        return DataQuery
+    public static Query fromDataQuery(sdmxdl.Query value) {
+        return Query
                 .newBuilder()
                 .setKey(value.getKey().toString())
                 .setDetail(fromDataDetail(value.getDetail()))
                 .build();
     }
 
-    public static Query toDataQuery(DataQuery value) {
-        return Query
+    public static sdmxdl.Query toDataQuery(Query value) {
+        return sdmxdl.Query
                 .builder()
-                .key(Key.parse(value.getKey()))
+                .key(sdmxdl.Key.parse(value.getKey()))
                 .detail(toDataDetail(value.getDetail()))
                 .build();
     }
 
-    public static DataDetail fromDataDetail(Detail value) {
-        return DataDetail.valueOf(value.name());
+    public static Detail fromDataDetail(sdmxdl.Detail value) {
+        return Detail.valueOf(value.name());
     }
 
-    public static Detail toDataDetail(DataDetail value) {
-        return Detail.valueOf(value.name());
+    public static sdmxdl.Detail toDataDetail(Detail value) {
+        return sdmxdl.Detail.valueOf(value.name());
     }
 
     public static Series fromSeries(sdmxdl.Series value) {
@@ -215,16 +213,16 @@ public class ProtobufRepositories {
                 .newBuilder()
                 .setKey(value.getKey().toString())
                 .putAllMeta(value.getMeta())
-                .addAllObs(fromCollection(value.getObs(), ProtobufRepositories::fromObs))
+                .addAllObs(fromCollection(value.getObs(), ProtoApi::fromObs))
                 .build();
     }
 
     public static sdmxdl.Series toSeries(Series value) {
         return sdmxdl.Series
                 .builder()
-                .key(Key.parse(value.getKey()))
+                .key(sdmxdl.Key.parse(value.getKey()))
                 .meta(value.getMetaMap())
-                .obs(toCollection(value.getObsList(), ProtobufRepositories::toObs))
+                .obs(toCollection(value.getObsList(), ProtoApi::toObs))
                 .build();
     }
 
@@ -240,7 +238,7 @@ public class ProtobufRepositories {
     public static sdmxdl.Obs toObs(Obs value) {
         return sdmxdl.Obs
                 .builder()
-                .period(TimeInterval.parse(value.getPeriod()))
+                .period(sdmxdl.TimeInterval.parse(value.getPeriod()))
                 .value(value.getValue())
                 .meta(value.getMetaMap())
                 .build();
@@ -266,5 +264,13 @@ public class ProtobufRepositories {
             default:
                 throw new RuntimeException();
         }
+    }
+
+    public static Confidentiality fromConfidentiality(sdmxdl.Confidentiality value) {
+        return Confidentiality.valueOf(value.name());
+    }
+
+    public static sdmxdl.Confidentiality toConfidentiality(Confidentiality value) {
+        return sdmxdl.Confidentiality.valueOf(value.name());
     }
 }

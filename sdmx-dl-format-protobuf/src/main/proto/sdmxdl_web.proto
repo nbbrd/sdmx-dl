@@ -3,6 +3,25 @@ option java_multiple_files = true;
 
 package sdmxdl.format.protobuf.web;
 
+import "sdmxdl_api.proto";
+
+message WebSource {
+  string id = 1;
+  map<string, string> names = 2;
+  string driver = 3;
+  string endpoint = 4;
+  map<string, string> properties = 5;
+  repeated string aliases = 6;
+  optional string website = 7;
+  optional string monitor = 8;
+  optional string monitor_website = 9;
+  Confidentiality confidentiality = 10;
+}
+
+message WebSources {
+  repeated WebSource web_sources = 1;
+}
+
 enum MonitorStatus {
   UNKNOWN = 0;
   UP = 1;

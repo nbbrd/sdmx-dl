@@ -14,13 +14,17 @@ import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import sdmxdl.Detail;
+import sdmxdl.Query;
 import sdmxdl.*;
 import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
+import sdmxdl.format.protobuf.Flow;
 import sdmxdl.format.protobuf.Series;
+import sdmxdl.format.protobuf.Structure;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
-import sdmxdl.format.protobuf.web.SdmxWebSource;
+import sdmxdl.format.protobuf.web.WebSource;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -72,7 +76,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         try {
             return Uni.createFrom()
                     .item(manager.getMonitorReport(request.getSource()))
-                    .map(ProtobufMonitors::fromMonitorReport);
+                    .map(ProtoWeb::fromMonitorReport);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -94,11 +98,11 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/flow")
     @Override
-    public Uni<Dataflow> getFlow(FlowRequest request) {
+    public Uni<Flow> getFlow(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getFlow(DatabaseRef.NO_DATABASE, FlowRef.parse(request.getFlow())))
-                    .map(ProtobufRepositories::fromDataflow);
+                    .item(connection.getFlow(DatabaseRef.parse(request.getDatabase()), FlowRef.parse(request.getFlow())))
+                    .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -120,11 +124,11 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/structure")
     @Override
-    public Uni<DataStructure> getStructure(FlowRequest request) {
+    public Uni<Structure> getStructure(FlowRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getStructure(DatabaseRef.NO_DATABASE, FlowRef.parse(request.getFlow())))
-                    .map(ProtobufRepositories::fromDataStructure);
+                    .item(connection.getStructure(DatabaseRef.parse(request.getDatabase()), FlowRef.parse(request.getFlow())))
+                    .map(ProtoApi::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -150,8 +154,8 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataSet> getData(KeyRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getData(DatabaseRef.NO_DATABASE, getFlowRef(request), getDataQuery(request)))
-                    .map(ProtobufRepositories::fromDataSet);
+                    .item(connection.getData(DatabaseRef.parse(request.getDatabase()), getFlowRef(request), getDataQuery(request)))
+                    .map(ProtoApi::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -168,11 +172,11 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/sources")
     @Override
-    public Multi<SdmxWebSource> getSources(Empty request) {
+    public Multi<WebSource> getSources(Empty request) {
         return Multi.createFrom().items(manager.getSources()
                 .values()
                 .stream()
-                .map(ProtobufSources::fromWebSource));
+                .map(ProtoWeb::fromWebSource));
     }
 
     @RequestBody(
@@ -190,11 +194,11 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/flows")
     @Override
-    public Multi<Dataflow> getFlows(SourceRequest request) {
+    public Multi<Flow> getFlows(SourceRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getFlows(DatabaseRef.NO_DATABASE).stream())
-                    .map(ProtobufRepositories::fromDataflow);
+                    .items(connection.getFlows(DatabaseRef.parse(request.getDatabase())).stream())
+                    .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
@@ -220,8 +224,8 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Series> getDataStream(KeyRequest request) {
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getData(DatabaseRef.NO_DATABASE, getFlowRef(request), getDataQuery(request)).getData().stream())
-                    .map(ProtobufRepositories::fromSeries);
+                    .items(connection.getData(DatabaseRef.parse(request.getDatabase()), getFlowRef(request), getDataQuery(request)).getData().stream())
+                    .map(ProtoApi::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
