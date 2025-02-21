@@ -14,7 +14,9 @@ service SdmxWebManager {
 
   rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
 
-  rpc GetFlows(SourceRequest) returns (stream sdmxdl.format.protobuf.Flow);
+  rpc GetDatabases(SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
+
+  rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
 
   rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Flow);
 
@@ -30,18 +32,26 @@ message Empty {
 
 message SourceRequest {
   string source = 1;
-  string database = 2;
+  optional string languages = 2;
+}
+
+message DatabaseRequest {
+  string source = 1;
+  optional string database = 2;
+  optional string languages = 3;
 }
 
 message FlowRequest {
   string source = 1;
-  string database = 2;
-  string flow = 3;
+  string flow = 2;
+  optional string database = 3;
+  optional string languages = 4;
 }
 
 message KeyRequest {
   string source = 1;
-  string database = 2;
-  string flow = 3;
-  string key = 4;
+  string flow = 2;
+  string key = 3;
+  optional string database = 4;
+  optional string languages = 5;
 }
