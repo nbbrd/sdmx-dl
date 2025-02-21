@@ -42,7 +42,7 @@ public class ProtoApi {
     public static Database fromDatabase(sdmxdl.Database value) {
         return Database
                 .newBuilder()
-                .setRef(value.getId().getId())
+                .setRef(value.getRef().getId())
                 .setName(value.getName())
                 .build();
     }

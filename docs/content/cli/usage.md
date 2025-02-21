@@ -133,7 +133,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 
 Other options:
@@ -174,7 +174,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -215,7 +215,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -295,7 +295,7 @@ Example: <code>sdmx-dl <font color="#859900">list databases</font> <abbr title="
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -333,7 +333,7 @@ Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -373,7 +373,7 @@ Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title=
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -414,7 +414,7 @@ Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title=
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -456,7 +456,7 @@ Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -497,7 +497,7 @@ Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr titl
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -534,7 +534,7 @@ Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="s
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -606,7 +606,7 @@ Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="so
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 - [`--sort`](../options#sort) - Sort output.
@@ -648,7 +648,7 @@ Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="so
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 - [`--sort`](../options#sort) - Sort output.
@@ -726,7 +726,7 @@ Example: <code>sdmx-dl <font color="#268bd2">check sources all</font></code>
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
-- [`-d, --database<database>`](../options#database) - Database ID.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 

@@ -55,7 +55,7 @@ public final class ListDatabasesCommand implements Callable<Void> {
     static CsvTable<Database> getTable(Languages languages) {
         return CsvTable
                 .builderOf(Database.class)
-                .columnOf("Id", database -> database.getId().toString())
+                .columnOf("Ref", database -> database.getRef().toString())
                 .columnOf("Name", Database::getName)
                 .build();
     }

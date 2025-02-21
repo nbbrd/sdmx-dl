@@ -147,7 +147,7 @@ final class RestConnection implements Connection {
 
     private void checkDatabase(DatabaseRef database) throws IOException {
         if (!database.equals(DatabaseRef.NO_DATABASE)) {
-            throw new IOException("Database ID is not supported");
+            throw new IOException("Database reference is not supported");
         }
     }
 }

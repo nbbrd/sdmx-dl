@@ -307,7 +307,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
 
         @Override
         public void write(Kryo kryo, Output output, Database t) {
-            kryo.writeObject(output, t.getId());
+            kryo.writeObject(output, t.getRef());
             output.writeString(t.getName());
         }
 

@@ -16,7 +16,6 @@
  */
 package sdmxdl;
 
-import lombok.NonNull;
 import nbbrd.design.SealedType;
 
 
@@ -31,8 +30,6 @@ import nbbrd.design.SealedType;
         Codelist.class,
         DataSet.class
 })
-public abstract class Resource<T extends ResourceRef<T>> {
-
-    @NonNull
-    public abstract T getRef();
+public abstract class Resource<T extends ResourceRef<T>> implements HasReference<T> {
+    
 }

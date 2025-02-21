@@ -43,7 +43,7 @@ public class ListDatabasesCommandTest {
                 .isEmpty();
 
         assertThat(FileSample.readAll(out))
-                .contains("Id,Name", atIndex(0))
+                .contains("Ref,Name", atIndex(0))
                 .hasSize(1);
     }
 }

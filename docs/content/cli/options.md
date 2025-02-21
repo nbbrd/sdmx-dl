@@ -31,7 +31,7 @@ SDMX-specific options.
 | Name                                                  | Shortcut | Parameter                             | Description                                 |
 |-------------------------------------------------------|----------|---------------------------------------|---------------------------------------------|
 | <a id="sources" href="#sources">`--sources`</a>       | `-s`     | [`<file>`](../datatypes#file)         | File that provides data source definitions. |
-| <a id="database" href="#database">`--database`</a>    | `-d`     | [`<database>`](../datatypes#database) | Database ID.                                |
+| <a id="database" href="#database">`--database`</a>    | `-d`     | [`<database>`](../datatypes#database) | Database reference.                                |
 | <a id="languages" href="#languages">`--languages`</a> | `-l`     | [`<langs>`](../datatypes#langs)       | Language priority list.                     |
 
 ## CSV

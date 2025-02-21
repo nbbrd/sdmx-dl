@@ -197,7 +197,7 @@ public final class PxWebDriver implements Driver {
 
         private void checkDatabase(DatabaseRef database) throws IOException {
             if (database.equals(DatabaseRef.NO_DATABASE)) {
-                throw new IOException("Database ID is required");
+                throw new IOException("Database reference is required");
             }
         }
     }

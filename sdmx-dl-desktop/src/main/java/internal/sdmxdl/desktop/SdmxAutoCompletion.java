@@ -159,7 +159,7 @@ public abstract class SdmxAutoCompletion {
                     .builder(this::load)
                     .behavior(SYNC)
                     .postProcessor(this::filterAndSort)
-                    .valueToString(database -> database.getId().toString())
+                    .valueToString(database -> database.getRef().toString())
                     .cache(cache, this::getCacheKey, SYNC)
                     .build();
         }
@@ -169,7 +169,7 @@ public abstract class SdmxAutoCompletion {
             return new CustomListCellRenderer<Database>() {
                 @Override
                 protected String getValueAsString(Database value) {
-                    return value.getId() + ": " + value.getName();
+                    return value.getRef() + ": " + value.getName();
                 }
 
                 @Override
@@ -192,7 +192,7 @@ public abstract class SdmxAutoCompletion {
         private Predicate<Database> getFilter(String term) {
             Predicate<String> filter = ExtAutoCompletionSource.basicFilter(term);
             return value -> filter.test(value.getName())
-                    || filter.test(value.getId().toString());
+                    || filter.test(value.getRef().toString());
         }
 
         private String getCacheKey(String term) {
