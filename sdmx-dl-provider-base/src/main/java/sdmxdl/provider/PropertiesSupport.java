@@ -40,7 +40,7 @@ public class PropertiesSupport {
         return null;
     }
 
-    private static String toEnvKey(String key) {
+    public static String toEnvKey(String key) {
         return key.replace('.', '_').toUpperCase(Locale.ROOT);
     }
 }

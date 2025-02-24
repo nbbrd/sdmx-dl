@@ -11,5 +11,6 @@ import java.io.IOException;
 @FunctionalInterface
 public interface WebConnector {
 
-    @NonNull Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException;
+    @NonNull
+    Connection connect(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException;
 }

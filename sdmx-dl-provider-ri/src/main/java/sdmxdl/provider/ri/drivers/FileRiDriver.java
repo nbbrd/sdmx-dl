@@ -25,6 +25,7 @@ import sdmxdl.web.spi.WebContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.util.Collection;
 import java.util.List;
@@ -133,7 +134,7 @@ public final class FileRiDriver implements Driver {
     static File toFile(URI endpoint) throws IOException {
         if (endpoint != null) {
             try {
-                return new File(endpoint);
+                return Paths.get(endpoint).toFile();
             } catch (IllegalArgumentException ex) {
                 throw new IOException("Invalid file name: '" + endpoint + "'", ex);
             }

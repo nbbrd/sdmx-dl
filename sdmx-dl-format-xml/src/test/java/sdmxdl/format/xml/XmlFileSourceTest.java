@@ -22,6 +22,7 @@ import sdmxdl.file.FileSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -64,6 +65,6 @@ public class XmlFileSourceTest {
                 .hasFieldOrPropertyWithValue("structure", structure);
     }
 
-    private final File data = new File("a.xml");
-    private final File structure = new File("b.xml");
+    private final File data = Paths.get("a.xml").toFile();
+    private final File structure = Paths.get("b.xml").toFile();
 }

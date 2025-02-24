@@ -71,6 +71,7 @@ public final class InseeDialectDriver implements Driver {
                     .name("en", "National Institute of Statistics and Economic Studies")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(DIALECTS_INSEE)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")

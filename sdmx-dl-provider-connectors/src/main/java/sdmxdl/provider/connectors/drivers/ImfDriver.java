@@ -19,6 +19,7 @@ package sdmxdl.provider.connectors.drivers;
 import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.IMF2;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Confidentiality;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -47,6 +48,7 @@ public final class ImfDriver implements Driver {
                     .id("IMF")
                     .name("en", "International Monetary Fund")
                     .driver(CONNECTORS_IMF)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("http://dataservices.imf.org/REST/SDMX_XML.svc")
                     .websiteOf("https://data.imf.org")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/IMF")

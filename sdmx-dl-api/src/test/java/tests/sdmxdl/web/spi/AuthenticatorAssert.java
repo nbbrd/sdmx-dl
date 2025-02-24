@@ -29,8 +29,8 @@ public class AuthenticatorAssert {
             .idPattern(AuthenticatorLoader.ID_PATTERN)
             .rank(ignore -> -1)
             .rankLowerBound(-1)
-            .properties(ignore -> emptyList())
-            .propertiesPrefix("")
+            .properties(Authenticator::getAuthenticatorProperties)
+            .propertiesPrefix(Authenticator.AUTHENTICATOR_PROPERTY_PREFIX)
             .build();
 
     public void assertCompliance(@NonNull Authenticator authenticator, @NonNull Sample sample) {

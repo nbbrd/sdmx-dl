@@ -25,8 +25,8 @@ The commands follow a **verb+noun hierarchy**.
 flowchart TB
     r{{sdmx-dl}}
     r --- f([fetch]) --- data & meta & keys
-    r --- l([list]) --- sources & flows & dimensions & attributes & codes & availability & features & plugins
-    r --- c([check]) --- status & access & config
+    r --- l([list]) --- sources & databases & flows & dimensions & attributes & codes & availability & features & plugins
+    r --- c([check]) --- status & access & config & xsources[sources]
     r --- s([setup]) --- completion & launcher
 
     classDef default fill:#93a1a1,stroke-width:0px 
@@ -40,9 +40,10 @@ flowchart TB
     click keys "#fetch-keys" "fetch keys command"
    
     classDef lx fill:#859900
-    class l,sources,flows,dimensions,attributes,codes,availability,features,plugins lx;
+    class l,sources,databases,flows,dimensions,attributes,codes,availability,features,plugins lx;
     click l "#list" "list command"
     click sources "#list-sources" "list sources command"
+    click databases "#list-databases" "list databases command"
     click flows "#list-flows" "list flows command"
     click dimensions "#list-dimensions" "list dimensions command"
     click attributes "#list-attributes" "list attributes command"
@@ -52,11 +53,12 @@ flowchart TB
     click plugins "#list-plugins" "list plugins command"
    
     classDef cx fill:#268bd2
-    class c,status,access,config cx;
+    class c,status,access,config,xsources cx;
     click c "#check" "check command"
     click status "#check-status" "check status command"
     click access "#check-access" "check access command"
     click config "#check-config" "check config command"
+    click xsources "#check-sources" "check sources command"
     
     classDef sx fill:#b58900
     class s,completion,launcher sx;
@@ -82,6 +84,7 @@ List resources and structural metadata.
 
 Subcommands:
 [sources](#list-sources),
+[databases](#list-databases),
 [flows](#list-flows),
 [dimensions](#list-dimensions),
 [attributes](#list-attributes),
@@ -99,7 +102,8 @@ Check resources and services.
 Subcommands:
 [status](#check-status),
 [access](#check-access),
-[config](#check-config)
+[config](#check-config),
+[sources](#check-sources)
 
 {{< shields_io/badge label="setup" color="b58900" >}}
 
@@ -129,6 +133,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch data</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 
 Other options:
@@ -169,6 +174,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch meta</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -209,6 +215,7 @@ Example: <code>sdmx-dl <font color="#dc322f">fetch keys</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -257,18 +264,57 @@ CSV columns:
 2. [`Description:string`](../datatypes#string)
 3. [`Aliases:list`](../datatypes#list)
 4. [`Driver:string`](../datatypes#string)
-5. [`Endpoint:uri`](../datatypes#uri)
-6. [`Properties:map`](../datatypes#list)
-7. [`Website:url`](../datatypes#url)
-8. [`Monitor:uri`](../datatypes#uri)
-9. [`MonitorWebsite:url`](../datatypes#url)
-10. [`Languages:list`](../datatypes#list)
+5. [`Confidentiality:enum`](../datatypes#enum)
+6. [`Endpoint:uri`](../datatypes#uri)
+7. [`Properties:map`](../datatypes#list)
+8. [`Website:url`](../datatypes#url)
+9. [`Monitor:uri`](../datatypes#uri)
+10. [`MonitorWebsite:url`](../datatypes#url)
+11. [`Languages:list`](../datatypes#list)
 
 {{< /tab >}}
 {{< /tabs >}}
 
 {{< expand "Output sample" >}}
 <small>{{< include file="/tmp/usage/list-sources-sample.md" >}}</small>
+{{< /expand >}}
+
+{{< shields_io/badge label="list" message="databases" color="859900" >}}
+
+List databases.
+
+Example: <code>sdmx-dl <font color="#859900">list databases</font> <abbr title="source">STATFI</abbr></code>
+
+{{< tabs "list-databases" >}}
+{{< tab "Parameters" >}}
+
+1. [`source`](../datatypes#source) - Data source name.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`--sort`](../options#sort) - Sort output.
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`Id:string`](../datatypes#string)
+2. [`Name:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< expand "Output sample" >}}
+<small>{{< include file="/tmp/usage/list-databases-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="list" message="flows" color="859900" >}}
@@ -287,6 +333,7 @@ Example: <code>sdmx-dl <font color="#859900">list flows</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -326,6 +373,7 @@ Example: <code>sdmx-dl <font color="#859900">list dimensions</font> <abbr title=
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -366,6 +414,7 @@ Example: <code>sdmx-dl <font color="#859900">list attributes</font> <abbr title=
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -407,6 +456,7 @@ Example: <code>sdmx-dl <font color="#859900">list codes</font> <abbr title="sour
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -447,6 +497,7 @@ Example: <code>sdmx-dl <font color="#859900">list availability</font> <abbr titl
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -483,6 +534,7 @@ Example: <code>sdmx-dl <font color="#859900">list features</font> <abbr title="s
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--sort`](../options#sort) - Sort output.
 
@@ -527,7 +579,7 @@ Other options:
 {{< tab "Output" >}}
 
 CSV columns:
-1. [`Type:string`](../datatypes#string)
+1. [`Type:enum`](../datatypes#string)
 1. [`Id:string`](../datatypes#string)
 1. [`Properties:string`](../datatypes#string)
 
@@ -554,6 +606,7 @@ Example: <code>sdmx-dl <font color="#268bd2">check status</font> <abbr title="so
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 - [`--sort`](../options#sort) - Sort output.
@@ -595,6 +648,7 @@ Example: <code>sdmx-dl <font color="#268bd2">check access</font> <abbr title="so
 
 Main options:
 - [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
 - [`-l, --languages<langs>`](../options#languages) - Language priority list.
 - [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
 - [`--sort`](../options#sort) - Sort output.
@@ -654,6 +708,44 @@ CSV columns:
 
 {{< expand "Output sample" >}}
 <small>{{< include file="/tmp/usage/check-config-sample.md" >}}</small>
+{{< /expand >}}
+
+{{< shields_io/badge label="check" message="sources" color="268bd2" >}}
+
+Check sources configuration.
+
+Example: <code>sdmx-dl <font color="#268bd2">check sources all</font></code>  
+
+{{< tabs "check-sources" >}}
+{{< tab "Parameters" >}}
+
+1. [`sources`](../datatypes#list) - Data source names.
+
+{{< /tab >}}
+{{< tab "Options" >}}
+
+Main options:
+- [`-s, --sources<file>`](../options#sources) - File that provides data source definitions.
+- [`-d, --database<database>`](../options#database) - Database reference.
+- [`-l, --languages<langs>`](../options#languages) - Language priority list.
+- [`--no-parallel`](../options#no-parallel) - Disable parallel queries.
+
+Other options:
+[`CSV`](../options#csv),
+[`Network`](../options#network)
+
+{{< /tab >}}
+{{< tab "Output" >}}
+
+CSV columns:
+1. [`ID:string`](../datatypes#string)
+2. [`Issue:string`](../datatypes#string)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+{{< expand "Output sample" >}}
+<small>{{< include file="/tmp/usage/check-sources-sample.md" >}}</small>
 {{< /expand >}}
 
 {{< shields_io/badge label="setup" message="completion" color="b58900" >}}<br>

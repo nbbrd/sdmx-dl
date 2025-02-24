@@ -33,15 +33,24 @@ public interface Connection extends Closeable {
 
     void testConnection() throws IOException;
 
-    @NonNull Collection<Flow> getFlows() throws IOException;
+    @NonNull
+    Collection<Database> getDatabases() throws IOException;
 
-    @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    @NonNull
+    Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException;
 
-    @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
+    @NonNull
+    Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
-    @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+    @NonNull
+    Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException;
 
-    @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+    @NonNull
+    DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
 
-    @NonNull Set<Feature> getSupportedFeatures() throws IOException;
+    @NonNull
+    Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+
+    @NonNull
+    Set<Feature> getSupportedFeatures() throws IOException;
 }

@@ -27,6 +27,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Collections;
 
 @DirectImpl
 @ServiceProvider
@@ -52,6 +54,11 @@ public final class UptimeRobotMonitor implements Monitor {
 
         Xml.Parser<MonitorReport> parser = Stax.StreamParser.valueOf(UptimeRobotMonitor::parseReport);
         return post(url, id.toBody(), parser::parseReader, context, source, getMonitorId());
+    }
+
+    @Override
+    public @NonNull Collection<String> getMonitorProperties() {
+        return Collections.emptyList();
     }
 
     @lombok.AllArgsConstructor

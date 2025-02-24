@@ -30,6 +30,7 @@ import sdmxdl.format.csv.SdmxCsvFieldWriter;
 import sdmxdl.format.csv.SdmxPicocsvFormatter;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -71,7 +72,7 @@ public final class FetchDataCommand implements Callable<Void> {
 
     private void writeBody(Csv.Writer w) throws IOException {
         try (Connection conn = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            Structure dsd = conn.getStructure(web.getFlow());
+            Structure dsd = conn.getStructure(web.getDatabase(), web.getFlow());
             getBodyFormatter(dsd, format).getFormatter(dsd).formatCsv(getSortedSeries(conn, web), w);
         }
     }
@@ -97,10 +98,12 @@ public final class FetchDataCommand implements Callable<Void> {
 
     private static DataSet getSortedSeries(Connection conn, WebKeyOptions web) throws IOException {
         Query query = Query.builder().key(web.getKey()).detail(getDetail()).build();
-        try (Stream<Series> stream = conn.getDataStream(web.getFlow(), query)) {
+        try (Stream<Series> stream = conn.getDataStream(web.getDatabase(), web.getFlow(), query)) {
             return stream
                     .sorted(WebFlowOptions.SERIES_BY_KEY)
                     .collect(toDataSet(web.getFlow(), query));
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
         }
     }
 

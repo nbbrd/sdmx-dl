@@ -10,6 +10,8 @@ import sdmxdl.web.spi.Authenticator;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.Collection;
+import java.util.Collections;
 
 @DirectImpl
 @ServiceProvider
@@ -38,6 +40,11 @@ public final class WinPasswordVaultAuthenticator implements Authenticator {
         try (WinPasswordVault vault = WinPasswordVault.open()) {
             vault.invalidate(getResource(source));
         }
+    }
+
+    @Override
+    public @NonNull Collection<String> getAuthenticatorProperties() {
+        return Collections.emptyList();
     }
 
     private String getResource(WebSource source) {

@@ -48,7 +48,7 @@ public class CsvTable<T> {
         });
     }
 
-    void writeNames(Csv.Writer writer) throws IOException {
+    private void writeNames(Csv.Writer writer) throws IOException {
         for (CsvColumn<T> column : columns) {
             column.writeName(writer);
         }

@@ -3,7 +3,7 @@ package sdmxdl.grpc;
 import io.quarkus.grpc.GrpcClient;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
-import sdmxdl.format.protobuf.web.SdmxWebSource;
+import sdmxdl.format.protobuf.web.WebSource;
 
 import java.time.Duration;
 import java.util.List;
@@ -19,10 +19,10 @@ public class SdmxWebManagerServiceTest {
     @Test
     public void testGetSources() {
         Empty request = Empty.newBuilder().build();
-        List<SdmxWebSource> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
+        List<WebSource> response = grpc.getSources(request).collect().asList().await().atMost(Duration.ofSeconds(5));
         assertThat(response)
                 .hasSizeGreaterThanOrEqualTo(34)
-                .extracting(SdmxWebSource::getId)
+                .extracting(WebSource::getId)
                 .contains("ECB");
     }
 }

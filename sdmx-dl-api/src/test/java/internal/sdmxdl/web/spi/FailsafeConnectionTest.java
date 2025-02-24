@@ -20,18 +20,19 @@ import _test.sdmxdl.CustomException;
 import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestConnection;
 import org.junit.jupiter.api.Test;
-import sdmxdl.Query;
 import sdmxdl.Feature;
+import sdmxdl.Query;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.api.ConnectionAssert;
 import tests.sdmxdl.api.RepoSamples;
-import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.MockedDriver;
 
 import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Languages.ANY;
 
 /**
@@ -75,18 +76,18 @@ public class FailsafeConnectionTest {
     public void testGetFlows() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(valid::getFlows);
+                .isThrownBy(() -> valid.getFlows(NO_DATABASE));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(failing::getFlows)
+                .isThrownBy(() -> failing.getFlows(NO_DATABASE))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(nul::getFlows)
+                .isThrownBy(() -> nul.getFlows(NO_DATABASE))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -95,18 +96,18 @@ public class FailsafeConnectionTest {
     public void testGetFlow() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getFlow(RepoSamples.FLOW_REF));
+                .isThrownBy(() -> valid.getFlow(NO_DATABASE, RepoSamples.FLOW_REF));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getFlow(RepoSamples.FLOW_REF))
+                .isThrownBy(() -> failing.getFlow(NO_DATABASE, RepoSamples.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getFlow(RepoSamples.FLOW_REF))
+                .isThrownBy(() -> nul.getFlow(NO_DATABASE, RepoSamples.FLOW_REF))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -115,18 +116,18 @@ public class FailsafeConnectionTest {
     public void testGetStructure() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getStructure(RepoSamples.FLOW_REF));
+                .isThrownBy(() -> valid.getStructure(NO_DATABASE, RepoSamples.FLOW_REF));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getStructure(RepoSamples.FLOW_REF))
+                .isThrownBy(() -> failing.getStructure(NO_DATABASE, RepoSamples.FLOW_REF))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getStructure(RepoSamples.FLOW_REF))
+                .isThrownBy(() -> nul.getStructure(NO_DATABASE, RepoSamples.FLOW_REF))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -135,18 +136,18 @@ public class FailsafeConnectionTest {
     public void testGetData() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getData(RepoSamples.FLOW_REF, Query.ALL));
+                .isThrownBy(() -> valid.getData(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getData(RepoSamples.FLOW_REF, Query.ALL))
+                .isThrownBy(() -> failing.getData(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getData(RepoSamples.FLOW_REF, Query.ALL))
+                .isThrownBy(() -> nul.getData(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }
@@ -155,18 +156,18 @@ public class FailsafeConnectionTest {
     public void testGetDataStream() {
         failsafe.reset();
         assertThatNoException()
-                .isThrownBy(() -> valid.getDataStream(RepoSamples.FLOW_REF, Query.ALL));
+                .isThrownBy(() -> valid.getDataStream(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL));
         failsafe.assertEmpty();
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> failing.getDataStream(RepoSamples.FLOW_REF, Query.ALL))
+                .isThrownBy(() -> failing.getDataStream(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL))
                 .withCauseInstanceOf(CustomException.class);
         failsafe.assertUnexpectedError("unexpected CustomException", CustomException.class);
 
         failsafe.reset();
         assertThatIOException()
-                .isThrownBy(() -> nul.getDataStream(RepoSamples.FLOW_REF, Query.ALL))
+                .isThrownBy(() -> nul.getDataStream(NO_DATABASE, RepoSamples.FLOW_REF, Query.ALL))
                 .withNoCause();
         failsafe.assertUnexpectedNull("unexpected null");
     }

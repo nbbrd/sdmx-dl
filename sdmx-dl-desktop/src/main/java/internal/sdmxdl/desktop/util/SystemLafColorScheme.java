@@ -4,6 +4,7 @@ import ec.util.chart.impl.AndroidColorScheme;
 import lombok.NonNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,8 @@ public final class SystemLafColorScheme extends AndroidColorScheme.AndroidDarkCo
 
     @Override
     public int getAxisColor() {
-        return UIManager.getColor("Table.cellFocusColor").getRGB();
+        Color result = UIManager.getColor("Table.cellFocusColor");
+        return result != null ? result.getRGB() : super.getAxisColor();
     }
 
     @Override

@@ -44,7 +44,7 @@ public class WebOptions {
 
     @CommandLine.Option(
             names = {"-s", "--sources"},
-            defaultValue = "${env:SDMXDL_SOURCES}",
+            defaultValue = "${env:SDMXDL_REGISTRY_SOURCESFILE}",
             paramLabel = "<file>",
             descriptionKey = "cli.sdmx.sourcesFile"
     )

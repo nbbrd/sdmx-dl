@@ -80,12 +80,12 @@ public class RiHttpUtils {
     }
 
     public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull WebContext context) {
-        return newClient(newContext(source, context));
+        return newClient(source, newContext(source, context));
     }
 
-    public static @NonNull HttpClient newClient(@NonNull HttpContext context) {
+    public static @NonNull HttpClient newClient(@NonNull WebSource source, @NonNull HttpContext context) {
         HttpClient result = new DefaultHttpClient(context);
-        File dumpFolder = DUMP_FOLDER_PROPERTY.get(System.getProperties());
+        File dumpFolder = DUMP_FOLDER_PROPERTY.get(source.getProperties());
         return dumpFolder != null ? newDumpingClient(context, result, dumpFolder) : result;
     }
 
@@ -103,12 +103,12 @@ public class RiHttpUtils {
                 .urlConnectionFactory(() -> network.getURLConnectionFactory()::openConnection)
                 .listener(context.getOnEvent() != null ? new RiHttpEventListener(context.getOnEvent().asConsumer(source, "RI_HTTP")) : HttpEventListener.noOp())
                 .authenticator(new RiHttpAuthenticator(source, context.getAuthenticators(), context.getOnEvent()))
-                .userAgent(USER_AGENT_PROPERTY.get(System.getProperties()))
+                .userAgent(USER_AGENT_PROPERTY.get(source.getProperties()))
                 .build();
     }
 
     private static DumpingClient newDumpingClient(HttpContext context, HttpClient client, File dumpFolder) {
-        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping '" + file + "'"));
+        return new DumpingClient(dumpFolder.toPath(), client, file -> context.getListener().onEvent("Dumping " + file.toUri()));
     }
 
     @lombok.AllArgsConstructor

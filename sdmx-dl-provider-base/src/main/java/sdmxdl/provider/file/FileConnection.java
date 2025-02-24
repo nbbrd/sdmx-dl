@@ -51,32 +51,38 @@ public final class FileConnection implements Connection {
     }
 
     @Override
-    public @NonNull Collection<Flow> getFlows() throws IOException {
+    public @NonNull Collection<Database> getDatabases() throws IOException {
+        checkState();
+        return Collections.emptyList();
+    }
+
+    @Override
+    public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
         checkState();
         return Collections.singleton(flow);
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return flow;
     }
 
     @Override
-    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
         return client.decode().getStructure();
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-        return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+    public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+    public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
         checkState();
         checkFlowRef(flowRef);
 

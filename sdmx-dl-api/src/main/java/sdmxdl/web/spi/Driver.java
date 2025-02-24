@@ -39,7 +39,8 @@ import java.util.Collection;
 public interface Driver {
 
     @ServiceId(pattern = ServiceId.SCREAMING_SNAKE_CASE)
-    @NonNull String getDriverId();
+    @NonNull
+    String getDriverId();
 
     @ServiceSorter(reverse = true)
     int getDriverRank();
@@ -47,15 +48,18 @@ public interface Driver {
     @ServiceFilter
     boolean isDriverAvailable();
 
-    @NonNull Connection connect(
+    @NonNull
+    Connection connect(
             @NonNull WebSource source,
             @NonNull Languages languages,
             @NonNull WebContext context
     ) throws IOException, IllegalArgumentException;
 
-    @NonNull Collection<WebSource> getDefaultSources();
+    @NonNull
+    Collection<WebSource> getDefaultSources();
 
-    @NonNull Collection<String> getDriverProperties();
+    @NonNull
+    Collection<String> getDriverProperties();
 
     int NATIVE_DRIVER_RANK = Byte.MAX_VALUE;
     int WRAPPED_DRIVER_RANK = 0;

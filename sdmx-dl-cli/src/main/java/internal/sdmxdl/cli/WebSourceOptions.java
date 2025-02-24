@@ -17,10 +17,7 @@
 package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
-import sdmxdl.Connection;
-import sdmxdl.Flow;
-import sdmxdl.Feature;
-import sdmxdl.Languages;
+import sdmxdl.*;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -42,6 +39,18 @@ public class WebSourceOptions extends WebNetOptions {
     )
     private String source;
 
+    @CommandLine.Option(
+            names = {"-d", "--database"},
+            paramLabel = "<database>",
+            converter = DatabaseRefConverter.class,
+            descriptionKey = "cli.sdmx.database"
+    )
+    private DatabaseRef database;
+
+    public DatabaseRef getDatabase() {
+        return database == null ? DatabaseRef.NO_DATABASE : database;
+    }
+
     public Connection open(SdmxWebManager manager, Languages languages) throws IOException {
         return manager.getConnection(getSource(), languages);
     }
@@ -54,7 +63,7 @@ public class WebSourceOptions extends WebNetOptions {
 
     public Collection<Flow> loadFlows(SdmxWebManager manager, Languages languages) throws IOException {
         try (Connection conn = open(manager, languages)) {
-            return conn.getFlows();
+            return conn.getFlows(getDatabase());
         }
     }
 

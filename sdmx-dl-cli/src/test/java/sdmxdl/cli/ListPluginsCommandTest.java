@@ -44,7 +44,7 @@ public class ListPluginsCommandTest {
 
         assertThat(FileSample.readAll(out))
                 .contains("Type,Id,Properties", atIndex(0))
-                .contains("Registry,RI_REGISTRY,sdmxdl.registry.sourcesFile")
+                .contains("REGISTRY,RI_REGISTRY,sdmxdl.registry.sourcesFile")
                 .hasSizeGreaterThan(3);
     }
 }

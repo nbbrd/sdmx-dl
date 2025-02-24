@@ -104,11 +104,14 @@ public class RepoSamples {
             .series(S3)
             .build();
 
+    public static final Database DATABASE = new Database(DatabaseRef.parse("IIF"), "Invest in Finland");
+
     public static final DataRepository EMPTY_REPO = DataRepository.builder().build();
 
     public static final DataRepository REPO = DataRepository
             .builder()
             .name("repoName")
+            .database(DATABASE)
             .structure(STRUCT)
             .flow(FLOW)
             .dataSet(DATA_SET)
@@ -134,6 +137,7 @@ public class RepoSamples {
             .id("ECB")
             .name("en", "European Central Bank")
             .driver("ri:sdmx21")
+            .confidentiality(Confidentiality.SECRET)
             .endpointOf("https://data-api.ecb.europa.eu/service")
             .property("detailSupported", "true")
             .alias("XYZ")

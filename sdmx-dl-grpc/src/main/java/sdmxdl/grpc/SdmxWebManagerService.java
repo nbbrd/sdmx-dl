@@ -8,15 +8,24 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import sdmxdl.Detail;
+import sdmxdl.Query;
 import sdmxdl.*;
+import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
+import sdmxdl.format.protobuf.Database;
+import sdmxdl.format.protobuf.Flow;
 import sdmxdl.format.protobuf.Series;
+import sdmxdl.format.protobuf.Structure;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
-import sdmxdl.format.protobuf.web.SdmxWebSource;
+import sdmxdl.format.protobuf.web.WebSource;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -31,7 +40,22 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
-    private final Languages languages = Languages.ANY;
+
+    public record ErrorResponse(String type, String message) {
+        private static ErrorResponse of(Exception x) {
+            return new ErrorResponse(x.getClass().getSimpleName(), x.getMessage());
+        }
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ErrorResponse> mapException(IllegalArgumentException x) {
+        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ErrorResponse> mapException(IOException x) {
+        return RestResponse.status(Response.Status.BAD_REQUEST, ErrorResponse.of(x));
+    }
 
     @RequestBody(
             content = @Content(
@@ -52,9 +76,35 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         try {
             return Uni.createFrom()
                     .item(manager.getMonitorReport(request.getSource()))
-                    .map(ProtobufMonitors::fromMonitorReport);
+                    .map(ProtoWeb::fromMonitorReport);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
+        }
+    }
+
+    @RequestBody(
+            content = @Content(
+                    examples = @ExampleObject(
+                            name = "ECB example",
+                            value = """
+                                    {
+                                      "source": "ECB"
+                                    }
+                                    """
+                    )
+            )
+    )
+    @POST
+    @Path("/databases")
+    @Override
+    public Multi<Database> getDatabases(SourceRequest request) {
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+            return Multi.createFrom()
+                    .items(connection.getDatabases().stream())
+                    .map(ProtoApi::fromDatabase);
+        } catch (IOException ex) {
+            return Multi.createFrom().failure(ex);
         }
     }
 
@@ -74,11 +124,14 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/flow")
     @Override
-    public Uni<Dataflow> getFlow(FlowRequest request) {
+    public Uni<Flow> getFlow(FlowRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        FlowRef flowRef = FlowRef.parse(request.getFlow());
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getFlow(FlowRef.parse(request.getFlow())))
-                    .map(ProtobufRepositories::fromDataflow);
+                    .item(connection.getFlow(databaseRef, flowRef))
+                    .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -100,11 +153,14 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/structure")
     @Override
-    public Uni<DataStructure> getStructure(FlowRequest request) {
+    public Uni<Structure> getStructure(FlowRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        FlowRef flowRef = FlowRef.parse(request.getFlow());
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getStructure(FlowRef.parse(request.getFlow())))
-                    .map(ProtobufRepositories::fromDataStructure);
+                    .item(connection.getStructure(databaseRef, flowRef))
+                    .map(ProtoApi::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
@@ -128,23 +184,35 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/data")
     @Override
     public Uni<DataSet> getData(KeyRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        FlowRef flowRef = FlowRef.parse(request.getFlow());
+        Query query = getDataQuery(request);
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Uni.createFrom()
-                    .item(connection.getData(getFlowRef(request), getDataQuery(request)))
-                    .map(ProtobufRepositories::fromDataSet);
+                    .item(connection.getData(databaseRef, flowRef, query))
+                    .map(ProtoApi::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }
     }
 
     @POST
+    @Path("/about")
+    @Override
+    public Uni<About> getAbout(Empty request) {
+        return Uni.createFrom()
+                .item(About.newBuilder().setName(sdmxdl.About.NAME).setVersion(sdmxdl.About.VERSION).build());
+    }
+
+    @POST
     @Path("/sources")
     @Override
-    public Multi<SdmxWebSource> getSources(Empty request) {
+    public Multi<WebSource> getSources(Empty request) {
         return Multi.createFrom().items(manager.getSources()
                 .values()
                 .stream()
-                .map(ProtobufSources::fromWebSource));
+                .map(ProtoWeb::fromWebSource));
     }
 
     @RequestBody(
@@ -162,11 +230,13 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @POST
     @Path("/flows")
     @Override
-    public Multi<Dataflow> getFlows(SourceRequest request) {
+    public Multi<Flow> getFlows(DatabaseRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getFlows().stream())
-                    .map(ProtobufRepositories::fromDataflow);
+                    .items(connection.getFlows(databaseRef).stream())
+                    .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
@@ -179,7 +249,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
                             value = """
                                     {
                                       "source": "ECB",
-                                      "flow": "EXR";
+                                      "flow": "EXR",
                                       "key": "M.USD+CHF.EUR.SP00.A"
                                     }
                                     """
@@ -190,17 +260,17 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/dataStream")
     @Override
     public Multi<Series> getDataStream(KeyRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        FlowRef flowRef = FlowRef.parse(request.getFlow());
+        Query query = getDataQuery(request);
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
         try (Connection connection = manager.getConnection(request.getSource(), languages)) {
             return Multi.createFrom()
-                    .items(connection.getData(getFlowRef(request), getDataQuery(request)).getData().stream())
-                    .map(ProtobufRepositories::fromSeries);
+                    .items(connection.getData(databaseRef, flowRef, query).getData().stream())
+                    .map(ProtoApi::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
-    }
-
-    private FlowRef getFlowRef(KeyRequest request) {
-        return FlowRef.parse(request.getFlow());
     }
 
     private Query getDataQuery(KeyRequest request) {

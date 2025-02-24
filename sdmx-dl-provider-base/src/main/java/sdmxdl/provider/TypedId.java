@@ -22,18 +22,22 @@ import nbbrd.io.function.IOSupplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
+import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @param <T>
@@ -91,11 +95,36 @@ public final class TypedId<T> {
         return URI.create(Stream.of(items)
                 .map(item -> {
                     try {
-                        return URLEncoder.encode(item, StandardCharsets.UTF_8.name());
+                        return URLEncoder.encode(item, UTF_8.name());
                     } catch (UnsupportedEncodingException ex) {
                         throw new UncheckedIOException(ex);
                     }
                 })
                 .collect(Collectors.joining("/", base + "/", "")));
+    }
+
+    public static String getUniqueID(WebSource source) {
+        return source.getId() + "_" + hash(source);
+    }
+
+    private static String hash(WebSource source) {
+        try {
+            return bytesToHex(MessageDigest.getInstance("MD5").digest(source.toString().getBytes(UTF_8))).substring(0, 7);
+        } catch (NoSuchAlgorithmException e) {
+            int hashCode = source.hashCode();
+            return hashCode >= 0 ? "0" + hashCode : "1" + -hashCode;
+        }
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder result = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                result.append('0');
+            }
+            result.append(hex);
+        }
+        return result.toString();
     }
 }

@@ -61,6 +61,7 @@ public final class BbkDialectDriver implements Driver {
                     .name("en", "Deutsche Bundesbank")
                     .name("de", "Deutsche Bundesbank")
                     .driver(DIALECTS_BBK)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://api.statistiken.bundesbank.de/rest")
                     .websiteOf("https://www.bundesbank.de/en/statistics/time-series-databases")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/BBK")

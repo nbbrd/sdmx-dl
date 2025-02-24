@@ -66,6 +66,7 @@ public final class JToolWindowBar extends JComponent {
     }
 
     public void addToolWindow(String name, Icon icon, Component window) {
+        window.setPreferredSize(new Dimension(50, 300));
         int index = windows.size();
         bar.add(newButton(index, name, icon));
         windows.add(window);

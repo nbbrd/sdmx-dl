@@ -7,6 +7,45 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0-beta.14] - 2025-02-24
+
+This is the fourteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release improves the gRPC module and introduces the concept of databases in the API.  
+The experimental PxWebDriver has also been improved but is not yet ready for daily use.  
+The WITS endpoint has been updated.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+> production!**
+
+### Added
+
+- ![API] Add confidentiality property to WebSource [#518](https://github.com/nbbrd/sdmx-dl/issues/518)
+- ![API] Add missing properties methods in extensions points [#781](https://github.com/nbbrd/sdmx-dl/issues/781)
+- ![API] Add support of databases [#875](https://github.com/nbbrd/sdmx-dl/issues/875)
+- ![CLI] Add check sources command [#515](https://github.com/nbbrd/sdmx-dl/issues/515)
+- ![GRPC] Add error mapping in rest service
+- ![GRPC] Add gRPC uber-jar to distribution binaries
+- ![GRPC] Add missing methods and parameters in gRPC
+
+### Changed
+
+- ![SOURCE] Update ILO website URL [#780](https://github.com/nbbrd/sdmx-dl/issues/780)
+- ![PROVIDER] Improve reporting when no source file is configured [#866](https://github.com/nbbrd/sdmx-dl/issues/866)
+- ![BUILD] Modernize use of NIO API
+
+### Fixed
+
+- ![SOURCE] Fix WITS endpoint [#860](https://github.com/nbbrd/sdmx-dl/issues/860)
+- ![PROVIDER] Fix hidden IO exception when using data stream
+- ![PROVIDER] Fix cache key in PxWebDriver
+- ![PROVIDER] Fix dimension IDs in PxWebDriver
+- ![PROVIDER] Fix detection of time variable in PxWebDriver
+- ![PROVIDER] Simplify FlowRef in PxWebDriver
+- ![PROVIDER] Improve structure parsing in PxWebDriver
+- ![CLI] Fix sources file env variable in CLI [#779](https://github.com/nbbrd/sdmx-dl/issues/779)
+
 ## [3.0.0-beta.13] - 2024-09-06
 
 This is the thirteenth beta release of **sdmx-dl**.  
@@ -456,7 +495,8 @@ production._
 
 - Initial release
 
-[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...HEAD
+[Unreleased]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.14...HEAD
+[3.0.0-beta.14]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.13...v3.0.0-beta.14
 [3.0.0-beta.13]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.12...v3.0.0-beta.13
 [3.0.0-beta.12]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.11...v3.0.0-beta.12
 [3.0.0-beta.11]: https://github.com/nbbrd/sdmx-dl/compare/v3.0.0-beta.10...v3.0.0-beta.11

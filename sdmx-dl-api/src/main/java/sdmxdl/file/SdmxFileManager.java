@@ -56,20 +56,26 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
     }
 
     @lombok.Builder.Default
-    @NonNull FileCaching caching = FileCaching.noOp();
+    @NonNull
+    FileCaching caching = FileCaching.noOp();
 
-    @Nullable EventListener<? super FileSource> onEvent;
+    @Nullable
+    EventListener<? super FileSource> onEvent;
 
-    @Nullable ErrorListener<? super FileSource> onError;
+    @Nullable
+    ErrorListener<? super FileSource> onError;
 
     @lombok.Singular
-    @NonNull List<Persistence> persistences;
+    @NonNull
+    List<Persistence> persistences;
 
     @lombok.Singular
-    @NonNull List<Reader> readers;
+    @NonNull
+    List<Reader> readers;
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    @NonNull FileContext context = initLazyContext();
+    @NonNull
+    FileContext context = initLazyContext();
 
     @Override
     public @NonNull Connection getConnection(@NonNull FileSource source, @NonNull Languages languages) throws IOException {

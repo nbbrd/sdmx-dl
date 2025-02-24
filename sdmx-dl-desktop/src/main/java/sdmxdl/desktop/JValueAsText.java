@@ -7,7 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
-public final class JValueAsText<T extends HasPersistence> extends JComponent implements HasModel<T> {
+public final class JValueAsText<T extends HasPersistence> extends JComponent {
+
+    public static final String MODEL_PROPERTY = "model";
 
     @Getter
     private T model = null;

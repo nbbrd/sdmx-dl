@@ -16,8 +16,10 @@
  */
 package sdmxdl.web;
 
+import lombok.Builder;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import sdmxdl.Confidentiality;
 import sdmxdl.Languages;
 import sdmxdl.Source;
 
@@ -49,6 +51,9 @@ public class WebSource extends Source {
 
     @lombok.Singular
     @NonNull Set<String> aliases;
+
+    @lombok.Builder.Default
+    @NonNull Confidentiality confidentiality = Confidentiality.RESTRICTED;
 
     @Nullable URL website;
 

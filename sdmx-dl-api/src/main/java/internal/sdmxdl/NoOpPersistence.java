@@ -5,6 +5,7 @@ import sdmxdl.HasPersistence;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,5 +31,10 @@ public enum NoOpPersistence implements Persistence {
     @Override
     public @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type) {
         return FileFormat.noOp();
+    }
+
+    @Override
+    public @NonNull Collection<String> getPersistenceProperties() {
+        return Collections.emptyList();
     }
 }

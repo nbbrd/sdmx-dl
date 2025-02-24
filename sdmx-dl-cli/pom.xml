@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.sdmx-dl</groupId>
         <artifactId>sdmx-dl-parent</artifactId>
-        <version>3.0.0-beta.13</version>
+        <version>3.0.0-beta.14</version>
     </parent>
 
     <artifactId>sdmx-dl-cli</artifactId>
@@ -19,7 +19,6 @@
 
     <properties>
         <project.x.mainClass>sdmxdl.cli.MainCommand</project.x.mainClass>
-        <hugo-geekdoc.version>v0.47.0</hugo-geekdoc.version>
     </properties>
 
     <dependencies>
@@ -240,7 +239,7 @@
                 <!-- Generates data files for documentation -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>generate-csv-sources</id>
@@ -257,7 +256,7 @@
                                 <argument>list</argument>
                                 <argument>sources</argument>
                                 <argument>-o</argument>
-                                <argument>${project.parent.basedir}/docs/tmp/sources.csv</argument>
+                                <argument>${project.parent.basedir}/docs/assets/sources.csv</argument>
                                 <argument>--no-config</argument>
                             </arguments>
                         </configuration>
@@ -268,147 +267,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>setup-docs</id>
-            <build>
-                <plugins>
-                    <!-- Clean Hugo theme for documentation -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>clean-hugo-theme</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>clean</goal>
-                                </goals>
-                                <configuration>
-                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                                    <filesets>
-                                        <fileset>
-                                            <directory>${project.parent.basedir}/docs/themes/hugo-geekdoc</directory>
-                                        </fileset>
-                                    </filesets>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- Download Hugo theme for documentation -->
-                    <plugin>
-                        <groupId>com.googlecode.maven-download-plugin</groupId>
-                        <artifactId>download-maven-plugin</artifactId>
-                        <version>1.9.0</version>
-                        <executions>
-                            <execution>
-                                <id>download-hugo-theme</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <url>
-                                https://github.com/thegeeklab/hugo-geekdoc/releases/download/${hugo-geekdoc.version}/hugo-geekdoc.tar.gz
-                            </url>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.parent.basedir}/docs/themes/hugo-geekdoc</outputDirectory>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>full-release</id>
-            <build>
-                <plugins>
-                    <!-- Extract changelog for release -->
-                    <plugin>
-                        <groupId>com.github.nbbrd.heylogs</groupId>
-                        <artifactId>heylogs-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>extract-changelog</id>
-                                <goals>
-                                    <goal>extract</goal>
-                                </goals>
-                                <configuration>
-                                    <inputFile>${project.parent.basedir}/CHANGELOG.md</inputFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- Release assets -->
-                    <plugin>
-                        <groupId>org.jreleaser</groupId>
-                        <artifactId>jreleaser-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>full-release</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <jreleaser>
-                                <project>
-                                    <description>Easily download official statistics</description>
-                                </project>
-                                <release>
-                                    <github>
-                                        <skipTag>true</skipTag>
-                                        <!-- Fix default value -->
-                                        <branch>master</branch>
-                                        <changelog>
-                                            <external>${project.build.directory}/CHANGELOG.md</external>
-                                        </changelog>
-                                    </github>
-                                </release>
-                                <signing>
-                                    <active>ALWAYS</active>
-                                    <!-- Fix default value -->
-                                    <armored>true</armored>
-                                </signing>
-                                <distributions>
-                                    <!-- Name is here ! -->
-                                    <sdmx-dl>
-                                        <type>SINGLE_JAR</type>
-                                        <artifacts>
-                                            <artifact>
-                                                <path>
-                                                    ${project.build.directory}/${project.artifactId}-${project.version}-bin.jar
-                                                </path>
-                                            </artifact>
-                                        </artifacts>
-                                        <java>
-                                            <mainClass>${project.x.mainClass}</mainClass>
-                                            <artifactId>${project.artifactId}</artifactId>
-                                            <version>8</version>
-                                        </java>
-                                        <scoop>
-                                            <active>RELEASE</active>
-                                        </scoop>
-                                        <brew>
-                                            <active>RELEASE</active>
-                                            <extraProperties>
-                                                <skipJava>true</skipJava>
-                                            </extraProperties>
-                                        </brew>
-                                        <jbang>
-                                            <active>RELEASE</active>
-                                        </jbang>
-                                    </sdmx-dl>
-                                </distributions>
-                            </jreleaser>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
         <profile>
             <id>native</id>
             <properties>
@@ -441,14 +299,15 @@
                             <!-- FIX: kryo: report-unsupported-elements-at-runtime -->
                             <!-- FIX: sdmx-dl: xml resources such as Checks.xml -->
                             <!-- FIX: sdmx-dl: ps1 resources such as WinPasswordVault.ps1 -->
-                            <!-- FIX: sdmx-dl: properties resources such as pom.properties -->
+                            <!-- FIX: sdmx-dl: csv resources such as api.json -->
+                            <!-- FIX: sdmx-dl: csv resources such as websites.csv -->
                             <!-- FIX: sdmx-dl: some Windows charsets are not included by default -->
                             <buildArgs>
                                 --no-fallback
                                 --enable-http
                                 --enable-https
                                 --report-unsupported-elements-at-runtime
-                                -H:IncludeResources=.*\.(xml|ps1|properties)$
+                                -H:IncludeResources=.*\.(xml|ps1|json|csv)$
                                 -H:+AddAllCharsets
                                 -H:+TraceSecurityServices
                             </buildArgs>

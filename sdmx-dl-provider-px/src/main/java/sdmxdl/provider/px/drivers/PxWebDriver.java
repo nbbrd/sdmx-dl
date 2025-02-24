@@ -20,6 +20,7 @@ import sdmxdl.format.DataCursor;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.format.time.ObservationalTimePeriod;
+import sdmxdl.format.time.TimeFormats;
 import sdmxdl.format.xml.SdmxXmlStreams;
 import sdmxdl.provider.ConnectionSupport;
 import sdmxdl.provider.HasMarker;
@@ -46,6 +47,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nbbrd.io.Resource.newInputStream;
+import static sdmxdl.format.time.TimeFormats.IGNORE_ERROR;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 
 @DirectImpl
@@ -100,41 +102,34 @@ public final class PxWebDriver implements Driver {
         }
     }
 
-    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+    private static PxWebClient newClient(WebSource source, Languages languages, WebContext context) throws IOException {
         PxWebClient client = new DefaultPxWebClient(
                 HasMarker.of(source),
-                getBaseURL(source, languages),
+                getDefaultClientBaseURL(source, languages),
                 RiHttpUtils.newClient(source, context)
         );
 
-        PxWebClient cachedClient = CachedPxWebClient.of(
+        return new CachedPxWebClient(
                 client,
                 context.getDriverCache(source),
-                CACHE_TTL_PROPERTY.get(source.getProperties()),
-                source,
-                languages
+                getCachedClientBaseURI(source, languages),
+                Duration.ofMillis(CACHE_TTL_PROPERTY.get(source.getProperties()))
         );
-
-        return new PxWebConnection(cachedClient);
     }
 
-    @VisibleForTesting
-    static @NonNull URL getBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
-        try {
-            return UriTemplate.expand(source.getEndpoint(), getUriTemplateVariables(source, languages)).toURL();
-        } catch (URISyntaxException ex) {
-            throw new IOException(ex);
-        }
+    private static @NonNull Connection newConnection(@NonNull WebSource source, @NonNull Languages languages, @NonNull WebContext context) throws IOException {
+        return new PxWebConnection(newClient(source, languages, context));
     }
 
-    private static Map<String, String> getUriTemplateVariables(WebSource source, Languages languages) {
+    private static String resolveVersion(WebSource source) {
         List<String> versions = VERSIONS_PROPERTY.get(source.getProperties());
+        return versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION;
+    }
+
+    private static String resolveLanguage(WebSource source, Languages requested) {
         List<String> availableLanguages = LANGUAGES_PROPERTY.get(source.getProperties());
-        String language = availableLanguages != null ? lookupLanguage(availableLanguages, languages) : null;
-        Map<String, String> result = new HashMap<>();
-        result.put(VERSION_VARIABLE, versions != null && !versions.isEmpty() ? versions.get(0) : DEFAULT_VERSION);
-        result.put(LANGUAGE_VARIABLE, language != null ? language : DEFAULT_LANG);
-        return result;
+        String language = availableLanguages != null ? lookupLanguage(availableLanguages, requested) : null;
+        return language != null ? language : DEFAULT_LANG;
     }
 
     @VisibleForTesting
@@ -146,7 +141,7 @@ public final class PxWebDriver implements Driver {
     @lombok.AllArgsConstructor
     private static final class PxWebConnection implements Connection {
 
-        @lombok.NonNull
+        @NonNull
         private final PxWebClient client;
 
         @Override
@@ -155,29 +150,39 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() throws IOException {
-            return client.getTables();
+        public @NonNull Collection<sdmxdl.Database> getDatabases() throws IOException {
+            return client.getDataBases();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
+            checkDatabase(database);
+            return client.getTables(database.getId());
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
-            return client.getMeta(flowRef.getAgency(), flowRef.getId());
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return client.getMeta(database.getId(), flowRef.getId());
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
-            Structure dsd = client.getMeta(flowRef.getAgency(), flowRef.getId());
-            DataCursor dataCursor = client.getData(flowRef.getAgency(), flowRef.getId(), dsd, query.getKey());
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
+        }
+
+        @Override
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
+            checkDatabase(database);
+            Structure dsd = client.getMeta(database.getId(), flowRef.getId());
+            DataCursor dataCursor = client.getData(database.getId(), flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
         }
 
@@ -189,17 +194,42 @@ public final class PxWebDriver implements Driver {
         @Override
         public void close() {
         }
+
+        private void checkDatabase(DatabaseRef database) throws IOException {
+            if (database.equals(DatabaseRef.NO_DATABASE)) {
+                throw new IOException("Database reference is required");
+            }
+        }
     }
 
     private interface PxWebClient extends HasMarker {
 
-        @NonNull Config getConfig() throws IOException;
+        @NonNull
+        Config getConfig() throws IOException;
 
-        @NonNull List<Flow> getTables() throws IOException;
+        @NonNull
+        List<sdmxdl.Database> getDataBases() throws IOException;
 
-        @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
+        @NonNull
+        List<Flow> getTables(@NonNull String dbId) throws IOException;
 
-        @NonNull DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+        @NonNull
+        Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException;
+
+        @NonNull
+        DataCursor getData(@NonNull String dbId, @NonNull String tableId, @NonNull Structure dsd, @NonNull Key key) throws IOException, IllegalArgumentException;
+    }
+
+    @VisibleForTesting
+    static @NonNull URL getDefaultClientBaseURL(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
+        Map<String, String> variables = new HashMap<>();
+        variables.put(VERSION_VARIABLE, resolveVersion(source));
+        variables.put(LANGUAGE_VARIABLE, resolveLanguage(source, languages));
+        try {
+            return UriTemplate.expand(source.getEndpoint(), variables).toURL();
+        } catch (URISyntaxException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @lombok.AllArgsConstructor
@@ -228,11 +258,8 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<Config> getConfigParser(MediaType ignore) {
-            return Config.JSON_PARSER;
-        }
-
-        private List<Database> getDatabases() throws IOException {
+        @Override
+        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(baseURL)
@@ -244,42 +271,36 @@ public final class PxWebDriver implements Driver {
             }
         }
 
-        private TextParser<List<Database>> getDatabasesParser(MediaType ignore) {
-            return Database.JSON_PARSER.andThen(Arrays::asList);
+        private TextParser<Config> getConfigParser(MediaType ignore) {
+            return Config.JSON_PARSER;
         }
 
-        private List<Flow> getTables(Database db) throws IOException {
+        private TextParser<List<sdmxdl.Database>> getDatabasesParser(MediaType ignore) {
+            return PxWebDriver.Database.JSON_PARSER
+                    .andThen(tables -> Stream.of(tables).map(PxWebDriver.Database::toDatabase).collect(toList()));
+        }
+
+        @Override
+        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
             HttpRequest request = HttpRequest
                     .builder()
                     .query(URLQueryBuilder
                             .of(baseURL)
-                            .path(db.getDbId())
+                            .path(dbId)
                             .param("query", "*")
                             .param("filter", "*")
                             .build())
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getTablesParser(db.getDbId(), response.getContentType())
+                return getTablesParser(response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        @Override
-        public @NonNull List<Flow> getTables() throws IOException {
-            List<Flow> result = new ArrayList<>();
-            for (Database database : getDatabases()) {
-                try {
-                    result.addAll(getTables(database));
-                } catch (IOException ignore) {
-                }
-            }
-            return result;
-        }
-
-        private TextParser<List<Flow>> getTablesParser(String dbId, MediaType ignore) {
+        private TextParser<List<Flow>> getTablesParser(MediaType ignore) {
             return Table.JSON_PARSER
-                    .andThen(tables -> Stream.of(tables).map(table -> table.toDataflow(dbId)).collect(toList()));
+                    .andThen(tables -> Stream.of(tables).map(Table::toDataflow).collect(toList()));
         }
 
         @Override
@@ -294,14 +315,14 @@ public final class PxWebDriver implements Driver {
                     .build();
 
             try (HttpResponse response = client.send(request)) {
-                return getMetaParser(dbId, tableId, response.getContentType())
+                return getMetaParser(tableId, response.getContentType())
                         .parseReader(response::getBodyAsReader);
             }
         }
 
-        private TextParser<Structure> getMetaParser(String dbId, String tableId, MediaType ignore) {
+        private TextParser<Structure> getMetaParser(String tableId, MediaType ignore) {
             return TableMeta.JSON_PARSER
-                    .andThen(tableMeta -> tableMeta.toDataStructure(StructureRef.of(dbId, tableId, null)));
+                    .andThen(tableMeta -> tableMeta.toStructure(StructureRef.of(null, tableId, null)));
         }
 
         @Override
@@ -327,18 +348,13 @@ public final class PxWebDriver implements Driver {
         }
     }
 
+    @VisibleForTesting
+    static URI getCachedClientBaseURI(WebSource source, Languages languages) {
+        return TypedId.resolveURI(URI.create("cache:pxweb"), TypedId.getUniqueID(source), resolveLanguage(source, languages));
+    }
+
     @lombok.AllArgsConstructor
     private static final class CachedPxWebClient implements PxWebClient {
-
-        static @NonNull CachedPxWebClient of(
-                @NonNull PxWebClient client, @NonNull Cache<DataRepository> cache, long ttlInMillis,
-                @NonNull WebSource source, @NonNull Languages languages) {
-            return new CachedPxWebClient(client, cache, getBase(source, languages), Duration.ofMillis(ttlInMillis));
-        }
-
-        private static URI getBase(WebSource source, Languages languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
-        }
 
         @lombok.NonNull
         private final PxWebClient delegate;
@@ -347,16 +363,26 @@ public final class PxWebDriver implements Driver {
         private final Cache<DataRepository> cache;
 
         @lombok.NonNull
-        private final URI base;
+        private final URI baseURI;
 
         @lombok.NonNull
         private final Duration ttl;
 
         @lombok.Getter(lazy = true)
-        private final TypedId<List<Flow>> idOfTables = initIdOfTables(base);
+        private final TypedId<List<sdmxdl.Database>> idOfDatabases = initIdOfDatabases(baseURI);
 
         @lombok.Getter(lazy = true)
-        private final TypedId<Structure> idOfMeta = initIdOfMeta(base);
+        private final TypedId<List<Flow>> idOfTables = initIdOfTables(baseURI);
+
+        @lombok.Getter(lazy = true)
+        private final TypedId<Structure> idOfMeta = initIdOfMeta(baseURI);
+
+        private static TypedId<List<sdmxdl.Database>> initIdOfDatabases(URI base) {
+            return TypedId.of(base,
+                    DataRepository::getDatabases,
+                    databases -> DataRepository.builder().databases(databases).build()
+            ).with("databases");
+        }
 
         private static TypedId<List<Flow>> initIdOfTables(URI base) {
             return TypedId.of(base,
@@ -383,13 +409,24 @@ public final class PxWebDriver implements Driver {
         }
 
         @Override
-        public @NonNull List<Flow> getTables() throws IOException {
-            return getIdOfTables().load(cache, delegate::getTables, o -> ttl);
+        public @NonNull List<sdmxdl.Database> getDataBases() throws IOException {
+            return getIdOfDatabases()
+                    .load(cache, delegate::getDataBases, ignore -> ttl);
+        }
+
+        @Override
+        public @NonNull List<Flow> getTables(@NonNull String dbId) throws IOException {
+            return getIdOfTables()
+                    .with(dbId)
+                    .load(cache, () -> delegate.getTables(dbId), ignore -> ttl);
         }
 
         @Override
         public @NonNull Structure getMeta(@NonNull String dbId, @NonNull String tableId) throws IOException, IllegalArgumentException {
-            return getIdOfMeta().with(dbId).with(tableId).load(cache, () -> delegate.getMeta(dbId, tableId), o -> ttl);
+            return getIdOfMeta()
+                    .with(dbId)
+                    .with(tableId)
+                    .load(cache, () -> delegate.getMeta(dbId, tableId), ignore -> ttl);
         }
 
         @Override
@@ -423,14 +460,14 @@ public final class PxWebDriver implements Driver {
 
         @Override
         @Nullable
-        public String getSeriesAttribute(@NonNull String key) throws IllegalStateException {
-            return null;
+        public String getSeriesAttribute(@NonNull String key) throws IOException, IllegalStateException {
+            return delegate.getSeriesAttribute(key);
         }
 
         @Override
         @NonNull
-        public Map<String, String> getSeriesAttributes() throws IllegalStateException {
-            return Collections.emptyMap();
+        public Map<String, String> getSeriesAttributes() throws IOException, IllegalStateException {
+            return delegate.getSeriesAttributes();
         }
 
         @Override
@@ -468,19 +505,33 @@ public final class PxWebDriver implements Driver {
             return dsd
                     .toBuilder()
                     .clearDimensions()
-                    .dimension(FREQ_DIMENSION)
+                    .dimension(MANDATORY_FREQ_AS_FIRST_DIMENSION)
                     .dimensions(dsd.getDimensionList()
                             .stream()
-                            .map(PxWebSdmxDataCursor::fixDimensionCode)
+                            .map(dimension -> dimension
+                                    .toBuilder()
+                                    .id(convertDimensionNameToId(dimension.getName()))
+                                    .build())
                             .collect(toList()))
                     .build();
         }
 
-        private static Dimension fixDimensionCode(Dimension dimension) {
-            return dimension.toBuilder().id(dimension.getName().replace(" ", "")).build();
+        /**
+         * Convert a PxWeb variable text to an SDMX dimension ID.
+         * <p>
+         * Surprisingly, PxWeb variable code is not used as SDMX dimension ID when getting data.
+         * The PxWeb variable text is used instead after being normalized to a valid SDMX ID.
+         * Note that the PxWeb variable text is dependent of the requested language.
+         *
+         * @param name the name to be converted
+         * @return the converted ID
+         */
+        @VisibleForTesting
+        static String convertDimensionNameToId(String name) {
+            return name.replaceAll("[^a-zA-Z0-9_\\-]", "");
         }
 
-        private static final Dimension FREQ_DIMENSION = Dimension
+        private static final Dimension MANDATORY_FREQ_AS_FIRST_DIMENSION = Dimension
                 .builder()
                 .id("FREQ")
                 .name("")
@@ -525,9 +576,13 @@ public final class PxWebDriver implements Driver {
         String dbId;
         String text;
 
+        sdmxdl.Database toDatabase() {
+            return new sdmxdl.Database(DatabaseRef.parse(dbId), text);
+        }
+
         static final TextParser<Database[]> JSON_PARSER = GsonIO.GsonParser
                 .builder(Database[].class)
-                .deserializer(Database.class, Database::deserialize)
+                .deserializer(Database.class, PxWebDriver.Database::deserialize)
                 .build();
 
         @MightBeGenerated
@@ -548,11 +603,11 @@ public final class PxWebDriver implements Driver {
         String path;
         String title;
 
-        Flow toDataflow(String dbId) {
+        Flow toDataflow() {
             return Flow
                     .builder()
-                    .ref(FlowRef.of(dbId, id, null))
-                    .structureRef(StructureRef.of(dbId, id, null))
+                    .ref(FlowRef.of(null, id, null))
+                    .structureRef(StructureRef.of(null, id, null))
                     .name(title)
                     .build();
         }
@@ -577,29 +632,52 @@ public final class PxWebDriver implements Driver {
     @lombok.Value
     static class TableMeta {
 
+        String title;
         List<TableVariable> variables;
 
-        Structure toDataStructure(StructureRef ref) {
+        Structure toStructure(StructureRef ref) {
+            TableVariable timeVariable = getTimeVariable();
             return Structure
                     .builder()
                     .ref(ref)
-                    .timeDimensionId(toTimeDimensionId())
-                    .primaryMeasureId("")
-                    .name("")
-                    .dimensions(toDimensionList())
+                    .timeDimensionId(timeVariable.getCode())
+                    .primaryMeasureId(DEFAULT_PRIMARY_MEASURE)
+                    .name(title)
+                    .dimensions(toDimensionList(timeVariable))
+                    .attribute(UNIT_MEASURE_ATTRIBUTE)
                     .build();
         }
 
-        List<Dimension> toDimensionList() {
+        @VisibleForTesting
+        TableVariable getTimeVariable() {
+            return variables
+                    .stream()
+                    .filter(TableVariable::isTime)
+                    .findFirst()
+                    .orElseGet(() -> variables
+                            .stream()
+                            .filter(variable -> variable.getValueTexts().stream().map(TIME_PERIOD_PARSER::parse).allMatch(Objects::nonNull))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException("Time variable not found")));
+        }
+
+        List<Dimension> toDimensionList(TableVariable timeVariable) {
             return CollectionUtil.indexedStreamOf(variables)
-                    .filter(item -> !item.getElement().isTime())
+                    .filter(item -> !timeVariable.equals(item.getElement()))
                     .map(item -> item.getElement().toDimension(item.getIndex() + 1))
                     .collect(Collectors.toList());
         }
 
-        private String toTimeDimensionId() {
-            return variables.stream().filter(TableVariable::isTime).findFirst().orElseThrow(IllegalArgumentException::new).getCode();
-        }
+        static final String DEFAULT_PRIMARY_MEASURE = "OBS_VALUE";
+
+        static final Attribute UNIT_MEASURE_ATTRIBUTE = Attribute
+                .builder()
+                .id("UNIT_MEASURE")
+                .name("Unit measure")
+                .relationship(AttributeRelationship.SERIES)
+                .build();
+
+        static final Parser<ObservationalTimePeriod> TIME_PERIOD_PARSER = TimeFormats.getObservationalTimePeriod(IGNORE_ERROR);
 
         static final TextParser<TableMeta> JSON_PARSER = GsonIO.GsonParser
                 .builder(TableMeta.class)
@@ -612,6 +690,7 @@ public final class PxWebDriver implements Driver {
             JsonObject x = json.getAsJsonObject();
             JsonArray y = x.getAsJsonArray("variables");
             return new TableMeta(
+                    x.get("title").getAsString(),
                     GsonUtil.asStream(y).map(o -> context.<TableVariable>deserialize(o, TableVariable.class)).collect(toList())
             );
         }

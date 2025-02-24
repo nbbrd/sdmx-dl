@@ -48,7 +48,7 @@ final class CachedRestClient implements RestClient {
 
     @VisibleForTesting
     static URI getBase(WebSource source, Languages languages) {
-        return TypedId.resolveURI(URI.create("cache:rest"), source.getId(), String.valueOf(source.hashCode()), languages.toString());
+        return TypedId.resolveURI(URI.create("cache:rest"), TypedId.getUniqueID(source), languages.toString());
     }
 
     @lombok.NonNull

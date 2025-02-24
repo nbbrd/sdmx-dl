@@ -6,6 +6,8 @@ import sdmxdl.ext.FileFormat;
 import sdmxdl.ext.Persistence;
 import sdmxdl.format.design.ServiceSupport;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @ServiceSupport
@@ -25,6 +27,9 @@ public final class PersistenceSupport implements Persistence {
     @lombok.Builder.Default
     private final Factory factory = Persistence.noOp()::getFormat;
 
+    @lombok.Singular
+    private final Collection<String> properties;
+
     @Override
     public @NonNull String getPersistenceId() {
         return id;
@@ -43,6 +48,11 @@ public final class PersistenceSupport implements Persistence {
     @Override
     public @NonNull <T extends HasPersistence> FileFormat<T> getFormat(@NonNull Class<T> type) {
         return factory.create(type);
+    }
+
+    @Override
+    public @NonNull Collection<String> getPersistenceProperties() {
+        return properties;
     }
 
     @FunctionalInterface

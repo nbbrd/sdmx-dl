@@ -25,6 +25,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import nbbrd.design.DirectImpl;
 import nbbrd.io.text.Parser;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Confidentiality;
 import sdmxdl.Duration;
 import sdmxdl.format.ObsParser;
 import sdmxdl.format.time.ObservationalTimePeriod;
@@ -66,6 +67,7 @@ public final class InseeDriver implements Driver {
                     .id("INSEE")
                     .name("fr", "Institut national de la statistique et des études économiques")
                     .driver(CONNECTORS_INSEE)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://bdm.insee.fr/series/sdmx")
                     .websiteOf("https://www.insee.fr/fr/statistiques")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/INSEE")

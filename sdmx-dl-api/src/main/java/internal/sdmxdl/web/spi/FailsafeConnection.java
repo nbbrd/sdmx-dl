@@ -59,11 +59,28 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Collection<Flow> getFlows() throws IOException {
+    public @NonNull Collection<Database> getDatabases() throws IOException {
+        Collection<Database> result;
+
+        try {
+            result = delegate.getDatabases();
+        } catch (RuntimeException ex) {
+            throw unexpectedError(ex, "while getting databases");
+        }
+
+        if (result == null) {
+            throw unexpectedNull("databases");
+        }
+
+        return result;
+    }
+
+    @Override
+    public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
         Collection<Flow> result;
 
         try {
-            result = delegate.getFlows();
+            result = delegate.getFlows(database);
         } catch (RuntimeException ex) {
             throw unexpectedError(ex, "while getting flows");
         }
@@ -76,11 +93,11 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
         Flow result;
 
         try {
-            result = delegate.getFlow(flowRef);
+            result = delegate.getFlow(database, flowRef);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -95,11 +112,11 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+    public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
         Structure result;
 
         try {
-            result = delegate.getStructure(flowRef);
+            result = delegate.getStructure(database, flowRef);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -114,11 +131,11 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         DataSet result;
 
         try {
-            result = delegate.getData(flowRef, query);
+            result = delegate.getData(database, flowRef, query);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {
@@ -133,11 +150,11 @@ final class FailsafeConnection implements Connection {
     }
 
     @Override
-    public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+    public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
         Stream<Series> result;
 
         try {
-            result = delegate.getDataStream(flowRef, query);
+            result = delegate.getDataStream(database, flowRef, query);
         } catch (IllegalArgumentException ex) {
             throw ex;
         } catch (RuntimeException ex) {

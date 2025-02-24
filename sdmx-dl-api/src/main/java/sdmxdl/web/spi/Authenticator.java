@@ -11,6 +11,7 @@ import sdmxdl.web.WebSource;
 
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.util.Collection;
 
 @ServiceDefinition(
         quantifier = Quantifier.MULTIPLE,
@@ -28,4 +29,8 @@ public interface Authenticator {
     @Nullable PasswordAuthentication getPasswordAuthenticationOrNull(@NonNull WebSource source) throws IOException;
 
     void invalidateAuthentication(@NonNull WebSource source) throws IOException;
+
+    @NonNull Collection<String> getAuthenticatorProperties();
+
+    String AUTHENTICATOR_PROPERTY_PREFIX = "sdmxdl.authenticator";
 }

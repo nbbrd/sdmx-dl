@@ -224,6 +224,9 @@ public class Duration implements TemporalAmount {
      */
     int weeks;
 
+    @lombok.Getter(value = AccessLevel.PACKAGE, lazy = true)
+    ChronoUnit minChronoUnit = initMinChronoUnit();
+
     @Override
     public String toString() {
         if (weeks != 0) {
@@ -324,5 +327,16 @@ public class Duration implements TemporalAmount {
     private static int toInt(Matcher matcher, int group) {
         String result = matcher.group(group);
         return result != null ? Integer.parseInt(result.substring(0, result.length() - 1)) : 0;
+    }
+
+    private ChronoUnit initMinChronoUnit() {
+        if (weeks != 0) return DAYS;
+        if (seconds != 0) return SECONDS;
+        if (minutes != 0) return MINUTES;
+        if (hours != 0) return HOURS;
+        if (days != 0) return DAYS;
+        if (months != 0) return MONTHS;
+        if (years != 0) return YEARS;
+        return NANOS;
     }
 }

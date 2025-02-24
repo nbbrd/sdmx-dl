@@ -49,6 +49,8 @@ public class PxWebDriverTest {
     @Test
     public void testTableMeta() throws IOException {
         PxWebDriver.TableMeta meta = PxWebDriver.TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8);
+        assertThat(meta.getTitle())
+                .isEqualTo("Accommodation establishment capacity by municipality by Municipality, Type of establishment, Year and Information");
         assertThat(meta.getVariables())
                 .hasSize(4)
                 .satisfies(o -> {
@@ -66,10 +68,19 @@ public class PxWebDriverTest {
                     assertThat(o.isTime()).isTrue();
                 }, Index.atIndex(2));
 
-        assertThat(meta.toDataStructure(StructureRef.parse("hello")))
+        assertThat(meta.toStructure(StructureRef.parse("hello")))
                 .satisfies(o -> {
                     assertThat(o.getDimensions()).hasSize(3);
                 });
+    }
+
+    @Test
+    public void testGetTimeVariable() throws IOException {
+        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "statfin-table-meta.json", UTF_8).getTimeVariable())
+                .returns("Vuosi", TableVariable::getCode);
+
+        assertThat(TableMeta.JSON_PARSER.parseResource(PxWebDriverTest.class, "grande-region-a301-table-meta.json", UTF_8).getTimeVariable())
+                .returns("Année", TableVariable::getCode);
     }
 
     @Test
@@ -87,31 +98,59 @@ public class PxWebDriverTest {
     }
 
     @Test
-    public void testGetBaseURL() throws IOException {
+    public void testGetDefaultClientBaseURL() throws IOException {
         WebSource empty = WebSource
                 .builder().id("").driver("")
                 .endpointOf("https://localhost/_VERSION_/_LANG_")
                 .propertyOf(VERSIONS_PROPERTY, "v1")
                 .build();
 
-        assertThat(getBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(empty, NL)).hasToString("https://localhost/v1/en");
 
         WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
 
-        assertThat(getBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, EN)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
-        assertThat(getBaseURL(en, NL)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, ANY)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, EN)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, FR_BE)).hasToString("https://localhost/v1/en");
+        assertThat(getDefaultClientBaseURL(en, NL)).hasToString("https://localhost/v1/en");
 
         WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
 
-        assertThat(getBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
-        assertThat(getBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, ANY)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, EN)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, FR_BE)).hasToString("https://localhost/v1/fr");
+        assertThat(getDefaultClientBaseURL(fr, NL)).hasToString("https://localhost/v1/fr");
+    }
+
+    @Test
+    public void testGetCachedClientBaseURI() throws IOException {
+        WebSource empty = WebSource
+                .builder().id("").driver("")
+                .endpointOf("https://localhost/_VERSION_/_LANG_")
+                .propertyOf(VERSIONS_PROPERTY, "v1")
+                .build();
+
+        assertThat(getCachedClientBaseURI(empty, ANY)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, EN)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, FR_BE)).hasToString("cache:pxweb/_ca7ff5d/en");
+        assertThat(getCachedClientBaseURI(empty, NL)).hasToString("cache:pxweb/_ca7ff5d/en");
+
+        WebSource en = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "en").build();
+
+        assertThat(getCachedClientBaseURI(en, ANY)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, EN)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, FR_BE)).hasToString("cache:pxweb/_dee2f11/en");
+        assertThat(getCachedClientBaseURI(en, NL)).hasToString("cache:pxweb/_dee2f11/en");
+
+        WebSource fr = empty.toBuilder().propertyOf(LANGUAGES_PROPERTY, "fr").build();
+
+        assertThat(getCachedClientBaseURI(fr, ANY)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, EN)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, FR_BE)).hasToString("cache:pxweb/_c3c36b2/fr");
+        assertThat(getCachedClientBaseURI(fr, NL)).hasToString("cache:pxweb/_c3c36b2/fr");
     }
 
     @Test
@@ -130,6 +169,27 @@ public class PxWebDriverTest {
         assertThat(lookupLanguage(setOf("fr", "en"), EN)).isEqualTo("en");
         assertThat(lookupLanguage(setOf("fr", "en"), FR_BE)).isEqualTo("fr");
         assertThat(lookupLanguage(setOf("fr", "en"), NL)).isEqualTo("fr");
+    }
+
+    @Test
+    public void testConvertDimensionNameToId() {
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tuotteet toimialoittain (CPA 2015)"))
+                .isEqualTo("TuotteettoimialoittainCPA2015");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Palvelun kohde"))
+                .isEqualTo("Palvelunkohde");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Tiedot"))
+                .isEqualTo("Tiedot");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Koulutusala ja koulutuksen sisältö"))
+                .isEqualTo("Koulutusalajakoulutuksensislt");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Industries_luok"))
+                .isEqualTo("Industries_luok");
+
+        assertThat(PxWebDriver.PxWebSdmxDataCursor.convertDimensionNameToId("Underlying cause of death (86-group short list)"))
+                .isEqualTo("Underlyingcauseofdeath86-groupshortlist");
     }
 
     private static <T> Set<T> setOf(T... values) {

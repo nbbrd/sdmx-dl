@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
 @DirectImpl
@@ -57,6 +58,7 @@ public final class RngRiDriver implements Driver {
                     .id("RNG")
                     .name("en", "Random number generator")
                     .driver(RI_RNG)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("rng:3:4:0:2010-01-01")
                     .build())
             .build();
@@ -116,18 +118,23 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() {
+        public @NonNull Collection<Database> getDatabases() {
+            return emptyList();
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) {
             return singleton(Flow.builder().ref(FlowRef.parse("RNG")).structureRef(StructureRef.parse("STRUCT_RNG")).name("RNG").build());
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
-            return ConnectionSupport.getFlowFromFlows(flowRef, this, this);
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, this);
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
-            Flow flow = getFlow(flowRef);
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
+            Flow flow = getFlow(database, flowRef);
             return Structure
                     .builder()
                     .ref(flow.getStructureRef())
@@ -163,12 +170,12 @@ public final class RngRiDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
-            return ConnectionSupport.getDataSetFromStream(flowRef, query, this);
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+            return ConnectionSupport.getDataSetFromStream(database, flowRef, query, this);
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
         }
 

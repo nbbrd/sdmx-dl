@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import nbbrd.desktop.favicon.DomainName;
 import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
+import sdmxdl.Confidentiality;
 import sdmxdl.desktop.DataSourceRef;
 import sdmxdl.desktop.HasSdmxProperties;
 import sdmxdl.web.SdmxWebManager;
@@ -49,16 +50,20 @@ public final class SdmxIconSupport {
         return new FlatSVGIcon("sdmxdl/desktop/SDMX_logo.svg", 16, 16);
     }
 
-    public Icon getIcon(String source, int size, Runnable onUpdate) {
-        return getIcon(properties.getSdmxManager().getSources().get(source), size, onUpdate);
-    }
-
     public Icon getIcon(DataSourceRef dataSourceRef, int size, Runnable onUpdate) {
-        return getIcon(dataSourceRef.getSource(), size, onUpdate);
+        return getIcon(dataSourceRef.toWebSource(properties.getSdmxManager()), size, onUpdate);
     }
 
     public Icon getIcon(WebSource source, int size, Runnable onUpdate) {
         URL website = source.getWebsite();
-        return website != null ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, sdmxIcon) : sdmxIcon;
+        return website != null && !isForbidden(source.getConfidentiality())
+                ? faviconSupport.getOrDefault(FaviconRef.of(DomainName.of(website), size), onUpdate, sdmxIcon)
+                : sdmxIcon;
     }
+
+    private static boolean isForbidden(Confidentiality confidentiality) {
+        return confidentiality.compareTo(MAX_CONFIDENTIALITY) > 0;
+    }
+
+    private static final Confidentiality MAX_CONFIDENTIALITY = Confidentiality.PUBLIC;
 }

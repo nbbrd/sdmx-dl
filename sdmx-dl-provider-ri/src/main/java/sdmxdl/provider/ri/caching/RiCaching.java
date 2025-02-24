@@ -2,6 +2,7 @@ package sdmxdl.provider.ri.caching;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.design.VisibleForTesting;
 import nbbrd.io.text.BooleanProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
@@ -15,6 +16,7 @@ import sdmxdl.file.FileSource;
 import sdmxdl.file.spi.FileCaching;
 import sdmxdl.format.DiskCache;
 import sdmxdl.format.DiskCachingSupport;
+import sdmxdl.format.MemCache;
 import sdmxdl.format.design.PropertyDefinition;
 import sdmxdl.provider.PropertiesSupport;
 import sdmxdl.web.MonitorReports;
@@ -27,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static java.util.Objects.requireNonNull;
 import static nbbrd.io.text.BaseProperty.keysOf;
 
 @DirectImpl
@@ -54,6 +57,11 @@ public final class RiCaching implements FileCaching, WebCaching {
     public static final Property<String> PERSISTENCE_ID_PROPERTY
             = Property.of("sdmxdl.caching.persistenceId", null, Parser.onString(), Formatter.onString());
 
+    // Set max confidentiality
+    @PropertyDefinition
+    public static final Property<Confidentiality> MAX_CONFIDENTIALITY_PROPERTY
+            = Property.of("sdmxdl.caching.maxConfidentiality", Confidentiality.RESTRICTED, Parser.onEnum(Confidentiality.class), Formatter.onEnum());
+
     private static final String ID = "RI_CACHING";
 
     private static final int RANK = 100;
@@ -62,7 +70,8 @@ public final class RiCaching implements FileCaching, WebCaching {
             NO_CACHE_PROPERTY,
             CACHE_FOLDER_PROPERTY,
             NO_COMPRESSION_PROPERTY,
-            PERSISTENCE_ID_PROPERTY
+            PERSISTENCE_ID_PROPERTY,
+            MAX_CONFIDENTIALITY_PROPERTY
     );
 
     @Override
@@ -108,6 +117,10 @@ public final class RiCaching implements FileCaching, WebCaching {
             return noCache(source, onEvent);
         }
 
+        if (isForbidden(properties, source.getConfidentiality())) {
+            return forbiddenCache(source, onEvent);
+        }
+
         return getDiskCaching(properties)
                 .getDriverCache(source, persistences, onEvent, onError);
     }
@@ -123,6 +136,10 @@ public final class RiCaching implements FileCaching, WebCaching {
 
         if (isNoCache(properties)) {
             return noCache(source, onEvent);
+        }
+
+        if (isForbidden(properties, source.getConfidentiality())) {
+            return forbiddenCache(source, onEvent);
         }
 
         return getDiskCaching(properties)
@@ -151,6 +168,11 @@ public final class RiCaching implements FileCaching, WebCaching {
         return Cache.noOp();
     }
 
+    private static <V extends HasExpiration, T extends Source> Cache<V> forbiddenCache(T source, EventListener<? super T> onEvent) {
+        if (onEvent != null) onEvent.accept(source, ID, "Cache forbidden");
+        return MemCache.<V>builder().build();
+    }
+
     private static DiskCachingSupport getDiskCaching(Function<? super String, ? extends CharSequence> properties) {
         return DiskCachingSupport
                 .builder()
@@ -164,6 +186,11 @@ public final class RiCaching implements FileCaching, WebCaching {
 
     private static boolean isNoCache(Function<? super String, ? extends CharSequence> properties) {
         return NO_CACHE_PROPERTY.get(properties);
+    }
+
+    @VisibleForTesting
+    static boolean isForbidden(Function<? super String, ? extends CharSequence> properties, Confidentiality confidentiality) {
+        return confidentiality.compareTo(requireNonNull(MAX_CONFIDENTIALITY_PROPERTY.get(properties))) > 0;
     }
 
     private static Path getCacheFolder(Function<? super String, ? extends CharSequence> properties) {

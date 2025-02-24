@@ -7,10 +7,7 @@ import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +25,9 @@ public final class MockedDriver implements Driver {
 
     @lombok.Singular
     private final Map<DataRepository, Set<Feature>> repos;
+
+    @lombok.Singular
+    private final List<Database> databases;
 
     @lombok.Singular
     private final Collection<WebSource> customSources;
@@ -108,13 +108,19 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Collection<Flow> getFlows() throws IOException {
+        public @NonNull Collection<Database> getDatabases() throws IOException {
+            checkState();
+            return repo.getDatabases();
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
             checkState();
             return repo.getFlows();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
             return repo
@@ -123,20 +129,20 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            StructureRef structRef = getFlow(flowRef).getStructureRef();
+            StructureRef structRef = getFlow(database, flowRef).getStructureRef();
             return repo
                     .getStructure(structRef)
                     .orElseThrow(() -> missingStructure(repo.getName(), structRef));
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
+            checkKey(query.getKey(), getStructure(database, flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
@@ -144,10 +150,10 @@ public final class MockedDriver implements Driver {
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             checkState();
             checkDataflowRef(flowRef);
-            checkKey(query.getKey(), getStructure(flowRef));
+            checkKey(query.getKey(), getStructure(database, flowRef));
             return repo
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))

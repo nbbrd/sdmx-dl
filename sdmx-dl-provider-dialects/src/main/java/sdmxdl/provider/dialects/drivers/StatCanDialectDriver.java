@@ -1,10 +1,6 @@
 package sdmxdl.provider.dialects.drivers;
 
 import com.google.gson.*;
-import nbbrd.io.http.HttpClient;
-import nbbrd.io.http.HttpRequest;
-import nbbrd.io.http.HttpResponse;
-import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;
@@ -12,6 +8,10 @@ import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
+import nbbrd.io.http.HttpClient;
+import nbbrd.io.http.HttpRequest;
+import nbbrd.io.http.HttpResponse;
+import nbbrd.io.http.URLQueryBuilder;
 import nbbrd.io.net.MediaType;
 import nbbrd.service.ServiceProvider;
 import sdmxdl.*;
@@ -42,13 +42,13 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
-import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
 import static sdmxdl.DataSet.toDataSet;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.RI_CONNECTION_PROPERTIES;
+import static sdmxdl.provider.ri.drivers.RiHttpUtils.newClient;
 import static sdmxdl.provider.web.DriverProperties.CACHE_TTL_PROPERTY;
 import static sdmxdl.provider.web.WebValidators.dataflowRefOf;
 
@@ -72,6 +72,7 @@ public final class StatCanDialectDriver implements Driver {
                     .name("en", "Statistics Canada")
                     .name("fr", "Statistique Canada")
                     .driver(DIALECTS_STATCAN)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("https://www150.statcan.gc.ca/t1/wds/rest")
                     .websiteOf("https://www150.statcan.gc.ca/n1/en/type/data?MM=1")
                     .propertyOf(CACHE_TTL_PROPERTY, Long.toString(Duration.ofHours(1).toMillis()))
@@ -104,18 +105,23 @@ public final class StatCanDialectDriver implements Driver {
         private final StatCanClient client;
 
         @Override
-        public @NonNull Collection<Flow> getFlows() throws IOException {
+        public @NonNull Collection<Database> getDatabases() throws IOException {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRef database) throws IOException {
             return client.getFlows();
         }
 
         @Override
-        public @NonNull Flow getFlow(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Flow getFlow(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             Converter.DATAFLOW_REF_VALIDATOR.checkValidity(flowRef);
-            return ConnectionSupport.getFlowFromFlows(flowRef, this, client);
+            return ConnectionSupport.getFlowFromFlows(database, flowRef, this, client);
         }
 
         @Override
-        public @NonNull Structure getStructure(@NonNull FlowRef flowRef) throws IOException {
+        public @NonNull Structure getStructure(@NonNull DatabaseRef database, @NonNull FlowRef flowRef) throws IOException {
             int productId = Converter.fromDataflowRef(flowRef);
             StructureRef dsdRef = Converter.toDataStructureRef(productId);
             return client.getStructAndData(productId)
@@ -134,14 +140,14 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         @Override
-        public @NonNull DataSet getData(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull DataSet getData(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getData(query))
                     .orElseGet(() -> emptyDataSet(flowRef, query));
         }
 
         @Override
-        public @NonNull Stream<Series> getDataStream(@NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
+        public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseGet(Stream::empty);
@@ -165,11 +171,14 @@ public final class StatCanDialectDriver implements Driver {
     @VisibleForTesting
     interface StatCanClient extends HasMarker {
 
-        @NonNull List<Flow> getFlows() throws IOException;
+        @NonNull
+        List<Flow> getFlows() throws IOException;
 
-        @NonNull DataRepository getStructAndData(int productId) throws IOException;
+        @NonNull
+        DataRepository getStructAndData(int productId) throws IOException;
 
-        @NonNull Duration ping() throws IOException;
+        @NonNull
+        Duration ping() throws IOException;
     }
 
     @VisibleForTesting
@@ -271,7 +280,7 @@ public final class StatCanDialectDriver implements Driver {
         }
 
         private static URI getBase(WebSource source, Languages languages) {
-            return TypedId.resolveURI(URI.create("cache:rest"), source.getEndpoint().getHost(), languages.toString());
+            return TypedId.resolveURI(URI.create("cache:statcan"), TypedId.getUniqueID(source), languages.toString());
         }
 
         @lombok.NonNull

@@ -21,6 +21,7 @@ import sdmxdl.*;
 
 import java.io.IOException;
 
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static tests.sdmxdl.api.SdmxConditions.*;
 import static tests.sdmxdl.api.TckUtil.nullDescriptionOf;
 
@@ -71,11 +72,11 @@ public class ConnectionAssert {
 
         checkRedundantClose(s, supplier);
 
-        assertState(s, supplier, o -> o.getData(sample.validFlow, Query.ALL), "getData(DataflowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getDataStream(sample.validFlow, Query.ALL), "getDataStream(DataflowRef, DataQuery)");
-        assertState(s, supplier, o -> o.getStructure(sample.validFlow), "getStructure(DataflowRef)");
-        assertState(s, supplier, o -> o.getFlow(sample.validFlow), "getFlow(DataflowRef)");
-        assertState(s, supplier, Connection::getFlows, "getFlows()");
+        assertState(s, supplier, o -> o.getData(NO_DATABASE, sample.validFlow, Query.ALL), "getData(DataflowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getDataStream(NO_DATABASE, sample.validFlow, Query.ALL), "getDataStream(DataflowRef, DataQuery)");
+        assertState(s, supplier, o -> o.getStructure(NO_DATABASE, sample.validFlow), "getStructure(DataflowRef)");
+        assertState(s, supplier, o -> o.getFlow(NO_DATABASE, sample.validFlow), "getFlow(DataflowRef)");
+        assertState(s, supplier, o -> o.getFlows(NO_DATABASE), "getFlows()");
     }
 
     @SuppressWarnings("RedundantExplicitClose")
@@ -94,14 +95,14 @@ public class ConnectionAssert {
             checkInvalidKey(s, sample, conn, filter);
         }
 
-        s.assertThat(conn.getFlows())
+        s.assertThat(conn.getFlows(NO_DATABASE))
                 .are(validDataflow())
                 .anyMatch(sample.validFlow::containsRef);
 
-        s.assertThat(conn.getFlow(sample.validFlow))
+        s.assertThat(conn.getFlow(NO_DATABASE, sample.validFlow))
                 .is(validDataflow());
 
-        Structure dsd = conn.getStructure(sample.validFlow);
+        Structure dsd = conn.getStructure(NO_DATABASE, sample.validFlow);
         s.assertThat(dsd).has(validName());
         s.assertThat(dsd.getAttributes()).are(validAttribute());
         s.assertThat(dsd.getDimensions()).are(validDimension());
@@ -110,11 +111,11 @@ public class ConnectionAssert {
     private void checkInvalidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) {
         Query invalidQuery = Query.builder().key(sample.invalidKey).detail(filter).build();
 
-        s.assertThatThrownBy(() -> conn.getData(sample.validFlow, invalidQuery))
+        s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
 
-        s.assertThatThrownBy(() -> conn.getDataStream(sample.validFlow, invalidQuery))
+        s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, sample.validFlow, invalidQuery))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContainingAll("Expecting key", sample.invalidKey.toString());
     }
@@ -122,51 +123,51 @@ public class ConnectionAssert {
     private void checkValidKey(SoftAssertions s, Sample sample, Connection conn, Detail filter) throws IOException {
         Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
 
-        s.assertThat(conn.getDataStream(sample.validFlow, validQuery))
-                .containsExactlyElementsOf(conn.getData(sample.validFlow, validQuery).getData());
+        s.assertThat(conn.getDataStream(NO_DATABASE, sample.validFlow, validQuery))
+                .containsExactlyElementsOf(conn.getData(NO_DATABASE, sample.validFlow, validQuery).getData());
     }
 
     private void checkInvalidFlow(SoftAssertions s, Sample sample, Connection conn) {
         for (Detail filter : Detail.values()) {
             Query validQuery = Query.builder().key(sample.validKey).detail(filter).build();
 
-            s.assertThatThrownBy(() -> conn.getData(sample.invalidFlow, validQuery))
+            s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
 
-            s.assertThatThrownBy(() -> conn.getDataStream(sample.invalidFlow, validQuery))
+            s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, sample.invalidFlow, validQuery))
                     .isInstanceOf(IOException.class);
 
-            s.assertThatThrownBy(() -> conn.getFlow(sample.invalidFlow))
+            s.assertThatThrownBy(() -> conn.getFlow(NO_DATABASE, sample.invalidFlow))
                     .isInstanceOf(IOException.class);
 
-            s.assertThatThrownBy(() -> conn.getStructure(sample.invalidFlow))
+            s.assertThatThrownBy(() -> conn.getStructure(NO_DATABASE, sample.invalidFlow))
                     .isInstanceOf(IOException.class);
         }
     }
 
     @SuppressWarnings("ConstantConditions")
     private void assertNonnull(SoftAssertions s, Connection conn, FlowRef ref) {
-        s.assertThatThrownBy(() -> conn.getData(null, Query.ALL))
+        s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, null, Query.ALL))
                 .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getData(ref, null))
+        s.assertThatThrownBy(() -> conn.getData(NO_DATABASE, ref, null))
                 .as(nullDescriptionOf("getData(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(null, Query.ALL))
+        s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, null, Query.ALL))
                 .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getDataStream(ref, null))
+        s.assertThatThrownBy(() -> conn.getDataStream(NO_DATABASE, ref, null))
                 .as(nullDescriptionOf("getDataStream(DataflowRef, DataQuery)", "query"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getStructure(null))
+        s.assertThatThrownBy(() -> conn.getStructure(NO_DATABASE, null))
                 .as(nullDescriptionOf("getStructure(DataflowRef)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
 
-        s.assertThatThrownBy(() -> conn.getFlow(null))
+        s.assertThatThrownBy(() -> conn.getFlow(NO_DATABASE, null))
                 .as(nullDescriptionOf("getFlow(DataflowRef)", "flowRef"))
                 .isInstanceOf(NullPointerException.class);
     }

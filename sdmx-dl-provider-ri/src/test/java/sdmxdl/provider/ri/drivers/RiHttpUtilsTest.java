@@ -1,6 +1,7 @@
 package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
+import nbbrd.io.http.HttpContext;
 import nbbrd.io.http.HttpEventListener;
 import nbbrd.io.http.HttpRequest;
 import nbbrd.io.net.MediaType;
@@ -25,7 +26,9 @@ public class RiHttpUtilsTest {
     @Test
     public void testFactory() {
         assertThatNullPointerException()
-                .isThrownBy(() -> RiHttpUtils.newClient(null));
+                .isThrownBy(() -> RiHttpUtils.newClient(null, (WebContext) null));
+        assertThatNullPointerException()
+                .isThrownBy(() -> RiHttpUtils.newClient(null, (HttpContext) null));
     }
 
     WebSource source = WebSource
@@ -40,14 +43,8 @@ public class RiHttpUtilsTest {
         assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
                 .startsWith("sdmx-dl/");
 
-        String previous = System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world");
-        try {
-            assertThat(RiHttpUtils.newContext(source, DriverAssert.noOpWebContext()).getUserAgent())
-                    .startsWith("hello world");
-        } finally {
-            if (previous != null)
-                System.setProperty(DriverProperties.USER_AGENT_PROPERTY.getKey(), previous);
-        }
+        assertThat(RiHttpUtils.newContext(source.toBuilder().property(DriverProperties.USER_AGENT_PROPERTY.getKey(), "hello world").build(), DriverAssert.noOpWebContext()).getUserAgent())
+                .startsWith("hello world");
     }
 
     @Test

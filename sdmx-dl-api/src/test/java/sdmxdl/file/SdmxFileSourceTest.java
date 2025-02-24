@@ -19,6 +19,7 @@ package sdmxdl.file;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,13 +33,13 @@ public class SdmxFileSourceTest {
         assertThat(FileSource.builder().data(data).structure(structure).build().asDataflowRef().toString())
                 .isEqualTo("all,data&struct,latest");
 
-        assertThat(FileSource.builder().data(data).structure(new File("")).build().asDataflowRef().toString())
+        assertThat(FileSource.builder().data(data).structure(Paths.get("").toFile()).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
 
         assertThat(FileSource.builder().data(data).build().asDataflowRef().toString())
                 .isEqualTo("all,data,latest");
     }
 
-    private final File data = new File("a.xml");
-    private final File structure = new File("b.xml");
+    private final File data = Paths.get("a.xml").toFile();
+    private final File structure = Paths.get("b.xml").toFile();
 }

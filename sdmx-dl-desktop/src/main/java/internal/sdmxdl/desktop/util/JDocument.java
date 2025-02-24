@@ -23,9 +23,9 @@ public final class JDocument<T> extends JComponent {
 
     private final JToolBar toolBar = new JToolBar();
 
-    private final JTabbedPane content = new JTabbedPane();
+    private final JTabbedPane tabs = new JTabbedPane();
 
-    private final List<Consumer<T>> callbacks = new ArrayList<>();
+    private final List<Item<T>> items = new ArrayList<>();
 
     public JDocument() {
         initComponents();
@@ -33,29 +33,61 @@ public final class JDocument<T> extends JComponent {
 
     private void initComponents() {
         toolBar.add(Box.createHorizontalGlue());
-        content.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
+        tabs.putClientProperty(FlatClientProperties.TABBED_PANE_TRAILING_COMPONENT, toolBar);
+//        content.setTabPlacement(JTabbedPane.BOTTOM);
 
         setLayout(new BorderLayout());
-        add(BorderLayout.CENTER, new JScrollPane(content));
+        add(tabs, BorderLayout.CENTER);
 
         addPropertyChangeListener(MODEL_PROPERTY, this::onModelChange);
     }
 
     private void onModelChange(PropertyChangeEvent evt) {
-        callbacks.forEach(callback -> callback.accept(model));
+        items.forEach(item -> item.onModelChange.accept(model));
+    }
+
+    private void updateContent() {
+        tabs.removeAll();
+        removeAll();
+        switch (items.size()) {
+            case 0:
+                break;
+            case 1:
+                add(items.get(0).component, BorderLayout.CENTER);
+                break;
+            default:
+                add(tabs, BorderLayout.CENTER);
+                items.forEach(item -> tabs.addTab(item.title, item.component));
+                break;
+        }
     }
 
     public <C extends JComponent> void addComponent(String title, C component) {
-        content.add(title, component);
+        items.add(new Item<>(title, component, JDocument::doNothing));
+        updateContent();
     }
 
     public <C extends JComponent> void addComponent(String title, C component, BiConsumer<C, T> onModelChange) {
-        content.add(title, component);
-        onModelChange.accept(component, model);
-        callbacks.add(model -> onModelChange.accept(component, model));
+        items.add(new Item<>(title, component, value -> onModelChange.accept(component, value)));
+        updateContent();
+    }
+
+    public void clearComponents() {
+        items.clear();
+        updateContent();
     }
 
     public void addToolBarItem(JComponent item) {
         toolBar.add(item);
+    }
+
+    @lombok.AllArgsConstructor
+    private static class Item<T> {
+        String title;
+        JComponent component;
+        Consumer<T> onModelChange;
+    }
+
+    private static <T> void doNothing(T ignore) {
     }
 }

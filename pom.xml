@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.sdmx-dl</groupId>
     <artifactId>sdmx-dl-parent</artifactId>
-    <version>3.0.0-beta.13</version>
+    <version>3.0.0-beta.14</version>
     <packaging>pom</packaging>
 
     <name>sdmx-dl</name>
@@ -38,7 +38,7 @@
     <properties>
         <!-- Java 8+ config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2024-09-06T13:22:31Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2025-02-24T13:53:08Z</project.build.outputTimestamp>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
@@ -47,7 +47,7 @@
         <x.github.repo>sdmx-dl</x.github.repo>
 
         <slf4j.version>2.0.16</slf4j.version>
-        <protobuf.version>3.25.3</protobuf.version>
+        <protobuf.version>3.25.5</protobuf.version>
     </properties>
 
     <dependencyManagement>
@@ -56,21 +56,21 @@
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>3.46.0</version>
+                <version>3.49.0</version>
             </dependency>
 
             <!-- test libraries -->
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.11.0</version>
+                <version>5.11.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.26.3</version>
+                <version>3.27.3</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -80,7 +80,7 @@
             <dependency>
                 <groupId>io.github.hakky54</groupId>
                 <artifactId>logcaptor</artifactId>
-                <version>2.9.3</version>
+                <version>2.10.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -103,7 +103,7 @@
             <dependency>
                 <groupId>com.github.nbbrd.java-io-util</groupId>
                 <artifactId>java-io-bom</artifactId>
-                <version>0.0.30</version>
+                <version>0.0.32</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -124,12 +124,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.14.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -154,19 +154,24 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.20.0</version>
+                    <version>3.21.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.2</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
                             <artifactId>surefire-junit-platform</artifactId>
-                            <version>3.5.0</version>
+                            <version>3.5.2</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.5.2</version>
                 </plugin>
                 <!-- Other plugins -->
                 <plugin>
@@ -182,7 +187,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -192,17 +197,17 @@
                 <plugin>
                     <groupId>org.gaul</groupId>
                     <artifactId>modernizer-maven-plugin</artifactId>
-                    <version>2.9.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>de.thetaphi</groupId>
                     <artifactId>forbiddenapis</artifactId>
-                    <version>3.7</version>
+                    <version>3.8</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
-                    <version>0.9.2</version>
+                    <version>0.9.3</version>
                 </plugin>
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
@@ -217,7 +222,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.11.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.simplify4u.plugins</groupId>
@@ -237,7 +242,12 @@
                 <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
-                    <version>1.13.1</version>
+                    <version>1.16.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -270,6 +280,19 @@
                         </configurationParameters>
                     </properties>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-integration-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>de.thetaphi</groupId>
@@ -311,12 +334,20 @@
         <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
-        <module>sdmx-dl-bom</module>
         <module>sdmx-dl-standalone</module>
     </modules>
 
     <profiles>
         <!-- Java17 modules -->
+        <profile>
+            <id>java8-modules</id>
+            <activation>
+                <jdk>(,17)</jdk>
+            </activation>
+            <modules>
+                <module>sdmx-dl-bom</module>
+            </modules>
+        </profile>
         <profile>
             <id>java17-modules</id>
             <activation>
@@ -324,6 +355,7 @@
             </activation>
             <modules>
                 <module>sdmx-dl-grpc</module>
+                <module>sdmx-dl-bom</module>
             </modules>
         </profile>
 
@@ -346,7 +378,7 @@
                 </property>
             </activation>
             <properties>
-                <lombok.version>1.18.34</lombok.version>
+                <lombok.version>1.18.36</lombok.version>
                 <java-service.version>1.9.0</java-service.version>
                 <java-design.version>1.5.1</java-design.version>
                 <picocli.version>4.7.5</picocli.version>
@@ -522,12 +554,12 @@
                             <dependency>
                                 <groupId>org.kordamp.maven</groupId>
                                 <artifactId>pomchecker-enforcer-rules</artifactId>
-                                <version>1.12.0</version>
+                                <version>1.14.0</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>extra-enforcer-rules</artifactId>
-                                <version>1.8.0</version>
+                                <version>1.9.0</version>
                             </dependency>
                         </dependencies>
                         <executions>

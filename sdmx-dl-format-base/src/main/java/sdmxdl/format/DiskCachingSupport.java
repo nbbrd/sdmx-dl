@@ -154,6 +154,6 @@ public final class DiskCachingSupport implements FileCaching, WebCaching {
 
     private <T extends Source> void logConfig(T source, EventListener<? super T> onEvent, FileFormat<?> format) {
         if (onEvent != null)
-            onEvent.accept(source, id, "Using cache folder '" + root + "' with format '" + format.getFileExtension() + "'");
+            onEvent.accept(source, id, "Using cache folder " + root.toUri() + " with format '" + format.getFileExtension() + "'");
     }
 }

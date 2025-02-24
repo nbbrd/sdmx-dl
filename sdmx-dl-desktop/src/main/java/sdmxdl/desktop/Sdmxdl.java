@@ -1,6 +1,7 @@
 package sdmxdl.desktop;
 
 import internal.sdmxdl.desktop.SdmxIconSupport;
+import internal.sdmxdl.desktop.util.AsyncSupport;
 import lombok.Getter;
 import lombok.NonNull;
 import sdmxdl.HasPersistence;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
+public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
 
     INSTANCE;
 
@@ -37,6 +38,9 @@ enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
 
     @Getter
     private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
+
+    @Getter
+    private final AsyncSupport<DataSourceRef, FlowStruct> flowStructSupport = AsyncSupport.of(ref -> FlowStruct.load(this.getSdmxManager(), ref));
 
     public <T extends HasPersistence> String formatAsJson(Class<T> type, T value) {
         Optional<FileFormat<T>> dsdFormat = getSdmxManager()

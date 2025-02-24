@@ -40,11 +40,11 @@ public class ListSourcesCommandTest {
         assertThat(watcher.getOut())
                 .isEmpty();
         assertThat(watcher.getErr())
-                .contains("[CFG] Using source file '" + src.getPath() + "'")
+                .contains("[CFG] Using 1 custom sources from file '" + src.getPath() + "'")
                 .doesNotContain("[SSL] Initializing SSL factory");
 
         assertThat(FileSample.readAll(out))
-                .contains("Name,Description,Aliases,Driver,Endpoint,Properties,Website,Monitor,MonitorWebsite,Languages", atIndex(0))
+                .contains("Name,Description,Aliases,Driver,Confidentiality,Endpoint,Properties,Website,Monitor,MonitorWebsite,Languages", atIndex(0))
                 .hasSizeGreaterThan(2);
     }
 }

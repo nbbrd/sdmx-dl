@@ -70,45 +70,60 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     }
 
     @lombok.Singular
-    @NonNull List<Driver> drivers;
+    @NonNull
+    List<Driver> drivers;
 
     @lombok.Singular
-    @NonNull List<Monitor> monitors;
+    @NonNull
+    List<Monitor> monitors;
 
     @lombok.Builder.Default
-    @NonNull Networking networking = Networking.getDefault();
+    @NonNull
+    Networking networking = Networking.getDefault();
 
     @lombok.Builder.Default
-    @NonNull WebCaching caching = WebCaching.noOp();
+    @NonNull
+    WebCaching caching = WebCaching.noOp();
 
-    @Nullable EventListener<? super WebSource> onEvent;
+    @Nullable
+    EventListener<? super WebSource> onEvent;
 
-    @Nullable ErrorListener<? super WebSource> onError;
+    @Nullable
+    ErrorListener<? super WebSource> onError;
 
     @lombok.Singular
-    @NonNull List<Persistence> persistences;
+    @NonNull
+    List<Persistence> persistences;
 
     @lombok.Singular
-    @NonNull List<Authenticator> authenticators;
+    @NonNull
+    List<Authenticator> authenticators;
 
     @lombok.Builder.Default
-    @NonNull Registry registry = Registry.noOp();
+    @NonNull
+    Registry registry = Registry.noOp();
 
-    @Nullable Consumer<CharSequence> onRegistryEvent;
+    @Nullable
+    Consumer<CharSequence> onRegistryEvent;
 
-    @Nullable BiConsumer<CharSequence, IOException> onRegistryError;
-
-    @lombok.Getter(lazy = true)
-    @NonNull List<WebSource> customSources = initLazyCustomSources(getRegistry(), getPersistences(), getOnRegistryEvent(), getOnRegistryError());
-
-    @lombok.Getter(lazy = true)
-    @NonNull List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
+    @Nullable
+    BiConsumer<CharSequence, IOException> onRegistryError;
 
     @lombok.Getter(lazy = true)
-    @NonNull SortedMap<String, WebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
+    @NonNull
+    List<WebSource> customSources = initLazyCustomSources(getRegistry(), getPersistences(), getOnRegistryEvent(), getOnRegistryError());
+
+    @lombok.Getter(lazy = true)
+    @NonNull
+    List<WebSource> defaultSources = initLazyDefaultSources(getDrivers());
+
+    @lombok.Getter(lazy = true)
+    @NonNull
+    SortedMap<String, WebSource> sources = initLazySourceMap(getCustomSources(), getDefaultSources());
 
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
-    @NonNull WebContext context = initLazyContext();
+    @NonNull
+    WebContext context = initLazyContext();
 
     public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
         WebSource source = lookupSource(name)
@@ -121,8 +136,6 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     public @NonNull Connection getConnection(@NonNull WebSource source, @NonNull Languages languages) throws IOException {
         Driver driver = lookupDriverById(source.getDriver())
                 .orElseThrow(() -> new IOException("Failed to find a suitable driver for '" + source + "'"));
-
-        checkSourceProperties(source, driver);
 
         return driver.connect(source, languages, getContext());
     }
@@ -145,20 +158,6 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
                 .orElseThrow(() -> new IOException("Failed to find a suitable monitoring for '" + source + "'"));
 
         return monitor.getReport(source, getContext());
-    }
-
-    private void checkSourceProperties(WebSource source, Driver driver) {
-        if (onEvent != null) {
-            Collection<String> expected = new ArrayList<>();
-            expected.addAll(driver.getDriverProperties());
-            expected.addAll(networking.getNetworkingProperties());
-            expected.addAll(caching.getWebCachingProperties());
-            Collection<String> found = source.getProperties().keySet();
-            String diff = found.stream().filter(item -> !expected.contains(item)).sorted().collect(Collectors.joining(","));
-            if (!diff.isEmpty()) {
-                onEvent.accept(source, "WEB_MANAGER", "Unexpected properties [" + diff + "]");
-            }
-        }
     }
 
     private Optional<WebSource> lookupSource(String name) {

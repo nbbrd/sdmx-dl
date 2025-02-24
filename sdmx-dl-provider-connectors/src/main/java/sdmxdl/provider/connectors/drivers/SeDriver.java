@@ -19,6 +19,7 @@ package sdmxdl.provider.connectors.drivers;
 import nbbrd.design.DirectImpl;
 import it.bancaditalia.oss.sdmx.client.custom.DotStat;
 import nbbrd.service.ServiceProvider;
+import sdmxdl.Confidentiality;
 import sdmxdl.provider.web.DriverSupport;
 import sdmxdl.provider.web.RestConnector;
 import sdmxdl.web.WebSource;
@@ -48,6 +49,7 @@ public final class SeDriver implements Driver {
                     .id("SE")
                     .name("en", "Statistics Estonia")
                     .driver(CONNECTORS_SE)
+                    .confidentiality(Confidentiality.PUBLIC)
                     .endpointOf("http://andmebaas.stat.ee/restsdmx/sdmx.ashx")
                     .websiteOf("http://andmebaas.stat.ee")
                     .monitorOf("upptime:/nbbrd/sdmx-upptime/SE")

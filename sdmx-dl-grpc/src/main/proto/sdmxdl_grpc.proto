@@ -3,21 +3,24 @@ option java_multiple_files = true;
 
 package sdmxdl.grpc;
 
-import "sdmxdl_monitor.proto";
-import "sdmxdl_repository.proto";
-import "sdmxdl_source.proto";
+import "sdmxdl_api.proto";
+import "sdmxdl_web.proto";
 
 service SdmxWebManager {
 
-  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.SdmxWebSource);
+  rpc GetAbout(Empty) returns (sdmxdl.format.protobuf.About);
+
+  rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSource);
 
   rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
 
-  rpc GetFlows(SourceRequest) returns (stream sdmxdl.format.protobuf.Dataflow);
+  rpc GetDatabases(SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
 
-  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Dataflow);
+  rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
 
-  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.DataStructure);
+  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Flow);
+
+  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.Structure);
 
   rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
 
@@ -29,15 +32,26 @@ message Empty {
 
 message SourceRequest {
   string source = 1;
+  optional string languages = 2;
+}
+
+message DatabaseRequest {
+  string source = 1;
+  optional string database = 2;
+  optional string languages = 3;
 }
 
 message FlowRequest {
   string source = 1;
   string flow = 2;
+  optional string database = 3;
+  optional string languages = 4;
 }
 
 message KeyRequest {
   string source = 1;
   string flow = 2;
   string key = 3;
+  optional string database = 4;
+  optional string languages = 5;
 }

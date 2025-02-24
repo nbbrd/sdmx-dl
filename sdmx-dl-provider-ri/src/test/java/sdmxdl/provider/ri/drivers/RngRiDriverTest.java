@@ -2,8 +2,8 @@ package sdmxdl.provider.ri.drivers;
 
 import org.junit.jupiter.api.Test;
 import sdmxdl.Connection;
-import sdmxdl.Query;
 import sdmxdl.Flow;
+import sdmxdl.Query;
 import sdmxdl.web.WebSource;
 import tests.sdmxdl.web.spi.DriverAssert;
 
@@ -24,10 +24,10 @@ public class RngRiDriverTest {
         for (WebSource source : x.getDefaultSources()) {
             System.out.println(source);
             try (Connection conn = x.connect(source, ANY, DriverAssert.noOpWebContext())) {
-                for (Flow flow : conn.getFlows()) {
+                for (Flow flow : conn.getFlows(null)) {
                     System.out.println(flow);
-                    System.out.println(conn.getStructure(flow.getRef()));
-                    conn.getDataStream(flow.getRef(), Query.ALL)
+                    System.out.println(conn.getStructure(null, flow.getRef()));
+                    conn.getDataStream(null, flow.getRef(), Query.ALL)
                             .forEach(series -> System.out.println(series.getKey() + " " + series.getObs().size()));
                 }
             }

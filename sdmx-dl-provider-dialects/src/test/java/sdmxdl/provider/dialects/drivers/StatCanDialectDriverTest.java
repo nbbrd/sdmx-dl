@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
+import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Languages.ANY;
 import static sdmxdl.provider.dialects.drivers.StatCanDialectDriver.Converter.*;
 
@@ -42,19 +43,19 @@ public class StatCanDialectDriverTest {
             String msg = "Expecting DataflowRef id 'F_10100001' to match pattern 'DF_\\d+'";
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getFlow(badFlowRef))
+                    .isThrownBy(() -> connection.getFlow(NO_DATABASE, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getStructure(badFlowRef))
+                    .isThrownBy(() -> connection.getStructure(NO_DATABASE, badFlowRef))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getData(badFlowRef, Query.ALL))
+                    .isThrownBy(() -> connection.getData(NO_DATABASE, badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
 
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> connection.getDataStream(badFlowRef, Query.ALL))
+                    .isThrownBy(() -> connection.getDataStream(NO_DATABASE, badFlowRef, Query.ALL))
                     .withMessageContaining(msg);
         }
     }
@@ -137,7 +138,7 @@ public class StatCanDialectDriverTest {
         @Test
         public void testToSdmxRepository(@TempDir File tmp) throws IOException {
             String fileName = "statcan-10100001.zip";
-            File x = new File(tmp, fileName);
+            File x = tmp.toPath().resolve(fileName).toFile();
             Files.copy(StatCanDialectDriverTest.class.getResourceAsStream(fileName), x.toPath());
 
             Map<Languages, String> labels = new HashMap<>();
@@ -175,7 +176,7 @@ public class StatCanDialectDriverTest {
         @Test
         public void testRevisions(@TempDir File tmp) throws IOException {
             String fileName = "statcan-34100158.zip";
-            File x = new File(tmp, fileName);
+            File x = tmp.toPath().resolve(fileName).toFile();
             try (InputStream stream = Resource.newInputStream(StatCanDialectDriverTest.class, fileName)) {
                 Files.copy(stream, x.toPath());
             }

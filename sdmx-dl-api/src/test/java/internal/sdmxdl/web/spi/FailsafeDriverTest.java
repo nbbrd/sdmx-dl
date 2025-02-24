@@ -21,8 +21,8 @@ import _test.sdmxdl.FailsafeHandler;
 import _test.sdmxdl.TestDriver;
 import org.junit.jupiter.api.Test;
 import sdmxdl.web.spi.Driver;
-import tests.sdmxdl.web.spi.MockedDriver;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.MockedDriver;
 
 import java.io.IOException;
 

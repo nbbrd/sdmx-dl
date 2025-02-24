@@ -1,8 +1,8 @@
 syntax = "proto3";
 option java_multiple_files = true;
 
-import "sdmxdl_repository.proto";
-import "sdmxdl_source.proto";
+import "sdmxdl_api.proto";
+import "sdmxdl_web.proto";
 
 package sdmxdl.cli.protobuf;
 
@@ -14,11 +14,11 @@ message ConsoleInfo {
 }
 
 message Sources {
-  repeated sdmxdl.format.protobuf.web.SdmxWebSource sources = 1;
+  repeated sdmxdl.format.protobuf.web.WebSource sources = 1;
 }
 
 message Flows {
-  repeated sdmxdl.format.protobuf.Dataflow flows = 1;
+  repeated sdmxdl.format.protobuf.Flow flows = 1;
 }
 
 message Features {
