@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This is the fourteenth beta release of **sdmx-dl**.  
+sdmx-dl follows [semantic versioning](https://semver.org/).
+
+This release improves the gRPC module and introduces the concept of databases in the API.  
+The experimental PxWebDriver has also been improved but is not yet ready for daily use.  
+The WITS endpoint has been updated.
+
+> **Disclaimer**: sdmx-dl is still in development and is available <ins>for test only</ins>. **Do not use in
+> production!**
+
 ### Added
 
 - ![API] Add confidentiality property to WebSource [#518](https://github.com/nbbrd/sdmx-dl/issues/518)
