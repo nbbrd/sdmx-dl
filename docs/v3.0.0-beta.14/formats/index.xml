@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Data formats on sdmx-dl</title>
+    <link>https://nbbrd.github.io/sdmx-dl/docs/v3.0.0-beta.14/formats/</link>
+    <description>Recent content in Data formats on sdmx-dl</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="https://nbbrd.github.io/sdmx-dl/docs/v3.0.0-beta.14/formats/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
