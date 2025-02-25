@@ -28,7 +28,7 @@ public class SdmxCommand {
     }
 
     public static Builder builderOf(DatabaseRef ref) {
-        return builder().option("c", !ref.equals(DatabaseRef.NO_DATABASE) ? ref.toString() : null);
+        return builder().option("d", !ref.equals(DatabaseRef.NO_DATABASE) ? ref.toString() : null);
     }
 
     private static String toOptionText(Map.Entry<String, String> e) {
