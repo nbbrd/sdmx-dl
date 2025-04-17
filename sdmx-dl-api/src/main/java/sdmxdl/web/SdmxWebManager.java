@@ -22,8 +22,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import sdmxdl.EventListener;
 import sdmxdl.*;
+import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.spi.*;
 
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -124,6 +125,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     @lombok.Getter(lazy = true, value = AccessLevel.PRIVATE)
     @NonNull
     WebContext context = initLazyContext();
+
+    public @NonNull SdmxWebManager warmupAsync() {
+        Executors.newSingleThreadExecutor(SdmxWebManager::newLowPriorityDaemonThread)
+                .execute(networking::warmupNetwork);
+        return this;
+    }
 
     public @NonNull Connection getConnection(@NonNull String name, @NonNull Languages languages) throws IOException {
         WebSource source = lookupSource(name)
@@ -226,5 +233,12 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    private static Thread newLowPriorityDaemonThread(Runnable runnable) {
+        Thread result = new Thread(runnable);
+        result.setDaemon(true);
+        result.setPriority(Thread.MIN_PRIORITY);
+        return result;
     }
 }

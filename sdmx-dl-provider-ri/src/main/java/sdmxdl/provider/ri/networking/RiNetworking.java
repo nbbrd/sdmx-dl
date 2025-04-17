@@ -19,6 +19,7 @@ import sdmxdl.web.spi.Networking;
 import java.util.Collection;
 import java.util.function.Function;
 
+import static java.util.Collections.emptyMap;
 import static nbbrd.io.text.BaseProperty.keysOf;
 
 @DirectImpl
@@ -68,6 +69,15 @@ public final class RiNetworking implements Networking {
                 NO_DEFAULT_SSL_PROPERTY,
                 URL_BACKEND_PROPERTY
         );
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Override
+    public void warmupNetwork() {
+        RiNetwork network = getNetwork(key -> PropertiesSupport.getProperty(emptyMap(), key));
+        network.getSSLFactory().getLazyDelegate();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
     }
 
     @Override

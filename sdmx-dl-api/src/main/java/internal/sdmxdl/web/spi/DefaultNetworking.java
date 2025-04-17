@@ -36,6 +36,15 @@ public enum DefaultNetworking implements Networking {
     }
 
     @Override
+    public void warmupNetwork() {
+        Network network = Network.getDefault();
+        network.getSSLFactory().getSSLSocketFactory();
+        network.getSSLFactory().getHostnameVerifier();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
+    }
+
+    @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
             @Nullable EventListener<? super WebSource> onEvent,

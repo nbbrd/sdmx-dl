@@ -5,7 +5,6 @@ import nbbrd.io.curl.CurlHttpURLConnection;
 import nbbrd.net.proxy.SystemProxySelector;
 import sdmxdl.provider.Slow;
 import sdmxdl.web.spi.Network;
-import sdmxdl.web.spi.SSLFactory;
 import sdmxdl.web.spi.URLConnectionFactory;
 
 import java.net.ProxySelector;
@@ -39,7 +38,7 @@ class RiNetwork implements Network {
     }
 
     @Override
-    public @NonNull SSLFactory getSSLFactory() {
+    public @NonNull RiSSLFactory getSSLFactory() {
         return RiSSLFactory
                 .builder()
                 .noDefaultTrustMaterial(noDefaultSSL)

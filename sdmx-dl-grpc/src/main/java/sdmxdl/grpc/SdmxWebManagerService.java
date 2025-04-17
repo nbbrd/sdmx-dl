@@ -39,7 +39,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 @RegisterForReflection
 public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
-    private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader();
+    private final SdmxWebManager manager = SdmxWebManager.ofServiceLoader().warmupAsync();
 
     public record ErrorResponse(String type, String message) {
         private static ErrorResponse of(Exception x) {

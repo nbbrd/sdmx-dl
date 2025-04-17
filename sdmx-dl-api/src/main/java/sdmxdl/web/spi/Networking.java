@@ -31,6 +31,8 @@ public interface Networking {
 
     @NonNull Collection<String> getNetworkingProperties();
 
+    void warmupNetwork();
+
     @NonNull Network getNetwork(
             @NonNull WebSource source,
             @Nullable EventListener<? super WebSource> onEvent,

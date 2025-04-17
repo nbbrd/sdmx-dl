@@ -64,6 +64,15 @@ public final class SingleNetworkingSupport implements Networking {
     }
 
     @Override
+    public void warmupNetwork() {
+        Network network = getSingleNetwork();
+        network.getSSLFactory().getSSLSocketFactory();
+        network.getSSLFactory().getHostnameVerifier();
+        network.getProxySelector();
+        network.getURLConnectionFactory();
+    }
+
+    @Override
     public @NonNull Network getNetwork(
             @NonNull WebSource source,
             @Nullable EventListener<? super WebSource> onEvent,

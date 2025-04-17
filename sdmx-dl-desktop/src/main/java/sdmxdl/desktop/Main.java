@@ -79,7 +79,8 @@ public class Main {
                 .onError(Main::printError)
                 .onRegistryEvent(Main::printRegistryEvent)
                 .onRegistryError(Main::printRegistryError)
-                .build();
+                .build()
+                .warmupAsync();
     }
 
     private static void printEvent(WebSource source, String marker, CharSequence message) {

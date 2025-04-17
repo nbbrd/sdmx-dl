@@ -23,7 +23,7 @@ final class RiSSLFactory implements SSLFactory {
     @lombok.Builder.Default
     private final boolean noSystemTrustMaterial = false;
 
-    @lombok.Getter(value = AccessLevel.PRIVATE, lazy = true)
+    @lombok.Getter(value = AccessLevel.PACKAGE, lazy = true)
     private final @NonNull nl.altindag.ssl.SSLFactory lazyDelegate = initLazyDelegate();
 
     @Slow
