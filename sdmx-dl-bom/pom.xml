@@ -334,5 +334,35 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>check-compatibility</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.nbbrd.nbbrd-maven-tools</groupId>
+                        <artifactId>compatibility-maven-plugin</artifactId>
+                        <version>1.0.1-SNAPSHOT</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check-downstream</goal>
+                                </goals>
+                                <configuration>
+                                    <source>${project.baseUri}/../</source>
+                                    <targets>
+                                        <target>https://github.com/nbbrd/jdemetra-dotstat</target>
+                                        <target>https://github.com/nbbrd/jdplus-sdmx</target>
+                                    </targets>
+                                    <targetFroms>2021,2023</targetFroms>
+                                    <targetLimits>3,3</targetLimits>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
