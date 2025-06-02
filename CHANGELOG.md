@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add warming of network resources [#919](https://github.com/nbbrd/sdmx-dl/issues/919)
 
+### Changed
+
+- ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
+
 ## [3.0.0-beta.14] - 2025-02-24
 
 This is the fourteenth beta release of **sdmx-dl**.  

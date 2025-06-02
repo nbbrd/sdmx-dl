@@ -115,19 +115,20 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <checkStaleness>true</checkStaleness>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <protocVersion>${protobuf.version}</protocVersion>
+                    <embedSourcesInClassOutputs>true</embedSourcesInClassOutputs>
+                    <failOnMissingSources>false</failOnMissingSources>
+                </configuration>
             </plugin>
         </plugins>
     </build>

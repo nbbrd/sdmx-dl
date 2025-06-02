@@ -111,13 +111,6 @@
     </dependencyManagement>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.7.1</version>
-            </extension>
-        </extensions>
         <pluginManagement>
             <plugins>
                 <!-- Enforce reproducible builds -->
@@ -173,9 +166,9 @@
                     <version>3.6.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <groupId>io.github.ascopes</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>0.6.1</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
