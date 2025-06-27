@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- ![API] Modify TimeInterval to closely follow ISO-8601
 - ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
 
 ## [3.0.0-beta.14] - 2025-02-24

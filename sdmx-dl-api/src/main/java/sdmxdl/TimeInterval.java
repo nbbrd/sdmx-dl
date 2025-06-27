@@ -13,6 +13,8 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
+import static java.time.temporal.ChronoField.NANO_OF_SECOND;
+
 /**
  * Simplified implementation of <a href="https://en.wikipedia.org/wiki/ISO_8601#Time_intervals">ISO-8601 time intervals</a>
  * that uses the <code>start/duration</code> expression such as <code>2007-03-01T13:00:00Z/P1Y2M10DT2H30M</code>.
@@ -42,7 +44,7 @@ public class TimeInterval {
 
     @Override
     public String toString() {
-        return start.toString() + SOLIDUS + duration;
+        return toIsoString(start) + SOLIDUS + duration;
     }
 
     public @NonNull String toShortString() {
@@ -71,11 +73,6 @@ public class TimeInterval {
         ChronoUnit durationUnit = duration.getMinChronoUnit();
 
         ChronoUnit min = min(startUnit, durationUnit);
-
-        // FIXME: is this the best behavior ?
-        if (second == 0 && min.equals(ChronoUnit.SECONDS)) {
-            min = ChronoUnit.MINUTES;
-        }
 
         switch (min) {
             case SECONDS:
@@ -106,7 +103,7 @@ public class TimeInterval {
             case YEARS:
                 return String.valueOf(year);
             default:
-                return start.toString();
+                return toIsoString(start);
         }
     }
 
@@ -126,7 +123,13 @@ public class TimeInterval {
 
     private static final DateTimeFormatter AT_LEAST_YEAR = new DateTimeFormatterBuilder()
             .appendValue(ChronoField.YEAR, 4)
-            .appendPattern("['-'MM['-'dd['T'HH[':'mm[':'ss['.'SSS]]]]]]")
+            .optionalStart().appendLiteral('-').appendPattern("MM")
+            .optionalStart().appendLiteral('-').appendPattern("dd")
+            .optionalStart().appendLiteral('T').appendPattern("HH")
+            .optionalStart().appendLiteral(':').appendPattern("mm")
+            .optionalStart().appendLiteral(':').appendPattern("ss")
+            .optionalStart().appendFraction(NANO_OF_SECOND, 0, 9, true)
+            .optionalEnd().optionalEnd().optionalEnd().optionalEnd().optionalEnd().optionalEnd()
             .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
             .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
             .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
@@ -136,4 +139,9 @@ public class TimeInterval {
             .toFormatter(Locale.ROOT);
 
     private static final char SOLIDUS = '/';
+
+    private static String toIsoString(LocalDateTime start) {
+        String result = start.toString();
+        return result.length() == 16 ? (result + ":00") : result;
+    }
 }
