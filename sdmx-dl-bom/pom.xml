@@ -358,6 +358,7 @@
                                     </targets>
                                     <targetFroms>2021,2023</targetFroms>
                                     <targetLimits>3,3</targetLimits>
+                                    <logErrors>true</logErrors>
                                 </configuration>
                             </execution>
                         </executions>
