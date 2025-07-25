@@ -2,7 +2,7 @@ package sdmxdl.format;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Cache;
 import sdmxdl.ext.FileFormat;

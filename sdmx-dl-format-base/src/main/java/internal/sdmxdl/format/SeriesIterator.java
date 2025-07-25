@@ -17,7 +17,7 @@
 package internal.sdmxdl.format;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Obs;
 import sdmxdl.Series;
 import sdmxdl.TimeInterval;

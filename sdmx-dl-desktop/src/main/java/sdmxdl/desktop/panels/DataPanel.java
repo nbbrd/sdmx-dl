@@ -16,7 +16,7 @@ import j2html.tags.DomContent;
 import lombok.Getter;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.IntervalXYDataset;
 import sdmxdl.Attribute;

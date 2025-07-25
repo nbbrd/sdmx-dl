@@ -1,7 +1,7 @@
 package sdmxdl.provider;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.file.FileSource;
 import sdmxdl.web.WebSource;
 

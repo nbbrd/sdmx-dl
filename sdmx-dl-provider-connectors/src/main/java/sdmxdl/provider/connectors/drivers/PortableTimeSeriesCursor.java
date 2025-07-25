@@ -18,7 +18,7 @@ package sdmxdl.provider.connectors.drivers;
 
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Structure;
 import sdmxdl.Key;
 import sdmxdl.format.DataCursor;

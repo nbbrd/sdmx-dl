@@ -16,7 +16,7 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.index.qual.NonNegative;
+import nbbrd.design.NonNegative;
 
 import java.util.Comparator;
 

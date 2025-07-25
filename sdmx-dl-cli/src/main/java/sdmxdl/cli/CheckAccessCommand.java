@@ -22,7 +22,7 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import lombok.AccessLevel;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.Connection;
 import sdmxdl.Languages;

@@ -1,7 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.WebSources;

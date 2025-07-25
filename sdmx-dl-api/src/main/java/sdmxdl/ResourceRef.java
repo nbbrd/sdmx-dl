@@ -19,7 +19,7 @@ package sdmxdl;
 import internal.sdmxdl.Chars;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract identifier of a resource.

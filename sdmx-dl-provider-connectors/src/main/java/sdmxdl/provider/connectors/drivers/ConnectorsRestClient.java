@@ -26,7 +26,7 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.text.BaseProperty;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.*;
 import sdmxdl.format.ObsParser;

@@ -24,7 +24,7 @@ import nbbrd.io.text.BaseProperty;
 import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;
 import sdmxdl.format.design.PropertyDefinition;

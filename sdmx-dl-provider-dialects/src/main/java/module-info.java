@@ -6,7 +6,7 @@ module sdmxdl.provider.dialects {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires sdmxdl.api;
     requires sdmxdl.format.xml;

@@ -1,7 +1,7 @@
 package internal.sdmxdl.web.spi;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.web.WebSource;

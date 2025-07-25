@@ -17,7 +17,7 @@
 package sdmxdl.ext;
 
 import lombok.NonNull;
-import org.checkerframework.checker.index.qual.NonNegative;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 
 import java.io.IOException;

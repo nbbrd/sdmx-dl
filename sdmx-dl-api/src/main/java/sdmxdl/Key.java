@@ -22,8 +22,8 @@ import nbbrd.design.Immutable;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.design.VisibleForTesting;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import nbbrd.design.NonNegative;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 

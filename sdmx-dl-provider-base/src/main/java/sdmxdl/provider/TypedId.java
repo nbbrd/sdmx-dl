@@ -19,7 +19,7 @@ package sdmxdl.provider;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.io.function.IOSupplier;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.DataRepository;
 import sdmxdl.ext.Cache;
 import sdmxdl.web.WebSource;

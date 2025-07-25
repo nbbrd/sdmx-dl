@@ -16,7 +16,7 @@
  */
 package sdmxdl;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author Philippe Charles

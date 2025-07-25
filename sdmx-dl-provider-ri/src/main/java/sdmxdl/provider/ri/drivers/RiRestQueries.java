@@ -2,7 +2,7 @@ package sdmxdl.provider.ri.drivers;
 
 import nbbrd.io.http.URLQueryBuilder;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.CodelistRef;
 import sdmxdl.StructureRef;
 import sdmxdl.FlowRef;

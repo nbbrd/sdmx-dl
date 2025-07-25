@@ -21,7 +21,7 @@ import internal.sdmxdl.web.spi.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.EventListener;
 import sdmxdl.ext.Persistence;

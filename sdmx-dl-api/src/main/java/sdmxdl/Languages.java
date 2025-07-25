@@ -21,7 +21,7 @@ import lombok.NonNull;
 import nbbrd.design.MightBePromoted;
 import nbbrd.design.RepresentableAsString;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;

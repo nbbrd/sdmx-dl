@@ -19,7 +19,7 @@ package sdmxdl.provider.ri.readers;
 import lombok.NonNull;
 import nbbrd.io.net.MediaType;
 import nbbrd.io.xml.Xml;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Structure;
 import sdmxdl.EventListener;
 import sdmxdl.Languages;

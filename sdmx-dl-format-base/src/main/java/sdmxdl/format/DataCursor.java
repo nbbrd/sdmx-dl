@@ -20,7 +20,7 @@ import internal.sdmxdl.format.SeriesIterator;
 import lombok.NonNull;
 import nbbrd.design.NotThreadSafe;
 import nbbrd.io.function.IORunnable;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Key;
 import sdmxdl.Series;
 import sdmxdl.format.time.ObservationalTimePeriod;

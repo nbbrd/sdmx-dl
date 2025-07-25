@@ -16,7 +16,7 @@
  */
 package sdmxdl.testing;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import sdmxdl.DatabaseRef;
 import sdmxdl.FlowRef;
 import sdmxdl.Languages;

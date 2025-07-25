@@ -22,7 +22,7 @@ import internal.sdmxdl.file.spi.ReaderLoader;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import nbbrd.design.StaticFactoryMethod;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.file.spi.FileCaching;

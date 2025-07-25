@@ -7,7 +7,7 @@ import nbbrd.io.text.Formatter;
 import nbbrd.io.text.Parser;
 import nbbrd.io.text.Property;
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.design.PropertyDefinition;

@@ -17,7 +17,7 @@
 package internal.sdmxdl.cli;
 
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
 import sdmxdl.ext.Persistence;
 import sdmxdl.web.SdmxWebManager;

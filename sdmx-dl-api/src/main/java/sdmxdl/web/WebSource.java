@@ -18,7 +18,7 @@ package sdmxdl.web;
 
 import lombok.Builder;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.Confidentiality;
 import sdmxdl.Languages;
 import sdmxdl.Source;

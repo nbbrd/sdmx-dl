@@ -19,7 +19,7 @@ package sdmxdl;
 import lombok.NonNull;
 import nbbrd.design.SealedType;
 import nbbrd.design.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 

@@ -2,7 +2,7 @@ package sdmxdl.provider.web;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import sdmxdl.ErrorListener;
 import sdmxdl.EventListener;
 import sdmxdl.format.design.ServiceSupport;
