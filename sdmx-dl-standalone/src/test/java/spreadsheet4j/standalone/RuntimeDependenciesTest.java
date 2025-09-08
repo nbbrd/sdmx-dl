@@ -89,7 +89,7 @@ public class RuntimeDependenciesTest {
     private static void checkSllContextKickstart(List<? extends DependencyResolver.GAV> coordinates) {
         assertThatGroupId(coordinates, "io.github.hakky54")
                 .extracting(DependencyResolver.GAV::getArtifactId)
-                .containsExactlyInAnyOrder("sslcontext-kickstart");
+                .containsExactlyInAnyOrder("ayza");
     }
 
     private static void checkJavaNetProxy(List<? extends DependencyResolver.GAV> coordinates) {
