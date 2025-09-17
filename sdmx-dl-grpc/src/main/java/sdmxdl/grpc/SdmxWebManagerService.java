@@ -1,5 +1,7 @@
 package sdmxdl.grpc;
 
+import io.quarkiverse.mcp.server.Tool;
+import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkus.grpc.GrpcService;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.smallrye.mutiny.Multi;
@@ -14,21 +16,24 @@ import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import sdmxdl.*;
+import sdmxdl.Confidentiality;
 import sdmxdl.Detail;
 import sdmxdl.Query;
-import sdmxdl.*;
+import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
 import sdmxdl.format.protobuf.Database;
 import sdmxdl.format.protobuf.Flow;
 import sdmxdl.format.protobuf.Series;
 import sdmxdl.format.protobuf.Structure;
-import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.WebSource;
+import sdmxdl.format.protobuf.web.WebSources;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.util.List;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -202,7 +207,40 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Override
     public Uni<About> getAbout(Empty request) {
         return Uni.createFrom()
-                .item(About.newBuilder().setName(sdmxdl.About.NAME).setVersion(sdmxdl.About.VERSION).build());
+                .item(ProtoApi.fromAbout());
+    }
+
+    @Tool(description = "Get description of SDMX-DL.")
+    public About mcpGetAbout() {
+        return ProtoApi.fromAbout();
+    }
+
+    @Tool(description = "List SDMX sources.")
+    public WebSources mcpGetSources() {
+        return ProtoWeb.fromWebSources(sdmxdl.web.WebSources.builder().sources(
+                manager.getSources()
+                        .values()
+                        .stream()
+                        .filter(Confidentiality.PUBLIC::isAllowedIn)
+                        .toList()
+        ).build());
+    }
+
+    @Tool(description = "List SDMX data flows.")
+    public List<Flow> mcpGetFlows(@ToolArg(description = "SDMX source ID") String source) {
+        DatabaseRef databaseRef = DatabaseRef.NO_DATABASE;
+        Languages languages = Languages.ANY;
+        sdmxdl.web.WebSource webSource = manager.getSources().get(source);
+        if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
+            throw new RuntimeException("Cannot access flows for source: " + source);
+        }
+        try (Connection connection = manager.getConnection(webSource, languages)) {
+            return connection.getFlows(databaseRef).stream()
+                    .map(ProtoApi::fromDataflow)
+                    .toList();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @POST

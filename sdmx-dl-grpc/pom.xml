@@ -24,6 +24,7 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.26.3</quarkus.platform.version>
+        <quarkus.mcp.version>1.5.0</quarkus.mcp.version>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <enforcer.skip>true</enforcer.skip>
@@ -100,6 +101,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.mcp</groupId>
+            <artifactId>quarkus-mcp-server-sse</artifactId>
+            <version>${quarkus.mcp.version}</version>
+        </dependency>
 
         <!-- test only -->
         <dependency>
@@ -110,6 +116,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.mcp</groupId>
+            <artifactId>quarkus-mcp-server-test</artifactId>
+            <version>${quarkus.mcp.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
