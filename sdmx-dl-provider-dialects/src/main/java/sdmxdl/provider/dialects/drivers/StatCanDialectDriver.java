@@ -4,6 +4,7 @@ import com.google.gson.*;
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
 import nbbrd.design.MightBePromoted;
+import nbbrd.design.NonNegative;
 import nbbrd.design.VisibleForTesting;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOFunction;
@@ -151,6 +152,11 @@ public final class StatCanDialectDriver implements Driver {
             return getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseGet(Stream::empty);
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
         @Override

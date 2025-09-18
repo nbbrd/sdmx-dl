@@ -18,6 +18,7 @@ package internal.sdmxdl.web.spi;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 
 import java.io.IOException;
@@ -163,6 +164,25 @@ final class FailsafeConnection implements Connection {
 
         if (result == null) {
             throw unexpectedNull("data stream");
+        }
+
+        return result;
+    }
+
+    @Override
+    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        Collection<String> result;
+
+        try {
+            result = delegate.getAvailableDimensionCodes(database, flowRef, constraints, dimensionIndex);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            throw unexpectedError(ex, "while getting available dimension values");
+        }
+
+        if (result == null) {
+            throw unexpectedNull("available dimension values");
         }
 
         return result;

@@ -17,6 +17,7 @@
 package sdmxdl.provider.file;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
@@ -90,6 +91,11 @@ public final class FileConnection implements Connection {
         checkKey(query.getKey(), info);
 
         return client.loadData(info, DataRef.of(flowRef, query));
+    }
+
+    @Override
+    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
     }
 
     @Override

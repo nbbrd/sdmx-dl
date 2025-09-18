@@ -17,6 +17,7 @@
 package sdmxdl;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import nbbrd.design.NotThreadSafe;
 
 import java.io.Closeable;
@@ -50,6 +51,9 @@ public interface Connection extends Closeable {
 
     @NonNull
     Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException;
+
+    @NonNull
+    Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException;
 
     @NonNull
     Set<Feature> getSupportedFeatures() throws IOException;

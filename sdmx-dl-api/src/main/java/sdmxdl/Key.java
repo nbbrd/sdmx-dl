@@ -18,11 +18,7 @@ package sdmxdl;
 
 import internal.sdmxdl.Chars;
 import lombok.NonNull;
-import nbbrd.design.Immutable;
-import nbbrd.design.RepresentableAsString;
-import nbbrd.design.StaticFactoryMethod;
-import nbbrd.design.VisibleForTesting;
-import nbbrd.design.NonNegative;
+import nbbrd.design.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -60,6 +56,12 @@ public final class Key {
     @NonNull
     public String get(@NonNegative int index) throws IndexOutOfBoundsException {
         return items[index];
+    }
+
+    public @NonNull Key with(@NonNull String item, @NonNegative int index) throws IndexOutOfBoundsException {
+        String[] result = Arrays.copyOf(items, items.length);
+        result[index] = parseCode(item);
+        return new Key(result);
     }
 
     public boolean isWildcard(@NonNegative int index) throws IndexOutOfBoundsException {
@@ -130,6 +132,15 @@ public final class Key {
         }
 
         return null;
+    }
+
+    public @NonNull Key expand(@NonNull Structure dsd) {
+        if (equals(Key.ALL)) {
+            String[] expanded = new String[dsd.getDimensions().size()];
+            Arrays.fill(expanded, "");
+            return Key.of(expanded);
+        }
+        return this;
     }
 
     @Override

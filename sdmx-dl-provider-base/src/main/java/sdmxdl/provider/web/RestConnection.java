@@ -17,6 +17,7 @@
 package sdmxdl.provider.web;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.provider.CommonSdmxExceptions;
 import sdmxdl.provider.ConnectionSupport;
@@ -92,6 +93,11 @@ final class RestConnection implements Connection {
         Stream<Series> result = client.getData(DataRef.of(flow.getRef(), realQuery), dsd);
 
         return realQuery.equals(query) ? result : query.execute(result);
+    }
+
+    @Override
+    public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+        return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
     }
 
     private static Query deriveDataQuery(Query query, Set<Feature> features, Structure dsd) {

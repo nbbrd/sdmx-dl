@@ -1,6 +1,7 @@
 package tests.sdmxdl.web.spi;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
@@ -8,8 +9,9 @@ import sdmxdl.web.spi.WebContext;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @lombok.Builder(toBuilder = true)
 public final class MockedDriver implements Driver {
@@ -62,7 +64,7 @@ public final class MockedDriver implements Driver {
 
     @Override
     public @NonNull Collection<WebSource> getDefaultSources() {
-        return Stream.concat(generateSources(), customSources.stream()).collect(Collectors.toList());
+        return Stream.concat(generateSources(), customSources.stream()).collect(toList());
     }
 
     @Override
@@ -158,6 +160,31 @@ public final class MockedDriver implements Driver {
                     .getDataSet(flowRef)
                     .map(dataSet -> dataSet.getDataStream(query))
                     .orElseThrow(() -> missingData(repo.getName(), flowRef));
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            checkState();
+            checkDataflowRef(flowRef);
+            StructureRef structRef = getFlow(database, flowRef).getStructureRef();
+            Structure dsd = repo
+                    .getStructure(structRef)
+                    .orElseThrow(() -> missingStructure(repo.getName(), structRef));
+            if (supportedFeatures.contains(Feature.DATA_QUERY_DETAIL)) {
+                return repo
+                        .getDataSet(flowRef)
+                        .map(dataSet -> dataSet.getDataStream(Query.builder().key(constraints).build()))
+                        .orElseThrow(() -> missingData(repo.getName(), flowRef))
+                        .map(series -> series.getKey().get(dimensionIndex))
+                        .distinct()
+                        .collect(toList());
+            } else {
+                return dsd
+                        .getDimensionList()
+                        .get(dimensionIndex)
+                        .getCodes()
+                        .keySet();
+            }
         }
 
         @Override

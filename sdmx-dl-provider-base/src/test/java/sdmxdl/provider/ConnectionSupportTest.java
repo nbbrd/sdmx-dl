@@ -1,6 +1,7 @@
 package sdmxdl.provider;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import org.junit.jupiter.api.Test;
 import sdmxdl.*;
 
@@ -91,6 +92,11 @@ class ConnectionSupportTest {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) throws IOException, IllegalArgumentException {
             return streamSupplier.get();
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            throw new IllegalArgumentException("");
         }
 
         @Override

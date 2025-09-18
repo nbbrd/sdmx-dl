@@ -28,7 +28,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static sdmxdl.Detail.*;
+import static sdmxdl.Detail.FULL;
+import static sdmxdl.Detail.NO_DATA;
 
 /**
  * Utility class used by JDemetra+ plugin.
@@ -88,9 +89,9 @@ public class SdmxCubeUtil {
         if (!node.equals(Key.ALL) && !node.isWildcard(dimensionIndex)) {
             throw new IllegalArgumentException("Expecting wildcard on dimensionIndex");
         }
-        return isDataQueryDetailSupported(conn)
-                ? request(conn, database, flow, node, SERIES_KEYS_ONLY).map(series -> series.getKey().get(dimensionIndex)).distinct()
-                : computeAllPossibleChildren(conn.getStructure(database, flow).getDimensionList(), dimensionIndex);
+        return conn.getAvailableDimensionCodes(database, flow, node, dimensionIndex)
+                .stream()
+                .sorted();
     }
 
     public @NonNull Optional<Dimension> getDimensionById(@NonNull Structure dsd, @NonNull String id) {
@@ -156,10 +157,6 @@ public class SdmxCubeUtil {
                 computeAllPossibleSeries(codeLists, idx + 1, stack, result);
             }
         });
-    }
-
-    private Stream<String> computeAllPossibleChildren(List<Dimension> dimensions, int dimensionIndex) {
-        return dimensions.get(dimensionIndex).getCodes().keySet().stream().sorted();
     }
 
     private Series emptySeriesOf(Key key) {

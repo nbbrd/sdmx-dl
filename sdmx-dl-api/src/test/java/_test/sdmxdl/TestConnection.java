@@ -17,13 +17,17 @@
 package _test.sdmxdl;
 
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
 import sdmxdl.*;
 import tests.sdmxdl.api.RepoSamples;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Philippe Charles
@@ -63,6 +67,11 @@ public enum TestConnection implements Connection {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return RepoSamples.DATA_SET.getData().stream();
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return RepoSamples.DATA_SET.getData().stream().map(Series::getKey).map(key -> key.get(dimensionIndex)).distinct().collect(toList());
         }
 
         @Override
@@ -111,6 +120,11 @@ public enum TestConnection implements Connection {
         }
 
         @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            throw new CustomException();
+        }
+
+        @Override
         public @NonNull Set<Feature> getSupportedFeatures() {
             throw new CustomException();
         }
@@ -152,6 +166,11 @@ public enum TestConnection implements Connection {
 
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
+            return null;
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
             return null;
         }
 

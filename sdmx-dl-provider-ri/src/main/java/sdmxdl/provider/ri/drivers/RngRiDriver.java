@@ -2,6 +2,7 @@ package sdmxdl.provider.ri.drivers;
 
 import lombok.NonNull;
 import nbbrd.design.DirectImpl;
+import nbbrd.design.NonNegative;
 import nbbrd.design.RepresentableAs;
 import nbbrd.design.StaticFactoryMethod;
 import nbbrd.io.text.BooleanProperty;
@@ -177,6 +178,11 @@ public final class RngRiDriver implements Driver {
         @Override
         public @NonNull Stream<Series> getDataStream(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Query query) {
             return Freq.stream().flatMap(freq -> newSeriesStream(freq, query));
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
         private Stream<Series> newSeriesStream(Freq freq, Query query) {

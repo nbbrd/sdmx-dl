@@ -77,6 +77,7 @@ public class ConnectionAssert {
         assertState(s, supplier, o -> o.getStructure(NO_DATABASE, sample.validFlow), "getStructure(DataflowRef)");
         assertState(s, supplier, o -> o.getFlow(NO_DATABASE, sample.validFlow), "getFlow(DataflowRef)");
         assertState(s, supplier, o -> o.getFlows(NO_DATABASE), "getFlows()");
+        assertState(s, supplier, o -> o.getAvailableDimensionCodes(NO_DATABASE, sample.validFlow, Key.ALL, 0), "getAvailableDimensionValues(DataflowRef,Key,int)");
     }
 
     @SuppressWarnings("RedundantExplicitClose")
@@ -142,6 +143,9 @@ public class ConnectionAssert {
 
             s.assertThatThrownBy(() -> conn.getStructure(NO_DATABASE, sample.invalidFlow))
                     .isInstanceOf(IOException.class);
+
+            s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, sample.invalidFlow, sample.validKey, 0))
+                    .isInstanceOf(IOException.class);
         }
     }
 
@@ -169,6 +173,14 @@ public class ConnectionAssert {
 
         s.assertThatThrownBy(() -> conn.getFlow(NO_DATABASE, null))
                 .as(nullDescriptionOf("getFlow(DataflowRef)", "flowRef"))
+                .isInstanceOf(NullPointerException.class);
+
+        s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, null, Key.ALL, 0))
+                .as(nullDescriptionOf("getAvailableDimensionValues(DataflowRef,Key,int)", "flowRef"))
+                .isInstanceOf(NullPointerException.class);
+
+        s.assertThatThrownBy(() -> conn.getAvailableDimensionCodes(NO_DATABASE, ref, null, 0))
+                .as(nullDescriptionOf("getAvailableDimensionValues(DataflowRef,Key,int)", "key"))
                 .isInstanceOf(NullPointerException.class);
     }
 

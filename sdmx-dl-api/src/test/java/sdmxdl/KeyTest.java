@@ -25,8 +25,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 /**
@@ -189,6 +188,35 @@ public class KeyTest {
 
         assertThat(Key.parse("4. .M"))
                 .describedAs("Blank code must return wildcard")
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "", "M");
+    }
+
+    @Test
+    public void testWith() {
+        assertThat(Key.parse("").with("x", 0))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("x");
+
+        assertThat(Key.parse("4.AUS.M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4..M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4.*.M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4. .M").with("x", 1))
+                .extracting(KeyTest::keyAsList, LIST)
+                .containsExactly("4", "x", "M");
+
+        assertThat(Key.parse("4.AUS.M").with("", 1))
+                .isEqualTo(Key.parse("4.AUS.M").with("*", 1))
+                .isEqualTo(Key.parse("4.AUS.M").with(" ", 1))
                 .extracting(KeyTest::keyAsList, LIST)
                 .containsExactly("4", "", "M");
     }

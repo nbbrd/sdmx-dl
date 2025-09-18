@@ -2,16 +2,13 @@ package sdmxdl.provider.px.drivers;
 
 import com.google.gson.*;
 import lombok.NonNull;
-import nbbrd.design.DirectImpl;
-import nbbrd.design.MightBeGenerated;
-import nbbrd.design.MightBePromoted;
-import nbbrd.design.VisibleForTesting;
+import nbbrd.design.*;
 import nbbrd.io.FileParser;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.http.*;
 import nbbrd.io.net.MediaType;
-import nbbrd.io.text.Formatter;
 import nbbrd.io.text.*;
+import nbbrd.io.text.Formatter;
 import nbbrd.service.ServiceProvider;
 import org.jspecify.annotations.Nullable;
 import sdmxdl.*;
@@ -184,6 +181,11 @@ public final class PxWebDriver implements Driver {
             Structure dsd = client.getMeta(database.getId(), flowRef.getId());
             DataCursor dataCursor = client.getData(database.getId(), flowRef.getId(), dsd, query.getKey());
             return query.execute(dataCursor.asCloseableStream());
+        }
+
+        @Override
+        public @NonNull Collection<String> getAvailableDimensionCodes(@NonNull DatabaseRef database, @NonNull FlowRef flowRef, @NonNull Key constraints, @NonNegative int dimensionIndex) throws IOException, IllegalArgumentException {
+            return ConnectionSupport.getAvailableDimensionCodes(this, database, flowRef, constraints, dimensionIndex);
         }
 
         @Override
