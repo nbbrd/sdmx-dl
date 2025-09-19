@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ![API] Add warming of network resources [#919](https://github.com/nbbrd/sdmx-dl/issues/919)
 - ![API] Add dimension code availability API [#1016](https://github.com/nbbrd/sdmx-dl/issues/1016)
+- ![GRPC] Add dimension code availability in protobuf service [#912](https://github.com/nbbrd/sdmx-dl/issues/912)
 
 ### Changed
 

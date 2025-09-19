@@ -25,6 +25,8 @@ service SdmxWebManager {
   rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
 
   rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+
+  rpc GetAvailability(KeyDimensionRequest) returns (stream DimensionCodes);
 }
 
 message Empty {
@@ -54,4 +56,17 @@ message KeyRequest {
   string key = 3;
   optional string database = 4;
   optional string languages = 5;
+}
+
+message KeyDimensionRequest {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  int32 dimension = 4;
+  optional string database = 5;
+  optional string languages = 6;
+}
+
+message DimensionCodes {
+  repeated string codes = 1;
 }

@@ -311,6 +311,38 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         }
     }
 
+    @RequestBody(
+            content = @Content(
+                    examples = @ExampleObject(
+                            name = "ECB example",
+                            value = """
+                                    {
+                                      "source": "ECB",
+                                      "flow": "EXR",
+                                      "key": "M..EUR.SP00.A",
+                                      "dimension": 1
+                                    }
+                                    """
+                    )
+            )
+    )
+    @POST
+    @Path("/availability")
+    @Override
+    public Multi<DimensionCodes> getAvailability(KeyDimensionRequest request) {
+        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
+        FlowRef flowRef = FlowRef.parse(request.getFlow());
+        Key key = Key.parse(request.getKey());
+        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
+        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+            return Multi.createFrom()
+                    .items(connection.getAvailableDimensionCodes(databaseRef, flowRef, key, request.getDimension()))
+                    .map(codes -> DimensionCodes.newBuilder().addAllCodes(codes).build());
+        } catch (IOException ex) {
+            return Multi.createFrom().failure(ex);
+        }
+    }
+
     private Query getDataQuery(KeyRequest request) {
         return Query
                 .builder()
