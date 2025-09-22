@@ -17,13 +17,17 @@
 package sdmxdl.provider.dialects.drivers;
 
 import org.junit.jupiter.api.Test;
-import sdmxdl.Query;
-import sdmxdl.StructureRef;
-import sdmxdl.FlowRef;
-import sdmxdl.Key;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import sdmxdl.*;
+import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.DataRef;
+import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
+import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -67,4 +71,29 @@ public class BbkDialectDriverTest {
                 .describedAs("SdmxFix#5")
                 .hasToString("https://api.statistiken.bundesbank.de/rest/data/BBEX3/M.ISK.EUR%2BUSD.CA.AC.A01?detail=serieskeyonly");
     }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "BbkDialectDriverTest.csv", useHeadersInDisplayName = true)
+    @EnableWebQueriesOnSystemProperty
+    public void testBuiltinSources(String source, int minFlowCount, String flow, int dimCount, String key, int minSeriesCount, int minObsCount, String details) throws IOException {
+        DriverAssert.assertBuiltinSource(new BbkDialectDriver(), DriverAssert.SourceQuery
+                        .builder()
+                        .source(source)
+                        .minFlowCount(minFlowCount)
+                        .flow(flow)
+                        .key(key)
+                        .dimCount(dimCount)
+                        .minSeriesCount(minSeriesCount)
+                        .minObsCount(minObsCount)
+                        .build(),
+                context
+        );
+    }
+
+    private final WebContext context = WebContext
+            .builder()
+            .caching(MemCachingSupport.builder().id("local").build())
+            .networking(new RiNetworking())
+            .onEvent(DriverAssert.eventOf(System.out::println))
+            .build();
 }

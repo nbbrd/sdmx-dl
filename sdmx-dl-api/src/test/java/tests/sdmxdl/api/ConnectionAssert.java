@@ -97,11 +97,11 @@ public class ConnectionAssert {
         }
 
         s.assertThat(conn.getFlows(NO_DATABASE))
-                .are(validDataflow())
+                .are(validFlow(true))
                 .anyMatch(sample.validFlow::containsRef);
 
         s.assertThat(conn.getFlow(NO_DATABASE, sample.validFlow))
-                .is(validDataflow());
+                .is(validFlow(true));
 
         Structure dsd = conn.getStructure(NO_DATABASE, sample.validFlow);
         s.assertThat(dsd).has(validName());

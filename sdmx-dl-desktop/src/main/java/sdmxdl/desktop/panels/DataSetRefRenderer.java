@@ -1,8 +1,10 @@
 package sdmxdl.desktop.panels;
 
+import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.util.*;
 import j2html.tags.DomContent;
 import j2html.tags.Text;
+import nbbrd.io.picocsv.Picocsv;
 import sdmxdl.DataRepository;
 import sdmxdl.Dimension;
 import sdmxdl.desktop.*;
@@ -11,6 +13,9 @@ import sdmxdl.web.WebSource;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
@@ -73,7 +78,13 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
                 .build());
 
         result.addToolBarItem(new ButtonBuilder()
-                .action(NoOpCommand.INSTANCE.toAction(result))
+                .action(JCommand.<JDocument<DataSetRef>>of(x -> {
+                            SingleSeries singleSeries = (SingleSeries) x.getClientProperty("singleSeries");
+                            String csv = getCsvTestingLine(singleSeries);
+                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(csv), null);
+                        })
+                        .toAction(result)
+                        .withWeakPropertyChangeListener(result, JDocument.MODEL_PROPERTY))
                 .ikon(MDI_EXPORT)
                 .toolTipText("Export")
                 .build());
@@ -107,6 +118,7 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
                     JValueAsText<DataRepository> dsdTextArea = new JValueAsText<>();
                     dsdTextArea.setModel(DataRepository.builder().structure(singleSeries.getDsd()).build());
                     result.addComponent("DSD", dsdTextArea);
+                    result.putClientProperty("singleSeries", singleSeries);
                 } catch (InterruptedException | ExecutionException ex) {
                     ExceptionPanel exceptionPanel = new ExceptionPanel();
                     exceptionPanel.setException(ex.getCause());
@@ -159,5 +171,21 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     private static Text htmlDimension(DataSetRef ref) {
         return text(String.valueOf(ref.getDimensionIndex()));
+    }
+
+    private static String getCsvTestingLine(SingleSeries series) {
+        try {
+            return Picocsv.Formatter.<SingleSeries>of((value, writer) -> {
+                writer.writeField(value.getRef().getDataSourceRef().getSource());
+                writer.writeField(String.valueOf(value.getFlows().size()));
+                writer.writeField(value.getRef().getDataSourceRef().getFlow());
+                writer.writeField(String.valueOf(value.getDsd().getDimensions().size()));
+                writer.writeField(value.getRef().getKey().toString());
+                writer.writeField("1");
+                writer.writeField(String.valueOf(value.getSeries().getObs().size()));
+            }).formatToString(series);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

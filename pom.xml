@@ -318,7 +318,6 @@
         <module>sdmx-dl-provider-dialects</module>
         <module>sdmx-dl-provider-connectors</module>
         <module>sdmx-dl-provider-px</module>
-        <module>sdmx-dl-testing</module>
         <module>sdmx-dl-cli</module>
         <module>sdmx-dl-desktop</module>
         <module>sdmx-dl-standalone</module>

@@ -1,0 +1,3 @@
+source,minFlowCount,flow,dimCount,key,minSeriesCount,minObsCount,details
+STATCAN,5924,DF_10100001,2,1.1,1,13,
+STATCAN,5924,DF_10100139,2,1.1,1,2099,missing series header in compact data

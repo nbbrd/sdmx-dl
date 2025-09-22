@@ -109,6 +109,7 @@ public final class DataPanel extends JComponent {
             grid.setCornerRenderer(JTables.cellRendererOf((label, value) -> {
                 label.setText(model.getDuration() != null ? html(small(labelTag(model.getDuration().toString(), model.getAccentColor()))).render() : null);
                 label.setHorizontalAlignment(JLabel.CENTER);
+                label.setToolTipText(model.getDuration() + " #" + model.getSeries().getObs().size());
             }));
             chart.setDataset(asChartModel(model));
             chart.setTitle(model.getMeta().getName());

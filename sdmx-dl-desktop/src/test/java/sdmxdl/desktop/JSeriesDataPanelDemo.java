@@ -8,6 +8,7 @@ import tests.sdmxdl.api.RepoSamples;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 
 public class JSeriesDataPanelDemo {
 
@@ -18,7 +19,7 @@ public class JSeriesDataPanelDemo {
                     AbstractAction load = new AbstractAction("Load") {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            panel.setModel(new SingleSeries(RepoSamples.STRUCT, RepoSamples.S1, AccentColors.DARK_BLUE));
+                            panel.setModel(new SingleSeries(DataSetRef.builder().build(), Collections.emptyList(), RepoSamples.STRUCT, RepoSamples.S1, AccentColors.DARK_BLUE));
                         }
                     };
                     AbstractAction clear = new AbstractAction("Clear") {
