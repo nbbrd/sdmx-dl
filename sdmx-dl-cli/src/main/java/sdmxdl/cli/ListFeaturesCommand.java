@@ -57,7 +57,7 @@ public final class ListFeaturesCommand implements Callable<Void> {
     }
 
     private Stream<Feature> getRows() throws IOException {
-        return sort.applySort(web.loadFeatures(web.loadManager(), web.getLangs()), BY_NAME);
+        return sort.applySort(web.loadManager().getSupportedFeatures(web.toSourceRequest()), BY_NAME);
     }
 
     private static final Comparator<Feature> BY_NAME = Comparator.comparing(Enum::name);

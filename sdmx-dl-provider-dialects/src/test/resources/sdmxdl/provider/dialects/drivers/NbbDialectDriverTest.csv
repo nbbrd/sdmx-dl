@@ -1,2 +1,2 @@
-source,minFlowCount,flow,dimCount,key,minSeriesCount,minObsCount,details
-NBB,124,EXR,2,AUD.M,1,225,
+source,flow,key,minFlowCount,dimCount,minSeriesCount,minObsCount,details
+NBB,EXR,AUD.M,124,2,1,225,

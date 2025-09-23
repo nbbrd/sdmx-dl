@@ -19,9 +19,9 @@ package sdmxdl.provider.dialects.drivers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
-import sdmxdl.Languages;
 import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.KeyRequest;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
@@ -41,13 +41,11 @@ public class ImfDialectDriverTest {
     @ParameterizedTest
     @CsvFileSource(resources = "ImfDialectDriverTest.csv", useHeadersInDisplayName = true)
     @EnableWebQueriesOnSystemProperty
-    public void testBuiltinSources(String source, int minFlowCount, String flow, int dimCount, String key, int minSeriesCount, int minObsCount, String details) throws IOException {
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new ImfDialectDriver(), DriverAssert.SourceQuery
                         .builder()
-                        .source(source)
+                        .keyRequest(KeyRequest.builder().source(source).flowOf(flow).keyOf(key).build())
                         .minFlowCount(minFlowCount)
-                        .flow(flow)
-                        .key(key)
                         .dimCount(dimCount)
                         .minSeriesCount(minSeriesCount)
                         .minObsCount(minObsCount)

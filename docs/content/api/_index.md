@@ -7,6 +7,19 @@ weight: 1
 
 **sdmx-dl API** is a library designed as a facade for the SDMX model and APIs.
 
+Usage:
+
+```java
+SdmxWebManager.ofServiceLoader()
+        .getData(KeyRequest
+                .builder()
+                .source("ECB")
+                .flowOf("EXR")
+                .keyOf("M.CHF+USD.EUR.SP00.A")
+                .build())
+        .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
+```
+
 ## Structure overview
 
 ```mermaid
@@ -31,12 +44,10 @@ flowchart BT
         desktop
         grpc
     end
-    testing
 
     formats --> api
     providers --> formats
-    testing ---> api
-    applications --> providers & testing
+    applications --> providers
 ```
 
 ## Dependencies setup

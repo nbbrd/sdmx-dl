@@ -1,2 +1,2 @@
-source,minFlowCount,flow,dimCount,key,minSeriesCount,minObsCount,details
-BBK,49,BBEX3,6,M.ISK.EUR+USD.CA.AC.A01,2,694,
+source,flow,key,minFlowCount,dimCount,minSeriesCount,minObsCount,details
+BBK,BBEX3,M.ISK.EUR+USD.CA.AC.A01,49,6,2,694,

@@ -5,18 +5,18 @@ import com.formdev.flatlaf.FlatIconColors;
 import ec.util.list.swing.JLists;
 import ec.util.various.swing.JCommand;
 import internal.sdmxdl.desktop.SdmxCommand;
-import internal.sdmxdl.desktop.SdmxURI;
 import internal.sdmxdl.desktop.XmlDataSetRef;
 import internal.sdmxdl.desktop.XmlDataSourceRef;
 import internal.sdmxdl.desktop.util.*;
 import lombok.NonNull;
 import nbbrd.io.function.IOBiConsumer;
 import org.kordamp.ikonli.Ikon;
-import sdmxdl.Key;
 import sdmxdl.desktop.panels.*;
 import sdmxdl.ext.Persistence;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
+import sdmxdl.web.FlowRequest;
+import sdmxdl.web.KeyRequest;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.*;
@@ -529,25 +529,26 @@ public final class MainComponent extends JComponent {
     }
 
     private void copyPath(DataSourceRef ref) {
+        FlowRequest flowRequest = ref.toFlowRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSourceURI(ref.getSource(), ref.toFlowRef(), ref.getDatabase()))
+                .copyToClipboard("SDMX-DL URI", flowRequest.toURI().toString())
                 .copyToClipboard("XML reference", XmlDataSourceRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(ref.getDatabase(), ref.getSource(), ref.toFlowRef()))
-                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(ref.getDatabase(), ref.getSource(), ref.getFlow(), Key.ALL))
+                .copyToClipboard("List dimensions command", SdmxCommand.listDimensions(flowRequest))
+                .copyToClipboard("List attributes command", SdmxCommand.listAttributes(flowRequest))
+                .copyToClipboard("Fetch all keys command", SdmxCommand.fetchKeys(KeyRequest.builderOf(flowRequest).build()))
                 .showMenuAsPopup(this);
     }
 
     private void copyPath(DataSetRef ref) {
-        DataSourceRef src = ref.getDataSourceRef();
+        KeyRequest keyRequest = ref.toKeyRequest();
         new OnDemandMenuBuilder()
-                .copyToClipboard("SDMX-DL URI", SdmxURI.dataSetURI(src.getSource(), src.toFlowRef(), ref.getKey(), src.getDatabase()))
+                .copyToClipboard("SDMX-DL URI", keyRequest.toURI().toString())
                 .copyToClipboard("XML reference", XmlDataSetRef.formatToString(ref))
                 .addSeparator()
-                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
-                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(src.getDatabase(), src.getSource(), src.getFlow(), ref.getKey()))
+                .copyToClipboard("Fetch data command", SdmxCommand.fetchData(keyRequest))
+                .copyToClipboard("Fetch meta command", SdmxCommand.fetchMeta(keyRequest))
+                .copyToClipboard("Fetch keys command", SdmxCommand.fetchKeys(keyRequest))
                 .showMenuAsPopup(this);
     }
 

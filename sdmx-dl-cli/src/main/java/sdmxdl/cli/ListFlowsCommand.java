@@ -59,6 +59,6 @@ public final class ListFlowsCommand implements Callable<Void> {
     }
 
     private Stream<Flow> getRows() throws IOException {
-        return sort.applySort(web.loadFlows(web.loadManager(), web.getLangs()), WebSourceOptions.FLOWS_BY_REF);
+        return sort.applySort(web.loadManager().getFlows(web.toDatabaseRequest()), WebSourceOptions.FLOWS_BY_REF);
     }
 }

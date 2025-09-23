@@ -18,8 +18,6 @@ import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import sdmxdl.*;
 import sdmxdl.Confidentiality;
-import sdmxdl.Detail;
-import sdmxdl.Query;
 import sdmxdl.format.protobuf.*;
 import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
@@ -27,9 +25,7 @@ import sdmxdl.format.protobuf.Database;
 import sdmxdl.format.protobuf.Flow;
 import sdmxdl.format.protobuf.Series;
 import sdmxdl.format.protobuf.Structure;
-import sdmxdl.format.protobuf.web.MonitorReport;
-import sdmxdl.format.protobuf.web.WebSource;
-import sdmxdl.format.protobuf.web.WebSources;
+import sdmxdl.format.protobuf.web.*;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -103,10 +99,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/databases")
     @Override
     public Multi<Database> getDatabases(SourceRequest request) {
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Multi.createFrom()
-                    .items(connection.getDatabases().stream())
+                    .items(manager.getDatabases(ProtoWeb.toSourceRequest(request)).stream())
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -130,12 +125,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/flow")
     @Override
     public Uni<Flow> getFlow(FlowRequest request) {
-        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        FlowRef flowRef = FlowRef.parse(request.getFlow());
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Uni.createFrom()
-                    .item(connection.getFlow(databaseRef, flowRef))
+                    .item(manager.getFlow(ProtoWeb.toFlowRequest(request)))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -159,12 +151,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/structure")
     @Override
     public Uni<Structure> getStructure(FlowRequest request) {
-        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        FlowRef flowRef = FlowRef.parse(request.getFlow());
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Uni.createFrom()
-                    .item(connection.getStructure(databaseRef, flowRef))
+                    .item(manager.getStructure(ProtoWeb.toFlowRequest(request)))
                     .map(ProtoApi::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -189,13 +178,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/data")
     @Override
     public Uni<DataSet> getData(KeyRequest request) {
-        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        FlowRef flowRef = FlowRef.parse(request.getFlow());
-        Query query = getDataQuery(request);
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Uni.createFrom()
-                    .item(connection.getData(databaseRef, flowRef, query))
+                    .item(manager.getData(ProtoWeb.toKeyRequest(request)))
                     .map(ProtoApi::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -228,14 +213,12 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
 
     @Tool(description = "List SDMX data flows.")
     public List<Flow> mcpGetFlows(@ToolArg(description = "SDMX source ID") String source) {
-        DatabaseRef databaseRef = DatabaseRef.NO_DATABASE;
-        Languages languages = Languages.ANY;
         sdmxdl.web.WebSource webSource = manager.getSources().get(source);
         if (webSource == null || !Confidentiality.PUBLIC.isAllowedIn(webSource)) {
             throw new RuntimeException("Cannot access flows for source: " + source);
         }
-        try (Connection connection = manager.getConnection(webSource, languages)) {
-            return connection.getFlows(databaseRef).stream()
+        try {
+            return manager.getFlows(sdmxdl.web.DatabaseRequest.builder().build()).stream()
                     .map(ProtoApi::fromDataflow)
                     .toList();
         } catch (IOException ex) {
@@ -269,11 +252,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/flows")
     @Override
     public Multi<Flow> getFlows(DatabaseRequest request) {
-        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Multi.createFrom()
-                    .items(connection.getFlows(databaseRef).stream())
+                    .items(manager.getFlows(ProtoWeb.toDatabaseRequest(request)).stream())
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -298,13 +279,9 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     @Path("/dataStream")
     @Override
     public Multi<Series> getDataStream(KeyRequest request) {
-        DatabaseRef databaseRef = request.hasDatabase() ? DatabaseRef.parse(request.getDatabase()) : DatabaseRef.NO_DATABASE;
-        FlowRef flowRef = FlowRef.parse(request.getFlow());
-        Query query = getDataQuery(request);
-        Languages languages = request.hasLanguages() ? Languages.parse(request.getLanguages()) : Languages.ANY;
-        try (Connection connection = manager.getConnection(request.getSource(), languages)) {
+        try {
             return Multi.createFrom()
-                    .items(connection.getData(databaseRef, flowRef, query).getData().stream())
+                    .items(manager.getData(ProtoWeb.toKeyRequest(request)).getData().stream())
                     .map(ProtoApi::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -341,13 +318,5 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
         }
-    }
-
-    private Query getDataQuery(KeyRequest request) {
-        return Query
-                .builder()
-                .key(Key.parse(request.getKey()))
-                .detail(Detail.FULL)
-                .build();
     }
 }

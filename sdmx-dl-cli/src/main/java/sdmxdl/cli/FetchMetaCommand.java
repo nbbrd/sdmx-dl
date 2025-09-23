@@ -22,13 +22,14 @@ import internal.sdmxdl.cli.ext.CsvTable;
 import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.io.text.Formatter;
 import picocli.CommandLine;
-import sdmxdl.Detail;
 import sdmxdl.Key;
 
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
+
+import static sdmxdl.Detail.NO_DATA;
 
 /**
  * @author Philippe Charles
@@ -62,14 +63,10 @@ public final class FetchMetaCommand implements Callable<Void> {
     }
 
     private Stream<MetaResult> getRows() throws IOException {
-        return sort.applySort(web.loadSeries(web.loadManager(), getDetail())
-                        .getData().stream()
-                        .flatMap(this::getMetaResultStream)
-                , BY_FLOW_KEY_CONCEPT);
-    }
-
-    private Detail getDetail() {
-        return Detail.NO_DATA;
+        return sort.applySort(
+                web.loadManager().getData(web.toKeyRequest(NO_DATA)).getData().stream().flatMap(this::getMetaResultStream),
+                BY_FLOW_KEY_CONCEPT
+        );
     }
 
     private Stream<MetaResult> getMetaResultStream(sdmxdl.Series series) {

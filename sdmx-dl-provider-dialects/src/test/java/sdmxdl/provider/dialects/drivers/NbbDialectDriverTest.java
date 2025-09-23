@@ -28,6 +28,7 @@ import sdmxdl.provider.DataRef;
 import sdmxdl.provider.Marker;
 import sdmxdl.provider.ri.drivers.RiRestClient;
 import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.KeyRequest;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
@@ -123,13 +124,11 @@ public class NbbDialectDriverTest {
     @ParameterizedTest
     @CsvFileSource(resources = "NbbDialectDriverTest.csv", useHeadersInDisplayName = true)
     @EnableWebQueriesOnSystemProperty
-    public void testBuiltinSources(String source, int minFlowCount, String flow, int dimCount, String key, int minSeriesCount, int minObsCount, String details) throws IOException {
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new NbbDialectDriver(), DriverAssert.SourceQuery
                         .builder()
-                        .source(source)
+                        .keyRequest(KeyRequest.builder().source(source).flowOf(flow).keyOf(key).build())
                         .minFlowCount(minFlowCount)
-                        .flow(flow)
-                        .key(key)
                         .dimCount(dimCount)
                         .minSeriesCount(minSeriesCount)
                         .minObsCount(minObsCount)

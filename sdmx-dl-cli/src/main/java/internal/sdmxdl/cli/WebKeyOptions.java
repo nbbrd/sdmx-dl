@@ -18,11 +18,8 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.Detail;
-import sdmxdl.DataSet;
 import sdmxdl.Key;
-import sdmxdl.web.SdmxWebManager;
-
-import java.io.IOException;
+import sdmxdl.web.KeyRequest;
 
 /**
  * @author Philippe Charles
@@ -39,7 +36,11 @@ public class WebKeyOptions extends WebFlowOptions {
     )
     private Key key;
 
-    public DataSet loadSeries(SdmxWebManager manager, Detail detail) throws IOException {
-        return loadSeries(manager, getKey(), detail);
+    public KeyRequest toKeyRequest(Detail detail) {
+        return KeyRequest
+                .builderOf(toFlowRequest())
+                .key(getKey())
+                .detail(detail)
+                .build();
     }
 }

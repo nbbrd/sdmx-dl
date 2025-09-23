@@ -41,3 +41,29 @@ message MonitorReports {
   string creation_time = 3;
   string expiration_time = 4;
 }
+
+message SourceRequest {
+  string source = 1;
+  optional string languages = 2;
+}
+
+message DatabaseRequest {
+  string source = 1;
+  optional string database = 2;
+  optional string languages = 3;
+}
+
+message FlowRequest {
+  string source = 1;
+  string flow = 2;
+  optional string database = 3;
+  optional string languages = 4;
+}
+
+message KeyRequest {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  optional string database = 4;
+  optional string languages = 5;
+}

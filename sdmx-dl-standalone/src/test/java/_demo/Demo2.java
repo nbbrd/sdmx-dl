@@ -10,14 +10,14 @@ import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Detail.DATA_ONLY;
 import static sdmxdl.Languages.ANY;
 
-public class Demo {
+public class Demo2 {
 
     @nbbrd.design.Demo
     public static void main(String[] args) throws IOException {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .onEvent(Demo::printEvent)
+                .onEvent(Demo2::printEvent)
                 .build();
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
@@ -28,7 +28,7 @@ public class Demo {
             Query chfData = Query.builder().key(chf).detail(DATA_ONLY).build();
             ecb.getData(NO_DATABASE, exr, chfData)
                     .getData()
-                    .forEach(Demo::printSeries);
+                    .forEach(Demo2::printSeries);
         }
     }
 
@@ -37,7 +37,7 @@ public class Demo {
     }
 
     private static void printSeries(Series series) {
-        System.out.println(series.getKey() + ": " + series.getObs().size() + " observations");
+        System.out.println(series.getKey() + ": " + series.getObs().size() + " obs");
     }
 
     private static void printEvent(WebSource source, String marker, CharSequence message) {

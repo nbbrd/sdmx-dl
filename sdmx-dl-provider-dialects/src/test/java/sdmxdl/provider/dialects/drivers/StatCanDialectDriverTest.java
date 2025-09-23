@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import sdmxdl.*;
 import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.KeyRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
@@ -207,13 +208,11 @@ public class StatCanDialectDriverTest {
     @ParameterizedTest
     @CsvFileSource(resources = "StatCanDialectDriverTest.csv", useHeadersInDisplayName = true)
     @EnableWebQueriesOnSystemProperty
-    public void testBuiltinSources(String source, int minFlowCount, String flow, int dimCount, String key, int minSeriesCount, int minObsCount, String details) throws IOException {
+    public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new StatCanDialectDriver(), DriverAssert.SourceQuery
                         .builder()
-                        .source(source)
+                        .keyRequest(KeyRequest.builder().source(source).flowOf(flow).keyOf(key).build())
                         .minFlowCount(minFlowCount)
-                        .flow(flow)
-                        .key(key)
                         .dimCount(dimCount)
                         .minSeriesCount(minSeriesCount)
                         .minObsCount(minObsCount)

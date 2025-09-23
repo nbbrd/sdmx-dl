@@ -1,2 +1,2 @@
-source,minFlowCount,flow,dimCount,key,minSeriesCount,minObsCount,details
-IMF,120,DS-BOPAGG,3,A.US.BK_CD_BP6_USD,1,4,
+source,flow,key,minFlowCount,dimCount,minSeriesCount,minObsCount,details
+IMF,DS-BOPAGG,A.US.BK_CD_BP6_USD,120,3,1,4,

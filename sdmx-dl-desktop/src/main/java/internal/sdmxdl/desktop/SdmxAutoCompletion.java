@@ -24,8 +24,8 @@ import nbbrd.desktop.favicon.FaviconRef;
 import nbbrd.desktop.favicon.FaviconSupport;
 import nbbrd.desktop.favicon.URLConnectionFactory;
 import nbbrd.io.Resource;
-import sdmxdl.Dimension;
 import sdmxdl.*;
+import sdmxdl.Dimension;
 import sdmxdl.desktop.MainComponent;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
@@ -296,7 +296,7 @@ public abstract class SdmxAutoCompletion {
 
         private List<Dimension> load(String term) throws Exception {
             try (Connection c = manager.getConnection(source.get(), languages)) {
-                return new ArrayList<>(c.getStructure(database.get(), flowRef.get()).getDimensions());
+                return c.getStructure(database.get(), flowRef.get()).getDimensionList();
             }
         }
 

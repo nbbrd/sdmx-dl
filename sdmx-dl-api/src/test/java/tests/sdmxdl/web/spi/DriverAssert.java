@@ -5,6 +5,7 @@ import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.Condition;
 import sdmxdl.*;
+import sdmxdl.web.KeyRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -71,18 +72,18 @@ public class DriverAssert {
     public static void assertBuiltinSource(Driver driver, SourceQuery query, WebContext context) throws IOException {
         WebSource webSource = driver.getDefaultSources()
                 .stream()
-                .filter(item -> item.getId().equals(query.getSource()))
+                .filter(item -> item.getId().equals(query.getKeyRequest().getSource()))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
-        try (Connection connection = driver.connect(webSource, query.getLanguages(), context)) {
-            DatabaseRef database = DatabaseRef.parse(query.getDatabase());
+        try (Connection connection = driver.connect(webSource, query.getKeyRequest().getLanguages(), context)) {
+            DatabaseRef database = query.getKeyRequest().getDatabase();
             assertThat(connection.getFlows(database))
                     .describedAs("Flows of %s/%s", webSource.getId(), database)
                     .are(validFlow(query.isNoDescription()))
                     .hasSizeGreaterThanOrEqualTo(query.getMinFlowCount());
 
-            FlowRef flowRef = FlowRef.parse(query.getFlow());
+            FlowRef flowRef = query.getKeyRequest().getFlow();
             assertThat(connection.getFlow(database, flowRef))
                     .describedAs("Flow %s/%s/%s", webSource.getId(), database, flowRef)
                     .is(validFlow(query.isNoDescription()))
@@ -102,8 +103,8 @@ public class DriverAssert {
                                 .are(validAttribute());
                     });
 
-            Key key = Key.parse(query.getKey());
-            assertThat(connection.getData(database, flowRef, Query.builder().key(key).build()))
+            Key key = query.getKeyRequest().getKey();
+            assertThatObject(connection.getData(database, flowRef, Query.builder().key(key).build()))
                     .satisfies(dataSet -> {
                         assertThat(dataSet.getData())
                                 .describedAs("Data of %s/%s/%s for key %s", webSource.getId(), database, flowRef, key)
@@ -126,16 +127,10 @@ public class DriverAssert {
     @lombok.Value
     @lombok.Builder
     public static class SourceQuery {
-        String source;
-        @lombok.Builder.Default
-        Languages languages = ANY;
-        @lombok.Builder.Default
-        String database = "";
+        KeyRequest keyRequest;
         int minFlowCount;
-        String flow;
         @lombok.Builder.Default
         boolean noDescription = true;
-        String key;
         int dimCount;
         int minSeriesCount;
         int minObsCount;

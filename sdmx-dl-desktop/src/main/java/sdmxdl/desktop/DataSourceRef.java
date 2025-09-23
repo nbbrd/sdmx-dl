@@ -6,6 +6,7 @@ import sdmxdl.*;
 import sdmxdl.provider.ri.caching.RiCaching;
 import sdmxdl.provider.ri.drivers.RiHttpUtils;
 import sdmxdl.provider.ri.networking.RiNetworking;
+import sdmxdl.web.FlowRequest;
 import sdmxdl.web.SdmxWebManager;
 import sdmxdl.web.WebSource;
 
@@ -48,6 +49,16 @@ public class DataSourceRef {
     @lombok.Builder.Default
     @NonNull
     Toggle curlBackend = Toggle.DEFAULT;
+
+    public FlowRequest toFlowRequest() {
+        return FlowRequest
+                .builder()
+                .source(source)
+                .database(database)
+                .flowOf(flow)
+                .languages(languages)
+                .build();
+    }
 
     public FlowRef toFlowRef() {
         return FlowRef.parse(flow);

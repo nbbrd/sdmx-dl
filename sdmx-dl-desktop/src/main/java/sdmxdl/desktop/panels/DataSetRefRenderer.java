@@ -177,12 +177,13 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
         try {
             return Picocsv.Formatter.<SingleSeries>of((value, writer) -> {
                 writer.writeField(value.getRef().getDataSourceRef().getSource());
-                writer.writeField(String.valueOf(value.getFlows().size()));
                 writer.writeField(value.getRef().getDataSourceRef().getFlow());
-                writer.writeField(String.valueOf(value.getDsd().getDimensions().size()));
                 writer.writeField(value.getRef().getKey().toString());
+                writer.writeField(String.valueOf(value.getFlows().size()));
+                writer.writeField(String.valueOf(value.getDsd().getDimensions().size()));
                 writer.writeField("1");
                 writer.writeField(String.valueOf(value.getSeries().getObs().size()));
+                writer.writeField("");
             }).formatToString(series);
         } catch (IOException e) {
             throw new RuntimeException(e);

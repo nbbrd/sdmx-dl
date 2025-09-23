@@ -23,7 +23,6 @@ import internal.sdmxdl.cli.ext.RFC4180OutputOptions;
 import nbbrd.design.VisibleForTesting;
 import picocli.CommandLine;
 import sdmxdl.Database;
-import sdmxdl.Connection;
 import sdmxdl.Languages;
 
 import java.io.IOException;
@@ -61,8 +60,6 @@ public final class ListDatabasesCommand implements Callable<Void> {
     }
 
     private Stream<Database> getRows() throws IOException {
-        try (Connection c = web.loadManager().getConnection(web.getSource(), web.getLangs())) {
-            return c.getDatabases().stream();
-        }
+        return web.loadManager().getDatabases(web.toSourceRequest()).stream();
     }
 }
