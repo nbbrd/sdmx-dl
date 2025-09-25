@@ -101,7 +101,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Database> getDatabases(SourceRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getDatabases(ProtoWeb.toSourceRequest(request)).stream())
+                    .items(manager.getDatabases(ProtoGrpc.toSourceRequest(request)).stream())
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -127,7 +127,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Flow> getFlow(FlowRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getFlow(ProtoWeb.toFlowRequest(request)))
+                    .item(manager.getFlow(ProtoGrpc.toFlowRequest(request)))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -153,7 +153,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Structure> getStructure(FlowRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getStructure(ProtoWeb.toFlowRequest(request)))
+                    .item(manager.getStructure(ProtoGrpc.toFlowRequest(request)))
                     .map(ProtoApi::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -180,7 +180,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataSet> getData(KeyRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getData(ProtoWeb.toKeyRequest(request)))
+                    .item(manager.getData(ProtoGrpc.toKeyRequest(request)))
                     .map(ProtoApi::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -254,7 +254,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Flow> getFlows(DatabaseRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getFlows(ProtoWeb.toDatabaseRequest(request)).stream())
+                    .items(manager.getFlows(ProtoGrpc.toDatabaseRequest(request)).stream())
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -281,7 +281,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Series> getDataStream(KeyRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getData(ProtoWeb.toKeyRequest(request)).getData().stream())
+                    .items(manager.getData(ProtoGrpc.toKeyRequest(request)).getData().stream())
                     .map(ProtoApi::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

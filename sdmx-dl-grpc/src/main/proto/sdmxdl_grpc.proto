@@ -12,24 +12,50 @@ service SdmxWebManager {
 
   rpc GetSources(Empty) returns (stream sdmxdl.format.protobuf.web.WebSource);
 
-  rpc GetMonitorReport(sdmxdl.format.protobuf.web.SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
+  rpc GetMonitorReport(SourceRequest) returns (sdmxdl.format.protobuf.web.MonitorReport);
 
-  rpc GetDatabases(sdmxdl.format.protobuf.web.SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
+  rpc GetDatabases(SourceRequest) returns (stream sdmxdl.format.protobuf.Database);
 
-  rpc GetFlows(sdmxdl.format.protobuf.web.DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
+  rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
 
-  rpc GetFlow(sdmxdl.format.protobuf.web.FlowRequest) returns (sdmxdl.format.protobuf.Flow);
+  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Flow);
 
-  rpc GetStructure(sdmxdl.format.protobuf.web.FlowRequest) returns (sdmxdl.format.protobuf.Structure);
+  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.Structure);
 
-  rpc GetData(sdmxdl.format.protobuf.web.KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
+  rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
 
-  rpc GetDataStream(sdmxdl.format.protobuf.web.KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
+  rpc GetDataStream(KeyRequest) returns (stream sdmxdl.format.protobuf.Series);
 
   rpc GetAvailability(KeyDimensionRequest) returns (stream DimensionCodes);
 }
 
 message Empty {
+}
+
+message SourceRequest {
+  string source = 1;
+  optional string languages = 2;
+}
+
+message DatabaseRequest {
+  string source = 1;
+  optional string database = 2;
+  optional string languages = 3;
+}
+
+message FlowRequest {
+  string source = 1;
+  string flow = 2;
+  optional string database = 3;
+  optional string languages = 4;
+}
+
+message KeyRequest {
+  string source = 1;
+  string flow = 2;
+  string key = 3;
+  optional string database = 4;
+  optional string languages = 5;
 }
 
 message KeyDimensionRequest {
