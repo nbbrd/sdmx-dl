@@ -10,14 +10,14 @@ import static sdmxdl.DatabaseRef.NO_DATABASE;
 import static sdmxdl.Detail.DATA_ONLY;
 import static sdmxdl.Languages.ANY;
 
-public class Demo2 {
+public class WebDemo2 {
 
     @nbbrd.design.Demo
     public static void main(String[] args) throws IOException {
 
         SdmxWebManager manager = SdmxWebManager.ofServiceLoader()
                 .toBuilder()
-                .onEvent(Demo2::printEvent)
+                .onEvent(WebDemo2::printEvent)
                 .build();
 
         try (Connection ecb = manager.getConnection("ECB", ANY)) {
@@ -28,7 +28,7 @@ public class Demo2 {
             Query chfData = Query.builder().key(chf).detail(DATA_ONLY).build();
             ecb.getData(NO_DATABASE, exr, chfData)
                     .getData()
-                    .forEach(Demo2::printSeries);
+                    .forEach(WebDemo2::printSeries);
         }
     }
 

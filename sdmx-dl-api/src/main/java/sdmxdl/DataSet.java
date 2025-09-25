@@ -53,6 +53,10 @@ public class DataSet extends Resource<FlowRef> implements Iterable<Series> {
         return data.iterator();
     }
 
+    public @NonNull Stream<Series> stream() {
+        return data.stream();
+    }
+
     public @NonNull DataSet getData(@NonNull Query query) {
         return query.equals(Query.ALL) ? this : query.execute(data.stream()).collect(toDataSet(ref, query));
     }

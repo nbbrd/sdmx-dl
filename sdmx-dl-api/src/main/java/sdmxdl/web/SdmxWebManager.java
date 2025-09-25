@@ -167,40 +167,9 @@ public class SdmxWebManager extends SdmxManager<WebSource> {
         return monitor.getReport(source, getContext());
     }
 
-    public @NonNull Set<Feature> getSupportedFeatures(@NonNull SourceRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getSupportedFeatures();
-        }
-    }
-
-    public @NonNull Collection<Database> getDatabases(@NonNull SourceRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getDatabases();
-        }
-    }
-
-    public @NonNull Collection<Flow> getFlows(@NonNull DatabaseRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getFlows(request.getDatabase());
-        }
-    }
-
-    public @NonNull Flow getFlow(@NonNull FlowRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getFlow(request.getDatabase(), request.getFlow());
-        }
-    }
-
-    public @NonNull Structure getStructure(@NonNull FlowRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getStructure(request.getDatabase(), request.getFlow());
-        }
-    }
-
-    public @NonNull DataSet getData(@NonNull KeyRequest request) throws IOException {
-        try (Connection connection = getConnection(request.getSource(), request.getLanguages())) {
-            return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
-        }
+    public @NonNull Provider using(@NonNull String name) throws IOException {
+        return using(lookupSource(name)
+                .orElseThrow(() -> newMissingSource(name)));
     }
 
     private Optional<WebSource> lookupSource(String name) {

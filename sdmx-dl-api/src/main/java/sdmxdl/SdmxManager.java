@@ -24,6 +24,8 @@ import sdmxdl.file.SdmxFileManager;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author Philippe Charles
@@ -35,9 +37,65 @@ import java.io.IOException;
 @ThreadSafe
 public abstract class SdmxManager<SOURCE extends Source> {
 
+    public final @NonNull Provider using(@NonNull SOURCE source) {
+        return new DefaultProvider<>(this, source);
+    }
+
     public abstract @NonNull Connection getConnection(@NonNull SOURCE source, @NonNull Languages languages) throws IOException;
 
     public abstract @Nullable EventListener<? super SOURCE> getOnEvent();
 
     public abstract @Nullable ErrorListener<? super SOURCE> getOnError();
+
+    @lombok.AllArgsConstructor
+    private static final class DefaultProvider<SOURCE extends Source> implements Provider {
+
+        @NonNull
+        private final SdmxManager<SOURCE> manager;
+
+        @NonNull
+        private final SOURCE source;
+
+        @Override
+        public @NonNull Set<Feature> getSupportedFeatures(sdmxdl.@NonNull SourceRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getSupportedFeatures();
+            }
+        }
+
+        @Override
+        public @NonNull Collection<Database> getDatabases(sdmxdl.@NonNull SourceRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getDatabases();
+            }
+        }
+
+        @Override
+        public @NonNull Collection<Flow> getFlows(sdmxdl.@NonNull DatabaseRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getFlows(request.getDatabase());
+            }
+        }
+
+        @Override
+        public @NonNull Flow getFlow(sdmxdl.@NonNull FlowRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getFlow(request.getDatabase(), request.getFlow());
+            }
+        }
+
+        @Override
+        public @NonNull Structure getStructure(sdmxdl.@NonNull FlowRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getStructure(request.getDatabase(), request.getFlow());
+            }
+        }
+
+        @Override
+        public @NonNull DataSet getData(sdmxdl.@NonNull KeyRequest request) throws IOException {
+            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
+                return connection.getData(request.getDatabase(), request.getFlow(), request.toQuery());
+            }
+        }
+    }
 }

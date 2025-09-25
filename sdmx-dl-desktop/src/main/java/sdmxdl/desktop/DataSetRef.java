@@ -2,7 +2,7 @@ package sdmxdl.desktop;
 
 import lombok.NonNull;
 import sdmxdl.Key;
-import sdmxdl.web.KeyRequest;
+import sdmxdl.KeyRequest;
 
 @lombok.Value
 @lombok.Builder

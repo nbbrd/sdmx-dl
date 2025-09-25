@@ -19,9 +19,9 @@ package sdmxdl.provider.dialects.drivers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import sdmxdl.KeyRequest;
 import sdmxdl.format.MemCachingSupport;
 import sdmxdl.provider.ri.networking.RiNetworking;
-import sdmxdl.web.KeyRequest;
 import sdmxdl.web.spi.WebContext;
 import tests.sdmxdl.web.spi.DriverAssert;
 import tests.sdmxdl.web.spi.EnableWebQueriesOnSystemProperty;
@@ -44,7 +44,8 @@ public class DotStatDialectDriverTest {
     public void testBuiltinSources(String source, String flow, String key, int minFlowCount, int dimCount, int minSeriesCount, int minObsCount, String details) throws IOException {
         DriverAssert.assertBuiltinSource(new DotStatDialectDriver(), DriverAssert.SourceQuery
                         .builder()
-                        .keyRequest(KeyRequest.builder().source(source).flowOf(flow).keyOf(key).build())
+                        .source(source)
+                        .keyRequest(KeyRequest.builder().flowOf(flow).keyOf(key).build())
                         .minFlowCount(minFlowCount)
                         .dimCount(dimCount)
                         .minSeriesCount(minSeriesCount)

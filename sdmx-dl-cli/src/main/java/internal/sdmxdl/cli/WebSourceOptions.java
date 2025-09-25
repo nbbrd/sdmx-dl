@@ -18,9 +18,9 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.DatabaseRef;
+import sdmxdl.DatabaseRequest;
 import sdmxdl.Flow;
-import sdmxdl.web.DatabaseRequest;
-import sdmxdl.web.SourceRequest;
+import sdmxdl.SourceRequest;
 
 import java.util.Comparator;
 
@@ -53,7 +53,6 @@ public class WebSourceOptions extends WebNetOptions {
     public SourceRequest toSourceRequest() {
         return SourceRequest
                 .builder()
-                .source(getSource())
                 .languages(getLangs())
                 .build();
     }

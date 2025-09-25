@@ -7,17 +7,28 @@ weight: 1
 
 **sdmx-dl API** is a library designed as a facade for the SDMX model and APIs.
 
-Usage:
-
+Web example:
 ```java
 SdmxWebManager.ofServiceLoader()
-        .getData(KeyRequest
-                .builder()
-                .source("ECB")
-                .flowOf("EXR")
-                .keyOf("M.CHF+USD.EUR.SP00.A")
-                .build())
-        .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
+    .using("ECB")
+    .getData(KeyRequest
+        .builder()
+        .flowOf("EXR")
+        .keyOf("M.CHF+USD.EUR.SP00.A")
+        .build())
+    .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
+```
+
+File example:
+```java
+SdmxFileManager.ofServiceLoader()
+    .using(dataFile())
+    .getData(KeyRequest
+        .builder()
+        .flowOf("data")
+        .keyOf("A.DEU.1.0.319.0.UBLGE")
+        .build())
+    .forEach(series -> System.out.printf(Locale.ROOT, "%s: %d obs%n", series.getKey(), series.getObs().size()));
 ```
 
 ## Structure overview

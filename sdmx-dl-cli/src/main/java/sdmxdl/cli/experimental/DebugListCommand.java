@@ -27,12 +27,12 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Spec;
 import sdmxdl.Feature;
 import sdmxdl.Flow;
+import sdmxdl.KeyRequest;
 import sdmxdl.cli.protobuf.Features;
 import sdmxdl.cli.protobuf.Flows;
 import sdmxdl.cli.protobuf.Sources;
 import sdmxdl.format.protobuf.ProtoApi;
 import sdmxdl.format.protobuf.ProtoWeb;
-import sdmxdl.web.KeyRequest;
 import sdmxdl.web.WebSource;
 
 import java.util.Collection;
@@ -70,7 +70,7 @@ public final class DebugListCommand implements Callable<Void> {
 
     @Command
     public void flows(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromDataflows(web.loadManager().getFlows(web.toDatabaseRequest())));
+        nonNull(out).dumpAll(fromDataflows(web.loadManager().using(web.getSource()).getFlows(web.toDatabaseRequest())));
     }
 
     private static Flows fromDataflows(Collection<Flow> value) {
@@ -83,12 +83,12 @@ public final class DebugListCommand implements Callable<Void> {
     @Command
     public void keys(@Mixin WebFlowOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
         KeyRequest request = KeyRequest.builderOf(web.toFlowRequest()).detail(SERIES_KEYS_ONLY).build();
-        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().getData(request)));
+        nonNull(out).dumpAll(ProtoApi.fromDataSet(web.loadManager().using(web.getSource()).getData(request)));
     }
 
     @Command
     public void features(@Mixin WebSourceOptions web, @ArgGroup(validate = false, headingKey = "debug") DebugOutputOptions out) throws Exception {
-        nonNull(out).dumpAll(fromFeatures(web.loadManager().getSupportedFeatures(web.toSourceRequest())));
+        nonNull(out).dumpAll(fromFeatures(web.loadManager().using(web.getSource()).getSupportedFeatures(web.toSourceRequest())));
     }
 
     private static Features fromFeatures(Collection<Feature> value) {

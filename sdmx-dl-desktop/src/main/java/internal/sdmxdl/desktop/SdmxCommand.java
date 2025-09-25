@@ -1,9 +1,9 @@
 package internal.sdmxdl.desktop;
 
 import sdmxdl.DatabaseRef;
+import sdmxdl.FlowRequest;
 import sdmxdl.Key;
-import sdmxdl.web.FlowRequest;
-import sdmxdl.web.KeyRequest;
+import sdmxdl.KeyRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -47,24 +47,24 @@ public class SdmxCommand {
         return builderOf(database).parameters(asList(parameters)).build().toText();
     }
 
-    public static String fetchData(KeyRequest request) {
-        return of(request.getDatabase(), "fetch", "data", request.getSource(), request.getFlow().toString(), toCommandParameter(request.getKey()));
+    public static String fetchData(String source, KeyRequest request) {
+        return of(request.getDatabase(), "fetch", "data", source, request.getFlow().toString(), toCommandParameter(request.getKey()));
     }
 
-    public static String fetchMeta(KeyRequest request) {
-        return of(request.getDatabase(), "fetch", "meta", request.getSource(), request.getFlow().toString(), toCommandParameter(request.getKey()));
+    public static String fetchMeta(String source, KeyRequest request) {
+        return of(request.getDatabase(), "fetch", "meta", source, request.getFlow().toString(), toCommandParameter(request.getKey()));
     }
 
-    public static String fetchKeys(KeyRequest request) {
-        return of(request.getDatabase(), "fetch", "keys", request.getSource(), request.getFlow().toString(), toCommandParameter(request.getKey()));
+    public static String fetchKeys(String source, KeyRequest request) {
+        return of(request.getDatabase(), "fetch", "keys", source, request.getFlow().toString(), toCommandParameter(request.getKey()));
     }
 
-    public static String listDimensions(FlowRequest request) {
-        return of(request.getDatabase(), "list", "dimensions", request.getSource(), request.getFlow().toString());
+    public static String listDimensions(String source, FlowRequest request) {
+        return of(request.getDatabase(), "list", "dimensions", source, request.getFlow().toString());
     }
 
-    public static String listAttributes(FlowRequest request) {
-        return of(request.getDatabase(), "list", "attributes", request.getSource(), request.getFlow().toString());
+    public static String listAttributes(String source, FlowRequest request) {
+        return of(request.getDatabase(), "list", "attributes", source, request.getFlow().toString());
     }
 
     private static String toCommandParameter(Key key) {

@@ -1,62 +1,62 @@
 package sdmxdl.grpc;
 
+import sdmxdl.DatabaseRef;
+import sdmxdl.Languages;
+
 @lombok.experimental.UtilityClass
 public class ProtoGrpc {
 
-    public static SourceRequest fromSourceRequest(sdmxdl.web.SourceRequest value) {
+    public static SourceRequest fromSourceRequest(String source, sdmxdl.SourceRequest value) {
         SourceRequest.Builder result = SourceRequest.newBuilder();
-        result.setSource(value.getSource());
+        result.setSource(source);
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static sdmxdl.web.SourceRequest toSourceRequest(SourceRequest value) {
-        return sdmxdl.web.SourceRequest
+    public static sdmxdl.SourceRequest toSourceRequest(SourceRequest value) {
+        return sdmxdl.SourceRequest
                 .builder()
-                .source(value.getSource())
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
                 .build();
     }
 
-    public static DatabaseRequest fromDatabaseRequest(sdmxdl.web.DatabaseRequest value) {
+    public static DatabaseRequest fromDatabaseRequest(String source, sdmxdl.DatabaseRequest value) {
         DatabaseRequest.Builder result = DatabaseRequest.newBuilder();
-        result.setSource(value.getSource());
+        result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static sdmxdl.web.DatabaseRequest toDatabaseRequest(DatabaseRequest value) {
-        return sdmxdl.web.DatabaseRequest
+    public static sdmxdl.DatabaseRequest toDatabaseRequest(DatabaseRequest value) {
+        return sdmxdl.DatabaseRequest
                 .builder()
-                .source(value.getSource())
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : "")
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
                 .build();
     }
 
-    public static FlowRequest fromFlowRequest(sdmxdl.web.FlowRequest value) {
+    public static FlowRequest fromFlowRequest(String source, sdmxdl.FlowRequest value) {
         FlowRequest.Builder result = FlowRequest.newBuilder();
-        result.setSource(value.getSource());
+        result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setFlow(value.getFlow().toString());
         result.setLanguages(value.getLanguages().toString());
         return result.build();
     }
 
-    public static sdmxdl.web.FlowRequest toFlowRequest(FlowRequest value) {
-        return sdmxdl.web.FlowRequest
+    public static sdmxdl.FlowRequest toFlowRequest(FlowRequest value) {
+        return sdmxdl.FlowRequest
                 .builder()
-                .source(value.getSource())
                 .databaseOf(value.hasDatabase() ? value.getDatabase() : "")
                 .flowOf(value.getFlow())
                 .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
                 .build();
     }
 
-    public static KeyRequest fromKeyRequest(sdmxdl.web.KeyRequest value) {
+    public static KeyRequest fromKeyRequest(String source, sdmxdl.KeyRequest value) {
         KeyRequest.Builder result = KeyRequest.newBuilder();
-        result.setSource(value.getSource());
+        result.setSource(source);
         result.setDatabase(value.getDatabase().toString());
         result.setFlow(value.getFlow().toString());
         result.setKey(value.getKey().toString());
@@ -64,14 +64,13 @@ public class ProtoGrpc {
         return result.build();
     }
 
-    public static sdmxdl.web.KeyRequest toKeyRequest(KeyRequest value) {
-        return sdmxdl.web.KeyRequest
+    public static sdmxdl.KeyRequest toKeyRequest(KeyRequest value) {
+        return sdmxdl.KeyRequest
                 .builder()
-                .source(value.getSource())
-                .databaseOf(value.hasDatabase() ? value.getDatabase() : "")
+                .databaseOf(value.hasDatabase() ? value.getDatabase() : DatabaseRef.NO_DATABASE_KEYWORD)
                 .flowOf(value.getFlow())
                 .keyOf(value.getKey())
-                .languagesOf(value.hasLanguages() ? value.getLanguages() : "")
+                .languagesOf(value.hasLanguages() ? value.getLanguages() : Languages.ANY_KEYWORD)
                 .build();
     }
 }

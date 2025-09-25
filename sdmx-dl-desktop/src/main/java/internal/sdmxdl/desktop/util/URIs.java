@@ -1,4 +1,4 @@
-package internal.sdmxdl;
+package internal.sdmxdl.desktop.util;
 
 import lombok.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -17,8 +17,6 @@ import static java.util.stream.Collectors.joining;
 
 @lombok.experimental.UtilityClass
 public class URIs {
-
-    public static final String SDMX_DL_SCHEME = "sdmx-dl";
 
     @Nullable
     public static String[] getPathArray(@NonNull URI uri, int expectedSize) {

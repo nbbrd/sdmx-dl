@@ -25,7 +25,9 @@ import sdmxdl.format.protobuf.Database;
 import sdmxdl.format.protobuf.Flow;
 import sdmxdl.format.protobuf.Series;
 import sdmxdl.format.protobuf.Structure;
-import sdmxdl.format.protobuf.web.*;
+import sdmxdl.format.protobuf.web.MonitorReport;
+import sdmxdl.format.protobuf.web.WebSource;
+import sdmxdl.format.protobuf.web.WebSources;
 import sdmxdl.web.SdmxWebManager;
 
 import java.io.IOException;
@@ -101,7 +103,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Database> getDatabases(SourceRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getDatabases(ProtoGrpc.toSourceRequest(request)).stream())
+                    .iterable(manager.using(request.getSource()).getDatabases(ProtoGrpc.toSourceRequest(request)))
                     .map(ProtoApi::fromDatabase);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -127,7 +129,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Flow> getFlow(FlowRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getFlow(ProtoGrpc.toFlowRequest(request)))
+                    .item(manager.using(request.getSource()).getFlow(ProtoGrpc.toFlowRequest(request)))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -153,7 +155,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<Structure> getStructure(FlowRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getStructure(ProtoGrpc.toFlowRequest(request)))
+                    .item(manager.using(request.getSource()).getStructure(ProtoGrpc.toFlowRequest(request)))
                     .map(ProtoApi::fromDataStructure);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -180,7 +182,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Uni<DataSet> getData(KeyRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.getData(ProtoGrpc.toKeyRequest(request)))
+                    .item(manager.using(request.getSource()).getData(ProtoGrpc.toKeyRequest(request)))
                     .map(ProtoApi::fromDataSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
@@ -218,7 +220,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
             throw new RuntimeException("Cannot access flows for source: " + source);
         }
         try {
-            return manager.getFlows(sdmxdl.web.DatabaseRequest.builder().build()).stream()
+            return manager.using(webSource).getFlows(sdmxdl.DatabaseRequest.builder().build()).stream()
                     .map(ProtoApi::fromDataflow)
                     .toList();
         } catch (IOException ex) {
@@ -254,7 +256,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Flow> getFlows(DatabaseRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getFlows(ProtoGrpc.toDatabaseRequest(request)).stream())
+                    .iterable(manager.using(request.getSource()).getFlows(ProtoGrpc.toDatabaseRequest(request)))
                     .map(ProtoApi::fromDataflow);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);
@@ -281,7 +283,7 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
     public Multi<Series> getDataStream(KeyRequest request) {
         try {
             return Multi.createFrom()
-                    .items(manager.getData(ProtoGrpc.toKeyRequest(request)).getData().stream())
+                    .iterable(manager.using(request.getSource()).getData(ProtoGrpc.toKeyRequest(request)))
                     .map(ProtoApi::fromSeries);
         } catch (IOException ex) {
             return Multi.createFrom().failure(ex);

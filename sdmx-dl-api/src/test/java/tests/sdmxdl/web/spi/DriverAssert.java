@@ -5,7 +5,6 @@ import lombok.NonNull;
 import nbbrd.design.MightBeGenerated;
 import org.assertj.core.api.Condition;
 import sdmxdl.*;
-import sdmxdl.web.KeyRequest;
 import sdmxdl.web.WebSource;
 import sdmxdl.web.spi.Driver;
 import sdmxdl.web.spi.WebContext;
@@ -72,7 +71,7 @@ public class DriverAssert {
     public static void assertBuiltinSource(Driver driver, SourceQuery query, WebContext context) throws IOException {
         WebSource webSource = driver.getDefaultSources()
                 .stream()
-                .filter(item -> item.getId().equals(query.getKeyRequest().getSource()))
+                .filter(item -> item.getId().equals(query.getSource()))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
@@ -127,6 +126,7 @@ public class DriverAssert {
     @lombok.Value
     @lombok.Builder
     public static class SourceQuery {
+        String source;
         KeyRequest keyRequest;
         int minFlowCount;
         @lombok.Builder.Default

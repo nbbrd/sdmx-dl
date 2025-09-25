@@ -19,7 +19,7 @@ package internal.sdmxdl.cli;
 import picocli.CommandLine;
 import sdmxdl.Detail;
 import sdmxdl.Key;
-import sdmxdl.web.KeyRequest;
+import sdmxdl.KeyRequest;
 
 /**
  * @author Philippe Charles

@@ -20,7 +20,7 @@ public class WebConceptOptions extends WebFlowOptions {
     private String concept;
 
     public Component loadComponent(SdmxWebManager manager) throws IOException {
-        Structure dsd = manager.getStructure(toFlowRequest());
+        Structure dsd = manager.using(getSource()).getStructure(toFlowRequest());
         return Stream.concat(dsd.getDimensions().stream(), dsd.getAttributes().stream())
                 .filter(component -> component.getId().equals(getConcept()))
                 .findFirst()

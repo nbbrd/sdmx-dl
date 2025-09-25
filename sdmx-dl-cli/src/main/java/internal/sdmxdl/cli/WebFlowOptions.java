@@ -18,8 +18,8 @@ package internal.sdmxdl.cli;
 
 import picocli.CommandLine;
 import sdmxdl.FlowRef;
+import sdmxdl.FlowRequest;
 import sdmxdl.Series;
-import sdmxdl.web.FlowRequest;
 
 import java.util.Comparator;
 

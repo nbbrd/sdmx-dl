@@ -29,6 +29,7 @@ import sdmxdl.file.spi.FileCaching;
 import sdmxdl.file.spi.FileContext;
 import sdmxdl.file.spi.Reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -83,6 +84,10 @@ public class SdmxFileManager extends SdmxManager<FileSource> {
                 .orElseThrow(() -> new IOException("cannot find reader for source '" + source + "'"));
 
         return reader.read(source, languages, getContext());
+    }
+
+    public @NonNull Provider using(@NonNull File data) throws IOException {
+        return using(new FileSource(data, null));
     }
 
     private FileContext initLazyContext() {
