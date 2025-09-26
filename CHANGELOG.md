@@ -20,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - ![FORMAT] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
 - ![BUILD] Migrate OSSRH to Central Portal
 - ![BUILD] Move testing module to test units
+- ![BUILD] Apply zero-dependency principle to standalone module [#1028](https://github.com/nbbrd/sdmx-dl/issues/1028)
 
 ## [3.0.0-beta.14] - 2025-02-24
 
