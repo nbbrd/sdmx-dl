@@ -228,6 +228,7 @@
                                     </moduleInfo>
                                 </module>
                             </modules>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
                             <jdepsExtraArgs>--ignore-missing-deps</jdepsExtraArgs>
                         </configuration>
                     </execution>
@@ -239,10 +240,9 @@
                         </goals>
                         <configuration>
                             <module>
-                                <moduleInfoFile>
-                                    ${project.build.directory}/generated-sources/modules/sdmxdl.api/module-info.java
-                                </moduleInfoFile>
+                                <moduleInfoFile>${project.build.directory}/sdmxdl.api/module-info.java</moduleInfoFile>
                             </module>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
                         </configuration>
                     </execution>
                 </executions>
