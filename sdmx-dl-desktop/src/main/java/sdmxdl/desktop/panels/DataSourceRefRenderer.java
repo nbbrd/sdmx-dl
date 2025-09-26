@@ -4,12 +4,8 @@ import com.formdev.flatlaf.util.ColorFunctions;
 import internal.Colors;
 import j2html.tags.DomContent;
 import j2html.tags.specialized.KbdTag;
-import sdmxdl.DatabaseRef;
-import sdmxdl.Flow;
-import sdmxdl.FlowRef;
-import sdmxdl.Languages;
+import sdmxdl.*;
 import sdmxdl.desktop.DataSourceRef;
-import sdmxdl.desktop.FlowStruct;
 import sdmxdl.desktop.Sdmxdl;
 import sdmxdl.web.WebSource;
 
@@ -94,15 +90,15 @@ public enum DataSourceRefRenderer implements Renderer<DataSourceRef> {
     }
 
     private DomContent flowName(DataSourceRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value, onUpdate);
-        return text(flowStruct != null ? flowStruct.getFlow().getName() : value.getFlow());
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value, onUpdate);
+        return text(metaSet != null ? metaSet.getFlow().getName() : value.getFlow());
     }
 
     private static DomContent flowRefAndName(DataSourceRef ref, Runnable onUpdate) {
-        FlowStruct fs = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(ref, onUpdate);
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(ref, onUpdate);
         WebSource s = ref.toWebSource(Sdmxdl.INSTANCE.getSdmxManager());
         Color color = s != null ? getColor(s) : getFallbackColor();
-        return fs != null ? flowRefAndName(fs.getFlow(), color) : flowRef(ref, color);
+        return metaSet != null ? flowRefAndName(metaSet.getFlow(), color) : flowRef(ref, color);
     }
 
     private static DomContent flowRefAndName(Flow flow, Color color) {

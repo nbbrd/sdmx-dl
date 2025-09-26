@@ -151,6 +151,7 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         result.register(Key.class, new KeySerializer());
         result.register(Query.class, new QuerySerializer());
         result.register(Detail.class, new DefaultSerializers.EnumSerializer(Detail.class));
+        result.register(MetaSet.class, new MetaSetSerializer());
         result.register(DataSet.class, new DataSetSerializer());
         result.register(Series.class, new SeriesSerializer());
         result.register(Obs.class, new ObsSerializer());
@@ -426,6 +427,24 @@ final class KryoFileFormat<T extends HasPersistence> implements FileFormat<T> {
         @Override
         protected CodelistRef read(String input) {
             return CodelistRef.parse(input);
+        }
+    }
+
+    private static final class MetaSetSerializer extends ImmutableSerializer<MetaSet> {
+
+        @Override
+        public void write(Kryo kryo, Output output, MetaSet t) {
+            kryo.writeObject(output, t.getFlow());
+            kryo.writeObject(output, t.getStructure());
+        }
+
+        @Override
+        public MetaSet read(Kryo kryo, Input input, Class<? extends MetaSet> type) {
+            return MetaSet
+                    .builder()
+                    .flow(kryo.readObject(input, Flow.class))
+                    .structure(kryo.readObject(input, Structure.class))
+                    .build();
         }
     }
 

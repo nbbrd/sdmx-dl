@@ -23,8 +23,8 @@ import sdmxdl.format.protobuf.About;
 import sdmxdl.format.protobuf.DataSet;
 import sdmxdl.format.protobuf.Database;
 import sdmxdl.format.protobuf.Flow;
+import sdmxdl.format.protobuf.MetaSet;
 import sdmxdl.format.protobuf.Series;
-import sdmxdl.format.protobuf.Structure;
 import sdmxdl.format.protobuf.web.MonitorReport;
 import sdmxdl.format.protobuf.web.WebSource;
 import sdmxdl.format.protobuf.web.WebSources;
@@ -124,39 +124,13 @@ public class SdmxWebManagerService implements sdmxdl.grpc.SdmxWebManager {
             )
     )
     @POST
-    @Path("/flow")
+    @Path("/meta")
     @Override
-    public Uni<Flow> getFlow(FlowRequest request) {
+    public Uni<MetaSet> getMeta(FlowRequest request) {
         try {
             return Uni.createFrom()
-                    .item(manager.using(request.getSource()).getFlow(ProtoGrpc.toFlowRequest(request)))
-                    .map(ProtoApi::fromDataflow);
-        } catch (IOException ex) {
-            return Uni.createFrom().failure(ex);
-        }
-    }
-
-    @RequestBody(
-            content = @Content(
-                    examples = @ExampleObject(
-                            name = "ECB example",
-                            value = """
-                                    {
-                                      "source": "ECB",
-                                      "flow": "EXR"
-                                    }
-                                    """
-                    )
-            )
-    )
-    @POST
-    @Path("/structure")
-    @Override
-    public Uni<Structure> getStructure(FlowRequest request) {
-        try {
-            return Uni.createFrom()
-                    .item(manager.using(request.getSource()).getStructure(ProtoGrpc.toFlowRequest(request)))
-                    .map(ProtoApi::fromDataStructure);
+                    .item(manager.using(request.getSource()).getMeta(ProtoGrpc.toFlowRequest(request)))
+                    .map(ProtoApi::fromMetaSet);
         } catch (IOException ex) {
             return Uni.createFrom().failure(ex);
         }

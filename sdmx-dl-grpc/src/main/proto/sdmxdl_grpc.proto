@@ -18,9 +18,7 @@ service SdmxWebManager {
 
   rpc GetFlows(DatabaseRequest) returns (stream sdmxdl.format.protobuf.Flow);
 
-  rpc GetFlow(FlowRequest) returns (sdmxdl.format.protobuf.Flow);
-
-  rpc GetStructure(FlowRequest) returns (sdmxdl.format.protobuf.Structure);
+  rpc GetMeta(FlowRequest) returns (sdmxdl.format.protobuf.MetaSet);
 
   rpc GetData(KeyRequest) returns (sdmxdl.format.protobuf.DataSet);
 

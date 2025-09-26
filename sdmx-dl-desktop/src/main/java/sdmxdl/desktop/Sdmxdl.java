@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import sdmxdl.HasPersistence;
 import sdmxdl.Languages;
+import sdmxdl.MetaSet;
 import sdmxdl.ext.FileFormat;
 import sdmxdl.web.SdmxWebManager;
 
@@ -40,7 +41,7 @@ public enum Sdmxdl implements HasSdmxProperties<SdmxWebManager> {
     private final SdmxIconSupport iconSupport = SdmxIconSupport.of(this);
 
     @Getter
-    private final AsyncSupport<DataSourceRef, FlowStruct> flowStructSupport = AsyncSupport.of(ref -> FlowStruct.load(this.getSdmxManager(), ref));
+    private final AsyncSupport<DataSourceRef, MetaSet> metaSetAsyncSupport = AsyncSupport.of(ref -> this.getSdmxManager().using(ref.getSource()).getMeta(ref.toFlowRequest()));
 
     public <T extends HasPersistence> String formatAsJson(Class<T> type, T value) {
         Optional<FileFormat<T>> dsdFormat = getSdmxManager()

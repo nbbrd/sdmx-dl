@@ -18,10 +18,7 @@ public interface Provider {
     Collection<Flow> getFlows(@NonNull DatabaseRequest request) throws IOException;
 
     @NonNull
-    Flow getFlow(@NonNull FlowRequest request) throws IOException;
-
-    @NonNull
-    Structure getStructure(@NonNull FlowRequest request) throws IOException;
+    MetaSet getMeta(@NonNull FlowRequest request) throws IOException;
 
     @NonNull
     DataSet getData(@NonNull KeyRequest request) throws IOException;

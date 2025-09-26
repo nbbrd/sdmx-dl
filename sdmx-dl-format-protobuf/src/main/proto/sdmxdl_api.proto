@@ -51,6 +51,11 @@ message DataRepository {
   string expiration_time = 7;
 }
 
+message MetaSet {
+  Flow flow = 1;
+  Structure structure = 2;
+}
+
 message DataSet {
   string ref = 1; /* Representation of FlowRef */
   Query query = 2;

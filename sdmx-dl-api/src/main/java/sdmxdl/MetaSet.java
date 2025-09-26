@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 National Bank of Belgium
+ * Copyright 2020 National Bank of Belgium
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -16,21 +16,24 @@
  */
 package sdmxdl;
 
-import nbbrd.design.SealedType;
-
+import lombok.NonNull;
 
 /**
- * Abstract resource.
- *
  * @author Philippe Charles
  */
-@SealedType({
-        Structure.class,
-        Flow.class,
-        Codelist.class,
-        DataSet.class,
-        MetaSet.class
-})
-public abstract class Resource<T extends ResourceRef<T>> implements HasReference<T> {
-    
+@lombok.Value
+@lombok.Builder(toBuilder = true)
+@lombok.EqualsAndHashCode(callSuper = false)
+public class MetaSet extends Resource<FlowRef> {
+
+    @NonNull
+    Flow flow;
+
+    @NonNull
+    Structure structure;
+
+    @Override
+    public @NonNull FlowRef getRef() {
+        return flow.getRef();
+    }
 }

@@ -7,6 +7,7 @@ import j2html.tags.Text;
 import nbbrd.io.picocsv.Picocsv;
 import sdmxdl.DataRepository;
 import sdmxdl.Dimension;
+import sdmxdl.MetaSet;
 import sdmxdl.desktop.*;
 import sdmxdl.web.WebSource;
 
@@ -28,9 +29,9 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     @Override
     public String toText(DataSetRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value.getDataSourceRef(), onUpdate);
-        return flowStruct != null
-                ? getDimension(value, flowStruct).getCodelist().getCodes().get(value.getKey().get(value.getDimensionIndex()))
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value.getDataSourceRef(), onUpdate);
+        return metaSet != null
+                ? getDimension(value, metaSet).getCodelist().getCodes().get(value.getKey().get(value.getDimensionIndex()))
                 : getKeyText(value);
     }
 
@@ -42,11 +43,11 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
 
     @Override
     public String toTooltip(DataSetRef value, Runnable onUpdate) {
-        FlowStruct flowStruct = Sdmxdl.INSTANCE.getFlowStructSupport().getOrNull(value.getDataSourceRef(), onUpdate);
+        MetaSet metaSet = Sdmxdl.INSTANCE.getMetaSetAsyncSupport().getOrNull(value.getDataSourceRef(), onUpdate);
         return html(
                 table(
                         tr(th("Key:").withStyle("text-align:right"), td(getKeyText(value))),
-                        tr(th("Dimension:").withStyle("text-align:right"), td(htmlDimension(value, flowStruct)))
+                        tr(th("Dimension:").withStyle("text-align:right"), td(htmlDimension(value, metaSet)))
                 )
         ).render();
     }
@@ -151,17 +152,17 @@ public enum DataSetRefRenderer implements Renderer<DataSetRef> {
         return source.getWebsite();
     }
 
-    private static Dimension getDimension(DataSetRef ref, FlowStruct fs) {
-        return fs.getStructure().getDimensionList().get(ref.getDimensionIndex());
+    private static Dimension getDimension(DataSetRef ref, MetaSet metaSet) {
+        return metaSet.getStructure().getDimensionList().get(ref.getDimensionIndex());
     }
 
     private static String getKeyText(DataSetRef ref) {
         return ref.getKey().toString();
     }
 
-    private static DomContent htmlDimension(DataSetRef ref, FlowStruct fs) {
-        return fs != null
-                ? htmlDimension(getDimension(ref, fs))
+    private static DomContent htmlDimension(DataSetRef ref, MetaSet metaSet) {
+        return metaSet != null
+                ? htmlDimension(getDimension(ref, metaSet))
                 : htmlDimension(ref);
     }
 

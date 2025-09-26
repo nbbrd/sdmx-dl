@@ -78,16 +78,13 @@ public abstract class SdmxManager<SOURCE extends Source> {
         }
 
         @Override
-        public @NonNull Flow getFlow(sdmxdl.@NonNull FlowRequest request) throws IOException {
+        public @NonNull MetaSet getMeta(@NonNull FlowRequest request) throws IOException {
             try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getFlow(request.getDatabase(), request.getFlow());
-            }
-        }
-
-        @Override
-        public @NonNull Structure getStructure(sdmxdl.@NonNull FlowRequest request) throws IOException {
-            try (Connection connection = manager.getConnection(source, request.getLanguages())) {
-                return connection.getStructure(request.getDatabase(), request.getFlow());
+                return MetaSet
+                        .builder()
+                        .flow(connection.getFlow(request.getDatabase(), request.getFlow()))
+                        .structure(connection.getStructure(request.getDatabase(), request.getFlow()))
+                        .build();
             }
         }
 

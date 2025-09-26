@@ -184,6 +184,22 @@ public class ProtoApi {
                 .build();
     }
 
+    public static MetaSet fromMetaSet(sdmxdl.MetaSet value) {
+        return MetaSet
+                .newBuilder()
+                .setFlow(fromDataflow(value.getFlow()))
+                .setStructure(fromDataStructure(value.getStructure()))
+                .build();
+    }
+
+    public static sdmxdl.MetaSet toMetaSet(MetaSet value) {
+        return sdmxdl.MetaSet
+                .builder()
+                .flow(toDataflow(value.getFlow()))
+                .structure(toDataStructure(value.getStructure()))
+                .build();
+    }
+
     public static Query fromDataQuery(sdmxdl.Query value) {
         return Query
                 .newBuilder()
