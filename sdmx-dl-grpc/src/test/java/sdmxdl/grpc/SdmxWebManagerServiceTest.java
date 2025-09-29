@@ -41,10 +41,10 @@ public class SdmxWebManagerServiceTest {
     }
 
     @Test
-    public void mcpGetAbout() {
-        McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient();
-        client.when()
-                .toolsCall("mcpGetAbout", r -> {
+    public void mcpAbout() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpAbout", r -> {
                     assertThat(r)
                             .returns(false, ToolResponse::isError)
                             .extracting(ToolResponse::content, list(Content.class))
@@ -57,10 +57,10 @@ public class SdmxWebManagerServiceTest {
     }
 
     @Test
-    public void mcpGetSources() {
-        McpAssured.McpStreamableTestClient client = McpAssured.newConnectedStreamableClient();
-        client.when()
-                .toolsCall("mcpGetSources", r -> {
+    public void mcpSources() {
+        McpAssured.newConnectedStreamableClient()
+                .when()
+                .toolsCall("mcpSources", r -> {
                     assertThat(r)
                             .returns(false, ToolResponse::isError)
                             .extracting(ToolResponse::content, list(Content.class))
